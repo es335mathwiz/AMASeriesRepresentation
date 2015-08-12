@@ -4,7 +4,8 @@
 
 Print["reading AMASeriesRepresentation`"]
 
-BeginPackage["AMASeriesRepresentation`", {"JLink`","ProtectedSymbols`","mathSmolyak`"}]
+BeginPackage["AMASeriesRepresentation`", {"JLink`","ProtectedSymbols`","mathSmolyak`",
+	"DifferentialEquations`InterpolatingFunctionAnatomy`"}]
 
 Begin["Private`"]
 
@@ -64,29 +65,48 @@ FindRoot[subbedEqns,
 
 (*compute the next set of z functions, setup x guess for fixed point computation*)
 
-computeFPower[FF_?MatrixQ,kk_Integer]:=
-computeFPower[FF,kk]=FF .computeFPower[FF,kk-1]/;kk>=1
-computeFPower[FF,0]:=IdentityMatrix[Length[FF]]
+computeFPower[FF_?MatrixQ,kk_Integer]:=(
+computeFPower[FF,kk]=FF .computeFPower[FF,kk-1])/;kk>=1
+computeFPower[FF_?MatrixQ,0]:=IdentityMatrix[Length[FF]]
 
 computeFPartK[FF_?MatrixQ,phi_?MatrixQ,psiZ_?MatrixQ,kk_Integer,ZZk_?MatrixQ]:=
 computeFPartK[FF,phi,psiZ,kk,ZZk]=computeFPower[FF,kk].phi.psiZ.ZZk
 
-computeFPart[FF_?MatrixQ,phi_?MatrixQ,psiZ_?MatrixQ,ZZks:{_InterpolatingFunction...},xxGuess_?MatrixQ]:=
-With[{kk=Length[ZZks],zzkMats=Transpose[{#@@ Flatten[xxGuess]}]&/@ZZks},
-Sum[computeFPartK[FF,phi,psiZ,ii,zzkMats[[ii]]],{ii,kk}]]
+computeFPart[FF_?MatrixQ,phi_?MatrixQ,psiZ_?MatrixQ,ZZks:{{_InterpolatingFunction..}..},xxGuess_?MatrixQ]:=
+With[{kk=Length[ZZks],zzkVecs=applyZFuncs[#,xxGuess]&/@ZZks},
+Sum[computeFPartK[FF,phi,psiZ,ii,zzkVecs[[ii]]],{ii,kk}]]
+
+
+applyZFuncs[theFuncs:{_InterpolatingFunction..},xxGuess_?MatrixQ]:=
+Transpose[{Through[(theFuncs @@ #)&[Flatten[xxGuess]]]}]
+
 
 computeNextXt[linMod:{BB_?MatrixQ,phi_?MatrixQ,FF_?MatrixQ,psiEps_?MatrixQ,psiC_?MatrixQ,psiZ_?MatrixQ},
-	ZZks:{_InterpolatingFunction..},xxGuess_?MatrixQ]:=
+	ZZks:{{_InterpolatingFunction..}..},xxGuess_?MatrixQ]:=
 computeNextXt[linMod,ZZks,xxGuess]=
 computeNonFPart[BB,phi,psiEps,psiC]+
 computeFPart[FF,phi,psiZ,ZZks,xxGuess]+phi.genZVars[Length[psiZ[[1]]]]
 
+computeNextXt[linMod:{BB_?MatrixQ,phi_?MatrixQ,FF_?MatrixQ,psiEps_?MatrixQ,psiC_?MatrixQ,psiZ_?MatrixQ},xt_?MatrixQ,
+	{},xxGuess_?MatrixQ]:=
+computeNextXt[linMod,xt,{},xxGuess]=With[{zapEps=Thread[(genEpsVars[Length[psiEps[[1]]]])->0],
+	zapZs=Thread[(genZVars[Length[psiZ[[1]]]])->0]},
+	computeNextXt[linMod](*/.Join[zapEps,zapZs]*)]
+
+
+computeNextXt[linMod:{BB_?MatrixQ,phi_?MatrixQ,FF_?MatrixQ,psiEps_?MatrixQ,psiC_?MatrixQ,psiZ_?MatrixQ},xt_?MatrixQ,
+	ZZks:{{_InterpolatingFunction..}..},xxGuess_?MatrixQ]:=
+computeNextXt[linMod,xt,ZZks,xxGuess]=
+computeNonFPart[BB,phi,psiEps,psiC]+
+computeFPart[FF,phi,psiZ,ZZks,xxGuess]+phi.genZVars[Length[psiZ[[1]]]]
+
+
 
 computeNextXtp1[linMod:{BB_?MatrixQ,phi_?MatrixQ,FF_?MatrixQ,psiEps_?MatrixQ,psiC_?MatrixQ,psiZ_?MatrixQ},
-	ZZks:{_InterpolatingFunction..},xxGuess_?MatrixQ]:=
+	ZZks:{{_InterpolatingFunction..}..},xxGuess_?MatrixQ]:=
 computeNextXtp1[linMod,ZZks,xxGuess]=
 With[{xt=computeNextXt[linMod,ZZks,xxGuess]},
-	computeNextXt[linMod,xt,0*genEpsVars[Length[psiEps[[1]]]],Drop[ZZks,1],Transpose[{ZZks[[1]]@@Flatten[xxGuess]}],xxGuess]]
+	computeNextXt[linMod,xt,Drop[ZZks,1],xxGuess]]
 
 
 Print["should memoize subXtXtp1"]
@@ -99,7 +119,7 @@ subXtXtp1[aFunc_Function,linMod:{BB_?MatrixQ,phi_?MatrixQ,FF_?MatrixQ,psiEps_?Ma
 
 makeConstraintFindRootFunc[hmFunc_Function,
 	linMod:{BB_?MatrixQ,phi_?MatrixQ,FF_?MatrixQ,psiEps_?MatrixQ,psiC_?MatrixQ,psiZ_?MatrixQ},
-	ZZks:{_InterpolatingFunction...},xxNext_?MatrixQ,xxNextp1_?MatrixQ,zzGuesser:{_InterpolatingFunction...},xxGuess_?MatrixQ]:=
+	ZZks:{{_InterpolatingFunction..}..},xxNext_?MatrixQ,xxNextp1_?MatrixQ,zzGuesser:{_InterpolatingFunction...},xxGuess_?MatrixQ]:=
 makeConstraintFindRootFunc[hmFunc,
 	linMod,
 	ZZks,xxNext,xxNextp1,zzGuesser,xxGuess]=
@@ -122,7 +142,7 @@ FindRoot[Thread[
 
 makeConstraintFixedPointFunc[hmFunc_Function,
 	linMod:{BB_?MatrixQ,phi_?MatrixQ,FF_?MatrixQ,psiEps_?MatrixQ,psiC_?MatrixQ,psiZ_?MatrixQ},
-	ZZks:{_InterpolatingFunction...},xxNext_?MatrixQ,xxNextp1_?MatrixQ,zzGuesser:{_InterpolatingFunction...},xxGuess_?MatrixQ]:=
+	ZZks:{{_InterpolatingFunction..}..},xxNext_?MatrixQ,xxNextp1_?MatrixQ,zzGuesser:{_InterpolatingFunction...},xxGuess_?MatrixQ]:=
 makeConstraintFixedPointFunc[hmFunc,
 	linMod,
 	ZZks,xxNext,xxNextp1,zzGuesser,xxGuess]=
@@ -182,31 +202,60 @@ Table[ii,{ii,xLow,xHigh,N[xHigh-xLow]/iPts}]]/;iPts>=0
 
 subsFuncToVecFunc[aSubsFunc_Function]:=Function[xx,With[{theRes=aSubsFunc @@ xx},Last/@theRes]]
 
+fillIn[{theRes:{_?NumberQ...},toIgnore:{_Integer...},shortVec:{_?NumberQ...}}]:=
+Module[{},
+If[toIgnore=={}==shortVec,theRes,
+	If[MemberQ[toIgnore,Length[theRes]+1],fillIn[{Append[theRes,0],Drop[toIgnore,1],shortVec}],
+		fillIn[{Append[theRes,shortVec[[1]]],toIgnore,Drop[shortVec,1]}]]]]/;OrderedQ[toIgnore]
 
-makeInterpFunc[aVecFunc_Function,gSpec:{{_Integer,_?NumberQ,_?NumberQ}..}]:=
-With[{thePts=gridPts[gSpec]},
-With[{interpData=Map[{#,aVecFunc@#}&,thePts]},Function[kk,
+fillIn[{theRes:{_?NumberQ...},toIgnore:{_Integer...},shortVec:{_?NumberQ...}}]:=
+fillIn[{theRes,Sort[toIgnore],shortVec}]
+
+makeInterpFunc[aVecFunc_Function,toIgnore:{_Integer...},gSpec:{iOrd_Integer,{_Integer,_?NumberQ,_?NumberQ}..}]:=
+With[{thePts=gridPts[gSpec[[2]]]},
+With[{interpData=Map[{#,aVecFunc@fillIn[{{},toIgnore,#}]}&,thePts]},Function[{kk,theOrd},
+Interpolation[{#[[1]],#[[2,kk]]}&/@interpData,InterpolationOrder->theOrd]]@@#&/@
+Transpose[{Range[Length[interpData[[1,2]]]],Table[iOrd,{Length[interpData[[1,2]]]}]}]]]
+
+
+
+makeInterpFuncPF[aVecFunc_Function,toIgnore:{_Integer...},gSpec:{iOrd_Integer,{_Integer,_?NumberQ,_?NumberQ}..},numShocks_Integer]:=
+With[{thePts=gridPts[gSpec[[2]]],theZeroes=Table[0,{numShocks}]},
+With[{interpData=Map[{#,aVecFunc@Join[fillIn[{{},toIgnore,#}],theZeroes]}&,thePts]},Function[kk,
 Interpolation[{#[[1]],#[[2,kk]]}&/@interpData]]/@Range[Length[interpData[[1,2]]]]]]
 
 
 
-makeInterpFuncPF[aVecFunc_Function,gSpec:{{_Integer,_?NumberQ,_?NumberQ}..},numShocks_Integer]:=
-With[{thePts=gridPts[gSpec],theZeroes=Table[0,{numShocks}]},
-With[{interpData=Map[{#,aVecFunc@Join[#,theZeroes]}&,thePts]},Function[kk,
-Interpolation[{#[[1]],#[[2,kk]]}&/@interpData]]/@Range[Length[interpData[[1,2]]]]]]
-
-
-
-makeInterpFuncRE[aVecFunc_Function,gSpec:{{_Integer,_?NumberQ,_?NumberQ}..},distribs_List]:=
-With[{interpFuncs=makeInterpFunc[aVecFunc,gSpec]},
-	With[{newGSpec=Drop[gSpec,-Length[distribs]]},
-		With[{thePts=gridPts[newGSpec]},
-With[{interpData=Map[{#,doExpect[interpFuncs,distribs,#]}&,thePts]},Function[kk,
+makeInterpFuncRE[aVecFunc_Function,toIgnore:{_Integer...},gSpec:{iOrd_Integer,{_Integer,_?NumberQ,_?NumberQ}..},distribs_List]:=
+With[{interpFuncs=makeInterpFunc[aVecFunc,toIgnore,gSpec]},
+	With[{newGSpecPts=Drop[gSpec[[2]],-Length[distribs]]},
+		With[{thePts=gridPts[newGSpecPts]},
+With[{interpData=Map[{#,doExpect[interpFuncs,distribs,fillIn[{{},toIgnore,#}]]}&,thePts]},Function[kk,
 Interpolation[{#[[1]],#[[2,kk]]}&/@interpData]]/@Range[Length[interpData[[1,2]]]]]]]]
 
 doExpect[vecFuncs:{_InterpolatingFunction..},distribs_List,xtm1_?VectorQ]:=
 With[{shockVars=Table[Unique["shkVars"],{Length[distribs]}]},
 NExpectation[Through[vecFuncs@@#&[Join[xtm1,shockVars]]],Thread[shockVars \[Distributed] distribs]]]
+
+
+(*
+
+ageOneZFunc[iterStateFuncs:{_InterpolatingFunction...},zFunc_InterpolatingFunction]:=
+With[{iPts=InterpolatingFunctionGrid[iterStateFuncs]},
+	With[{funcData=Map[{#,zFunc@@#},iPts,{Depth[iPts]-2}]},
+		Interpolation
+
+
+ageZFuncs[modSpecific:{{bmat_?MatrixQ,phimat_?MatrixQ,fmat_?MatrixQ,psieps_?MatrixQ,psic_?MatrixQ,psiz_?MatrixQ},compCon:{_Function...},stateSel_List,xtm1_?MatrixQ,noZFuncsGuess_,{iterStateDim_Integer,neq_Integer,nlag_Integer,nlead_Integer,nShocks_Integer},fpSolver_},{}]:={}
+
+
+ageZFuncs[modSpecific:{{bmat_?MatrixQ,phimat_?MatrixQ,fmat_?MatrixQ,psieps_?MatrixQ,psic_?MatrixQ,psiz_?MatrixQ},
+compCon:{_Function...},stateSel_List,xtm1_?MatrixQ,noZFuncsGuess_,{iterStateDim_Integer,neq_Integer,nlag_Integer,nlead_Integer,nShocks_Integer},fpSolver_},zFuncs_List]:=
+With[{iterStateFuncs=zFuncs[[Range[iterStateDim]]]},
+ageOneZFunc[iterStateFuncs,#]&/@Drop[zFuncs,iterStateDim]]
+
+*)
+
 (*
 http://mathematica.stackexchange.com/questions/1803/how-to-compile-effectively
 computeNonFPart=Compile[{{BB,_Real,2},{phi,_Real,2},{psiEps,_Real,2},{xtm1,_Real,2},{epst,_Real,2}},
@@ -215,9 +264,6 @@ computeNonFPart=Compile[{{BB,_Real,2},{phi,_Real,2},{psiEps,_Real,2},{xtm1,_Real
 computeFPartk=Compile[{{FF,_Real,2},{phi,_Real,2},{kk,_Integer},{ZZk,_Real,2}},
 	computeFPower[FF,kk] . phi . ZZk]
 	
-
-applyZs[theFuncs:{_InterpolatingFunction[___]..},xtm1_?MatrixQ,epst_?MatrixQ]:=
-Through[theFuncs[Join[xtm1,epst]]]
 
 makePFFuncs[czFuncs_Function,numModVars_Integer,numShocks_Integer]:=
 With[{modArgs=Table[Unique["xvar"],{numModVars}]},

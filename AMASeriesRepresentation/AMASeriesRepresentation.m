@@ -10,28 +10,30 @@ BeginPackage["AMASeriesRepresentation`", {"JLink`","ProtectedSymbols`","mathSmol
 Begin["Private`"]
 
 (*compute the first set of z functions*)
-computeNonFPart[BB_?MatrixQ,phi_?MatrixQ,psiEps_?MatrixQ,psiC_?MatrixQ]:=
-computeNonFPart[BB,phi,psiEps,psiC]=(BB.genXtm1Vars[Length[BB]] + phi.psiEps.genEpsVars[Length[psiEps[[1]]]]+
+computeNonFPart[BB_?MatrixQ,phi_?MatrixQ,psiEps_?MatrixQ,psiC_?MatrixQ]:=(*
+computeNonFPart[BB,phi,psiEps,psiC]=*)
+(BB.Transpose[{genXtm1Vars[Length[BB]]}] + phi.psiEps.Transpose[{genEpsVars[Length[psiEps[[1]]]]}]+
 Inverse[IdentityMatrix[Length[fmat]]-fmat] . phimat . psic)
 
-computeNonFPart[BB_?MatrixQ,phi_?MatrixQ,psiEps_?MatrixQ,psiC_?MatrixQ,xt_?MatrixQ]:=
-computeNonFPart[BB,phi,psiEps,psiC]=(BB.xt +Inverse[IdentityMatrix[Length[fmat]]-fmat] . phimat . psic)
+computeNonFPart[BB_?MatrixQ,phi_?MatrixQ,psiEps_?MatrixQ,psiC_?MatrixQ,xt_?MatrixQ]:=(*
+computeNonFPart[BB,phi,psiEps,psiC]=*)
+(BB.xt +Inverse[IdentityMatrix[Length[fmat]]-fmat] . phimat . psic)
 
 
 
-computeNextXt[linMod:{BB_?MatrixQ,phi_?MatrixQ,FF_?MatrixQ,psiEps_?MatrixQ,psiC_?MatrixQ,psiZ_?MatrixQ}]:=
-computeNextXt[linMod]=
+computeNextXt[linMod:{BB_?MatrixQ,phi_?MatrixQ,FF_?MatrixQ,psiEps_?MatrixQ,psiC_?MatrixQ,psiZ_?MatrixQ}]:=(*
+computeNextXt[linMod]=*)
 computeNonFPart[BB,phi,psiEps,psiC]+phi.psiZ .genZVars[Length[psiZ[[1]]]]
 
 
 
 
-computeNextXt[linMod:{BB_?MatrixQ,phi_?MatrixQ,FF_?MatrixQ,psiEps_?MatrixQ,psiC_?MatrixQ,psiZ_?MatrixQ},xt_?MatrixQ]:=
-computeNextXt[linMod,xt]=
-computeNonFPart[BB,phi,psiEps,psiC,xt]
+computeNextXt[linMod:{BB_?MatrixQ,phi_?MatrixQ,FF_?MatrixQ,psiEps_?MatrixQ,psiC_?MatrixQ,psiZ_?MatrixQ},xt_?MatrixQ]:=(*
+computeNextXt[linMod,xt]=*)
+computeNonFPart[BB,phi,psiEps,psiC,xt]+phi.psiZ .genZVars[Length[psiZ[[1]]]]
 
-computeNextXtp1[linMod:{BB_?MatrixQ,phi_?MatrixQ,FF_?MatrixQ,psiEps_?MatrixQ,psiC_?MatrixQ,psiZ_?MatrixQ}]:=
-computeNextXtp1[linMod]=
+computeNextXtp1[linMod:{BB_?MatrixQ,phi_?MatrixQ,FF_?MatrixQ,psiEps_?MatrixQ,psiC_?MatrixQ,psiZ_?MatrixQ}]:=(*
+computeNextXtp1[linMod]=*)
 With[{xt=computeNextXt[linMod]},
 	computeNextXt[linMod,xt]]
 
@@ -58,9 +60,12 @@ With[{zzGuess=If[zzGuesser=={},Table[0,{Length[psiZ[[1]]]}],Through[zzGuesser[fl
 ReplacePart[Function[theArgs,
 	With[{zSubs=
 FindRoot[subbedEqns,
-		findRootArg]},
+		findRootArg]//Chop},
 		Join[Thread[xxTargets->(forZSubs/.zSubs)],zSubs]]
 		],1->flatXtm1Eps]]]]
+
+
+
 
 
 (*compute the next set of z functions, setup x guess for fixed point computation*)
@@ -69,83 +74,112 @@ computeFPower[FF_?MatrixQ,kk_Integer]:=(
 computeFPower[FF,kk]=FF .computeFPower[FF,kk-1])/;kk>=1
 computeFPower[FF_?MatrixQ,0]:=IdentityMatrix[Length[FF]]
 
-computeFPartK[FF_?MatrixQ,phi_?MatrixQ,psiZ_?MatrixQ,kk_Integer,ZZk_?MatrixQ]:=
-computeFPartK[FF,phi,psiZ,kk,ZZk]=computeFPower[FF,kk].phi.psiZ.ZZk
+computeFPartK[FF_?MatrixQ,phi_?MatrixQ,psiZ_?MatrixQ,kk_Integer]:=
+computeFPartK[FF,phi,psiZ,kk,ZZk]=computeFPower[FF,kk].phi.psiZ
 
-computeFPart[FF_?MatrixQ,phi_?MatrixQ,psiZ_?MatrixQ,ZZks:{{_InterpolatingFunction..}..},xxGuess_?MatrixQ]:=
-With[{kk=Length[ZZks],zzkVecs=applyZFuncs[#,xxGuess]&/@ZZks},
-Sum[computeFPartK[FF,phi,psiZ,ii,zzkVecs[[ii]]],{ii,kk}]]
+computeFPart[FF_?MatrixQ,phi_?MatrixQ,psiEps_?MatrixQ,psiZ_?MatrixQ,
+	ZZks:{_InterpolatingFunction..},xxGuess_?MatrixQ,toIgnore:{_Integer...}]:=
+With[{kk=Length[ZZks]/Length[psiZ[[1]]],zzkVecs=applyZFuncs[ZZks,doIgnoreParts[xxGuess,toIgnore]]},
+	With[{allZPows= ArrayFlatten[{Table[computeFPartK[FF,phi,psiZ,ii],{ii,kk}]}]},allZPows . zzkVecs]]
 
 
-applyZFuncs[theFuncs:{_InterpolatingFunction..},xxGuess_?MatrixQ]:=
-Transpose[{Through[(theFuncs @@ #)&[Flatten[xxGuess]]]}]
+computeFPart[FF_?MatrixQ,phi_?MatrixQ,psiEps_?MatrixQ,psiZ_?MatrixQ,
+	{},xxGuess_?MatrixQ,toIgnore:{_Integer...}]:=Table[0,{Length[phi]}]
+
+applyZFuncs[theFuncs:{_InterpolatingFunction..},xxGuessEps_?MatrixQ]:=
+Transpose[{Through[(theFuncs @@ #)&[Flatten[xxGuessEps]]]}]
 
 
 computeNextXt[linMod:{BB_?MatrixQ,phi_?MatrixQ,FF_?MatrixQ,psiEps_?MatrixQ,psiC_?MatrixQ,psiZ_?MatrixQ},
-	ZZks:{{_InterpolatingFunction..}..},xxGuess_?MatrixQ]:=
-computeNextXt[linMod,ZZks,xxGuess]=
+	ZZks:{_InterpolatingFunction..},xxGuess_?MatrixQ,toIgnore:{_Integer...}]:=(*
+computeNextXt[linMod,ZZks,xxGuess,toIgnore]=*)
 computeNonFPart[BB,phi,psiEps,psiC]+
-computeFPart[FF,phi,psiZ,ZZks,xxGuess]+phi.genZVars[Length[psiZ[[1]]]]
-
+computeFPart[FF,phi,psiEps,psiZ,ZZks,xxGuess,toIgnore]+phi.genZVars[Length[psiZ[[1]]]]
+(*
 computeNextXt[linMod:{BB_?MatrixQ,phi_?MatrixQ,FF_?MatrixQ,psiEps_?MatrixQ,psiC_?MatrixQ,psiZ_?MatrixQ},xt_?MatrixQ,
-	{},xxGuess_?MatrixQ]:=
-computeNextXt[linMod,xt,{},xxGuess]=With[{zapEps=Thread[(genEpsVars[Length[psiEps[[1]]]])->0],
-	zapZs=Thread[(genZVars[Length[psiZ[[1]]]])->0]},
-	computeNextXt[linMod](*/.Join[zapEps,zapZs]*)]
+	{},xxGuess_?MatrixQ,toIgnore:{_Integer...}]:=(*
+computeNextXt[linMod,xt,{},xxGuess,toIgnore]=*)
+	computeNextXt[linMod,xt](*/.Join[zapEps,zapZs]*)
 
-
+*)
 computeNextXt[linMod:{BB_?MatrixQ,phi_?MatrixQ,FF_?MatrixQ,psiEps_?MatrixQ,psiC_?MatrixQ,psiZ_?MatrixQ},xt_?MatrixQ,
-	ZZks:{{_InterpolatingFunction..}..},xxGuess_?MatrixQ]:=
-computeNextXt[linMod,xt,ZZks,xxGuess]=
-computeNonFPart[BB,phi,psiEps,psiC]+
-computeFPart[FF,phi,psiZ,ZZks,xxGuess]+phi.genZVars[Length[psiZ[[1]]]]
+	ZZks:{_InterpolatingFunction..},xxGuess_?MatrixQ,toIgnore:{_Integer...}]:=(*
+computeNextXt[linMod,xt,ZZks,xxGuess,toIgnore]=*)
+computeNonFPart[BB,phi,psiEps,psiC,xt]+
+computeFPart[FF,phi,psiEps,psiZ,ZZks,xxGuess,toIgnore]+phi.genZVars[Length[psiZ[[1]]]]
 
 
 
 computeNextXtp1[linMod:{BB_?MatrixQ,phi_?MatrixQ,FF_?MatrixQ,psiEps_?MatrixQ,psiC_?MatrixQ,psiZ_?MatrixQ},
-	ZZks:{{_InterpolatingFunction..}..},xxGuess_?MatrixQ]:=
-computeNextXtp1[linMod,ZZks,xxGuess]=
-With[{xt=computeNextXt[linMod,ZZks,xxGuess]},
-	computeNextXt[linMod,xt,Drop[ZZks,1],xxGuess]]
+	ZZks:{_InterpolatingFunction..},xxGuess_?MatrixQ,toIgnore:{_Integer...}]:=(*
+computeNextXtp1[linMod,ZZks,xxGuess,toIgnore]=*)
+With[{xt=computeNextXt[linMod,ZZks,xxGuess,toIgnore]},
+With[{zzkVecs=applyZFuncs[ZZks[[Range[Length[psiZ[[1]]]]]],doIgnoreParts[xxGuess,toIgnore]]},
+computeNonFPart[BB,phi,psiEps,psiC,xt]+
+computeFPart[FF,phi,psiEps,psiZ,Drop[ZZks,Length[psiZ[[1]]]],xxGuess,toIgnore]+phi.zzkVecs]]
 
+doIgnoreParts[xxGuess_?MatrixQ,toIgnore:{_Integer...}]:=
+Delete[xxGuess,{#}&/@toIgnore]
 
 Print["should memoize subXtXtp1"]
 subXtXtp1[aFunc_Function,linMod:{BB_?MatrixQ,phi_?MatrixQ,FF_?MatrixQ,psiEps_?MatrixQ,psiC_?MatrixQ,psiZ_?MatrixQ},
-	ZZks:{_InterpolatingFunction..},xxGuess_?MatrixQ]:=
-	With[{xt=computeNextXt[linMod,ZZks,xxGuess],
-		xtp1=computeNextXtp1[linMod,ZZks,xxGuess]},
-		aFunc[genXtm1Vars[Length[BB]],xt,xtp1,genEpsVars[Length[psiEps[[1]]]]]]
+	ZZks:{_InterpolatingFunction..},xxGuess_?MatrixQ,toIgnore:{_Integer...}]:=
+	With[{xt=computeNextXt[linMod,ZZks,xxGuess,toIgnore],
+		xtp1=computeNextXtp1[linMod,ZZks,xxGuess,toIgnore]},
+		aFunc[Transpose[{genXtm1Vars[Length[BB]]}],xt,xtp1,Transpose[{genEpsVars[Length[psiEps[[1]]]]}]]]
+
+
 
 
 makeConstraintFindRootFunc[hmFunc_Function,
 	linMod:{BB_?MatrixQ,phi_?MatrixQ,FF_?MatrixQ,psiEps_?MatrixQ,psiC_?MatrixQ,psiZ_?MatrixQ},
-	ZZks:{{_InterpolatingFunction..}..},xxNext_?MatrixQ,xxNextp1_?MatrixQ,zzGuesser:{_InterpolatingFunction...},xxGuess_?MatrixQ]:=
-makeConstraintFindRootFunc[hmFunc,
-	linMod,
-	ZZks,xxNext,xxNextp1,zzGuesser,xxGuess]=
-With[{flatXtm1Eps=Flatten[Join[genXtm1Vars[Length[BB]],genEpsVars[Length[psiEps[[1]]]]]],
-	xxTargets=Flatten[Join[genXtVars[Length[BB]],genXtp1Vars[Length[psiEps[[1]]]]]]},
-With[{zzGuess=If[zzGuesser=={},Table[0,{Length[zzNext]}],Through[zzGuesser[flatXtm1Eps]]]},
-	With[{findRootArg=Transpose[{Flatten[zzNext],zzGuess}]},
+	ZZks:{_InterpolatingFunction..},
+	zzGuesser:{_InterpolatingFunction...},xxGuess_?MatrixQ,toIgnore:{_Integer...}]:=
+(*makeConstraintFindRootFunc[hmFunc,linMod,ZZks,zzGuesser,xxGuess,toIgnore]=*)
+With[{subbedEqns=Thread[(subXtXtp1[hmFunc,linMod,ZZks,xxGuess,toIgnore]//N//Expand//Simplify)==0],
+	forZSubs=Flatten[Join[computeNextXt[linMod,ZZks,xxGuess,toIgnore],computeNextXtp1[linMod,ZZks,xxGuess,toIgnore]]],
+	flatXtm1Eps=Flatten[Join[genXtm1Vars[Length[BB]],genEpsVars[Length[psiEps[[1]]]]]],
+	xxTargets=Flatten[Join[genXtVars[Length[BB]],genXtp1Vars[Length[BB]]]]},
+With[{zzGuess=If[zzGuesser=={},Table[0,{Length[psiZ[[1]]]}],Through[zzGuesser[flatXtm1Eps]]]},
+	With[{findRootArg=Transpose[{Flatten[genZVars[Length[psiZ[[1]]]]],zzGuess}]},Sow[{subbedEqns,findRootArg}];
 ReplacePart[Function[theArgs,
-	With[{forZSubs=Flatten[Join[computeNextXt[linMod,ZZks,xxGuess],
-		computeNextXtp1[linMod,ZZks,xxGuess]]],
-		zSubs=
-FindRoot[Thread[
-	(subXtXtp1[hmFunc,linMod,
-		ZZks,xxGuess]//N//Expand//Simplify)==0],
+	With[{zSubs=
+FindRoot[subbedEqns,
 		findRootArg]},
 		Join[Thread[xxTargets->(forZSubs/.zSubs)],zSubs]]
 		],1->flatXtm1Eps]]]]
 
+(*
 
+makeConstraintFindRootFunc[hmFunc_Function,
+	linMod:{BB_?MatrixQ,phi_?MatrixQ,FF_?MatrixQ,psiEps_?MatrixQ,psiC_?MatrixQ,psiZ_?MatrixQ},
+	ZZks:{_InterpolatingFunction..},zzGuesser:{_InterpolatingFunction...},xxGuess_?MatrixQ,toIgnore:{_Integer...}]:=
+(*makeConstraintFindRootFunc[hmFunc,
+	linMod,
+	ZZks,zzGuesser,xxGuess]=*)
+With[{flatXtm1Eps=Flatten[Join[genXtm1Vars[Length[BB]],genEpsVars[Length[psiEps[[1]]]]]],
+	xxTargets=Flatten[Join[genXtVars[Length[BB]],genXtp1Vars[Length[psiEps[[1]]]]]]},
+With[{zzGuess=If[zzGuesser=={},Table[0,{Length[psiZ[[1]]]}],Through[zzGuesser[flatXtm1Eps]]]},
+	With[{findRootArg=Transpose[{Flatten[genZVars[Length[psiZ[[1]]]]],zzGuess}]},
+ReplacePart[Function[theArgs,
+	With[{forZSubs=Flatten[Join[computeNextXt[linMod,ZZks,xxGuess,toIgnore],
+		computeNextXtp1[linMod,ZZks,xxGuess,toIgnore]]],
+		zSubs=
+FindRoot[Thread[
+	(subXtXtp1[hmFunc,linMod,
+		ZZks,xxGuess,toIgnore]//N//Expand//Simplify)==0],
+		findRootArg]},
+		Join[Thread[xxTargets->(forZSubs/.zSubs)],zSubs]]
+		],1->flatXtm1Eps]]]]
+
+*)
 
 makeConstraintFixedPointFunc[hmFunc_Function,
 	linMod:{BB_?MatrixQ,phi_?MatrixQ,FF_?MatrixQ,psiEps_?MatrixQ,psiC_?MatrixQ,psiZ_?MatrixQ},
-	ZZks:{{_InterpolatingFunction..}..},xxNext_?MatrixQ,xxNextp1_?MatrixQ,zzGuesser:{_InterpolatingFunction...},xxGuess_?MatrixQ]:=
+	ZZks:{_InterpolatingFunction..},xxNext_?MatrixQ,xxNextp1_?MatrixQ,zzGuesser:{_InterpolatingFunction...},xxGuess_?MatrixQ,toIgnore:{_Integer}]:=
 makeConstraintFixedPointFunc[hmFunc,
 	linMod,
-	ZZks,xxNext,xxNextp1,zzGuesser,xxGuess]=
+	ZZks,xxNext,xxNextp1,zzGuesser,xxGuess,toIgnore]=
 With[{numVars=Length[Length[BB]],numShocks=Length[psiEps[[1]]]},
 With[{xeVars=Table[Unique["xeVars"],{numVars+numShocks}],xxTargets=Flatten[Join[xxNext,xxNextp1]],
 	frFuncNow=Function[xg,makeConstraintFindRootFunc[hmFunc,linMod,ZZks,xxNext,xxNextp1,zzGuesser,xg]]},
@@ -212,48 +246,69 @@ fillIn[{theRes:{_?NumberQ...},toIgnore:{_Integer...},shortVec:{_?NumberQ...}}]:=
 fillIn[{theRes,Sort[toIgnore],shortVec}]
 
 makeInterpFunc[aVecFunc_Function,toIgnore:{_Integer...},gSpec:{iOrd_Integer,{_Integer,_?NumberQ,_?NumberQ}..}]:=
-With[{thePts=gridPts[gSpec[[2]]]},
+With[{thePts=gridPts[Drop[gSpec,1]]},
 With[{interpData=Map[{#,aVecFunc@fillIn[{{},toIgnore,#}]}&,thePts]},Function[{kk,theOrd},
 Interpolation[{#[[1]],#[[2,kk]]}&/@interpData,InterpolationOrder->theOrd]]@@#&/@
 Transpose[{Range[Length[interpData[[1,2]]]],Table[iOrd,{Length[interpData[[1,2]]]}]}]]]
 
 
-
-makeInterpFuncPF[aVecFunc_Function,toIgnore:{_Integer...},gSpec:{iOrd_Integer,{_Integer,_?NumberQ,_?NumberQ}..},numShocks_Integer]:=
-With[{thePts=gridPts[gSpec[[2]]],theZeroes=Table[0,{numShocks}]},
-With[{interpData=Map[{#,aVecFunc@Join[fillIn[{{},toIgnore,#}],theZeroes]}&,thePts]},Function[kk,
-Interpolation[{#[[1]],#[[2,kk]]}&/@interpData]]/@Range[Length[interpData[[1,2]]]]]]
-
-
-
-makeInterpFuncRE[aVecFunc_Function,toIgnore:{_Integer...},gSpec:{iOrd_Integer,{_Integer,_?NumberQ,_?NumberQ}..},distribs_List]:=
-With[{interpFuncs=makeInterpFunc[aVecFunc,toIgnore,gSpec]},
-	With[{newGSpecPts=Drop[gSpec[[2]],-Length[distribs]]},
+prepNextZZksPF[iterStateFuncs:{_InterpolatingFunction..},
+	newPForREFunc:{_InterpolatingFunction..},previousPForREFuncs:{_InterpolatingFunction...},numShocks_Integer]:=
+Join[newPForREFunc,ageZFuncsPF[iterStateFuncs,previousPForREFuncs,numShocks]]
+(*
+makeInterpFuncPF[aVecFunc_Function,
+	toIgnore:{_Integer...},gSpec:{iOrd_Integer,{_Integer,_?NumberQ,_?NumberQ}..},numShocks_Integer]:=
+	With[{droppedShocks=Drop[gSpec,-numShocks],theZeroes=Table[0,numShocks]},
+	With[{newGSpecPts=doIgnoreParts[droppedShocks,toIgnore]},
 		With[{thePts=gridPts[newGSpecPts]},
-With[{interpData=Map[{#,doExpect[interpFuncs,distribs,fillIn[{{},toIgnore,#}]]}&,thePts]},Function[kk,
-Interpolation[{#[[1]],#[[2,kk]]}&/@interpData]]/@Range[Length[interpData[[1,2]]]]]]]]
+With[{interpData=Map[{#,aVecFunc@Join[fillIn[{{},toIgnore,#}],theZeroes]}&,thePts]},Function[{kk,theOrd},
+Interpolation[{#[[1]],#[[2,kk]]}&/@interpData,InterpolationOrder->theOrd]]@@#&/@
+Transpose[{Range[Length[interpData[[1,2]]]],Table[iOrd,{Length[interpData[[1,2]]]}]}]]]]]
+*)
+
+makeInterpFuncPF[aVecFunc_Function,
+	toIgnore:{_Integer...},gSpec:{iOrd_Integer,{_Integer,_?NumberQ,_?NumberQ}..},numShocks_Integer]:=
+With[{interpFuncs=makeInterpFunc[aVecFunc,toIgnore,gSpec]},
+	With[{droppedShocks=Drop[gSpec,-numShocks]},
+	With[{newGSpecPts=Drop[droppedShocks,1]},
+		With[{thePts=gridPts[newGSpecPts]},
+With[{interpData=Map[{#,doPF[interpFuncs,numShocks,#]}&,thePts]},Function[{kk,theOrd},
+Interpolation[{#[[1]],#[[2,kk]]}&/@interpData,InterpolationOrder->theOrd]]@@#&/@
+Transpose[{Range[Length[interpData[[1,2]]]],Table[iOrd,{Length[interpData[[1,2]]]}]}]]]]]]
+
+
+doPF[vecFuncs:{_InterpolatingFunction..},numShocks_Integer,xtm1_?VectorQ]:=
+With[{shockVals=Table[0,{numShocks}]},
+Through[vecFuncs@@#&[Join[xtm1,shockVals]]]]
+
+makeInterpFuncRE[aVecFunc_Function,
+	toIgnore:{_Integer...},gSpec:{iOrd_Integer,{_Integer,_?NumberQ,_?NumberQ}..},distribs_List]:=
+With[{interpFuncs=makeInterpFunc[aVecFunc,toIgnore,gSpec]},
+	With[{droppedShocks=Drop[gSpec,-Length[distribs]]},
+	With[{newGSpecPts=Drop[droppedShocks,1]},
+		With[{thePts=gridPts[newGSpecPts]},
+With[{interpData=Map[{#,doExpect[interpFuncs,distribs,#]}&,thePts]},Function[{kk,theOrd},
+Interpolation[{#[[1]],#[[2,kk]]}&/@interpData,InterpolationOrder->theOrd]]@@#&/@
+Transpose[{Range[Length[interpData[[1,2]]]],Table[iOrd,{Length[interpData[[1,2]]]}]}]]]]]]
 
 doExpect[vecFuncs:{_InterpolatingFunction..},distribs_List,xtm1_?VectorQ]:=
 With[{shockVars=Table[Unique["shkVars"],{Length[distribs]}]},
 NExpectation[Through[vecFuncs@@#&[Join[xtm1,shockVars]]],Thread[shockVars \[Distributed] distribs]]]
 
+getGridPtsLessShocks[aFunc_InterpolatingFunction,numShocks_Integer]:=
+With[{fullGrid=InterpolatingFunctionGrid[aFunc]},
+	With[{iPts=Union[Drop[#,-numShocks]&/@Level[fullGrid,{Depth[fullGrid]-2}]]},iPts]]
 
+
+ageOneZFuncPF[iterStateFuncs:{_InterpolatingFunction..},zFunc_InterpolatingFunction,numShocks_Integer]:=
+With[{iPts=getGridPtsLessShocks[iterStateFuncs[[1]],numShocks],
+	iOrd=InterpolatingFunctionInterpolationOrder[iterStateFuncs[[1]]][[1]]},
+	With[{funcData=Map[{#,zFunc@@#}&,iPts]},
+		Interpolation[Flatten[funcData,Depth[funcData]-4],InterpolationOrder->iOrd]]]/;(Length[Union[InterpolatingFunctionInterpolationOrder[iterStateFuncs[[1]]]]]==1)
+
+ageZFuncsPF[iterStateFuncs:{_InterpolatingFunction..},zFuncs:{_InterpolatingFunction...},numShocks_Integer]:=
+ageZFuncsPF[iterStateFuncs,zFuncs,numShocks]=Module[{},ageOneZFuncPF[iterStateFuncs,#,numShocks]& /@ zFuncs]
 (*
-
-ageOneZFunc[iterStateFuncs:{_InterpolatingFunction...},zFunc_InterpolatingFunction]:=
-With[{iPts=InterpolatingFunctionGrid[iterStateFuncs]},
-	With[{funcData=Map[{#,zFunc@@#},iPts,{Depth[iPts]-2}]},
-		Interpolation
-
-
-ageZFuncs[modSpecific:{{bmat_?MatrixQ,phimat_?MatrixQ,fmat_?MatrixQ,psieps_?MatrixQ,psic_?MatrixQ,psiz_?MatrixQ},compCon:{_Function...},stateSel_List,xtm1_?MatrixQ,noZFuncsGuess_,{iterStateDim_Integer,neq_Integer,nlag_Integer,nlead_Integer,nShocks_Integer},fpSolver_},{}]:={}
-
-
-ageZFuncs[modSpecific:{{bmat_?MatrixQ,phimat_?MatrixQ,fmat_?MatrixQ,psieps_?MatrixQ,psic_?MatrixQ,psiz_?MatrixQ},
-compCon:{_Function...},stateSel_List,xtm1_?MatrixQ,noZFuncsGuess_,{iterStateDim_Integer,neq_Integer,nlag_Integer,nlead_Integer,nShocks_Integer},fpSolver_},zFuncs_List]:=
-With[{iterStateFuncs=zFuncs[[Range[iterStateDim]]]},
-ageOneZFunc[iterStateFuncs,#]&/@Drop[zFuncs,iterStateDim]]
-
 *)
 
 (*

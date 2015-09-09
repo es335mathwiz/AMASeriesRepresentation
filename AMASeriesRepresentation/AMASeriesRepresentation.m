@@ -7,6 +7,15 @@ Print["reading AMASeriesRepresentation`"]
 BeginPackage["AMASeriesRepresentation`", {"JLink`","ProtectedSymbols`","mathSmolyak`",
 	"DifferentialEquations`InterpolatingFunctionAnatomy`"}]
 
+genZVars::usage="genZVars[horizons_Integer,numConstr_Integer,offset_Integer]"
+genPath::usage="genPath[xtm1_?MatrixQ,bmat_?MatrixQ,phimat_?MatrixQ,fmat_?MatrixQ,psieps_?MatrixQ,psic_?MatrixQ,psiz_?MatrixQ,numNonZeroZs_Integer,zSubs_List,epsSubs_List]"
+
+Print["changing MatrixPower to produce Identity Matrix for singular matrices raised to 0th power"]
+Unprotect[MatrixPower]
+MatrixPower[xx_?MatrixQ,0]:=IdentityMatrix[Length[xx]]/;
+Length[xx]===Length[xx[[1]]]
+Protect[MatrixPower]
+
 Begin["Private`"]
 
 (*compute the first set of z functions*)
@@ -328,6 +337,64 @@ Function[modVars,czFuncs @@ Join[modVars,Table[0,{numShocks}]]]]
 	
 *)	
 	
+genPath[xtm1_?MatrixQ,
+bmat_?MatrixQ,phimat_?MatrixQ,fmat_?MatrixQ,psieps_?MatrixQ,
+psic_?MatrixQ,psiz_?MatrixQ,
+numNonZeroZs_Integer,zSubs_List,epsSubs_List]:=
+genPath[xtm1,
+bmat,phimat,fmat,psieps,psic,psiz,
+numNonZeroZs,zSubs,epsSubs]=
+ With[{numCon=Length[psiz[[1]]],epsVals=genEpsVars[Length[psieps[[1]]]]/.epsSubs},
+      With[{rawFParts=Reverse[(doFPart[phimat,fmat,psiz,#,numCon,0] &/@Range[0,numNonZeroZs-1])]/.zSubs},
+With[{bgn=(nonFPart[xtm1,
+epsVals,bmat,phimat,fmat,psieps,psic]+rawFParts[[1]])},
+Join[xtm1,Join @@ FoldList[(nonFPart[#1,{{0}},bmat,phimat,fmat,psieps,psic]+#2)&,bgn,Drop[rawFParts,1]]]]]]
+
+doFPart[phimat_?MatrixQ,fmat_?MatrixQ,psiz_?MatrixQ,
+horizon_Integer,numCon_Integer]:=
+doFPart[phimat,fmat,psiz,horizon,numCon,0]
+
+
+doFPart[phimat_?MatrixQ,fmat_?MatrixQ,psiz_?MatrixQ,
+horizon_Integer,numCon_Integer,offset_Integer]:=
+With[{zMats=genZVars[horizon,numCon,offset]},
+Plus @@ MapIndexed[ MatrixPower[fmat,(#2[[1]]-1)] . phimat. psiz . #1&,
+Reverse[zMats]]]
+
+
+doFPart[phimat_?MatrixQ,fmat_?MatrixQ,psiz_?MatrixQ,
+horizon_Integer,numCon_Integer,zSubs_List]:=
+With[{zMats=genZVars[horizon,numCon,offset]/.zSubs},
+Plus @@ MapIndexed[ MatrixPower[fmat,(#2[[1]]-1)] . phimat. psiz . #1&,
+Reverse[zMats]]]
+
+nonFPart=Compile[{{xtm1,_Real,2},{epsilon,_Real,2},
+{bmat,_Real,2},{phimat,_Real,2},{fmat,_Real,2},{psimat,_Real,2},{psic,_Real,2}},
+bmat . xtm1 + phimat . psimat . epsilon + 
+Inverse[IdentityMatrix[Length[xtm1]]-fmat] . phimat . psic]
+	
+genZVars[horizons_Integer,numConstr_Integer]:=
+genZVars[horizons,numConstr,0]
+(*
+genZVars[horizons_Integer,numConstr_Integer,offset_Integer]:=
+Table[
+{makeProtectedSymbol["zzz$"<>ToString[forTime]<>"$"<>ToString[ii]][ProtectedSymbols`t]},
+{forTime,0-offset,horizons},{ii,numConstr,1,-1}]/;offset<=0
+*)
+
+genZVars[horizons_Integer,numConstr_Integer,offset_Integer]:=
+Module[{},
+genZVars[horizons,numConstr,offset]=
+Table[
+{makeProtectedSymbol["zzz$"<>ToString[forTime]<>"$"<>ToString[ii]][ProtectedSymbols`t]},
+{forTime,0-offset,horizons},{ii,numConstr,1,-1}]]/;offset<=0
+
+genEpsVars[numShocks_Integer]:=
+Table[
+{makeProtectedSymbol["eps$"<>ToString[ii]]},{ii,numShocks}]
+
+
+
 End[]
 EndPackage[]
 
@@ -352,13 +419,13 @@ numNonZeroZs_Integer,padZeroZs_Integer]"
 genZVars::usage="genZVars[horizons_Integer,numConstr_Integer,offset_Integer]"
 
 
+
+
+
+
+
 Begin["Private`"]
 (* Implementation of the package *)
-Print["changing MatrixPower to produce Identity Matrix for singular matrices raised to 0th power"]
-Unprotect[MatrixPower]
-MatrixPower[xx_?MatrixQ,0]:=IdentityMatrix[Length[xx]]/;
-Length[xx]===Length[xx[[1]]]
-Protect[MatrixPower]
 
 
 Print["need to split eps from other state vars"]
@@ -756,25 +823,6 @@ bmat . xtm1 + phimat . psimat . epsilon +
 Inverse[IdentityMatrix[Length[xtm1]]-fmat] . phimat . psic]
 	
 	
-doFPart[phimat_?MatrixQ,fmat_?MatrixQ,psiz_?MatrixQ,
-horizon_Integer,numCon_Integer]:=
-doFPart[phimat,fmat,psiz,horizon,numCon,0]
-
-
-doFPart[phimat_?MatrixQ,fmat_?MatrixQ,psiz_?MatrixQ,
-horizon_Integer,numCon_Integer,offset_Integer]:=
-With[{zMats=genZVars[horizon,numCon,offset]},
-Plus @@ MapIndexed[ MatrixPower[fmat,(#2[[1]]-1)] . phimat. psiz . #1&,
-Reverse[zMats]]]
-
-
-doFPart[phimat_?MatrixQ,fmat_?MatrixQ,psiz_?MatrixQ,
-horizon_Integer,numCon_Integer,zSubs_List]:=
-With[{zMats=genZVars[horizon,numCon,offset]/.zSubs},
-Plus @@ MapIndexed[ MatrixPower[fmat,(#2[[1]]-1)] . phimat. psiz . #1&,
-Reverse[zMats]]]
-
-
 
 genZVars[horizons_Integer,numConstr_Integer]:=
 genZVars[horizons,numConstr,0]

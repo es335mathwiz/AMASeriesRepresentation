@@ -3,7 +3,8 @@
 	<name>AMASeriesRep</name>
 	<comment></comment>
 	<projects>
-		<project>ProtectedSymbols</project>
+		<project>anisotropicSmolyak</project>
+		<project>ProtectedSymbolsProject</project>
 	</projects>
 	<buildSpec>
 		<buildCommand>

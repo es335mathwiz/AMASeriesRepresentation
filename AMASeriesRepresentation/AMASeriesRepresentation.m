@@ -19,27 +19,27 @@ Protect[MatrixPower]
 Begin["Private`"]
 
 (*compute the first set of z functions*)
-computeNonFPart[BB_?MatrixQ,phi_?MatrixQ,psiEps_?MatrixQ,psiC_?MatrixQ]:=(*
+computeNonFPart[linMod:{BB_?MatrixQ,phi_?MatrixQ,FF_?MatrixQ,psiEps_?MatrixQ,psiC_?MatrixQ,psiZ_?MatrixQ}]:=(*
 computeNonFPart[BB,phi,psiEps,psiC]=*)
 (BB.Transpose[{genXtm1Vars[Length[BB]]}] + phi.psiEps.Transpose[{genEpsVars[Length[psiEps[[1]]]]}]+
-Inverse[IdentityMatrix[Length[fmat]]-fmat] . phimat . psic)
+Inverse[IdentityMatrix[Length[FF]]-FF] . phi . psiC)
 
-computeNonFPart[BB_?MatrixQ,phi_?MatrixQ,psiEps_?MatrixQ,psiC_?MatrixQ,xt_?MatrixQ]:=(*
+computeNonFPart[linMod:{BB_?MatrixQ,phi_?MatrixQ,FF_?MatrixQ,psiEps_?MatrixQ,psiC_?MatrixQ,psiZ_?MatrixQ},xt_?MatrixQ]:=(*
 computeNonFPart[BB,phi,psiEps,psiC]=*)
-(BB.xt +Inverse[IdentityMatrix[Length[fmat]]-fmat] . phimat . psic)
+(BB.xt +Inverse[IdentityMatrix[Length[FF]]-FF] . phi . psiC)
 
 
 
 computeNextXt[linMod:{BB_?MatrixQ,phi_?MatrixQ,FF_?MatrixQ,psiEps_?MatrixQ,psiC_?MatrixQ,psiZ_?MatrixQ}]:=(*
 computeNextXt[linMod]=*)
-computeNonFPart[BB,phi,psiEps,psiC]+phi.psiZ .genZVars[Length[psiZ[[1]]]]
+computeNonFPart[linMod]+phi.psiZ .genZVars[Length[psiZ[[1]]]]
 
 
 
 
 computeNextXt[linMod:{BB_?MatrixQ,phi_?MatrixQ,FF_?MatrixQ,psiEps_?MatrixQ,psiC_?MatrixQ,psiZ_?MatrixQ},xt_?MatrixQ]:=(*
 computeNextXt[linMod,xt]=*)
-computeNonFPart[BB,phi,psiEps,psiC,xt]+phi.psiZ .genZVars[Length[psiZ[[1]]]]
+computeNonFPart[linMod,xt]+phi.psiZ .genZVars[Length[psiZ[[1]]]]
 
 computeNextXtp1[linMod:{BB_?MatrixQ,phi_?MatrixQ,FF_?MatrixQ,psiEps_?MatrixQ,psiC_?MatrixQ,psiZ_?MatrixQ}]:=(*
 computeNextXtp1[linMod]=*)
@@ -102,13 +102,13 @@ Transpose[{Through[(theFuncs @@ #)&[Flatten[xxGuessEps]]]}]
 computeNextXt[linMod:{BB_?MatrixQ,phi_?MatrixQ,FF_?MatrixQ,psiEps_?MatrixQ,psiC_?MatrixQ,psiZ_?MatrixQ},
 	ZZks:{_InterpolatingFunction..},xxGuess_?MatrixQ,toIgnore:{_Integer...}]:=(*
 computeNextXt[linMod,ZZks,xxGuess,toIgnore]=*)
-computeNonFPart[BB,phi,psiEps,psiC]+
+computeNonFPart[linMod]+
 computeFPart[FF,phi,psiEps,psiZ,ZZks,xxGuess,toIgnore]+phi.genZVars[Length[psiZ[[1]]]]
 
 computeNextXt[linMod:{BB_?MatrixQ,phi_?MatrixQ,FF_?MatrixQ,psiEps_?MatrixQ,psiC_?MatrixQ,psiZ_?MatrixQ},xt_?MatrixQ,
 	ZZks:{_InterpolatingFunction..},xxGuess_?MatrixQ,toIgnore:{_Integer...}]:=(*
 computeNextXt[linMod,xt,ZZks,xxGuess,toIgnore]=*)
-computeNonFPart[BB,phi,psiEps,psiC,xt]+
+computeNonFPart[linMod,xt]+
 computeFPart[FF,phi,psiEps,psiZ,ZZks,xxGuess,toIgnore]+phi.genZVars[Length[psiZ[[1]]]]
 
 
@@ -118,7 +118,7 @@ computeNextXtp1[linMod:{BB_?MatrixQ,phi_?MatrixQ,FF_?MatrixQ,psiEps_?MatrixQ,psi
 computeNextXtp1[linMod,ZZks,xxGuess,toIgnore]=*)
 With[{xt=computeNextXt[linMod,ZZks,xxGuess,toIgnore]},
 With[{zzkVecs=applyZFuncs[ZZks[[Range[Length[psiZ[[1]]]]]],doIgnoreParts[xxGuess,toIgnore]]},
-computeNonFPart[BB,phi,psiEps,psiC,xt]+
+computeNonFPart[linMod,xt]+
 computeFPart[FF,phi,psiEps,psiZ,Drop[ZZks,Length[psiZ[[1]]]],xxGuess,toIgnore]+phi.zzkVecs]]
 
 doIgnoreParts[xxGuess_?MatrixQ,toIgnore:{_Integer...}]:=

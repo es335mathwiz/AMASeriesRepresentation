@@ -64,7 +64,7 @@ With[{subbedEqns=Thread[(subXtXtp1[hmFunc,linMod]//N//Expand//Simplify)==0],
 	forZSubs=Flatten[Join[computeNextXt[linMod],computeNextXtp1[linMod]]],
 	flatXtm1Eps=Flatten[Join[genXtm1Vars[Length[BB]],genEpsVars[Length[psiEps[[1]]]]]],
 	xxTargets=Flatten[Join[genXtVars[Length[BB]],genXtp1Vars[Length[BB]]]]},
-With[{zzGuess=If[zzGuesser=={},Table[0,{Length[psiZ[[1]]]}],Through[zzGuesser[flatXtm1Eps]]]},
+With[{zzGuess=If[zzGuesser=={},Table[Abs[Random[]],{Length[psiZ[[1]]]}],Through[zzGuesser[flatXtm1Eps]]]},
 	With[{findRootArg=Transpose[{Flatten[genZVars[Length[psiZ[[1]]]]],zzGuess}]},
 ReplacePart[Function[theArgs,
 	With[{zSubs=
@@ -306,10 +306,15 @@ Reverse[zMats]]]
 
 
 doFPart[phimat_?MatrixQ,fmat_?MatrixQ,psiz_?MatrixQ,
-horizon_Integer,numCon_Integer,zSubs_List]:=
+horizon_Integer,numCon_Integer,offset_Integer,zSubs_List]:=
 With[{zMats=genZVars[horizon,numCon,offset]/.zSubs},
 Plus @@ MapIndexed[ MatrixPower[fmat,(#2[[1]]-1)] . phimat. psiz . #1&,
 Reverse[zMats]]]
+
+
+doFPart[phimat_?MatrixQ,fmat_?MatrixQ,psiz_?MatrixQ,
+horizon_Integer,numCon_Integer,zSubs_List]:=doFPart[phimat,fmat,psiz,horizon,numCon,0,zSubs]
+
 
 nonFPart=Compile[{{xtm1,_Real,2},{epsilon,_Real,2},
 {bmat,_Real,2},{phimat,_Real,2},{fmat,_Real,2},{psimat,_Real,2},{psic,_Real,2}},

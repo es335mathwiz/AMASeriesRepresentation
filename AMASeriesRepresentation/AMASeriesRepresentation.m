@@ -144,7 +144,7 @@ computeFPart[FF,phi,psiEps,psiZ,numTerms]+phi.genZVars[Length[psiZ[[1]]]]
 computeNextXtp1[linMod:{BB_?MatrixQ,phi_?MatrixQ,FF_?MatrixQ,psiEps_?MatrixQ,psiC_?MatrixQ,psiZ_?MatrixQ},numTerms_Integer]:=(*
 computeNextXtp1[linMod,ZZks,xxGuess,toIgnore]=*)
 With[{xt=computeNextXt[linMod,numTerms]},
-With[{zzkVecs=Last[genZVars[numTerms,Length[psiZ[[1]]]]]},
+With[{zzkVecs=Reverse[Last[genZVars[numTerms,Length[psiZ[[1]]]]]]},
 computeNonFPart[linMod,xt]+
 computeFPart[FF,phi,psiEps,psiZ,numTerms]+phi.zzkVecs]]
 
@@ -184,13 +184,13 @@ FindRoot[subbedEqns,
 
 makeConstraintFixedPointFunc[hmFunc_Function,
 	linMod:{BB_?MatrixQ,phi_?MatrixQ,FF_?MatrixQ,psiEps_?MatrixQ,psiC_?MatrixQ,psiZ_?MatrixQ},
-	ZZks:{_InterpolatingFunction..},xxNext_?MatrixQ,xxNextp1_?MatrixQ,zzGuesser:{_InterpolatingFunction...},xxGuess_?MatrixQ,toIgnore:{_Integer}]:=
-makeConstraintFixedPointFunc[hmFunc,
+	ZZks:{_InterpolatingFunction..},zzGuesser:{_InterpolatingFunction...},xxGuess_?MatrixQ,toIgnore:{_Integer...}]:=
+(*makeConstraintFixedPointFunc[hmFunc,
 	linMod,
-	ZZks,xxNext,xxNextp1,zzGuesser,xxGuess,toIgnore]=
-With[{numVars=Length[Length[BB]],numShocks=Length[psiEps[[1]]]},
-With[{xeVars=Table[Unique["xeVars"],{numVars+numShocks}],xxTargets=Flatten[Join[xxNext,xxNextp1]],
-	frFuncNow=Function[xg,makeConstraintFindRootFunc[hmFunc,linMod,ZZks,xxNext,xxNextp1,zzGuesser,xg]]},
+	ZZks,zzGuesser,xxGuess,toIgnore]=*)
+With[{numVars=Length[BB],numShocks=Length[psiEps[[1]]]},
+With[{xeVars=Table[Unique["xeVars"],{numVars+numShocks}],
+	frFuncNow=Function[xg,makeConstraintFindRootFunc[hmFunc,linMod,ZZks,zzGuesser,xg,toIgnore]]},
 	Print["mcfp:",{flatXtm1Eps,xxTargets}];
 ReplacePart[Function[theArgs,FixedPoint[Transpose[{Last/@(frFuncNow[#]@@xeVars)}][[Range[numVars]]]&,xxGuess]],1->xeVars]]]
 

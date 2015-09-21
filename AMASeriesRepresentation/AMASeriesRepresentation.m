@@ -190,12 +190,17 @@ makeConstraintFixedPointFunc[hmFunc_Function,
 	ZZks,zzGuesser,xxGuess,toIgnore]=*)
 With[{numVars=Length[BB],numShocks=Length[psiEps[[1]]]},
 With[{xeVars=Table[Unique["xeVars"],{numVars+numShocks}],
-	frFuncNow=Function[xg,makeConstraintFindRootFunc[hmFunc,linMod,ZZks,zzGuesser,xg,toIgnore]]},
-	Print["mcfp:",{flatXtm1Eps,xxTargets}];
-With[{theRes=
+frFuncNow=
+Function[xg,
+makeConstraintFindRootFunc[hmFunc,linMod,ZZks,zzGuesser,xg,toIgnore]]},
 ReplacePart[Function[theArgs,
-	FixedPoint[Transpose[{Last/@(frFuncNow[#]@@xeVars)}][[Range[numVars]]]&,xxGuess]],1->xeVars]},
-	{theRes,frFuncNow[theRes]}]]]
+With[{theFP=
+FixedPoint[
+Transpose[{Last/@(frFuncNow[#]@@xeVars)}][[Range[numVars]]]&,xxGuess]},
+frFuncNow[theFP]@@xeVars]],
+1->xeVars]
+]]
+
 
 
 genZVars[numConstr_Integer]:=

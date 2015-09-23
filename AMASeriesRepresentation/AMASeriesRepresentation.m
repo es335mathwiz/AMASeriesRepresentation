@@ -39,7 +39,7 @@ computeNonFPart[linMod]+phi.psiZ .genZVars[Length[psiZ[[1]]]]
 
 computeNextXt[linMod:{BB_?MatrixQ,phi_?MatrixQ,FF_?MatrixQ,psiEps_?MatrixQ,psiC_?MatrixQ,psiZ_?MatrixQ},xt_?MatrixQ]:=(*
 computeNextXt[linMod,xt]=*)
-computeNonFPart[linMod,xt]+phi.psiZ .genZVars[Length[psiZ[[1]]]]
+computeNonFPart[linMod,xt](*+phi.psiZ .genZVars[Length[psiZ[[1]]]]*)
 
 computeNextXtp1[linMod:{BB_?MatrixQ,phi_?MatrixQ,FF_?MatrixQ,psiEps_?MatrixQ,psiC_?MatrixQ,psiZ_?MatrixQ}]:=(*
 computeNextXtp1[linMod]=*)
@@ -64,7 +64,7 @@ With[{subbedEqns=Thread[(subXtXtp1[hmFunc,linMod]//N//Expand//Simplify)==0],
 	forZSubs=Flatten[Join[computeNextXt[linMod],computeNextXtp1[linMod]]],
 	flatXtm1Eps=Flatten[Join[genXtm1Vars[Length[BB]],genEpsVars[Length[psiEps[[1]]]]]],
 	xxTargets=Flatten[Join[genXtVars[Length[BB]],genXtp1Vars[Length[BB]]]]},
-With[{zzGuess=If[zzGuesser=={},Table[(*Abs[Random[]]*).14,{Length[psiZ[[1]]]}],Through[zzGuesser[flatXtm1Eps]]]},
+With[{zzGuess=If[zzGuesser=={},Table[(*Abs[Random[]]*).14*0,{Length[psiZ[[1]]]}],Through[zzGuesser[flatXtm1Eps]]]},
 	With[{findRootArg=Transpose[{Flatten[genZVars[Length[psiZ[[1]]]]],zzGuess}]},
 ReplacePart[Function[theArgs,
 	With[{zSubs=

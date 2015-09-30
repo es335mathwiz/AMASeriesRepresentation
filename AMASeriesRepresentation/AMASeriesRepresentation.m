@@ -104,13 +104,13 @@ computeNextXt[linMod:{BB_?MatrixQ,phi_?MatrixQ,FF_?MatrixQ,psiEps_?MatrixQ,psiC_
 	ZZks:{_InterpolatingFunction..},xxGuess_?MatrixQ,toIgnore:{_Integer...}]:=(*
 computeNextXt[linMod,ZZks,xxGuess,toIgnore]=*)
 computeNonFPart[linMod]+
-computeFPart[FF,phi,psiEps,psiZ,ZZks,xxGuess,toIgnore]+phi.genZVars[Length[psiZ[[1]]]]
+computeFPart[FF,phi,psiEps,psiZ,ZZks,xxGuess,toIgnore]+phi.psiZ.genZVars[Length[psiZ[[1]]]]
 
 computeNextXt[linMod:{BB_?MatrixQ,phi_?MatrixQ,FF_?MatrixQ,psiEps_?MatrixQ,psiC_?MatrixQ,psiZ_?MatrixQ},xt_?MatrixQ,
 	ZZks:{_InterpolatingFunction..},xxGuess_?MatrixQ,toIgnore:{_Integer...}]:=(*
 computeNextXt[linMod,xt,ZZks,xxGuess,toIgnore]=*)
 computeNonFPart[linMod,xt]+
-computeFPart[FF,phi,psiEps,psiZ,ZZks,xxGuess,toIgnore]+phi.genZVars[Length[psiZ[[1]]]]
+computeFPart[FF,phi,psiEps,psiZ,ZZks,xxGuess,toIgnore]+phi.psiZ.genZVars[Length[psiZ[[1]]]]
 
 
 
@@ -155,7 +155,7 @@ FindRoot[subbedEqns,
 		],1->flatXtm1Eps]]]]
 
 
-
+FPConst=.01;
 makeConstraintFixedPointFunc[hmFunc_Function,
 	linMod:{BB_?MatrixQ,phi_?MatrixQ,FF_?MatrixQ,psiEps_?MatrixQ,psiC_?MatrixQ,psiZ_?MatrixQ},
 	ZZks:{_InterpolatingFunction..},zzGuesser:{_InterpolatingFunction...},xxGuess_?MatrixQ,toIgnore:{_Integer...}]:=
@@ -165,15 +165,17 @@ makeConstraintFixedPointFunc[hmFunc_Function,
 With[{numVars=Length[BB],numShocks=Length[psiEps[[1]]]},
 With[{xeVars=Table[Unique["xeVars"],{numVars+numShocks}],
 frFuncNow=
-Function[xg,
+Function[xg,Print["x"(*"from makeConstraintFindRoot spawn:xg=",xg//InputForm*)];
 makeConstraintFindRootFunc[hmFunc,linMod,ZZks,zzGuesser,xg,toIgnore]]},
-ReplacePart[Function[theArgs,
-With[{theFP=
+ReplacePart[Function[theArgs,(*Print["xeVars=",something];*)
+With[{theFP=TimeConstrained[
 FixedPoint[
-Transpose[{Last/@(frFuncNow[#]@@xeVars)}][[Range[numVars]]]&,xxGuess]},
+Transpose[{Last/@(frFuncNow[#]@@xeVars)}][[Range[numVars]]]&,xxGuess,30,SameTest->mySameTest],FPTConst,Sow[theArgs,"badArgs"]]},
 frFuncNow[theFP]@@xeVars]],
-1->xeVars]
+{1->xeVars,{2,1,2}->xeVars}]
 ]]
+
+mySameTest[xx_?MatrixQ,yy_?MatrixQ]:=(Norm[xx-yy]<=10^-6)
 
 
 genZVars[numConstr_Integer]:=
@@ -371,7 +373,7 @@ computeNextXtp1[linMod,ZZks,xxGuess,toIgnore]=*)
 With[{xt=computeNextXt[linMod,numTerms]},
 With[{zzkVecs=Reverse[Last[genZVars[numTerms,Length[psiZ[[1]]]]]]},
 computeNonFPart[linMod,xt]+
-computeFPart[FF,phi,psiEps,psiZ,numTerms]+phi.zzkVecs]]
+computeFPart[FF,phi,psiEps,psiZ,numTerms]+phi.psiZ.zzkVecs]]
 
 
 *)

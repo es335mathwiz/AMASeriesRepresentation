@@ -4,7 +4,8 @@
 	<comment></comment>
 	<projects>
 		<project>anisotropicSmolyak</project>
-		<project>ProtectedSymbolsProject</project>
+		<project>MyMathUtilities</project>
+		<project>ProtectedSymbols</project>
 	</projects>
 	<buildSpec>
 		<buildCommand>

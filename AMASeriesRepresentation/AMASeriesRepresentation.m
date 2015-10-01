@@ -155,7 +155,7 @@ FindRoot[subbedEqns,
 		],1->flatXtm1Eps]]]]
 
 
-FPConst=.01;
+FPConst=10;
 makeConstraintFixedPointFunc[hmFunc_Function,
 	linMod:{BB_?MatrixQ,phi_?MatrixQ,FF_?MatrixQ,psiEps_?MatrixQ,psiC_?MatrixQ,psiZ_?MatrixQ},
 	ZZks:{_InterpolatingFunction..},zzGuesser:{_InterpolatingFunction...},xxGuess_?MatrixQ,toIgnore:{_Integer...}]:=

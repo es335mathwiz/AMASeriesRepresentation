@@ -58,12 +58,12 @@ makeConstraintFindRootFunc[hmFunc_Function,
 	linMod:{BB_?MatrixQ,phi_?MatrixQ,FF_?MatrixQ,psiEps_?MatrixQ,psiC_?MatrixQ,psiZ_?MatrixQ},
 	zzGuesser:{_InterpolatingFunction...}]:=(*
 makeConstraintFindRootFunc[hmFunc,linMod,zzGuesser]=*)
-With[{subbedEqns=Thread[(subXtXtp1[hmFunc,linMod](*//N//Expand//Simplify*))==0],
+With[{subbedEqns=Thread[(subXtXtp1[hmFunc,linMod]/.zName_[t]->zName(*//N//Expand//Simplify*))==0],
 	forZSubs=Flatten[Join[computeNextXt[linMod],computeNextXtp1[linMod]]],
 	flatXtm1Eps=Flatten[Join[genXtm1Vars[Length[BB]],genEpsVars[Length[psiEps[[1]]]]]],
 	xxTargets=Flatten[Join[genXtVars[Length[BB]],genXtp1Vars[Length[BB]]]]},
 With[{zzGuess=If[zzGuesser=={},Table[(*Abs[Random[]]*).14*0,{Length[psiZ[[1]]]}],Through[zzGuesser[flatXtm1Eps]]]},
-	With[{findRootArg=Transpose[{Flatten[genZVars[Length[psiZ[[1]]]]],zzGuess}]},
+	With[{findRootArg=Transpose[{Flatten[genZVars[Length[psiZ[[1]]]]]/.zName_[t]->zName,zzGuess}]},
 ReplacePart[Function[theArgs,
 	With[{zSubs=
 FindRoot[subbedEqns,
@@ -141,12 +141,12 @@ makeConstraintFindRootFunc[hmFunc_Function,
 	ZZks:{_InterpolatingFunction..},
 	zzGuesser:{_InterpolatingFunction...},xxGuess_?MatrixQ,toIgnore:{_Integer...}]:=
 (*makeConstraintFindRootFunc[hmFunc,linMod,ZZks,zzGuesser,xxGuess,toIgnore]=*)
-With[{subbedEqns=Thread[(subXtXtp1[hmFunc,linMod,ZZks,xxGuess,toIgnore](*/N//Expand//Simplify*))==0],
+With[{subbedEqns=Thread[(subXtXtp1[hmFunc,linMod,ZZks,xxGuess,toIgnore]/.zName_[t]->zName(*/N//Expand//Simplify*))==0],
 	forZSubs=Flatten[Join[computeNextXt[linMod,ZZks,xxGuess,toIgnore],computeNextXtp1[linMod,ZZks,xxGuess,toIgnore]]],
 	flatXtm1Eps=Flatten[Join[genXtm1Vars[Length[BB]],genEpsVars[Length[psiEps[[1]]]]]],
 	xxTargets=Flatten[Join[genXtVars[Length[BB]],genXtp1Vars[Length[BB]]]]},
 With[{zzGuess=If[zzGuesser=={},Table[0,{Length[psiZ[[1]]]}],Through[zzGuesser[flatXtm1Eps]]]},
-	With[{findRootArg=Transpose[{Flatten[genZVars[Length[psiZ[[1]]]]],zzGuess}]},Sow[{subbedEqns,findRootArg}];
+	With[{findRootArg=Transpose[{Flatten[genZVars[Length[psiZ[[1]]]]]/.zName_[t]->zName,zzGuess}]},Sow[{subbedEqns,findRootArg}];
 ReplacePart[Function[theArgs,
 	With[{zSubs=
 FindRoot[subbedEqns,
@@ -179,10 +179,11 @@ mySameTest[xx_?MatrixQ,yy_?MatrixQ]:=(Norm[xx-yy]<=10^-6)
 
 
 genZVars[numConstr_Integer]:=
+Reverse[Flatten[genZVars[0,numConstr]]](*
 Module[{},
 genZVars[numConstr]=
 Table[
-makeProtectedSymbol["zzzVar$"<>ToString[ii]],{ii,numConstr}]]/;And[numConstr>=0]
+makeProtectedSymbol["zzzVar$"<>ToString[ii]],{ii,numConstr}]]/;And[numConstr>=0]*)
 
 
 genXtVars[numVars_Integer]:=

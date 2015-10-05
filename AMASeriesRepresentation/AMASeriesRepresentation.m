@@ -59,7 +59,7 @@ makeConstraintFindRootFunc[hmFunc_Function,
 	zzGuesser:{_InterpolatingFunction...}]:=(*
 makeConstraintFindRootFunc[hmFunc,linMod,zzGuesser]=*)
 With[{subbedEqns=Thread[(subXtXtp1[hmFunc,linMod]/.zName_[t]->zName(*//N//Expand//Simplify*))==0],
-	forZSubs=Flatten[Join[computeNextXt[linMod],computeNextXtp1[linMod]]],
+	forZSubs=Flatten[Join[computeNextXt[linMod],computeNextXtp1[linMod]]]/.zName_[t]->zName,
 	flatXtm1Eps=Flatten[Join[genXtm1Vars[Length[BB]],genEpsVars[Length[psiEps[[1]]]]]],
 	xxTargets=Flatten[Join[genXtVars[Length[BB]],genXtp1Vars[Length[BB]]]]},
 With[{zzGuess=If[zzGuesser=={},Table[(*Abs[Random[]]*).14*0,{Length[psiZ[[1]]]}],Through[zzGuesser[flatXtm1Eps]]]},

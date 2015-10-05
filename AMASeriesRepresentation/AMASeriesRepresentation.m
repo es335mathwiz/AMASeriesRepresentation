@@ -183,7 +183,7 @@ Reverse[Flatten[genZVars[0,numConstr]]](*
 Module[{},
 genZVars[numConstr]=
 Table[
-makeProtectedSymbol["zzzVar$"<>ToString[ii]],{ii,numConstr}]]/;And[numConstr>=0]*)
+makeProtectedSymbol["zzzVar$"<>ToString[ii]],{ii,numConstr}]]*)/;And[numConstr>=0]
 
 
 genXtVars[numVars_Integer]:=
@@ -197,7 +197,7 @@ genXtm1Vars[numVars_Integer]:=
 Module[{},
 genXtm1Vars[numVars]=
 Table[
-makeProtectedSymbol["xxxtm1Var$"<>ToString[ii]],{ii,numVars}]]/;And[numVars>=0]
+makeProtectedSymbol["xxxtm1Var$"<>ToString[ii]],{ii,numVars}]][numVars>=0]
 
 
 genXtp1Vars[numVars_Integer]:=

@@ -155,7 +155,7 @@ FindRoot[subbedEqns,
 		],1->flatXtm1Eps]]]]
 
 
-FPConst=10;
+FPTConst=10;
 makeConstraintFixedPointFunc[hmFunc_Function,
 	linMod:{BB_?MatrixQ,phi_?MatrixQ,FF_?MatrixQ,psiEps_?MatrixQ,psiC_?MatrixQ,psiZ_?MatrixQ},
 	ZZks:{_InterpolatingFunction..},zzGuesser:{_InterpolatingFunction...},xxGuess_?MatrixQ,toIgnore:{_Integer...}]:=
@@ -197,7 +197,7 @@ genXtm1Vars[numVars_Integer]:=
 Module[{},
 genXtm1Vars[numVars]=
 Table[
-makeProtectedSymbol["xxxtm1Var$"<>ToString[ii]],{ii,numVars}]][numVars>=0]
+makeProtectedSymbol["xxxtm1Var$"<>ToString[ii]],{ii,numVars}]]/;And[numVars>=0]
 
 
 genXtp1Vars[numVars_Integer]:=

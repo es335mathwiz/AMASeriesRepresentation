@@ -351,7 +351,7 @@ Table[
 
 (*numTerms version used outside of this function to check solution*)
 computeFPart[FF_?MatrixQ,phi_?MatrixQ,psiEps_?MatrixQ,psiZ_?MatrixQ,numTerms_Integer]:=
-With[{theZs=Join @@ Reverse[Drop[genZVars[numTerms,Length[psiZ[[1]]]],1]]},
+With[{theZs=Join @@ Reverse[Drop[Reverse/@genZVars[numTerms,Length[psiZ[[1]]]],1]]},
 	With[{allZPows= ArrayFlatten[{Table[computeFPartK[FF,phi,psiZ,ii],{ii,numTerms}]}]},allZPows.theZs]]
 
 

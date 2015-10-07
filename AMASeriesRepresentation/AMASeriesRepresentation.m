@@ -166,7 +166,7 @@ makeConstraintFixedPointFunc[hmFunc_Function,
 With[{numVars=Length[BB],numShocks=Length[psiEps[[1]]]},
 With[{xeVars=Table[Unique["xeVars"],{numVars+numShocks}],
 frFuncNow=
-Function[xg,Print["x"(*"from makeConstraintFindRoot spawn:xg=",xg//InputForm*)];
+Function[xg,(*Print["x"(*"from makeConstraintFindRoot spawn:xg=",xg//InputForm*)];*)
 makeConstraintFindRootFunc[hmFunc,linMod,ZZks,zzGuesser,xg,toIgnore]]},
 ReplacePart[Function[theArgs,(*Print["xeVars=",something];*)
 With[{theFP=TimeConstrained[

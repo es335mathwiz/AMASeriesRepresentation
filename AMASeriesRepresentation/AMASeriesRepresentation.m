@@ -22,6 +22,7 @@ Begin["Private`"]
 computeNonFPart[linMod:{BB_?MatrixQ,phi_?MatrixQ,FF_?MatrixQ,psiEps_?MatrixQ,psiC_?MatrixQ,psiZ_?MatrixQ}]:=(*
 computeNonFPart[BB,phi,psiEps,psiC]=*)
 (BB.Transpose[{genXtm1Vars[Length[BB]]}] + phi.psiEps.Transpose[{genEpsVars[Length[psiEps[[1]]]]}]+
+
 Inverse[IdentityMatrix[Length[FF]]-FF] . phi . psiC)
 
 computeNonFPart[linMod:{BB_?MatrixQ,phi_?MatrixQ,FF_?MatrixQ,psiEps_?MatrixQ,psiC_?MatrixQ,psiZ_?MatrixQ},xt_?MatrixQ]:=(*
@@ -142,7 +143,7 @@ makeConstraintFindRootFunc[hmFunc_Function,
 	zzGuesser:{_InterpolatingFunction...},xxGuess_?MatrixQ,toIgnore:{_Integer...}]:=
 (*makeConstraintFindRootFunc[hmFunc,linMod,ZZks,zzGuesser,xxGuess,toIgnore]=*)
 With[{subbedEqns=Thread[(subXtXtp1[hmFunc,linMod,ZZks,xxGuess,toIgnore]/.zName_[t]->zName(*/N//Expand//Simplify*))==0],
-	forZSubs=Flatten[Join[computeNextXt[linMod,ZZks,xxGuess,toIgnore],computeNextXtp1[linMod,ZZks,xxGuess,toIgnore]]],
+	forZSubs=Flatten[Join[computeNextXt[linMod,ZZks,xxGuess,toIgnore],computeNextXtp1[linMod,ZZks,xxGuess,toIgnore]]]/.zName_[t]->zName,
 	flatXtm1Eps=Flatten[Join[genXtm1Vars[Length[BB]],genEpsVars[Length[psiEps[[1]]]]]],
 	xxTargets=Flatten[Join[genXtVars[Length[BB]],genXtp1Vars[Length[BB]]]]},
 With[{zzGuess=If[zzGuesser=={},Table[0,{Length[psiZ[[1]]]}],Through[zzGuesser[flatXtm1Eps]]]},

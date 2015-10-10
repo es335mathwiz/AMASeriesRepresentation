@@ -356,6 +356,20 @@ With[{theZs=Join @@ Reverse[Drop[Reverse/@genZVars[numTerms,Length[psiZ[[1]]]],1
 	With[{allZPows= ArrayFlatten[{Table[computeFPartK[FF,phi,psiZ,ii],{ii,numTerms}]}]},allZPows.theZs]]
 
 
+computeXtPath[linMod:{BB_?MatrixQ,phi_?MatrixQ,FF_?MatrixQ,psiEps_?MatrixQ,psiC_?MatrixQ,psiZ_?MatrixQ},
+	numZTerms_Integer,postZTerms_Integer]:=
+	With[{initNonZPart=computNonFPart[linMod],allZs=genZVars[numZTerms-1,Length[psiZ[[1]]],0]},
+		With[{allFPows=ArrayFlatten[{Table[computeFPartK[FF,phi,psiZ,ii],{ii,numZTerms-1}]}]},
+		FoldList[doStep[linMod,initNonZPart,#]&,allZs]]]
+		
+doStep[linMod:{BB_?MatrixQ,phi_?MatrixQ,FF_?MatrixQ,psiEps_?MatrixQ,psiC_?MatrixQ,psiZ_?MatrixQ},
+	xxNow_?MatrixQ,epsNow_?MatrixQ,zsNow:{_?MatrixQ...}]:=		
+	BB . xxNow + phi .psiEps. epsNow+sumZs[FF,psiZ,zsNow]
+	
+sumZs[FF_?MatrixQ,psiZ_?MatrixQ,zsNow:{_?MatrixQ...}]:=
+With[{allFPows=ArrayFlatten[{Table[computeFPartK[FF,phi,psiZ,ii],{ii,0,Length[zsNow]}]}]},
+	allZPows.theZs]
+
 
 
 computeNextXt[linMod:{BB_?MatrixQ,phi_?MatrixQ,FF_?MatrixQ,psiEps_?MatrixQ,psiC_?MatrixQ,psiZ_?MatrixQ},numTerms_Integer]:=(*

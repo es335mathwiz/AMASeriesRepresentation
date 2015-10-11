@@ -22,7 +22,6 @@ Begin["Private`"]
 computeNonFPart[linMod:{BB_?MatrixQ,phi_?MatrixQ,FF_?MatrixQ,psiEps_?MatrixQ,psiC_?MatrixQ,psiZ_?MatrixQ}]:=(*
 computeNonFPart[BB,phi,psiEps,psiC]=*)
 (BB.Transpose[{genXtm1Vars[Length[BB]]}] + phi.psiEps.Transpose[{genEpsVars[Length[psiEps[[1]]]]}]+
-
 Inverse[IdentityMatrix[Length[FF]]-FF] . phi . psiC)
 
 computeNonFPart[linMod:{BB_?MatrixQ,phi_?MatrixQ,FF_?MatrixQ,psiEps_?MatrixQ,psiC_?MatrixQ,psiZ_?MatrixQ},xt_?MatrixQ]:=(*
@@ -363,15 +362,16 @@ computeXtPath[linMod:{BB_?MatrixQ,phi_?MatrixQ,FF_?MatrixQ,psiEps_?MatrixQ,psiC_
 				 NestList[{doStep[linMod,#[[1]],#[[2]],#[[3]]],zeroEps,Drop[#[[3]],1]}&,
 				 	{Transpose[{Private`genXtm1Vars[Length[BB]]}],
 				 Transpose[{Private`genEpsVars[Length[psiEps[[1]]]]}], 
-				 Reverse /@ genZVars[numZTerms-1, Length[psiZ[[1]]],0]},numZTerms]},
-				 With[{pathNow=Join @@ First/@ trips,theEnd=BB .trips[[-1,1]]},
-				 	With[{extraEnd=Join @@ NestList[BB.#&,theEnd,addZeroZTerms]},
+				 Reverse /@ genZVars[numZTerms-1, Length[psiZ[[1]]],0]/.zName_[t]->zName},numZTerms]},
+				 With[{pathNow=Join @@ First/@ trips,theEnd=BB .trips[[-1,1]]+Inverse[IdentityMatrix[Length[FF]]-FF] . phi . psiC},
+				 	With[{extraEnd=Join @@ NestList[BB.#+Inverse[IdentityMatrix[Length[FF]]-FF] . phi . psiC&,theEnd,addZeroZTerms]},
 				 	Join[pathNow,extraEnd]
 				 ]]]]
 		
 doStep[linMod:{BB_?MatrixQ,phi_?MatrixQ,FF_?MatrixQ,psiEps_?MatrixQ,psiC_?MatrixQ,psiZ_?MatrixQ},
 	xxNow_?MatrixQ,epsNow_?MatrixQ,zsNow:{_?MatrixQ...}]:=		
-	BB . xxNow + phi .psiEps. epsNow+sumZs[FF,phi,psiZ,zsNow]
+	BB . xxNow + phi .psiEps. epsNow+sumZs[FF,phi,psiZ,zsNow]+
+	Inverse[IdentityMatrix[Length[FF]]-FF] . phi . psiC
 	
 sumZs[FF_?MatrixQ,phi_?MatrixQ,psiZ_?MatrixQ,zsNow:{_?MatrixQ..}]:=
 With[{allFPows=ArrayFlatten[{Table[computeFPartK[FF,phi,psiZ,ii],{ii,0,Length[zsNow]-1}]}]},

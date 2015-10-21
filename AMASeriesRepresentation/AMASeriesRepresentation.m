@@ -123,6 +123,14 @@ With[{xzRes=Drop[FoldList[#2@@(Flatten[#1][[Range[numXVars]]])&,
 xtGuess,XZFuncs],1]},Plus @@
 MapThread[Dot[#1,phi.psiZ.Drop[#2,numXVars]]&,{fPows , xzRes}]]]]
 
+
+fSum[linMod:{BB_?MatrixQ,phi_?MatrixQ,FF_?MatrixQ,psiEps_?MatrixQ,psiC_?MatrixQ,psiZ_?MatrixQ},zPath:{_?MatrixQ..}]:=
+With[{numZVars=Length[psiZ[[1]]]},
+With[{fPows=NestList[FF.#&,IdentityMatrix[numZVars],Length[zPath]-1]},
+Plus @@
+MapThread[Dot[#1,phi.psiZ.#2]&,{fPows , zPath}]]]
+
+
 genPath[xzFunc_Function,
 XZFuncs:{_Function..},xtm1Val_?MatrixQ,epsVal_?MatrixQ]:=
 With[{numXVars=Length[xtm1Val]},

@@ -31,6 +31,8 @@ xtGuess_?MatrixQ,eqnsFunc_CompiledFunction]"
 doIterRE::usage="doIterRE[linMod:{BB_?MatrixQ,phi_?MatrixQ,FF_?MatrixQ,psiEps_?MatrixQ,psiC_?MatrixQ,psiZ_?MatrixQ},XZFuncsNow:{_Function..},
 xtGuess_?MatrixQ,eqnsFunc_CompiledFunction]"
 X0Z0::usage="from genX0Z0Funcs[linMod];"
+fSum::usage="fSum[linMod:{BB_?MatrixQ,phi_?MatrixQ,FF_?MatrixQ,psiEps_?MatrixQ,psiC_?MatrixQ,psiZ_?MatrixQ},zPath:{_?MatrixQ..}]"
+
 Begin["Private`"]
 
 

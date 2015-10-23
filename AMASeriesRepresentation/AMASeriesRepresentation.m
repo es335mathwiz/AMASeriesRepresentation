@@ -14,26 +14,31 @@ genXZFuncRE::usage="genXZFuncRE[{numX_Integer,numEps_Integer,numZ_Integer},aLilX
 genXZFuncPF::usage="genXZFuncPF[{numX_Integer,numEps_Integer,numZ_Integer},aLilXkZkFunc_Function]"
 pathErrs::usage="pathErrs[{numX_Integer,numEps_Integer,numZs_Integer},{lilXZFunc_Function,bigXZFuncs:{_Function..}},eqnsFunc_CompiledFunction,anX_?MatrixQ,anEps_?MatrixQ]"
 
-nestIterPF::usage="nestIterPF[linMod:{BB_?MatrixQ,phi_?MatrixQ,FF_?MatrixQ,psiEps_?MatrixQ,psiC_?MatrixQ,psiZ_?MatrixQ},XZFuncsNow:{_Function..},
+nestIterPF::usage="nestIterPF[linMod:{BB_?MatrixQ,phi_?MatrixQ,FF_?MatrixQ,psiEps_?MatrixQ,psiC_?MatrixQ,psiZ_?MatrixQ,psiZPreComp_?MatrixQ},XZFuncsNow:{_Function..},
 xtGuess_?MatrixQ,eqnsFunc_CompiledFunction,numIters_Integer]"
 
 
-nestIterRE::usage="nestIterRE[linMod:{BB_?MatrixQ,phi_?MatrixQ,FF_?MatrixQ,psiEps_?MatrixQ,psiC_?MatrixQ,psiZ_?MatrixQ},XZFuncsNow:{_Function..},
+nestIterRE::usage="nestIterRE[linMod:{BB_?MatrixQ,phi_?MatrixQ,FF_?MatrixQ,psiEps_?MatrixQ,psiC_?MatrixQ,psiZ_?MatrixQ,psiZPreComp_?MatrixQ},XZFuncsNow:{_Function..},
 xtGuess_?MatrixQ,eqnsFunc_CompiledFunction,numIters_Integer]"
 
 genPath::usage="genPath[xzFunc_Function,XZFuncs:{_Function..},xtm1Val_?MatrixQ,epsVal_?MatrixQ]"
-genX0Z0Funcs::usage="genX0Z0Funcs[linMod:{BB_?MatrixQ,phi_?MatrixQ,FF_?MatrixQ,psiEps_?MatrixQ,psiC_?MatrixQ,psiZ_?MatrixQ}]"
+genX0Z0Funcs::usage="genX0Z0Funcs[linMod:{BB_?MatrixQ,phi_?MatrixQ,FF_?MatrixQ,psiEps_?MatrixQ,psiC_?MatrixQ,psiZ_?MatrixQ,psiZPreComp_?MatrixQ}]"
 
-doIterPF::usage="doIterPF[linMod:{BB_?MatrixQ,phi_?MatrixQ,FF_?MatrixQ,psiEps_?MatrixQ,psiC_?MatrixQ,psiZ_?MatrixQ},XZFuncsNow:{_Function..},
+doIterPF::usage="doIterPF[linMod:{BB_?MatrixQ,phi_?MatrixQ,FF_?MatrixQ,psiEps_?MatrixQ,psiC_?MatrixQ,psiZ_?MatrixQ,psiZPreComp_?MatrixQ},XZFuncsNow:{_Function..},
 xtGuess_?MatrixQ,eqnsFunc_CompiledFunction]"
 
 
-doIterRE::usage="doIterRE[linMod:{BB_?MatrixQ,phi_?MatrixQ,FF_?MatrixQ,psiEps_?MatrixQ,psiC_?MatrixQ,psiZ_?MatrixQ},XZFuncsNow:{_Function..},
+doIterRE::usage="doIterRE[linMod:{BB_?MatrixQ,phi_?MatrixQ,FF_?MatrixQ,psiEps_?MatrixQ,psiC_?MatrixQ,psiZ_?MatrixQ,psiZPreComp_?MatrixQ},XZFuncsNow:{_Function..},
 xtGuess_?MatrixQ,eqnsFunc_CompiledFunction]"
 X0Z0::usage="from genX0Z0Funcs[linMod];"
-fSum::usage="fSum[linMod:{BB_?MatrixQ,phi_?MatrixQ,FF_?MatrixQ,psiEps_?MatrixQ,psiC_?MatrixQ,psiZ_?MatrixQ},zPath:{_?MatrixQ..}]"
-
+fSum::usage="fSum[linMod:{BB_?MatrixQ,phi_?MatrixQ,FF_?MatrixQ,psiEps_?MatrixQ,psiC_?MatrixQ,psiZ_?MatrixQ,psiZPreComp_?MatrixQ},zPath:{_?MatrixQ..}]"
 Begin["Private`"]
+
+Print["changing MatrixPower to produce Identity Matrix for singular matrices raised to 0th power"]
+Unprotect[MatrixPower]
+MatrixPower[xx_?MatrixQ,0]:=IdentityMatrix[Length[xx]]/;
+Length[xx]===Length[xx[[1]]]
+Protect[MatrixPower]
 
 
 
@@ -56,7 +61,8 @@ Range[2,Length[bigXZFuncs]]]]]]
 truncErrorMat=
 Compile[{{fmat,_Real,2},{phimat,_Real,2},{kk,_Integer}},
 With[{dim=Length[fmat]},
-Inverse[IdentityMatrix[dim] - fmat] . MatrixPower[fmat,kk]]]
+If[kk==0,Inverse[IdentityMatrix[dim] - fmat],
+Inverse[IdentityMatrix[dim] - fmat] . MatrixPower[fmat,kk]]]]
 
 
 genXtm1Vars[numVars_Integer]:=
@@ -91,7 +97,7 @@ genZVars[numConstr]=
 Table[
 makeProtectedSymbol["zzzVar$"<>ToString[ii]],{ii,numConstr}]]*)/;And[numConstr>=0]
 
-genX0Z0Funcs[linMod:{BB_?MatrixQ,phi_?MatrixQ,FF_?MatrixQ,psiEps_?MatrixQ,psiC_?MatrixQ,psiZ_?MatrixQ}]:=
+genX0Z0Funcs[linMod:{BB_?MatrixQ,phi_?MatrixQ,FF_?MatrixQ,psiEps_?MatrixQ,psiC_?MatrixQ,psiZ_?MatrixQ,psiZPreComp_?MatrixQ}]:=
 With[{numXVars=Length[BB],numZVars=Length[psiZ[[1]]]},
 With[{xtm1Vars=genXtm1Vars[numXVars]},
 With[{compArgs=xtm1Vars},
@@ -100,7 +106,7 @@ Inverse[IdentityMatrix[Length[xtm1Vars]]-FF] . phi . psiC,ConstantArray[0,{numZV
 
 
 (*func of xtm1vars,epsvars,zvars and a guess for xt*)
-genLilXkZkFunc[linMod:{BB_?MatrixQ,phi_?MatrixQ,FF_?MatrixQ,psiEps_?MatrixQ,psiC_?MatrixQ,psiZ_?MatrixQ},XZFuncs:{_Function..},xtGuess_?MatrixQ]:=
+genLilXkZkFunc[linMod:{BB_?MatrixQ,phi_?MatrixQ,FF_?MatrixQ,psiEps_?MatrixQ,psiC_?MatrixQ,psiZ_?MatrixQ,psiZPreComp_?MatrixQ},XZFuncs:{_Function..},xtGuess_?MatrixQ]:=
 With[{numXVars=Length[BB],
 numEpsVars=Length[psiEps[[1]]],numZVars=Length[psiZ[[1]]]},
 With[{xtm1Vars=genXtm1Vars[numXVars],
@@ -117,7 +123,7 @@ BB.xtVals+Inverse[IdentityMatrix[Length[xtm1Vars]]-FF] . phi . psiC+fCon,
 Transpose[{epsVars}]]]}]]]]
 
 (*sum for tp1 mult by FF for t*)
-fSum[linMod:{BB_?MatrixQ,phi_?MatrixQ,FF_?MatrixQ,psiEps_?MatrixQ,psiC_?MatrixQ,psiZ_?MatrixQ},XZFuncs:{_Function..},xtGuess_?MatrixQ]:=
+fSum[linMod:{BB_?MatrixQ,phi_?MatrixQ,FF_?MatrixQ,psiEps_?MatrixQ,psiC_?MatrixQ,psiZ_?MatrixQ,psiZPreComp_?MatrixQ},XZFuncs:{_Function..},xtGuess_?MatrixQ]:=
 With[{numXVars=Length[BB],numZVars=Length[psiZ[[1]]]},
 With[{
 fPows=NestList[FF.#&,IdentityMatrix[numZVars],Length[XZFuncs]-1]},
@@ -125,12 +131,19 @@ With[{xzRes=Drop[FoldList[#2@@(Flatten[#1][[Range[numXVars]]])&,
 xtGuess,XZFuncs],1]},Plus @@
 MapThread[Dot[#1,phi.psiZ.Drop[#2,numXVars]]&,{fPows , xzRes}]]]]
 
-
-fSum[linMod:{BB_?MatrixQ,phi_?MatrixQ,FF_?MatrixQ,psiEps_?MatrixQ,psiC_?MatrixQ,psiZ_?MatrixQ},zPath:{_?MatrixQ..}]:=
+(*
+fSum[linMod:{BB_?MatrixQ,phi_?MatrixQ,FF_?MatrixQ,psiEps_?MatrixQ,psiC_?MatrixQ,psiZ_?MatrixQ,psiZPreComp_?MatrixQ},zPath:{_?MatrixQ..}]:=
 With[{numZVars=Length[psiZ[[1]]]},
 With[{fPows=NestList[FF.#&,IdentityMatrix[numZVars],Length[zPath]-1]},
 Plus @@
 MapThread[Dot[#1,phi.psiZ.#2]&,{fPows , zPath}]]]
+*)
+
+fSumC=Compile[{{phi,_Real,2},{FF,_Real,2},{psiZ,_Real,2},{zPath,_Real,3}},
+With[{numZVars=Length[psiZ[[1]]]},
+With[{fPows=NestList[FF.#&,IdentityMatrix[numZVars],Length[zPath]-1]},
+Plus @@
+MapThread[Dot[#1,phi.psiZ.#2]&,{fPows , zPath}]]]]
 
 
 genPath[xzFunc_Function,
@@ -141,7 +154,7 @@ With[{xzRes=FoldList[(#2@@(Flatten[#1][[Range[numXVars]]]))[[Range[numXVars]]]&,
 xtVal[[Range[numXVars]]],XZFuncs]},Join[xtm1Val,Join @@xzRes]]]]
 
 
-genPath[linMod:{BB_?MatrixQ,phi_?MatrixQ,FF_?MatrixQ,psiEps_?MatrixQ,psiC_?MatrixQ,psiZ_?MatrixQ},
+genPath[linMod:{BB_?MatrixQ,phi_?MatrixQ,FF_?MatrixQ,psiEps_?MatrixQ,psiC_?MatrixQ,psiZ_?MatrixQ,psiZPreComp_?MatrixQ},
 	xzFunc_Function,XZFuncs:{_Function..},xtm1Val_?MatrixQ,epsVal_?MatrixQ]:=
 With[{numXVars=Length[xtm1Val]},
 With[{xtVal=xzFunc @@ Flatten[Join[xtm1Val,epsVal]]},
@@ -150,7 +163,7 @@ xtVal[[Range[numXVars]]],XZFuncs]},{Join[xtm1Val,Join @@xzRes],
 compareFormula[linMod,XZFuncs,xtm1Val,epsVal,xtVal]}
 ]]]
 
-compareFormula[linMod:{BB_?MatrixQ,phi_?MatrixQ,FF_?MatrixQ,psiEps_?MatrixQ,psiC_?MatrixQ,psiZ_?MatrixQ},
+compareFormula[linMod:{BB_?MatrixQ,phi_?MatrixQ,FF_?MatrixQ,psiEps_?MatrixQ,psiC_?MatrixQ,psiZ_?MatrixQ,psiZPreComp_?MatrixQ},
 	XZFuncs:{_Function..},xtm1Vars_?MatrixQ,epsVars_?MatrixQ,xtztVal_?MatrixQ]:=
 	With[{numX=Length[BB],numZ=Length[psiZ[[1]]]},
 		With[{xtVal=xtztVal[[Range[numX]]],ztVal=xtztVal[[numX+Range[numZ]]]},
@@ -181,7 +194,7 @@ Join[(xkFunc@@Join[funcArgs,zVals])[[numX+Range[numX]]],
 Transpose[{zVals}]]]],
 1->funcArgs]]]
 $fixedPointLimit=30;
-genFPFunc[linMod:{BB_?MatrixQ,phi_?MatrixQ,FF_?MatrixQ,psiEps_?MatrixQ,psiC_?MatrixQ,psiZ_?MatrixQ},
+genFPFunc[linMod:{BB_?MatrixQ,phi_?MatrixQ,FF_?MatrixQ,psiEps_?MatrixQ,psiC_?MatrixQ,psiZ_?MatrixQ,psiZPreComp_?MatrixQ},
 XZFuncs:{_Function..},xtGuess_?MatrixQ,eqnsFunc_CompiledFunction]:=
 With[{numX=Length[BB],numEps=Length[psiEps[[1]]],numZ=Length[psiZ[[1]]]},
 With[{funcArgs=Table[Unique["theFPFuncArgs"],{numX+numEps}]},
@@ -194,26 +207,26 @@ eqnsFunc]},xzFuncNow @@funcArgs]&,xtGuess,$fixedPointLimit]],
 
 
 
-doIterPF[linMod:{BB_?MatrixQ,phi_?MatrixQ,FF_?MatrixQ,psiEps_?MatrixQ,psiC_?MatrixQ,psiZ_?MatrixQ},XZFuncsNow:{_Function..},
+doIterPF[linMod:{BB_?MatrixQ,phi_?MatrixQ,FF_?MatrixQ,psiEps_?MatrixQ,psiC_?MatrixQ,psiZ_?MatrixQ,psiZPreComp_?MatrixQ},XZFuncsNow:{_Function..},
 xtGuess_?MatrixQ,eqnsFunc_CompiledFunction]:=
 With[{numX=Length[BB],numEps=Length[psiEps[[1]]],numZ=Length[psiZ[[1]]]},
 With[{theFuncs=genFPFunc[linMod,XZFuncsNow,xtGuess,eqnsFunc]},
 {theFuncs,Prepend[XZFuncsNow,genXZFuncPF[{numX,numEps,numZ},theFuncs]]}]]
 
 
-doIterRE[linMod:{BB_?MatrixQ,phi_?MatrixQ,FF_?MatrixQ,psiEps_?MatrixQ,psiC_?MatrixQ,psiZ_?MatrixQ},XZFuncsNow:{_Function..},
+doIterRE[linMod:{BB_?MatrixQ,phi_?MatrixQ,FF_?MatrixQ,psiEps_?MatrixQ,psiC_?MatrixQ,psiZ_?MatrixQ,psiZPreComp_?MatrixQ},XZFuncsNow:{_Function..},
 xtGuess_?MatrixQ,eqnsFunc_CompiledFunction,distribs_List]:=
 With[{numX=Length[BB],numEps=Length[psiEps[[1]]],numZ=Length[psiZ[[1]]]},
 With[{theFuncs=genFPFunc[linMod,XZFuncsNow,xtGuess,eqnsFunc]},
 {theFuncs,Prepend[XZFuncsNow,genXZFuncRE[{numX,numEps,numZ},theFuncs,distribs]]}]]
 
-nestIterPF[linMod:{BB_?MatrixQ,phi_?MatrixQ,FF_?MatrixQ,psiEps_?MatrixQ,psiC_?MatrixQ,psiZ_?MatrixQ},XZFuncsNow:{_Function..},
+nestIterPF[linMod:{BB_?MatrixQ,phi_?MatrixQ,FF_?MatrixQ,psiEps_?MatrixQ,psiC_?MatrixQ,psiZ_?MatrixQ,psiZPreComp_?MatrixQ},XZFuncsNow:{_Function..},
 xtGuess_?MatrixQ,eqnsFunc_CompiledFunction,numIters_Integer]:=
 NestList[doIterPF[linMod,#[[2]],xtGuess,
 eqnsFunc]&,{ig,XZFuncsNow},numIters]
 
 
-nestIterRE[linMod:{BB_?MatrixQ,phi_?MatrixQ,FF_?MatrixQ,psiEps_?MatrixQ,psiC_?MatrixQ,psiZ_?MatrixQ},XZFuncsNow:{_Function..},
+nestIterRE[linMod:{BB_?MatrixQ,phi_?MatrixQ,FF_?MatrixQ,psiEps_?MatrixQ,psiC_?MatrixQ,psiZ_?MatrixQ,psiZPreComp_?MatrixQ},XZFuncsNow:{_Function..},
 xtGuess_?MatrixQ,eqnsFunc_CompiledFunction,distribs_List,numIters_Integer]:=
 NestList[doIterRE[linMod,#[[2]],xtGuess,
 eqnsFunc,distribs]&,{ig,XZFuncsNow},numIters]
@@ -252,27 +265,27 @@ With[{shockVars=Table[Unique["shkVars"],{Length[distribs]}]},
 NExpectation[Through[vecFuncs@@#&[Join[xtm1,shockVars]]],Thread[shockVars \[Distributed] distribs]]]
 
 (*compute the first set of z functions*)
-computeNonFPart[linMod:{BB_?MatrixQ,phi_?MatrixQ,FF_?MatrixQ,psiEps_?MatrixQ,psiC_?MatrixQ,psiZ_?MatrixQ}]:=(*
+computeNonFPart[linMod:{BB_?MatrixQ,phi_?MatrixQ,FF_?MatrixQ,psiEps_?MatrixQ,psiC_?MatrixQ,psiZ_?MatrixQ,psiZPreComp_?MatrixQ}]:=(*
 computeNonFPart[BB,phi,psiEps,psiC]=*)
 (BB.Transpose[{genXtm1Vars[Length[BB]]}] + phi.psiEps.Transpose[{genEpsVars[Length[psiEps[[1]]]]}]+
 Inverse[IdentityMatrix[Length[FF]]-FF] . phi . psiC)
 
-computeNonFPart[linMod:{BB_?MatrixQ,phi_?MatrixQ,FF_?MatrixQ,psiEps_?MatrixQ,psiC_?MatrixQ,psiZ_?MatrixQ},xt_?MatrixQ]:=(*
+computeNonFPart[linMod:{BB_?MatrixQ,phi_?MatrixQ,FF_?MatrixQ,psiEps_?MatrixQ,psiC_?MatrixQ,psiZ_?MatrixQ,psiZPreComp_?MatrixQ},xt_?MatrixQ]:=(*
 computeNonFPart[BB,phi,psiEps,psiC]=*)
 (BB.xt +Inverse[IdentityMatrix[Length[FF]]-FF] . phi . psiC)
 
 
 
-computeNextXt[linMod:{BB_?MatrixQ,phi_?MatrixQ,FF_?MatrixQ,psiEps_?MatrixQ,psiC_?MatrixQ,psiZ_?MatrixQ}]:=(*
+computeNextXt[linMod:{BB_?MatrixQ,phi_?MatrixQ,FF_?MatrixQ,psiEps_?MatrixQ,psiC_?MatrixQ,psiZ_?MatrixQ,psiZPreComp_?MatrixQ}]:=(*
 computeNextXt[linMod]=*)
 computeNonFPart[linMod]+phi.psiZ .genZVars[Length[psiZ[[1]]]]
 
 
-computeNextXt[linMod:{BB_?MatrixQ,phi_?MatrixQ,FF_?MatrixQ,psiEps_?MatrixQ,psiC_?MatrixQ,psiZ_?MatrixQ},xt_?MatrixQ]:=(*
+computeNextXt[linMod:{BB_?MatrixQ,phi_?MatrixQ,FF_?MatrixQ,psiEps_?MatrixQ,psiC_?MatrixQ,psiZ_?MatrixQ,psiZPreComp_?MatrixQ},xt_?MatrixQ]:=(*
 computeNextXt[linMod,xt]=*)
 computeNonFPart[linMod,xt](*+phi.psiZ .genZVars[Length[psiZ[[1]]]]*)
 
-computeNextXtp1[linMod:{BB_?MatrixQ,phi_?MatrixQ,FF_?MatrixQ,psiEps_?MatrixQ,psiC_?MatrixQ,psiZ_?MatrixQ}]:=(*
+computeNextXtp1[linMod:{BB_?MatrixQ,phi_?MatrixQ,FF_?MatrixQ,psiEps_?MatrixQ,psiC_?MatrixQ,psiZ_?MatrixQ,psiZPreComp_?MatrixQ}]:=(*
 computeNextXtp1[linMod]=*)
 With[{xt=computeNextXt[linMod]},
 	computeNextXt[linMod,xt]]
@@ -280,7 +293,7 @@ With[{xt=computeNextXt[linMod]},
 
 
 Print["should memoize subXtXtp1"]
-subXtXtp1[aFunc_Function,linMod:{BB_?MatrixQ,phi_?MatrixQ,FF_?MatrixQ,psiEps_?MatrixQ,psiC_?MatrixQ,psiZ_?MatrixQ}]:=
+subXtXtp1[aFunc_Function,linMod:{BB_?MatrixQ,phi_?MatrixQ,FF_?MatrixQ,psiEps_?MatrixQ,psiC_?MatrixQ,psiZ_?MatrixQ,psiZPreComp_?MatrixQ}]:=
 	With[{xt=computeNextXt[linMod],
 		xtp1=computeNextXtp1[linMod]},
 		aFunc[Transpose[{genXtm1Vars[Length[BB]]}],xt,xtp1,Transpose[{genEpsVars[Length[psiEps[[1]]]]}]]]
@@ -288,7 +301,7 @@ subXtXtp1[aFunc_Function,linMod:{BB_?MatrixQ,phi_?MatrixQ,FF_?MatrixQ,psiEps_?Ma
 
 
 makeConstraintFindRootFunc[hmFunc_Function,
-	linMod:{BB_?MatrixQ,phi_?MatrixQ,FF_?MatrixQ,psiEps_?MatrixQ,psiC_?MatrixQ,psiZ_?MatrixQ},
+	linMod:{BB_?MatrixQ,phi_?MatrixQ,FF_?MatrixQ,psiEps_?MatrixQ,psiC_?MatrixQ,psiZ_?MatrixQ,psiZPreComp_?MatrixQ},
 	zzGuesser:{_InterpolatingFunction...}]:=(*
 makeConstraintFindRootFunc[hmFunc,linMod,zzGuesser]=*)
 With[{subbedEqns=Thread[(subXtXtp1[hmFunc,linMod]/.zName_[t]->zName(*//N//Expand//Simplify*))==0],
@@ -333,13 +346,13 @@ applyZFuncs[theFuncs:{_InterpolatingFunction..},xxGuessEps_?MatrixQ]:=
 Transpose[{Through[(theFuncs @@ #)&[Flatten[xxGuessEps]]]}]
 
 
-computeNextXt[linMod:{BB_?MatrixQ,phi_?MatrixQ,FF_?MatrixQ,psiEps_?MatrixQ,psiC_?MatrixQ,psiZ_?MatrixQ},
+computeNextXt[linMod:{BB_?MatrixQ,phi_?MatrixQ,FF_?MatrixQ,psiEps_?MatrixQ,psiC_?MatrixQ,psiZ_?MatrixQ,psiZPreComp_?MatrixQ},
 	ZZks:{_InterpolatingFunction..},xxGuess_?MatrixQ,toIgnore:{_Integer...}]:=(*
 computeNextXt[linMod,ZZks,xxGuess,toIgnore]=*)
 computeNonFPart[linMod]+
 computeFPart[FF,phi,psiEps,psiZ,ZZks,xxGuess,toIgnore]+phi.psiZ.genZVars[Length[psiZ[[1]]]]
 
-computeNextXt[linMod:{BB_?MatrixQ,phi_?MatrixQ,FF_?MatrixQ,psiEps_?MatrixQ,psiC_?MatrixQ,psiZ_?MatrixQ},xt_?MatrixQ,
+computeNextXt[linMod:{BB_?MatrixQ,phi_?MatrixQ,FF_?MatrixQ,psiEps_?MatrixQ,psiC_?MatrixQ,psiZ_?MatrixQ,psiZPreComp_?MatrixQ},xt_?MatrixQ,
 	ZZks:{_InterpolatingFunction..},xxGuess_?MatrixQ,toIgnore:{_Integer...}]:=(*
 computeNextXt[linMod,xt,ZZks,xxGuess,toIgnore]=*)
 computeNonFPart[linMod,xt]+
@@ -347,7 +360,7 @@ computeFPart[FF,phi,psiEps,psiZ,ZZks,xxGuess,toIgnore]+phi.psiZ.genZVars[Length[
 
 
 
-computeNextXtp1[linMod:{BB_?MatrixQ,phi_?MatrixQ,FF_?MatrixQ,psiEps_?MatrixQ,psiC_?MatrixQ,psiZ_?MatrixQ},
+computeNextXtp1[linMod:{BB_?MatrixQ,phi_?MatrixQ,FF_?MatrixQ,psiEps_?MatrixQ,psiC_?MatrixQ,psiZ_?MatrixQ,psiZPreComp_?MatrixQ},
 	ZZks:{_InterpolatingFunction..},xxGuess_?MatrixQ,toIgnore:{_Integer...}]:=(*
 computeNextXtp1[linMod,ZZks,xxGuess,toIgnore]=*)
 With[{xt=computeNextXt[linMod,ZZks,xxGuess,toIgnore]},
@@ -360,7 +373,7 @@ doIgnoreParts[xxGuess_?MatrixQ,toIgnore:{_Integer...}]:=
 Delete[xxGuess,{#}&/@toIgnore]
 
 Print["should memoize subXtXtp1"]
-subXtXtp1[aFunc_Function,linMod:{BB_?MatrixQ,phi_?MatrixQ,FF_?MatrixQ,psiEps_?MatrixQ,psiC_?MatrixQ,psiZ_?MatrixQ},
+subXtXtp1[aFunc_Function,linMod:{BB_?MatrixQ,phi_?MatrixQ,FF_?MatrixQ,psiEps_?MatrixQ,psiC_?MatrixQ,psiZ_?MatrixQ,psiZPreComp_?MatrixQ},
 	ZZks:{_InterpolatingFunction..},xxGuess_?MatrixQ,toIgnore:{_Integer...}]:=
 	With[{xt=computeNextXt[linMod,ZZks,xxGuess,toIgnore],
 		xtp1=computeNextXtp1[linMod,ZZks,xxGuess,toIgnore]},
@@ -370,7 +383,7 @@ subXtXtp1[aFunc_Function,linMod:{BB_?MatrixQ,phi_?MatrixQ,FF_?MatrixQ,psiEps_?Ma
 
 
 makeConstraintFindRootFunc[hmFunc_Function,
-	linMod:{BB_?MatrixQ,phi_?MatrixQ,FF_?MatrixQ,psiEps_?MatrixQ,psiC_?MatrixQ,psiZ_?MatrixQ},
+	linMod:{BB_?MatrixQ,phi_?MatrixQ,FF_?MatrixQ,psiEps_?MatrixQ,psiC_?MatrixQ,psiZ_?MatrixQ,psiZPreComp_?MatrixQ},
 	ZZks:{_InterpolatingFunction..},
 	zzGuesser:{_InterpolatingFunction...},xxGuess_?MatrixQ,toIgnore:{_Integer...}]:=
 (*makeConstraintFindRootFunc[hmFunc,linMod,ZZks,zzGuesser,xxGuess,toIgnore]=*)
@@ -390,7 +403,7 @@ FindRoot[subbedEqns,
 
 FPTConst=10;
 makeConstraintFixedPointFunc[hmFunc_Function,
-	linMod:{BB_?MatrixQ,phi_?MatrixQ,FF_?MatrixQ,psiEps_?MatrixQ,psiC_?MatrixQ,psiZ_?MatrixQ},
+	linMod:{BB_?MatrixQ,phi_?MatrixQ,FF_?MatrixQ,psiEps_?MatrixQ,psiC_?MatrixQ,psiZ_?MatrixQ,psiZPreComp_?MatrixQ},
 	ZZks:{_InterpolatingFunction..},zzGuesser:{_InterpolatingFunction...},xxGuess_?MatrixQ,toIgnore:{_Integer...}]:=
 (*makeConstraintFixedPointFunc[hmFunc,
 	linMod,
@@ -594,7 +607,7 @@ With[{theZs=Join @@ Reverse[Drop[Reverse/@genZVars[numTerms,Length[psiZ[[1]]]],1
 	With[{allZPows= ArrayFlatten[{Table[computeFPartK[FF,phi,psiZ,ii],{ii,numTerms}]}]},allZPows.theZs]]
 
 
-computeXtPath[linMod:{BB_?MatrixQ,phi_?MatrixQ,FF_?MatrixQ,psiEps_?MatrixQ,psiC_?MatrixQ,psiZ_?MatrixQ},
+computeXtPath[linMod:{BB_?MatrixQ,phi_?MatrixQ,FF_?MatrixQ,psiEps_?MatrixQ,psiC_?MatrixQ,psiZ_?MatrixQ,psiZPreComp_?MatrixQ},
 	numZTerms_Integer,addZeroZTerms_Integer]:=
 		With[{zeroEps=0*Transpose[{Private`genEpsVars[Length[psiEps[[1]]]]}]},
 			With[{trips=
@@ -607,7 +620,7 @@ computeXtPath[linMod:{BB_?MatrixQ,phi_?MatrixQ,FF_?MatrixQ,psiEps_?MatrixQ,psiC_
 				 	Join[pathNow,extraEnd]
 				 ]]]]
 		
-doStep[linMod:{BB_?MatrixQ,phi_?MatrixQ,FF_?MatrixQ,psiEps_?MatrixQ,psiC_?MatrixQ,psiZ_?MatrixQ},
+doStep[linMod:{BB_?MatrixQ,phi_?MatrixQ,FF_?MatrixQ,psiEps_?MatrixQ,psiC_?MatrixQ,psiZ_?MatrixQ,psiZPreComp_?MatrixQ},
 	xxNow_?MatrixQ,epsNow_?MatrixQ,zsNow:{_?MatrixQ...}]:=		
 	BB . xxNow + phi .psiEps. epsNow+sumZs[FF,phi,psiZ,zsNow]+
 	Inverse[IdentityMatrix[Length[FF]]-FF] . phi . psiC
@@ -619,19 +632,19 @@ With[{allFPows=ArrayFlatten[{Table[computeFPartK[FF,phi,psiZ,ii],{ii,0,Length[zs
 sumZs[FF_?MatrixQ,phi_?MatrixQ,psiZ_?MatrixQ,{}]:=0
 
 
-computeNextXt[linMod:{BB_?MatrixQ,phi_?MatrixQ,FF_?MatrixQ,psiEps_?MatrixQ,psiC_?MatrixQ,psiZ_?MatrixQ},numTerms_Integer]:=(*
+computeNextXt[linMod:{BB_?MatrixQ,phi_?MatrixQ,FF_?MatrixQ,psiEps_?MatrixQ,psiC_?MatrixQ,psiZ_?MatrixQ,psiZPreComp_?MatrixQ},numTerms_Integer]:=(*
 computeNextXt[linMod,ZZks,xxGuess,toIgnore]=*)
 computeNonFPart[linMod]+
 computeFPart[FF,phi,psiEps,psiZ,numTerms]+phi.genZVars[Length[psiZ[[1]]]]
 
-computeNextXt[linMod:{BB_?MatrixQ,phi_?MatrixQ,FF_?MatrixQ,psiEps_?MatrixQ,psiC_?MatrixQ,psiZ_?MatrixQ},numTerms_Integer,xt_?MatrixQ]:=(*
+computeNextXt[linMod:{BB_?MatrixQ,phi_?MatrixQ,FF_?MatrixQ,psiEps_?MatrixQ,psiC_?MatrixQ,psiZ_?MatrixQ,psiZPreComp_?MatrixQ},numTerms_Integer,xt_?MatrixQ]:=(*
 computeNextXt[linMod,xt,ZZks,xxGuess,toIgnore]=*)
 computeNonFPart[linMod,xt]+
 computeFPart[FF,phi,psiEps,psiZ,numTerms]+phi.genZVars[Length[psiZ[[1]]]]
 
 
 
-computeNextXtp1[linMod:{BB_?MatrixQ,phi_?MatrixQ,FF_?MatrixQ,psiEps_?MatrixQ,psiC_?MatrixQ,psiZ_?MatrixQ},numTerms_Integer]:=(*
+computeNextXtp1[linMod:{BB_?MatrixQ,phi_?MatrixQ,FF_?MatrixQ,psiEps_?MatrixQ,psiC_?MatrixQ,psiZ_?MatrixQ,psiZPreComp_?MatrixQ},numTerms_Integer]:=(*
 computeNextXtp1[linMod,ZZks,xxGuess,toIgnore]=*)
 With[{xt=computeNextXt[linMod,numTerms]},
 With[{zzkVecs=Reverse[Last[genZVars[numTerms,Length[psiZ[[1]]]]]]},

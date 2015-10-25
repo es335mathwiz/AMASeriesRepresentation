@@ -222,13 +222,13 @@ $fixedPointLimit=30;
 genFPFunc[linMod:{BB_?MatrixQ,phi_?MatrixQ,FF_?MatrixQ,psiEps_?MatrixQ,psiC_?MatrixQ,psiZ_?MatrixQ,psiZPreComp_?MatrixQ},
 XZFuncs:{_Function..},xtGuess_?MatrixQ,eqnsFunc_CompiledFunction]:=
 With[{numX=Length[BB],numEps=Length[psiEps[[1]]],numZ=Length[psiZ[[1]]]},
-With[{funcArgs=Table[Unique["theFPFuncArgs"],{numX+numEps}],
-theNG=genLilXkZkFuncNG[linMod,XZFuncs]},Print["theNG=",theNG//InputForm];
+With[{funcArgs=Table[Unique["theFPFuncArgs"],{numX+numEps}](*,
+theNG=genLilXkZkFuncNG[linMod,XZFuncs]*)},(*Print["theNG=",theNG//InputForm];*)
 ReplacePart[
 Function[xxxx,
-FixedPoint[With[{xzFuncNowAA=
-genFRFunc[{numX,numEps,numZ},theNG,eqnsFunc]},
-xzFuncNowAA @@Join[funcArgs,#[[Range[numX]]]]]&,xtGuess,$fixedPointLimit]],
+FixedPoint[With[{xzFuncNow=
+genFRFunc[{numX,numEps,numZ},genLilXkZkFunc[linMod,XZFuncs,#[[Range[numX]]]],
+eqnsFunc]},xzFuncNow @@funcArgs]&,xtGuess,$fixedPointLimit]],
 1->funcArgs]]]
 
 

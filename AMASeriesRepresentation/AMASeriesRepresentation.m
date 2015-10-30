@@ -60,7 +60,7 @@ iterateDRPF[drFunc_Function,initVec_?VectorQ,numEps_Integer,numPers_Integer]:=
 With[{firVal=drFunc @@ initVec,numX=Length[initVec]-numEps},
 With[{iterated=
 NestList[(drFunc @@ Flatten[#])&,firVal,numPers-1]},
-Join[Transpose[{initVec}][[Range[numX]]],firVal[[Range[numX]]],Join @@ (#[[Range[numX]]]&/@iterated)]]]/;
+Join[Transpose[{initVec}][[Range[numX]]],(*firVal[[Range[numX]]],*)Join @@ (#[[Range[numX]]]&/@iterated)]]]/;
 And[numPers>0]
 
   
@@ -68,13 +68,10 @@ And[numPers>0]
 pathErrsDRPF[drFunc_Function,eqnsFunc_CompiledFunction,
 anX_?MatrixQ,anEps_?MatrixQ,numPers_Integer]:=
 With[{numX=Length[anX],numEps=Length[anEps]},
-With[{aPath=iterateDRPF[drFunc,Flatten[Join[anX,anEps]],numEps,numPers]},
-With[{useEps={eqnsFunc @@ Flatten[Append[
-aPath[[Range[3*numX]]],anEps]]}},
-Join[useEps,
+With[{aPath=iterateDRPF[drFunc,Flatten[Join[anX,anEps]],numEps,numPers+1]},
 Map[(eqnsFunc @@ Append[
 Flatten[aPath[[numX*(#-1)+Range[3*numX]]]],0])&,
-Range[1,numPers]]]]]]
+Range[1,numPers]]]]
 
 
 
@@ -333,20 +330,6 @@ Transpose[{zVals}]]]],
 
 
  
-genFRFuncGuts[{numX_Integer,numEps_Integer,numZ_Integer},
-xkFunc:(_Function|_CompiledFunction),eqnsFunc_CompiledFunction]:=
-With[{funcArgs=Table[Unique["theFRFuncArgs"],{numX+numEps}],
-zArgs=Table[Unique["theFRZArgs"],{numZ}]},
-With[{zArgsInit={#,0}&/@zArgs,funcName=Unique["fName"]},
-funcName[funcArgsNot:{_?NumberQ..},zArgsNot:{_?NumberQ..}]:=
-Module[{theVars=Join[funcArgsNot,zArgsNot]},Print[theVars,Flatten[xkFunc@@theVars]];
-eqnsFunc@@(Flatten[xkFunc@@theVars])];
-ReplacePart[
-Function[xxxx,With[{zVals=zArgs/.FindRoot[funcName[funcArgs,zArgs],zArgsInit]},
-Join[(xkFunc@@Join[funcArgs,zVals])[[numX+Range[numX]]],
-Transpose[{zVals}]]]],
-1->funcArgs]]]
-
 $fixedPointLimit=30;
 genFPFunc[linMod:{BB_?MatrixQ,phi_?MatrixQ,FF_?MatrixQ,psiEps_?MatrixQ,psiC_?MatrixQ,psiZ_?MatrixQ,psiZPreComp_?MatrixQ},
 XZFuncs:{_Function..},xtGuess_?MatrixQ,eqnsFunc_CompiledFunction]:=

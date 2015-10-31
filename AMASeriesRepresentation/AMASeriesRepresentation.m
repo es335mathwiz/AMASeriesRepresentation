@@ -38,6 +38,41 @@ iterateDRPF::usage="iterateDRPF[drFunc_Function,initVec_?VectorQ,numPers_Integer
 pathErrsDRPF::usage="pathErrsDRPF[drFunc_Function,eqnsFunc_CompiledFunction,anX_?MatrixQ,anEps_?MatrixQ,numPers_Integer]"
 Begin["Private`"]
 
+
+ 
+gridPts[rngs:{{_?NumberQ,_?NumberQ,_?NumberQ}..}]:=
+With[{funcForPts=(Function[xx,oneDimGridPts[xx[[1]],xx[[{2,3}]]]] @#) &},
+With[{oneDimPts=funcForPts/@rngs},
+With[{theOuter=Outer[List,Sequence@@#]&[oneDimPts]},
+Flatten[theOuter,Depth[theOuter]-3]]]]
+
+
+oneDimGridPts[iPts_Integer,{xLow_?NumberQ,xHigh_?NumberQ}]:=
+If[iPts==0,{{(xLow+xHigh)2}},
+Table[ii,{ii,xLow,xHigh,N[xHigh-xLow]/iPts}]]/;iPts>=0
+
+
+fillIn[{theRes:{_?NumberQ...},toIgnore:{_Integer...},shortVec:{_?NumberQ...}}]:=
+Module[{},
+If[toIgnore=={}==shortVec,theRes,
+	If[MemberQ[toIgnore,Length[theRes]+1],fillIn[{Append[theRes,1],Drop[toIgnore,1],shortVec}],
+		fillIn[{Append[theRes,shortVec[[1]]],toIgnore,Drop[shortVec,1]}]]]]/;OrderedQ[toIgnore]
+
+fillIn[{theRes:{_?NumberQ...},toIgnore:{_Integer...},shortVec:{_?NumberQ...}}]:=
+fillIn[{theRes,Sort[toIgnore],shortVec}]
+Print["makeInterpFunc not generic, tied to RBC"];
+makeInterpFunc[aVecFunc_Function,toIgnore:{_Integer...},gSpec:{iOrd_Integer,{_Integer,_?NumberQ,_?NumberQ}..}]:=
+With[{thePts=gridPts[Drop[gSpec,1]]},
+With[{interpData=Map[{#,aVecFunc@@fillIn[{{},toIgnore,#}]}&,thePts]},
+	With[{interpFuncList=
+	Function[kk,Interpolation[{#[[1]], #[[2, kk, 1]]} & /@ interpData,InterpolationOrder -> iOrd]]/@Range[Length[interpData[[1,2]]]]},
+	Function[{ig, kk, th}, Transpose[{Through[interpFuncList[kk, th]]}]]
+]]]
+
+
+
+
+
 Print["changing MatrixPower to produce Identity Matrix for singular matrices raised to 0th power"]
 Unprotect[MatrixPower]
 MatrixPower[xx_?MatrixQ,0]:=IdentityMatrix[Length[xx]]/;

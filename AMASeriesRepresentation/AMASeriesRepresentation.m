@@ -321,12 +321,18 @@ xtGuess_?MatrixQ,eqnsFunc_CompiledFunction,distribs_List,numIters_Integer]:=
 NestList[doIterRE[linMod,#[[2]],xtGuess,
 eqnsFunc,distribs]&,{ig,XZFuncsNow},numIters]
 
-Print["genXZFuncPF: tied to RBC Model not generic"]'
+Print["genXZFuncPFInterp: tied to RBC Model not generic"]'
 
 Global`numPts = 20; Global`aGSpec = 
  MapAt[N, {0, {Global`numPts, Global`kLow, Global`kHigh}, {Global`numPts, Global`thLow, Global`thHigh}, {Global`numPts,
      Global`sigLow, Global`sigHigh}}, {{2, 2}, {2, 3}, {3, 2}, {3, 3}, {4, 2}, {4, 
     3}}];
+    
+genXZFuncPFInterp[{numX_Integer,numEps_Integer,numZ_Integer},
+aLilXkZkFunc_Function]:=
+With[{theFuncNow=genXZFuncPFInterp[{numX,numEps,numZ},aLilXkZkFunc]},
+makeInterpFunc[theFuncNow,{1},Drop[Global`aGSpec,-1]]]
+
     
 genXZFuncPF[{numX_Integer,numEps_Integer,numZ_Integer},
 aLilXkZkFunc_Function]:=
@@ -336,7 +342,7 @@ With[{theFuncNow=
 ReplacePart[
 Function[xxxx,aLilXkZkFunc@@Join[funcArgs,theZeroes]],
 1->funcArgs]},
-makeInterpFunc[theFuncNow,{1},Drop[Global`aGSpec,-1]]
+	theFuncNow
 ]]
 
 

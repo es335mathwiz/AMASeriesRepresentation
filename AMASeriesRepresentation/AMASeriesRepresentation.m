@@ -241,12 +241,12 @@ compareFormula[linMod:{BB_?MatrixQ,phi_?MatrixQ,FF_?MatrixQ,psiEps_?MatrixQ,psiC
 	With[{numX=Length[BB],numZ=Length[psiZ[[1]]]},
 		With[{xtVal=xtztVal[[Range[numX]]],ztVal=xtztVal[[numX+Range[numZ]]]},
 With[{fCon=fSum[linMod,XZFuncs,xtVal]},
-	With[{xtVals=BB.Transpose[{xtm1Vars}]+
-Inverse[IdentityMatrix[Length[xtm1Vars]]-FF] . phi . psiC + phi . psiEps . Transpose[{epsVars}]+
+	With[{xtVals=BB.xtm1Vars+
+Inverse[IdentityMatrix[Length[xtm1Vars]]-FF] . phi . psiC + phi . psiEps . epsVars+
 phi . psiZ . ztVal +FF.fCon},
-Join[Transpose[{xtm1Vars}],xtVals,
+Join[xtm1Vars,xtVals,
 BB.xtVals+Inverse[IdentityMatrix[Length[xtm1Vars]]-FF] . phi . psiC+fCon,
-Transpose[{epsVars}]]]]]]
+epsVars]]]]]
 
 (*eqnsfuncs func of xtm1,xt,xtp1,eps  returns discrep*)
 (*xkfunc func of xtm1, eps zs returns xtm1,xt,xtp1,eps as matrices*)

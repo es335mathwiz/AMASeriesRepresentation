@@ -5,7 +5,7 @@
 	<projects>
 		<project>anisotropicSmolyak</project>
 		<project>MyMathUtilities</project>
-		<project>ProtectedSymbols</project>
+		<project>ProtectedSymbolsProject</project>
 	</projects>
 	<buildSpec>
 		<buildCommand>

@@ -171,25 +171,7 @@ With[{compArgs=xtm1Vars},
 Function @@ {compArgs,Join[BB.Transpose[{xtm1Vars}]+
 Inverse[IdentityMatrix[Length[xtm1Vars]]-FF] . phi . psiC,ConstantArray[0,{numZVars,1}]]}]]]
 
-(*
-(*func of xtm1vars,epsvars,zvars and a guess for xt*)
-genLilXkZkFuncComp[linMod:{BB_?MatrixQ,phi_?MatrixQ,FF_?MatrixQ,psiEps_?MatrixQ,psiC_?MatrixQ,psiZ_?MatrixQ,psiZPreComp_?MatrixQ},XZFuncs:{_Function..},xtGuess_?MatrixQ]:=
-With[{numXVars=Length[BB],
-numEpsVars=Length[psiEps[[1]]],numZVars=Length[psiZ[[1]]]},
-With[{xtm1Vars=genXtm1Vars[numXVars],
-epsVars=genEpsVars[numEpsVars],
-zVars=Reverse[Flatten[genZVars[0,numZVars]]]},
-With[{fCon=fSum[linMod,XZFuncs,xtGuess]},
-With[{compArgs={#,_Real}&/@Join[xtm1Vars,epsVars,zVars]},
-Compile @@ {compArgs,
-With[{xtVals=BB.Transpose[{xtm1Vars}]+
-Inverse[IdentityMatrix[Length[xtm1Vars]]-FF] . phi . psiC + phi . psiEps . Transpose[{epsVars}]+
-phi . psiZ . Transpose[{zVars}] +FF.fCon},
-Join[Transpose[{xtm1Vars}],xtVals,
-BB.xtVals+Inverse[IdentityMatrix[Length[xtm1Vars]]-FF] . phi . psiC+fCon,
-Transpose[{epsVars}]]]}]]]]
 
-*)
 (*func of xtm1vars,epsvars,zvars and a guess for xt*)
 genLilXkZkFunc[linMod:{BB_?MatrixQ,phi_?MatrixQ,FF_?MatrixQ,psiEps_?MatrixQ,psiC_?MatrixQ,psiZ_?MatrixQ,psiZPreComp_?MatrixQ},XZFuncs:{_Function..},xtGuess_?MatrixQ]:=
 With[{numXVars=Length[BB],
@@ -209,76 +191,7 @@ Transpose[{epsVars}]]]],
 1->Join[xtm1Vars,epsVars,zVars]
 ]]]]
 
-(*
-(*need to move compile out of the loop
-func of xtm1vars,epsvars,zvars and a guess for xt*)
-genLilXkZkFuncNG[linMod:{BB_?MatrixQ,phi_?MatrixQ,FF_?MatrixQ,psiEps_?MatrixQ,psiC_?MatrixQ,psiZ_?MatrixQ,psiZPreComp_?MatrixQ},XZFuncs:{_Function..}]:=
-Module[{},
-With[{fSummer=Unique["fSumFName"],
-	numXVars=Length[BB],
-numEpsVars=Length[psiEps[[1]]],numZVars=Length[psiZ[[1]]]},
-fSummer[xtGuess_?MatrixQ]:=fSum[linMod,XZFuncs,xtGuess];
-With[{fSumName=fSum[linMod,XZFuncs,#]&,
-	xtm1Vars=genXtm1Vars[numXVars],
-xGVars=Table[Unique["xGuess"],{numXVars}],
-epsVars=genEpsVars[numEpsVars],
-zVars=Reverse[Flatten[genZVars[0,numZVars]/.{xxx_[t]->xxx}]],
-fConNG=Unique["fCon"]},
-With[{betterArgs=Flatten[Join[xtm1Vars,epsVars,zVars,xGVars,{fConNG}]]},
-With[{compArgs=Append[{#,_Real}&/@(Drop[betterArgs,-1]),{fConNG,_Real,2}]},Print["about to compile",compArgs];
-	With[{theGuts={
-compArgs,
-With[{xtVals=0*BB.Transpose[{xtm1Vars}]+
-0*Inverse[IdentityMatrix[Length[xtm1Vars]]-FF] . phi . psiC + 0*phi . psiEps . Transpose[{epsVars}]+
-0*phi . psiZ . Transpose[{zVars}] +FF.fConNG},Print["incomped",{xtm1Vars,epsVars,zVars,xGVars,fConNG}];
-Join[Transpose[{xtm1Vars}],xtVals,
-BB.xtVals+Inverse[IdentityMatrix[Length[xtm1Vars]]-FF] . phi . psiC+fConNG,
-Transpose[{epsVars}]]]
-}},Print[theGuts//InputForm];
-	With[{nonFPartComp=Compile @@ theGuts},
-ReplacePart[
-Function[xxxx,nonFPartComp @@ Append[zzzz,yyyy @@{Transpose[{xGVars}]}]],
-{1->Drop[betterArgs,-1]}
-]/.{zzzz->Drop[betterArgs,-1],yyyy->fSumName}
-]]]]]]]
-*)
-notYetFSum[_?MatrixQ]:=Print["notYetFSum:should never evaluate"]
-(*	
-genLilXkZkFuncNGAgain[linMod:{BB_?MatrixQ,phi_?MatrixQ,FF_?MatrixQ,psiEps_?MatrixQ,psiC_?MatrixQ,psiZ_?MatrixQ,psiZPreComp_?MatrixQ},XZFuncs:{_Function..}]:=
-Module[{},
-With[{numXVars=Length[BB],
-numEpsVars=Length[psiEps[[1]]],numZVars=Length[psiZ[[1]]]},
-With[{xtm1Vars=genXtm1Vars[numXVars],
-xGVars=Table[Unique["xGuess"],{numXVars}],
-epsVars=genEpsVars[numEpsVars],
-zVars=Reverse[Flatten[genZVars[0,numZVars]]]},
-With[{compArgs={#,_Real}&/@Join[xtm1Vars,epsVars,zVars,xGVars]},
-ReplacePart[
-Compile[
-xxxxx,
-With[{fConNG=notfSum[linMod,XZFuncs,Transpose[{xGVars}]]},
-With[{xtVals=BB.Transpose[{xtm1Vars}]+
-Inverse[IdentityMatrix[Length[xtm1Vars]]-FF] . phi . psiC + phi . psiEps . Transpose[{epsVars}]+
-phi . psiZ . Transpose[{zVars}] +FF.fConNG},
-Join[Transpose[{xtm1Vars}],xtVals,
-BB.xtVals+Inverse[IdentityMatrix[Length[xtm1Vars]]-FF] . phi . psiC+fConNG,
-Transpose[{epsVars}]]]
-]
-],
-1->compArgs
-]]]]]
-*)
 
-(*sum for tp1 mult by FF for t*)
-notfSum[linMod:{BB_?MatrixQ,phi_?MatrixQ,FF_?MatrixQ,psiEps_?MatrixQ,psiC_?MatrixQ,psiZ_?MatrixQ,psiZPreComp_?MatrixQ},XZFuncs:{_Function..},xtGuess_?MatrixQ]:=
-Module[{},
-With[{numXVars=Length[BB],numZVars=Length[psiZ[[1]]]},
-With[{
-fPows=NestList[FF.#&,IdentityMatrix[numZVars],Length[XZFuncs]-1]},Print[{xtGuess,XZFuncs}//InputForm];
-With[{xzRes=5(*Drop[FoldList[#2@@(Flatten[#1][[Range[numXVars]]])&,
-xtGuess,XZFuncs],1]*)},Print["notFSum"];5(*Plus @@
-MapThread[Dot[#1,phi.psiZ.Drop[#2,numXVars]]&,{fPows , xzRes}]
-*)]]]]
 
 
 (*sum for tp1 mult by FF for t*)
@@ -290,18 +203,10 @@ With[{xzRes=Drop[FoldList[#2@@(Flatten[#1][[Range[numXVars]]])&,
 xtGuess,XZFuncs],1]},Plus @@
 MapThread[Dot[#1,phi.psiZ.Drop[#2,numXVars]]&,{fPows , xzRes}]]]]
 
-(*
-fSum[linMod:{BB_?MatrixQ,phi_?MatrixQ,FF_?MatrixQ,psiEps_?MatrixQ,psiC_?MatrixQ,psiZ_?MatrixQ,psiZPreComp_?MatrixQ},zPath:{_?MatrixQ..}]:=
-With[{numZVars=Length[psiZ[[1]]]},
-With[{fPows=NestList[FF.#&,IdentityMatrix[numZVars],Length[zPath]-1]},
-Plus @@
-MapThread[Dot[#1,phi.psiZ.#2]&,{fPows , zPath}]]]
-*)
 fSum[linMod:{BB_?MatrixQ,phi_?MatrixQ,FF_?MatrixQ,psiEps_?MatrixQ,psiC_?MatrixQ,psiZ_?MatrixQ,psiZPreComp_?MatrixQ},XZFuncs:{_Function..},xtGuess_?MatrixQ]:=
-With[{numXVars=Length[BB],numZVars=Length[psiZ[[1]]]},
-With[{fPows=NestList[FF.#&,IdentityMatrix[numZVars],Length[XZFuncs]-1]},
+With[{numXVars=Length[BB]},
 With[{xzRes=#[[numXVars+Range[numXVars]]]&/@(Drop[FoldList[#2@@(Flatten[#1][[Range[numXVars]]])&,
-xtGuess,XZFuncs],1])},fSumC[phi,FF,psiZ,xzRes]]]]
+xtGuess,XZFuncs],1])},fSumC[phi,FF,psiZ,xzRes]]]
 
 
 fSumC=Compile[{{phi,_Real,2},{FF,_Real,2},{psiZ,_Real,2},{zPath,_Real,3}},
@@ -369,13 +274,12 @@ $fixedPointLimit=30;
 genFPFunc[linMod:{BB_?MatrixQ,phi_?MatrixQ,FF_?MatrixQ,psiEps_?MatrixQ,psiC_?MatrixQ,psiZ_?MatrixQ,psiZPreComp_?MatrixQ},
 XZFuncs:{_Function..},xtGuess_?MatrixQ,eqnsFunc_CompiledFunction]:=
 With[{numX=Length[BB],numEps=Length[psiEps[[1]]],numZ=Length[psiZ[[1]]]},
-With[{funcArgs=Table[Unique["theFPFuncArgs"],{numX+numEps}](*,
-theNG=genLilXkZkFuncNG[linMod,XZFuncs]*)},(*Print["theNG=",theNG//InputForm];*)
+With[{funcArgs=Table[Unique["theFPFuncArgs"],{numX+numEps}]},
 ReplacePart[
-Function[xxxx,
+Function[xxxx,Sow[
 FixedPoint[With[{xzFuncNow=
 genFRFunc[{numX,numEps,numZ},genLilXkZkFunc[linMod,XZFuncs,#[[Range[numX]]]],
-eqnsFunc]},xzFuncNow @@funcArgs]&,xtGuess,$fixedPointLimit]],
+eqnsFunc]},xzFuncNow @@funcArgs]&,xtGuess,$fixedPointLimit]]],
 1->funcArgs]]]
 
 
@@ -383,8 +287,7 @@ $fixedPointLimit=30;
 genFPFuncAgain[linMod:{BB_?MatrixQ,phi_?MatrixQ,FF_?MatrixQ,psiEps_?MatrixQ,psiC_?MatrixQ,psiZ_?MatrixQ,psiZPreComp_?MatrixQ},
 XZFuncs:{_Function..},eqnsFunc_CompiledFunction]:=
 With[{numX=Length[BB],numEps=Length[psiEps[[1]]],numZ=Length[psiZ[[1]]]},
-With[{funcArgs=Table[Unique["theFPFuncArgs"],{numX+numEps}](*,
-theNG=genLilXkZkFuncNG[linMod,XZFuncs]*)},(*Print["theNG=",theNG//InputForm];*)
+With[{funcArgs=Table[Unique["theFPFuncArgs"],{numX+numEps}]},
 ReplacePart[
 Function[xxxx,
 FixedPoint[With[{xzFuncNow=
@@ -417,15 +320,23 @@ xtGuess_?MatrixQ,eqnsFunc_CompiledFunction,distribs_List,numIters_Integer]:=
 NestList[doIterRE[linMod,#[[2]],xtGuess,
 eqnsFunc,distribs]&,{ig,XZFuncsNow},numIters]
 
+Print["genXZFuncPF: tied to RBC Model not generic"]'
 
-
+Global`numPts = 20; Global`aGSpec = 
+ MapAt[N, {0, {Global`numPts, Global`kLow, Global`kHigh}, {Global`numPts, Global`thLow, Global`thHigh}, {Global`numPts,
+     Global`sigLow, Global`sigHigh}}, {{2, 2}, {2, 3}, {3, 2}, {3, 3}, {4, 2}, {4, 
+    3}}];
+    
 genXZFuncPF[{numX_Integer,numEps_Integer,numZ_Integer},
 aLilXkZkFunc_Function]:=
 With[{funcArgs=Table[Unique["theFRFuncArgs"],{numX}],
 theZeroes=Table[0,{numEps}]},
+With[{theFuncNow=
 ReplacePart[
 Function[xxxx,aLilXkZkFunc@@Join[funcArgs,theZeroes]],
-1->funcArgs]]
+1->funcArgs]},
+makeInterpFunc[theFuncNow,{1},Drop[Global`aGSpec,-1]]
+]]
 
 
 genXZFuncRE[{numX_Integer,numEps_Integer,numZ_Integer},

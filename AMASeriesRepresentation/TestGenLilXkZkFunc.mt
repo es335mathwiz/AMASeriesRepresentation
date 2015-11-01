@@ -10,8 +10,16 @@ linMod={{{0., 0.6926315789473684, 0.34202807765803783},
  {{-0.9988685455324166}, {-0.19718359057668058}, {0.05009757134342517}}, 
  {{1., 0., 0.}, {0., 1., 0.}, {0., 0., 1.}}, {{0}}};
  anXtm1EpsZ={1, .18, 1.1, 0.01, 0.01, -.02, .0001};
+ 	X0Z0=genX0Z0Funcs[linMod]
 Test[
-	With[{theFunc=genLilXkZkFuncNG[linMod, {X0Z0},X0Z0@@anXtm1EpsZ]},
+	X0Z0@@anXtm1EpsZ
+	,
+	{{0.3891952752266469}, {0.20228690596886514}, {1.0950453226496533}, {0}, {0}, {0}},
+	TestID->"TestGenLilXkZkFunc-20151101-J4G6L2"
+] 
+ 
+Test[
+	With[{theFunc=Private`genLilXkZkFunc[linMod, {X0Z0},X0Z0@@anXtm1EpsZ]},
 		theFunc @@ anXtm1EpsZ]
 	,
 	{{1}, {0.18}, {1.1}, {0.3792309409344926}, {0.19778300683599365}, 

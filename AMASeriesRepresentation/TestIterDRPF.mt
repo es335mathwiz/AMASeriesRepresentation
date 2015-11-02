@@ -53,20 +53,119 @@ Test[
 
 
 
-
 Test[
 	iterateDRPF[xzFunc02,anXtm1EpsZ[[Range[4]]],1,5]
 	,
-	{{1}, {0.18}, {1.1}, {0.3921887121940096}, {0.2042476292306595}, {1.1057730363825737}, {0.41078392534332286}, {0.21401979618704192}, {1.1068456916955154}, {0.4187836324784842}, {0.21821716328989457}, {1.1096258211181955}, {0.4229558873001222}, {0.22042095872723413}, {1.1129237777310605}, {0.42588599798923116}, {0.221983535659673}, {1.1166485805582018}}
-	,
-	TestID->"TestIterDRPF-2015tt01-A5U5A6"
+	{{1}, {0.18}, {1.1}, {0.39235731006153807}, {0.20407903136313102}, {1.1057730363825737}, {0.4109304257871363}, {0.2137434837319069}, {1.106944760582406}, {0.4188791110486636}, {0.21788507272749033}, {1.1097296492784399}, {0.42301366241122956}, {0.22004481794980663}, {1.1129831204775922}, {0.4259043418724}, {0.22155935852931263}, {1.116635453419975}}	,
+	TestID->"TestIterDRPF-2015tt01-A775A6"
 ]
 
 
 Test[
 	iterateDRPF[xzFunc03,anXtm1EpsZ[[Range[4]]],1,5]
 	,
-	{{1}, {0.18}, {1.1}, {0.3921887121940096}, {0.2042476292306595}, {1.1057730363825737}, {0.41078392534332286}, {0.21401979618704192}, {1.1068456916955154}, {0.4187836324784842}, {0.21821716328989457}, {1.1096258211181955}, {0.4229558873001222}, {0.22042095872723413}, {1.1129237777310605}, {0.42588599798923116}, {0.221983535659673}, {1.1166485805582018}}
+	{{1}, {0.18}, {1.1}, {0.3924247522246667}, {0.20401158920000237}, {1.1057730363825737}, {0.41097343692730054}, {0.21365532890426184}, {1.106996477073932}, {0.41892085044163274}, {0.21778931452688902}, {1.1098003075064278}, {0.4230592739770495}, {0.2199436997376074}, {1.1130631809357934}, {0.425954416963074}, {0.22145224323224136}, {1.1167218493775308}},
+	TestID->"TestIterDRPF-2015nn01-A5U886"
+]
+
+
+
+
+
+
+
+Test[
+	With[{pathNow=iterateDRPF[xzFunc01,anXtm1EpsZ[[Range[4]]],1,5],oSet=0},
+	rbcEqnsFunctionalNext@@Append[Flatten[pathNow[[oSet+Range[9]]]],anXtm1EpsZ[[4]]]]
 	,
-	TestID->"TestIterDRPF-2015nn01-A5U5A6"
+	True
+	,
+	TestID->"TestGenPath-2MM51101-H4uuR9"
+]
+
+Test[
+	With[{pathNow=iterateDRPF[xzFunc02,anXtm1EpsZ[[Range[4]]],1,5],oSet=0},
+	rbcEqnsFunctionalNext@@Append[Flatten[pathNow[[oSet+Range[9]]]],anXtm1EpsZ[[4]]]]
+	,
+	True
+	,
+	TestID->"TestGenPath-2MM51771-H4uuR9"
+]
+
+Test[
+	With[{pathNow=iterateDRPF[xzFunc03,anXtm1EpsZ[[Range[4]]],1,5],oSet=0},
+	rbcEqnsFunctionalNext@@Append[Flatten[pathNow[[oSet+Range[9]]]],anXtm1EpsZ[[4]]]]
+	,
+	True
+	,
+	TestID->"TestGenPath-ttM51771-H487R9"
+]
+
+
+
+Test[
+	With[{pathNow=iterateDRPF[xzFunc01,anXtm1EpsZ[[Range[4]]],1,5]},
+	rbcEqnsFunctionalNext@@Append[Flatten[pathNow[[3+Range[9]]]],0*anXtm1EpsZ[[4]]]]
+	,
+	True
+	,
+	TestID->"TestGenPath-98M51101-H4uuR9"
+]
+
+Test[
+	With[{pathNow=iterateDRPF[xzFunc02,anXtm1EpsZ[[Range[4]]],1,5]},
+	rbcEqnsFunctionalNext@@Append[Flatten[pathNow[[3+Range[9]]]],0*anXtm1EpsZ[[4]]]]
+	,
+	True
+	,
+	TestID->"TestGenPath-2MM59071-H4uuR9"
+]
+
+Test[
+	With[{pathNow=iterateDRPF[xzFunc03,anXtm1EpsZ[[Range[4]]],1,5]},
+	rbcEqnsFunctionalNext@@Append[Flatten[pathNow[[3+Range[9]]]],0*anXtm1EpsZ[[4]]]]
+	,
+	True
+	,
+	TestID->"TestGenPath-2MM51io01-H487R9"
+]
+
+
+
+
+
+Test[
+	With[{pathNow=iterateDRPF[xzFunc01,anXtm1EpsZ[[Range[4]]],1,5],oSet=6},
+	rbcEqnsFunctionalNext@@Append[Flatten[pathNow[[oSet+Range[9]]]],0*anXtm1EpsZ[[4]]]]
+	,
+	True
+	,
+	TestID->"TestGenPath-2MmkM51101-H4uuR9"
+]
+
+Test[
+	With[{pathNow=iterateDRPF[xzFunc02,anXtm1EpsZ[[Range[4]]],1,5],oSet=6},
+	rbcEqnsFunctionalNext@@Append[Flatten[pathNow[[oSet+Range[9]]]],0*anXtm1EpsZ[[4]]]]
+	,
+	True
+	,
+	TestID->"TestGenPath-2MM51771-H4upouR9"
+]
+
+Test[
+	With[{pathNow=iterateDRPF[xzFunc03,anXtm1EpsZ[[Range[4]]],1,5],oSet=6},
+	rbcEqnsFunctionalNext@@Append[Flatten[pathNow[[oSet+Range[9]]]],0*anXtm1EpsZ[[4]]]]
+	,
+	True
+	,
+	TestID->"TestGenPath-ttuiM51771-H487R9"
+]
+
+
+Test[
+	pathNow=pathErrsDRPF[xzFunc01,anXtm1EpsZ[[Range[4]]],1,rbcEqnsFunctionalNext,3]
+	,
+	True
+	,
+	TestID->"TestGenPath-ttuiM59971-H487R9"
 ]

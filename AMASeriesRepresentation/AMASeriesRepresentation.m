@@ -109,6 +109,25 @@ And[numPers>0]
 
   
 
+pathErrsDRPF[drFunc_Function,initVec_?VectorQ,numEps_Integer,eqnsFunc_CompiledFunction,numPers_Integer]:=
+With[{firVal=drFunc @@ initVec,numX=Length[initVec]-numEps},
+With[{iterated=
+NestList[(drFunc @@ Flatten[#])&,firVal,numPers-1]},
+With[{pathNow=
+Join[Transpose[{initVec}][[Range[numX]]],Join @@ (#[[Range[numX]]]&/@iterated)]},
+With[{firstArg=doFuncArg[pathNow,Flatten[Reverse[initVec[[-Range[numEps]]]]],numX,0],
+	restArgs=(doFuncArg[pathNow,Table[0,{numEps}],numX,#-2]&/@Range[3,numPers])},
+Print["fa=",{firstArg,restArgs}];
+With[{first=eqnsFunc@@firstArg},
+	With[{theRest=(eqnsFunc@@#)&/@restArgs},
+		Prepend[theRest,first]
+]]]]]]/;
+And[numPers>1]
+
+doFuncArg[pathNow_?MatrixQ,epsVals_?VectorQ,numX_Integer,oSet_Integer]:=
+With[{firstArg=Join[Flatten[pathNow[[oSet*3+Range[3*numX]]]],Flatten[epsVals]]},Print["fa=",firstArg];
+firstArg]
+  (*
 pathErrsDRPF[drFunc_Function,eqnsFunc_CompiledFunction,
 anX_?MatrixQ,anEps_?MatrixQ,numPers_Integer]:=
 With[{numX=Length[anX],numEps=Length[anEps]},
@@ -117,7 +136,7 @@ Map[(eqnsFunc @@ Append[
 Flatten[aPath[[numX*(#-1)+Range[3*numX]]]],0])&,
 Range[1,numPers]]]]
 
-
+*)
 
 pathErrs[{numX_Integer,numEps_Integer,numZs_Integer},
 {lilXZFunc_Function,bigXZFuncs:{_Function..}},eqnsFunc_CompiledFunction,

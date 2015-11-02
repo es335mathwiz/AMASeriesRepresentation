@@ -23,13 +23,21 @@ theLilFunc=Private`genLilXkZkFunc[linMod, {X0Z0},X0Z0@@anXtm1EpsZ];
 theFR=Private`genFRFunc[{3,1,3},theLilFunc,rbcEqnsFunctionalNext];
 theFP=Private`genFPFunc[linMod,{X0Z0},X0Z0@@anXtm1EpsZ,rbcEqnsFunctionalNext];
 
+
+
+theLilFuncMoreX0Z0=Private`genLilXkZkFunc[linMod, {X0Z0,X0Z0,X0Z0,X0Z0},X0Z0@@anXtm1EpsZ];
+theFRMoreX0Z0=Private`genFRFunc[{3,1,3},theLilFuncMoreX0Z0,rbcEqnsFunctionalNext];
+theFPMoreX0Z0=Private`genFPFunc[linMod,{X0Z0,X0Z0,X0Z0,X0Z0},X0Z0@@anXtm1EpsZ,rbcEqnsFunctionalNext];
+
+
+
 (*fixed point irrelevant until more than one XZ*)
 Test[
 With[{frXtZt=theFR@@anXtm1EpsZ[[Range[4]]],
 	fpXtZt=theFP@@anXtm1EpsZ[[Range[4]]]},Chop[Norm[frXtZt-fpXtZt]==0]],
 	True
 	,
-	TestID->"TestGenFRFunc-20151101-R6T3M7"
+	TestID->"TestGenFRFunc-201101-R6T3M7"
 ]
 
 (*satisfies system equations*)
@@ -39,5 +47,27 @@ With[{fpXtZt=theFP@@anXtm1EpsZ[[Range[4]]]},
 	Chop[Norm[rbcEqnsFunctionalNext @@ aPath]]==0]],
 	True
 	,
-	TestID->"TestGenFRFunc-20151101-R6T8M7"
+	TestID->"TestGenFRFunc-151101-R6T8M7"
+]
+
+
+
+
+(*fixed point irrelevant until more than one XZ and Z's non zero*)
+Test[
+With[{frXtZt=theFRMoreX0Z0@@anXtm1EpsZ[[Range[4]]],
+	fpXtZt=theFPMoreX0Z0@@anXtm1EpsZ[[Range[4]]]},Chop[Norm[frXtZt-fpXtZt]==0]],
+	True
+	,
+	TestID->"TestGenFRFunc-20151101-MMT3M7"
+]
+
+(*satisfies system equations*)
+Test[
+With[{fpXtZt=theFPMoreX0Z0@@anXtm1EpsZ[[Range[4]]]},
+	With[{aPath=Flatten[theLilFunc@@ Flatten[Join[anXtm1EpsZ[[Range[4]]],fpXtZt[[3+Range[3]]]]]]},
+	Chop[Norm[rbcEqnsFunctionalNext @@ aPath]]==0]],
+	True
+	,
+	TestID->"TestGenFRFunc-20151101-NNT8M7"
 ]

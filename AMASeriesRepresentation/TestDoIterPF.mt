@@ -18,40 +18,37 @@ linMod={{{0., 0.6926315789473684, 0.34202807765803783},
 },
 {cct^(-1) - (0.342*((1.*thetatp1)/cctp1))/kkt^(16/25), 
 cct + kkt - 1.*kktm1^(9/25)*thetat, 
-thetat - 1.*2.718281828459045^epsVal*thetatm1^(19/20)}]
+thetat - 1.*2.718281828459045^epsVal*thetatm1^(19/20)}];
 theLilFunc=Private`genLilXkZkFunc[linMod, {X0Z0},X0Z0@@anXtm1EpsZ];
 theFR=Private`genFRFunc[{3,1,3},theLilFunc,rbcEqnsFunctionalNext];
+theFP=Private`genFPFunc[linMod,{X0Z0},X0Z0@@anXtm1EpsZ,rbcEqnsFunctionalNext];
+{xzFunc,iterXZFuncsPF}=doIterPF[linMod,{X0Z0},X0Z0@@anXtm1EpsZ,rbcEqnsFunctionalNext]
+anXZFuncPF=genXZFuncPF[{3,1,3},theFP];
 
-
-theLilFuncMoreX0Z0=Private`genLilXkZkFunc[linMod, {X0Z0,X0Z0,X0Z0,X0Z0},X0Z0@@anXtm1EpsZ];
-theFRMoreX0Z0=Private`genFRFunc[{3,1,3},theLilFuncMoreX0Z0,rbcEqnsFunctionalNext];
 
 Test[
-theFR@@anXtm1EpsZ[[Range[4]]],(*produces xtzt for a given xtm1,eps and conditional z functions*)
-	{{0.3921887121940096}, {0.2042476292306595}, {1.1057730363825737}, {0.005996813507974068}, {-0.0009158809951082657}, {0.0007182092189910172}}
+	Chop[Norm[iterXZFuncsPF[[1]] @@anXtm1EpsZ-xzFunc @@Append[anXtm1EpsZ[[Range[3]]],0]]]==0
 	,
-	TestID->"TestGenFRFunc-20151101-L8W9H4"
+	True
+	,
+	TestID->"TestDoIterPF-20151101-C2H9V8"
 ]
 
 
 Test[
-With[{frXtZt=theFR@@anXtm1EpsZ[[Range[4]]]},
-	With[{aPath=Flatten[theLilFunc@@ Flatten[Join[anXtm1EpsZ[[Range[4]]],frXtZt[[3+Range[3]]]]]]},
-	Chop[Norm[rbcEqnsFunctionalNext @@ aPath]]==0]],
-	True
+	anXZFuncPF @@anXtm1EpsZ
 	,
-	TestID->"TestGenFRFunc-20151101-R6T3M7"
+	{{0.3883382263359695}, {0.20216347433348605}, {1.09477041083488}, {0.004769815399172405}, {-0.0008300529768195824}, {-0.0002749118147733487}}
+	,
+	TestID->"TestDoIterPF-20151101-A7A1F3"
 ]
 
 
 
-
-
 Test[
-With[{frXtZt=theFRMoreX0Z0@@anXtm1EpsZ[[Range[4]]]},
-	With[{aPath=Flatten[theLilFunc@@ Flatten[Join[anXtm1EpsZ[[Range[4]]],frXtZt[[3+Range[3]]]]]]},
-	Chop[Norm[rbcEqnsFunctionalNext @@ aPath]]==0]],
-	True
+	iterXZFuncsPF[[1]] @@anXtm1EpsZ
 	,
-	TestID->"TestGenFRFunc-20151101-R63TM7"
+	{{0.3883382263359695}, {0.20216347433348605}, {1.09477041083488}, {0.004769815399172405}, {-0.0008300529768195824}, {-0.0002749118147733487}}
+	,
+	TestID->"TestDoIterPF-20151101-C3L9F3"
 ]

@@ -41,7 +41,11 @@ aPath03=genPath[xzFunc03,Drop[iterXZFuncsPF03,1],Transpose[{anXtm1EpsZ[[Range[3]
 cPath03=Private`genPathCompare[linMod,xzFunc03,Drop[iterXZFuncsPF03,1],Transpose[{anXtm1EpsZ[[Range[3]]]}],{anXtm1EpsZ[[{4}]]}];
 
 
+pathErrs01=pathErrsDRPF[xzFunc01,anXtm1EpsZ[[Range[4]]],1,rbcEqnsFunctionalNext,4]
 
+pathErrs02=pathErrsDRPF[xzFunc02,anXtm1EpsZ[[Range[4]]],1,rbcEqnsFunctionalNext,4]
+
+pathErrs03=pathErrsDRPF[xzFunc03,anXtm1EpsZ[[Range[4]]],1,rbcEqnsFunctionalNext,4]
 
 Test[
 	iterateDRPF[xzFunc01,anXtm1EpsZ[[Range[4]]],1,5]
@@ -76,7 +80,7 @@ Test[
 
 Test[
 	With[{pathNow=iterateDRPF[xzFunc01,anXtm1EpsZ[[Range[4]]],1,5],oSet=0},
-	rbcEqnsFunctionalNext@@Append[Flatten[pathNow[[oSet+Range[9]]]],anXtm1EpsZ[[4]]]]
+	Chop[Norm[pathErrs01[[1]]-rbcEqnsFunctionalNext@@Append[Flatten[pathNow[[oSet+Range[9]]]],anXtm1EpsZ[[4]]]]]==0]
 	,
 	True
 	,
@@ -85,87 +89,81 @@ Test[
 
 Test[
 	With[{pathNow=iterateDRPF[xzFunc02,anXtm1EpsZ[[Range[4]]],1,5],oSet=0},
-	rbcEqnsFunctionalNext@@Append[Flatten[pathNow[[oSet+Range[9]]]],anXtm1EpsZ[[4]]]]
+	Chop[Norm[pathErrs02[[1]]-rbcEqnsFunctionalNext@@Append[Flatten[pathNow[[oSet+Range[9]]]],anXtm1EpsZ[[4]]]]]==0]
 	,
 	True
 	,
-	TestID->"TestGenPath-2MM51771-H4uuR9"
+	TestID->"TestGenPath-2M881101-H4uuR9"
 ]
 
 Test[
 	With[{pathNow=iterateDRPF[xzFunc03,anXtm1EpsZ[[Range[4]]],1,5],oSet=0},
-	rbcEqnsFunctionalNext@@Append[Flatten[pathNow[[oSet+Range[9]]]],anXtm1EpsZ[[4]]]]
+	Chop[Norm[pathErrs03[[1]]-rbcEqnsFunctionalNext@@Append[Flatten[pathNow[[oSet+Range[9]]]],anXtm1EpsZ[[4]]]]]==0]
 	,
 	True
 	,
-	TestID->"TestGenPath-ttM51771-H487R9"
+	TestID->"TestGenPath-20981101-H4uuR9"
 ]
-
 
 
 Test[
-	With[{pathNow=iterateDRPF[xzFunc01,anXtm1EpsZ[[Range[4]]],1,5]},
-	rbcEqnsFunctionalNext@@Append[Flatten[pathNow[[3+Range[9]]]],0*anXtm1EpsZ[[4]]]]
+	With[{pathNow=iterateDRPF[xzFunc01,anXtm1EpsZ[[Range[4]]],1,5],oSet=3},
+	Chop[Norm[pathErrs01[[2]]-rbcEqnsFunctionalNext@@Append[Flatten[pathNow[[oSet+Range[9]]]],0*anXtm1EpsZ[[4]]]]]==0]
 	,
 	True
 	,
-	TestID->"TestGenPath-98M51101-H4uuR9"
+	TestID->"TestGenPath-20094101-H4uuR9"
 ]
 
 Test[
-	With[{pathNow=iterateDRPF[xzFunc02,anXtm1EpsZ[[Range[4]]],1,5]},
-	rbcEqnsFunctionalNext@@Append[Flatten[pathNow[[3+Range[9]]]],0*anXtm1EpsZ[[4]]]]
+	With[{pathNow=iterateDRPF[xzFunc02,anXtm1EpsZ[[Range[4]]],1,5],oSet=3},
+	Chop[Norm[pathErrs02[[2]]-rbcEqnsFunctionalNext@@Append[Flatten[pathNow[[oSet+Range[9]]]],0*anXtm1EpsZ[[4]]]]]==0]
 	,
 	True
 	,
-	TestID->"TestGenPath-2MM59071-H4uuR9"
+	TestID->"TestGenPath-oi094101-H4uuR9"
 ]
-
 Test[
-	With[{pathNow=iterateDRPF[xzFunc03,anXtm1EpsZ[[Range[4]]],1,5]},
-	rbcEqnsFunctionalNext@@Append[Flatten[pathNow[[3+Range[9]]]],0*anXtm1EpsZ[[4]]]]
+	With[{pathNow=iterateDRPF[xzFunc03,anXtm1EpsZ[[Range[4]]],1,5],oSet=3},
+	Chop[Norm[pathErrs03[[2]]-rbcEqnsFunctionalNext@@Append[Flatten[pathNow[[oSet+Range[9]]]],0*anXtm1EpsZ[[4]]]]]==0]
 	,
 	True
 	,
-	TestID->"TestGenPath-2MM51io01-H487R9"
+	TestID->"TestGenPath-20094101-H488R9"
 ]
-
-
-
 
 
 Test[
 	With[{pathNow=iterateDRPF[xzFunc01,anXtm1EpsZ[[Range[4]]],1,5],oSet=6},
-	rbcEqnsFunctionalNext@@Append[Flatten[pathNow[[oSet+Range[9]]]],0*anXtm1EpsZ[[4]]]]
+	Chop[Norm[pathErrs01[[3]]-rbcEqnsFunctionalNext@@Append[Flatten[pathNow[[oSet+Range[9]]]],0*anXtm1EpsZ[[4]]]]]==0]
 	,
 	True
 	,
-	TestID->"TestGenPath-2MmkM51101-H4uuR9"
+	TestID->"TestGenPath-20094101-H4u099"
 ]
 
 Test[
 	With[{pathNow=iterateDRPF[xzFunc02,anXtm1EpsZ[[Range[4]]],1,5],oSet=6},
-	rbcEqnsFunctionalNext@@Append[Flatten[pathNow[[oSet+Range[9]]]],0*anXtm1EpsZ[[4]]]]
+	Chop[Norm[{pathErrs02[[3]]-rbcEqnsFunctionalNext@@Append[Flatten[pathNow[[oSet+Range[9]]]],0*anXtm1EpsZ[[4]]]}]]==0]
 	,
 	True
 	,
-	TestID->"TestGenPath-2MM51771-H4upouR9"
+	TestID->"TestGenPath-oi094101-uyuuR9"
 ]
-
 Test[
 	With[{pathNow=iterateDRPF[xzFunc03,anXtm1EpsZ[[Range[4]]],1,5],oSet=6},
-	rbcEqnsFunctionalNext@@Append[Flatten[pathNow[[oSet+Range[9]]]],0*anXtm1EpsZ[[4]]]]
+	Chop[Norm[pathErrs03[[3]]-rbcEqnsFunctionalNext@@Append[Flatten[pathNow[[oSet+Range[9]]]],0*anXtm1EpsZ[[4]]]]]==0]
 	,
 	True
 	,
-	TestID->"TestGenPath-ttuiM51771-H487R9"
+	TestID->"TestGenPath-20094101-H4llR9"
 ]
 
 
 Test[
 	pathNow=pathErrsDRPF[xzFunc01,anXtm1EpsZ[[Range[4]]],1,rbcEqnsFunctionalNext,3]
 	,
-	True
+	{{0.0029670678549633678, 0., 0.}, {0.003719799597816209, 0., 0.006617684852284533}}
 	,
 	TestID->"TestGenPath-ttuiM59971-H487R9"
 ]

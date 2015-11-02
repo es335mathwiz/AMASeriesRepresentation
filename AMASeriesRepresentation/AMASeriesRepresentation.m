@@ -60,16 +60,25 @@ If[toIgnore=={}==shortVec,theRes,
 
 fillIn[{theRes:{_?NumberQ...},toIgnore:{_Integer...},shortVec:{_?NumberQ...}}]:=
 fillIn[{theRes,Sort[toIgnore],shortVec}]
+
 Print["makeInterpFunc not generic, tied to RBC"];
 makeInterpFunc[aVecFunc_Function,toIgnore:{_Integer...},gSpec:{iOrd_Integer,{_Integer,_?NumberQ,_?NumberQ}..}]:=
+With[{interpData=genInterpData[aVecFunc,toIgnore,gSpec],numArgs=Length[gSpec[[2]]]},
+	With[{numFuncs=Length[interpData[[1,2]]],funcArgs=Table[Unique["fArgs"],{numArgs}]},
+	With[{longFuncArgs=fillIn[{},toIgnore,funcArgs],
+		interpFuncList=
+	Function[funcIdx,Interpolation[{#[[1]], #[[2, funcIdx, 1]]} & /@ interpData,InterpolationOrder -> iOrd]]/@Range[numFuncs]},
+	ReplacePart[
+	Function[{ig, kk, th}, Transpose[{Through[interpFuncList[kk, th]]}]],{1->longFuncArgs,{-1,1}->funcArgs}]
+	]
+]]
+
+
+
+genInterpData[aVecFunc_Function,toIgnore:{_Integer...},gSpec:{iOrd_Integer,{_Integer,_?NumberQ,_?NumberQ}..}]:=
 With[{thePts=gridPts[Drop[gSpec,1]]},
 With[{interpData=Map[{#,aVecFunc@@fillIn[{{},toIgnore,#}]}&,thePts]},
-	With[{interpFuncList=
-	Function[kk,Interpolation[{#[[1]], #[[2, kk, 1]]} & /@ interpData,InterpolationOrder -> iOrd]]/@Range[Length[interpData[[1,2]]]]},
-	Function[{ig, kk, th}, Transpose[{Through[interpFuncList[kk, th]]}]]
-]]]
-
-
+interpData]]
 
 
 
@@ -347,9 +356,9 @@ Global`numPts = 20; Global`aGSpec =
     3}}];
     
 genXZFuncPFInterp[{numX_Integer,numEps_Integer,numZ_Integer},
-aLilXkZkFunc_Function]:=
-With[{theFuncNow=genXZFuncPFInterp[{numX,numEps,numZ},aLilXkZkFunc]},
-makeInterpFunc[theFuncNow,{1},Drop[Global`aGSpec,-1]]]
+aLilXkZkFunc_Function,aGSpec:{_Integer,{{_Integer,_?NumberQ,_?NumberQ}..}}]:=
+With[{theFuncNow=genXZFuncPF[{numX,numEps,numZ},aLilXkZkFunc]},
+makeInterpFunc[theFuncNow,{1},Drop[aGSpec,-1]]]
 
     
 genXZFuncPF[{numX_Integer,numEps_Integer,numZ_Integer},

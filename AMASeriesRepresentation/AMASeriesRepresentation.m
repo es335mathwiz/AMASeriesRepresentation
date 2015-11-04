@@ -35,6 +35,9 @@ fSum::usage="fSum[linMod:{BB_?MatrixQ,phi_?MatrixQ,FF_?MatrixQ,psiEps_?MatrixQ,p
 
 iterateDRPF::usage="iterateDRPF[drFunc_Function,initVec_?VectorQ,numPers_Integer]"
 
+iterateDRREIntegrate::usage="iterateDRPF[drFunc_Function,initVec_?VectorQ,numPers_Integer]"
+
+pathErrsDRREIntegrate::usage="pathErrsDRPF[drFunc_Function,eqnsFunc_CompiledFunction,anX_?MatrixQ,anEps_?MatrixQ,numPers_Integer]"
 pathErrsDRPF::usage="pathErrsDRPF[drFunc_Function,eqnsFunc_CompiledFunction,anX_?MatrixQ,anEps_?MatrixQ,numPers_Integer]"
 Begin["Private`"]
 
@@ -101,7 +104,56 @@ If[reps==1,theMean,
 And[reps>0,numPers>0]
 
 
+iterateDRREIntegrate[drFunc_Function,initVec_?MatrixQ,expctSpec:{{{_Symbol,_}..},opts_:{}},numPers_Integer,reps_Integer:1]:=
+With[{firVal=drFunc @@ initVec},
+With[{allReps=
+Table[
+NestList[drFunc @@ {#[[1]],#[[3]],
+If[NumberQ[aDist],aDist,RandomVariate[aDist]]}&,firVal,numPers-1],{reps}]},
+With[{theMean=prepMeansForHApp[Mean[allReps],initVec]},
+If[reps==1,theMean,
+{theMean,prepStdDevsForHApp[StandardDeviation[allReps]]}]]]]/;
+And[reps>0,numPers>0]
 
+
+
+iterateDRREIntegrate[drFunc_Function,initVec_?VectorQ,allArgs:{expctSpec:{{_Symbol,_}..},opts_:{}},numPers_Integer]:=
+With[{numEps=Length[expctSpec],firVal=drFunc @@ initVec},
+	With[{numX=Length[initVec]-numEps,iterFunc=makeREIterFunc[drFunc,allArgs]},
+With[{iterated=
+NestList[(iterFunc @@ Flatten[#])&,firVal,numPers-1]},
+Join[Transpose[{initVec}][[Range[numX]]],Join @@ (#[[Range[numX]]]&/@iterated)]]]]/;
+And[numPers>0]
+
+makeREIterFunc[drFunc_Function,{expctSpec:{{_Symbol,_}..},opts_:{}}]:=
+With[{numX=Length[drFunc[[1]]]-Length[expctSpec]},
+With[{xVars=Table[Unique["xV"],{numX}]},
+With[{xEpsVars=Join[xVars,First/@expctSpec],
+	intArg=MapThread[#1 \[Distributed] #2&,Transpose[expctSpec]],funcName=Unique["fName"]},
+funcName[funcArgsNot:{_?NumberQ..},idx_Integer]:=(drFunc@@Flatten[funcArgsNot])[[idx,1]];
+	With[{theStuff=
+		Function[xxxx,
+		NExpectation[funcName[Flatten[valSubbed],#],theArg]&/@Range[numX]]
+		},(*{theStuff,*)
+	ReplacePart[
+theStuff,
+	{1->xVars,{2,1,1,2}->intArg,{2,1,1,1,1,1}->xEpsVars}](*	}*)
+	]]]]
+
+   
+
+ 
+pathErrsDRREIntegrate[drFunc_Function,initVec_?VectorQ,allArgs:{expctSpec:{{_Symbol,_}..},opts_:{}},eqnsFunc_CompiledFunction,numPers_Integer]:=
+With[{numEps=Length[expctSpec]},
+With[{pathNow=iterateDRREIntegrate[drFunc,initVec,allArgs,numPers],numX=Length[initVec]-numEps},
+With[{firstArg=doFuncArg[pathNow,Flatten[Reverse[initVec[[-Range[numEps]]]]],numX,0],
+	restArgs=(doFuncArg[pathNow,Table[0,{numEps}],numX,#-2]&/@Range[3,numPers])},
+With[{first=eqnsFunc@@firstArg},
+	With[{theRest=(eqnsFunc@@#)&/@restArgs},
+		Prepend[theRest,first]
+]]]]]/;
+And[numPers>1]
+ 
 iterateDRPF[drFunc_Function,initVec_?VectorQ,numEps_Integer,numPers_Integer]:=
 With[{firVal=drFunc @@ initVec,numX=Length[initVec]-numEps,theZeros=Table[0,{numEps}]},
 With[{iterated=
@@ -109,8 +161,8 @@ NestList[(drFunc @@ Flatten[Append[#[[Range[numX]]],theZeros]])&,firVal,numPers-
 Join[Transpose[{initVec}][[Range[numX]]],Join @@ (#[[Range[numX]]]&/@iterated)]]]/;
 And[numPers>0]
 
-  
-
+   
+ 
 pathErrsDRPF[drFunc_Function,initVec_?VectorQ,numEps_Integer,eqnsFunc_CompiledFunction,numPers_Integer]:=
 With[{pathNow=iterateDRPF[drFunc,initVec,numEps,numPers],numX=Length[initVec]-numEps},
 With[{firstArg=doFuncArg[pathNow,Flatten[Reverse[initVec[[-Range[numEps]]]]],numX,0],
@@ -385,6 +437,8 @@ Function[xxxx,
 	(funcName[Join[funcArgs,shockVars],#]),Thread[shockVars \[Distributed] distribs]]&/@Range[numX+numZ]
 	],
 1->funcArgs]]
+
+
 
 
 End[]

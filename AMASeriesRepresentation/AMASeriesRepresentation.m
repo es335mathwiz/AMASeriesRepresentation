@@ -100,27 +100,25 @@ If[reps==1,theMean,
 {theMean,prepStdDevsForHApp[StandardDeviation[allReps]]}]]]]/;
 And[reps>0,numPers>0]
 
+
+
 iterateDRPF[drFunc_Function,initVec_?VectorQ,numEps_Integer,numPers_Integer]:=
 With[{firVal=drFunc @@ initVec,numX=Length[initVec]-numEps,theZeros=Table[0,{numEps}]},
 With[{iterated=
 NestList[(drFunc @@ Flatten[Append[#[[Range[numX]]],theZeros]])&,firVal,numPers-1]},
-Join[Transpose[{initVec}][[Range[numX]]],(*firVal[[Range[numX]]],*)Join @@ (#[[Range[numX]]]&/@iterated)]]]/;
+Join[Transpose[{initVec}][[Range[numX]]],Join @@ (#[[Range[numX]]]&/@iterated)]]]/;
 And[numPers>0]
 
   
 
 pathErrsDRPF[drFunc_Function,initVec_?VectorQ,numEps_Integer,eqnsFunc_CompiledFunction,numPers_Integer]:=
-With[{firVal=drFunc @@ initVec,numX=Length[initVec]-numEps,theZeros=Table[0,{numEps}]},
-With[{iterated=
-NestList[(drFunc @@ Flatten[Append[#[[Range[numX]]],theZeros]])&,firVal,numPers-1]},
-With[{pathNow=
-Join[Transpose[{initVec}][[Range[numX]]],Join @@ (#[[Range[numX]]]&/@iterated)]},
+With[{pathNow=iterateDRPF[drFunc,initVec,numEps,numPers],numX=Length[initVec]-numEps},
 With[{firstArg=doFuncArg[pathNow,Flatten[Reverse[initVec[[-Range[numEps]]]]],numX,0],
 	restArgs=(doFuncArg[pathNow,Table[0,{numEps}],numX,#-2]&/@Range[3,numPers])},
 With[{first=eqnsFunc@@firstArg},
 	With[{theRest=(eqnsFunc@@#)&/@restArgs},
 		Prepend[theRest,first]
-]]]]]]/;
+]]]]/;
 And[numPers>1]
 
 doFuncArg[pathNow_?MatrixQ,epsVals_?VectorQ,numX_Integer,oSet_Integer]:=

@@ -39,6 +39,9 @@ iterateDRREIntegrate::usage="iterateDRPF[drFunc_Function,initVec_?VectorQ,numPer
 
 evalPathErrDRREIntegrate::usage="evalPathErrDRREIntegrate[drFunc_Function,initVec_?VectorQ,allArgs:{expctSpec:{{_Symbol,_}..},opts_:{}},eqnsFunc_CompiledFunction]"
 
+evalExpctPathErrDRREIntegrate[drFunc_Function,initVec_?VectorQ,allArgs:{expctSpec:{{_Symbol,_}..},opts_:{}},eqnsFunc_CompiledFunction]:=
+With[{numEps=Length[expctSpec]},
+
 
 
 
@@ -149,10 +152,22 @@ theStuff,
    
 evalPathErrDRREIntegrate[drFunc_Function,initVec_?VectorQ,allArgs:{expctSpec:{{_Symbol,_}..},opts_:{}},eqnsFunc_CompiledFunction]:=
 With[{numEps=Length[expctSpec]},
-With[{pathNow=iterateDRREIntegrate[drFunc,initVec,allArgs,2],numX=Length[initVec]-numEps},
+With[{pathNow=iterateDRREIntegrate[drFunc,initVec,allArgs,2],numX=Length[initVec]-numEps,
+epsArgs=Table[Unique["eArgs"],{numEps}]},
+With[{firstArg=
+doFuncArg[pathNow,epsArgs,numX,0]},
+With[{first=NExpectation[eqnsFunc@@firstArg,
+Thread[shockVars \[Distributed] distribs]]},
+first
+]]]]
+
+evalExpctPathErrDRREIntegrate[
+drFunc_Function,initVec_?VectorQ,allArgs:{expctSpec:{{_Symbol,_}..},opts_:{}},eqnsFunc_CompiledFunction]:=
+With[{numEps=Length[expctSpec]},
+With[{pathNow=iterateDRREIntegrate[drFunc,initVec,allArgs,1],numX=Length[initVec]-numEps},
 With[{firstArg=doFuncArg[pathNow,Flatten[Reverse[initVec[[-Range[numEps]]]]],numX,0]},
 With[{first=eqnsFunc@@firstArg},
-		theRest
+first
 ]]]]
 
 

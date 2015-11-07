@@ -41,7 +41,7 @@ pathErrsDRREIntegrate::usage="pathErrsDRPF[drFunc_Function,eqnsFunc_CompiledFunc
 pathErrsDRPF::usage="pathErrsDRPF[drFunc_Function,eqnsFunc_CompiledFunction,anX_?MatrixQ,anEps_?MatrixQ,numPers_Integer]"
 Begin["Private`"]
 
-
+ 
  
 gridPts[rngs:{{_?NumberQ,_?NumberQ,_?NumberQ}..}]:=
 With[{funcForPts=(Function[xx,oneDimGridPts[xx[[1]],xx[[{2,3}]]]] @#) &},
@@ -122,7 +122,7 @@ With[{numEps=Length[expctSpec],firVal=drFunc @@ initVec},
 	With[{numX=Length[initVec]-numEps,iterFunc=makeREIterFunc[drFunc,allArgs]},
 With[{iterated=
 NestList[(iterFunc @@ Flatten[#])&,firVal,numPers-1]},
-Join[Transpose[{initVec}][[Range[numX]]],Join @@ (#[[Range[numX]]]&/@iterated)]]]]/;
+Transpose[{Flatten[Join[Transpose[{initVec}][[Range[numX]]],Join @@ (Transpose[{#[[Range[numX]]]}]&/@iterated)]]}]]]]/;
 And[numPers>0]
 
 makeREIterFunc[drFunc_Function,{expctSpec:{{_Symbol,_}..},opts_:{}}]:=
@@ -141,7 +141,6 @@ theStuff,
 	]]]]
 
    
-
  
 pathErrsDRREIntegrate[drFunc_Function,initVec_?VectorQ,allArgs:{expctSpec:{{_Symbol,_}..},opts_:{}},eqnsFunc_CompiledFunction,numPers_Integer]:=
 With[{numEps=Length[expctSpec]},

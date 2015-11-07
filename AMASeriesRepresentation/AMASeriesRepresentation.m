@@ -37,6 +37,12 @@ iterateDRPF::usage="iterateDRPF[drFunc_Function,initVec_?VectorQ,numPers_Integer
 
 iterateDRREIntegrate::usage="iterateDRPF[drFunc_Function,initVec_?VectorQ,numPers_Integer]"
 
+evalPathErrDRREIntegrate::usage="evalPathErrDRREIntegrate[drFunc_Function,initVec_?VectorQ,allArgs:{expctSpec:{{_Symbol,_}..},opts_:{}},eqnsFunc_CompiledFunction]"
+
+
+
+
+
 pathErrsDRREIntegrate::usage="pathErrsDRPF[drFunc_Function,eqnsFunc_CompiledFunction,anX_?MatrixQ,anEps_?MatrixQ,numPers_Integer]"
 pathErrsDRPF::usage="pathErrsDRPF[drFunc_Function,eqnsFunc_CompiledFunction,anX_?MatrixQ,anEps_?MatrixQ,numPers_Integer]"
 Begin["Private`"]
@@ -103,7 +109,7 @@ If[reps==1,theMean,
 {theMean,prepStdDevsForHApp[StandardDeviation[allReps]]}]]]]/;
 And[reps>0,numPers>0]
 
-
+(*
 iterateDRREIntegrate[drFunc_Function,initVec_?MatrixQ,expctSpec:{{{_Symbol,_}..},opts_:{}},numPers_Integer,reps_Integer:1]:=
 With[{firVal=drFunc @@ initVec},
 With[{allReps=
@@ -115,14 +121,14 @@ If[reps==1,theMean,
 {theMean,prepStdDevsForHApp[StandardDeviation[allReps]]}]]]]/;
 And[reps>0,numPers>0]
 
-
+*)
 
 iterateDRREIntegrate[drFunc_Function,initVec_?VectorQ,allArgs:{expctSpec:{{_Symbol,_}..},opts_:{}},numPers_Integer]:=
 With[{numEps=Length[expctSpec],firVal=drFunc @@ initVec},
 	With[{numX=Length[initVec]-numEps,iterFunc=makeREIterFunc[drFunc,allArgs]},
 With[{iterated=
-NestList[(iterFunc @@ Flatten[#])&,firVal,numPers-1]},
-Join[Transpose[{initVec}][[Range[numX]]],Join @@ (#[[Range[numX]]]&/@iterated)]]]]/;
+NestList[(Transpose[{iterFunc @@ Flatten[#]}])&,firVal,numPers-1]},
+Join[Transpose[{initVec}][[Range[numX]]],Join @@ (Identity[#[[Range[numX]]]]&/@iterated)]]]]/;
 And[numPers>0]
 
 makeREIterFunc[drFunc_Function,{expctSpec:{{_Symbol,_}..},opts_:{}}]:=
@@ -141,6 +147,14 @@ theStuff,
 	]]]]
 
    
+evalPathErrDRREIntegrate[drFunc_Function,initVec_?VectorQ,allArgs:{expctSpec:{{_Symbol,_}..},opts_:{}},eqnsFunc_CompiledFunction]:=
+With[{numEps=Length[expctSpec]},
+With[{pathNow=iterateDRREIntegrate[drFunc,initVec,allArgs,2],numX=Length[initVec]-numEps},
+With[{firstArg=doFuncArg[pathNow,Flatten[Reverse[initVec[[-Range[numEps]]]]],numX,0]},
+With[{first=eqnsFunc@@firstArg},
+		theRest
+]]]]
+
 
  
 pathErrsDRREIntegrate[drFunc_Function,initVec_?VectorQ,allArgs:{expctSpec:{{_Symbol,_}..},opts_:{}},eqnsFunc_CompiledFunction,numPers_Integer]:=

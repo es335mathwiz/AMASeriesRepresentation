@@ -33,3 +33,43 @@ Test[
 	0	,
 	TestID->"TestApprox-20151108-F9V5S9"
 ]
+
+quickFunc01 = 
+  Private`condApproxExpREFunc[Private`hmatSymbRE, linMod, 1];
+quickFunc02 = 
+  Private`condApproxExpREFunc[Private`hmatSymbRE, linMod, 2];
+quickFunc03 = 
+  Private`condApproxExpREFunc[Private`hmatSymbRE, linMod, 3];
+quickFunc10 = 
+  Private`condApproxExpREFunc[Private`hmatSymbRE, linMod, 10];
+Test[
+	quickFunc01 @@ anXEps
+	,
+	{{0.3921815069815494}, {0.2042548344431197}, {1.1057730363825737}}
+	,
+	TestID->"TestApprox-20151108-D8M5G2"
+]
+
+Test[
+	quickFunc02 @@ anXEps
+	,
+	{{0.3923530184605553}, {0.20408332296411383}, {1.1057730363825737}}
+	,
+	TestID->"TestApprox-20151108-xxM5G2"
+]
+
+Test[
+	quickFunc03 @@ anXEps
+	,
+	{{0.3924233363175051}, {0.20401300510716405}, {1.1057730363825737}}
+	,
+	TestID->"TestApprox-20151108-D8Mcc2"
+]
+
+Test[
+	quickFunc10 @@ anXEps
+	,
+	{{0.39245510442410614}, {0.203981237000563}, {1.1057730363825737}}
+	,
+	TestID->"TestApprox-20151108-D8Myy2"
+]

@@ -39,10 +39,9 @@ iterateDRREIntegrate::usage="iterateDRPF[drFunc_Function,initVec_?VectorQ,numPer
 
 evalPathErrDRREIntegrate::usage="evalPathErrDRREIntegrate[drFunc_Function,initVec_?VectorQ,allArgs:{expctSpec:{{_Symbol,_}..},opts_:{}},eqnsFunc_CompiledFunction]"
 
-evalExpctPathErrDRREIntegrate[drFunc_Function,initVec_?VectorQ,allArgs:{expctSpec:{{_Symbol,_}..},opts_:{}},eqnsFunc_CompiledFunction]:=
-With[{numEps=Length[expctSpec]},
+evalExpctPathErrDRREIntegrate::usage="evalExpctPathErrDRREIntegrate[drFunc_Function,initVec_?VectorQ,allArgs:{expctSpec:{{_Symbol,_}..},opts_:{}},eqnsFunc_CompiledFunction]"
 
-
+evalBadPathErrDRREIntegrate::usage="evalBadPathErrDRREIntegrate[drFunc_Function,noEpsVec_?VectorQ,allArgs:{expctSpec:{{_Symbol,_}..},opts_:{}},eqnsFunc_CompiledFunction]"
 
 
 
@@ -50,7 +49,7 @@ pathErrsDRREIntegrate::usage="pathErrsDRPF[drFunc_Function,eqnsFunc_CompiledFunc
 pathErrsDRPF::usage="pathErrsDRPF[drFunc_Function,eqnsFunc_CompiledFunction,anX_?MatrixQ,anEps_?MatrixQ,numPers_Integer]"
 Begin["Private`"]
 
-
+ 
  
 gridPts[rngs:{{_?NumberQ,_?NumberQ,_?NumberQ}..}]:=
 With[{funcForPts=(Function[xx,oneDimGridPts[xx[[1]],xx[[{2,3}]]]] @#) &},
@@ -142,7 +141,7 @@ With[{xEpsVars=Join[xVars,First/@expctSpec],
 funcName[funcArgsNot:{_?NumberQ..},idx_Integer]:=(drFunc@@Flatten[funcArgsNot])[[idx,1]];
 	With[{theStuff=
 		Function[xxxx,
-		NExpectation[funcName[Flatten[valSubbed],#],theArg]&/@Range[numX]]
+		NExpectation[funcName[Flatten[valSubbed],#]//Chop,theArg]&/@Range[numX]]
 		},(*{theStuff,*)
 	ReplacePart[
 theStuff,
@@ -150,6 +149,9 @@ theStuff,
 	]]]]
 
    
+
+(*
+old code desktop
 evalPathErrDRREIntegrate[drFunc_Function,initVec_?VectorQ,allArgs:{expctSpec:{{_Symbol,_}..},opts_:{}},eqnsFunc_CompiledFunction]:=
 With[{numEps=Length[expctSpec],iterFunc=makeREIterFunc[drFunc,allArgs]},
 With[{xtm1Xt=iterateDRREIntegrate[drFunc,initVec,allArgs,1],numX=Length[initVec]-numEps,
@@ -160,15 +162,39 @@ With[{first=NExpectation[eqnsFunc@@firstArg,
 Thread[shockVars \[Distributed] distribs]]},
 first
 ]]]]
+*)
 
-evalExpctPathErrDRREIntegrate[
+evalExpctPathErrDRREIntegrate[drFunc_Function,noEpsVec_?VectorQ,allArgs:{expctSpec:{{_Symbol,_}..},opts_:{}},eqnsFunc_CompiledFunction]:=
+With[{funcName=Unique["fName"]},
+funcName[tryEps:{_?NumberQ..},idx_Integer]:=
+	With[{theVal=evalPathErrDRREIntegrate[drFunc,Join[noEpsVec,tryEps],allArgs,eqnsFunc]},(*Print["ex:",theVal[[1,idx]]];*)theVal[[1,idx]]];
+	With[{outerEVars=Table[Unique["eVs"],{Length[expctSpec]}]},
+	With[{intArg=Thread[outerEVars \[Distributed] Last/@expctSpec]},
+	NExpectation[funcName[outerEVars,#],intArg]&/@Range[3]]]]
+
+   
+evalBadPathErrDRREIntegrate[drFunc_Function,noEpsVec_?VectorQ,allArgs:{expctSpec:{{_Symbol,_}..},opts_:{}},eqnsFunc_CompiledFunction]:=
+With[{funcName=Unique["fName"]},
+funcName[tryEps:{_?NumberQ..}]:=
+	With[{theVal=evalPathErrDRREIntegrate[drFunc,Join[noEpsVec,tryEps],allArgs,eqnsFunc]},(*Print["ex:",theVal[[1,idx]]];*)Norm[theVal,Infinity]];
+	With[{outerEVars=Table[Unique["eVs"],{Length[expctSpec]}]},
+	With[{maxArgs={#,0}&/@outerEVars,cons=And @@  (-0.03<=#<=0.03&/@ outerEVars)},
+	FindMaximum[{funcName[outerEVars],cons},maxArgs]]]]
+
+
+worstPathForErrDRREIntegrate[drFunc_Function,noEpsVec_?VectorQ,allArgs:{expctSpec:{{_Symbol,_}..},opts_:{}},eqnsFunc_CompiledFunction]:=
+With[{fMinRes=evalBadPathErrDRREIntegrate[drFunc,noEpsVec,allArgs,eqnsFunc]},
+	With[{badEps=(First/@fMinRes[[2]])/.fMinRes[[2]]},
+	With[{badPath=iterateDRREIntegrate[drFunc,Join[noEpsVec,badEps],allArgs,2]},
+		Join[badPath,Transpose[{badEps}]]]]]
+	
+	
+>>>>>>> fb12b3a48d9cbcee4bc4715418c5eb024e003225
+
+evalPathErrDRREIntegrate[
 drFunc_Function,initVec_?VectorQ,allArgs:{expctSpec:{{_Symbol,_}..},opts_:{}},eqnsFunc_CompiledFunction]:=
-With[{numEps=Length[expctSpec]},
-With[{pathNow=iterateDRREIntegrate[drFunc,initVec,allArgs,1],numX=Length[initVec]-numEps},
-With[{firstArg=doFuncArg[pathNow,Flatten[Reverse[initVec[[-Range[numEps]]]]],numX,0]},
-With[{first=eqnsFunc@@firstArg},
-first
-]]]]
+pathErrsDRREIntegrate[drFunc,initVec,allArgs,eqnsFunc,2]
+
 
 
  

@@ -151,8 +151,8 @@ theStuff,
 
    
 evalPathErrDRREIntegrate[drFunc_Function,initVec_?VectorQ,allArgs:{expctSpec:{{_Symbol,_}..},opts_:{}},eqnsFunc_CompiledFunction]:=
-With[{numEps=Length[expctSpec]},
-With[{pathNow=iterateDRREIntegrate[drFunc,initVec,allArgs,2],numX=Length[initVec]-numEps,
+With[{numEps=Length[expctSpec],iterFunc=makeREIterFunc[drFunc,allArgs]},
+With[{xtm1Xt=iterateDRREIntegrate[drFunc,initVec,allArgs,1],numX=Length[initVec]-numEps,
 epsArgs=Table[Unique["eArgs"],{numEps}]},
 With[{firstArg=
 doFuncArg[pathNow,epsArgs,numX,0]},

@@ -187,9 +187,6 @@ With[{fMinRes=evalBadPathErrDRREIntegrate[drFunc,noEpsVec,allArgs,eqnsFunc]},
 	With[{badEps=(First/@fMinRes[[2]])/.fMinRes[[2]]},
 	With[{badPath=iterateDRREIntegrate[drFunc,Join[noEpsVec,badEps],allArgs,2]},
 		Join[badPath,Transpose[{badEps}]]]]]
-	
-	
->>>>>>> fb12b3a48d9cbcee4bc4715418c5eb024e003225
 
 evalPathErrDRREIntegrate[
 drFunc_Function,initVec_?VectorQ,allArgs:{expctSpec:{{_Symbol,_}..},opts_:{}},eqnsFunc_CompiledFunction]:=

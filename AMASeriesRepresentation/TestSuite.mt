@@ -6,6 +6,7 @@ TestSuite[
 		"TestGenFRFunc.mt",
 		"TestGenLilXkZkFunc.mt",
 		"TestGenPath.mt",
-		"TestIterDRPF.mt"
+		"TestIterDRPF.mt",
+		"TestApprox.mt"
 	}
 ]

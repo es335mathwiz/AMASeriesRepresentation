@@ -43,7 +43,7 @@ evalExpctPathErrDRREIntegrate::usage="evalExpctPathErrDRREIntegrate[drFunc_Funct
 
 evalBadPathErrDRREIntegrate::usage="evalBadPathErrDRREIntegrate[drFunc_Function,noEpsVec_?VectorQ,allArgs:{expctSpec:{{_Symbol,_}..},opts_:{}},eqnsFunc_CompiledFunction]"
 
-
+genZsRE::usage="genZsRE[anHmat_?MatrixQ,PsiEps_?MatrixQ,PsiC_?MatrixQ,theDRFunc:(_Function|_CompiledFunction),initVec_?VectorQ,allArgs:{expctSpec:{{_Symbol,_}..},opts_:{}},theSysFunc:(_Function|_CompiledFunction),iters_Integer]"
 
 pathErrsDRREIntegrate::usage="pathErrsDRPF[drFunc_Function,eqnsFunc_CompiledFunction,anX_?MatrixQ,anEps_?MatrixQ,numPers_Integer]"
 pathErrsDRPF::usage="pathErrsDRPF[drFunc_Function,eqnsFunc_CompiledFunction,anX_?MatrixQ,anEps_?MatrixQ,numPers_Integer]"
@@ -125,7 +125,7 @@ And[reps>0,numPers>0]
 
 *)
 
-iterateDRREIntegrate[drFunc_Function,initVec_?VectorQ,allArgs:{expctSpec:{{_Symbol,_}..},opts_:{}},numPers_Integer]:=
+iterateDRREIntegrate[drFunc:(_Function|_CompiledFunction),initVec_?VectorQ,allArgs:{expctSpec:{{_Symbol,_}..},opts_:{}},numPers_Integer]:=
 With[{numEps=Length[expctSpec],firVal=drFunc @@ initVec},
 	With[{numX=Length[initVec]-numEps,iterFunc=makeREIterFunc[drFunc,allArgs]},
 With[{iterated=
@@ -133,7 +133,7 @@ NestList[(Transpose[{iterFunc @@ Flatten[#]}])&,firVal,numPers-1]},
 Join[Transpose[{initVec}][[Range[numX]]],Join @@ (Identity[#[[Range[numX]]]]&/@iterated)]]]]/;
 And[numPers>0]
 
-makeREIterFunc[drFunc_Function,{expctSpec:{{_Symbol,_}..},opts_:{}}]:=
+makeREIterFunc[drFunc:(_Function|_CompiledFunction),{expctSpec:{{_Symbol,_}..},opts_:{}}]:=
 With[{numX=Length[drFunc[[1]]]-Length[expctSpec]},
 With[{xVars=Table[Unique["xV"],{numX}]},
 With[{xEpsVars=Join[xVars,First/@expctSpec],
@@ -148,7 +148,28 @@ theStuff,
 	{1->xVars,{2,1,1,2}->intArg,{2,1,1,1,1,1}->xEpsVars}](*	}*)
 	]]]]
 
-   
+ 
+
+genZsRE[anHmat_?MatrixQ,PsiEps_?MatrixQ,PsiC_?MatrixQ,
+	theDRFunc:(_Function|_CompiledFunction),initVec_?VectorQ,allArgs:{expctSpec:{{_Symbol,_}..},opts_:{}},
+	theSysFunc:(_Function|_CompiledFunction),iters_Integer]:=
+Module[{numEps=Length[expctSpec]},
+ With[{numX=Length[initVec]-numEps,
+ 	thePath=Flatten[iterateDRREIntegrate[theDRFunc,initVec,allArgs,iters+1]]},Print["done thePath"];
+With[{worsePaths=
+  Private`worstPathForErrDRREIntegrate[theFunc,
+   thePath[[Range[numX]+numX*(#)]],allArgs,
+				       theSysFunc]&/@Range[(Length[thePath]/numX)-1]},Print["done worsePaths"];
+With[{begi=
+(anHmat). (Transpose[{thePath[[Range[3*numX]]]}]) -(PsiC)-PsiEps. Transpose[{Take[initVec,-numEps]}]},
+If[iters==1,
+    {begi},
+ Join[{begi},
+      theSysFunc @@ Flatten[#]&/@worsePaths]
+]]
+]]]
+
+ 
 
 (*
 old code desktop

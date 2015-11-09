@@ -148,7 +148,7 @@ theStuff,
 	{1->xVars,{2,1,1,2}->intArg,{2,1,1,1,1,1}->xEpsVars}](*	}*)
 	]]]]
 
- 
+ (*
 
 genZsRE[anHmat_?MatrixQ,PsiEps_?MatrixQ,PsiC_?MatrixQ,
 	theDRFunc:(_Function|_CompiledFunction),initVec_?VectorQ,allArgs:{expctSpec:{{_Symbol,_}..},opts_:{}},
@@ -157,7 +157,7 @@ Module[{numEps=Length[expctSpec]},
  With[{numX=Length[initVec]-numEps,
  	thePath=Flatten[iterateDRREIntegrate[theDRFunc,initVec,allArgs,iters+1]]},Print["done thePath"];
 With[{worsePaths=
-  Private`worstPathForErrDRREIntegrate[theFunc,
+  Private`worstPathForErrDRREIntegrate[theDRFunc,
    thePath[[Range[numX]+numX*(#)]],allArgs,
 				       theSysFunc]&/@Range[(Length[thePath]/numX)-1]},Print["done worsePaths"];
 With[{begi=
@@ -169,7 +169,18 @@ If[iters==1,
 ]]
 ]]]
 
- 
+ *)
+
+genZsRE[theDRFunc:(_Function|_CompiledFunction),initVec_?VectorQ,allArgs:{expctSpec:{{_Symbol,_}..},opts_:{}},
+	theSysFunc:(_Function|_CompiledFunction),iters_Integer]:=
+Module[{numEps=Length[expctSpec]},
+With[{numX=Length[initVec]-numEps,
+ 	thePath=Flatten[iterateDRREIntegrate[theDRFunc,initVec,allArgs,iters+1]]},Print["done thePath"];
+With[{worsePaths=
+  Private`worstPathForErrDRREIntegrate[theDRFunc,thePath[[Range[numX]+numX*(#)]],allArgs,theSysFunc]&/@
+				       Range[(Length[thePath]/numX)-1]},Print["done worsePaths",worsePaths,Range[(Length[thePath]/numX)-1]];
+      theSysFunc @@ Flatten[#]&/@worsePaths]
+]]
 
 (*
 old code desktop
@@ -199,7 +210,7 @@ With[{funcName=Unique["fName"]},
 funcName[tryEps:{_?NumberQ..}]:=
 	With[{theVal=evalPathErrDRREIntegrate[drFunc,Join[noEpsVec,tryEps],allArgs,eqnsFunc]},(*Print["ex:",theVal[[1,idx]]];*)Norm[theVal,Infinity]];
 	With[{outerEVars=Table[Unique["eVs"],{Length[expctSpec]}]},
-	With[{maxArgs={#,0}&/@outerEVars,cons=And @@  (-0.03<=#<=0.03&/@ outerEVars)},
+	With[{maxArgs={#,0}&/@outerEVars,cons=And @@  ((-0.01<=#<=0.01)&/@ outerEVars)},
 	FindMaximum[{funcName[outerEVars],cons},maxArgs]]]]
 
 

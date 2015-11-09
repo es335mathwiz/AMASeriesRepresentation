@@ -14,6 +14,7 @@ Needs["simpleRBCModel`"]
 Get["exactCalcsRBC.mth"]
 theDist={{{ee, 
     NormalDistribution[0, 0.01]}}};
+    
 Test[
 	iterateDRREIntegrate[condExpREFunc, anXEps, theDist, 5]
 	,
@@ -34,7 +35,116 @@ Test[
 	0	,
 	TestID->"TestApprox-20151108-F9V5S9"
 ]
+Test[
+Chop[Norm[evalPathErrDRREIntegrate[condExpREFunc, {1, .228,1, .07}, theDist, Private`rbcEqnsFunctionalNext]]]
+	,
+	0
+	,
+	TestID->"TestApprox-20151109-A5G2F6"
+]
 
+Test[
+Chop[Norm[evalPathErrDRREIntegrate[condExpREFunc, {1, .58,1, .07}, theDist, Private`rbcEqnsFunctionalNext]]]
+	,
+	0
+	,
+	TestID->"TestApprox-201xx109-A5G2F6"
+]
+
+
+Test[
+Chop[Norm[evalPathErrDRREIntegrate[condExpREFunc, {1, .58,1.1, .07}, theDist, Private`rbcEqnsFunctionalNext]]]
+	,
+	0
+	,
+	TestID->"TestApprox-201xx109-bbG2F6"
+]
+
+
+Test[
+	Chop[evalBadPathErrDRREIntegrate[condExpREFunc, {1, .228,1}, theDist, Private`rbcEqnsFunctionalNext][[1]]]
+	,
+	0
+	,
+	TestID->"TestApprox-20151109-A4K9W1"
+]
+
+
+
+
+Test[
+	Chop[Private`worstPathForErrDRREIntegrate[condExpREFunc, {1, .228, 
+  1}, theDist, Private`rbcEqnsFunctionalNext]]
+	,
+	{{1}, {0.228}, {1}, {0.3864401918135434}, {0.2008549325231487}, 
+ {0.9999996556943771}, {0.3692199565087831}, {0.19190459745593294}, 
+ {1.0000496741433378}, {-3.443056821638992*^-7}}
+	,
+	TestID->"TestApprox-20151109-AoptW1"
+]
+
+
+Test[
+	Chop[Norm[
+  Private`rbcEqnsFunctionalNext @@ 
+   Flatten[Private`worstPathForErrDRREIntegrate[
+     condExpREFunc, {1, .228, 1}, theDist, 
+     Private`rbcEqnsFunctionalNext]]]]
+	,
+	0
+	,
+	TestID->"TestApprox-20151109-F0Y7K9"
+]
+
+condExpRENotFunc = 
+ Function[{cc, kk, tt, ee}, 
+  1.2*Drop[(condExpRE @@ Append[{cc, kk, tt, ee}, 1]), 3]]
+  
+theRes=Chop[evalPathErrDRREIntegrate[condExpRENotFunc, {1, .58,1.1, .07}, theDist, Private`rbcEqnsFunctionalNext]]
+Test[
+Norm[theRes-{{0, 0, 0.23483004444308975}}]
+	,
+	0.
+	,
+	TestID->"TestApprox-341xx109-bbG2F6"
+]
+
+chk=	evalBadPathErrDRREIntegrate[condExpRENotFunc,{1, .228,1},theDist,Private`rbcEqnsFunctionalNext];
+Test[
+Norm[{chk[[1]],chk[[2,1,2]]}-{0.20609087060599562, 0.029999824423538216}]
+	,
+	0.
+	,
+	TestID->"TestApprox-20151109-A4K551"
+]
+
+
+
+theRes=Private`worstPathForErrDRREIntegrate[condExpRENotFunc, {1,.228,1}, theDist, Private`rbcEqnsFunctionalNext];
+Test[
+	Norm[theRes-{{1}, {0.228}, {1}, {0.4778509379347684}, {0.24836629296913498}, 
+ {1.236545223635966}, {0.5851425962368156}, {0.30413186612916554}, 
+ {1.4682583008190289}, {0.029999824423538216}}]
+	,
+0.
+	,
+	TestID->"TestApprox-20151109-A23tW1"
+]
+
+
+Test[
+	Chop[Norm[
+  Private`rbcEqnsFunctionalNext @@ 
+   Flatten[Private`worstPathForErrDRREIntegrate[
+     condExpREFunc, {1, .228, 1}, theDist, 
+     Private`rbcEqnsFunctionalNext]]]]
+	,
+	0
+	,
+	TestID->"TestApprox-20151109-F767K9"
+]
+  
+ (* 
 quickFunc01 = 
   Private`condApproxExpREFunc[Private`hmatSymbRE, linMod,condExpREFunc, 1];
 quickFunc02 = 
@@ -56,7 +166,7 @@ Test[
 	,
 	{{0.3923530184605553}, {0.20408332296411383}, {1.1057730363825737}}
 	,
-	TestID->"TestApprox-20151108-xxM5G2"
+TestID->"TestApprox-20151108-xxM5G2"
 ]
 
 Test[
@@ -74,7 +184,7 @@ Test[
 	,
 	TestID->"TestApprox-20151108-D8Myy2"
 ]
-
+*)
 Test[
 	condExpREFunc @@ anXEps
 	,
@@ -82,7 +192,6 @@ Test[
 	,
 	TestID->"TestApprox-20151108-I3Q8B7"
 ]
-
 
 hip = iterateDRREIntegrate[condExpREFunc, 
    anXEps, {{{ee, NormalDistribution[0, 0.01]}}}, 5];
@@ -130,8 +239,8 @@ Test[
 ]
 
 Test[
-	Norm[pathErrsDRREIntegrate[condExpREFunc, anXEps, theDist, \
-Private`rbcEqnsFunctionalNext, 2]]
+	Chop[Norm[pathErrsDRREIntegrate[condExpREFunc, anXEps, theDist, \
+Private`rbcEqnsFunctionalNext, 2]]]
 	,
 	0
 	,

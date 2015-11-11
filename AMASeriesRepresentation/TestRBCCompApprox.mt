@@ -90,11 +90,11 @@ Test[
 
 condExpRENotFunc = 
  Function[{cc, kk,nl, tt, ee}, 
-  1.2*Drop[(condExpRE @@ Append[{cc, kk,nl, tt, ee}, 1]), 3]]
+  1.2*Drop[(condExpRE @@ Append[{cc, kk,nl, tt, ee}, 1]), 4]]
   
 theRes=Chop[evalPathErrDRREIntegrate[condExpRENotFunc, {1., .58,1,1.1, .07}, theDist, rbcEqnsCompiled]]
 Test[
-Norm[{theRes-{0.43463696517177397, 0.2583091824183317, -1.2848574078558457, 1.0446657052996773}}]
+Identity[{theRes,{{0.43463696517177397, 0.2583091824183317, -1.2848574078558457, 1.0446657052996773}}}]
 	,
 	0.
 	,
@@ -105,7 +105,7 @@ chk=	evalBadPathErrDRREIntegrate[condExpRENotFunc,{1., .228,1,1.},theDist,rbcEqn
 
 chkPath=Private`worstPathForErrDRREIntegrate[condExpRENotFunc,{1., .228,1,1.},theDist,rbcEqnsCompiled];
 Test[
-Identity[{chk[[1]],(rbcEqnsCompiled@@ Flatten[chkPath])}]
+Identity[{chk,(rbcEqnsCompiled@@ Flatten[chkPath])}]
 	,
 	0
 	,
@@ -116,7 +116,7 @@ Identity[{chk[[1]],(rbcEqnsCompiled@@ Flatten[chkPath])}]
 
 theRes=rbcEqnsCompiled@@Flatten[Private`worstPathForErrDRREIntegrate[condExpRENotFunc, {1,.228,1,1}, theDist, rbcEqnsCompiled]];
 Test[
-	List[{theRes[[-1]],evalBadPathErrDRREIntegrate[condExpRENotFunc, {1.,.228,1,1.}, theDist, rbcEqnsCompiled]}]
+	List[{theRes,evalBadPathErrDRREIntegrate[condExpRENotFunc, {1.,.228,1,1.}, theDist, rbcEqnsCompiled]}]
 	,
 0
 	,
@@ -211,7 +211,7 @@ golly =
   rbcEqnsCompiled];
 
 Test[
-	List[bip[[1]]-(rbcEqnsCompiled@@ Flatten[golly])]
+	List[bip-(rbcEqnsCompiled@@ Flatten[golly])]
 	,
 0
 	,

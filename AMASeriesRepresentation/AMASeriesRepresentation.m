@@ -258,7 +258,7 @@ With[{first=eqnsFunc@@firstArg},
 And[numPers>1]
 
 doFuncArg[pathNow_?MatrixQ,epsVals_?VectorQ,numX_Integer,oSet_Integer]:=
-With[{firstArg=Join[Flatten[pathNow[[oSet*3+Range[3*numX]]]],Flatten[epsVals]]},
+With[{firstArg=Join[Flatten[pathNow[[oSet*numX+Range[3*numX]]]],Flatten[epsVals]]},
 firstArg]
   (*
 pathErrsDRPF[drFunc_Function,eqnsFunc_CompiledFunction,

@@ -140,7 +140,7 @@ Test[
 
 Test[
 	With[{pathNow=iterateDRPF[xzFunc01,anXtm1EpsZ[[Range[5]]],1,5],oSet=8},
-	Chop[Norm[pathErrs01[[4]]-rbcComp@@Append[Flatten[pathNow[[oSet+Range[12]]]],0*anXtm1EpsZ[[5]]]]]==0]
+	Chop[Norm[pathErrs01[[3]]-rbcComp@@Append[Flatten[pathNow[[oSet+Range[12]]]],0*anXtm1EpsZ[[5]]]]]==0]
 	,
 	True
 	,
@@ -149,7 +149,7 @@ Test[
 
 Test[
 	With[{pathNow=iterateDRPF[xzFunc02,anXtm1EpsZ[[Range[5]]],1,5],oSet=8},
-	Chop[Norm[{pathErrs02[[4]]-rbcComp@@Append[Flatten[pathNow[[oSet+Range[12]]]],0*anXtm1EpsZ[[5]]]}]]==0]
+	Chop[Norm[{pathErrs02[[3]]-rbcComp@@Append[Flatten[pathNow[[oSet+Range[12]]]],0*anXtm1EpsZ[[5]]]}]]==0]
 	,
 	True
 	,
@@ -157,7 +157,7 @@ Test[
 ]
 Test[
 	With[{pathNow=iterateDRPF[xzFunc03,anXtm1EpsZ[[Range[5]]],1,5],oSet=8},
-	Chop[Norm[pathErrs03[[4]]-rbcComp@@Append[Flatten[pathNow[[oSet+Range[12]]]],0*anXtm1EpsZ[[5]]]]]==0]
+	Chop[Norm[pathErrs03[[3]]-rbcComp@@Append[Flatten[pathNow[[oSet+Range[12]]]],0*anXtm1EpsZ[[5]]]]]==0]
 	,
 	True
 	,
@@ -168,7 +168,7 @@ Test[
 Test[
 	pathNow=pathErrsDRPF[xzFunc01,anXtm1EpsZ[[Range[5]]],1,rbcComp,3]
 	,
-	{{0.0031988823523936283, 0., 0.}, {0.003593666816470442, 0., 0.}}
+{{-0.0012032873783485165, -1.1102230246251565*^-16, 0., 0.}, {-0.005838140921684332, 0., 4.440892098500626*^-16, 0.}}	
 	,
 	TestID->"TestGenPath-ttuiM59971-H487R9"
 ]

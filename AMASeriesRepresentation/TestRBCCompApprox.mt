@@ -94,9 +94,9 @@ condExpRENotFunc =
   
 theRes=Chop[evalPathErrDRREIntegrate[condExpRENotFunc, {1., .58,1,1.1, .07}, theDist, rbcEqnsCompiled]]
 Test[
-Identity[{theRes,{{0.43463696517177397, 0.2583091824183317, -1.2848574078558457, 1.0446657052996773}}}]
+Chop[Norm @Transpose[theRes-{{-0.2624612021450765, 0, 0.36980265458585415, 0.23483004444308975}}]]
 	,
-	0.
+	0
 	,
 	TestID->"TestApprox-341xx109-bbG2F6"
 ]
@@ -105,22 +105,11 @@ chk=	evalBadPathErrDRREIntegrate[condExpRENotFunc,{1., .228,1,1.},theDist,rbcEqn
 
 chkPath=Private`worstPathForErrDRREIntegrate[condExpRENotFunc,{1., .228,1,1.},theDist,rbcEqnsCompiled];
 Test[
-Identity[{chk,(rbcEqnsCompiled@@ Flatten[chkPath])}]
+Chop[Norm @@{chk[[1]]-Norm[Transpose[{(rbcEqnsCompiled@@ Flatten[chkPath])}],Infinity]}]
 	,
 	0
 	,
 	TestID->"TestApprox-20151109-A4K551"
-]
-
-
-
-theRes=rbcEqnsCompiled@@Flatten[Private`worstPathForErrDRREIntegrate[condExpRENotFunc, {1,.228,1,1}, theDist, rbcEqnsCompiled]];
-Test[
-	List[{theRes,evalBadPathErrDRREIntegrate[condExpRENotFunc, {1.,.228,1,1.}, theDist, rbcEqnsCompiled]}]
-	,
-0
-	,
-	TestID->"TestApprox-20151109-A23tW1"
 ]
 
 
@@ -211,7 +200,7 @@ golly =
   rbcEqnsCompiled];
 
 Test[
-	List[bip-(rbcEqnsCompiled@@ Flatten[golly])]
+	Chop@Norm[bip[[1]]-Norm[Transpose[{(rbcEqnsCompiled@@ Flatten[golly])}],Infinity]]
 	,
 0
 	,

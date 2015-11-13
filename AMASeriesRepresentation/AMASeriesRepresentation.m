@@ -94,7 +94,7 @@ With[{interpData=genInterpData[aVecFunc,toIgnore,gSpec],numArgs=Length[gSpec[[2]
 
  
 genInterpData[aVecFunc_Function,toIgnore:{_Integer...},gSpec:{iOrd_Integer,{{_Integer,_?NumberQ,_?NumberQ}..}}]:=
-With[{thePts=gridPts[Drop[gSpec,1]]},
+With[{thePts=gridPts[gSpec[[2]]]},
 With[{interpData=Map[{#,aVecFunc@@fillIn[{{},toIgnore,#}]}&,thePts]},
 interpData]]
 

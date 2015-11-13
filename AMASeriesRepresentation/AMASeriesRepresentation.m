@@ -75,6 +75,15 @@ If[toIgnore=={}==shortVec,theRes,
 	If[MemberQ[toIgnore,Length[theRes]+1],fillIn[{Append[theRes,1],Drop[toIgnore,1],shortVec}],
 		fillIn[{Append[theRes,shortVec[[1]]],toIgnore,Drop[shortVec,1]}]]]]/;OrderedQ[toIgnore]
 
+fillInSymb[{theRes:{___},toIgnore:{_Integer...},shortVec:{___}}]:=
+Module[{},
+If[toIgnore=={}==shortVec,theRes,
+	If[MemberQ[toIgnore,Length[theRes]+1],fillInSymb[{Append[theRes,Unique["ig"]],Drop[toIgnore,1],shortVec}],
+		fillInSymb[{Append[theRes,shortVec[[1]]],toIgnore,Drop[shortVec,1]}]]]]/;OrderedQ[toIgnore]
+
+fillInSymb[{theRes:{___},toIgnore:{_Integer...},shortVec:{___}}]:=
+fillInSymb[{theRes,Sort[toIgnore],shortVec}]
+
 fillIn[{theRes:{_?NumberQ...},toIgnore:{_Integer...},shortVec:{_?NumberQ...}}]:=
 fillIn[{theRes,Sort[toIgnore],shortVec}]
 
@@ -82,19 +91,21 @@ Print["makeInterpFunc not generic, tied to RBC"];
 makeInterpFunc[aVecFunc_Function,toIgnore:{_Integer...},gSpec:{iOrd_Integer,{{_Integer,_?NumberQ,_?NumberQ}..}}]:=
 With[{interpData=genInterpData[aVecFunc,toIgnore,gSpec],numArgs=Length[gSpec[[2]]]},
 	With[{numFuncs=Length[interpData[[1,2]]],funcArgs=Table[Unique["fArgs"],{numArgs}]},
-	With[{longFuncArgs=fillIn[{},toIgnore,funcArgs],
+	With[{longFuncArgs=fillInSymb[{{},toIgnore,funcArgs}],
 		interpFuncList=
-	Function[funcIdx,Interpolation[{#[[1]], #[[2, funcIdx, 1]]} & /@ interpData,InterpolationOrder -> iOrd]]/@Range[numFuncs]},
+	Function[funcIdx,Interpolation[{#[[1]], #[[2, funcIdx, 1]]} & /@ 
+		interpData,InterpolationOrder -> iOrd]]/@Range[numFuncs]},
+	(*	Print[	Function[xxxxxxx, Transpose[{Through[interpFuncList@@yyyyyyy]}]]//InputForm];*)
 	ReplacePart[
-	Function[{ig, kk, th}, Transpose[{Through[interpFuncList[kk, th]]}]],
-		{1->longFuncArgs,{-1,1}->funcArgs}]
+	Function[xxxxxxx, Transpose[{Through[interpFuncList@@yyyyyyy]}]],
+		{1->longFuncArgs,{2, 1, 1, 1, 2}->funcArgs}]/.{xxxxxxx$->longFuncArgs}
 	]
 ]]
 
 
  
 genInterpData[aVecFunc_Function,toIgnore:{_Integer...},gSpec:{iOrd_Integer,{{_Integer,_?NumberQ,_?NumberQ}..}}]:=
-With[{thePts=gridPts[Drop[gSpec,1]]},
+With[{thePts=gridPts[gSpec[[2]]]},
 With[{interpData=Map[{#,aVecFunc@@fillIn[{{},toIgnore,#}]}&,thePts]},
 interpData]]
 
@@ -215,7 +226,7 @@ funcName[tryEps:{_?NumberQ..},idx_Integer]:=
 evalBadPathErrDRREIntegrate[drFunc_Function,noEpsVec_?VectorQ,allArgs:{expctSpec:{{_Symbol,_}..},opts_:{}},eqnsFunc_CompiledFunction]:=
 With[{funcName=Unique["fName"]},
 funcName[tryEps:{_?NumberQ..}]:=
-	With[{theVal=evalPathErrDRREIntegrate[drFunc,Join[noEpsVec,tryEps],allArgs,eqnsFunc]},Print["ex:",theVal,Norm[theVal,Infinity]];Norm[Transpose[theVal],Infinity]];
+	With[{theVal=evalPathErrDRREIntegrate[drFunc,Join[noEpsVec,tryEps],allArgs,eqnsFunc]},(*Print["ex:",theVal,Norm[theVal,Infinity]];Norm[Transpose[theVal],Infinity]];*)
 	With[{outerEVars=Table[Unique["eVs"],{Length[expctSpec]}]},
 	With[{maxArgs={#,0}&/@outerEVars,cons=And @@  ((-0.01<=#<=0.01)&/@ outerEVars)},
 	FindMaximum[{funcName[outerEVars],cons},maxArgs]]]]

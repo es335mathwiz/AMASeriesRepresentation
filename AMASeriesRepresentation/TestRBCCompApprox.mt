@@ -10,6 +10,7 @@ ProjectionMethodToolsJava/code"],
  "Microsoft Windows (64-bit)", 
  SetDirectory[
   "g:/git/ProjectionMethodTools/ProjectionMethodToolsJava/code"]]; 
+$ContextPath=DeleteCases[$ContextPath,"simpleRBCModel`"] 
 Needs["betterRBC`"]
  anXEps={1,.2,1,1.1,0.01}   
 Test[

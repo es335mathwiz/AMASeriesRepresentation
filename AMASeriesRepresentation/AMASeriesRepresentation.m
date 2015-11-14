@@ -19,6 +19,8 @@ xtGuess_?MatrixQ,eqnsFunc_CompiledFunction,numIters_Integer]"
 
 nestIterPFInterp::usage="nestIterPFInterp[linMod:{BB_?MatrixQ,phi_?MatrixQ,FF_?MatrixQ,psiEps_?MatrixQ,psiC_?MatrixQ,psiZ_?MatrixQ,psiZPreComp_?MatrixQ},XZFuncsNow:{_Function..},xtGuess_?MatrixQ,eqnsFunc_CompiledFunction,aGSpec:{_Integer,{{_Integer,_?NumberQ,_?NumberQ}..}},numIters_Integer]"
 
+nestIterREInterp::usage="nestIterPFInterp[linMod:{BB_?MatrixQ,phi_?MatrixQ,FF_?MatrixQ,psiEps_?MatrixQ,psiC_?MatrixQ,psiZ_?MatrixQ,psiZPreComp_?MatrixQ},XZFuncsNow:{_Function..},xtGuess_?MatrixQ,eqnsFunc_CompiledFunction,aGSpec:{_Integer,{{_Integer,_?NumberQ,_?NumberQ}..}},numIters_Integer]"
+
 nestIterRE::usage="nestIterRE[linMod:{BB_?MatrixQ,phi_?MatrixQ,FF_?MatrixQ,psiEps_?MatrixQ,psiC_?MatrixQ,psiZ_?MatrixQ,psiZPreComp_?MatrixQ},XZFuncsNow:{_Function..},
 xtGuess_?MatrixQ,eqnsFunc_CompiledFunction,numIters_Integer]"
 
@@ -30,6 +32,10 @@ xtGuess_?MatrixQ,eqnsFunc_CompiledFunction]"
 
 
 doIterPFInterp::usage="doIterPF[linMod:{BB_?MatrixQ,phi_?MatrixQ,FF_?MatrixQ,psiEps_?MatrixQ,psiC_?MatrixQ,psiZ_?MatrixQ,psiZPreComp_?MatrixQ},XZFuncsNow:{_Function..},
+xtGuess_?MatrixQ,eqnsFunc_CompiledFunction]"
+
+
+doIterREInterp::usage="doIterPF[linMod:{BB_?MatrixQ,phi_?MatrixQ,FF_?MatrixQ,psiEps_?MatrixQ,psiC_?MatrixQ,psiZ_?MatrixQ,psiZPreComp_?MatrixQ},XZFuncsNow:{_Function..},
 xtGuess_?MatrixQ,eqnsFunc_CompiledFunction]"
 
 
@@ -499,6 +505,15 @@ With[{numX=Length[BB],numEps=Length[psiEps[[1]]],numZ=Length[psiZ[[1]]]},
 With[{theFuncs=genFPFunc[linMod,XZFuncsNow,xtGuess,eqnsFunc]},
 {theFuncs,Prepend[XZFuncsNow,genXZFuncRE[{numX,numEps,numZ},theFuncs,expctSpec]]}]]
 
+
+doIterREInterp[linMod:{BB_?MatrixQ,phi_?MatrixQ,FF_?MatrixQ,psiEps_?MatrixQ,psiC_?MatrixQ,psiZ_?MatrixQ,psiZPreComp_?MatrixQ},XZFuncsNow:{(_Function|_InterpolatingFunction|_CompiledFunction)..},
+xtGuess_?MatrixQ,eqnsFunc_CompiledFunction,toIgnore:{_Integer...},aGSpec:{_Integer,{{_Integer,_?NumberQ,_?NumberQ}..}},allArgs:{expctSpec:{{_Symbol,_}..},opts_:{}}]:=
+With[{numX=Length[BB],numEps=Length[psiEps[[1]]],numZ=Length[psiZ[[1]]]},
+With[{theFuncs=genFPFunc[linMod,XZFuncsNow,xtGuess,eqnsFunc]},
+{theFuncs,Prepend[XZFuncsNow,genXZFuncREInterp[{numX,numEps,numZ},theFuncs,toIgnore,aGSpec,allArgs]]}]]
+
+
+
 nestIterPF[linMod:{BB_?MatrixQ,phi_?MatrixQ,FF_?MatrixQ,psiEps_?MatrixQ,psiC_?MatrixQ,psiZ_?MatrixQ,psiZPreComp_?MatrixQ},XZFuncsNow:{_Function..},
 xtGuess_?MatrixQ,eqnsFunc_CompiledFunction,numIters_Integer]:=
 NestList[doIterPF[linMod,#[[2]],xtGuess,
@@ -512,9 +527,17 @@ eqnsFunc,toIgnore,aGSpec]&,{ig,XZFuncsNow},numIters]
 
 
 nestIterRE[linMod:{BB_?MatrixQ,phi_?MatrixQ,FF_?MatrixQ,psiEps_?MatrixQ,psiC_?MatrixQ,psiZ_?MatrixQ,psiZPreComp_?MatrixQ},XZFuncsNow:{_Function..},
-xtGuess_?MatrixQ,eqnsFunc_CompiledFunction,distribs_List,numIters_Integer]:=
+xtGuess_?MatrixQ,eqnsFunc_CompiledFunction,allArgs:{expctSpec:{{_Symbol,_}..},opts_:{}},numIters_Integer]:=
 NestList[doIterRE[linMod,#[[2]],xtGuess,
-eqnsFunc,distribs]&,{ig,XZFuncsNow},numIters]
+eqnsFunc,allArgs]&,{ig,XZFuncsNow},numIters]
+
+
+nestIterREInterp[linMod:{BB_?MatrixQ,phi_?MatrixQ,FF_?MatrixQ,psiEps_?MatrixQ,psiC_?MatrixQ,psiZ_?MatrixQ,psiZPreComp_?MatrixQ},XZFuncsNow:{(_Function|_InterpolatingFunction|_CompiledFunction)..},
+xtGuess_?MatrixQ,eqnsFunc_CompiledFunction,toIgnore:{_Integer...},aGSpec:{_Integer,{{_Integer,_?NumberQ,_?NumberQ}..}},allArgs:{expctSpec:{{_Symbol,_}..},opts_:{}},numIters_Integer]:=
+NestList[doIterREInterp[linMod,#[[2]],xtGuess,
+eqnsFunc,toIgnore,aGSpec,allArgs]&,{ig,XZFuncsNow},numIters]
+
+
 
 Print["genXZFuncPFInterp: tied to RBC Model not generic"]'
 (*
@@ -528,6 +551,10 @@ aLilXkZkFunc_Function,toIgnore:{_Integer...},aGSpec:{_Integer,{{_Integer,_?Numbe
 With[{theFuncNow=genXZFuncPF[{numX,numEps,numZ},aLilXkZkFunc]},
 makeInterpFunc[theFuncNow,toIgnore,{aGSpec[[1]],Drop[aGSpec[[2]],-numEps]}]]
 
+genXZFuncREInterp[probDims:{numX_Integer,numEps_Integer,numZ_Integer},
+aLilXkZkFunc_Function,toIgnore:{_Integer...},aGSpec:{_Integer,{{_Integer,_?NumberQ,_?NumberQ}..}},allArgs:{expctSpec:{{_Symbol,_}..},opts_:{}}]:=
+With[{theFuncNow=genXZFuncRE[{numX,numEps,numZ},aLilXkZkFunc,allArgs]},
+makeInterpFunc[theFuncNow,toIgnore,{aGSpec[[1]],Drop[aGSpec[[2]],-numEps]}]]
   
   
     
@@ -544,17 +571,17 @@ Function[xxxx,aLilXkZkFunc@@Join[funcArgs,theZeroes]],
 
 
 genXZFuncRE[{numX_Integer,numEps_Integer,numZ_Integer},
-aLilXkZkFunc_Function,distribs_List]:=
-With[{shockVars=First/@distribs,
+aLilXkZkFunc_Function,allArgs:{expctSpec:{{_Symbol,_}..},opts_:{}}]:=
+With[{shockVars=First/@allArgs[[1]],
 	funcArgs=Table[Unique["theFRFuncArgs"],{numX}],funcName=Unique["fName"]},
 funcName[fNameArgs:{_?NumberQ..},idx_Integer]:=Module[{},
 (*	Print["fn:",{fNameArgs,idx,(aLilXkZkFunc@@ fNameArgs)}];*)
-(aLilXkZkFunc@@ fNameArgs)[[idx,1]]];
-eqnsFunc@@(Flatten[xkFunc@@Join[funcArgs,zArgs]]);
+(aLilXkZkFunc@@ fNameArgs)[[idx,1]]];Print["shock",shockVars];
+(*eqnsFunc@@(Flatten[xkFunc@@Join[funcArgs,zArgs]]);*)
 ReplacePart[
 Function[xxxx,
 	Transpose[{myNExpectation[
-	(funcName[Join[funcArgs,shockVars],#]),((#[[1]]\[Distributed]#[[2]])&/@ distribs)]&/@Range[numX+numZ]}]
+	(funcName[Join[funcArgs,shockVars],#]),((#[[1]]\[Distributed]#[[2]])&/@ allArgs)]&/@Range[numX+numZ]}]
 	],
 1->funcArgs]]
 

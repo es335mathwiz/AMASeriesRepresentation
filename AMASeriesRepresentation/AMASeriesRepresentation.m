@@ -572,7 +572,7 @@ Function[xxxx,aLilXkZkFunc@@Join[funcArgs,theZeroes]],
 
 genXZFuncRE[{numX_Integer,numEps_Integer,numZ_Integer},
 aLilXkZkFunc_Function,allArgs:{expctSpec:{{_Symbol,_}..},opts_:{}}]:=
-With[{shockVars=First/@allArgs[[1]],
+With[{shockVars=First/@(allArgs[[1]]),
 	funcArgs=Table[Unique["theFRFuncArgs"],{numX}],funcName=Unique["fName"]},
 funcName[fNameArgs:{_?NumberQ..},idx_Integer]:=Module[{},
 (*	Print["fn:",{fNameArgs,idx,(aLilXkZkFunc@@ fNameArgs)}];*)
@@ -581,7 +581,7 @@ funcName[fNameArgs:{_?NumberQ..},idx_Integer]:=Module[{},
 ReplacePart[
 Function[xxxx,
 	Transpose[{myNExpectation[
-	(funcName[Join[funcArgs,shockVars],#]),((#[[1]]\[Distributed]#[[2]])&/@ allArgs)]&/@Range[numX+numZ]}]
+	(funcName[Join[funcArgs,shockVars],#]),((#[[1]]\[Distributed]#[[2]])&/@ (allArgs[[1]]))]&/@Range[numX+numZ]}]
 	],
 1->funcArgs]]
 

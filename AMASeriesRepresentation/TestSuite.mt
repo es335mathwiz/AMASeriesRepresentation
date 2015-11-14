@@ -15,6 +15,7 @@ TestSuite[
 		"TestRBCCompGenLilXkZkFunc.mt",
 		"TestRBCCompGenPath.mt",
 		"TestRBCCompIterDRPF.mt",
-		"TestRBCCompApprox.mt"
+		"TestRBCCompApprox.mt",
+		"TestRBCPFRE.mt"
 	}
 ]

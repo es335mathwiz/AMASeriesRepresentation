@@ -503,7 +503,7 @@ doIterRE[linMod:{BB_?MatrixQ,phi_?MatrixQ,FF_?MatrixQ,psiEps_?MatrixQ,psiC_?Matr
 xtGuess_?MatrixQ,eqnsFunc_CompiledFunction,allArgs:{expctSpec:{{_Symbol,_}..},opts_:{}}]:=
 With[{numX=Length[BB],numEps=Length[psiEps[[1]]],numZ=Length[psiZ[[1]]]},
 With[{theFuncs=genFPFunc[linMod,XZFuncsNow,xtGuess,eqnsFunc]},
-{theFuncs,Prepend[XZFuncsNow,genXZFuncRE[{numX,numEps,numZ},theFuncs,expctSpec]]}]]
+{theFuncs,Prepend[XZFuncsNow,genXZFuncRE[{numX,numEps,numZ},theFuncs,allArgs]]}]]
 
 
 doIterREInterp[linMod:{BB_?MatrixQ,phi_?MatrixQ,FF_?MatrixQ,psiEps_?MatrixQ,psiC_?MatrixQ,psiZ_?MatrixQ,psiZPreComp_?MatrixQ},XZFuncsNow:{(_Function|_InterpolatingFunction|_CompiledFunction)..},
@@ -576,7 +576,7 @@ With[{shockVars=First/@(allArgs[[1]]),
 	funcArgs=Table[Unique["theFRFuncArgs"],{numX}],funcName=Unique["fName"]},
 funcName[fNameArgs:{_?NumberQ..},idx_Integer]:=Module[{},
 (*	Print["fn:",{fNameArgs,idx,(aLilXkZkFunc@@ fNameArgs)}];*)
-(aLilXkZkFunc@@ fNameArgs)[[idx,1]]];Print["shock",shockVars];
+(aLilXkZkFunc@@ fNameArgs)[[idx,1]]];
 (*eqnsFunc@@(Flatten[xkFunc@@Join[funcArgs,zArgs]]);*)
 ReplacePart[
 Function[xxxx,

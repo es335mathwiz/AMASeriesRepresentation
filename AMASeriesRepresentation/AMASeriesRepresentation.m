@@ -53,6 +53,7 @@ genZsRE::usage="genZsRE[anHmat_?MatrixQ,PsiEps_?MatrixQ,PsiC_?MatrixQ,theDRFunc:
 
 pathErrsDRREIntegrate::usage="pathErrsDRPF[drFunc_Function,eqnsFunc_CompiledFunction,anX_?MatrixQ,anEps_?MatrixQ,numPers_Integer]"
 pathErrsDRPF::usage="pathErrsDRPF[drFunc_Function,eqnsFunc_CompiledFunction,anX_?MatrixQ,anEps_?MatrixQ,numPers_Integer]"
+PerfectForesight::usage="degenerate distribution implementing perfect foresight"
 Begin["Private`"]
 
  
@@ -159,13 +160,13 @@ With[{xEpsVars=Join[xVars,First/@expctSpec],
 funcName[funcArgsNot:{_?NumberQ..},idx_Integer]:=(drFunc@@Flatten[funcArgsNot])[[idx,1]];
 	With[{theStuff=
 		Function[xxxx,
-		NExpectation[funcName[Flatten[valSubbed],#]//Chop,theArg]&/@Range[numX]]
+		myNExpectation[funcName[Flatten[valSubbed],#]//Chop,theArg]&/@Range[numX]]
 		},(*{theStuff,*)
 	ReplacePart[
 theStuff,
 	{1->xVars,{2,1,1,2}->intArg,{2,1,1,1,1,1}->xEpsVars}](*	}*)
 	]]]]
-
+myNExpectation[funcName_Symbol[farg_List,idx_Integer],nArgs_List]:=NExpectation[funcName[farg,idx],nArgs]
  (*
 
 genZsRE[anHmat_?MatrixQ,PsiEps_?MatrixQ,PsiC_?MatrixQ,
@@ -208,7 +209,7 @@ With[{xtm1Xt=iterateDRREIntegrate[drFunc,initVec,allArgs,1],numX=Length[initVec]
 epsArgs=Table[Unique["eArgs"],{numEps}]},
 With[{firstArg=
 doFuncArg[pathNow,epsArgs,numX,0]},
-With[{first=NExpectation[eqnsFunc@@firstArg,
+With[{first=myNExpectation[eqnsFunc@@firstArg,
 Thread[shockVars \[Distributed] distribs]]},
 first
 ]]]]
@@ -220,7 +221,7 @@ funcName[tryEps:{_?NumberQ..},idx_Integer]:=
 	With[{theVal=evalPathErrDRREIntegrate[drFunc,Join[noEpsVec,tryEps],allArgs,eqnsFunc]},(*Print["ex:",theVal[[1,idx]]];*)theVal[[1,idx]]];
 	With[{outerEVars=Table[Unique["eVs"],{Length[expctSpec]}]},
 	With[{intArg=Thread[outerEVars \[Distributed] Last/@expctSpec]},
-	NExpectation[funcName[outerEVars,#],intArg]&/@Range[3]]]]
+	myNExpectation[funcName[outerEVars,#],intArg]&/@Range[3]]]]
 
    
 evalBadPathErrDRREIntegrate[drFunc_Function,noEpsVec_?VectorQ,allArgs:{expctSpec:{{_Symbol,_}..},opts_:{}},eqnsFunc_CompiledFunction]:=
@@ -552,13 +553,15 @@ funcName[fNameArgs:{_?NumberQ..},idx_Integer]:=Module[{},
 eqnsFunc@@(Flatten[xkFunc@@Join[funcArgs,zArgs]]);
 ReplacePart[
 Function[xxxx,
-	NExpectation[
-	(funcName[Join[funcArgs,shockVars],#]),((#[[1]]\[Distributed]#[[2]])&/@ distribs)]&/@Range[numX+numZ]
+	Transpose[{myNExpectation[
+	(funcName[Join[funcArgs,shockVars],#]),((#[[1]]\[Distributed]#[[2]])&/@ distribs)]&/@Range[numX+numZ]}]
 	],
 1->funcArgs]]
 
-
-
+myNExpectation[funcName_Symbol[funcArgs_List,idx_Integer],anEpsVar_\[Distributed] PerfectForesight]:=
+funcName@@Append[ReplacePart[{funcArgs},{{(1),(-1)}->0}],idx]
+myNExpectation[funcName_Symbol[funcArgs_List,idx_Integer],{anEpsVar_\[Distributed] PerfectForesight}]:=
+funcName@@Append[ReplacePart[{funcArgs},{{1,(-1)}->0}],idx]
 
 End[]
 EndPackage[]

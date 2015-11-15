@@ -447,7 +447,7 @@ With[{funcArgs=Table[Unique["theFRFuncArgs"],{numX+numEps}],
 zArgs=Table[Unique["theFRZArgs"],{numZ}]},
 With[{zArgsInit={#,0}&/@zArgs,funcName=Unique["fName"]},
 funcName[funcArgsNot:{_?NumberQ..}]:=
-Module[{theVars=Join[funcArgsNot]},(*Print[theVars,Flatten[xkFunc@@theVars]];*)
+Module[{theVars=Join[funcArgsNot]},(*Print["genFRFunc func",theVars,Flatten[xkFunc@@theVars]];*)
 eqnsFunc@@(Flatten[xkFunc@@theVars])];
 ReplacePart[
 Function[xxxx,With[{zVals=zArgs/.FindRoot[funcName@Join[funcArgs,zArgs],zArgsInit]},
@@ -579,9 +579,9 @@ funcName[fNameArgs:{_?NumberQ..},idx_Integer]:=Module[{},
 (aLilXkZkFunc@@ fNameArgs)[[idx,1]]];
 (*eqnsFunc@@(Flatten[xkFunc@@Join[funcArgs,zArgs]]);*)
 ReplacePart[
-Function[xxxx,
+Function[xxxx,Module[{},Print["doInt",funcArgs,shockVars,funcName[Join[funcArgs,{0}],1]];
 	Transpose[{myNExpectation[
-	(funcName[Join[funcArgs,shockVars],#]),((#[[1]]\[Distributed]#[[2]])&/@ (allArgs[[1]]))]&/@Range[numX+numZ]}]
+	(funcName[Join[funcArgs,shockVars],#]),((#[[1]]\[Distributed]#[[2]])&/@ (allArgs[[1]]))]&/@Range[numX+numZ]}]]
 	],
 1->funcArgs]]
 

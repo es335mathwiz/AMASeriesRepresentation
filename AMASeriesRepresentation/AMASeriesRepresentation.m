@@ -454,7 +454,8 @@ Function[xxxx,With[{zVals=zArgs/.FindRoot[funcName@Join[funcArgs,zArgs],zArgsIni
 Join[(xkFunc@@Join[funcArgs,zVals])[[numX+Range[numX]]],
 Transpose[{zVals}]]]],
 1->funcArgs]]]
-
+(* input   [function (xt,eps,zt)->(xtm1,xt,xtp1,eps), function (xtm1,xt,xtp1,eps)->me]*)
+(* output   [function  (xt,eps) ->(xt,zt)] *)
 
 
  
@@ -469,7 +470,8 @@ FixedPoint[With[{xzFuncNow=
 genFRFunc[{numX,numEps,numZ},genLilXkZkFunc[linMod,XZFuncs,#[[Range[numX]]]],
 eqnsFunc]},xzFuncNow @@funcArgs]&,xtGuess,$fixedPointLimit]]],
 1->funcArgs]]]
-
+(* input   [linMod,XZ, xguess,function (xt,eps,zt)->(xtm1,xt,xtp1,eps), function (xtm1,xt,xtp1,eps)->me]*)
+(* output   [function  (xt,eps) ->(xt,zt)] *)
 
 $fixedPointLimit=30;
 genFPFuncAgain[linMod:{BB_?MatrixQ,phi_?MatrixQ,FF_?MatrixQ,psiEps_?MatrixQ,psiC_?MatrixQ,psiZ_?MatrixQ,psiZPreComp_?MatrixQ},

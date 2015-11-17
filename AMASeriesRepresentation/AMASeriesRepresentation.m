@@ -390,11 +390,16 @@ With[{xzRes=Drop[FoldList[#2@@(Flatten[#1][[Range[numXVars]]])&,
 xtGuess,XZFuncs],1]},Plus @@
 MapThread[Dot[#1,phi.psiZ.Drop[#2,numXVars]]&,{fPows , xzRes}]]]]
 
-fSum[linMod:{BB_?MatrixQ,phi_?MatrixQ,FF_?MatrixQ,psiEps_?MatrixQ,psiC_?MatrixQ,psiZ_?MatrixQ,psiZPreComp_?MatrixQ},XZFuncs:{_Function..},xtGuess_?MatrixQ]:=
+fSum[linMod:{BB_?MatrixQ,phi_?MatrixQ,FF_?MatrixQ,psiEps_?MatrixQ,psiC_?MatrixQ,psiZ_?MatrixQ,psiZPreComp_?MatrixQ},XZFuncs:{_F<unction..},xtGuess_?MatrixQ]:=
 With[{numXVars=Length[BB]},
 With[{xzRes=#[[numXVars+Range[numXVars]]]&/@(Drop[FoldList[#2@@(Flatten[#1][[Range[numXVars]]])&,
 xtGuess,XZFuncs],1])},
 fSumC[phi,FF,psiZ,xzRes]]]
+
+(*
+With[{xzRes=#[[numXVars+Range[numXVars]]]&/@(Drop[FoldList[#2@@(Flatten[#1][[Range[numXVars]]])&,
+xtGuess,XZFuncs],1])},
+*)
 
 
 fSumC=Compile[{{phi,_Real,2},{FF,_Real,2},{psiZ,_Real,2},{zPath,_Real,3}},

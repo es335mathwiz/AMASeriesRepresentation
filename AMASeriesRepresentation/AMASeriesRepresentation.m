@@ -468,7 +468,8 @@ ReplacePart[
 Function[xxxx,Sow[
 FixedPoint[With[{xzFuncNow=
 genFRFunc[{numX,numEps,numZ},genLilXkZkFunc[linMod,XZFuncs,#[[Range[numX]]]],
-eqnsFunc]},xzFuncNow @@funcArgs]&,xtGuess,$fixedPointLimit]]],
+eqnsFunc]},(*Print["infp:",XZFuncs[[1]]@@funcArgs];*)
+xzFuncNow @@funcArgs]&,(XZFuncs[[1]]@@funcArgs)[[Range[numX]]],$fixedPointLimit]]],
 1->funcArgs]]]
 (* input   [linMod,XZ, xguess,function (xt,eps,zt)->(xtm1,xt,xtp1,eps), function (xtm1,xt,xtp1,eps)->me]*)
 (* output   [function  (xt,eps) ->(xt,zt)] *)

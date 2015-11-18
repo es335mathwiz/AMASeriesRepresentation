@@ -1,21 +1,22 @@
 (* Wolfram Language Test file *)
 
 TestSuite[
-	{
+	{"TestRBCPFRE.mt",
+		"TestIterDRPF.mt",
 		"TestDoIterPF.mt",
 		"TestGenFPFunc.mt",
 		"TestGenFRFunc.mt",
-		"TestGenLilXkZkFunc.mt",
+		"TestGenLilXkZkFunc.mt",(*not okay*)
+
 		"TestGenPath.mt",
-		"TestIterDRPF.mt",
-		"TestApprox.mt",
-		"TestRBCCompDoIterPF.mt",
+		"TestApprox.mt",(*hangs by itself with rbcpfre*)
+		"TestRBCCompDoIterPF.mt",(*okay*)
 		"TestRBCCompGenFPFunc.mt",
 		"TestRBCCompGenFRFunc.mt",
 		"TestRBCCompGenLilXkZkFunc.mt",
 		"TestRBCCompGenPath.mt",
-		"TestRBCCompIterDRPF.mt",
+		"TestRBCCompIterDRPF.mt",(*okay*)
 		"TestRBCCompApprox.mt",
-		"TestRBCPFRE.mt"
+		"TestCondExpComposition.mt"
 	}
 ]

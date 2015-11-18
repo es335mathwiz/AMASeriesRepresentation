@@ -1,20 +1,6 @@
 (* Wolfram Language Test file *)
-Switch[$System,
- "Mac OS X x86 (64-bit)", 
- SetDirectory[
-  "/Users/garyanderson/git/ProjectionMethodTools/\
-ProjectionMethodToolsJava/code"],
- "Linux x86 (64-bit)", 
- SetDirectory[
-  "~/git/ProjectionMethodTools/ProjectionMethodToolsJava/code"],
- "Microsoft Windows (64-bit)", 
- SetDirectory[
-  "g:/git/ProjectionMethodTools/ProjectionMethodToolsJava/code"]]; \
-Needs["simpleRBCModel`"]
-Get["exactCalcsRBC.mth"]
-theDist={{{ee, 
-    NormalDistribution[0, 0.01]}}};
-    
+
+ Get["prepSimple.m"]   
 Test[
 	Chop[Norm[iterateDRREIntegrate[condExpREFunc, anXEps, theDist, 5]-	{{1}, {0.18}, {1.1}, {0.3924551126574322}, {0.20398122876723684}, 
  {1.1057730363825737}, {0.4084912681688997}, {0.2123161302640786}, 

@@ -390,12 +390,14 @@ With[{xzRes=Drop[FoldList[#2@@(Flatten[#1][[Range[numXVars]]])&,
 xtGuess,XZFuncs],1]},Plus @@
 MapThread[Dot[#1,phi.psiZ.Drop[#2,numXVars]]&,{fPows , xzRes}]]]]
 
-fSum[linMod:{BB_?MatrixQ,phi_?MatrixQ,FF_?MatrixQ,psiEps_?MatrixQ,psiC_?MatrixQ,psiZ_?MatrixQ,psiZPreComp_?MatrixQ},XZFuncs:{_F<unction..},xtGuess_?MatrixQ]:=
+fSum[linMod:{BB_?MatrixQ,phi_?MatrixQ,FF_?MatrixQ,psiEps_?MatrixQ,psiC_?MatrixQ,psiZ_?MatrixQ,psiZPreComp_?MatrixQ},XZFuncs:{_Function..},xtGuess_?MatrixQ]:=
 With[{numXVars=Length[BB]},
 With[{xzRes=#[[numXVars+Range[numXVars]]]&/@(Drop[FoldList[#2@@(Flatten[#1][[Range[numXVars]]])&,
 xtGuess,XZFuncs],1])},
 fSumC[phi,FF,psiZ,xzRes]]]
+getZtAfterXt[vecOrMat:(_?VectorQ|_?matrixQ),numX_Integer]:=vecOrMat[[numX+Range[numX]]]
 
+getXt[vecOrMat:(_?VectorQ|_?matrixQ),numX_Integer]:=vecOrMat[[Range[numX]]]
 (*
 With[{xzRes=#[[numXVars+Range[numXVars]]]&/@(Drop[FoldList[#2@@(Flatten[#1][[Range[numXVars]]])&,
 xtGuess,XZFuncs],1])},
@@ -442,7 +444,7 @@ epsVars]]]]]
 
 (*eqnsfuncs func of xtm1,xt,xtp1,eps  returns discrep*)
 (*xkfunc func of xtm1, eps zs returns xtm1,xt,xtp1,eps as matrices*)
-Print["exactCalcsRBC.mth:should compile"];
+
 
 (*returns function of xtm1 eps that gives xt and z*)
  
@@ -502,7 +504,7 @@ With[{theFuncs=genFPFunc[linMod,XZFuncsNow,xtGuess,eqnsFunc]},
 doIterPFInterp[linMod:{BB_?MatrixQ,phi_?MatrixQ,FF_?MatrixQ,psiEps_?MatrixQ,psiC_?MatrixQ,psiZ_?MatrixQ,psiZPreComp_?MatrixQ},XZFuncsNow:{(_Function|_InterpolatingFunction|_CompiledFunction)..},
 xtGuess_?MatrixQ,eqnsFunc_CompiledFunction,toIgnore:{_Integer...},aGSpec:{_Integer,{{_Integer,_?NumberQ,_?NumberQ}..}}]:=
 With[{numX=Length[BB],numEps=Length[psiEps[[1]]],numZ=Length[psiZ[[1]]]},
-With[{theFuncs=genFPFunc[linMod,XZFuncsNow,xtGuess,eqnsFunc]},
+With[{theFuncs=makeInterpFunc[genFPFunc[linMod,XZFuncsNow,xtGuess,eqnsFunc],toIgnore,aGSpec]},
 {theFuncs,Prepend[XZFuncsNow,genXZFuncPFInterp[{numX,numEps,numZ},theFuncs,toIgnore,aGSpec]]}]]
 
 
@@ -517,7 +519,7 @@ With[{theFuncs=genFPFunc[linMod,XZFuncsNow,xtGuess,eqnsFunc]},
 doIterREInterp[linMod:{BB_?MatrixQ,phi_?MatrixQ,FF_?MatrixQ,psiEps_?MatrixQ,psiC_?MatrixQ,psiZ_?MatrixQ,psiZPreComp_?MatrixQ},XZFuncsNow:{(_Function|_InterpolatingFunction|_CompiledFunction)..},
 xtGuess_?MatrixQ,eqnsFunc_CompiledFunction,toIgnore:{_Integer...},aGSpec:{_Integer,{{_Integer,_?NumberQ,_?NumberQ}..}},allArgs:{expctSpec:{{_Symbol,_}..},opts_:{}}]:=
 With[{numX=Length[BB],numEps=Length[psiEps[[1]]],numZ=Length[psiZ[[1]]]},
-With[{theFuncs=genFPFunc[linMod,XZFuncsNow,xtGuess,eqnsFunc]},
+With[{theFuncs=makeInterpFunc[genFPFunc[linMod,XZFuncsNow,xtGuess,eqnsFunc],toIgnore,aGSpec]},
 {theFuncs,Prepend[XZFuncsNow,genXZFuncREInterp[{numX,numEps,numZ},theFuncs,toIgnore,aGSpec,allArgs]]}]]
 
 

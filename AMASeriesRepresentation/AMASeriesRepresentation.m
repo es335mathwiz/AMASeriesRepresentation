@@ -206,7 +206,7 @@ genZsREExact[hMat_?MatrixQ,linMod:{BB_?MatrixQ,phi_?MatrixQ,FF_?MatrixQ,psiEps_?
 Module[{numEps=Length[expctSpec]},
 With[{numX=Length[initVec]-numEps,
  	thePath=Flatten[iterateDRREIntegrate[theExactDR,initVec,allArgs,iters+1]]},(*Print["done thePath"];*)
- 	With[{firstVal=hMat .thePath[[Range[3*numX]]]- psiC -phi . psiEps . Take[initVec,-numEps]},
+ 	With[{firstVal=hMat .thePath[[Range[3*numX]]]- psiC - psiEps . Take[initVec,-numEps]},
  		With[{restVals=
       (hMat .thePath[[Range[3*numX]+numX*#]] -psiC)&/@Range[(Length[thePath]/numX)-3]},
       Join[{firstVal},restVals]

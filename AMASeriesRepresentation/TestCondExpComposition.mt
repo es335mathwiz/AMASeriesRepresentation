@@ -1,6 +1,20 @@
 (* Wolfram Language Test file *)
+Print["before switch",$System]
+Switch[$System,
+ "Mac OS X x86 (64-bit)", Print["mac"];
+ SetDirectory[
+  "/Users/garyanderson/git/ProjectionMethodTools/ProjectionMethodToolsJava/code"];Print[Directory[]],
+ "Linux x86 (64-bit)", Print["linux"];
+ SetDirectory[
+  "~/git/ProjectionMethodTools/ProjectionMethodToolsJava/code"];Print[Directory[]],
+ "Microsoft Windows (64-bit)", Print["windows"];
+ SetDirectory[
+  "g:/git/ProjectionMethodTools/ProjectionMethodToolsJava/code"];Print[Directory[]],
+  _,Print["unknown:",$System]]; 
+$ContextPath=DeleteCases[$ContextPath,"simpleRBCModel`"] 
+Print["after switch",$System];
 Get["prepBetter.m"]
-Print["inTestCondExpComposition.mt",Directory[],{linMod,X0Z0}//InputForm];
+Print["inTestCondExpComposition.mt",$Path,Directory[],{linMod,X0Z0}//InputForm];
 what=fSum[linMod,{X0Z0}];
 Save["whyPblm.mth",{linMod,X0Z0,what}]
 Test[

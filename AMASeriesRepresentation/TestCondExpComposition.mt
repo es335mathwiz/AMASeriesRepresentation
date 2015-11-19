@@ -1,6 +1,6 @@
 (* Wolfram Language Test file *)
 Get["prepBetter.m"]
-Print["inTestCondExpComposition.mt",Directory[],{linMod,X0Z0}//InputForm];
+Print["inTestCondExpComposition.mt",$Path,Directory[],{linMod,X0Z0}//InputForm];
 what=fSum[linMod,{X0Z0}];
 Save["whyPblm.mth",{linMod,X0Z0,what}]
 Test[

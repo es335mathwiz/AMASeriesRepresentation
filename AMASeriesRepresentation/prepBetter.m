@@ -3,8 +3,7 @@ Print["reading prepBetter.m"]
 Switch[$System,
  "Mac OS X x86 (64-bit)", 
  SetDirectory[
-  "/Users/garyanderson/git/ProjectionMethodTools/\
-ProjectionMethodToolsJava/code"],
+  "/Users/garyanderson/git/ProjectionMethodTools/ProjectionMethodToolsJava/code"],
  "Linux x86 (64-bit)", 
  SetDirectory[
   "~/git/ProjectionMethodTools/ProjectionMethodToolsJava/code"],

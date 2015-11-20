@@ -30,10 +30,10 @@ Test[
 
 {x1z1pfInterp, X1Z1PFInterp} = 
   doIterPFInterp[linMod, {X0Z0}, X0Z0[1, .18, 1, 1][[Range[4]]], 
-   rbcEqnsCompiled, {1, 3}, aGSpec];
+   rbcEqnsCompiled,  aGSpec];
 {x1z1reInterp, X1Z1REInterp} = 
   doIterREInterp[linMod, {X0Z0}, X0Z0[1, .18, 1, 1][[Range[4]]], 
-   rbcEqnsCompiled, {1, 3}, aGSpec, {{{ee, PerfectForesight}}}];
+   rbcEqnsCompiled,  aGSpec, {{{ee, PerfectForesight}}}];
 
 Test[
 	{x1z1pfInterp @@ anXEps, Through[X1Z1PFInterp @@ # &@anXEps]}=={x1z1reInterp @@ anXEps, Through[X1Z1REInterp @@ # &@anXEps]}
@@ -45,10 +45,10 @@ Test[
 
 couplePFInterp = 
     nestIterPFInterp[linMod, {X0Z0}, X0Z0[1, .18, 1, 1][[Range[4]]], 
-     rbcEqnsCompiled, {1, 3}, aGSpec, 3];
+     rbcEqnsCompiled,  aGSpec, 3];
 coupleREInterp = 
  nestIterREInterp[linMod, {X0Z0}, X0Z0[1, .18, 1, 1][[Range[4]]], 
-  rbcEqnsCompiled, {1, 3}, aGSpec, {{{ee, PerfectForesight}}}, 3];
+  rbcEqnsCompiled,  aGSpec, {{{ee, PerfectForesight}}}, 3];
   
   Test[
 	Through[couplePFInterp[[-1, 2]] @@ # &@{1, .18, 1, 1}]==Through[coupleREInterp[[-1, 2]] @@ # &@{1, .18, 1, 1}]

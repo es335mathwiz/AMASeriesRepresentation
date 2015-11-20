@@ -27,6 +27,6 @@ thHigh = 11/10;
 pdf=NormalDistribution[0, sigVal];
 
 
-aGSpec={1,{{4,kLow,kHigh},{3,thLow,thHigh},{3,sigLow,3*sigHigh}}};
+aGSpec={{1,3},1,{{4,kLow,kHigh},{3,thLow,thHigh},{3,sigLow,3*sigHigh}}};
 
 Print["done reading prepBetter.m"]

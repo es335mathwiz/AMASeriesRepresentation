@@ -69,7 +69,7 @@ Begin["Private`"]
 
  
  
-gridPts[rngs:{{_?NumberQ,_?NumberQ,_?NumberQ}..}]:=
+gridPts[rngs:{{_Integer,_?NumberQ,_?NumberQ}..}]:=
 With[{funcForPts=(Function[xx,oneDimGridPts[xx[[1]],xx[[{2,3}]]]] @#) &},
 With[{oneDimPts=funcForPts/@rngs},
 With[{theOuter=Outer[List,Sequence@@#]&[oneDimPts]},
@@ -100,8 +100,8 @@ fillIn[{theRes:{_?NumberQ...},toIgnore:{_Integer...},shortVec:{_?NumberQ...}}]:=
 fillIn[{theRes,Sort[toIgnore],shortVec}]
 
 Print["makeInterpFunc not generic, tied to RBC"];
-makeInterpFunc[aVecFunc_Function,toIgnore:{_Integer...},gSpec:{iOrd_Integer,{{_Integer,_?NumberQ,_?NumberQ}..}}]:=
-With[{interpData=genInterpData[aVecFunc,toIgnore,gSpec],numArgs=Length[gSpec[[2]]]},
+makeInterpFunc[aVecFunc_Function,gSpec:{toIgnore:{_Integer...},iOrd_Integer,{{_Integer,_?NumberQ,_?NumberQ}..}}]:=
+With[{interpData=genInterpData[aVecFunc,gSpec],numArgs=Length[gSpec[[3]]]},
 	With[{numFuncs=Length[interpData[[1,2]]],funcArgs=Table[Unique["fArgs"],{numArgs}]},
 	With[{longFuncArgs=fillInSymb[{{},toIgnore,funcArgs}],
 		interpFuncList=
@@ -116,8 +116,8 @@ With[{interpData=genInterpData[aVecFunc,toIgnore,gSpec],numArgs=Length[gSpec[[2]
 
 
  
-genInterpData[aVecFunc_Function,toIgnore:{_Integer...},gSpec:{iOrd_Integer,{{_Integer,_?NumberQ,_?NumberQ}..}}]:=
-With[{thePts=gridPts[gSpec[[2]]]},
+genInterpData[aVecFunc_Function,gSpec:{toIgnore:{_Integer...},iOrd_Integer,{{_Integer,_?NumberQ,_?NumberQ}..}}]:=
+With[{thePts=gridPts[gSpec[[3]]]},
 With[{interpData=Map[{#,aVecFunc@@fillIn[{{},toIgnore,#}]}&,thePts]},
 interpData]]
 
@@ -159,7 +159,7 @@ iterateDRREIntegrate[drFunc:(_Function|_CompiledFunction),initVec_?VectorQ,allAr
 With[{numEps=Length[expctSpec],firVal=drFunc @@ initVec},
 	With[{numX=Length[initVec]-numEps,iterFunc=makeREIterFunc[drFunc,allArgs]},
 With[{iterated=
-NestList[(Transpose[{iterFunc @@ Flatten[#]}])&,firVal,numPers-1]},
+NestList[(Print[#//InputForm];(Transpose[{iterFunc @@ Flatten[#]}]))&,firVal,numPers-1]},
 Join[Transpose[{initVec}][[Range[numX]]],Join @@ (Identity[#[[Range[numX]]]]&/@iterated)]]]]/;
 And[numPers>0]
 
@@ -541,10 +541,10 @@ With[{theFuncs=genFPFunc[linMod,XZFuncsNow,xtGuess,eqnsFunc]},
 
 
 doIterPFInterp[linMod:{BB_?MatrixQ,phi_?MatrixQ,FF_?MatrixQ,psiEps_?MatrixQ,psiC_?MatrixQ,psiZ_?MatrixQ,psiZPreComp_?MatrixQ},XZFuncsNow:{(_Function|_InterpolatingFunction|_CompiledFunction)..},
-xtGuess_?MatrixQ,eqnsFunc_CompiledFunction,toIgnore:{_Integer...},aGSpec:{_Integer,{{_Integer,_?NumberQ,_?NumberQ}..}}]:=
+xtGuess_?MatrixQ,eqnsFunc_CompiledFunction,gSpec:{toIgnore:{_Integer...},iOrd_Integer,{{_Integer,_?NumberQ,_?NumberQ}..}}]:=
 With[{numX=Length[BB],numEps=Length[psiEps[[1]]],numZ=Length[psiZ[[1]]]},
-With[{theFuncs=makeInterpFunc[genFPFunc[linMod,XZFuncsNow,xtGuess,eqnsFunc],toIgnore,aGSpec]},
-{theFuncs,Prepend[XZFuncsNow,genXZFuncPFInterp[{numX,numEps,numZ},theFuncs,toIgnore,aGSpec]]}]]
+With[{theFuncs=makeInterpFunc[genFPFunc[linMod,XZFuncsNow,xtGuess,eqnsFunc],gSpec]},
+{theFuncs,Prepend[XZFuncsNow,genXZFuncPFInterp[{numX,numEps,numZ},theFuncs,gSpec]]}]]
 
 
 
@@ -556,10 +556,10 @@ With[{theFuncs=genFPFunc[linMod,XZFuncsNow,xtGuess,eqnsFunc]},
 
 
 doIterREInterp[linMod:{BB_?MatrixQ,phi_?MatrixQ,FF_?MatrixQ,psiEps_?MatrixQ,psiC_?MatrixQ,psiZ_?MatrixQ,psiZPreComp_?MatrixQ},XZFuncsNow:{(_Function|_InterpolatingFunction|_CompiledFunction)..},
-xtGuess_?MatrixQ,eqnsFunc_CompiledFunction,toIgnore:{_Integer...},aGSpec:{_Integer,{{_Integer,_?NumberQ,_?NumberQ}..}},allArgs:{expctSpec:{{_Symbol,_}..},opts_:{}}]:=
+xtGuess_?MatrixQ,eqnsFunc_CompiledFunction,gSpec:{toIgnore:{_Integer...},iOrd_Integer,{{_Integer,_?NumberQ,_?NumberQ}..}},allArgs:{expctSpec:{{_Symbol,_}..},opts_:{}}]:=
 With[{numX=Length[BB],numEps=Length[psiEps[[1]]],numZ=Length[psiZ[[1]]]},
-With[{theFuncs=makeInterpFunc[genFPFunc[linMod,XZFuncsNow,xtGuess,eqnsFunc],toIgnore,aGSpec]},
-{theFuncs,Prepend[XZFuncsNow,genXZFuncREInterp[{numX,numEps,numZ},theFuncs,toIgnore,aGSpec,allArgs]]}]]
+With[{theFuncs=makeInterpFunc[genFPFunc[linMod,XZFuncsNow,xtGuess,eqnsFunc],gSpec]},
+{theFuncs,Prepend[XZFuncsNow,genXZFuncREInterp[{numX,numEps,numZ},theFuncs,gSpec,allArgs]]}]]
 
 
 
@@ -570,9 +570,9 @@ eqnsFunc]&,{ig,XZFuncsNow},numIters]
 
 
 nestIterPFInterp[linMod:{BB_?MatrixQ,phi_?MatrixQ,FF_?MatrixQ,psiEps_?MatrixQ,psiC_?MatrixQ,psiZ_?MatrixQ,psiZPreComp_?MatrixQ},XZFuncsNow:{(_Function|_InterpolatingFunction|_CompiledFunction)..},
-xtGuess_?MatrixQ,eqnsFunc_CompiledFunction,toIgnore:{_Integer...},aGSpec:{_Integer,{{_Integer,_?NumberQ,_?NumberQ}..}},numIters_Integer]:=
+xtGuess_?MatrixQ,eqnsFunc_CompiledFunction,gSpec:{toIgnore:{_Integer...},iOrd_Integer,{{_Integer,_?NumberQ,_?NumberQ}..}},numIters_Integer]:=
 NestList[doIterPFInterp[linMod,#[[2]],xtGuess,
-eqnsFunc,toIgnore,aGSpec]&,{ig,XZFuncsNow},numIters]
+eqnsFunc,gSpec]&,{ig,XZFuncsNow},numIters]
 
 
 nestIterRE[linMod:{BB_?MatrixQ,phi_?MatrixQ,FF_?MatrixQ,psiEps_?MatrixQ,psiC_?MatrixQ,psiZ_?MatrixQ,psiZPreComp_?MatrixQ},XZFuncsNow:{_Function..},
@@ -582,9 +582,9 @@ eqnsFunc,allArgs]&,{ig,XZFuncsNow},numIters]
 
 
 nestIterREInterp[linMod:{BB_?MatrixQ,phi_?MatrixQ,FF_?MatrixQ,psiEps_?MatrixQ,psiC_?MatrixQ,psiZ_?MatrixQ,psiZPreComp_?MatrixQ},XZFuncsNow:{(_Function|_InterpolatingFunction|_CompiledFunction)..},
-xtGuess_?MatrixQ,eqnsFunc_CompiledFunction,toIgnore:{_Integer...},aGSpec:{_Integer,{{_Integer,_?NumberQ,_?NumberQ}..}},allArgs:{expctSpec:{{_Symbol,_}..},opts_:{}},numIters_Integer]:=
+xtGuess_?MatrixQ,eqnsFunc_CompiledFunction,gSpec:{toIgnore:{_Integer...},iOrd_Integer,{{_Integer,_?NumberQ,_?NumberQ}..}},allArgs:{expctSpec:{{_Symbol,_}..},opts_:{}},numIters_Integer]:=
 NestList[doIterREInterp[linMod,#[[2]],xtGuess,
-eqnsFunc,toIgnore,aGSpec,allArgs]&,{ig,XZFuncsNow},numIters]
+eqnsFunc,gSpec,allArgs]&,{ig,XZFuncsNow},numIters]
 
 
 
@@ -596,14 +596,14 @@ Global`numPts = 20; Global`aGSpec =
     3}}];
   *) 
 genXZFuncPFInterp[probDims:{numX_Integer,numEps_Integer,numZ_Integer},
-aLilXkZkFunc_Function,toIgnore:{_Integer...},aGSpec:{_Integer,{{_Integer,_?NumberQ,_?NumberQ}..}}]:=
+aLilXkZkFunc_Function,gSpec:{toIgnore:{_Integer...},iOrd_Integer,{{_Integer,_?NumberQ,_?NumberQ}..}}]:=
 With[{theFuncNow=genXZFuncPF[{numX,numEps,numZ},aLilXkZkFunc]},
-makeInterpFunc[theFuncNow,toIgnore,{aGSpec[[1]],Drop[aGSpec[[2]],-numEps]}]]
+makeInterpFunc[theFuncNow,{toIgnore,gSpec[[2]],Drop[gSpec[[3]],-numEps]}]]
 
 genXZFuncREInterp[probDims:{numX_Integer,numEps_Integer,numZ_Integer},
-aLilXkZkFunc_Function,toIgnore:{_Integer...},aGSpec:{_Integer,{{_Integer,_?NumberQ,_?NumberQ}..}},allArgs:{expctSpec:{{_Symbol,_}..},opts_:{}}]:=
+aLilXkZkFunc_Function,gSpec:{toIgnore:{_Integer...},iOrd_Integer,{{_Integer,_?NumberQ,_?NumberQ}..}},allArgs:{expctSpec:{{_Symbol,_}..},opts_:{}}]:=
 With[{theFuncNow=genXZFuncRE[{numX,numEps,numZ},aLilXkZkFunc,allArgs]},
-makeInterpFunc[theFuncNow,toIgnore,{aGSpec[[1]],Drop[aGSpec[[2]],-numEps]}]]
+makeInterpFunc[theFuncNow,{toIgnore,gSpec[[2]],Drop[gSpec[[3]],-numEps]}]]
   
   
     

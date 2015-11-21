@@ -163,6 +163,14 @@ NestList[(Print[#//InputForm];(Transpose[{iterFunc @@ Flatten[#]}]))&,firVal,num
 Join[Transpose[{initVec}][[Range[numX]]],Join @@ (Identity[#[[Range[numX]]]]&/@iterated)]]]]/;
 And[numPers>0]
 
+iterateDRREIntegrate[drFunc:(_Function|_CompiledFunction),condExpFunc:(_Function|_CompiledFunction),initVec_?VectorQ,allArgs:{expctSpec:{{_Symbol,_}..},opts_:{}},numPers_Integer]:=
+With[{numEps=Length[expctSpec],firVal=drFunc @@ initVec},
+	With[{numX=Length[initVec]-numEps},
+With[{iterated=
+NestList[(Print[#//InputForm];(Transpose[{condExpFunc @@ Flatten[#]}]))&,firVal,numPers-1]},
+Join[Transpose[{initVec}][[Range[numX]]],Join @@ (Identity[#[[Range[numX]]]]&/@iterated)]]]]/;
+And[numPers>0]
+
 makeREIterFunc[drFunc:(_Function|_CompiledFunction),{expctSpec:{{_Symbol,_}..},opts_:{}}]:=
 With[{numX=Length[drFunc[[1]]]-Length[expctSpec]},
 With[{xVars=Table[Unique["xV"],{numX}]},

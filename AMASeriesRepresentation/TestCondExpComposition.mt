@@ -16,7 +16,8 @@ Print["after switch",$System];
 Get["prepBetter.m"]
 Print["inTestCondExpComposition.mt",$Path,Directory[],{linMod,X0Z0}//InputForm];
 what=fSum[linMod,{X0Z0}];
-Save["whyPblm.mth",{linMod,X0Z0,what}]
+hat=fSum[linMod,{X0Z0},Table[{0},{4}]]
+Save["whyPblm.mth",{linMod,X0Z0,what,hat}]
 Test[
 	ffs=fSum[linMod,{X0Z0},Table[{0},{4}]]
 	,

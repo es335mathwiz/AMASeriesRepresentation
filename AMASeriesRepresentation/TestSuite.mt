@@ -7,7 +7,7 @@ TestSuite[
 		"TestGenFPFunc.mt",
 		"TestGenFRFunc.mt",
 		"TestGenLilXkZkFunc.mt",(*not okay*)
-
+		"TestCondExpComposition.mt",
 		"TestGenPath.mt",
 		"TestApprox.mt",(*hangs by itself with rbcpfre*)
 		"TestRBCCompDoIterPF.mt",(*okay*)
@@ -17,6 +17,6 @@ TestSuite[
 		"TestRBCCompGenPath.mt",
 		"TestRBCCompIterDRPF.mt",(*okay*)
 		"TestRBCCompApprox.mt",
-		"TestCondExpComposition.mt"
+		"TestEmpty.mt"
 	}
 ]

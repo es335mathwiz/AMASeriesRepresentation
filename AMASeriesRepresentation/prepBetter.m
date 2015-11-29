@@ -13,6 +13,7 @@ Switch[$System,
 $ContextPath=DeleteCases[$ContextPath,"simpleRBCModel`"] 
 Needs["betterRBC`"]
  anXEps={1,.2,1,1.1,0.01}   
+  anX={1,.2,1,1.1}   
  
 thVal=(theta//.ssSolnSubsRE//.(simpParamSubs//N))//N;
 kVal = (kk /. Private`kSSSubRE//.(simpParamSubs//N))//N;

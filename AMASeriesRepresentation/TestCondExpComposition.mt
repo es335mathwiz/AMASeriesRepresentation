@@ -13,7 +13,7 @@ Switch[$System,
   _,Print["unknown:",$System]]; 
 $ContextPath=DeleteCases[$ContextPath,"simpleRBCModel`"] 
 Print["after switch",$System];
-Get["prepBetter.m"]
+Get["prepBetter.m"];Get["betterRBC.m"];
 Print["inTestCondExpComposition.mt",$Path,Directory[],{linMod,X0Z0}//InputForm];
 what=fSum[linMod,{X0Z0}];
 hat=fSum[linMod,{X0Z0},Table[{0},{4}]]

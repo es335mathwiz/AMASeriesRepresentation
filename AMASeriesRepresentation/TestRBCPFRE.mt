@@ -7,6 +7,7 @@ Get["prepBetter.m"]
    {x1z1re, X1Z1RE} = 
   doIterRE[linMod, {X0Z0}, X0Z0[1, .18, 1, 1][[Range[4]]], 
    rbcEqnsCompiled, {{{ee, PerfectForesight}}}];
+   Print[{Through[X1Z1PF @@ # &@anXEps]-Through[X1Z1RE @@ # &@anXEps]}]
 Test[
 	Through[X1Z1PF @@ # &@anXEps]==Through[X1Z1RE @@ # &@anXEps]
 	,

@@ -32,12 +32,13 @@ theLilFuncMoreX0Z0=Private`genLilXkZkFunc[linMod, {X0Z0,X0Z0,X0Z0,X0Z0},X0Z0@@an
 theFRMoreX0Z0=Private`genFRFunc[probDims,theLilFuncMoreX0Z0,rbcComp];
 theFPMoreX0Z0=Private`genFPFunc[linMod,{X0Z0,X0Z0,X0Z0,X0Z0},X0Z0@@anXtm1EpsZ,rbcComp];
 
-
+With[{frXtZt=theFR@@anXtm1EpsZ[[Range[5]]],
+	fpXtZt=theFP@@anXtm1EpsZ[[Range[5]]]},Print[Chop[Norm[frXtZt-fpXtZt]]]]
 
 (*fixed point irrelevant until more than one XZ*)
 Test[
 With[{frXtZt=theFR@@anXtm1EpsZ[[Range[5]]],
-	fpXtZt=theFP@@anXtm1EpsZ[[Range[5]]]},Chop[Norm[frXtZt-fpXtZt]==0]],
+	fpXtZt=theFP@@anXtm1EpsZ[[Range[5]]]},Chop[Norm[frXtZt-fpXtZt]]==0],
 	True
 	,
 	TestID->"TestGenFRFunc-201101-R6T3M7"
@@ -53,13 +54,14 @@ With[{fpXtZt=theFP@@anXtm1EpsZ[[Range[5]]]},
 	TestID->"TestGenFRFunc-151101-R6T8M7"
 ]
 
-
+With[{frXtZt=theFRMoreX0Z0@@anXtm1EpsZ[[Range[5]]],
+	fpXtZt=theFPMoreX0Z0@@anXtm1EpsZ[[Range[5]]]},Print[Chop[Norm[frXtZt-fpXtZt]]]]
 
 
 (*fixed point irrelevant until more than one XZ and Z's non zero*)
 Test[
 With[{frXtZt=theFRMoreX0Z0@@anXtm1EpsZ[[Range[5]]],
-	fpXtZt=theFPMoreX0Z0@@anXtm1EpsZ[[Range[5]]]},Chop[Norm[frXtZt-fpXtZt]==0]],
+	fpXtZt=theFPMoreX0Z0@@anXtm1EpsZ[[Range[5]]]},Chop[Norm[frXtZt-fpXtZt]]==0],
 	True
 	,
 	TestID->"TestGenFRFunc-20151101-MMT3M7"

@@ -66,9 +66,23 @@ genZsREWorst::usage="genZsRE[anHmat_?MatrixQ,PsiEps_?MatrixQ,PsiC_?MatrixQ,theDR
 pathErrsDRREIntegrate::usage="pathErrsDRPF[drFunc_Function,eqnsFunc:(_Function|_CompiledFunction),anX_?MatrixQ,anEps_?MatrixQ,numPers_Integer]"
 pathErrsDRPF::usage="pathErrsDRPF[drFunc_Function,eqnsFunc:(_Function|_CompiledFunction),anX_?MatrixQ,anEps_?MatrixQ,numPers_Integer]"
 PerfectForesight::usage="degenerate distribution implementing perfect foresight"
+makeFunc::usage="makeFunc[funcArgsNow_List,numX_Integer,{theS_Function,thePairs:{{(_Function|CompiledFunction),(_Function|CompiledFunction)}..}}]"
+
+
 Begin["Private`"]
 
  
+makeFunc[funcArgsNow_List,numX_Integer,{theS_Function,
+thePairs:{{(_Function|CompiledFunction),(_Function|CompiledFunction)}..}}]:=
+With[{xtPos=Range[numX]+2*numX},
+With[{preArgs=
+(Function[xxxx,With[{indx=(theS@@xxxx+1)},
+thePairs[[indx,1]]@@xxxx + 
+(thePairs[[indx,2]]@@xxxx).(xxxx[[xxxxXtPos]])]])},
+With[{xxxxLocs=Position[preArgs,xxxx$],
+xxxxXtPos=Position[preArgs,xxxxXtPos]},
+ReplacePart[preArgs,{xxxxLocs->funcArgsNow,xxxxXtPos->xtPos}]]]]
+
  
 gridPts[rngs:{{_Integer,_?NumberQ,_?NumberQ}..}]:=
 With[{funcForPts=(Function[xx,oneDimGridPts[xx[[1]],xx[[{2,3}]]]] @#) &},

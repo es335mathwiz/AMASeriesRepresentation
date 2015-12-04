@@ -129,7 +129,7 @@ fillIn[{theRes,Sort[toIgnore],shortVec}]
 
 Print["makeInterpFunc not generic, tied to RBC"];
 makeInterpFunc[aVecFunc_Function,gSpec:{toIgnore:{_Integer...},iOrd_Integer,{{_Integer,_?NumberQ,_?NumberQ}..}}]:=
-With[{interpData=genInterpData[aVecFunc,gSpec],numArgs=Length[gSpec[[3]]]},
+With[{interpData=genInterpData[aVecFunc,gSpec],numArgs=Length[getGridPtTrips[gSpec]]},
 	With[{numFuncs=Length[interpData[[1,2]]],funcArgs=Table[Unique["fArgs"],{numArgs}]},
 	With[{longFuncArgs=fillInSymb[{{},toIgnore,funcArgs}],
 		interpFuncList=
@@ -145,7 +145,7 @@ With[{interpData=genInterpData[aVecFunc,gSpec],numArgs=Length[gSpec[[3]]]},
 
  
 genInterpData[aVecFunc_Function,gSpec:{toIgnore:{_Integer...},iOrd_Integer,{{_Integer,_?NumberQ,_?NumberQ}..}}]:=
-With[{thePts=gridPts[gSpec[[3]]]},
+With[{thePts=gridPts[getGridPtTrips[gSpec]]},
 With[{interpData=Map[{#,aVecFunc@@fillIn[{{},toIgnore,#}]}&,thePts]},
 interpData]]
 
@@ -317,7 +317,7 @@ pathErrsDRREIntegrate[drFunc,initVec,distribSpec,eqnsFunc,2]
 
 
 makeDREvalInterp[drFunc_Function,distribSpec:{expctSpec:{{_Symbol,_}..},opts_:{}},eqnsFunc:(_Function|_CompiledFunction),gSpec:{toIgnore:{_Integer...},iOrd_Integer,{{_Integer,_?NumberQ,_?NumberQ}..}}]:=
-With[{xEpsArgs=Table[Unique["xeArgs"],{Length[toIgnore]+Length[gSpec[[3]]]}]},
+With[{xEpsArgs=Table[Unique["xeArgs"],{Length[toIgnore]+Length[getGridPtTrips[gSpec]]}]},
 	With[{preInterp=
 	ReplacePart[
 	Function[xxxxxx,  
@@ -647,14 +647,22 @@ Global`numPts = 20; Global`aGSpec =
 genXZFuncPFInterp[probDims:{numX_Integer,numEps_Integer,numZ_Integer},
 aLilXkZkFunc_Function,gSpec:{toIgnore:{_Integer...},iOrd_Integer,{{_Integer,_?NumberQ,_?NumberQ}..}}]:=
 With[{theFuncNow=genXZFuncPF[{numX,numEps,numZ},aLilXkZkFunc]},
-makeInterpFunc[theFuncNow,{toIgnore,gSpec[[2]],Drop[gSpec[[3]],-numEps]}]]
+makeInterpFunc[theFuncNow,{toIgnore,getIOrd[gSpec],Drop[getGridPtTrips[gSpec],-numEps]}]]
 
 genXZFuncREInterp[probDims:{numX_Integer,numEps_Integer,numZ_Integer},
 aLilXkZkFunc_Function,gSpec:{toIgnore:{_Integer...},iOrd_Integer,{{_Integer,_?NumberQ,_?NumberQ}..}},distribSpec:{expctSpec:{{_Symbol,_}..},opts_:{}}]:=
 With[{theFuncNow=genXZFuncRE[{numX,numEps,numZ},aLilXkZkFunc,distribSpec]},
-makeInterpFunc[theFuncNow,{toIgnore,gSpec[[2]],Drop[gSpec[[3]],-numEps]}]]
+makeInterpFunc[theFuncNow,{toIgnore,gSpec[[2]],Drop[getGridPtTrips[gSpec],-numEps]}]]
   
-  
+
+
+getToIgnore[gSpec:{toIgnore:{_Integer...},iOrd_Integer,{{_Integer,_?NumberQ,_?NumberQ}..}}]:=toIgnore
+ 
+ 
+getIOrd[gSpec:{toIgnore:{_Integer...},iOrd_Integer,{{_Integer,_?NumberQ,_?NumberQ}..}}]:=iOrd
+
+
+getGridPtTrips[gSpec:{toIgnore:{_Integer...},iOrd_Integer,{{_Integer,_?NumberQ,_?NumberQ}..}}]:=gSpec[[3]]
     
 genXZFuncPF[{numX_Integer,numEps_Integer,numZ_Integer},
 aLilXkZkFunc_Function]:=

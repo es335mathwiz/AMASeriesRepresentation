@@ -83,6 +83,19 @@ With[{xxxxLocs=Position[preArgs,xxxx$],
 xxxxXtPos=Position[preArgs,xxxxXtPos]},
 ReplacePart[preArgs,{xxxxLocs->funcArgsNow,xxxxXtPos->xtPos}]]]]
 
+  
+makeFunc[funcArgsNow_List,numX_Integer,
+thePair:{(_Function|CompiledFunction),(_Function|CompiledFunction)}]:=
+With[{xtPos=Range[numX]+2*numX},
+With[{preArgs=
+(Function[xxxx,
+thePair[[1]]@@xxxx + 
+(thePair[[2]]@@xxxx).(xxxx[[xxxxXtPos]])])},
+With[{xxxxLocs=Position[preArgs,xxxx$],
+xxxxXtPos=Position[preArgs,xxxxXtPos]},
+ReplacePart[preArgs,{xxxxLocs->funcArgsNow,xxxxXtPos->xtPos}]]]]
+
+ 
  
 gridPts[rngs:{{_Integer,_?NumberQ,_?NumberQ}..}]:=
 With[{funcForPts=(Function[xx,oneDimGridPts[xx[[1]],xx[[{2,3}]]]] @#) &},

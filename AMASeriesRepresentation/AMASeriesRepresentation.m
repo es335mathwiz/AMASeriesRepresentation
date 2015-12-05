@@ -202,20 +202,36 @@ And[numPers>0]
 makeREIterFunc[drFunc:(_Function|_CompiledFunction),distribSpec:{expctSpec:{{_Symbol,_}..},regimeTransProbFunc_:Undefined}]:=
 With[{numEps=getNumEpsVars[distribSpec]},
 With[{numX=Length[drFunc[[1]]]-numEps},
-With[{xVars=Table[Unique["xV"],{numX}],dists=Last/@expctSpec,distVars=Table[Unique["epIntV"],{numEps}]},
-With[{xEpsVars=Join[xVars,distVars],
-	intArg=MapThread[#1 \[Distributed] #2&,{distVars,dists}],funcName=Unique["fName"]},
+With[{intVarRes=genIntVars[numX,numEps,expctSpec]},
+With[{xVars=Table[Unique["xV"],{numX}],
+	dists=Last/@expctSpec,distVars=Table[Unique["epIntV"],{numEps}]},
+With[{notXvars=intVarRes[[1]],notxEpsVars=intVarRes[[2]],notintArg=intVarRes[[3]],notFuncName=intVarRes[[4]],
+	xEpsVars=Join[xVars,distVars],intArg=MapThread[#1 \[Distributed] #2&,{distVars,dists}],funcName=Unique["fName"]},
 funcName[funcArgsNot:{_?NumberQ..},idx_Integer]:=(drFunc@@Flatten[funcArgsNot])[[idx,1]];
 	With[{theStuff=
 		Function[xxxx,
 		myNExpectation[funcName[Flatten[valSubbed],#]//Chop,theArg]&/@Range[numX]]
 		},(*{theStuff,*)
+		With[{xVarsPos=Position[theStuff,xxxx],intArgPos=Position[theStuff,valSubbed],xEVPos=Position[theStuff,theArg]},
 	ReplacePart[
 theStuff,
 	{1->xVars,{2,1,1,2}->intArg,{2,1,1,1,1,1}->xEpsVars}](*	}*)
-	]]]]]
+	]]]]]]]
+
+
 myNExpectation[funcName_Symbol[farg_List,idx_Integer],nArgs_List]:=NExpectation[funcName[farg,idx],nArgs]
+
+
+genIntVars[numX_Integer,numEps_Integer,expctSpec:{{_Symbol,_}..}]:=
+With[{xVars=Table[Unique["xV"],{numX}],dists=Last/@expctSpec,distVars=Table[Unique["epIntV"],{numEps}]},
+With[{xEpsVars=Join[xVars,distVars],
+	intArg=MapThread[#1 \[Distributed] #2&,{distVars,dists}],funcName=Unique["fName"]},{xVars,xEpsVars,intArg,funcName}]]
+
+
+
+
  (*
+
 
 genZsRE[anHmat_?MatrixQ,PsiEps_?MatrixQ,PsiC_?MatrixQ,
 	theDRFunc:(_Function|_CompiledFunction),initVec_?VectorQ,distribSpec:{expctSpec:{{_Symbol,_}..},regimeTransProbFunc_:Undefined},
@@ -701,7 +717,7 @@ funcName@@Append[ReplacePart[{funcArgs},{{1,(-1)}->0}],idx]
 
 
 getDistribs[distribSpec:{expctSpec:{{_Symbol,_}..},regimeTransProbFunc_:Undefined}]:=expctSpec
-getDistribOpts[distribSpec:{expctSpec:{{_Symbol,_}..},regimeTransProbFunc_:Undefined}]:=opts
+getRegimeTransProbFunc[distribSpec:{expctSpec:{{_Symbol,_}..},regimeTransProbFunc_:Undefined}]:=regimeTransProbFunc
 getNumEpsVars[distribSpec:{expctSpec:{{_Symbol,_}..},regimeTransProbFunc_:Undefined}]:=Length[expctSpec]
 End[]
 EndPackage[]

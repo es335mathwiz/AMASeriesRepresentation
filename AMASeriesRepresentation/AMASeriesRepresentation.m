@@ -187,7 +187,7 @@ iterateDRREIntegrate[drFunc:(_Function|_CompiledFunction),initVec_?VectorQ,distr
 With[{numEps=getNumEpsVars[distribSpec],firVal=drFunc @@ initVec},
 	With[{numX=Length[initVec]-numEps,iterFunc=makeREIterFunc[drFunc,distribSpec]},
 With[{iterated=
-NestList[((*Print[#//InputForm];*)(Transpose[{iterFunc @@ Flatten[#]}]))&,firVal,numPers-1]},
+NestList[((*Print[#//InputForm];*)(Transpose[{Flatten[iterFunc @@ Flatten[#]]}]))&,firVal,numPers-1]},
 Join[Transpose[{initVec}][[Range[numX]]],Join @@ (Identity[#[[Range[numX]]]]&/@iterated)]]]]/;
 And[numPers>0]
 
@@ -198,7 +198,7 @@ With[{iterated=
 NestList[(Print[#//InputForm];(Transpose[{condExpFunc @@ Flatten[#]}]))&,firVal,numPers-1]},
 Join[Transpose[{initVec}][[Range[numX]]],Join @@ (Identity[#[[Range[numX]]]]&/@iterated)]]]]/;
 And[numPers>0]
-
+(*
 makeREIterFunc[drFunc:(_Function|_CompiledFunction),distribSpec:{expctSpec:{{_Symbol,_}..},regimeTransProbFunc_:Undefined}]:=
 With[{numEps=getNumEpsVars[distribSpec]},
 With[{numX=Length[drFunc[[1]]]-numEps},
@@ -212,11 +212,17 @@ funcName[funcArgsNot:{_?NumberQ..},idx_Integer]:=(drFunc@@Flatten[funcArgsNot])[
 		Function[xxxx,
 		myNExpectation[funcName[Flatten[valSubbed],#]//Chop,theArg]&/@Range[numX]]
 		},(*{theStuff,*)
-		With[{xVarsPos=Position[theStuff,xxxx],intArgPos=Position[theStuff,valSubbed],xEVPos=Position[theStuff,theArg]},
+		With[{xVarsPos=Position[theStuff,xxxx$],intArgPos=Position[theStuff,valSubbed],xEVPos=Position[theStuff,theArg]},
 	ReplacePart[
 theStuff,
-	{1->xVars,{2,1,1,2}->intArg,{2,1,1,1,1,1}->xEpsVars}](*	}*)
+	{xVarsPos->xVars,xEVPos->intArg,intArgPos->xEpsVars}](*	}*)
 	]]]]]]]
+
+*)
+makeREIterFunc[drFunc:(_Function|_CompiledFunction),distribSpec:{expctSpec:{{_Symbol,_}..},regimeTransProbFunc_:Undefined}]:=
+With[{numEps=getNumEpsVars[distribSpec]},
+With[{numX=Length[drFunc[[1]]]-numEps,numZ=0},
+	genXZFuncRE[{numX,numEps,numZ},drFunc,distribSpec]]]
 
 
 myNExpectation[funcName_Symbol[farg_List,idx_Integer],nArgs_List]:=NExpectation[funcName[farg,idx],nArgs]

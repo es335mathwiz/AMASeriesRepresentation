@@ -699,8 +699,7 @@ Function[xxxx,aLilXkZkFunc@@Join[funcArgs,theZeroes]],
 genXZFuncRE[{numX_Integer,ignored_Integer,numZ_Integer},
 aLilXkZkFunc_Function,distribSpec:{expctSpec:{{_Symbol,_}..},regimeTransProbFunc_:{}}]:=
 With[{intVarRes=genIntVars[numX,distribSpec],
-	shockVars=First/@(distribSpec[[1]]),
-	funcArgs=Table[Unique["theFRFuncArgs"],{numX}],funcName=Unique["fName"]},
+funcName=Unique["fName"]},
 funcName[fNameArgs:{_?NumberQ..},idx_Integer]:=Module[{},
 (aLilXkZkFunc@@ fNameArgs)[[idx,1]]];
 (*eqnsFunc@@(Flatten[xkFunc@@Join[funcArgs,zArgs]]);*)
@@ -723,8 +722,8 @@ With[{xVars=Table[Unique["xV"],{numX}],
 	distVars=Table[Unique["epIntV"],{getNumEpsVars[distribSpec]}]},
 With[{xEpsVars=If[regimeTransProbFunc=={},
 	Join[xVars,distVars],Join[xVars,distVars,Unique["regV"]]],
-	intArg=MapThread[#1 \[Distributed] #2&,{distVars,dists}],funcName=Unique["fName"]},
-	{xVars,xEpsVars,intArg,funcName}]]
+	intArg=MapThread[#1 \[Distributed] #2&,{distVars,dists}]},
+	{xVars,xEpsVars,intArg}]]
 
 
 getDistribs[distribSpec:{expctSpec:{{_Symbol,_}..},regimeTransProbFunc_:{}}]:= Last/@expctSpec

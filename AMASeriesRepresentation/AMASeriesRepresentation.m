@@ -702,13 +702,11 @@ With[{intVarRes=genIntVars[numX,distribSpec],
 funcName=Unique["fName"]},
 funcName[fNameArgs:{_?NumberQ..},idx_Integer]:=Module[{},
 (aLilXkZkFunc@@ fNameArgs)[[idx,1]]];
-(*eqnsFunc@@(Flatten[xkFunc@@Join[funcArgs,zArgs]]);*)
-ReplacePart[
+With[{funcGuts=If[regimeTransProbFunc=={},
 Function[xxxx,Module[{},
 	Transpose[{myNExpectation[
-	(funcName[intVarRes[[2]],#]),intVarRes[[3]]]&/@Range[numX+numZ]}]]
-	],
-1->intVarRes[[1]]]]
+	(funcName[intVarRes[[2]],#]),intVarRes[[3]]]&/@Range[numX+numZ]}]]]]},
+	ReplacePart[funcGuts,1->intVarRes[[1]]]]]
 
 myNExpectation[funcName_Symbol[funcArgs_List,idx_Integer],anEpsVar_\[Distributed] PerfectForesight]:=
 funcName@@Append[ReplacePart[{funcArgs},{{(1),(-1)}->0}],idx]

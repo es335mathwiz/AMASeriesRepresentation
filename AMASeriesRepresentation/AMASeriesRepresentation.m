@@ -693,19 +693,30 @@ Function[xxxx,aLilXkZkFunc@@Join[funcArgs,theZeroes]],
 ]]
 
 
+getProbFunc[distribSpec:{expctSpec:{{_Symbol,_}..},regimeTransProbFunc_:{}}]:=
+If[regimeTransProbFunc=={},Function[1],regimeTransProbFunc[[2]]]
 
+getNumRegimes[distribSpec:{expctSpec:{{_Symbol,_}..},regimeTransProbFunc_:{}}]:=
+If[regimeTransProbFunc=={},0,regimeTransProbFunc[[1]]]
 
 
 genXZFuncRE[{numX_Integer,ignored_Integer,numZ_Integer},
 aLilXkZkFunc_Function,distribSpec:{expctSpec:{{_Symbol,_}..},regimeTransProbFunc_:{}}]:=
 With[{intVarRes=genIntVars[numX,distribSpec],
-funcName=Unique["fName"]},
+funcName=Unique["fName"],numRegimes=getNumRegimes[distribSpec]},
 funcName[fNameArgs:{_?NumberQ..},idx_Integer]:=Module[{},
 (aLilXkZkFunc@@ fNameArgs)[[idx,1]]];
-With[{funcGuts=If[regimeTransProbFunc=={},
-Function[xxxx,Module[{},
+With[{funcGuts=
+Switch[numRegimes,
+	0,Function[xxxx,Module[{},
 	Transpose[{myNExpectation[
-	(funcName[intVarRes[[2]],#]),intVarRes[[3]]]&/@Range[numX+numZ]}]]]]},
+	(funcName[intVarRes[[2]],#]),intVarRes[[3]]]&/@Range[numX+numZ]}]]],
+	_,Function[xxxx,Module[{},
+	Sum[(getProbFunc[distribSpec] @@
+		Append[intVarRes[[2]],ii-1])*
+	Transpose[{myNExpectation[Print["curious:",{getProbFunc[distribSpec] @@Append[intVarRes[[2]],ii-1],intVarRes[[2]],ii-1,#,(funcName[Append[intVarRes[[2]],ii-1],#])}];
+	(funcName[Append[intVarRes[[2]],ii-1],#]),intVarRes[[3]]]&/@Range[numX+numZ]}],{ii,numRegimes}]]]		
+	]},
 	ReplacePart[funcGuts,1->intVarRes[[1]]]]]
 
 myNExpectation[funcName_Symbol[funcArgs_List,idx_Integer],anEpsVar_\[Distributed] PerfectForesight]:=
@@ -719,7 +730,7 @@ With[{xVars=Table[Unique["xV"],{numX}],
 	dists=getDistribs[distribSpec],
 	distVars=Table[Unique["epIntV"],{getNumEpsVars[distribSpec]}]},
 With[{xEpsVars=If[regimeTransProbFunc=={},
-	Join[xVars,distVars],Join[xVars,distVars,Unique["regV"]]],
+	Join[xVars,distVars],Join[xVars,distVars(*,{Unique["regV"]}*)]],
 	intArg=MapThread[#1 \[Distributed] #2&,{distVars,dists}]},
 	{xVars,xEpsVars,intArg}]]
 

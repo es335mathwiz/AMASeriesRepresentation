@@ -6,6 +6,13 @@ Print["reading AMASeriesRepresentation`"]
 
 BeginPackage["AMASeriesRepresentation`", {"JLink`","ProtectedSymbols`","mathSmolyak`",
 	"DifferentialEquations`InterpolatingFunctionAnatomy`"}]
+	
+$noTransFunc::usage="transfuncinfo";
+	
+$transFuncHasShocks::usage="transfuncinfo";
+	
+$transFuncNoShocks::usage="transfuncinfo";
+
 makeDREvalInterp::usage="makeDREValInterp[drFunc_Function,distribSpec:{expctSpec:{{_Symbol,_}..},regimeTransProbFunc_:{}},eqnsFunc:(_Function|_CompiledFunction),gSpec:{toIgnore:{_Integer...},iOrd_Integer,{{_Integer,_?NumberQ,_?NumberQ}..}}]"
 
 truncErrorMat::usage="truncErrorMat[{{fmat,_Real,2},{phimat,_Real,2},{kk,_Integer}}]"
@@ -693,12 +700,7 @@ Function[xxxx,aLilXkZkFunc@@Join[funcArgs,theZeroes]],
 ]]
 
 
-getProbFunc[distribSpec:{expctSpec:{{_Symbol,_}..},regimeTransProbFunc_:{}}]:=
-If[regimeTransProbFunc=={},Function[1],regimeTransProbFunc[[2]]]
-
-getNumRegimes[distribSpec:{expctSpec:{{_Symbol,_}..},regimeTransProbFunc_:{}}]:=
-If[regimeTransProbFunc=={},0,regimeTransProbFunc[[1]]]
-
+	
 
 genXZFuncRE[{numX_Integer,ignored_Integer,numZ_Integer},
 aLilXkZkFunc_Function,distribSpec:{expctSpec:{{_Symbol,_}..},regimeTransProbFunc_:{}}]:=
@@ -707,15 +709,19 @@ funcName=Unique["fName"],numRegimes=getNumRegimes[distribSpec]},
 funcName[fNameArgs:{_?NumberQ..},idx_Integer]:=Module[{},
 (aLilXkZkFunc@@ fNameArgs)[[idx,1]]];
 With[{funcGuts=
-Switch[numRegimes,
-	0,Function[xxxx,Module[{},
+Switch[getRegimeTransProbFuncType[distribSpec],
+	$noTransFunc,Function[xxxx,Module[{},
 	Transpose[{myNExpectation[
 	(funcName[intVarRes[[2]],#]),intVarRes[[3]]]&/@Range[numX+numZ]}]]],
-	_,Function[xxxx,Module[{},
+	$transFuncNoShocks,Function[xxxx,Module[{},
 	Sum[(getProbFunc[distribSpec] @@
 		Append[intVarRes[[2]],ii-1])*
 	Transpose[{myNExpectation[Print["curious:",{getProbFunc[distribSpec] @@Append[intVarRes[[2]],ii-1],intVarRes[[2]],ii-1,#,(funcName[Append[intVarRes[[2]],ii-1],#])}];
-	(funcName[Append[intVarRes[[2]],ii-1],#]),intVarRes[[3]]]&/@Range[numX+numZ]}],{ii,numRegimes}]]]		
+	(funcName[Append[intVarRes[[2]],ii-1],#]),intVarRes[[3]]]&/@Range[numX+numZ]}],{ii,numRegimes}]]],
+	$transFuncHasShocks,Function[xxxx,Module[{},
+	Transpose[{myNExpectation[Print["curious:",{getProbFunc[distribSpec] @@Append[intVarRes[[2]],ii-1],intVarRes[[2]],ii-1,#,(funcName[Append[intVarRes[[2]],ii-1],#])}];
+	Sum[(getProbFunc[distribSpec] @@
+		Append[intVarRes[[2]],ii-1])*(funcName[Append[intVarRes[[2]],ii-1],#]),{ii,numRegimes}],intVarRes[[3]]]&/@Range[numX+numZ]}]]]		
 	]},
 	ReplacePart[funcGuts,1->intVarRes[[1]]]]]
 
@@ -735,8 +741,17 @@ With[{xEpsVars=If[regimeTransProbFunc=={},
 	{xVars,xEpsVars,intArg}]]
 
 
+getProbFunc[distribSpec:{expctSpec:{{_Symbol,_}..},regimeTransProbFunc_:{}}]:=
+If[regimeTransProbFunc=={},Function[1],regimeTransProbFunc[[3]]]
+
+getNumRegimes[distribSpec:{expctSpec:{{_Symbol,_}..},regimeTransProbFunc_:{}}]:=
+If[regimeTransProbFunc=={},0,regimeTransProbFunc[[1]]]
+
 getDistribs[distribSpec:{expctSpec:{{_Symbol,_}..},regimeTransProbFunc_:{}}]:= Last/@expctSpec
-getRegimeTransProbFunc[distribSpec:{expctSpec:{{_Symbol,_}..},regimeTransProbFunc_:{}}]:=regimeTransProbFunc
+(*{numReg,tranType,tranFunc}*)
+getRegimeTransProbFuncType[distribSpec:{expctSpec:{{_Symbol,_}..},regimeTransProbFunc_:{}}]:=
+If[regimeTransProbFunc=={},$noTransFunc,regimeTransProbFunc[[2]]]
+getRegimeTransProbFunc[distribSpec:{expctSpec:{{_Symbol,_}..},regimeTransProbFunc_:{}}]:=regimeTransProbFunc[[3]]
 getNumEpsVars[distribSpec:{expctSpec:{{_Symbol,_}..},regimeTransProbFunc_:{}}]:=Length[expctSpec]
 End[]
 EndPackage[]

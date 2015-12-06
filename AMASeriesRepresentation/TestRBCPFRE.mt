@@ -1,5 +1,5 @@
 (* Wolfram Language Test file *)
-Get["prepBetter.m"]
+Get["AMASeriesRepresentation/prepBetter.mth"]
 
  {x1z1pf, X1Z1PF} = 
   doIterPF[linMod, {X0Z0}, X0Z0[1, .18, 1, 1][[Range[4]]], 

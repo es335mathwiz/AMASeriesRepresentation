@@ -1,5 +1,5 @@
 (* Wolfram Language Test file *)
-Get["prepBetter.m"]
+Get["AMASeriesRepresentation/prepBetter.mth"]
  anXEps={1,.2,1,1.1,0.01}   
  Print[iterateDRREIntegrate[betterExactDR, anXEps, theDist, 5]]
 Test[

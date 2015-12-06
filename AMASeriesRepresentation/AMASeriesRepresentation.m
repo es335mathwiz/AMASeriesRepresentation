@@ -107,7 +107,8 @@ ReplacePart[preArgs,{xxxxLocs->funcArgsNow,xxxxXtPos->xtPos}]]]]
 gridPts[rngs:{{_Integer,_?NumberQ,_?NumberQ}..},numRegimes_:0]:=
 With[{funcForPts=(Function[xx,oneDimGridPts[xx[[1]],xx[[{2,3}]]]] @#) &},
 With[{oneDimPts=funcForPts/@rngs},
-	With[{maybeRegimes=If[numRegimes==0,oneDimPts,Append[oneDimPts,Range[0,numRegimes-1]]]},
+	With[{maybeRegimes=If[numRegimes==0,oneDimPts,
+		Prepend[Append[oneDimPts,Range[0,numRegimes-1]],Range[0,numRegimes-1]]]},
 With[{theOuter=Outer[List,Sequence@@#]&[maybeRegimes]},
 Flatten[theOuter,Depth[theOuter]-3]]]]]
 
@@ -153,7 +154,7 @@ With[{interpData=genInterpData[aVecFunc,gSpec],numArgs=getNumVars[gSpec]},
 
  
 genInterpData[aVecFunc_Function,gSpec:{toIgnore:{_Integer...},iOrd_Integer,{{_Integer,_?NumberQ,_?NumberQ}..},numRegimes_:0}]:=
-With[{thePts=gridPts[getGridPtTrips[gSpec]]},
+With[{thePts=gridPts[getGridPtTrips[gSpec],numRegimes]},
 With[{interpData=Map[{#,aVecFunc@@fillIn[{{},toIgnore,#}]}&,thePts]},
 interpData]]
 
@@ -675,7 +676,7 @@ makeInterpFunc[theFuncNow,{toIgnore,getIOrd[gSpec],Drop[getGridPtTrips[gSpec],-n
 genXZFuncREInterp[probDims:{numX_Integer,numEps_Integer,numZ_Integer},
 aLilXkZkFunc_Function,gSpec:{toIgnore:{_Integer...},iOrd_Integer,{{_Integer,_?NumberQ,_?NumberQ}..},numRegimes_:0},distribSpec:{expctSpec:{{_Symbol,_}..},regimeTransProbFunc_:{}}]:=
 With[{theFuncNow=genXZFuncRE[{numX,numEps,numZ},aLilXkZkFunc,distribSpec]},
-makeInterpFunc[theFuncNow,{toIgnore,gSpec[[2]],Drop[getGridPtTrips[gSpec],-numEps]}]]
+makeInterpFunc[theFuncNow,{toIgnore,gSpec[[2]],Drop[getGridPtTrips[gSpec],-(numEps-If[numRegimes>0,1,0])],numRegimes}]]
   
 
 
@@ -718,10 +719,10 @@ Switch[getRegimeTransProbFuncType[distribSpec],
 	$transFuncNoShocks,Function[xxxx,Module[{},
 	Sum[(getProbFunc[distribSpec] @@
 		Append[intVarRes[[2]],ii-1])*
-	Transpose[{myNExpectation[Print["curious:",{getProbFunc[distribSpec] @@Append[intVarRes[[2]],ii-1],intVarRes[[2]],ii-1,#,(funcName[Append[intVarRes[[2]],ii-1],#])}];
+	Transpose[{myNExpectation[(*Print["curious:",{getProbFunc[distribSpec] @@Append[intVarRes[[2]],ii-1],intVarRes[[2]],ii-1,#,(funcName[Append[intVarRes[[2]],ii-1],#])}];*)
 	(funcName[Append[intVarRes[[2]],ii-1],#]),intVarRes[[3]]]&/@Range[numX+numZ]}],{ii,numRegimes}]]],
 	$transFuncHasShocks,Function[xxxx,Module[{},
-	Transpose[{myNExpectation[Print["curious:",{getProbFunc[distribSpec] @@Append[intVarRes[[2]],ii-1],intVarRes[[2]],ii-1,#,(funcName[Append[intVarRes[[2]],ii-1],#])}];
+	Transpose[{myNExpectation[(*Print["curious:",{getProbFunc[distribSpec] @@Append[intVarRes[[2]],ii-1],intVarRes[[2]],ii-1,#,(funcName[Append[intVarRes[[2]],ii-1],#])}];*)
 	Sum[(getProbFunc[distribSpec] @@
 		Append[intVarRes[[2]],ii-1])*(funcName[Append[intVarRes[[2]],ii-1],#]),{ii,numRegimes}],intVarRes[[3]]]&/@Range[numX+numZ]}]]]		
 	]},

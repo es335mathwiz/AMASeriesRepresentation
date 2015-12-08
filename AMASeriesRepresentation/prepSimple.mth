@@ -30,8 +30,10 @@ pdf=NormalDistribution[0, sigVal];
 
     
 anX={.2,.18,1.1};
-anXEps={.2,.18,1.1,0.01};
-anXEpsZs={.2,.18,1.1,0.01,.1,.2,.3};
+anEps={0.01};
+anXEps=Join[anX,anEps]
+aZ={.1,.2,.3}
+anXEpsZs=Join[anXEps,aZ];
 probDims={3,1,3};
 
 

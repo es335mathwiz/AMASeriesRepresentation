@@ -12,7 +12,7 @@ $noTransFunc::usage="transfuncinfo";
 $transFuncHasShocks::usage="transfuncinfo";
 	
 $transFuncNoShocks::usage="transfuncinfo";
-
+genSeriesRepFunc::usage="genSeriesRepFunc[linMod:{theHMat_?MatrixQ,BB_?MatrixQ,phi_?MatrixQ,FF_?MatrixQ,psiEps_?MatrixQ,psiC_?MatrixQ,psiZ_?MatrixQ,psiZPreComp_?MatrixQ},distribSpec:{expctSpec:{{_Symbol,_}..},regimeTransProbFunc_:{}},theExactDR:(_Function|_CompiledFunction),terms_Integer]"
 makeDREvalInterp::usage="makeDREValInterp[drFunc_Function,distribSpec:{expctSpec:{{_Symbol,_}..},regimeTransProbFunc_:{}},eqnsFunc:(_Function|_CompiledFunction),gSpec:{toIgnore:{_Integer...},iOrd_Integer,{{_Integer,_?NumberQ,_?NumberQ}..}}]"
 
 truncErrorMat::usage="truncErrorMat[{{fmat,_Real,2},{phimat,_Real,2},{kk,_Integer}}]"
@@ -99,7 +99,7 @@ checkLinMod[linMod:{theHMat_?MatrixQ,BB_?MatrixQ,phi_?MatrixQ,FF_?MatrixQ,psiEps
 anX_?VectorQ,anEps_?VectorQ,numRegimes_:0]:=
 With[{X0Z0=genX0Z0Funcs[linMod],numZ=Length[psiZ[[1]]]},
 With[{lilxz=genLilXkZkFunc[linMod, {X0Z0}, Transpose[{Join[anX,anEps]}]]},
-	{X0Z0 @@anX,lilxz @@Join[anX,anEps,Table[0,{numZ}]]}]]
+	{Eigenvalues[BB]//Abs,Eigenvalues[FF]//Abs,X0Z0 @@anX,lilxz @@Join[anX,anEps,Table[0,{numZ}]]}]]
 
 makeFunc[funcArgsNow_List,numX_Integer,{theS_Function,
 thePairs:{{(_Function|CompiledFunction),(_Function|CompiledFunction)}..}}]:=
@@ -256,7 +256,7 @@ With[{numX=Length[drFunc[[1]]]-numEps,numZ=0},
 	genXZFuncRE[{numX,numEps,numZ},drFunc,distribSpec]]]
 
 
-myNExpectation[funcName_Symbol[farg_List,idx_Integer],nArgs_List]:=NExpectation[funcName[farg,idx],nArgs]
+myNExpectation[funcName_Symbol[farg_List,idx_Integer],nArgs_List]:=Chop[NExpectation[funcName[farg,idx],nArgs]]
 
 
  (*
@@ -288,24 +288,38 @@ genZsREExact[linMod:{theHMat_?MatrixQ,BB_?MatrixQ,phi_?MatrixQ,FF_?MatrixQ,psiEp
 Module[{numEps=getNumEpsVars[distribSpec]},
 With[{numX=Length[initVec]-numEps,
  	thePath=Flatten[iterateDRREIntegrate[theExactDR,initVec,distribSpec,iters+1]]},(*Print["done thePath"];*)
- 	With[{firstVal=hMat .thePath[[Range[3*numX]]]- psiC - psiEps . Take[initVec,-numEps]},
+ 	With[{firstVal=theHMat .thePath[[Range[3*numX]]]- psiC - psiEps . Take[initVec,-numEps]},
  		With[{restVals=
-      (hMat .thePath[[Range[3*numX]+numX*#]] -psiC)&/@Range[(Length[thePath]/numX)-3]},
+      (theHMat .thePath[[Range[3*numX]+numX*#]] -psiC)&/@Range[(Length[thePath]/numX)-3]},
       Join[{firstVal},restVals]
 ]]]]
 
-genSeriesReps[hMat_?MatrixQ,linMod:{theHMat_?MatrixQ,BB_?MatrixQ,phi_?MatrixQ,FF_?MatrixQ,psiEps_?MatrixQ,psiC_?MatrixQ,psiZ_?MatrixQ,psiZPreComp_?MatrixQ},
+genSeriesReps[linMod:{theHMat_?MatrixQ,BB_?MatrixQ,phi_?MatrixQ,FF_?MatrixQ,psiEps_?MatrixQ,psiC_?MatrixQ,psiZ_?MatrixQ,psiZPreComp_?MatrixQ},
 	initVec_?VectorQ,distribSpec:{expctSpec:{{_Symbol,_}..},regimeTransProbFunc_:{}},theExactDR:(_Function|_CompiledFunction),maxIters_Integer]:=
-With[{theZs=genZsREExact[hMat,linMod,initVec,distribSpec,theExactDR,maxIters]},
+With[{theZs=genZsREExact[linMod,initVec,distribSpec,theExactDR,maxIters]},
 	genASeriesRep[linMod,initVec,theZs,#]&/@Range[Length[theZs]]]
+	
+genSeriesRepFunc[linMod:{theHMat_?MatrixQ,BB_?MatrixQ,phi_?MatrixQ,FF_?MatrixQ,psiEps_?MatrixQ,psiC_?MatrixQ,psiZ_?MatrixQ,psiZPreComp_?MatrixQ},
+distribSpec:{expctSpec:{{_Symbol,_}..},regimeTransProbFunc_:{}},theExactDR:(_Function|_CompiledFunction),terms_Integer]:=
+Module[{numX=Length[BB[[1]]],numEps=Length[psiEps[[1]]]},
+With[{theArgs=Table[Unique["funArgs"],{numX+numEps}]},
+With[{theFunc=
+Function[xxxx,	
+With[{theZs=genZsREExact[linMod,xxxx,distribSpec,theExactDR,terms]},
+	genASeriesRep[linMod,xxxx,theZs,terms]]]},
+With[{xxxxPos=Position[theFunc,xxxx$]},
+ReplacePart[theFunc,
+	xxxxPos->theArgs
+]]]]]
 
 
 genASeriesRep[linMod:{theHMat_?MatrixQ,BB_?MatrixQ,phi_?MatrixQ,FF_?MatrixQ,psiEps_?MatrixQ,psiC_?MatrixQ,psiZ_?MatrixQ,psiZPreComp_?MatrixQ},
 	initVec_?VectorQ,theZs:{_?MatrixQ..},len_Integer]:=
 	Module[{theZFuncs = Function @@ {{}, Join[Table[{0}, {Length[BB[[1]]]}], #]} & /@ 
-   Drop[theZs, 1]},(*Print["theZFuncs",theZFuncs];*)
+   Drop[theZs[[Range[len]]], 1]},(*Print["theZFuncs",theZFuncs];*)
    With[{maybe = genLilXkZkFunc[linMod,theZFuncs, Table[{0},{Length[BB]}]]},(*	Print["zzts",Join[initVec,theZs[[1]]]];*)
    	maybe@@ Join[initVec,Flatten[theZs[[1]]]]]]
+
 
 genZsREWorst[theDRFunc:(_Function|_CompiledFunction),initVec_?VectorQ,distribSpec:{expctSpec:{{_Symbol,_}..},regimeTransProbFunc_:{}},
 	theSysFunc:(_Function|_CompiledFunction),iters_Integer]:=

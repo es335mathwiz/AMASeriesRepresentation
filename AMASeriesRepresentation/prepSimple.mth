@@ -13,7 +13,7 @@ ProjectionMethodToolsJava/code"],
   "g:/git/ProjectionMethodTools/ProjectionMethodToolsJava/code"]]; 
 $ContextPath=DeleteCases[$ContextPath,"betterRBC`"] 
 Needs["simpleRBCModel`"]
- anXEps={1,.2,1,1.1,0.01}   
+
  
 thVal=(theta//.ssSolnSubsRE//.(simpParamSubs//N))//N;
 kVal = (kk /. Private`kSSSubRE//.(simpParamSubs//N))//N;
@@ -29,9 +29,9 @@ pdf=NormalDistribution[0, sigVal];
 
 
     
-anX={1,.18,1.1};
-anXEps={1,.18,1.1,0.01};
-anXEpsZs={1,.18,1.1,0.01,.1,.2,.3};
+anX={.2,.18,1.1};
+anXEps={.2,.18,1.1,0.01};
+anXEpsZs={.2,.18,1.1,0.01,.1,.2,.3};
 probDims={3,1,3};
 
 

@@ -75,10 +75,32 @@ pathErrsDRPF::usage="pathErrsDRPF[drFunc_Function,eqnsFunc:(_Function|_CompiledF
 PerfectForesight::usage="degenerate distribution implementing perfect foresight"
 makeFunc::usage="makeFunc[funcArgsNow_List,numX_Integer,{theS_Function,thePairs:{{(_Function|CompiledFunction),(_Function|CompiledFunction)}..}}]"
 
-
+checkLinMod::usage="checkMod"
+checkMod::usage="checkMod"
 Begin["Private`"]
 
+checkMod[linMod:{theHMat_?MatrixQ,BB_?MatrixQ,phi_?MatrixQ,FF_?MatrixQ,psiEps_?MatrixQ,psiC_?MatrixQ,psiZ_?MatrixQ,psiZPreComp_?MatrixQ},
+gSpec:{toIgnore:{_Integer...},iOrd_Integer,{{_Integer,_?NumberQ,_?NumberQ}..},numRegimes_:0},
+distribSpec:{expctSpec:{{_Symbol,_}..},regimeTransProbFunc_:{}},anX_?VectorQ,anEps_?VectorQ,numRegimes_:0,
+eqnsFunc:(_Function|_CompiledFunction)]:=
+With[{X0Z0=genX0Z0Funcs[linMod],numX=Length[BB],numEps=Length[psiEps[[1]]],numZ=Length[psiZ[[1]]]},
+With[{lilxz=
+genLilXkZkFunc[linMod, {X0Z0}, Transpose[{Join[anX,anEps]}]]},
+With[{fr=genFRFunc[{numX,numEps,numZ},lilxz,eqnsFunc]},
+With[{fp=genFPFunc[linMod,{X0Z0},{{}},eqnsFunc]},
+{lilxz @@ Join[anX,anEps,Table[0,{numZ}]],
+fr @@ Join[anX,anEps],
+fp @@Join[anX,anEps]
+}]]]]
  
+ 
+ 
+checkLinMod[linMod:{theHMat_?MatrixQ,BB_?MatrixQ,phi_?MatrixQ,FF_?MatrixQ,psiEps_?MatrixQ,psiC_?MatrixQ,psiZ_?MatrixQ,psiZPreComp_?MatrixQ},
+anX_?VectorQ,anEps_?VectorQ,numRegimes_:0]:=
+With[{X0Z0=genX0Z0Funcs[linMod],numZ=Length[psiZ[[1]]]},
+With[{lilxz=genLilXkZkFunc[linMod, {X0Z0}, Transpose[{Join[anX,anEps]}]]},
+	{X0Z0 @@anX,lilxz @@Join[anX,anEps,Table[0,{numZ}]]}]]
+
 makeFunc[funcArgsNow_List,numX_Integer,{theS_Function,
 thePairs:{{(_Function|CompiledFunction),(_Function|CompiledFunction)}..}}]:=
 With[{xtPos=Range[numX]+2*numX},
@@ -261,7 +283,7 @@ If[iters==1,
 
  *)
 
-genZsREExact[hMat_?MatrixQ,linMod:{theHMat_?MatrixQ,BB_?MatrixQ,phi_?MatrixQ,FF_?MatrixQ,psiEps_?MatrixQ,psiC_?MatrixQ,psiZ_?MatrixQ,psiZPreComp_?MatrixQ},
+genZsREExact[linMod:{theHMat_?MatrixQ,BB_?MatrixQ,phi_?MatrixQ,FF_?MatrixQ,psiEps_?MatrixQ,psiC_?MatrixQ,psiZ_?MatrixQ,psiZPreComp_?MatrixQ},
 	initVec_?VectorQ,distribSpec:{expctSpec:{{_Symbol,_}..},regimeTransProbFunc_:{}},theExactDR:(_Function|_CompiledFunction),iters_Integer]:=
 Module[{numEps=getNumEpsVars[distribSpec]},
 With[{numX=Length[initVec]-numEps,

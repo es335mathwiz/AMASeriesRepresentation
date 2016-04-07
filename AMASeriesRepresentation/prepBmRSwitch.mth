@@ -1,0 +1,25 @@
+(* Wolfram Language package *)
+Print["reading prepBetter.m"]
+Switch[$System,
+ "Mac OS X x86 (64-bit)", 
+ SetDirectory[
+  "/Users/garyanderson/git/ProjectionMethodTools/ProjectionMethodToolsJava/code"],
+ "Linux x86 (64-bit)", 
+ SetDirectory[
+  "~/git/ProjectionMethodTools/ProjectionMethodToolsJava/code"],
+ "Microsoft Windows (64-bit)", 
+ SetDirectory[
+  "g:/git/ProjectionMethodTools/ProjectionMethodToolsJava/code"]]; 
+$ContextPath=DeleteCases[$ContextPath,"simpleRBCModel`"] 
+
+Get["barthMarxRSwitch`"]
+an0XVec={0,.1,.2,.3};
+an1XVec={1,.1,.2,.3};
+anEps0={0.01,0};
+anEps1={0.01,1};
+
+numN=4
+nGSpec=
+{{2,4},1, {{numN, -1,1}, {numN, -0.03, 0.03}},2};
+
+

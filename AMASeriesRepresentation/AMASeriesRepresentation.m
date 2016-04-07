@@ -78,11 +78,21 @@ makeFunc::usage="makeFunc[funcArgsNow_List,numX_Integer,{theS_Function,thePairs:
 
 checkLinMod::usage="checkMod"
 checkMod::usage="checkMod"
+getB::usage="getB"
+getF::usage="getF"
+getPhi::usage="getPhi"
 Begin["Private`"]
 
+getB[linMod:{theHMat_?MatrixQ,BB_?MatrixQ,phi_?MatrixQ,FF_?MatrixQ,psiEps_?MatrixQ,psiC_?MatrixQ,psiZ_?MatrixQ,psiZPreComp_?MatrixQ}]:=
+BB
+getF[linMod:{theHMat_?MatrixQ,BB_?MatrixQ,phi_?MatrixQ,FF_?MatrixQ,psiEps_?MatrixQ,psiC_?MatrixQ,psiZ_?MatrixQ,psiZPreComp_?MatrixQ}]:=
+FF
+
+getPhi[linMod:{theHMat_?MatrixQ,BB_?MatrixQ,phi_?MatrixQ,FF_?MatrixQ,psiEps_?MatrixQ,psiC_?MatrixQ,psiZ_?MatrixQ,psiZPreComp_?MatrixQ}]:=
+phi
 checkMod[linMod:{theHMat_?MatrixQ,BB_?MatrixQ,phi_?MatrixQ,FF_?MatrixQ,psiEps_?MatrixQ,psiC_?MatrixQ,psiZ_?MatrixQ,psiZPreComp_?MatrixQ},
 gSpec:{toIgnore:{_Integer...},iOrd_Integer,{{_Integer,_?NumberQ,_?NumberQ}..},numRegimes_:0},
-distribSpec:{expctSpec:{{_Symbol,_}..},regimeTransProbFunc_:{}},anX_?VectorQ,anEps_?VectorQ,numRegimes_:0,
+distribSpec:{expctSpec:{{_Symbol,_}..},regimeTransProbFunc_:{}},anX_?VectorQ,anEps_?VectorQ,
 eqnsFunc:(_Function|_CompiledFunction)]:=
 With[{X0Z0=genX0Z0Funcs[linMod],numX=Length[BB],numEps=Length[psiEps[[1]]],numZ=Length[psiZ[[1]]]},
 With[{lilxz=
@@ -215,7 +225,8 @@ And[reps>0,numPers>0]
 
 *)
 
-iterateDRREIntegrate[drFunc:(_Function|_CompiledFunction),initVec_?VectorQ,distribSpec:{expctSpec:{{_Symbol,_}..},regimeTransProbFunc_:{}},numPers_Integer]:=
+iterateDRREIntegrate[drFunc:(_Function|_CompiledFunction),initVec_?VectorQ,
+	distribSpec:{expctSpec:{{_Symbol,_}..},regimeTransProbFunc_:{}},numPers_Integer]:=
 With[{numEps=getNumEpsVars[distribSpec],firVal=drFunc @@ initVec},
 	With[{numX=Length[initVec]-numEps,iterFunc=makeREIterFunc[drFunc,distribSpec]},
 With[{iterated=
@@ -223,7 +234,8 @@ NestList[((*Print[#//InputForm];*)(Transpose[{Flatten[iterFunc @@ Flatten[#]]}])
 Join[Transpose[{initVec}][[Range[numX]]],Join @@ (Identity[#[[Range[numX]]]]&/@iterated)]]]]/;
 And[numPers>0]
 
-iterateDRREIntegrate[drFunc:(_Function|_CompiledFunction),condExpFunc:(_Function|_CompiledFunction),initVec_?VectorQ,distribSpec:{expctSpec:{{_Symbol,_}..},regimeTransProbFunc_:{}},numPers_Integer]:=
+iterateDRREIntegrate[drFunc:(_Function|_CompiledFunction),condExpFunc:(_Function|_CompiledFunction),initVec_?VectorQ,
+	distribSpec:{expctSpec:{{_Symbol,_}..},regimeTransProbFunc_:{}},numPers_Integer]:=
 With[{numEps=getNumEpsVars[distribSpec],firVal=drFunc @@ initVec},
 	With[{numX=Length[initVec]-numEps},
 With[{iterated=
@@ -360,7 +372,7 @@ evalBadPathErrDRREIntegrate[drFunc_Function,noEpsVec_?VectorQ,distribSpec:{expct
 With[{funcName=Unique["fName"]},
 funcName[tryEps:{_?NumberQ..}]:=
 	With[{theVal=evalPathErrDRREIntegrate[drFunc,Join[noEpsVec,tryEps],distribSpec,eqnsFunc]},
-		(*Print["ex:",theVal,Norm[theVal,Infinity]];*)Norm[Transpose[theVal],Infinity]];
+		Print["ex:",theVal,Norm[theVal,Infinity]];Norm[Transpose[theVal],Infinity]];
 	With[{outerEVars=Table[Unique["eVs"],{getNumEpsVars[distribSpec]}]},
 	With[{maxArgs={#,0}&/@outerEVars,cons=And @@  ((-0.01<=#<=0.01)&/@ outerEVars)},
 	FindMaximum[{funcName[outerEVars],cons},maxArgs]]]]
@@ -383,7 +395,8 @@ With[{xEpsArgs=Table[Unique["xeArgs"],{Length[toIgnore]+getNumVars[gSpec]}]},
 	ReplacePart[
 	Function[xxxxxx,  
   Transpose[
-     evalPathErrDRREIntegrate[drFunc, #, distribSpec,eqnsFunc]] & @xxxxxx],{1->xEpsArgs,{2,1}->xEpsArgs}]},{makeInterpFunc[preInterp,gSpec],preInterp}
+     evalPathErrDRREIntegrate[drFunc, #, distribSpec,eqnsFunc]] & @xxxxxx],{1->xEpsArgs,{2,1}->xEpsArgs}]},
+     {makeInterpFunc[preInterp,gSpec],preInterp}
 ]]
 
 pathErrsDRREIntegrate[drFunc_Function,initVec_?VectorQ,distribSpec:{expctSpec:{{_Symbol,_}..},regimeTransProbFunc_:{}},eqnsFunc:(_Function|_CompiledFunction),numPers_Integer]:=
@@ -503,7 +516,8 @@ Inverse[IdentityMatrix[Length[xtm1Vars]]-FF] . phi . psiC+phi . psiEps . epsVars
 
 
 (*funxzfunc of xtm1vars,epsvars,zvars and a guess for xt*)
-genLilXkZkFunc[linMod:{theHMat_?MatrixQ,BB_?MatrixQ,phi_?MatrixQ,FF_?MatrixQ,psiEps_?MatrixQ,psiC_?MatrixQ,psiZ_?MatrixQ,psiZPreComp_?MatrixQ},XZFuncs:{_Function...},xtGuess_?MatrixQ]:=
+genLilXkZkFunc[linMod:{theHMat_?MatrixQ,BB_?MatrixQ,phi_?MatrixQ,FF_?MatrixQ,psiEps_?MatrixQ,psiC_?MatrixQ,psiZ_?MatrixQ,psiZPreComp_?MatrixQ},
+	XZFuncs:{_Function...},xtGuess_?MatrixQ]:=
 With[{numXVars=Length[BB],
 numEpsVars=Length[psiEps[[1]]],numZVars=Length[psiZ[[1]]]},
 With[{xtm1Vars=genXtm1Vars[numXVars],

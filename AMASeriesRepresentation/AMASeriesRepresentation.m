@@ -4,8 +4,9 @@
 
 Print["reading AMASeriesRepresentation`"]
 
-BeginPackage["AMASeriesRepresentation`", {"JLink`","ProtectedSymbols`","mathSmolyak`",
+BeginPackage["AMASeriesRepresentation`", {"JLink`","ProtectedSymbols`",
 	"DifferentialEquations`InterpolatingFunctionAnatomy`"}]
+
 	
 $noTransFunc::usage="transfuncinfo";
 	

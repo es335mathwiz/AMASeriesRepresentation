@@ -9,3 +9,4 @@ _,
 (Print["windows code"];
 PrependTo[$Path,"g:/git/mathSmolyak"];
 PrependTo[$Path,"g:/git/ProtectedSymbolsDir/"])]
+Get[ "AMASeriesRepresentation`AMASeriesRepresentation`"]

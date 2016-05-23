@@ -1,5 +1,6 @@
 (* Wolfram Language package *)
 Print["reading prepSimple.m"]
+(*
 Switch[$System,
  "Mac OS X x86 (64-bit)", 
  SetDirectory[
@@ -12,6 +13,10 @@ ProjectionMethodToolsJava/code"],
  SetDirectory[
   "g:/git/ProjectionMethodTools/ProjectionMethodToolsJava/code"]]; 
 $ContextPath=DeleteCases[$ContextPath,"betterRBC`"] 
+ *)
+
+PrependTo[$Path,"../..ProtectedSymbols/"]
+
 Needs["simpleRBCModel`"]
 
  

@@ -3,8 +3,12 @@
 	<name>AMASeriesRep</name>
 	<comment></comment>
 	<projects>
+		<project>AMAModel</project>
 		<project>anisotropicSmolyak</project>
-		<project>MyMathUtilities</project>
+		<project>NumericAMA</project>
+		<project>ProtectedSymbolsProject</project>
+		<project>SymbolicAMA</project>
+		<project>utilities</project>
 	</projects>
 	<buildSpec>
 		<buildCommand>

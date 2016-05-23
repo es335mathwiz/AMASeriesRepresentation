@@ -1,0 +1,60 @@
+PrependTo[$Path,"../../../AMASeriesRepresentation/AMASeriesRepresentation/"]
+
+(*"../../../paperProduction/occBind/docs/"*)
+
+Print["pre prepsimp",Directory[]]
+Get["prepSimple.mth"]
+Print["post prepsimp",Directory[]]
+Get["genArbLin.mth"]
+
+
+Print["occDir=",occDir]
+occDir="~/Dropbox/Apps/Texpad/paperProduction/occBind/docs/"
+Print["occDir=",occDir]
+
+toOccDir[fName_String]:=CopyFile[fName,occDir <>fName,OverwriteTarget -> True];
+
+
+trueVal=Flatten[simpRBCExactDR @@ anXEps]
+numVals=30;
+
+
+
+
+simpMod = 
+  genSeriesReps[ linMod,anXEps, theDist, 
+   simpRBCExactDR, numVals];
+theSimpZs=genZsREExact[linMod,anXEps,theDist,simpRBCExactDR,numVals];
+simpErrMatNorms=Norm[truncErrorMat[notLinMod[[3]],notLinMod[[2]],#-1],Infinity]&/@Range[numVals]
+
+
+
+
+simpRes={simpErrMatNorms[[#]],Norm[theSimpZs[[#]],Infinity],
+simpErrMatNorms[[#]]*Norm[theSimpZs[[#]],Infinity],
+Norm[Flatten[simpMod[[#,{4,5,6}]]-trueVal],Infinity]}& /@ Range[numVals];
+
+
+
+
+Export["simpBoundsVActual.pdf",ListPlot[Transpose[simpRes[[All,{-2,-1}]]],
+PlotStyle->{Red,Blue},
+PlotRange->All,
+PlotJoined->True,
+PlotLegends->{Text[Subscript[B,n]],Text[Subscript[Z,n]]},
+PlotLabel->"RBC Model: Bounds versus Actual"]]
+Export["simpBoundsVActual.pdf",ListPlot[Transpose[simpRes[[All,{-2,-1}]]],
+PlotStyle->{Red,Blue},
+PlotRange->All,
+PlotJoined->True,
+PlotLegends->{Text[Subscript[B,n]],Text[Subscript[Z,n]]},
+PlotLabel->"Linearized RBC Model: Bounds versus Actual"]]
+
+toOccDir/@{
+"simpBoundsVActual.pdf"
+};
+
+Print["pre prep",Directory[]]
+
+Get["prepBetter.mth"]
+

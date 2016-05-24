@@ -43,17 +43,15 @@ PlotRange->All,
 PlotJoined->True,
 PlotLegends->{Text[Subscript[B,n]],Text[Subscript[Z,n]]},
 PlotLabel->"RBC Model: Bounds versus Actual"]]
-Export["simpBoundsVActual.pdf",ListPlot[Transpose[simpRes[[All,{-2,-1}]]],
-PlotStyle->{Red,Blue},
-PlotRange->All,
-PlotJoined->True,
-PlotLegends->{Text[Subscript[B,n]],Text[Subscript[Z,n]]},
-PlotLabel->"Linearized RBC Model: Bounds versus Actual"]]
 
 toOccDir/@{
 "simpBoundsVActual.pdf"
 };
 If[FileExistsQ[occDir="../../../DropBox/Apps/Texpad/paperProduction/occBind/docs/"],
+toOccDir/@{
+"simpBoundsVActual.pdf"
+}];
+If[FileExistsQ[occDir="../../paperProduction/occBind/docs/"],
 toOccDir/@{
 "simpBoundsVActual.pdf"
 }];

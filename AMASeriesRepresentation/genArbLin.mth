@@ -94,3 +94,7 @@ If[FileExistsQ[occDir="../../../DropBox/Apps/Texpad/paperProduction/occBind/docs
 toOccDir/@{
 "arbTruncErr.pdf","piPath.pdf","oscillPath.pdf","pseudoPath.pdf","theZs.pdf"
 }];
+If[FileExistsQ[occDir="../../paperProduction/occBind/docs/"],
+toOccDir/@{
+"arbTruncErr.pdf","piPath.pdf","oscillPath.pdf","pseudoPath.pdf","theZs.pdf"
+}];

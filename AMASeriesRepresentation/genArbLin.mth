@@ -36,11 +36,15 @@ Export["refPhimat.pdf", MatrixForm[phiArb]];
 Export["refFmat.pdf", MatrixForm[FFArb]];
 
 
-occDir="../../../paperProduction/occBind/docs/"
 toOccDir[fName_String]:=CopyFile[fName,occDir <>fName,OverwriteTarget -> True];
+occDir="../../../paperProduction/occBind/docs/"
 toOccDir/@{
 "refHmat.pdf","refBmat.pdf","refPhimat.pdf","refFmat.pdf"
 };
+If[FileExistsQ[occDir="../../../DropBox/Apps/Texpad/paperProduction/occBind/docs/"],
+toOccDir/@{
+"refHmat.pdf","refBmat.pdf","refPhimat.pdf","refFmat.pdf"
+}];
 
 Get["arbGenPath.mth"]
 
@@ -86,3 +90,7 @@ Export["pseudoPath.pdf",ListPlot[somePts[[3]],PlotJoined->True,PlotLabel->"Pseud
 Export["theZs.pdf",
 	   ListPlot[Transpose[Partition[Flatten[someZs],3]],PlotJoined->True,PlotLabel->"z's for  Path("<>ToString[initX]<>","<>ToString[theEpsVal]<>")"]];
 
+If[FileExistsQ[occDir="../../../DropBox/Apps/Texpad/paperProduction/occBind/docs/"],
+toOccDir/@{
+"arbTruncErr.pdf","piPath.pdf","oscillPath.pdf","pseudoPath.pdf","theZs.pdf"
+}];

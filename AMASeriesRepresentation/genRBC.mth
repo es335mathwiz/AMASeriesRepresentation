@@ -53,6 +53,12 @@ PlotLabel->"Linearized RBC Model: Bounds versus Actual"]]
 toOccDir/@{
 "simpBoundsVActual.pdf"
 };
+If[FileExistsQ[occDir="../../../DropBox/Apps/Texpad/paperProduction/occBind/docs/"],
+toOccDir/@{
+"simpBoundsVActual.pdf"
+}];
+
+
 
 Print["pre prep",Directory[]]
 

@@ -212,10 +212,10 @@ returns a pair of functions xz and XZ giving the xt values of x and z and giving
 
 
 genX0Z0Funcs::usage="genX0Z0Funcs[linMod:{theHMat_?MatrixQ,BB_?MatrixQ,phi_?MatrixQ,FF_?MatrixQ,psiEps_?MatrixQ,psiC_?MatrixQ,psiZ_?MatrixQ,psiZPreComp_?MatrixQ}]
-returns functions  expected X0(xtm1,eps) and Z0(xtm1,eps)
+returns functions  expected X0(xtm1,eps) and Z0(xtm1,eps)   based on the linear reference model
 "
 genx0z0Funcs::usage="genX0Z0Funcs[linMod:{theHMat_?MatrixQ,BB_?MatrixQ,phi_?MatrixQ,FF_?MatrixQ,psiEps_?MatrixQ,psiC_?MatrixQ,psiZ_?MatrixQ,psiZPreComp_?MatrixQ}]
-returns functions x0(xtm1,eps) and z0(xtm1,eps)
+returns functions x0(xtm1,eps) and z0(xtm1,eps)  based on the linear reference model
 "
 
 truncErrorMat::usage="truncErrorMat[{{fmat,_Real,2},{phimat,_Real,2},{kk,_Integer}}]

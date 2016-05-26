@@ -55,10 +55,11 @@ If[FileExistsQ[occDir="../../paperProduction/occBind/docs/"],
 toOccDir/@{
 "simpBoundsVActual.pdf"
 }];
-
+(*
 
 
 Print["pre prep",Directory[]]
 
 Get["prepBetter.mth"]
 
+ *)

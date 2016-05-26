@@ -19,60 +19,166 @@ $transFuncNoShocks::usage="transfuncinfo";
 makeDREvalInterp::usage="makeDREValInterp[drFunc_Function,distribSpec:{expctSpec:{{_Symbol,_}..},regimeTransProbFunc_:{}},eqnsFunc:(_Function|_CompiledFunction),gSpec:{toIgnore:{_Integer...},iOrd_Integer,{{_Integer,_?NumberQ,_?NumberQ}..}}]"
 
 
-genXZFuncRE::usage="genXZFuncRE[{numX_Integer,numEps_Integer,numZ_Integer},aLilXkZkFunc_Function,distribs_List]"
-
-genXZFuncPF::usage="genXZFuncPF[{numX_Integer,numEps_Integer,numZ_Integer},aLilXkZkFunc_Function]"
-
-nestIterPF::usage="nestIterPF[linMod:{theHMat_?MatrixQ,theHMat_?MatrixQ,BB_?MatrixQ,phi_?MatrixQ,FF_?MatrixQ,psiEps_?MatrixQ,psiC_?MatrixQ,psiZ_?MatrixQ,psiZPreComp_?MatrixQ},XZFuncsNow:{_Function..},
-xtGuess_?MatrixQ,eqnsFunc:(_Function|_CompiledFunction),numIters_Integer]"
-
-nestIterPFInterp::usage="nestIterPFInterp[linMod:{theHMat_?MatrixQ,theHMat_?MatrixQ,BB_?MatrixQ,phi_?MatrixQ,FF_?MatrixQ,psiEps_?MatrixQ,psiC_?MatrixQ,psiZ_?MatrixQ,psiZPreComp_?MatrixQ},XZFuncsNow:{_Function..},xtGuess_?MatrixQ,eqnsFunc:(_Function|_CompiledFunction),aGSpec:{_Integer,{{_Integer,_?NumberQ,_?NumberQ}..}},numIters_Integer]"
-
-nestIterREInterp::usage="nestIterPFInterp[linMod:{theHMat_?MatrixQ,BB_?MatrixQ,phi_?MatrixQ,FF_?MatrixQ,psiEps_?MatrixQ,psiC_?MatrixQ,psiZ_?MatrixQ,psiZPreComp_?MatrixQ},XZFuncsNow:{_Function..},xtGuess_?MatrixQ,eqnsFunc:(_Function|_CompiledFunction),aGSpec:{_Integer,{{_Integer,_?NumberQ,_?NumberQ}..}},numIters_Integer]"
-
-nestIterRE::usage="nestIterRE[linMod:{theHMat_?MatrixQ,BB_?MatrixQ,phi_?MatrixQ,FF_?MatrixQ,psiEps_?MatrixQ,psiC_?MatrixQ,psiZ_?MatrixQ,psiZPreComp_?MatrixQ},XZFuncsNow:{_Function..},
-xtGuess_?MatrixQ,eqnsFunc:(_Function|_CompiledFunction),numIters_Integer]"
-
-genPath::usage="genPath[xzFunc_Function,XZFuncs:{_Function..},xtm1Val_?MatrixQ,epsVal_?MatrixQ]"
-
-
-
 X0Z0::usage="from genX0Z0Funcs[linMod];"
-fSum::usage="fSum[linMod:{theHMat_?MatrixQ,BB_?MatrixQ,phi_?MatrixQ,FF_?MatrixQ,psiEps_?MatrixQ,psiC_?MatrixQ,psiZ_?MatrixQ,psiZPreComp_?MatrixQ},zPath:{_?MatrixQ..}]"
 
 evalExpctPathErrDRREIntegrate::usage="evalExpctPathErrDRREIntegrate[drFunc_Function,initVec_?VectorQ,distribSpec:{expctSpec:{{_Symbol,_}..},regimeTransProbFunc_:{}},eqnsFunc:(_Function|_CompiledFunction)]"
 
 genZsRE::usage="genZsRE[anHmat_?MatrixQ,PsiEps_?MatrixQ,PsiC_?MatrixQ,theDRFunc:(_Function|_CompiledFunction),initVec_?VectorQ,distribSpec:{expctSpec:{{_Symbol,_}..},regimeTransProbFunc_:{}},theSysFunc:(_Function|_CompiledFunction),iters_Integer]"
-
-pathErrs::usage="pathErrs[{numX_Integer,numEps_Integer,numZs_Integer},{lilXZFunc_Function,bigXZFuncs:{_Function..}},eqnsFunc:(_Function|_CompiledFunction),anX_?MatrixQ,anEps_?MatrixQ]"
 
 
 PerfectForesight::usage="degenerate distribution implementing perfect foresight"
 makeFunc::usage="makeFunc[funcArgsNow_List,numX_Integer,{theS_Function,thePairs:{{(_Function|CompiledFunction),(_Function|CompiledFunction)}..}}]"
 
 
-checkMod::usage="checkMod"
-
-
 
 (*usage updated*)
+fSum::usage="fSum[linMod:{theHMat_?MatrixQ,BB_?MatrixQ,phi_?MatrixQ,FF_?MatrixQ,psiEps_?MatrixQ,psiC_?MatrixQ,psiZ_?MatrixQ,psiZPreComp_?MatrixQ},
+XZFuncs:{_Function..},xtGuess_?MatrixQ]
+
+returns matrix of the F weigthed sum of z's"
+
+fSumC::usage="fSumC=Compile[{{phi,_Real,2},{FF,_Real,2},{psiZ,_Real,2},{zPath,_Real,3}},...]
+
+
+returns matrix of the F weigthed sum of z's
+"
+
+genPath::usage="genPath[xzFunc_Function,
+XZFuncs:{_Function..},xtm1Val_?MatrixQ,epsVal_?MatrixQ]
+
+generate a path using the xz and XZ funcs
+
+returns a matrix of the path values
+
+"
+
+
+pathErrs::usage="pathErrs[{numX_Integer,numEps_Integer,numZs_Integer},
+{lilXZFunc_Function,bigXZFuncs:{_Function..}},eqnsFunc:(_Function|_CompiledFunction),
+anX_?MatrixQ,anEps_?MatrixQ,X0Z0_Function]
+
+drops the first bigXZFunc which by construction is the expected value of the lilXZFunc and tacks on X0Z0 to compute a path
+returns a matrix of equation errors along the path
+"
+
+checkMod::usage="checkMod[linMod:{theHMat_?MatrixQ,BB_?MatrixQ,phi_?MatrixQ,FF_?MatrixQ,psiEps_?MatrixQ,psiC_?MatrixQ,psiZ_?MatrixQ,psiZPreComp_?MatrixQ},
+gSpec:{toIgnore:{_Integer...},iOrd_Integer,{{_Integer,_?NumberQ,_?NumberQ}..},numRegimes_:0},
+distribSpec:{expctSpec:{{_Symbol,_}..},regimeTransProbFunc_:{}},anX_?VectorQ,anEps_?VectorQ,
+eqnsFunc:(_Function|_CompiledFunction)]
+
+
+"
+
+
+
+genXZFuncPF::usage="genXZFuncPF[{numX_Integer,numEps_Integer,numZ_Integer},
+aLilXkZkFunc_Function]
+
+given problem dimensions and xz functions 
+returns  perfect foresight version functions for future unconditional expectations recalculates all values along the path
+"
+
+genXZFuncRE::usage="genXZFuncRE[{numX_Integer,ignored_Integer,numZ_Integer},
+aLilXkZkFunc_Function,distribSpec:{expctSpec:{{_Symbol,_}..},regimeTransProbFunc_:{}}]
+
+
+given problem dimensions and xz functions 
+returns  perfect foresight version functions for future unconditional expectations using interpolation to avoid recalculating all values along the path
+
+"
+
+genXZFuncPFInterp::usage="genXZFuncPFInterp[probDims:{numX_Integer,numEps_Integer,numZ_Integer},
+aLilXkZkFunc_Function,gSpec:{toIgnore:{_Integer...},iOrd_Integer,{{_Integer,_?NumberQ,_?NumberQ}..},numRegimes_:0}]
+
+
+
+given problem dimensions and xz functions 
+returns  rational expectations version functions for future unconditional expectations recalculates all values along the path
+
+"
+
+genXZFuncREInterp::usage="genXZFuncREInterp[probDims:{numX_Integer,numEps_Integer,numZ_Integer},
+aLilXkZkFunc_Function,gSpec:{toIgnore:{_Integer...},iOrd_Integer,{{_Integer,_?NumberQ,_?NumberQ}..},numRegimes_:0},distribSpec:{expctSpec:{{_Symbol,_}..},regimeTransProbFunc_:{}}]
+
+
+given problem dimensions and xz functions 
+returns  retional expectations version functions for future unconditional expectations using interpolation to avoid recalculating all values along the path
+
+
+"
+nestIterPF::usage="nestIterPF[linMod:{theHMat_?MatrixQ,BB_?MatrixQ,phi_?MatrixQ,FF_?MatrixQ,psiEps_?MatrixQ,psiC_?MatrixQ,psiZ_?MatrixQ,psiZPreComp_?MatrixQ},XZFuncsNow:{_Function..},
+xtGuess_?MatrixQ,eqnsFunc:(_Function|_CompiledFunction),numIters_Integer]
+
+recursively apply doIterPF numIters times"
+
+nestIterPFInterp::usage="nestIterPFInterp[linMod:{theHMat_?MatrixQ,BB_?MatrixQ,phi_?MatrixQ,FF_?MatrixQ,psiEps_?MatrixQ,psiC_?MatrixQ,psiZ_?MatrixQ,psiZPreComp_?MatrixQ},XZFuncsNow:{(_Function|_InterpolatingFunction|_CompiledFunction)..},
+xtGuess_?MatrixQ,eqnsFunc:(_Function|_CompiledFunction),gSpec:{toIgnore:{_Integer...},iOrd_Integer,{{_Integer,_?NumberQ,_?NumberQ}..},numRegimes_:0},numIters_Integer]
+
+recursively apply doIterPFInterp numIters times
+"
+
+nestIterRE::usage="nestIterRE[linMod:{theHMat_?MatrixQ,BB_?MatrixQ,phi_?MatrixQ,FF_?MatrixQ,psiEps_?MatrixQ,psiC_?MatrixQ,psiZ_?MatrixQ,psiZPreComp_?MatrixQ},XZFuncsNow:{_Function..},
+xtGuess_?MatrixQ,eqnsFunc:(_Function|_CompiledFunction),distribSpec:{expctSpec:{{_Symbol,_}..},regimeTransProbFunc_:{}},numIters_Integer]
+
+recursively apply doIterRE numIters times
+"
+
+nestIterREInterp::usage="nestIterREInterp[linMod:{theHMat_?MatrixQ,BB_?MatrixQ,phi_?MatrixQ,FF_?MatrixQ,psiEps_?MatrixQ,psiC_?MatrixQ,psiZ_?MatrixQ,psiZPreComp_?MatrixQ},XZFuncsNow:{(_Function|_InterpolatingFunction|_CompiledFunction)..},
+xtGuess_?MatrixQ,eqnsFunc:(_Function|_CompiledFunction),gSpec:{toIgnore:{_Integer...},iOrd_Integer,{{_Integer,_?NumberQ,_?NumberQ}..},numRegimes_:0},distribSpec:{expctSpec:{{_Symbol,_}..},regimeTransProbFunc_:{}},numIters_Integer]
+
+recursively apply doIterREInterp numIters times
+"
 
 
 doIterPF::usage="doIterPF[linMod:{theHMat_?MatrixQ,BB_?MatrixQ,phi_?MatrixQ,FF_?MatrixQ,psiEps_?MatrixQ,psiC_?MatrixQ,psiZ_?MatrixQ,psiZPreComp_?MatrixQ},XZFuncsNow:{_Function..},
-xtGuess_?MatrixQ,eqnsFunc:(_Function|_CompiledFunction)]"
+xtGuess_?MatrixQ,eqnsFunc:(_Function|_CompiledFunction)]
+
+given a reference linear model, (x,z,X,Z) function and an initial guess for the time t state and equation system
+extends (x,z,X,Z) an additional period using perfect foresight and recalculation of all the points along the path
+
+returns a pair of functions xz and XZ giving the xt values of x and z and giving the path of future values of X and Z
+"
 
 
 doIterPFInterp::usage="doIterPFInterp[linMod:{theHMat_?MatrixQ,BB_?MatrixQ,phi_?MatrixQ,FF_?MatrixQ,psiEps_?MatrixQ,psiC_?MatrixQ,psiZ_?MatrixQ,psiZPreComp_?MatrixQ},XZFuncsNow:{(_Function|_InterpolatingFunction|_CompiledFunction)..},
 xtGuess_?MatrixQ,eqnsFunc:(_Function|_CompiledFunction),gSpec:{toIgnore:{_Integer...},iOrd_Integer,{{_Integer,_?NumberQ,_?NumberQ}..},numRegimes_:0}]
+
+
+given a reference linear model, (x,z,X,Z) function and an initial guess for the time t state and equation system
+extends (x,z,X,Z) an additional period using perfect foresight using interpolation to avoid recalculation of all the points along the path
+
+returns a pair of functions xz and XZ giving the xt values of x and z and giving the path of future values of X and Z
+
 "
 
 
-doIterREInterp::usage="doIterPF[linMod:{theHMat_?MatrixQ,BB_?MatrixQ,phi_?MatrixQ,FF_?MatrixQ,psiEps_?MatrixQ,psiC_?MatrixQ,psiZ_?MatrixQ,psiZPreComp_?MatrixQ},XZFuncsNow:{_Function..},
-xtGuess_?MatrixQ,eqnsFunc:(_Function|_CompiledFunction)]"
-
-
 doIterRE::usage="doIterRE[linMod:{theHMat_?MatrixQ,BB_?MatrixQ,phi_?MatrixQ,FF_?MatrixQ,psiEps_?MatrixQ,psiC_?MatrixQ,psiZ_?MatrixQ,psiZPreComp_?MatrixQ},XZFuncsNow:{_Function..},
-xtGuess_?MatrixQ,eqnsFunc:(_Function|_CompiledFunction)]"
+xtGuess_?MatrixQ,eqnsFunc:(_Function|_CompiledFunction),distribSpec:{expctSpec:{{_Symbol,_}..},regimeTransProbFunc_:{}}]
+
+
+given a reference linear model, (x,z,X,Z) functions and an initial guess for the time t state and an equation system the function
+extends (x,z,X,Z) an additional period imposing rational expectations along with recalculation of all the points along the path
+
+returns a pair of functions xz and XZ giving the xt values of x and z and giving the unconditional expected path of future values of x and z
+
+
+"
+
+
+doIterREInterp::usage="
+
+doIterPF[linMod:{theHMat_?MatrixQ,BB_?MatrixQ,phi_?MatrixQ,FF_?MatrixQ,psiEps_?MatrixQ,psiC_?MatrixQ,psiZ_?MatrixQ,psiZPreComp_?MatrixQ},XZFuncsNow:{_Function..},
+xtGuess_?MatrixQ,eqnsFunc:(_Function|_CompiledFunction)]
+
+
+
+
+given a reference linear model, (x,z,X,Z) function and an initial guess for the time t state and equation system
+extends (x,z,X,Z) an additional period imposing rational expectations using interpolation to avoid recalculation of all the points along the path
+
+returns a pair of functions xz and XZ giving the xt values of x and z and giving the unconditional expected path of future values of x and z
+"
+
 
 
 genX0Z0Funcs::usage="genX0Z0Funcs[linMod:{theHMat_?MatrixQ,BB_?MatrixQ,phi_?MatrixQ,FF_?MatrixQ,psiEps_?MatrixQ,psiC_?MatrixQ,psiZ_?MatrixQ,psiZPreComp_?MatrixQ}]
@@ -333,7 +439,7 @@ And[numPers>1]
 
 pathErrs[{numX_Integer,numEps_Integer,numZs_Integer},
 {lilXZFunc_Function,bigXZFuncs:{_Function..}},eqnsFunc:(_Function|_CompiledFunction),
-anX_?MatrixQ,anEps_?MatrixQ]:=
+anX_?MatrixQ,anEps_?MatrixQ,X0Z0_Function]:=
 With[{aPath=genPath[lilXZFunc,Append[Drop[bigXZFuncs,1],X0Z0],
 anX,anEps]},
 With[{useEps={eqnsFunc @@ Flatten[Append[

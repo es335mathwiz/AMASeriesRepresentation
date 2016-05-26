@@ -16,22 +16,52 @@ $transFuncNoShocks::usage="transfuncinfo";
 
 
 
-makeDREvalInterp::usage="makeDREValInterp[drFunc_Function,distribSpec:{expctSpec:{{_Symbol,_}..},regimeTransProbFunc_:{}},eqnsFunc:(_Function|_CompiledFunction),gSpec:{toIgnore:{_Integer...},iOrd_Integer,{{_Integer,_?NumberQ,_?NumberQ}..}}]"
-
 
 X0Z0::usage="from genX0Z0Funcs[linMod];"
 
-evalExpctPathErrDRREIntegrate::usage="evalExpctPathErrDRREIntegrate[drFunc_Function,initVec_?VectorQ,distribSpec:{expctSpec:{{_Symbol,_}..},regimeTransProbFunc_:{}},eqnsFunc:(_Function|_CompiledFunction)]"
-
-genZsRE::usage="genZsRE[anHmat_?MatrixQ,PsiEps_?MatrixQ,PsiC_?MatrixQ,theDRFunc:(_Function|_CompiledFunction),initVec_?VectorQ,distribSpec:{expctSpec:{{_Symbol,_}..},regimeTransProbFunc_:{}},theSysFunc:(_Function|_CompiledFunction),iters_Integer]"
-
 
 PerfectForesight::usage="degenerate distribution implementing perfect foresight"
-makeFunc::usage="makeFunc[funcArgsNow_List,numX_Integer,{theS_Function,thePairs:{{(_Function|CompiledFunction),(_Function|CompiledFunction)}..}}]"
 
 
 
 (*usage updated*)
+
+
+genFRFunc::usage="genFRFunc[{numX_Integer,numEps_Integer,numZ_Integer},
+xkFunc:(_Function|_CompiledFunction),eqnsFunc:(_Function|_CompiledFunction)]
+
+returns a function that solves the eqnsFunc system using the xkFuncs in the series approximation for the conditional expectations function
+"
+
+
+genFPFunc::usage="genFPFunc[linMod:{theHMat_?MatrixQ,BB_?MatrixQ,phi_?MatrixQ,FF_?MatrixQ,psiEps_?MatrixQ,psiC_?MatrixQ,psiZ_?MatrixQ,psiZPreComp_?MatrixQ},
+XZFuncs:{_Function..},xtGuess_?MatrixQ,eqnsFunc:(_Function|_CompiledFunction)]
+
+
+returns a function that guesses the correct value of xt to use in the conditional expectations function and iterates until the guess is consitent with the root finding solution
+"
+
+genLilXkZkFunc::usage="genLilXkZkFunc[linMod:{theHMat_?MatrixQ,BB_?MatrixQ,phi_?MatrixQ,FF_?MatrixQ,psiEps_?MatrixQ,psiC_?MatrixQ,psiZ_?MatrixQ,psiZPreComp_?MatrixQ},
+	XZFuncs:{_Function...},xtGuess_?MatrixQ]
+	
+	
+"
+	
+	
+	
+makeRegimeFunc::usage="makeRegimeFunc[funcArgsNow_List,numX_Integer,{theS_Function,
+thePairs:{{(_Function|CompiledFunction),(_Function|CompiledFunction)}..}}]
+
+
+
+"
+
+makeDREvalInterp::usage="makeDREvalInterp[drFunc_Function,distribSpec:{expctSpec:{{_Symbol,_}..},regimeTransProbFunc_:{}},
+eqnsFunc:(_Function|_CompiledFunction),gSpec:{toIgnore:{_Integer...},iOrd_Integer,{{_Integer,_?NumberQ,_?NumberQ}..},numRegimes_:0}]
+
+returns a list of two functions: the second evaluates the error in the equations without interpolation, the first uses interpolation
+"
+
 fSum::usage="fSum[linMod:{theHMat_?MatrixQ,BB_?MatrixQ,phi_?MatrixQ,FF_?MatrixQ,psiEps_?MatrixQ,psiC_?MatrixQ,psiZ_?MatrixQ,psiZPreComp_?MatrixQ},
 XZFuncs:{_Function..},xtGuess_?MatrixQ]
 
@@ -167,7 +197,7 @@ returns a pair of functions xz and XZ giving the xt values of x and z and giving
 
 doIterREInterp::usage="
 
-doIterPF[linMod:{theHMat_?MatrixQ,BB_?MatrixQ,phi_?MatrixQ,FF_?MatrixQ,psiEps_?MatrixQ,psiC_?MatrixQ,psiZ_?MatrixQ,psiZPreComp_?MatrixQ},XZFuncsNow:{_Function..},
+doIterREInterp[linMod:{theHMat_?MatrixQ,BB_?MatrixQ,phi_?MatrixQ,FF_?MatrixQ,psiEps_?MatrixQ,psiC_?MatrixQ,psiZ_?MatrixQ,psiZPreComp_?MatrixQ},XZFuncsNow:{_Function..},
 xtGuess_?MatrixQ,eqnsFunc:(_Function|_CompiledFunction)]
 
 
@@ -228,6 +258,10 @@ system equations
 returns the infintiy norm of the error and the shock value
 "
 
+worstPathForErrDRREIntegrate::usage="worstPathForErrDRREIntegrate[drFunc_Function,noEpsVec_?VectorQ,distribSpec:{expctSpec:{{_Symbol,_}..},regimeTransProbFunc_:{}},eqnsFunc:(_Function|_CompiledFunction)]
+
+returns the path corresponding to evalBadPathErrDRREIntegrate
+"
 
 genZsREWorst::usage="genZsREWorst[theDRFunc:(_Function|_CompiledFunction),initVec_?VectorQ,distribSpec:{expctSpec:{{_Symbol,_}..},regimeTransProbFunc_:{}},
 	theSysFunc:(_Function|_CompiledFunction),iters_Integer]
@@ -250,10 +284,19 @@ uses genASeriesRep to generate the value for  {xtm1,xt,xtp1,eps} from the the se
 genSeriesReps::usage="genSeriesReps[linMod:{theHMat_?MatrixQ,BB_?MatrixQ,phi_?MatrixQ,FF_?MatrixQ,psiEps_?MatrixQ,psiC_?MatrixQ,psiZ_?MatrixQ,psiZPreComp_?MatrixQ},
 initVec_?VectorQ,distribSpec:{expctSpec:{{_Symbol,_}..},regimeTransProbFunc_:{}},theExactDR:(_Function|_CompiledFunction),maxIters_Integer]
 	
-generates  Zs using genZsREExact, then uses genASeriesRep to generates a list of the possible  values for {xtm1,xt,xtp1,eps} from the series representations using 
+generates  Zs using genZsREExact, then uses genASeriesRep to generate a list of the possible  values for {xtm1,xt,xtp1,eps} from the series representations using 
 from just the first z matrix to all the z's
 "
 
+
+genASeriesRep::usage="genASeriesRep[linMod:{theHMat_?MatrixQ,BB_?MatrixQ,phi_?MatrixQ,FF_?MatrixQ,psiEps_?MatrixQ,psiC_?MatrixQ,psiZ_?MatrixQ,psiZPreComp_?MatrixQ},
+	initVec_?VectorQ,theZs:{_?MatrixQ..},len_Integer]
+	
+matrix of the  values for {xtm1,xt,xtp1,eps} from the series representations using 
+from the first len z matrices
+	"
+	
+	
 genZsFromPath::usage="genZsFromPath[linMod:{theHMat_?MatrixQ,BB_?MatrixQ,phi_?MatrixQ,FF_?MatrixQ,psiEps_?MatrixQ,psiC_?MatrixQ,psiZ_?MatrixQ,psiZPreComp_?MatrixQ},
 thePath_?VectorQ,theEps_?VectorQ]
 
@@ -269,7 +312,7 @@ thePath_?VectorQ,theEps_?VectorQ]
 genZsREExact::usage="genZsREExact[linMod:{theHMat_?MatrixQ,BB_?MatrixQ,phi_?MatrixQ,FF_?MatrixQ,psiEps_?MatrixQ,psiC_?MatrixQ,psiZ_?MatrixQ,psiZPreComp_?MatrixQ},
 	initVec_?VectorQ,distribSpec:{expctSpec:{{_Symbol,_}..},regimeTransProbFunc_:{}},theExactDR:(_Function|_CompiledFunction),iters_Integer]
 	
-	iterates a decision rule forward using iterateDRIntegrate
+	iterates a decision rule forward using iterateDRIntegrate (can use PerfectForesight as distribution for specific shocks)
 	computes the z values using the hmat in linMod
 	returns a list of z matrices(one column matrices)
 	"
@@ -377,16 +420,15 @@ ReplacePart[theFunc,
 
 
 
-
 genZsREWorst[theDRFunc:(_Function|_CompiledFunction),initVec_?VectorQ,distribSpec:{expctSpec:{{_Symbol,_}..},regimeTransProbFunc_:{}},
 	theSysFunc:(_Function|_CompiledFunction),iters_Integer]:=
 Module[{numEps=getNumEpsVars[distribSpec]},
 With[{numX=Length[initVec]-numEps,
  	thePath=Flatten[iterateDRREIntegrate[theDRFunc,initVec,distribSpec,iters+1]]},Print["done thePath"];
-With[{worsePaths=
+With[{worstPaths=
   worstPathForErrDRREIntegrate[theDRFunc,thePath[[Range[numX]+numX*(#)]],distribSpec,theSysFunc]&/@
-				       Range[(Length[thePath]/numX)-1]},Print["done worstPaths",worsePaths,Range[(Length[thePath]/numX)-1]];
-      theSysFunc @@ Flatten[#]&/@worsePaths]
+				       Range[(Length[thePath]/numX)-1]},Print["done worstPaths",worstPaths,Range[(Length[thePath]/numX)-1]];
+      theSysFunc @@ Flatten[#]&/@worstPaths]
 ]]
 
 
@@ -641,25 +683,13 @@ getNumEpsVars[distribSpec:{expctSpec:{{_Symbol,_}..},regimeTransProbFunc_:{}}]:=
 
 
 
-makeFunc[funcArgsNow_List,numX_Integer,{theS_Function,
+makeRegimeFunc[funcArgsNow_List,numX_Integer,{theS_Function,
 thePairs:{{(_Function|CompiledFunction),(_Function|CompiledFunction)}..}}]:=
 With[{xtPos=Range[numX]+2*numX},
 With[{preArgs=
 (Function[xxxx,With[{indx=(theS@@xxxx+1)},
 thePairs[[indx,1]]@@xxxx + 
 (thePairs[[indx,2]]@@xxxx).(xxxx[[xxxxXtPos]])]])},
-With[{xxxxLocs=Position[preArgs,xxxx$],
-xxxxXtPos=Position[preArgs,xxxxXtPos]},
-ReplacePart[preArgs,{xxxxLocs->funcArgsNow,xxxxXtPos->xtPos}]]]]
-
-  
-makeFunc[funcArgsNow_List,numX_Integer,
-thePair:{(_Function|CompiledFunction),(_Function|CompiledFunction)}]:=
-With[{xtPos=Range[numX]+2*numX},
-With[{preArgs=
-(Function[xxxx,
-thePair[[1]]@@xxxx + 
-(thePair[[2]]@@xxxx).(xxxx[[xxxxXtPos]])])},
 With[{xxxxLocs=Position[preArgs,xxxx$],
 xxxxXtPos=Position[preArgs,xxxxXtPos]},
 ReplacePart[preArgs,{xxxxLocs->funcArgsNow,xxxxXtPos->xtPos}]]]]
@@ -892,21 +922,8 @@ xzFuncNow @@funcArgs]&,(XZFuncs[[1]]@@funcArgs)[[Range[numX]]],$fixedPointLimit]
 (* input   [linMod,XZ, xguess,function (xt,eps,zt)->(xtm1,xt,xtp1,eps), function (xtm1,xt,xtp1,eps)->me]*)
 (* output   [function  (xt,eps) ->(xt,zt)] *)
 
-$fixedPointLimit=30;
-genFPFuncAgain[linMod:{theHMat_?MatrixQ,BB_?MatrixQ,phi_?MatrixQ,FF_?MatrixQ,psiEps_?MatrixQ,psiC_?MatrixQ,psiZ_?MatrixQ,psiZPreComp_?MatrixQ},
-XZFuncs:{_Function..},eqnsFunc:(_Function|_CompiledFunction)]:=
-With[{numX=Length[BB],numEps=Length[psiEps[[1]]],numZ=Length[psiZ[[1]]]},
-With[{funcArgs=Table[Unique["theFPFuncArgs"],{numX+numEps}]},
-ReplacePart[
-Function[xxxx,
-FixedPoint[With[{xzFuncNow=
-genFRFunc[{numX,numEps,numZ},genLilXkZkFunc[linMod,XZFuncs,#[[Range[numX]]]],
-eqnsFunc]},xzFuncNow @@funcArgs]&,xtGuess,$fixedPointLimit]],
-1->funcArgs]]]
 
 
-Print["genXZFuncPFInterp: tied to RBC Model not generic"]'
- 
 genXZFuncPFInterp[probDims:{numX_Integer,numEps_Integer,numZ_Integer},
 aLilXkZkFunc_Function,gSpec:{toIgnore:{_Integer...},iOrd_Integer,{{_Integer,_?NumberQ,_?NumberQ}..},numRegimes_:0}]:=
 With[{theFuncNow=genXZFuncPF[{numX,numEps,numZ},aLilXkZkFunc]},

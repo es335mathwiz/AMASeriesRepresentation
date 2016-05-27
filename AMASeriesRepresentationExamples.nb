@@ -8,15 +8,17 @@ Cell["AMASeriesRepresentation Examples", "Title",
 
 Cell[CellGroupData[{
 
-Cell["Component Validation", "Section",
- CellChangeTimes->{{3.673276169961317*^9, 3.6732761948208895`*^9}}],
+Cell["Model Component Validation", "Section",
+ CellChangeTimes->{{3.673276169961317*^9, 3.6732761948208895`*^9}, {
+  3.673346771510983*^9, 3.673346772651609*^9}}],
 
 Cell[CellGroupData[{
 
-Cell["checkLinMod, getB, getF, getPhi, checkMod", "Subsection",
+Cell[" getB, getF, getPhi,checkLinMod,, checkMod", "Subsection",
  CellChangeTimes->{{3.673177673153864*^9, 3.673177682466438*^9}, {
-  3.6732607581086264`*^9, 3.6732607858588467`*^9}, {3.673276289040392*^9, 
-  3.6732762897278976`*^9}}],
+   3.6732607581086264`*^9, 3.6732607858588467`*^9}, {3.673276289040392*^9, 
+   3.6732762897278976`*^9}, {3.6733446733087645`*^9, 3.6733446783244305`*^9}, 
+   3.673350078291233*^9}],
 
 Cell[CellGroupData[{
 
@@ -30,8 +32,121 @@ Integer:0]\\ncomputes eigenvalues and checks consistency of dimensions of \
 model components\\nreturns {Eigenvalues[BB]//Abs,Eigenvalues[FF]//Abs,X0Z0 \
 @@anX,lilxz @@Join[anX,anEps,Table[0,{numZ}]]}\\nnumRegimes currently has no \
 impact\\n\"\>", "MSG"]], "Print", "PrintUsage",
- CellChangeTimes->{3.673291522976771*^9},
- CellTags->"Info273673277122-5789906"]
+ CellChangeTimes->{3.6733500985726576`*^9},
+ CellTags->"Info373673335698-5789906"]
+}, Open  ]],
+
+Cell[CellGroupData[{
+
+Cell[BoxData[
+ RowBox[{"?", "getB"}]], "Input",
+ CellChangeTimes->{{3.6732607935776587`*^9, 3.6732607963589306`*^9}}],
+
+Cell[BoxData[
+ StyleBox["\<\"getB[linMod] B from \
+linMod:{theHMat_?MatrixQ,BB_?MatrixQ,phi_?MatrixQ,FF_?MatrixQ,psiEps_?MatrixQ,\
+psiC_?MatrixQ,psiZ_?MatrixQ,psiZPreComp_?MatrixQ}\"\>", 
+  "MSG"]], "Print", "PrintUsage",
+ CellChangeTimes->{3.673350098650784*^9},
+ CellTags->"Info383673335698-5789906"]
+}, Open  ]],
+
+Cell[CellGroupData[{
+
+Cell[BoxData[
+ RowBox[{"?", "getF"}]], "Input",
+ CellChangeTimes->{{3.673261023355193*^9, 3.6732610251052065`*^9}}],
+
+Cell[BoxData[
+ StyleBox["\<\"getF[linMod] F from \
+linMod:{theHMat_?MatrixQ,BB_?MatrixQ,phi_?MatrixQ,FF_?MatrixQ,psiEps_?MatrixQ,\
+psiC_?MatrixQ,psiZ_?MatrixQ,psiZPreComp_?MatrixQ}\"\>", 
+  "MSG"]], "Print", "PrintUsage",
+ CellChangeTimes->{3.673350098744523*^9},
+ CellTags->"Info393673335698-5789906"]
+}, Open  ]],
+
+Cell[CellGroupData[{
+
+Cell[BoxData[
+ RowBox[{"?", "getPhi"}]], "Input",
+ CellChangeTimes->{{3.673261029339615*^9, 3.67326103182401*^9}}],
+
+Cell[BoxData[
+ StyleBox["\<\"getPhi[linMod] Phi from \
+linMod:{theHMat_?MatrixQ,BB_?MatrixQ,phi_?MatrixQ,FF_?MatrixQ,psiEps_?MatrixQ,\
+psiC_?MatrixQ,psiZ_?MatrixQ,psiZPreComp_?MatrixQ}\"\>", 
+  "MSG"]], "Print", "PrintUsage",
+ CellChangeTimes->{3.6733500988070345`*^9},
+ CellTags->"Info403673335698-5789906"]
+}, Open  ]],
+
+Cell[CellGroupData[{
+
+Cell[BoxData[
+ RowBox[{"Through", "[", 
+  RowBox[{
+   RowBox[{"{", 
+    RowBox[{"getB", ",", "getF", ",", "getPhi"}], "}"}], "[", "notLinMod", 
+   "]"}], "]"}]], "Input",
+ CellChangeTimes->{{3.673260806046508*^9, 3.6732608377342606`*^9}}],
+
+Cell[BoxData[
+ RowBox[{"{", 
+  RowBox[{
+   RowBox[{"{", 
+    RowBox[{
+     RowBox[{"{", 
+      RowBox[{
+       RowBox[{"-", "0.028238396845491516`"}], ",", 
+       RowBox[{"-", "0.055248744180337636`"}], ",", "0.009393685927283037`"}],
+       "}"}], ",", 
+     RowBox[{"{", 
+      RowBox[{
+       RowBox[{"-", "0.06646793570088973`"}], ",", 
+       RowBox[{"-", "0.7004617782525382`"}], ",", 
+       RowBox[{"-", "0.07185265031077039`"}]}], "}"}], ",", 
+     RowBox[{"{", 
+      RowBox[{
+       RowBox[{"-", "0.163638419026511`"}], ",", 
+       RowBox[{"-", "1.3986788438354867`"}], ",", "0.33172578847219863`"}], 
+      "}"}]}], "}"}], ",", 
+   RowBox[{"{", 
+    RowBox[{
+     RowBox[{"{", 
+      RowBox[{
+       RowBox[{"-", "0.38117396274769305`"}], ",", 
+       RowBox[{"-", "0.22390420634577735`"}], ",", "0.09406839637052514`"}], 
+      "}"}], ",", 
+     RowBox[{"{", 
+      RowBox[{
+       RowBox[{"-", "0.13435232947228626`"}], ",", 
+       RowBox[{"-", "0.18965263001413823`"}], ",", "0.630955655300204`"}], 
+      "}"}], ",", 
+     RowBox[{"{", 
+      RowBox[{
+       RowBox[{"-", "0.8168139091115831`"}], ",", 
+       RowBox[{"-", "1.0003347760968313`"}], ",", "0.04170940883804253`"}], 
+      "}"}]}], "}"}], ",", 
+   RowBox[{"{", 
+    RowBox[{
+     RowBox[{"{", 
+      RowBox[{"0.021007875750301403`", ",", "0.1572697564019157`", ",", 
+       RowBox[{"-", "0.05316342009921688`"}]}], "}"}], ",", 
+     RowBox[{"{", 
+      RowBox[{"1.2071224371787468`", ",", 
+       RowBox[{"-", "0.05530030054185216`"}], ",", 
+       RowBox[{"-", "0.4318424790861448`"}]}], "}"}], ",", 
+     RowBox[{"{", 
+      RowBox[{"2.5816526643885847`", ",", 
+       RowBox[{"-", "0.1835208669852481`"}], ",", 
+       RowBox[{"-", "0.5782267401529795`"}]}], "}"}]}], "}"}]}], 
+  "}"}]], "Output",
+ CellChangeTimes->{3.6732608387342725`*^9, 3.6732610112649994`*^9, 
+  3.673263358753767*^9, 3.673266470605441*^9, 3.6732717561029024`*^9, 
+  3.673271863506049*^9, 3.6732746087607574`*^9, 3.6732755141920013`*^9, 
+  3.673282417426129*^9, 3.673283564562634*^9, 3.673288325437127*^9, 
+  3.6732915232424097`*^9, 3.673350098822649*^9}]
 }, Open  ]],
 
 Cell[CellGroupData[{
@@ -217,120 +332,7 @@ Cell[BoxData[
    3.6732633584725313`*^9, 3.6732664703554287`*^9, 3.673271755821638*^9, 
    3.6732718632404294`*^9, 3.673274608510749*^9, 3.673275513942006*^9, 
    3.673282417129364*^9, 3.6732835642970104`*^9, 3.673288325187129*^9, 
-   3.6732915229924154`*^9}]
-}, Open  ]],
-
-Cell[CellGroupData[{
-
-Cell[BoxData[
- RowBox[{"?", "getB"}]], "Input",
- CellChangeTimes->{{3.6732607935776587`*^9, 3.6732607963589306`*^9}}],
-
-Cell[BoxData[
- StyleBox["\<\"getB[linMod] B from \
-linMod:{theHMat_?MatrixQ,BB_?MatrixQ,phi_?MatrixQ,FF_?MatrixQ,psiEps_?MatrixQ,\
-psiC_?MatrixQ,psiZ_?MatrixQ,psiZPreComp_?MatrixQ}\"\>", 
-  "MSG"]], "Print", "PrintUsage",
- CellChangeTimes->{3.67329152307054*^9},
- CellTags->"Info293673277122-5789906"]
-}, Open  ]],
-
-Cell[CellGroupData[{
-
-Cell[BoxData[
- RowBox[{"?", "getF"}]], "Input",
- CellChangeTimes->{{3.673261023355193*^9, 3.6732610251052065`*^9}}],
-
-Cell[BoxData[
- StyleBox["\<\"getF[linMod] F from \
-linMod:{theHMat_?MatrixQ,BB_?MatrixQ,phi_?MatrixQ,FF_?MatrixQ,psiEps_?MatrixQ,\
-psiC_?MatrixQ,psiZ_?MatrixQ,psiZPreComp_?MatrixQ}\"\>", 
-  "MSG"]], "Print", "PrintUsage",
- CellChangeTimes->{3.6732915231486607`*^9},
- CellTags->"Info303673277123-5789906"]
-}, Open  ]],
-
-Cell[CellGroupData[{
-
-Cell[BoxData[
- RowBox[{"?", "getPhi"}]], "Input",
- CellChangeTimes->{{3.673261029339615*^9, 3.67326103182401*^9}}],
-
-Cell[BoxData[
- StyleBox["\<\"getPhi[linMod] Phi from \
-linMod:{theHMat_?MatrixQ,BB_?MatrixQ,phi_?MatrixQ,FF_?MatrixQ,psiEps_?MatrixQ,\
-psiC_?MatrixQ,psiZ_?MatrixQ,psiZPreComp_?MatrixQ}\"\>", 
-  "MSG"]], "Print", "PrintUsage",
- CellChangeTimes->{3.6732915232424097`*^9},
- CellTags->"Info313673277123-5789906"]
-}, Open  ]],
-
-Cell[CellGroupData[{
-
-Cell[BoxData[
- RowBox[{"Through", "[", 
-  RowBox[{
-   RowBox[{"{", 
-    RowBox[{"getB", ",", "getF", ",", "getPhi"}], "}"}], "[", "notLinMod", 
-   "]"}], "]"}]], "Input",
- CellChangeTimes->{{3.673260806046508*^9, 3.6732608377342606`*^9}}],
-
-Cell[BoxData[
- RowBox[{"{", 
-  RowBox[{
-   RowBox[{"{", 
-    RowBox[{
-     RowBox[{"{", 
-      RowBox[{
-       RowBox[{"-", "0.028238396845491516`"}], ",", 
-       RowBox[{"-", "0.055248744180337636`"}], ",", "0.009393685927283037`"}],
-       "}"}], ",", 
-     RowBox[{"{", 
-      RowBox[{
-       RowBox[{"-", "0.06646793570088973`"}], ",", 
-       RowBox[{"-", "0.7004617782525382`"}], ",", 
-       RowBox[{"-", "0.07185265031077039`"}]}], "}"}], ",", 
-     RowBox[{"{", 
-      RowBox[{
-       RowBox[{"-", "0.163638419026511`"}], ",", 
-       RowBox[{"-", "1.3986788438354867`"}], ",", "0.33172578847219863`"}], 
-      "}"}]}], "}"}], ",", 
-   RowBox[{"{", 
-    RowBox[{
-     RowBox[{"{", 
-      RowBox[{
-       RowBox[{"-", "0.38117396274769305`"}], ",", 
-       RowBox[{"-", "0.22390420634577735`"}], ",", "0.09406839637052514`"}], 
-      "}"}], ",", 
-     RowBox[{"{", 
-      RowBox[{
-       RowBox[{"-", "0.13435232947228626`"}], ",", 
-       RowBox[{"-", "0.18965263001413823`"}], ",", "0.630955655300204`"}], 
-      "}"}], ",", 
-     RowBox[{"{", 
-      RowBox[{
-       RowBox[{"-", "0.8168139091115831`"}], ",", 
-       RowBox[{"-", "1.0003347760968313`"}], ",", "0.04170940883804253`"}], 
-      "}"}]}], "}"}], ",", 
-   RowBox[{"{", 
-    RowBox[{
-     RowBox[{"{", 
-      RowBox[{"0.021007875750301403`", ",", "0.1572697564019157`", ",", 
-       RowBox[{"-", "0.05316342009921688`"}]}], "}"}], ",", 
-     RowBox[{"{", 
-      RowBox[{"1.2071224371787468`", ",", 
-       RowBox[{"-", "0.05530030054185216`"}], ",", 
-       RowBox[{"-", "0.4318424790861448`"}]}], "}"}], ",", 
-     RowBox[{"{", 
-      RowBox[{"2.5816526643885847`", ",", 
-       RowBox[{"-", "0.1835208669852481`"}], ",", 
-       RowBox[{"-", "0.5782267401529795`"}]}], "}"}]}], "}"}]}], 
-  "}"}]], "Output",
- CellChangeTimes->{3.6732608387342725`*^9, 3.6732610112649994`*^9, 
-  3.673263358753767*^9, 3.673266470605441*^9, 3.6732717561029024`*^9, 
-  3.673271863506049*^9, 3.6732746087607574`*^9, 3.6732755141920013`*^9, 
-  3.673282417426129*^9, 3.673283564562634*^9, 3.673288325437127*^9, 
-  3.6732915232424097`*^9}]
+   3.6732915229924154`*^9, 3.6733500988382735`*^9}]
 }, Open  ]],
 
 Cell[CellGroupData[{
@@ -346,8 +348,8 @@ ngSpec:{toIgnore:{_Integer...},iOrd_Integer,{{_Integer,_?NumberQ,_?NumberQ}..}\
 ,numRegimes_:0},\\ndistribSpec:{expctSpec:{{_Symbol,_}..},regimeTransProbFunc_\
 :{}},anX_?VectorQ,anEps_?VectorQ,\\neqnsFunc:(_Function|_CompiledFunction)]\\\
 n\\n\\n\"\>", "MSG"]], "Print", "PrintUsage",
- CellChangeTimes->{3.6732915233205233`*^9},
- CellTags->"Info333673277123-5789906"]
+ CellChangeTimes->{3.673350098900785*^9},
+ CellTags->"Info433673335698-5789906"]
 }, Open  ]],
 
 Cell[CellGroupData[{
@@ -396,7 +398,7 @@ Cell[BoxData[
  CellChangeTimes->{3.6732688849731483`*^9, 3.6732689784270315`*^9, 
   3.673271844068387*^9, 3.6732719532340045`*^9, 3.6732746983239565`*^9, 
   3.673275605675575*^9, 3.673282417582315*^9, 3.6732835647032566`*^9, 
-  3.673288325608991*^9, 3.6732915233830423`*^9}]
+  3.673288325608991*^9, 3.6732915233830423`*^9, 3.673350098932026*^9}]
 }, Open  ]]
 }, Open  ]],
 
@@ -422,8 +424,8 @@ Cell[BoxData[
  StyleBox["\<\"truncErrorMat[{{fmat,_Real,2},{phimat,_Real,2},{kk,_Integer}}]\
 \\n\\ncomputes the truncation error matrix\\n\\n\"\>", 
   "MSG"]], "Print", "PrintUsage",
- CellChangeTimes->{3.673291523461162*^9},
- CellTags->"Info353673277123-5789906"]
+ CellChangeTimes->{3.673350099010161*^9},
+ CellTags->"Info453673335698-5789906"]
 }, Open  ]],
 
 Cell[CellGroupData[{
@@ -462,7 +464,8 @@ Cell[BoxData[
    3.6731996168771815`*^9, 3.673200362707423*^9, 3.6732006219438715`*^9, 
    3.6732666062314324`*^9, 3.673271776002128*^9, 3.673271883374033*^9, 
    3.6732746290734177`*^9, 3.6732755339718657`*^9, 3.6732824176760297`*^9, 
-   3.673283564812632*^9, 3.673288325718378*^9, 3.6732915234767866`*^9}]
+   3.673283564812632*^9, 3.673288325718378*^9, 3.6732915234767866`*^9, 
+   3.6733500990726523`*^9}]
 }, Open  ]]
 }, Open  ]],
 
@@ -490,8 +493,8 @@ Cell[BoxData[
 FF_?MatrixQ,psiEps_?MatrixQ,psiC_?MatrixQ,psiZ_?MatrixQ,psiZPreComp_?MatrixQ}]\
 \\nreturns functions x0(xtm1,eps) and z0(xtm1,eps)  based on the linear \
 reference model\\n\"\>", "MSG"]], "Print", "PrintUsage",
- CellChangeTimes->{3.6732915235549183`*^9},
- CellTags->"Info373673277123-5789906"]
+ CellChangeTimes->{3.673350099150775*^9},
+ CellTags->"Info473673335699-5789906"]
 }, Open  ]],
 
 Cell[CellGroupData[{
@@ -553,7 +556,7 @@ Cell[BoxData[
    3.6732010239402037`*^9, 3.673266606325184*^9, 3.6732717760958796`*^9, 
    3.673271883467785*^9, 3.6732746291671696`*^9, 3.673275534065617*^9, 
    3.6732824177541294`*^9, 3.673283564890744*^9, 3.673288325812117*^9, 
-   3.673291523570526*^9}]
+   3.673291523570526*^9, 3.673350099150775*^9}]
 }, Open  ]]
 }, Open  ]],
 
@@ -582,8 +585,8 @@ Cell[BoxData[
 FF_?MatrixQ,psiEps_?MatrixQ,psiC_?MatrixQ,psiZ_?MatrixQ,psiZPreComp_?MatrixQ}]\
 \\nreturns functions  expected X0(xtm1,eps) and Z0(xtm1,eps)   based on the \
 linear reference model\\n\"\>", "MSG"]], "Print", "PrintUsage",
- CellChangeTimes->{3.673291523648651*^9},
- CellTags->"Info393673277123-5789906"]
+ CellChangeTimes->{3.6733500992289195`*^9},
+ CellTags->"Info493673335699-5789906"]
 }, Open  ]],
 
 Cell[CellGroupData[{
@@ -635,70 +638,10 @@ Cell[BoxData[
    3.67320102403397*^9, 3.6732666064189177`*^9, 3.6732717762052555`*^9, 
    3.673271883561535*^9, 3.67327462926092*^9, 3.673275534143758*^9, 
    3.6732824178478427`*^9, 3.673283564984513*^9, 3.6732883259215045`*^9, 
-   3.673291523648651*^9}]
+   3.673291523648651*^9, 3.673350099244526*^9}]
 }, Open  ]]
 }, Open  ]]
-}, Closed]],
-
-Cell[CellGroupData[{
-
-Cell["iterateDRREIntegrate", "Section",
- CellChangeTimes->{{3.6730928550435543`*^9, 3.6730928622780037`*^9}, {
-  3.6730930871967354`*^9, 3.673093092899906*^9}, {3.673199372777853*^9, 
-  3.673199375981015*^9}, {3.6732899683173027`*^9, 3.6732899720048304`*^9}, {
-  3.673292128786224*^9, 3.6732921293487406`*^9}}],
-
-Cell[CellGroupData[{
-
-Cell[BoxData[
- RowBox[{"?", "iterateDRREIntegrate"}]], "Input",
- CellChangeTimes->{{3.6731777371856375`*^9, 3.673177738623136*^9}}],
-
-Cell[BoxData[
- StyleBox["\<\"iterateDRREIntegrate[drFunc:(_Function|_CompiledFunction),\
-initVec_?VectorQ,\\n\t\
-distribSpec:{expctSpec:{{_Symbol,_}..},regimeTransProbFunc_:{}},numPers_\
-Integer]\\n\t\\nIterates a decision rule forward from initVec(includes time \
-zero shocks) for numPers time intervals by integrating out the shocks \
-\\nusing the distribution\\nand, if not {},the regime change transition \
-probablities\\n\\nproduces a matrix containing the path\"\>", 
-  "MSG"]], "Print", "PrintUsage",
- CellChangeTimes->{3.6732915237267942`*^9},
- CellTags->"Info413673277123-5789906"]
 }, Open  ]],
-
-Cell[CellGroupData[{
-
-Cell[BoxData[
- RowBox[{"kip", "=", 
-  RowBox[{"iterateDRREIntegrate", "[", 
-   RowBox[{"simpRBCExactDR", ",", "anXEps", ",", "theDist", ",", "2"}], 
-   "]"}]}]], "Input",
- CellChangeTimes->{
-  3.673092716948702*^9, {3.6730930673684516`*^9, 3.6730930676497035`*^9}, {
-   3.6731940794356127`*^9, 3.6731940829512625`*^9}}],
-
-Cell[BoxData[
- RowBox[{"{", 
-  RowBox[{
-   RowBox[{"{", "1", "}"}], ",", 
-   RowBox[{"{", "0.228`", "}"}], ",", 
-   RowBox[{"{", "1", "}"}], ",", 
-   RowBox[{"{", "0.4144604099865236`", "}"}], ",", 
-   RowBox[{"{", "0.21541863254618707`", "}"}], ",", 
-   RowBox[{"{", "1.0725081812542165`", "}"}], ",", 
-   RowBox[{"{", "0.4046785327351019`", "}"}], ",", 
-   RowBox[{"{", "0.21033443494742385`", "}"}], ",", 
-   RowBox[{"{", "1.0688144034586515`", "}"}]}], "}"}]], "Output",
- CellChangeTimes->{3.6730923864456396`*^9, 3.67309271791746*^9, 
-  3.6730930683372097`*^9, 3.673093926635479*^9, 3.673094122402666*^9, 
-  3.6730948800297194`*^9, 3.6730949416708274`*^9, 3.673177720169877*^9, 
-  3.6731940847794037`*^9, 3.673263358878767*^9, 3.673266512762017*^9, 
-  3.6732717563216534`*^9, 3.6732718636779275`*^9, 3.6732746089794908`*^9, 
-  3.6732755144107647`*^9, 3.6732824180196476`*^9, 3.6732835651563706`*^9, 
-  3.673288326093381*^9, 3.6732915238361654`*^9}]
-}, Open  ]]
-}, Closed]],
 
 Cell[CellGroupData[{
 
@@ -729,8 +672,8 @@ MatrixQ,FF_?MatrixQ,psiEps_?MatrixQ,psiC_?MatrixQ,psiZ_?MatrixQ,psiZPreComp_?\
 MatrixQ},\\nthePath_?VectorQ,theEps_?VectorQ]\\n\\n    given the path\\n\t\
 computes the z values using the hmat in linMod\\n\treturns a list of z \
 matrices(one column matrices)\\n\\n\"\>", "MSG"]], "Print", "PrintUsage",
- CellChangeTimes->{3.6732915240080457`*^9},
- CellTags->"Info483673277123-5789906"]
+ CellChangeTimes->{3.6733500993226633`*^9},
+ CellTags->"Info513673335699-5789906"]
 }, Open  ]],
 
 Cell[CellGroupData[{
@@ -793,7 +736,67 @@ Cell[BoxData[
    3.673194133717305*^9, 3.67326335916002*^9, 3.673266528949646*^9, 
    3.673271757446663*^9, 3.67327186486544*^9, 3.6732746100107603`*^9, 
    3.673275515457648*^9, 3.6732824186912546`*^9, 3.673283565781371*^9, 
-   3.6732883267496357`*^9, 3.6732915244142942`*^9}]
+   3.6732883267496357`*^9, 3.6732915244142942`*^9, 3.673350099697667*^9}]
+}, Open  ]]
+}, Open  ]],
+
+Cell[CellGroupData[{
+
+Cell["iterateDRREIntegrate", "Subsection",
+ CellChangeTimes->{{3.6730928550435543`*^9, 3.6730928622780037`*^9}, {
+  3.6730930871967354`*^9, 3.673093092899906*^9}, {3.673199372777853*^9, 
+  3.673199375981015*^9}, {3.6732899683173027`*^9, 3.6732899720048304`*^9}, {
+  3.673292128786224*^9, 3.6732921293487406`*^9}}],
+
+Cell[CellGroupData[{
+
+Cell[BoxData[
+ RowBox[{"?", "iterateDRREIntegrate"}]], "Input",
+ CellChangeTimes->{{3.6731777371856375`*^9, 3.673177738623136*^9}}],
+
+Cell[BoxData[
+ StyleBox["\<\"iterateDRREIntegrate[drFunc:(_Function|_CompiledFunction),\
+initVec_?VectorQ,\\n\t\
+distribSpec:{expctSpec:{{_Symbol,_}..},regimeTransProbFunc_:{}},numPers_\
+Integer]\\n\t\\nIterates a decision rule forward from initVec(includes time \
+zero shocks) for numPers time intervals by integrating out the shocks \
+\\nusing the distribution\\nand, if not {},the regime change transition \
+probablities\\n\\nproduces a matrix containing the path\"\>", 
+  "MSG"]], "Print", "PrintUsage",
+ CellChangeTimes->{3.673350099775792*^9},
+ CellTags->"Info533673335699-5789906"]
+}, Open  ]],
+
+Cell[CellGroupData[{
+
+Cell[BoxData[
+ RowBox[{"kip", "=", 
+  RowBox[{"iterateDRREIntegrate", "[", 
+   RowBox[{"simpRBCExactDR", ",", "anXEps", ",", "theDist", ",", "2"}], 
+   "]"}]}]], "Input",
+ CellChangeTimes->{
+  3.673092716948702*^9, {3.6730930673684516`*^9, 3.6730930676497035`*^9}, {
+   3.6731940794356127`*^9, 3.6731940829512625`*^9}}],
+
+Cell[BoxData[
+ RowBox[{"{", 
+  RowBox[{
+   RowBox[{"{", "1", "}"}], ",", 
+   RowBox[{"{", "0.228`", "}"}], ",", 
+   RowBox[{"{", "1", "}"}], ",", 
+   RowBox[{"{", "0.4144604099865236`", "}"}], ",", 
+   RowBox[{"{", "0.21541863254618707`", "}"}], ",", 
+   RowBox[{"{", "1.0725081812542165`", "}"}], ",", 
+   RowBox[{"{", "0.4046785327351019`", "}"}], ",", 
+   RowBox[{"{", "0.21033443494742385`", "}"}], ",", 
+   RowBox[{"{", "1.0688144034586515`", "}"}]}], "}"}]], "Output",
+ CellChangeTimes->{3.6730923864456396`*^9, 3.67309271791746*^9, 
+  3.6730930683372097`*^9, 3.673093926635479*^9, 3.673094122402666*^9, 
+  3.6730948800297194`*^9, 3.6730949416708274`*^9, 3.673177720169877*^9, 
+  3.6731940847794037`*^9, 3.673263358878767*^9, 3.673266512762017*^9, 
+  3.6732717563216534`*^9, 3.6732718636779275`*^9, 3.6732746089794908`*^9, 
+  3.6732755144107647`*^9, 3.6732824180196476`*^9, 3.6732835651563706`*^9, 
+  3.673288326093381*^9, 3.6732915238361654`*^9, 3.6733500998851676`*^9}]
 }, Open  ]]
 }, Open  ]],
 
@@ -817,8 +820,8 @@ Integer]\\n\t\\n\titerates a decision rule forward using iterateDRIntegrate \
 (can use PerfectForesight as distribution for specific shocks)\\n\tcomputes \
 the z values using the hmat in linMod\\n\treturns a list of z matrices(one \
 column matrices)\\n\t\"\>", "MSG"]], "Print", "PrintUsage",
- CellChangeTimes->{3.673291524554909*^9},
- CellTags->"Info503673277124-5789906"]
+ CellChangeTimes->{3.673350099963299*^9},
+ CellTags->"Info553673335699-5789906"]
 }, Open  ]],
 
 Cell[CellGroupData[{
@@ -870,7 +873,7 @@ Cell[BoxData[
    3.6731941068577166`*^9, 3.673263359066269*^9, 3.6732665215433364`*^9, 
    3.6732717568997707`*^9, 3.6732718642404194`*^9, 3.6732746095420074`*^9, 
    3.673275514988883*^9, 3.673282419237932*^9, 3.67328356632826*^9, 
-   3.6732883273121405`*^9, 3.673291524945548*^9}]
+   3.6732883273121405`*^9, 3.673291524945548*^9, 3.673350100432048*^9}]
 }, Open  ]]
 }, Open  ]],
 
@@ -893,8 +896,8 @@ MatrixQ,FF_?MatrixQ,psiEps_?MatrixQ,psiC_?MatrixQ,psiZ_?MatrixQ,psiZPreComp_?\
 MatrixQ},\\n\tinitVec_?VectorQ,theZs:{_?MatrixQ..},len_Integer]\\n\t\\nmatrix \
 of the  values for {xtm1,xt,xtp1,eps} from the series representations using \
 \\nfrom the first len z matrices\\n\t\"\>", "MSG"]], "Print", "PrintUsage",
- CellChangeTimes->{3.6732915250705376`*^9},
- CellTags->"Info523673277124-5789906"]
+ CellChangeTimes->{3.6733501005570536`*^9},
+ CellTags->"Info573673335700-5789906"]
 }, Open  ]],
 
 Cell[CellGroupData[{
@@ -939,7 +942,7 @@ Cell[BoxData[
    3.6732717580404167`*^9, 3.6732718653341913`*^9, 3.673274610542015*^9, 
    3.673275516004516*^9, {3.673278563046979*^9, 3.673278575547073*^9}, 
    3.673282419768978*^9, 3.673283566875135*^9, 3.673288327905895*^9, 
-   3.6732915254924283`*^9}]
+   3.6732915254924283`*^9, 3.6733501009945407`*^9}]
 }, Open  ]],
 
 Cell[CellGroupData[{
@@ -978,7 +981,7 @@ Cell[BoxData[
    RowBox[{"{", "0.07`", "}"}]}], "}"}]], "Output",
  CellChangeTimes->{{3.673278682969795*^9, 3.673278707720005*^9}, 
    3.673282420206312*^9, 3.6732835673438854`*^9, 3.6732883283433876`*^9, 
-   3.6732915259142957`*^9}]
+   3.6732915259142957`*^9, 3.6733501014476814`*^9}]
 }, Open  ]]
 }, Open  ]],
 
@@ -1002,8 +1005,8 @@ Integer]\\n\t\\ngenerates  Zs using genZsREExact, then uses genASeriesRep to \
 generate a list of the possible  values for {xtm1,xt,xtp1,eps} from the \
 series representations using \\nfrom just the first z matrix to all the \
 z's\\n\"\>", "MSG"]], "Print", "PrintUsage",
- CellChangeTimes->{3.6732915259924364`*^9},
- CellTags->"Info563673277125-5789906"]
+ CellChangeTimes->{3.6733501015570617`*^9},
+ CellTags->"Info613673335701-5789906"]
 }, Open  ]],
 
 Cell[CellGroupData[{
@@ -1092,7 +1095,7 @@ Cell[BoxData[
    3.6731941526588774`*^9}, 3.673263359269395*^9, 3.6732665359653263`*^9, 
    3.6732717580404167`*^9, 3.6732718653341913`*^9, 3.673274610542015*^9, 
    3.673275516004516*^9, 3.6732824206905007`*^9, 3.6732835678438883`*^9, 
-   3.673288328921528*^9, 3.6732915264299355`*^9}]
+   3.673288328921528*^9, 3.6732915264299355`*^9, 3.6733501019633102`*^9}]
 }, Open  ]]
 }, Open  ]],
 
@@ -1115,8 +1118,8 @@ theExactDR:(_Function|_CompiledFunction),terms_Integer]\\n\t\\ngenerates  Zs \
 using genZsREExact, then \\nreturns a function that \\nuses genASeriesRep to \
 generate the value for  {xtm1,xt,xtp1,eps} from the the series representation \
 with the given number of terms \\n\\n\"\>", "MSG"]], "Print", "PrintUsage",
- CellChangeTimes->{3.673291526508062*^9},
- CellTags->"Info583673277126-5789906"]
+ CellChangeTimes->{3.67335010204144*^9},
+ CellTags->"Info633673335701-5789906"]
 }, Open  ]],
 
 Cell[CellGroupData[{
@@ -1151,7 +1154,7 @@ Cell[BoxData[
    3.673271758571671*^9, 3.673271865943573*^9, 3.6732746110732727`*^9, 
    3.6732755166139073`*^9, 3.673277617601927*^9, 3.673278077839978*^9, 
    3.673282421159072*^9, 3.6732835683907633`*^9, 3.6732883294371586`*^9, 
-   3.6732915269768043`*^9}]
+   3.6732915269768043`*^9, 3.673350102447688*^9}]
 }, Open  ]],
 
 Cell[BoxData[""], "Input",
@@ -1160,7 +1163,7 @@ Cell[BoxData[""], "Input",
 Cell[BoxData[""], "Input",
  CellChangeTimes->{{3.673196235051163*^9, 3.673196251348156*^9}}]
 }, Open  ]]
-}, Closed]],
+}, Open  ]],
 
 Cell[CellGroupData[{
 
@@ -1187,8 +1190,8 @@ Function|_CompiledFunction)]\\n\\nuses decision rule to compute an \
 unconditional expectations path of length 2, then applies eqnsFunc \\nreturns \
 a list containing  1 vector of equations errors\\n\\n\"\>", 
   "MSG"]], "Print", "PrintUsage",
- CellChangeTimes->{3.673291527054928*^9},
- CellTags->"Info633673277126-5789906"]
+ CellChangeTimes->{3.673350102572677*^9},
+ CellTags->"Info683673335702-5789906"]
 }, Open  ]],
 
 Cell[CellGroupData[{
@@ -1214,7 +1217,7 @@ Cell[BoxData[
    3.673199108385117*^9, 3.6732633598787746`*^9, 3.673266583943875*^9, 
    3.673271774955245*^9, 3.6732718822490244`*^9, 3.673274628057767*^9, 
    3.673275532909368*^9, 3.673282421393357*^9, 3.6732835685782633`*^9, 
-   3.6732883296402845`*^9, 3.673291527164317*^9}]
+   3.6732883296402845`*^9, 3.673291527164317*^9, 3.6733501026820655`*^9}]
 }, Open  ]]
 }, Open  ]],
 
@@ -1240,8 +1243,8 @@ Function|_CompiledFunction),numPers_Integer]\\n\\nuses decision rule to \
 compute an unconditional expectations path of length numPers, then applies \
 eqnsFunc along the path\\nreturns List of vectors of equations errors\\n\"\>",
    "MSG"]], "Print", "PrintUsage",
- CellChangeTimes->{3.673291527242443*^9},
- CellTags->"Info653673277127-5789906"]
+ CellChangeTimes->{3.6733501027601957`*^9},
+ CellTags->"Info703673335702-5789906"]
 }, Open  ]],
 
 Cell[CellGroupData[{
@@ -1297,7 +1300,7 @@ Cell[BoxData[
    3.673266592568943*^9, 3.673271775752127*^9, 3.67327188306153*^9, 
    3.67327462885466*^9, 3.6732755337375*^9, {3.673279743057621*^9, 
    3.6732797704953284`*^9}, 3.6732824220337377`*^9, 3.6732835692032638`*^9, 
-   3.673288330359028*^9, 3.6732915278205605`*^9}]
+   3.673288330359028*^9, 3.6732915278205605`*^9, 3.6733501034320745`*^9}]
 }, Open  ]]
 }, Open  ]],
 
@@ -1320,8 +1323,8 @@ decision rule uses FindMaximum to find the time t shock that produces the \
 largest infinity norm for the error in the\\nsystem equations\\nreturns the \
 infintiy norm of the error and the shock value\\n\"\>", 
   "MSG"]], "Print", "PrintUsage",
- CellChangeTimes->{3.67329152805495*^9},
- CellTags->"Info703673277127-5789906"]
+ CellChangeTimes->{3.6733501035102015`*^9},
+ CellTags->"Info723673335703-5789906"]
 }, Open  ]],
 
 Cell[CellGroupData[{
@@ -1341,12 +1344,13 @@ Cell[BoxData[
  RowBox[{"{", 
   RowBox[{"2.220446049250313`*^-15", ",", 
    RowBox[{"{", 
-    RowBox[{"eVs106", "\[Rule]", "1.924164038149018`*^-7"}], "}"}]}], 
+    RowBox[{"eVs96", "\[Rule]", "1.924164038149018`*^-7"}], "}"}]}], 
   "}"}]], "Output",
  CellChangeTimes->{3.6731973703335915`*^9, 3.6732633597537746`*^9, 
   3.6732665757094336`*^9, 3.673271774720869*^9, 3.6732718819052715`*^9, 
   3.6732746278234024`*^9, 3.67327553267498*^9, 3.6732824251731606`*^9, 
-  3.673283572422018*^9, 3.673288333499691*^9, 3.6732915309768357`*^9}]
+  3.673283572422018*^9, 3.673288333499691*^9, 3.6732915309768357`*^9, 
+  3.6733501064789705`*^9}]
 }, Open  ]]
 }, Open  ]],
 
@@ -1368,8 +1372,8 @@ Cell[BoxData[
 distribSpec:{expctSpec:{{_Symbol,_}..},regimeTransProbFunc_:{}},eqnsFunc:(_\
 Function|_CompiledFunction)]\\n\\nreturns the path corresponding to \
 evalBadPathErrDRREIntegrate\\n\"\>", "MSG"]], "Print", "PrintUsage",
- CellChangeTimes->{3.6732915312268476`*^9},
- CellTags->"Info723673277131-5789906"]
+ CellChangeTimes->{3.6733501066977215`*^9},
+ CellTags->"Info743673335706-5789906"]
 }, Open  ]],
 
 Cell[CellGroupData[{
@@ -1403,7 +1407,7 @@ Cell[BoxData[
    3.673271774720869*^9, 3.6732718819052715`*^9, 3.6732746278234024`*^9, 
    3.67327553267498*^9, {3.673279611595179*^9, 3.6732796331497602`*^9}, 
    3.6732824282032514`*^9, 3.6732835757345247`*^9, 3.67328833673409*^9, 
-   3.6732915341331215`*^9}]
+   3.6732915341331215`*^9, 3.6733501096039953`*^9}]
 }, Open  ]]
 }, Open  ]],
 
@@ -1426,8 +1430,8 @@ decision rule using iterateDRREIntegrate\\n\tapplies \
 worstPathForErrDRREIntegrate all along the path to return a list of\\n\t\
 vectors of maximum infinity norm errors in the sysFunc equations\\n\t\"\>", 
   "MSG"]], "Print", "PrintUsage",
- CellChangeTimes->{3.6732915342737527`*^9},
- CellTags->"Info743673277134-5789906"]
+ CellChangeTimes->{3.673350109744611*^9},
+ CellTags->"Info763673335709-5789906"]
 }, Open  ]],
 
 Cell[CellGroupData[{
@@ -1449,7 +1453,7 @@ Cell[BoxData["\<\"done thePath\"\>"], "Print",
  CellChangeTimes->{3.6732665512466993`*^9, 3.673271758868549*^9, 
   3.6732718662560616`*^9, 3.6732746114326344`*^9, 3.6732755169576626`*^9, 
   3.6732801978893776`*^9, 3.6732824285000134`*^9, 3.6732835760470247`*^9, 
-  3.673288337077843*^9, 3.673291534445613*^9}],
+  3.673288337077843*^9, 3.673291534445613*^9, 3.6733501099008737`*^9}],
 
 Cell[BoxData[
  InterpretationBox[
@@ -1513,7 +1517,7 @@ Cell[BoxData[
  CellChangeTimes->{3.6732665512466993`*^9, 3.673271758868549*^9, 
   3.6732718662560616`*^9, 3.6732746114326344`*^9, 3.6732755169576626`*^9, 
   3.6732801978893776`*^9, 3.6732824285000134`*^9, 3.6732835760470247`*^9, 
-  3.673288337077843*^9, 3.673291547477374*^9}]
+  3.673288337077843*^9, 3.673291534445613*^9, 3.673350122557213*^9}]
 }, Open  ]],
 
 Cell[BoxData[
@@ -1537,10 +1541,10 @@ Cell[BoxData[
    3.673266564334344*^9, 3.6732717717520943`*^9, 3.6732718788427467`*^9, 
    3.673274624870254*^9, 3.673275529746609*^9, 3.6732802106707287`*^9, 
    3.6732824409952354`*^9, 3.673283588968927*^9, 3.6732883497185745`*^9, 
-   3.673291547477374*^9}]
+   3.673291547477374*^9, 3.673350122557213*^9}]
 }, Open  ]]
 }, Open  ]]
-}, Closed]],
+}, Open  ]],
 
 Cell[CellGroupData[{
 
@@ -1548,448 +1552,116 @@ Cell["Construct Solution Decision Rule Series Components", "Section",
  CellChangeTimes->{{3.673283940126652*^9, 3.673283953829887*^9}, {
   3.673284140190752*^9, 3.6732841464251733`*^9}}],
 
-Cell[CellGroupData[{
-
-Cell["doIterRE, doIterREInterp, nestIterRE, nestIterREInterp", "Subsection",
+Cell["\<\
+makeDREvalInterp, doIterRE, doIterREInterp, nestIterRE, nestIterREInterp\
+\>", "Subsection",
  CellChangeTimes->{{3.6731971912933097`*^9, 3.673197205105908*^9}, {
    3.673197904908923*^9, 3.6731979055026784`*^9}, {3.6731989030866156`*^9, 
    3.6731989083991623`*^9}, {3.6731994965168285`*^9, 3.673199496923094*^9}, 
    3.673199982308102*^9, {3.6732011490818253`*^9, 3.673201180300825*^9}, {
    3.673261207887915*^9, 3.6732612338568726`*^9}, {3.6732810277083015`*^9, 
-   3.673281041286535*^9}}],
+   3.673281041286535*^9}, {3.673346419305038*^9, 3.6733464266175966`*^9}}],
+
+Cell[CellGroupData[{
+
+Cell["makeDREvalInterp", "Subsection",
+ CellChangeTimes->{{3.67327235916508*^9, 3.673272364837002*^9}}],
 
 Cell[CellGroupData[{
 
 Cell[BoxData[
- RowBox[{"?", "doIterRE"}]], "Input",
- CellChangeTimes->{{3.673197211730978*^9, 3.6731972126684694`*^9}, {
-   3.673197911627726*^9, 3.6731979123621073`*^9}, {3.673198911664814*^9, 
-   3.6731989162586017`*^9}, {3.6731995014700055`*^9, 3.673199501766884*^9}, {
-   3.673199983901862*^9, 3.6731999844487443`*^9}, {3.6732013078174686`*^9, 
-   3.673201314255019*^9}, 3.67320429238377*^9}],
+ RowBox[{"?", "makeDREvalInterp"}]], "Input",
+ CellChangeTimes->{{3.673272376665221*^9, 3.6732723786808753`*^9}}],
 
 Cell[BoxData[
- StyleBox["\<\"doIterRE[linMod:{theHMat_?MatrixQ,BB_?MatrixQ,phi_?MatrixQ,FF_?\
-MatrixQ,psiEps_?MatrixQ,psiC_?MatrixQ,psiZ_?MatrixQ,psiZPreComp_?MatrixQ},\
-XZFuncsNow:{_Function..},\\nxtGuess_?MatrixQ,eqnsFunc:(_Function|_\
-CompiledFunction),distribSpec:{expctSpec:{{_Symbol,_}..},regimeTransProbFunc_:\
-{}}]\\n\\n\\ngiven a reference linear model, (x,z,X,Z) functions and an \
-initial guess for the time t state and an equation system the \
-function\\nextends (x,z,X,Z) an additional period imposing rational \
-expectations along with recalculation of all the points along the \
-path\\n\\nreturns a pair of functions xz and XZ giving the xt values of x and \
-z and giving the unconditional expected path of future values of x and \
-z\\n\\n\\n\"\>", "MSG"]], "Print", "PrintUsage",
- CellChangeTimes->{3.673291547649249*^9},
- CellTags->"Info763673277147-5789906"]
+ StyleBox["\<\"makeDREvalInterp[drFunc_Function,distribSpec:{expctSpec:{{_\
+Symbol,_}..},regimeTransProbFunc_:{}},\\neqnsFunc:(_Function|_\
+CompiledFunction),gSpec:{toIgnore:{_Integer...},iOrd_Integer,{{_Integer,_?\
+NumberQ,_?NumberQ}..},numRegimes_:0}]\\n\\nreturns a list of two functions: \
+the second evaluates the error in the equations without interpolation, the \
+first uses interpolation\\n\"\>", "MSG"]], "Print", "PrintUsage",
+ CellChangeTimes->{3.673350122697855*^9},
+ CellTags->"Info783673335722-5789906"]
 }, Open  ]],
 
+Cell[BoxData[
+ RowBox[{"\[IndentingNewLine]", "\n", 
+  RowBox[{
+   RowBox[{
+    RowBox[{"{", 
+     RowBox[{"theInterp", ",", " ", "theNotInterp"}], "}"}], "=", 
+    RowBox[{"makeDREvalInterp", "[", 
+     RowBox[{
+     "simpRBCExactDR", ",", "theDist", ",", "Private`rbcEqnsFunctionalNext", 
+      ",", "aGSpec"}], "]"}]}], ";"}]}]], "Input",
+ CellChangeTimes->{{3.673272566119875*^9, 3.673272603463906*^9}, {
+   3.6732727587292*^9, 3.6732727757024274`*^9}, 3.673288524524525*^9, 
+   3.6732901223354406`*^9, 3.6732907870284204`*^9}],
+
 Cell[CellGroupData[{
 
 Cell[BoxData[
- RowBox[{"\n", "\[IndentingNewLine]", 
+ RowBox[{"{", 
   RowBox[{
-   RowBox[{
-    RowBox[{
-     RowBox[{"{", 
-      RowBox[{"nxtxz", ",", "nxtXZ"}], "}"}], "=", 
-     RowBox[{"doIterRE", "[", 
-      RowBox[{"linMod", ",", 
-       RowBox[{"{", "anX0Z0", "}"}], ",", 
-       RowBox[{
-        RowBox[{"(", 
-         RowBox[{"anX0Z0", " ", "@@", "anXEps"}], ")"}], "[", 
-        RowBox[{"[", 
-         RowBox[{"Range", "[", "3", "]"}], "]"}], "]"}], ",", 
-       "Private`rbcEqnsFunctionalNext", ",", "theDist"}], "]"}]}], ";"}], 
-   "\[IndentingNewLine]", 
-   RowBox[{"{", 
-    RowBox[{
-     RowBox[{"nxtxz", " ", "@@", "anXEps"}], ",", 
-     RowBox[{"Through", "[", 
-      RowBox[{
-       RowBox[{
-        RowBox[{"nxtXZ", " ", "@@", "#"}], "&"}], "[", " ", "anXEps", "]"}], 
-      "]"}]}], "}"}], "\[IndentingNewLine]"}]}]], "Input",
- CellChangeTimes->{{3.6732013221144705`*^9, 3.673201496381482*^9}, {
-   3.6732015581475906`*^9, 3.67320168888301*^9}, {3.6732017370708942`*^9, 
-   3.6732017408834248`*^9}, {3.673202007885556*^9, 3.673202013088723*^9}, {
-   3.673202047417122*^9, 3.6732020951675158`*^9}, {3.6732024025293484`*^9, 
-   3.6732024302170653`*^9}, {3.673202461232938*^9, 3.6732024880612645`*^9}, {
-   3.673202863650428*^9, 3.6732028654785643`*^9}, {3.6732029131664453`*^9, 
-   3.673202999089006*^9}, {3.6732030359486756`*^9, 3.673203040261222*^9}, 
-   3.6732042983681617`*^9, {3.6732045811395617`*^9, 3.6732045918896475`*^9}, 
-   3.6732903248433523`*^9, 3.673291022459447*^9}],
+   RowBox[{"theInterp", " ", "@@", " ", "anXEps"}], ",", 
+   RowBox[{"theNotInterp", " ", "@@", " ", "anXEps"}]}], "}"}]], "Input",
+ CellChangeTimes->{{3.673272836959484*^9, 3.673272875520671*^9}}],
 
 Cell[BoxData[
  RowBox[{"{", 
   RowBox[{
    RowBox[{"{", 
     RowBox[{
-     RowBox[{"{", "0.4143218602592106`", "}"}], ",", 
-     RowBox[{"{", "0.21555718227350007`", "}"}], ",", 
-     RowBox[{"{", "1.0725081812542165`", "}"}], ",", 
-     RowBox[{"{", "0.003118826692724136`", "}"}], ",", 
-     RowBox[{"{", "0.00020252534900729147`", "}"}], ",", 
-     RowBox[{"{", "0.002391577125806288`", "}"}]}], "}"}], ",", 
+     RowBox[{"{", 
+      RowBox[{"-", "1.595782720655032`*^-16"}], "}"}], ",", 
+     RowBox[{"{", "8.092661600497896`*^-18", "}"}], ",", 
+     RowBox[{"{", "0.`", "}"}]}], "}"}], ",", 
    RowBox[{"{", 
     RowBox[{
      RowBox[{"{", 
-      RowBox[{
-       RowBox[{"{", "0.38653352389379503`", "}"}], ",", 
-       RowBox[{"{", "0.2007911681520546`", "}"}], ",", 
-       RowBox[{"{", "1.0000500012493663`", "}"}], ",", 
-       RowBox[{"{", 
-        RowBox[{"-", "0.0016629992046475338`"}], "}"}], ",", 
-       RowBox[{"{", 
-        RowBox[{"-", "0.002703814923078178`"}], "}"}], ",", 
-       RowBox[{"{", 
-        RowBox[{"-", "7.128088442864416`*^-8"}], "}"}]}], "}"}], ",", 
-     RowBox[{"{", 
-      RowBox[{
-       RowBox[{"{", "0.38823878325031674`", "}"}], ",", 
-       RowBox[{"{", "0.20178976272280905`", "}"}], ",", 
-       RowBox[{"{", "1.0000500725309052`", "}"}], ",", 
-       RowBox[{"{", "0", "}"}], ",", 
-       RowBox[{"{", "0", "}"}], ",", 
-       RowBox[{"{", "0", "}"}]}], "}"}]}], "}"}]}], "}"}]], "Output",
- CellChangeTimes->{
-  3.6732024938113112`*^9, 3.6732027065317783`*^9, 3.673202866291072*^9, {
-   3.67320292001025*^9, 3.673202957026188*^9}, 3.673202999870281*^9, 
-   3.6732030419487348`*^9, 3.6732030831365542`*^9, 3.6732046057178955`*^9, 
-   3.6732666250267906`*^9, 3.6732717944241667`*^9, 3.6732719031009026`*^9, 
-   3.6732746482766914`*^9, 3.673275553175155*^9, 3.6732824541083317`*^9, 
-   3.673283602250184*^9, 3.6732883628593016`*^9, 3.673291560633727*^9}]
-}, Open  ]],
-
-Cell[CellGroupData[{
-
-Cell[BoxData[
- RowBox[{"?", "nestIterRE"}]], "Input",
- CellChangeTimes->{{3.673197211730978*^9, 3.6731972126684694`*^9}, {
-   3.673197911627726*^9, 3.6731979123621073`*^9}, {3.673198911664814*^9, 
-   3.6731989162586017`*^9}, {3.6731995014700055`*^9, 3.673199501766884*^9}, {
-   3.673199983901862*^9, 3.6731999844487443`*^9}, {3.6732013078174686`*^9, 
-   3.673201314255019*^9}, 3.67320429238377*^9, {3.6732052311283526`*^9, 
-   3.6732052326752567`*^9}}],
-
-Cell[BoxData[
- StyleBox["\<\"nestIterRE[linMod:{theHMat_?MatrixQ,BB_?MatrixQ,phi_?MatrixQ,\
-FF_?MatrixQ,psiEps_?MatrixQ,psiC_?MatrixQ,psiZ_?MatrixQ,psiZPreComp_?MatrixQ},\
-XZFuncsNow:{_Function..},\\nxtGuess_?MatrixQ,eqnsFunc:(_Function|_\
-CompiledFunction),distribSpec:{expctSpec:{{_Symbol,_}..},regimeTransProbFunc_:\
-{}},numIters_Integer]\\n\\nrecursively apply doIterRE numIters times\\n\"\>", 
-  "MSG"]], "Print", "PrintUsage",
- CellChangeTimes->{3.6732915609306173`*^9},
- CellTags->"Info793673277160-5789906"]
-}, Open  ]],
-
-Cell[BoxData[
- RowBox[{"\n", "\[IndentingNewLine]", 
-  RowBox[{
-   RowBox[{
-    RowBox[{"aBunchRE", "=", 
-     RowBox[{"nestIterRE", "[", 
-      RowBox[{"linMod", ",", 
-       RowBox[{"{", "anX0Z0", "}"}], ",", 
-       RowBox[{
-        RowBox[{"(", 
-         RowBox[{"anX0Z0", " ", "@@", "anXEps"}], ")"}], "[", 
-        RowBox[{"[", 
-         RowBox[{"Range", "[", "3", "]"}], "]"}], "]"}], ",", 
-       "Private`rbcEqnsFunctionalNext", ",", "theDist", ",", "2"}], "]"}]}], 
-    ";"}], "\[IndentingNewLine]", 
-   RowBox[{"(*", 
-    RowBox[{
-    "takes", " ", "quite", " ", "a", " ", "while", " ", "to", " ", "evaluate",
-      "\[IndentingNewLine]", 
-     RowBox[{"{", 
-      RowBox[{
-       RowBox[{
-        RowBox[{"aBunchRE", "[", 
-         RowBox[{"[", 
-          RowBox[{
-           RowBox[{"-", "1"}], ",", "1"}], "]"}], "]"}], " ", "@@", 
-        "anXEps"}], ",", 
-       RowBox[{"Through", "[", 
-        RowBox[{
-         RowBox[{
-          RowBox[{
-           RowBox[{"aBunchRE", "[", 
-            RowBox[{"[", 
-             RowBox[{
-              RowBox[{"-", "1"}], ",", "2"}], "]"}], "]"}], " ", "@@", "#"}], 
-          "&"}], "[", "anXEps", "]"}], "]"}]}], "}"}]}], 
-    "\[IndentingNewLine]", "*)"}]}]}]], "Input",
- CellChangeTimes->{{3.6732013221144705`*^9, 3.673201496381482*^9}, {
-   3.6732015581475906`*^9, 3.67320168888301*^9}, {3.6732017370708942`*^9, 
-   3.6732017408834248`*^9}, {3.673202007885556*^9, 3.673202013088723*^9}, {
-   3.673202047417122*^9, 3.6732020951675158`*^9}, {3.6732024025293484`*^9, 
-   3.6732024302170653`*^9}, {3.673202461232938*^9, 3.6732024880612645`*^9}, {
-   3.673202863650428*^9, 3.6732028654785643`*^9}, {3.6732029131664453`*^9, 
-   3.673202999089006*^9}, {3.6732030359486756`*^9, 3.673203040261222*^9}, 
-   3.6732042983681617`*^9, {3.6732045811395617`*^9, 3.6732045918896475`*^9}, {
-   3.6732052396284194`*^9, 3.6732052689099045`*^9}, {3.6732813393479176`*^9, 
-   3.6732813988171544`*^9}, {3.673281435270571*^9, 3.6732814766771517`*^9}, {
-   3.6732820643797693`*^9, 3.6732820691837654`*^9}, {3.673282177904445*^9, 
-   3.6732821859670095`*^9}, 3.6732907019027414`*^9, 3.6732910545690784`*^9}],
-
-Cell[CellGroupData[{
-
-Cell[BoxData[
- RowBox[{"?", "doIterREInterp"}]], "Input",
- CellChangeTimes->{{3.673204199484261*^9, 3.6732042030155387`*^9}, 
-   3.673204301430686*^9}],
-
-Cell[BoxData[
- StyleBox["\<\"\\n\\ndoIterREInterp[linMod:{theHMat_?MatrixQ,BB_?MatrixQ,phi_?\
-MatrixQ,FF_?MatrixQ,psiEps_?MatrixQ,psiC_?MatrixQ,psiZ_?MatrixQ,psiZPreComp_?\
-MatrixQ},XZFuncsNow:{_Function..},\\nxtGuess_?MatrixQ,eqnsFunc:(_Function|_\
-CompiledFunction)]\\n\\n\\n\\n\\ngiven a reference linear model, (x,z,X,Z) \
-function and an initial guess for the time t state and equation \
-system\\nextends (x,z,X,Z) an additional period imposing rational \
-expectations using interpolation to avoid recalculation of all the points \
-along the path\\n\\nreturns a pair of functions xz and XZ giving the xt \
-values of x and z and giving the unconditional expected path of future values \
-of x and z\\n\"\>", "MSG"]], "Print", "PrintUsage",
- CellChangeTimes->{3.6732915610087485`*^9},
- CellTags->"Info813673277160-5789906"]
-}, Open  ]],
-
-Cell[CellGroupData[{
-
-Cell[BoxData[
- RowBox[{"\[IndentingNewLine]", 
-  RowBox[{
-   RowBox[{
-    RowBox[{
-     RowBox[{"{", 
-      RowBox[{"nxtxz", ",", "nxtXZ"}], "}"}], "=", 
-     RowBox[{"doIterREInterp", "[", 
-      RowBox[{"linMod", ",", 
-       RowBox[{"{", "anX0Z0", "}"}], ",", 
-       RowBox[{
-        RowBox[{"(", 
-         RowBox[{"anX0Z0", " ", "@@", "anXEps"}], ")"}], "[", 
-        RowBox[{"[", 
-         RowBox[{"Range", "[", "3", "]"}], "]"}], "]"}], ",", 
-       "Private`rbcEqnsFunctionalNext", ",", "aGSpec", ",", "theDist"}], 
-      "]"}]}], ";"}], "\[IndentingNewLine]", 
-   RowBox[{"{", 
-    RowBox[{
-     RowBox[{"nxtxz", " ", "@@", "anXEps"}], ",", 
-     RowBox[{"Through", "[", 
-      RowBox[{
-       RowBox[{
-        RowBox[{"nxtXZ", " ", "@@", "#"}], "&"}], "[", " ", "anXEps", "]"}], 
-      "]"}]}], "}"}], "\[IndentingNewLine]"}]}]], "Input",
- CellChangeTimes->{{3.6732013221144705`*^9, 3.673201496381482*^9}, {
-   3.6732015581475906`*^9, 3.67320168888301*^9}, {3.6732017370708942`*^9, 
-   3.6732017408834248`*^9}, {3.673202007885556*^9, 3.673202013088723*^9}, {
-   3.673202047417122*^9, 3.6732020951675158`*^9}, {3.6732024025293484`*^9, 
-   3.6732024302170653`*^9}, {3.673202461232938*^9, 3.6732024880612645`*^9}, {
-   3.673202863650428*^9, 3.6732028654785643`*^9}, {3.6732029131664453`*^9, 
-   3.673202999089006*^9}, {3.6732030359486756`*^9, 3.673203040261222*^9}, {
-   3.6732034956448116`*^9, 3.6732035402701674`*^9}, {3.6732038627003345`*^9, 
-   3.673203867950364*^9}, {3.673203998842035*^9, 3.673204019467198*^9}, {
-   3.673204165843367*^9, 3.6732041676246333`*^9}, 3.6732043056494718`*^9, {
-   3.6732046239524035`*^9, 3.673204648811977*^9}, 3.673291063584775*^9}],
-
-Cell[BoxData[
- RowBox[{"{", 
-  RowBox[{
-   RowBox[{"{", 
-    RowBox[{
-     RowBox[{"{", "0.4114662028375065`", "}"}], ",", 
-     RowBox[{"{", "0.21395450186829973`", "}"}], ",", 
-     RowBox[{"{", "1.072694376436225`", "}"}], ",", 
-     RowBox[{"{", "0.0013646071817202399`", "}"}], ",", 
-     RowBox[{"{", 
-      RowBox[{"-", "0.004357695639711414`"}], "}"}], ",", 
-     RowBox[{"{", "0.0025777723078144717`", "}"}]}], "}"}], ",", 
-   RowBox[{"{", 
-    RowBox[{
-     RowBox[{"{", 
-      RowBox[{
-       RowBox[{"{", "0.38384315117260553`", "}"}], ",", 
-       RowBox[{"{", "0.1992851436035017`", "}"}], ",", 
-       RowBox[{"{", "1.0001562753529483`", "}"}], ",", 
-       RowBox[{"{", 
-        RowBox[{"-", "0.003258020114498321`"}], "}"}], ",", 
-       RowBox[{"{", 
-        RowBox[{"-", "0.0069583637602533485`"}], "}"}], ",", 
-       RowBox[{"{", "0.00010620282692082493`", "}"}]}], "}"}], ",", 
-     RowBox[{"{", 
-      RowBox[{
-       RowBox[{"{", "0.38823878325031674`", "}"}], ",", 
-       RowBox[{"{", "0.20178976272280905`", "}"}], ",", 
-       RowBox[{"{", "1.0000500725309052`", "}"}], ",", 
-       RowBox[{"{", "0", "}"}], ",", 
-       RowBox[{"{", "0", "}"}], ",", 
-       RowBox[{"{", "0", "}"}]}], "}"}]}], "}"}]}], "}"}]], "Output",
- CellChangeTimes->{3.6732041692027707`*^9, 3.67320465284326*^9, 
-  3.673266629183074*^9, 3.6732717983929453`*^9, 3.673271907507188*^9, 
-  3.673274652136097*^9, 3.6732755571126857`*^9, 3.6732824582473707`*^9, 
-  3.673283606218951*^9, 3.673288367062459*^9, 3.6732915645087714`*^9}]
-}, Open  ]],
-
-Cell[CellGroupData[{
-
-Cell[BoxData[
- RowBox[{"?", "nestIterREInterp"}]], "Input",
- CellChangeTimes->{{3.673204199484261*^9, 3.6732042030155387`*^9}, 
-   3.673204301430686*^9, {3.6732054300518155`*^9, 3.6732054316143303`*^9}}],
-
-Cell[BoxData[
- StyleBox["\<\"nestIterREInterp[linMod:{theHMat_?MatrixQ,BB_?MatrixQ,phi_?\
-MatrixQ,FF_?MatrixQ,psiEps_?MatrixQ,psiC_?MatrixQ,psiZ_?MatrixQ,psiZPreComp_?\
-MatrixQ},XZFuncsNow:{(_Function|_InterpolatingFunction|_CompiledFunction)..},\
-\\nxtGuess_?MatrixQ,eqnsFunc:(_Function|_CompiledFunction),gSpec:{toIgnore:{_\
-Integer...},iOrd_Integer,{{_Integer,_?NumberQ,_?NumberQ}..},numRegimes_:0},\
-distribSpec:{expctSpec:{{_Symbol,_}..},regimeTransProbFunc_:{}},numIters_\
-Integer]\\n\\nrecursively apply doIterREInterp numIters times\\n\"\>", 
-  "MSG"]], "Print", "PrintUsage",
- CellChangeTimes->{3.673291564696273*^9},
- CellTags->"Info843673277164-5789906"]
-}, Open  ]],
-
-Cell[CellGroupData[{
-
-Cell[BoxData[
- RowBox[{"\[IndentingNewLine]", 
-  RowBox[{
-   RowBox[{
-    RowBox[{"aBunchREInterp", "=", 
-     RowBox[{"nestIterREInterp", "[", 
-      RowBox[{"linMod", ",", 
-       RowBox[{"{", "anX0Z0", "}"}], ",", 
-       RowBox[{
-        RowBox[{"(", 
-         RowBox[{"anX0Z0", " ", "@@", "anXEps"}], ")"}], "[", 
-        RowBox[{"[", 
-         RowBox[{"Range", "[", "3", "]"}], "]"}], "]"}], ",", 
-       "Private`rbcEqnsFunctionalNext", ",", "aGSpec", ",", "theDist", ",", 
-       "2"}], "]"}]}], ";"}], "\[IndentingNewLine]"}]}]], "Input",
- CellChangeTimes->{{3.6732013221144705`*^9, 3.673201496381482*^9}, {
-   3.6732015581475906`*^9, 3.67320168888301*^9}, {3.6732017370708942`*^9, 
-   3.6732017408834248`*^9}, {3.673202007885556*^9, 3.673202013088723*^9}, {
-   3.673202047417122*^9, 3.6732020951675158`*^9}, {3.6732024025293484`*^9, 
-   3.6732024302170653`*^9}, {3.673202461232938*^9, 3.6732024880612645`*^9}, {
-   3.673202863650428*^9, 3.6732028654785643`*^9}, {3.6732029131664453`*^9, 
-   3.673202999089006*^9}, {3.6732030359486756`*^9, 3.673203040261222*^9}, {
-   3.6732034956448116`*^9, 3.6732035402701674`*^9}, {3.6732038627003345`*^9, 
-   3.673203867950364*^9}, {3.673203998842035*^9, 3.673204019467198*^9}, {
-   3.673204165843367*^9, 3.6732041676246333`*^9}, 3.6732043056494718`*^9, {
-   3.6732046239524035`*^9, 3.673204648811977*^9}, {3.6732054364893675`*^9, 
-   3.6732054804272175`*^9}, 3.6732910722410946`*^9}],
-
-Cell[BoxData[
- RowBox[{
-  StyleBox[
-   RowBox[{"InterpolatingFunction", "::", "dmval"}], "MessageName"], 
-  RowBox[{
-  ":", " "}], "\<\"Input value \[NoBreak]\\!\\(\\*RowBox[{\\\"{\\\", RowBox[{\
-\\\"0.08000678220559108`\\\", \\\",\\\", \\\"0.8780142197396383`\\\"}], \\\"}\
-\\\"}]\\)\[NoBreak] lies outside the range of data in the interpolating \
-function. Extrapolation will be used. \\!\\(\\*ButtonBox[\\\"\[RightSkeleton]\
-\\\", ButtonStyle->\\\"Link\\\", ButtonFrame->None, \
-ButtonData:>\\\"paclet:ref/message/InterpolatingFunction/dmval\\\", \
-ButtonNote -> \\\"InterpolatingFunction::dmval\\\"]\\)\"\>"}]], "Message", \
-"MSG",
- CellChangeTimes->{{3.6732054604739585`*^9, 3.6732054843335*^9}, 
-   3.673266633120598*^9, 3.673271802283588*^9, 3.673271911632229*^9, 
-   3.6732746558861275`*^9, 3.6732755608939705`*^9, 3.6732824620740366`*^9, 
-   3.6732836101408257`*^9, 3.673288370828117*^9, 3.673291568477553*^9}],
-
-Cell[BoxData[
- RowBox[{
-  StyleBox[
-   RowBox[{"InterpolatingFunction", "::", "dmval"}], "MessageName"], 
-  RowBox[{
-  ":", " "}], "\<\"Input value \[NoBreak]\\!\\(\\*RowBox[{\\\"{\\\", RowBox[{\
-\\\"0.08000678220559108`\\\", \\\",\\\", \\\"0.8780142197396383`\\\"}], \\\"}\
-\\\"}]\\)\[NoBreak] lies outside the range of data in the interpolating \
-function. Extrapolation will be used. \\!\\(\\*ButtonBox[\\\"\[RightSkeleton]\
-\\\", ButtonStyle->\\\"Link\\\", ButtonFrame->None, \
-ButtonData:>\\\"paclet:ref/message/InterpolatingFunction/dmval\\\", \
-ButtonNote -> \\\"InterpolatingFunction::dmval\\\"]\\)\"\>"}]], "Message", \
-"MSG",
- CellChangeTimes->{{3.6732054604739585`*^9, 3.6732054843335*^9}, 
-   3.673266633120598*^9, 3.673271802283588*^9, 3.673271911632229*^9, 
-   3.6732746558861275`*^9, 3.6732755608939705`*^9, 3.6732824620740366`*^9, 
-   3.6732836101408257`*^9, 3.673288370828117*^9, 3.6732915685088043`*^9}],
-
-Cell[BoxData[
- RowBox[{
-  StyleBox[
-   RowBox[{"InterpolatingFunction", "::", "dmval"}], "MessageName"], 
-  RowBox[{
-  ":", " "}], "\<\"Input value \[NoBreak]\\!\\(\\*RowBox[{\\\"{\\\", RowBox[{\
-\\\"0.08000678220559108`\\\", \\\",\\\", \\\"0.8780142197396383`\\\"}], \\\"}\
-\\\"}]\\)\[NoBreak] lies outside the range of data in the interpolating \
-function. Extrapolation will be used. \\!\\(\\*ButtonBox[\\\"\[RightSkeleton]\
-\\\", ButtonStyle->\\\"Link\\\", ButtonFrame->None, \
-ButtonData:>\\\"paclet:ref/message/InterpolatingFunction/dmval\\\", \
-ButtonNote -> \\\"InterpolatingFunction::dmval\\\"]\\)\"\>"}]], "Message", \
-"MSG",
- CellChangeTimes->{{3.6732054604739585`*^9, 3.6732054843335*^9}, 
-   3.673266633120598*^9, 3.673271802283588*^9, 3.673271911632229*^9, 
-   3.6732746558861275`*^9, 3.6732755608939705`*^9, 3.6732824620740366`*^9, 
-   3.6732836101408257`*^9, 3.673288370828117*^9, 3.673291568540058*^9}],
-
-Cell[BoxData[
- RowBox[{
-  StyleBox[
-   RowBox[{"General", "::", "stop"}], "MessageName"], 
-  RowBox[{
-  ":", " "}], "\<\"Further output of \
-\[NoBreak]\\!\\(\\*StyleBox[RowBox[{\\\"InterpolatingFunction\\\", \
-\\\"::\\\", \\\"dmval\\\"}], \\\"MessageName\\\"]\\)\[NoBreak] will be \
-suppressed during this calculation. \\!\\(\\*ButtonBox[\\\"\[RightSkeleton]\\\
-\", ButtonStyle->\\\"Link\\\", ButtonFrame->None, \
-ButtonData:>\\\"paclet:ref/message/General/stop\\\", ButtonNote -> \
-\\\"General::stop\\\"]\\)\"\>"}]], "Message", "MSG",
- CellChangeTimes->{{3.6732054604739585`*^9, 3.6732054843335*^9}, 
-   3.673266633120598*^9, 3.673271802283588*^9, 3.673271911632229*^9, 
-   3.6732746558861275`*^9, 3.6732755608939705`*^9, 3.6732824620740366`*^9, 
-   3.6732836101408257`*^9, 3.673288370828117*^9, 3.6732915685713043`*^9}]
+      RowBox[{"-", "4.440892098500626`*^-16"}], "}"}], ",", 
+     RowBox[{"{", "0.`", "}"}], ",", 
+     RowBox[{"{", "0.`", "}"}]}], "}"}]}], "}"}]], "Output",
+ CellChangeTimes->{{3.6732728468672433`*^9, 3.673272876098792*^9}, 
+   3.673274714355343*^9, 3.673275622035067*^9, 3.6732825319625816`*^9, 
+   3.673283689344096*^9, 3.6732884554927373`*^9, 3.6732916549387045`*^9, 
+   3.6733501298072824`*^9}]
 }, Open  ]]
 }, Open  ]],
 
 Cell[CellGroupData[{
 
-Cell["genXZFuncRE, genXZFuncREInterp", "Subsection",
- CellChangeTimes->{{3.6732613138643227`*^9, 3.6732613517396255`*^9}, 
-   3.6732840217835693`*^9, 3.673284071268324*^9}],
+Cell["fSum, fSumC", "Subsection",
+ CellChangeTimes->{{3.673271049336091*^9, 3.673271053382998*^9}}],
 
 Cell[CellGroupData[{
 
 Cell[BoxData[
- RowBox[{"?", "genXZFuncRE"}]], "Input",
- CellChangeTimes->{{3.6732675848528147`*^9, 3.673267597321664*^9}, 
-   3.673268354902751*^9}],
+ RowBox[{"?", "fSum"}]], "Input",
+ CellChangeTimes->{{3.673271066039362*^9, 3.6732710748050456`*^9}}],
 
 Cell[BoxData[
- StyleBox["\<\"genXZFuncRE[{numX_Integer,ignored_Integer,numZ_Integer},\\\
-naLilXkZkFunc_Function,distribSpec:{expctSpec:{{_Symbol,_}..},\
-regimeTransProbFunc_:{}}]\\n\\n\\ngiven problem dimensions and xz functions \
-\\nreturns  perfect foresight version functions for future unconditional \
-expectations using interpolation to avoid recalculating all values along the \
-path\\n\\n\"\>", "MSG"]], "Print", "PrintUsage",
- CellChangeTimes->{3.6732915958215256`*^9},
- CellTags->"Info1043673277195-5789906"]
+ StyleBox["\<\"fSum[linMod:{theHMat_?MatrixQ,BB_?MatrixQ,phi_?MatrixQ,FF_?\
+MatrixQ,psiEps_?MatrixQ,psiC_?MatrixQ,psiZ_?MatrixQ,psiZPreComp_?MatrixQ},\\\
+nXZFuncs:{_Function..},xtGuess_?MatrixQ]\\n\\nreturns matrix of the F \
+weigthed sum of z's\"\>", "MSG"]], "Print", "PrintUsage",
+ CellChangeTimes->{3.673350129885397*^9},
+ CellTags->"Info813673335729-5789906"]
 }, Open  ]],
 
 Cell[CellGroupData[{
 
 Cell[BoxData[{
  RowBox[{
-  RowBox[{"anX0Z0", "=", 
-   RowBox[{"genX0Z0Funcs", "[", "linMod", "]"}]}], ";", 
+  RowBox[{
+   RowBox[{"anX0Z0", "=", 
+    RowBox[{"genX0Z0Funcs", "[", "linMod", "]"}]}], ";"}], 
+  "\[IndentingNewLine]", "\[IndentingNewLine]"}], "\[IndentingNewLine]", 
+ RowBox[{
   RowBox[{
    RowBox[{"{", 
     RowBox[{"nxtxz", ",", "nxtXZ"}], "}"}], "=", 
-   RowBox[{"doIterRE", "[", 
+   RowBox[{"doIterREInterp", "[", 
     RowBox[{"linMod", ",", 
      RowBox[{"{", "anX0Z0", "}"}], ",", 
      RowBox[{
@@ -1997,155 +1669,148 @@ Cell[BoxData[{
        RowBox[{"anX0Z0", " ", "@@", "anXEps"}], ")"}], "[", 
       RowBox[{"[", 
        RowBox[{"Range", "[", "3", "]"}], "]"}], "]"}], ",", 
-     "Private`rbcEqnsFunctionalNext", ",", "theDist"}], "]"}]}], 
-  ";"}], "\[IndentingNewLine]", 
+     "Private`rbcEqnsFunctionalNext", ",", "aGSpec", ",", "theDist"}], 
+    "]"}]}], ";", 
+  RowBox[{"fSum", "[", 
+   RowBox[{"linMod", ",", "nxtXZ", ",", 
+    RowBox[{"Transpose", "[", 
+     RowBox[{"{", "anX", "}"}], "]"}]}], "]"}]}]}], "Input",
+ CellChangeTimes->{{3.6732710801175866`*^9, 3.6732711357274065`*^9}, {
+   3.673271288791783*^9, 3.673271297869997*^9}, 3.6732907578563147`*^9, 
+   3.6732909170211067`*^9}],
+
+Cell[BoxData[
+ RowBox[{"{", 
+  RowBox[{
+   RowBox[{"{", 
+    RowBox[{"-", "0.011425613764889722`"}], "}"}], ",", 
+   RowBox[{"{", 
+    RowBox[{"-", "0.006460280748779165`"}], "}"}], ",", 
+   RowBox[{"{", 
+    RowBox[{"-", "0.00007492535901258141`"}], "}"}]}], "}"}]], "Output",
+ CellChangeTimes->{3.6732711410711985`*^9, 3.67327130243253*^9, 
+  3.6732718516309433`*^9, 3.6732719609996905`*^9, 3.67327470635528*^9, 
+  3.6732756138475137`*^9, 3.673282524309249*^9, 3.673283676859685*^9, 
+  3.673284591874445*^9, 3.6732884359692574`*^9, 3.673291634860408*^9, 
+  3.6733501334948*^9}]
+}, Open  ]],
+
+Cell[CellGroupData[{
+
+Cell[BoxData["psiZArb"], "Input",
+ CellChangeTimes->{{3.6732714844913464`*^9, 3.6732714923195333`*^9}}],
+
+Cell[BoxData[
+ RowBox[{"{", 
+  RowBox[{
+   RowBox[{"{", 
+    RowBox[{"1", ",", "0", ",", "0"}], "}"}], ",", 
+   RowBox[{"{", 
+    RowBox[{"0", ",", "1", ",", "0"}], "}"}], ",", 
+   RowBox[{"{", 
+    RowBox[{"0", ",", "0", ",", "1"}], "}"}]}], "}"}]], "Output",
+ CellChangeTimes->{3.673271493350792*^9, 3.6732718518340707`*^9, 
+  3.6732719612965684`*^9, 3.673274706589645*^9, 3.6732756140662556`*^9, 
+  3.6732825245435514`*^9, 3.6732836770784535`*^9, 3.6732845921244364`*^9, 
+  3.67328843620364*^9, 3.6732916351104264`*^9, 3.673350133572927*^9}]
+}, Open  ]],
+
+Cell[CellGroupData[{
+
+Cell[BoxData[
+ RowBox[{"?", "fSumC"}]], "Input",
+ CellChangeTimes->{{3.6732715094759207`*^9, 3.6732715252416716`*^9}}],
+
+Cell[BoxData[
+ StyleBox["\<\"fSumC=Compile[{{phi,_Real,2},{FF,_Real,2},{psiZ,_Real,2},{\
+zPath,_Real,3}},...]\\n\\n\\nreturns matrix of the F weigthed sum of z's\\n\"\
+\>", "MSG"]], "Print", "PrintUsage",
+ CellChangeTimes->{3.6733501336354394`*^9},
+ CellTags->"Info853673335733-5789906"]
+}, Open  ]],
+
+Cell[CellGroupData[{
+
+Cell[BoxData[{
  RowBox[{
-  RowBox[{"thisOne", "=", 
-   RowBox[{"genXZFuncRE", "[", 
+  RowBox[{"rip", "=", 
+   RowBox[{"genZsREExact", "[", 
     RowBox[{
-     RowBox[{"{", 
-      RowBox[{"3", ",", "1", ",", "3"}], "}"}], ",", "nxtxz", ",", 
-     "theDist"}], "]"}]}], ";"}], "\[IndentingNewLine]", 
- RowBox[{"Through", "[", 
+    "linMod", ",", "anXEps", ",", "theDist", ",", "simpRBCExactDR", ",", 
+     "5"}], "]"}]}], ";"}], "\[IndentingNewLine]", 
+ RowBox[{"fSumC", "[", 
   RowBox[{
-   RowBox[{
-    RowBox[{
-     RowBox[{"{", 
-      RowBox[{"thisOne", ",", 
-       RowBox[{"nxtXZ", "[", 
-        RowBox[{"[", "1", "]"}], "]"}]}], "}"}], "@@", "#"}], "&"}], "[", 
-   "anXEps", "]"}], "]"}]}], "Input",
- CellChangeTimes->{{3.6732668468268576`*^9, 3.6732668482799945`*^9}, {
-  3.673267559305735*^9, 3.6732675801652765`*^9}, {3.6732677979203196`*^9, 
-  3.6732679196087904`*^9}, {3.673268361027799*^9, 3.673268363887198*^9}, {
-  3.6732684882631903`*^9, 3.673268490169456*^9}, {3.673268556603572*^9, 
-  3.673268558587963*^9}}],
+   RowBox[{"getB", "[", "linMod", "]"}], ",", 
+   RowBox[{"getF", "[", "linMod", "]"}], ",", "psiZArb", ",", "rip"}], 
+  "]"}]}], "Input",
+ CellChangeTimes->{{3.6732715501012573`*^9, 3.673271588054675*^9}}],
 
 Cell[BoxData[
  RowBox[{"{", 
   RowBox[{
-   RowBox[{"{", 
-    RowBox[{
-     RowBox[{"{", "0.38653352389379503`", "}"}], ",", 
-     RowBox[{"{", "0.2007911681520546`", "}"}], ",", 
-     RowBox[{"{", "1.0000500012493663`", "}"}], ",", 
-     RowBox[{"{", 
-      RowBox[{"-", "0.0016629992046475338`"}], "}"}], ",", 
-     RowBox[{"{", 
-      RowBox[{"-", "0.002703814923078178`"}], "}"}], ",", 
-     RowBox[{"{", 
-      RowBox[{"-", "7.128088442864416`*^-8"}], "}"}]}], "}"}], ",", 
-   RowBox[{"{", 
-    RowBox[{
-     RowBox[{"{", "0.38653352389379503`", "}"}], ",", 
-     RowBox[{"{", "0.2007911681520546`", "}"}], ",", 
-     RowBox[{"{", "1.0000500012493663`", "}"}], ",", 
-     RowBox[{"{", 
-      RowBox[{"-", "0.0016629992046475338`"}], "}"}], ",", 
-     RowBox[{"{", 
-      RowBox[{"-", "0.002703814923078178`"}], "}"}], ",", 
-     RowBox[{"{", 
-      RowBox[{"-", "7.128088442864416`*^-8"}], "}"}]}], "}"}]}], 
-  "}"}]], "Output",
- CellChangeTimes->{{3.6732677864202414`*^9, 3.673267801451597*^9}, 
-   3.6732678964367313`*^9, 3.6732679302807517`*^9, 3.6732685034351864`*^9, 
-   3.6732685853538027`*^9, 3.673271836596362*^9, 3.6732719456703897`*^9, 
-   3.6732746908395195`*^9, 3.6732755979098754`*^9, 3.6732825076815715`*^9, 
-   3.6732836560471506`*^9, 3.6732884229222794`*^9, 3.6732916216498528`*^9}]
+   RowBox[{"{", "0.0011700070726883922`", "}"}], ",", 
+   RowBox[{"{", "0.0002863181236191122`", "}"}], ",", 
+   RowBox[{"{", "0.0022718846724423558`", "}"}]}], "}"}]], "Output",
+ CellChangeTimes->{3.673271464553686*^9, 3.673271589007821*^9, 
+  3.673271681492921*^9, 3.673271852365327*^9, 3.6732719617809467`*^9, 
+  3.673274707105286*^9, 3.673275614613145*^9, 3.673282525043353*^9, 
+  3.6732836775628304`*^9, 3.6732845925932016`*^9, 3.673288436688014*^9, 
+  3.673291635657301*^9, 3.673350134041678*^9}]
+}, Open  ]]
+}, Open  ]],
+
+Cell[CellGroupData[{
+
+Cell["compareFormula, genPathCompare", "Subsection",
+ CellChangeTimes->{{3.6733470591194973`*^9, 3.673347086010338*^9}}],
+
+Cell[CellGroupData[{
+
+Cell[BoxData[
+ RowBox[{"?", "compareFormula"}]], "Input",
+ CellChangeTimes->{{3.6733470910416403`*^9, 3.673347094026038*^9}}],
+
+Cell[BoxData[
+ StyleBox["\<\"compareFormula[linMod:{theHMat_?MatrixQ,BB_?MatrixQ,phi_?\
+MatrixQ,FF_?MatrixQ,psiEps_?MatrixQ,psiC_?MatrixQ,psiZ_?MatrixQ,psiZPreComp_?\
+MatrixQ},\\n\t\
+XZFuncs:{_Function..},xtm1Vars_?MatrixQ,epsVars_?MatrixQ,xtztVal_?MatrixQ]\\n\
+\t\\n\t\\n\t\\n\t\"\>", "MSG"]], "Print", "PrintUsage",
+ CellChangeTimes->{3.6733501341198173`*^9},
+ CellTags->"Info883673335734-5789906"]
 }, Open  ]],
 
 Cell[CellGroupData[{
 
 Cell[BoxData[
- RowBox[{"?", "genXZFuncREInterp"}]], "Input",
- CellChangeTimes->{{3.6732675848528147`*^9, 3.673267597321664*^9}, 
-   3.673268028833356*^9, 3.673268365105957*^9}],
-
-Cell[BoxData[
- StyleBox["\<\"genXZFuncREInterp[probDims:{numX_Integer,numEps_Integer,numZ_\
-Integer},\\naLilXkZkFunc_Function,gSpec:{toIgnore:{_Integer...},iOrd_Integer,{\
-{_Integer,_?NumberQ,_?NumberQ}..},numRegimes_:0},distribSpec:{expctSpec:{{_\
-Symbol,_}..},regimeTransProbFunc_:{}}]\\n\\n\\ngiven problem dimensions and \
-xz functions \\nreturns  retional expectations version functions for future \
-unconditional expectations using interpolation to avoid recalculating all \
-values along the path\\n\\n\\n\"\>", "MSG"]], "Print", "PrintUsage",
- CellChangeTimes->{3.67329162225095*^9},
- CellTags->"Info1083673277222-5789906"]
-}, Open  ]],
-
-Cell[CellGroupData[{
-
-Cell[BoxData[
- RowBox[{"\[IndentingNewLine]", "\[IndentingNewLine]", 
-  RowBox[{
-   RowBox[{
-    RowBox[{
-     RowBox[{"{", 
-      RowBox[{"nxtxz", ",", "nxtXZ"}], "}"}], "=", 
-     RowBox[{"doIterREInterp", "[", 
-      RowBox[{"linMod", ",", 
-       RowBox[{"{", "anX0Z0", "}"}], ",", 
-       RowBox[{
-        RowBox[{"(", 
-         RowBox[{"anX0Z0", " ", "@@", "anXEps"}], ")"}], "[", 
-        RowBox[{"[", 
-         RowBox[{"Range", "[", "3", "]"}], "]"}], "]"}], ",", 
-       "Private`rbcEqnsFunctionalNext", ",", "aGSpec", ",", "theDist"}], 
-      "]"}]}], ";"}], "\[IndentingNewLine]", 
-   RowBox[{
-    RowBox[{"thisOne", "=", 
-     RowBox[{"genXZFuncREInterp", "[", 
-      RowBox[{
-       RowBox[{"{", 
-        RowBox[{"3", ",", "1", ",", "3"}], "}"}], ",", "nxtxz", ",", "aGSpec",
-        ",", "theDist"}], "]"}]}], ";"}], "\[IndentingNewLine]", 
-   RowBox[{"Through", "[", 
-    RowBox[{
-     RowBox[{
-      RowBox[{
-       RowBox[{"{", 
-        RowBox[{"thisOne", ",", 
-         RowBox[{"nxtXZ", "[", 
-          RowBox[{"[", "1", "]"}], "]"}]}], "}"}], "@@", "#"}], "&"}], "[", 
-     "anXEps", "]"}], "]"}]}]}]], "Input",
- CellChangeTimes->{{3.6732668468268576`*^9, 3.6732668482799945`*^9}, {
-   3.673267559305735*^9, 3.6732675801652765`*^9}, {3.6732677979203196`*^9, 
-   3.6732679196087904`*^9}, {3.673268036831377*^9, 3.6732680383313885`*^9}, {
-   3.673268203978484*^9, 3.673268208056641*^9}, {3.6732682581281843`*^9, 
-   3.6732682625188437`*^9}, {3.6732683714497576`*^9, 3.673268372512266*^9}, {
-   3.6732685839787917`*^9, 3.6732685859029264`*^9}, {3.6732686353095837`*^9, 
-   3.6732686655251427`*^9}, 3.6732907426530657`*^9, 3.673290892630286*^9}],
+ RowBox[{"compareFormula", "[", 
+  RowBox[{"linMod", ",", 
+   RowBox[{"{", "anX0Z0", "}"}], ",", 
+   RowBox[{"Transpose", "[", 
+    RowBox[{"{", "anX", "}"}], "]"}], ",", 
+   RowBox[{"{", "anEps", "}"}], ",", 
+   RowBox[{"Transpose", "[", 
+    RowBox[{"{", 
+     RowBox[{"Drop", "[", 
+      RowBox[{"anXEpsZs", ",", 
+       RowBox[{"{", "4", "}"}]}], "]"}], "}"}], "]"}]}], "]"}]], "Input",
+ CellChangeTimes->{{3.6733471275575438`*^9, 3.6733472498553953`*^9}, {
+  3.673347304444051*^9, 3.6733473846946917`*^9}}],
 
 Cell[BoxData[
  RowBox[{"{", 
   RowBox[{
-   RowBox[{"{", 
-    RowBox[{
-     RowBox[{"{", "0.38384315117260553`", "}"}], ",", 
-     RowBox[{"{", "0.1992851436035017`", "}"}], ",", 
-     RowBox[{"{", "1.0001562753529483`", "}"}], ",", 
-     RowBox[{"{", 
-      RowBox[{"-", "0.003258020114498321`"}], "}"}], ",", 
-     RowBox[{"{", 
-      RowBox[{"-", "0.0069583637602533485`"}], "}"}], ",", 
-     RowBox[{"{", "0.00010620282692082493`", "}"}]}], "}"}], ",", 
-   RowBox[{"{", 
-    RowBox[{
-     RowBox[{"{", "0.38384315117260553`", "}"}], ",", 
-     RowBox[{"{", "0.1992851436035017`", "}"}], ",", 
-     RowBox[{"{", "1.0001562753529483`", "}"}], ",", 
-     RowBox[{"{", 
-      RowBox[{"-", "0.003258020114498321`"}], "}"}], ",", 
-     RowBox[{"{", 
-      RowBox[{"-", "0.0069583637602533485`"}], "}"}], ",", 
-     RowBox[{"{", "0.00010620282692082493`", "}"}]}], "}"}]}], 
-  "}"}]], "Output",
- CellChangeTimes->{{3.6732677864202414`*^9, 3.673267801451597*^9}, 
-   3.6732678964367313`*^9, 3.6732679302807517`*^9, 3.6732680617222185`*^9, 
-   3.6732682654407415`*^9, 3.673268613215645*^9, {3.6732686460596695`*^9, 
-   3.6732686724939423`*^9}, 3.6732718437715073`*^9, 3.6732719528277507`*^9, 
-   3.6732746980270925`*^9, 3.6732756053786993`*^9, 3.6732825152346067`*^9, 
-   3.6732836634846773`*^9, 3.6732884307973413`*^9, 3.673291629626003*^9}]
+   RowBox[{"{", "0.2`", "}"}], ",", 
+   RowBox[{"{", "0.18`", "}"}], ",", 
+   RowBox[{"{", "1.1`", "}"}], ",", 
+   RowBox[{"{", "0.62797107309957`", "}"}], ",", 
+   RowBox[{"{", "0.33314357748469003`", "}"}], ",", 
+   RowBox[{"{", "1.4050548271635828`", "}"}], ",", 
+   RowBox[{"{", "0.5996046692205816`", "}"}], ",", 
+   RowBox[{"{", "0.31164862746723243`", "}"}], ",", 
+   RowBox[{"{", "1.384832918713013`", "}"}], ",", 
+   RowBox[{"{", "0.01`", "}"}]}], "}"}]], "Output",
+ CellChangeTimes->{3.673347387257212*^9, 3.673350134135429*^9}]
 }, Open  ]]
 }, Open  ]],
 
@@ -2242,136 +1907,7 @@ Cell[BoxData[
      RowBox[{"{", "1.1057390773455145`", "}"}], ",", 
      RowBox[{"{", "0.01`", "}"}]}], "}"}]}], "}"}]], "Output",
  CellChangeTimes->{3.6732850209872475`*^9, 3.673288431812976*^9, 
-  3.6732916310010138`*^9}]
-}, Open  ]]
-}, Open  ]],
-
-Cell[CellGroupData[{
-
-Cell["fSum, fSumC", "Subsection",
- CellChangeTimes->{{3.673271049336091*^9, 3.673271053382998*^9}}],
-
-Cell[CellGroupData[{
-
-Cell[BoxData[
- RowBox[{"?", "fSum"}]], "Input",
- CellChangeTimes->{{3.673271066039362*^9, 3.6732710748050456`*^9}}],
-
-Cell[BoxData[
- StyleBox["\<\"fSum[linMod:{theHMat_?MatrixQ,BB_?MatrixQ,phi_?MatrixQ,FF_?\
-MatrixQ,psiEps_?MatrixQ,psiC_?MatrixQ,psiZ_?MatrixQ,psiZPreComp_?MatrixQ},\\\
-nXZFuncs:{_Function..},xtGuess_?MatrixQ]\\n\\nreturns matrix of the F \
-weigthed sum of z's\"\>", "MSG"]], "Print", "PrintUsage",
- CellChangeTimes->{3.673291631094751*^9},
- CellTags->"Info1233673277231-5789906"]
-}, Open  ]],
-
-Cell[CellGroupData[{
-
-Cell[BoxData[{
- RowBox[{
-  RowBox[{
-   RowBox[{"anX0Z0", "=", 
-    RowBox[{"genX0Z0Funcs", "[", "linMod", "]"}]}], ";"}], 
-  "\[IndentingNewLine]", "\[IndentingNewLine]"}], "\[IndentingNewLine]", 
- RowBox[{
-  RowBox[{
-   RowBox[{"{", 
-    RowBox[{"nxtxz", ",", "nxtXZ"}], "}"}], "=", 
-   RowBox[{"doIterREInterp", "[", 
-    RowBox[{"linMod", ",", 
-     RowBox[{"{", "anX0Z0", "}"}], ",", 
-     RowBox[{
-      RowBox[{"(", 
-       RowBox[{"anX0Z0", " ", "@@", "anXEps"}], ")"}], "[", 
-      RowBox[{"[", 
-       RowBox[{"Range", "[", "3", "]"}], "]"}], "]"}], ",", 
-     "Private`rbcEqnsFunctionalNext", ",", "aGSpec", ",", "theDist"}], 
-    "]"}]}], ";", 
-  RowBox[{"fSum", "[", 
-   RowBox[{"linMod", ",", "nxtXZ", ",", 
-    RowBox[{"Transpose", "[", 
-     RowBox[{"{", "anX", "}"}], "]"}]}], "]"}]}]}], "Input",
- CellChangeTimes->{{3.6732710801175866`*^9, 3.6732711357274065`*^9}, {
-   3.673271288791783*^9, 3.673271297869997*^9}, 3.6732907578563147`*^9, 
-   3.6732909170211067`*^9}],
-
-Cell[BoxData[
- RowBox[{"{", 
-  RowBox[{
-   RowBox[{"{", 
-    RowBox[{"-", "0.011425613764889722`"}], "}"}], ",", 
-   RowBox[{"{", 
-    RowBox[{"-", "0.006460280748779165`"}], "}"}], ",", 
-   RowBox[{"{", 
-    RowBox[{"-", "0.00007492535901258141`"}], "}"}]}], "}"}]], "Output",
- CellChangeTimes->{3.6732711410711985`*^9, 3.67327130243253*^9, 
-  3.6732718516309433`*^9, 3.6732719609996905`*^9, 3.67327470635528*^9, 
-  3.6732756138475137`*^9, 3.673282524309249*^9, 3.673283676859685*^9, 
-  3.673284591874445*^9, 3.6732884359692574`*^9, 3.673291634860408*^9}]
-}, Open  ]],
-
-Cell[CellGroupData[{
-
-Cell[BoxData["psiZArb"], "Input",
- CellChangeTimes->{{3.6732714844913464`*^9, 3.6732714923195333`*^9}}],
-
-Cell[BoxData[
- RowBox[{"{", 
-  RowBox[{
-   RowBox[{"{", 
-    RowBox[{"1", ",", "0", ",", "0"}], "}"}], ",", 
-   RowBox[{"{", 
-    RowBox[{"0", ",", "1", ",", "0"}], "}"}], ",", 
-   RowBox[{"{", 
-    RowBox[{"0", ",", "0", ",", "1"}], "}"}]}], "}"}]], "Output",
- CellChangeTimes->{3.673271493350792*^9, 3.6732718518340707`*^9, 
-  3.6732719612965684`*^9, 3.673274706589645*^9, 3.6732756140662556`*^9, 
-  3.6732825245435514`*^9, 3.6732836770784535`*^9, 3.6732845921244364`*^9, 
-  3.67328843620364*^9, 3.6732916351104264`*^9}]
-}, Open  ]],
-
-Cell[CellGroupData[{
-
-Cell[BoxData[
- RowBox[{"?", "fSumC"}]], "Input",
- CellChangeTimes->{{3.6732715094759207`*^9, 3.6732715252416716`*^9}}],
-
-Cell[BoxData[
- StyleBox["\<\"fSumC=Compile[{{phi,_Real,2},{FF,_Real,2},{psiZ,_Real,2},{\
-zPath,_Real,3}},...]\\n\\n\\nreturns matrix of the F weigthed sum of z's\\n\"\
-\>", "MSG"]], "Print", "PrintUsage",
- CellChangeTimes->{3.6732916352041597`*^9},
- CellTags->"Info1273673277235-5789906"]
-}, Open  ]],
-
-Cell[CellGroupData[{
-
-Cell[BoxData[{
- RowBox[{
-  RowBox[{"rip", "=", 
-   RowBox[{"genZsREExact", "[", 
-    RowBox[{
-    "linMod", ",", "anXEps", ",", "theDist", ",", "simpRBCExactDR", ",", 
-     "5"}], "]"}]}], ";"}], "\[IndentingNewLine]", 
- RowBox[{"fSumC", "[", 
-  RowBox[{
-   RowBox[{"getB", "[", "linMod", "]"}], ",", 
-   RowBox[{"getF", "[", "linMod", "]"}], ",", "psiZArb", ",", "rip"}], 
-  "]"}]}], "Input",
- CellChangeTimes->{{3.6732715501012573`*^9, 3.673271588054675*^9}}],
-
-Cell[BoxData[
- RowBox[{"{", 
-  RowBox[{
-   RowBox[{"{", "0.0011700070726883922`", "}"}], ",", 
-   RowBox[{"{", "0.0002863181236191122`", "}"}], ",", 
-   RowBox[{"{", "0.0022718846724423558`", "}"}]}], "}"}]], "Output",
- CellChangeTimes->{3.673271464553686*^9, 3.673271589007821*^9, 
-  3.673271681492921*^9, 3.673271852365327*^9, 3.6732719617809467`*^9, 
-  3.673274707105286*^9, 3.673275614613145*^9, 3.673282525043353*^9, 
-  3.6732836775628304`*^9, 3.6732845925932016`*^9, 3.673288436688014*^9, 
-  3.673291635657301*^9}]
+  3.6732916310010138`*^9, 3.673350134151057*^9}]
 }, Open  ]]
 }, Open  ]],
 
@@ -2392,8 +1928,8 @@ Cell[BoxData[
 nreturns a function that solves the eqnsFunc system using the xkFuncs in the \
 series approximation for the conditional expectations function\\n\"\>", 
   "MSG"]], "Print", "PrintUsage",
- CellChangeTimes->{3.673291635735422*^9},
- CellTags->"Info1303673277235-5789906"]
+ CellChangeTimes->{3.6733501342291803`*^9},
+ CellTags->"Info933673335734-5789906"]
 }, Open  ]],
 
 Cell[CellGroupData[{
@@ -2430,7 +1966,8 @@ Cell[BoxData[
    RowBox[{"{", "0.00020252534900729147`", "}"}], ",", 
    RowBox[{"{", "0.002391577125806288`", "}"}]}], "}"}]], "Output",
  CellChangeTimes->{{3.673286117294062*^9, 3.6732861389973493`*^9}, 
-   3.673287327857206*^9, 3.6732884367817526`*^9, 3.6732916357510567`*^9}]
+   3.673287327857206*^9, 3.6732884367817526`*^9, 3.6732916357510567`*^9, 
+   3.6733501342448072`*^9}]
 }, Open  ]]
 }, Open  ]],
 
@@ -2455,8 +1992,8 @@ nXZFuncs:{_Function..},xtGuess_?MatrixQ,eqnsFunc:(_Function|_CompiledFunction)\
 the conditional expectations function and iterates until the guess is \
 consitent with the root finding solution\\n\"\>", 
   "MSG"]], "Print", "PrintUsage",
- CellChangeTimes->{3.6732916358135567`*^9},
- CellTags->"Info1353673277235-5789906"]
+ CellChangeTimes->{3.6733501343229313`*^9},
+ CellTags->"Info983673335734-5789906"]
 }, Open  ]],
 
 Cell[CellGroupData[{
@@ -2531,10 +2068,740 @@ Cell[BoxData[
  CellChangeTimes->{{3.673286117294062*^9, 3.6732861389973493`*^9}, 
    3.673286302748654*^9, 3.6732863408896008`*^9, 3.673286543048277*^9, {
    3.6732867894622693`*^9, 3.673286796915455*^9}, 3.6732869191508183`*^9, 
-   3.6732873348572493`*^9, 3.6732884435161924`*^9, 3.673291642797983*^9}]
+   3.6732873348572493`*^9, 3.6732884435161924`*^9, 3.673291642797983*^9, 
+   3.673350141432376*^9}]
+}, Open  ]],
+
+Cell[CellGroupData[{
+
+Cell[BoxData[
+ RowBox[{"?", "doIterRE"}]], "Input",
+ CellChangeTimes->{{3.673197211730978*^9, 3.6731972126684694`*^9}, {
+   3.673197911627726*^9, 3.6731979123621073`*^9}, {3.673198911664814*^9, 
+   3.6731989162586017`*^9}, {3.6731995014700055`*^9, 3.673199501766884*^9}, {
+   3.673199983901862*^9, 3.6731999844487443`*^9}, {3.6732013078174686`*^9, 
+   3.673201314255019*^9}, 3.67320429238377*^9}],
+
+Cell[BoxData[
+ StyleBox["\<\"doIterRE[linMod:{theHMat_?MatrixQ,BB_?MatrixQ,phi_?MatrixQ,FF_?\
+MatrixQ,psiEps_?MatrixQ,psiC_?MatrixQ,psiZ_?MatrixQ,psiZPreComp_?MatrixQ},\
+XZFuncsNow:{_Function..},\\nxtGuess_?MatrixQ,eqnsFunc:(_Function|_\
+CompiledFunction),distribSpec:{expctSpec:{{_Symbol,_}..},regimeTransProbFunc_:\
+{}}]\\n\\n\\ngiven a reference linear model, (x,z,X,Z) functions and an \
+initial guess for the time t state and an equation system the \
+function\\nextends (x,z,X,Z) an additional period imposing rational \
+expectations along with recalculation of all the points along the \
+path\\n\\nreturns a pair of functions xz and XZ giving the xt values of x and \
+z and giving the unconditional expected path of future values of x and \
+z\\n\\n\\n\"\>", "MSG"]], "Print", "PrintUsage",
+ CellChangeTimes->{3.6733501415886135`*^9},
+ CellTags->"Info1063673335741-5789906"]
+}, Open  ]],
+
+Cell[CellGroupData[{
+
+Cell[BoxData[
+ RowBox[{"\n", "\[IndentingNewLine]", 
+  RowBox[{
+   RowBox[{
+    RowBox[{
+     RowBox[{"{", 
+      RowBox[{"nxtxz", ",", "nxtXZ"}], "}"}], "=", 
+     RowBox[{"doIterRE", "[", 
+      RowBox[{"linMod", ",", 
+       RowBox[{"{", "anX0Z0", "}"}], ",", 
+       RowBox[{
+        RowBox[{"(", 
+         RowBox[{"anX0Z0", " ", "@@", "anXEps"}], ")"}], "[", 
+        RowBox[{"[", 
+         RowBox[{"Range", "[", "3", "]"}], "]"}], "]"}], ",", 
+       "Private`rbcEqnsFunctionalNext", ",", "theDist"}], "]"}]}], ";"}], 
+   "\[IndentingNewLine]", 
+   RowBox[{"{", 
+    RowBox[{
+     RowBox[{"nxtxz", " ", "@@", "anXEps"}], ",", 
+     RowBox[{"Through", "[", 
+      RowBox[{
+       RowBox[{
+        RowBox[{"nxtXZ", " ", "@@", "#"}], "&"}], "[", " ", "anXEps", "]"}], 
+      "]"}]}], "}"}], "\[IndentingNewLine]"}]}]], "Input",
+ CellChangeTimes->{{3.6732013221144705`*^9, 3.673201496381482*^9}, {
+   3.6732015581475906`*^9, 3.67320168888301*^9}, {3.6732017370708942`*^9, 
+   3.6732017408834248`*^9}, {3.673202007885556*^9, 3.673202013088723*^9}, {
+   3.673202047417122*^9, 3.6732020951675158`*^9}, {3.6732024025293484`*^9, 
+   3.6732024302170653`*^9}, {3.673202461232938*^9, 3.6732024880612645`*^9}, {
+   3.673202863650428*^9, 3.6732028654785643`*^9}, {3.6732029131664453`*^9, 
+   3.673202999089006*^9}, {3.6732030359486756`*^9, 3.673203040261222*^9}, 
+   3.6732042983681617`*^9, {3.6732045811395617`*^9, 3.6732045918896475`*^9}, 
+   3.6732903248433523`*^9, 3.673291022459447*^9}],
+
+Cell[BoxData[
+ RowBox[{"{", 
+  RowBox[{
+   RowBox[{"{", 
+    RowBox[{
+     RowBox[{"{", "0.4143218602592106`", "}"}], ",", 
+     RowBox[{"{", "0.21555718227350007`", "}"}], ",", 
+     RowBox[{"{", "1.0725081812542165`", "}"}], ",", 
+     RowBox[{"{", "0.003118826692724136`", "}"}], ",", 
+     RowBox[{"{", "0.00020252534900729147`", "}"}], ",", 
+     RowBox[{"{", "0.002391577125806288`", "}"}]}], "}"}], ",", 
+   RowBox[{"{", 
+    RowBox[{
+     RowBox[{"{", 
+      RowBox[{
+       RowBox[{"{", "0.38653352389379503`", "}"}], ",", 
+       RowBox[{"{", "0.2007911681520546`", "}"}], ",", 
+       RowBox[{"{", "1.0000500012493663`", "}"}], ",", 
+       RowBox[{"{", 
+        RowBox[{"-", "0.0016629992046475338`"}], "}"}], ",", 
+       RowBox[{"{", 
+        RowBox[{"-", "0.002703814923078178`"}], "}"}], ",", 
+       RowBox[{"{", 
+        RowBox[{"-", "7.128088442864416`*^-8"}], "}"}]}], "}"}], ",", 
+     RowBox[{"{", 
+      RowBox[{
+       RowBox[{"{", "0.38823878325031674`", "}"}], ",", 
+       RowBox[{"{", "0.20178976272280905`", "}"}], ",", 
+       RowBox[{"{", "1.0000500725309052`", "}"}], ",", 
+       RowBox[{"{", "0", "}"}], ",", 
+       RowBox[{"{", "0", "}"}], ",", 
+       RowBox[{"{", "0", "}"}]}], "}"}]}], "}"}]}], "}"}]], "Output",
+ CellChangeTimes->{
+  3.6732024938113112`*^9, 3.6732027065317783`*^9, 3.673202866291072*^9, {
+   3.67320292001025*^9, 3.673202957026188*^9}, 3.673202999870281*^9, 
+   3.6732030419487348`*^9, 3.6732030831365542`*^9, 3.6732046057178955`*^9, 
+   3.6732666250267906`*^9, 3.6732717944241667`*^9, 3.6732719031009026`*^9, 
+   3.6732746482766914`*^9, 3.673275553175155*^9, 3.6732824541083317`*^9, 
+   3.673283602250184*^9, 3.6732883628593016`*^9, 3.673291560633727*^9, 
+   3.6733501554481*^9}]
+}, Open  ]],
+
+Cell[CellGroupData[{
+
+Cell[BoxData[
+ RowBox[{"?", "genPathCompare"}]], "Input",
+ CellChangeTimes->{{3.673347106010497*^9, 3.6733471122605476`*^9}}],
+
+Cell[BoxData[
+ StyleBox["\<\"genPathCompare[linMod:{theHMat_?MatrixQ,BB_?MatrixQ,phi_?\
+MatrixQ,FF_?MatrixQ,psiEps_?MatrixQ,psiC_?MatrixQ,psiZ_?MatrixQ,psiZPreComp_?\
+MatrixQ},\\n\t\
+xzFunc_Function,XZFuncs:{_Function..},xtm1Val_?MatrixQ,epsVal_?MatrixQ]\\n\t\
+\\n\t\\n\"\>", "MSG"]], "Print", "PrintUsage",
+ CellChangeTimes->{3.673350155760603*^9},
+ CellTags->"Info1093673335755-5789906"]
+}, Open  ]],
+
+Cell[CellGroupData[{
+
+Cell[BoxData[
+ RowBox[{"genPathCompare", "[", 
+  RowBox[{"linMod", ",", "anx0z0", ",", 
+   RowBox[{"{", "anX0Z0", "}"}], ",", 
+   RowBox[{"Transpose", "[", 
+    RowBox[{"{", "anX", "}"}], "]"}], ",", 
+   RowBox[{"{", "anEps", "}"}]}], "]"}]], "Input",
+ CellChangeTimes->{{3.6733474158668175`*^9, 3.6733474313356895`*^9}, {
+  3.6733474674609776`*^9, 3.673347512742589*^9}, {3.6733475447897205`*^9, 
+  3.673347576946227*^9}, {3.6733484728660975`*^9, 3.6733485041459837`*^9}, {
+  3.6733488044633636`*^9, 3.673348832619301*^9}, {3.673349011766387*^9, 
+  3.673349020766287*^9}, {3.673350171604491*^9, 3.6733501756670113`*^9}}],
+
+Cell[BoxData[
+ RowBox[{"{", 
+  RowBox[{
+   RowBox[{"{", 
+    RowBox[{
+     RowBox[{"{", "0.2`", "}"}], ",", 
+     RowBox[{"{", "0.18`", "}"}], ",", 
+     RowBox[{"{", "1.1`", "}"}], ",", 
+     RowBox[{"{", "0.3927991728772442`", "}"}], ",", 
+     RowBox[{"{", "0.20416005641947957`", "}"}], ",", 
+     RowBox[{"{", "1.1050548271635827`", "}"}], ",", 
+     RowBox[{"{", "0.4076581860695823`", "}"}], ",", 
+     RowBox[{"{", "0.21188313014558843`", "}"}], ",", 
+     RowBox[{"{", "1.099847168356769`", "}"}]}], "}"}], ",", 
+   RowBox[{"{", 
+    RowBox[{
+     RowBox[{"{", "0.2`", "}"}], ",", 
+     RowBox[{"{", "0.18`", "}"}], ",", 
+     RowBox[{"{", "1.1`", "}"}], ",", 
+     RowBox[{"{", "0.3927991728772442`", "}"}], ",", 
+     RowBox[{"{", "0.20416005641947957`", "}"}], ",", 
+     RowBox[{"{", "1.1050548271635827`", "}"}], ",", 
+     RowBox[{"{", "0.4076581860695823`", "}"}], ",", 
+     RowBox[{"{", "0.21188313014558846`", "}"}], ",", 
+     RowBox[{"{", "1.099847168356769`", "}"}], ",", 
+     RowBox[{"{", "0.01`", "}"}]}], "}"}]}], "}"}]], "Output",
+ CellChangeTimes->{
+  3.673347549352269*^9, 3.6733475840400352`*^9, 3.6733485241920023`*^9, 
+   3.673348575814754*^9, 3.6733486129225187`*^9, {3.6733488268381147`*^9, 
+   3.6733488376661196`*^9}, 3.6733490219381504`*^9, 3.6733501562293587`*^9}]
+}, Open  ]],
+
+Cell[BoxData[
+ RowBox[{"\[IndentingNewLine]", 
+  RowBox[{
+   RowBox[{
+    RowBox[{"{", 
+     RowBox[{"nxtxz", ",", "nxtXZ"}], "}"}], "=", 
+    RowBox[{"doIterRE", "[", 
+     RowBox[{"linMod", ",", 
+      RowBox[{"{", "anX0Z0", "}"}], ",", 
+      RowBox[{
+       RowBox[{"(", 
+        RowBox[{"anX0Z0", " ", "@@", "anXEps"}], ")"}], "[", 
+       RowBox[{"[", 
+        RowBox[{"Range", "[", "3", "]"}], "]"}], "]"}], ",", 
+      "Private`rbcEqnsFunctionalNext", ",", "theDist"}], "]"}]}], 
+   ";"}]}]], "Input",
+ CellChangeTimes->{{3.6733474158668175`*^9, 3.6733474313356895`*^9}, {
+   3.6733474674609776`*^9, 3.673347512742589*^9}, {3.6733475447897205`*^9, 
+   3.673347576946227*^9}, {3.6733484728660975`*^9, 3.6733485041459837`*^9}, 
+   3.673348844134796*^9}],
+
+Cell[CellGroupData[{
+
+Cell[BoxData[
+ RowBox[{"genPathCompare", "[", 
+  RowBox[{"linMod", ",", "nxtxz", ",", "nxtXZ", ",", 
+   RowBox[{"Transpose", "[", 
+    RowBox[{"{", "anX", "}"}], "]"}], ",", 
+   RowBox[{"{", "anEps", "}"}]}], "]"}]], "Input",
+ CellChangeTimes->{{3.6733474158668175`*^9, 3.6733474313356895`*^9}, {
+   3.6733474674609776`*^9, 3.673347512742589*^9}, {3.6733475447897205`*^9, 
+   3.673347576946227*^9}, {3.6733484728660975`*^9, 3.6733485041459837`*^9}, 
+   3.673348844134796*^9, {3.673349048132522*^9, 3.673349053054406*^9}, {
+   3.6733492077421694`*^9, 3.673349210101548*^9}}],
+
+Cell[BoxData[
+ RowBox[{"{", 
+  RowBox[{
+   RowBox[{"{", 
+    RowBox[{
+     RowBox[{"{", "0.2`", "}"}], ",", 
+     RowBox[{"{", "0.18`", "}"}], ",", 
+     RowBox[{"{", "1.1`", "}"}], ",", 
+     RowBox[{"{", "0.3921887121940096`", "}"}], ",", 
+     RowBox[{"{", "0.2042476292306595`", "}"}], ",", 
+     RowBox[{"{", "1.1057730363825737`", "}"}], ",", 
+     RowBox[{"{", "0.40838212584320255`", "}"}], ",", 
+     RowBox[{"{", "0.21271703057218821`", "}"}], ",", 
+     RowBox[{"{", "1.100283019618161`", "}"}], ",", 
+     RowBox[{"{", "0.41195292442626996`", "}"}], ",", 
+     RowBox[{"{", "0.21411534977778782`", "}"}], ",", 
+     RowBox[{"{", "1.0953141778438102`", "}"}]}], "}"}], ",", 
+   RowBox[{"{", 
+    RowBox[{
+     RowBox[{"{", "0.2`", "}"}], ",", 
+     RowBox[{"{", "0.18`", "}"}], ",", 
+     RowBox[{"{", "1.1`", "}"}], ",", 
+     RowBox[{"{", "0.392361886252822`", "}"}], ",", 
+     RowBox[{"{", "0.20407445517184705`", "}"}], ",", 
+     RowBox[{"{", "1.1057730363825737`", "}"}], ",", 
+     RowBox[{"{", "0.4082621800216815`", "}"}], ",", 
+     RowBox[{"{", "0.21265468791115438`", "}"}], ",", 
+     RowBox[{"{", "1.1002830196188806`", "}"}], ",", 
+     RowBox[{"{", "0.01`", "}"}]}], "}"}]}], "}"}]], "Output",
+ CellChangeTimes->{3.673347549352269*^9, 3.6733475840400352`*^9, 
+  3.6733485241920023`*^9, 3.673348575814754*^9, 3.6733486129225187`*^9, 
+  3.6733488735876074`*^9, 3.673349088538842*^9, 3.673350180838939*^9}]
+}, Open  ]],
+
+Cell[CellGroupData[{
+
+Cell[BoxData[
+ RowBox[{"?", "nestIterRE"}]], "Input",
+ CellChangeTimes->{{3.673197211730978*^9, 3.6731972126684694`*^9}, {
+   3.673197911627726*^9, 3.6731979123621073`*^9}, {3.673198911664814*^9, 
+   3.6731989162586017`*^9}, {3.6731995014700055`*^9, 3.673199501766884*^9}, {
+   3.673199983901862*^9, 3.6731999844487443`*^9}, {3.6732013078174686`*^9, 
+   3.673201314255019*^9}, 3.67320429238377*^9, {3.6732052311283526`*^9, 
+   3.6732052326752567`*^9}}],
+
+Cell[BoxData[
+ StyleBox["\<\"nestIterRE[linMod:{theHMat_?MatrixQ,BB_?MatrixQ,phi_?MatrixQ,\
+FF_?MatrixQ,psiEps_?MatrixQ,psiC_?MatrixQ,psiZ_?MatrixQ,psiZPreComp_?MatrixQ},\
+XZFuncsNow:{_Function..},\\nxtGuess_?MatrixQ,eqnsFunc:(_Function|_\
+CompiledFunction),distribSpec:{expctSpec:{{_Symbol,_}..},regimeTransProbFunc_:\
+{}},numIters_Integer]\\n\\nrecursively apply doIterRE numIters times\\n\"\>", 
+  "MSG"]], "Print", "PrintUsage",
+ CellChangeTimes->{3.6733501812764482`*^9},
+ CellTags->"Info1133673335781-5789906"]
+}, Open  ]],
+
+Cell[BoxData[
+ RowBox[{"\n", "\[IndentingNewLine]", 
+  RowBox[{
+   RowBox[{
+    RowBox[{"aBunchRE", "=", 
+     RowBox[{"nestIterRE", "[", 
+      RowBox[{"linMod", ",", 
+       RowBox[{"{", "anX0Z0", "}"}], ",", 
+       RowBox[{
+        RowBox[{"(", 
+         RowBox[{"anX0Z0", " ", "@@", "anXEps"}], ")"}], "[", 
+        RowBox[{"[", 
+         RowBox[{"Range", "[", "3", "]"}], "]"}], "]"}], ",", 
+       "Private`rbcEqnsFunctionalNext", ",", "theDist", ",", "2"}], "]"}]}], 
+    ";"}], "\[IndentingNewLine]", 
+   RowBox[{"(*", 
+    RowBox[{
+    "takes", " ", "quite", " ", "a", " ", "while", " ", "to", " ", "evaluate",
+      "\[IndentingNewLine]", 
+     RowBox[{"{", 
+      RowBox[{
+       RowBox[{
+        RowBox[{"aBunchRE", "[", 
+         RowBox[{"[", 
+          RowBox[{
+           RowBox[{"-", "1"}], ",", "1"}], "]"}], "]"}], " ", "@@", 
+        "anXEps"}], ",", 
+       RowBox[{"Through", "[", 
+        RowBox[{
+         RowBox[{
+          RowBox[{
+           RowBox[{"aBunchRE", "[", 
+            RowBox[{"[", 
+             RowBox[{
+              RowBox[{"-", "1"}], ",", "2"}], "]"}], "]"}], " ", "@@", "#"}], 
+          "&"}], "[", "anXEps", "]"}], "]"}]}], "}"}]}], 
+    "\[IndentingNewLine]", "*)"}]}]}]], "Input",
+ CellChangeTimes->{{3.6732013221144705`*^9, 3.673201496381482*^9}, {
+   3.6732015581475906`*^9, 3.67320168888301*^9}, {3.6732017370708942`*^9, 
+   3.6732017408834248`*^9}, {3.673202007885556*^9, 3.673202013088723*^9}, {
+   3.673202047417122*^9, 3.6732020951675158`*^9}, {3.6732024025293484`*^9, 
+   3.6732024302170653`*^9}, {3.673202461232938*^9, 3.6732024880612645`*^9}, {
+   3.673202863650428*^9, 3.6732028654785643`*^9}, {3.6732029131664453`*^9, 
+   3.673202999089006*^9}, {3.6732030359486756`*^9, 3.673203040261222*^9}, 
+   3.6732042983681617`*^9, {3.6732045811395617`*^9, 3.6732045918896475`*^9}, {
+   3.6732052396284194`*^9, 3.6732052689099045`*^9}, {3.6732813393479176`*^9, 
+   3.6732813988171544`*^9}, {3.673281435270571*^9, 3.6732814766771517`*^9}, {
+   3.6732820643797693`*^9, 3.6732820691837654`*^9}, {3.673282177904445*^9, 
+   3.6732821859670095`*^9}, 3.6732907019027414`*^9, 3.6732910545690784`*^9}],
+
+Cell[CellGroupData[{
+
+Cell[BoxData[
+ RowBox[{"?", "doIterREInterp"}]], "Input",
+ CellChangeTimes->{{3.673204199484261*^9, 3.6732042030155387`*^9}, 
+   3.673204301430686*^9}],
+
+Cell[BoxData[
+ StyleBox["\<\"\\n\\ndoIterREInterp[linMod:{theHMat_?MatrixQ,BB_?MatrixQ,phi_?\
+MatrixQ,FF_?MatrixQ,psiEps_?MatrixQ,psiC_?MatrixQ,psiZ_?MatrixQ,psiZPreComp_?\
+MatrixQ},XZFuncsNow:{_Function..},\\nxtGuess_?MatrixQ,eqnsFunc:(_Function|_\
+CompiledFunction)]\\n\\n\\n\\n\\ngiven a reference linear model, (x,z,X,Z) \
+function and an initial guess for the time t state and equation \
+system\\nextends (x,z,X,Z) an additional period imposing rational \
+expectations using interpolation to avoid recalculation of all the points \
+along the path\\n\\nreturns a pair of functions xz and XZ giving the xt \
+values of x and z and giving the unconditional expected path of future values \
+of x and z\\n\"\>", "MSG"]], "Print", "PrintUsage",
+ CellChangeTimes->{3.6733501813701935`*^9},
+ CellTags->"Info1153673335781-5789906"]
+}, Open  ]],
+
+Cell[CellGroupData[{
+
+Cell[BoxData[
+ RowBox[{"\[IndentingNewLine]", 
+  RowBox[{
+   RowBox[{
+    RowBox[{
+     RowBox[{"{", 
+      RowBox[{"nxtxz", ",", "nxtXZ"}], "}"}], "=", 
+     RowBox[{"doIterREInterp", "[", 
+      RowBox[{"linMod", ",", 
+       RowBox[{"{", "anX0Z0", "}"}], ",", 
+       RowBox[{
+        RowBox[{"(", 
+         RowBox[{"anX0Z0", " ", "@@", "anXEps"}], ")"}], "[", 
+        RowBox[{"[", 
+         RowBox[{"Range", "[", "3", "]"}], "]"}], "]"}], ",", 
+       "Private`rbcEqnsFunctionalNext", ",", "aGSpec", ",", "theDist"}], 
+      "]"}]}], ";"}], "\[IndentingNewLine]", 
+   RowBox[{"{", 
+    RowBox[{
+     RowBox[{"nxtxz", " ", "@@", "anXEps"}], ",", 
+     RowBox[{"Through", "[", 
+      RowBox[{
+       RowBox[{
+        RowBox[{"nxtXZ", " ", "@@", "#"}], "&"}], "[", " ", "anXEps", "]"}], 
+      "]"}]}], "}"}], "\[IndentingNewLine]"}]}]], "Input",
+ CellChangeTimes->{{3.6732013221144705`*^9, 3.673201496381482*^9}, {
+   3.6732015581475906`*^9, 3.67320168888301*^9}, {3.6732017370708942`*^9, 
+   3.6732017408834248`*^9}, {3.673202007885556*^9, 3.673202013088723*^9}, {
+   3.673202047417122*^9, 3.6732020951675158`*^9}, {3.6732024025293484`*^9, 
+   3.6732024302170653`*^9}, {3.673202461232938*^9, 3.6732024880612645`*^9}, {
+   3.673202863650428*^9, 3.6732028654785643`*^9}, {3.6732029131664453`*^9, 
+   3.673202999089006*^9}, {3.6732030359486756`*^9, 3.673203040261222*^9}, {
+   3.6732034956448116`*^9, 3.6732035402701674`*^9}, {3.6732038627003345`*^9, 
+   3.673203867950364*^9}, {3.673203998842035*^9, 3.673204019467198*^9}, {
+   3.673204165843367*^9, 3.6732041676246333`*^9}, 3.6732043056494718`*^9, {
+   3.6732046239524035`*^9, 3.673204648811977*^9}, 3.673291063584775*^9}],
+
+Cell[BoxData[
+ RowBox[{"{", 
+  RowBox[{
+   RowBox[{"{", 
+    RowBox[{
+     RowBox[{"{", "0.4114662028375065`", "}"}], ",", 
+     RowBox[{"{", "0.21395450186829973`", "}"}], ",", 
+     RowBox[{"{", "1.072694376436225`", "}"}], ",", 
+     RowBox[{"{", "0.0013646071817202399`", "}"}], ",", 
+     RowBox[{"{", 
+      RowBox[{"-", "0.004357695639711414`"}], "}"}], ",", 
+     RowBox[{"{", "0.0025777723078144717`", "}"}]}], "}"}], ",", 
+   RowBox[{"{", 
+    RowBox[{
+     RowBox[{"{", 
+      RowBox[{
+       RowBox[{"{", "0.38384315117260553`", "}"}], ",", 
+       RowBox[{"{", "0.1992851436035017`", "}"}], ",", 
+       RowBox[{"{", "1.0001562753529483`", "}"}], ",", 
+       RowBox[{"{", 
+        RowBox[{"-", "0.003258020114498321`"}], "}"}], ",", 
+       RowBox[{"{", 
+        RowBox[{"-", "0.0069583637602533485`"}], "}"}], ",", 
+       RowBox[{"{", "0.00010620282692082493`", "}"}]}], "}"}], ",", 
+     RowBox[{"{", 
+      RowBox[{
+       RowBox[{"{", "0.38823878325031674`", "}"}], ",", 
+       RowBox[{"{", "0.20178976272280905`", "}"}], ",", 
+       RowBox[{"{", "1.0000500725309052`", "}"}], ",", 
+       RowBox[{"{", "0", "}"}], ",", 
+       RowBox[{"{", "0", "}"}], ",", 
+       RowBox[{"{", "0", "}"}]}], "}"}]}], "}"}]}], "}"}]], "Output",
+ CellChangeTimes->{3.6732041692027707`*^9, 3.67320465284326*^9, 
+  3.673266629183074*^9, 3.6732717983929453`*^9, 3.673271907507188*^9, 
+  3.673274652136097*^9, 3.6732755571126857`*^9, 3.6732824582473707`*^9, 
+  3.673283606218951*^9, 3.673288367062459*^9, 3.6732915645087714`*^9, 
+  3.6733501852764745`*^9}]
+}, Open  ]],
+
+Cell[CellGroupData[{
+
+Cell[BoxData[
+ RowBox[{"?", "nestIterREInterp"}]], "Input",
+ CellChangeTimes->{{3.673204199484261*^9, 3.6732042030155387`*^9}, 
+   3.673204301430686*^9, {3.6732054300518155`*^9, 3.6732054316143303`*^9}}],
+
+Cell[BoxData[
+ StyleBox["\<\"nestIterREInterp[linMod:{theHMat_?MatrixQ,BB_?MatrixQ,phi_?\
+MatrixQ,FF_?MatrixQ,psiEps_?MatrixQ,psiC_?MatrixQ,psiZ_?MatrixQ,psiZPreComp_?\
+MatrixQ},XZFuncsNow:{(_Function|_InterpolatingFunction|_CompiledFunction)..},\
+\\nxtGuess_?MatrixQ,eqnsFunc:(_Function|_CompiledFunction),gSpec:{toIgnore:{_\
+Integer...},iOrd_Integer,{{_Integer,_?NumberQ,_?NumberQ}..},numRegimes_:0},\
+distribSpec:{expctSpec:{{_Symbol,_}..},regimeTransProbFunc_:{}},numIters_\
+Integer]\\n\\nrecursively apply doIterREInterp numIters times\\n\"\>", 
+  "MSG"]], "Print", "PrintUsage",
+ CellChangeTimes->{3.67335018551084*^9},
+ CellTags->"Info1183673335785-5789906"]
+}, Open  ]],
+
+Cell[CellGroupData[{
+
+Cell[BoxData[
+ RowBox[{"\[IndentingNewLine]", 
+  RowBox[{
+   RowBox[{
+    RowBox[{"aBunchREInterp", "=", 
+     RowBox[{"nestIterREInterp", "[", 
+      RowBox[{"linMod", ",", 
+       RowBox[{"{", "anX0Z0", "}"}], ",", 
+       RowBox[{
+        RowBox[{"(", 
+         RowBox[{"anX0Z0", " ", "@@", "anXEps"}], ")"}], "[", 
+        RowBox[{"[", 
+         RowBox[{"Range", "[", "3", "]"}], "]"}], "]"}], ",", 
+       "Private`rbcEqnsFunctionalNext", ",", "aGSpec", ",", "theDist", ",", 
+       "2"}], "]"}]}], ";"}], "\[IndentingNewLine]"}]}]], "Input",
+ CellChangeTimes->{{3.6732013221144705`*^9, 3.673201496381482*^9}, {
+   3.6732015581475906`*^9, 3.67320168888301*^9}, {3.6732017370708942`*^9, 
+   3.6732017408834248`*^9}, {3.673202007885556*^9, 3.673202013088723*^9}, {
+   3.673202047417122*^9, 3.6732020951675158`*^9}, {3.6732024025293484`*^9, 
+   3.6732024302170653`*^9}, {3.673202461232938*^9, 3.6732024880612645`*^9}, {
+   3.673202863650428*^9, 3.6732028654785643`*^9}, {3.6732029131664453`*^9, 
+   3.673202999089006*^9}, {3.6732030359486756`*^9, 3.673203040261222*^9}, {
+   3.6732034956448116`*^9, 3.6732035402701674`*^9}, {3.6732038627003345`*^9, 
+   3.673203867950364*^9}, {3.673203998842035*^9, 3.673204019467198*^9}, {
+   3.673204165843367*^9, 3.6732041676246333`*^9}, 3.6732043056494718`*^9, {
+   3.6732046239524035`*^9, 3.673204648811977*^9}, {3.6732054364893675`*^9, 
+   3.6732054804272175`*^9}, 3.6732910722410946`*^9}],
+
+Cell[BoxData[
+ RowBox[{
+  StyleBox[
+   RowBox[{"InterpolatingFunction", "::", "dmval"}], "MessageName"], 
+  RowBox[{
+  ":", " "}], "\<\"Input value \[NoBreak]\\!\\(\\*RowBox[{\\\"{\\\", RowBox[{\
+\\\"0.08000678220559108`\\\", \\\",\\\", \\\"0.8780142197396383`\\\"}], \\\"}\
+\\\"}]\\)\[NoBreak] lies outside the range of data in the interpolating \
+function. Extrapolation will be used. \\!\\(\\*ButtonBox[\\\"\[RightSkeleton]\
+\\\", ButtonStyle->\\\"Link\\\", ButtonFrame->None, \
+ButtonData:>\\\"paclet:ref/message/InterpolatingFunction/dmval\\\", \
+ButtonNote -> \\\"InterpolatingFunction::dmval\\\"]\\)\"\>"}]], "Message", \
+"MSG",
+ CellChangeTimes->{{3.6732054604739585`*^9, 3.6732054843335*^9}, 
+   3.673266633120598*^9, 3.673271802283588*^9, 3.673271911632229*^9, 
+   3.6732746558861275`*^9, 3.6732755608939705`*^9, 3.6732824620740366`*^9, 
+   3.6732836101408257`*^9, 3.673288370828117*^9, 3.673291568477553*^9, 
+   3.6733501893858724`*^9}],
+
+Cell[BoxData[
+ RowBox[{
+  StyleBox[
+   RowBox[{"InterpolatingFunction", "::", "dmval"}], "MessageName"], 
+  RowBox[{
+  ":", " "}], "\<\"Input value \[NoBreak]\\!\\(\\*RowBox[{\\\"{\\\", RowBox[{\
+\\\"0.08000678220559108`\\\", \\\",\\\", \\\"0.8780142197396383`\\\"}], \\\"}\
+\\\"}]\\)\[NoBreak] lies outside the range of data in the interpolating \
+function. Extrapolation will be used. \\!\\(\\*ButtonBox[\\\"\[RightSkeleton]\
+\\\", ButtonStyle->\\\"Link\\\", ButtonFrame->None, \
+ButtonData:>\\\"paclet:ref/message/InterpolatingFunction/dmval\\\", \
+ButtonNote -> \\\"InterpolatingFunction::dmval\\\"]\\)\"\>"}]], "Message", \
+"MSG",
+ CellChangeTimes->{{3.6732054604739585`*^9, 3.6732054843335*^9}, 
+   3.673266633120598*^9, 3.673271802283588*^9, 3.673271911632229*^9, 
+   3.6732746558861275`*^9, 3.6732755608939705`*^9, 3.6732824620740366`*^9, 
+   3.6732836101408257`*^9, 3.673288370828117*^9, 3.673291568477553*^9, 
+   3.673350189401514*^9}],
+
+Cell[BoxData[
+ RowBox[{
+  StyleBox[
+   RowBox[{"InterpolatingFunction", "::", "dmval"}], "MessageName"], 
+  RowBox[{
+  ":", " "}], "\<\"Input value \[NoBreak]\\!\\(\\*RowBox[{\\\"{\\\", RowBox[{\
+\\\"0.08000678220559108`\\\", \\\",\\\", \\\"0.8780142197396383`\\\"}], \\\"}\
+\\\"}]\\)\[NoBreak] lies outside the range of data in the interpolating \
+function. Extrapolation will be used. \\!\\(\\*ButtonBox[\\\"\[RightSkeleton]\
+\\\", ButtonStyle->\\\"Link\\\", ButtonFrame->None, \
+ButtonData:>\\\"paclet:ref/message/InterpolatingFunction/dmval\\\", \
+ButtonNote -> \\\"InterpolatingFunction::dmval\\\"]\\)\"\>"}]], "Message", \
+"MSG",
+ CellChangeTimes->{{3.6732054604739585`*^9, 3.6732054843335*^9}, 
+   3.673266633120598*^9, 3.673271802283588*^9, 3.673271911632229*^9, 
+   3.6732746558861275`*^9, 3.6732755608939705`*^9, 3.6732824620740366`*^9, 
+   3.6732836101408257`*^9, 3.673288370828117*^9, 3.673291568477553*^9, 
+   3.673350189432748*^9}],
+
+Cell[BoxData[
+ RowBox[{
+  StyleBox[
+   RowBox[{"General", "::", "stop"}], "MessageName"], 
+  RowBox[{
+  ":", " "}], "\<\"Further output of \
+\[NoBreak]\\!\\(\\*StyleBox[RowBox[{\\\"InterpolatingFunction\\\", \
+\\\"::\\\", \\\"dmval\\\"}], \\\"MessageName\\\"]\\)\[NoBreak] will be \
+suppressed during this calculation. \\!\\(\\*ButtonBox[\\\"\[RightSkeleton]\\\
+\", ButtonStyle->\\\"Link\\\", ButtonFrame->None, \
+ButtonData:>\\\"paclet:ref/message/General/stop\\\", ButtonNote -> \
+\\\"General::stop\\\"]\\)\"\>"}]], "Message", "MSG",
+ CellChangeTimes->{{3.6732054604739585`*^9, 3.6732054843335*^9}, 
+   3.673266633120598*^9, 3.673271802283588*^9, 3.673271911632229*^9, 
+   3.6732746558861275`*^9, 3.6732755608939705`*^9, 3.6732824620740366`*^9, 
+   3.6732836101408257`*^9, 3.673288370828117*^9, 3.673291568477553*^9, 
+   3.673350189463997*^9}]
+}, Open  ]]
+}, Open  ]],
+
+Cell[CellGroupData[{
+
+Cell["genXZFuncRE, genXZFuncREInterp", "Subsection",
+ CellChangeTimes->{{3.6732613138643227`*^9, 3.6732613517396255`*^9}, 
+   3.6732840217835693`*^9, 3.673284071268324*^9}],
+
+Cell[CellGroupData[{
+
+Cell[BoxData[
+ RowBox[{"?", "genXZFuncRE"}]], "Input",
+ CellChangeTimes->{{3.6732675848528147`*^9, 3.673267597321664*^9}, 
+   3.673268354902751*^9}],
+
+Cell[BoxData[
+ StyleBox["\<\"genXZFuncRE[{numX_Integer,ignored_Integer,numZ_Integer},\\\
+naLilXkZkFunc_Function,distribSpec:{expctSpec:{{_Symbol,_}..},\
+regimeTransProbFunc_:{}}]\\n\\n\\ngiven problem dimensions and xz functions \
+\\nreturns  perfect foresight version functions for future unconditional \
+expectations using interpolation to avoid recalculating all values along the \
+path\\n\\n\"\>", "MSG"]], "Print", "PrintUsage",
+ CellChangeTimes->{3.6733501982609587`*^9},
+ CellTags->"Info1203673335798-5789906"]
+}, Open  ]],
+
+Cell[CellGroupData[{
+
+Cell[BoxData[{
+ RowBox[{
+  RowBox[{"anX0Z0", "=", 
+   RowBox[{"genX0Z0Funcs", "[", "linMod", "]"}]}], ";", 
+  RowBox[{
+   RowBox[{"{", 
+    RowBox[{"nxtxz", ",", "nxtXZ"}], "}"}], "=", 
+   RowBox[{"doIterRE", "[", 
+    RowBox[{"linMod", ",", 
+     RowBox[{"{", "anX0Z0", "}"}], ",", 
+     RowBox[{
+      RowBox[{"(", 
+       RowBox[{"anX0Z0", " ", "@@", "anXEps"}], ")"}], "[", 
+      RowBox[{"[", 
+       RowBox[{"Range", "[", "3", "]"}], "]"}], "]"}], ",", 
+     "Private`rbcEqnsFunctionalNext", ",", "theDist"}], "]"}]}], 
+  ";"}], "\[IndentingNewLine]", 
+ RowBox[{
+  RowBox[{"thisOne", "=", 
+   RowBox[{"genXZFuncRE", "[", 
+    RowBox[{
+     RowBox[{"{", 
+      RowBox[{"3", ",", "1", ",", "3"}], "}"}], ",", "nxtxz", ",", 
+     "theDist"}], "]"}]}], ";"}], "\[IndentingNewLine]", 
+ RowBox[{"Through", "[", 
+  RowBox[{
+   RowBox[{
+    RowBox[{
+     RowBox[{"{", 
+      RowBox[{"thisOne", ",", 
+       RowBox[{"nxtXZ", "[", 
+        RowBox[{"[", "1", "]"}], "]"}]}], "}"}], "@@", "#"}], "&"}], "[", 
+   "anXEps", "]"}], "]"}]}], "Input",
+ CellChangeTimes->{{3.6732668468268576`*^9, 3.6732668482799945`*^9}, {
+  3.673267559305735*^9, 3.6732675801652765`*^9}, {3.6732677979203196`*^9, 
+  3.6732679196087904`*^9}, {3.673268361027799*^9, 3.673268363887198*^9}, {
+  3.6732684882631903`*^9, 3.673268490169456*^9}, {3.673268556603572*^9, 
+  3.673268558587963*^9}}],
+
+Cell[BoxData[
+ RowBox[{"{", 
+  RowBox[{
+   RowBox[{"{", 
+    RowBox[{
+     RowBox[{"{", "0.38653352389379503`", "}"}], ",", 
+     RowBox[{"{", "0.2007911681520546`", "}"}], ",", 
+     RowBox[{"{", "1.0000500012493663`", "}"}], ",", 
+     RowBox[{"{", 
+      RowBox[{"-", "0.0016629992046475338`"}], "}"}], ",", 
+     RowBox[{"{", 
+      RowBox[{"-", "0.002703814923078178`"}], "}"}], ",", 
+     RowBox[{"{", 
+      RowBox[{"-", "7.128088442864416`*^-8"}], "}"}]}], "}"}], ",", 
+   RowBox[{"{", 
+    RowBox[{
+     RowBox[{"{", "0.38653352389379503`", "}"}], ",", 
+     RowBox[{"{", "0.2007911681520546`", "}"}], ",", 
+     RowBox[{"{", "1.0000500012493663`", "}"}], ",", 
+     RowBox[{"{", 
+      RowBox[{"-", "0.0016629992046475338`"}], "}"}], ",", 
+     RowBox[{"{", 
+      RowBox[{"-", "0.002703814923078178`"}], "}"}], ",", 
+     RowBox[{"{", 
+      RowBox[{"-", "7.128088442864416`*^-8"}], "}"}]}], "}"}]}], 
+  "}"}]], "Output",
+ CellChangeTimes->{{3.6732677864202414`*^9, 3.673267801451597*^9}, 
+   3.6732678964367313`*^9, 3.6732679302807517`*^9, 3.6732685034351864`*^9, 
+   3.6732685853538027`*^9, 3.673271836596362*^9, 3.6732719456703897`*^9, 
+   3.6732746908395195`*^9, 3.6732755979098754`*^9, 3.6732825076815715`*^9, 
+   3.6732836560471506`*^9, 3.6732884229222794`*^9, 3.6732916216498528`*^9, 
+   3.673350225104907*^9}]
+}, Open  ]],
+
+Cell[CellGroupData[{
+
+Cell[BoxData[
+ RowBox[{"?", "genXZFuncREInterp"}]], "Input",
+ CellChangeTimes->{{3.6732675848528147`*^9, 3.673267597321664*^9}, 
+   3.673268028833356*^9, 3.673268365105957*^9}],
+
+Cell[BoxData[
+ StyleBox["\<\"genXZFuncREInterp[probDims:{numX_Integer,numEps_Integer,numZ_\
+Integer},\\naLilXkZkFunc_Function,gSpec:{toIgnore:{_Integer...},iOrd_Integer,{\
+{_Integer,_?NumberQ,_?NumberQ}..},numRegimes_:0},distribSpec:{expctSpec:{{_\
+Symbol,_}..},regimeTransProbFunc_:{}}]\\n\\n\\ngiven problem dimensions and \
+xz functions \\nreturns  retional expectations version functions for future \
+unconditional expectations using interpolation to avoid recalculating all \
+values along the path\\n\\n\\n\"\>", "MSG"]], "Print", "PrintUsage",
+ CellChangeTimes->{3.673350225714302*^9},
+ CellTags->"Info1243673335825-5789906"]
+}, Open  ]],
+
+Cell[CellGroupData[{
+
+Cell[BoxData[
+ RowBox[{"\[IndentingNewLine]", "\[IndentingNewLine]", 
+  RowBox[{
+   RowBox[{
+    RowBox[{
+     RowBox[{"{", 
+      RowBox[{"nxtxz", ",", "nxtXZ"}], "}"}], "=", 
+     RowBox[{"doIterREInterp", "[", 
+      RowBox[{"linMod", ",", 
+       RowBox[{"{", "anX0Z0", "}"}], ",", 
+       RowBox[{
+        RowBox[{"(", 
+         RowBox[{"anX0Z0", " ", "@@", "anXEps"}], ")"}], "[", 
+        RowBox[{"[", 
+         RowBox[{"Range", "[", "3", "]"}], "]"}], "]"}], ",", 
+       "Private`rbcEqnsFunctionalNext", ",", "aGSpec", ",", "theDist"}], 
+      "]"}]}], ";"}], "\[IndentingNewLine]", 
+   RowBox[{
+    RowBox[{"thisOne", "=", 
+     RowBox[{"genXZFuncREInterp", "[", 
+      RowBox[{
+       RowBox[{"{", 
+        RowBox[{"3", ",", "1", ",", "3"}], "}"}], ",", "nxtxz", ",", "aGSpec",
+        ",", "theDist"}], "]"}]}], ";"}], "\[IndentingNewLine]", 
+   RowBox[{"Through", "[", 
+    RowBox[{
+     RowBox[{
+      RowBox[{
+       RowBox[{"{", 
+        RowBox[{"thisOne", ",", 
+         RowBox[{"nxtXZ", "[", 
+          RowBox[{"[", "1", "]"}], "]"}]}], "}"}], "@@", "#"}], "&"}], "[", 
+     "anXEps", "]"}], "]"}]}]}]], "Input",
+ CellChangeTimes->{{3.6732668468268576`*^9, 3.6732668482799945`*^9}, {
+   3.673267559305735*^9, 3.6732675801652765`*^9}, {3.6732677979203196`*^9, 
+   3.6732679196087904`*^9}, {3.673268036831377*^9, 3.6732680383313885`*^9}, {
+   3.673268203978484*^9, 3.673268208056641*^9}, {3.6732682581281843`*^9, 
+   3.6732682625188437`*^9}, {3.6732683714497576`*^9, 3.673268372512266*^9}, {
+   3.6732685839787917`*^9, 3.6732685859029264`*^9}, {3.6732686353095837`*^9, 
+   3.6732686655251427`*^9}, 3.6732907426530657`*^9, 3.673290892630286*^9}],
+
+Cell[BoxData[
+ RowBox[{"{", 
+  RowBox[{
+   RowBox[{"{", 
+    RowBox[{
+     RowBox[{"{", "0.38384315117260553`", "}"}], ",", 
+     RowBox[{"{", "0.1992851436035017`", "}"}], ",", 
+     RowBox[{"{", "1.0001562753529483`", "}"}], ",", 
+     RowBox[{"{", 
+      RowBox[{"-", "0.003258020114498321`"}], "}"}], ",", 
+     RowBox[{"{", 
+      RowBox[{"-", "0.0069583637602533485`"}], "}"}], ",", 
+     RowBox[{"{", "0.00010620282692082493`", "}"}]}], "}"}], ",", 
+   RowBox[{"{", 
+    RowBox[{
+     RowBox[{"{", "0.38384315117260553`", "}"}], ",", 
+     RowBox[{"{", "0.1992851436035017`", "}"}], ",", 
+     RowBox[{"{", "1.0001562753529483`", "}"}], ",", 
+     RowBox[{"{", 
+      RowBox[{"-", "0.003258020114498321`"}], "}"}], ",", 
+     RowBox[{"{", 
+      RowBox[{"-", "0.0069583637602533485`"}], "}"}], ",", 
+     RowBox[{"{", "0.00010620282692082493`", "}"}]}], "}"}]}], 
+  "}"}]], "Output",
+ CellChangeTimes->{{3.6732677864202414`*^9, 3.673267801451597*^9}, 
+   3.6732678964367313`*^9, 3.6732679302807517`*^9, 3.6732680617222185`*^9, 
+   3.6732682654407415`*^9, 3.673268613215645*^9, {3.6732686460596695`*^9, 
+   3.6732686724939423`*^9}, 3.6732718437715073`*^9, 3.6732719528277507`*^9, 
+   3.6732746980270925`*^9, 3.6732756053786993`*^9, 3.6732825152346067`*^9, 
+   3.6732836634846773`*^9, 3.6732884307973413`*^9, 3.673291629626003*^9}]
 }, Open  ]]
 }, Open  ]]
-}, Closed]],
+}, Open  ]],
 
 Cell[CellGroupData[{
 
@@ -2543,12 +2810,12 @@ Cell["Evaluate AMASeries Paths", "Section",
 
 Cell[CellGroupData[{
 
-Cell["pathErrs, genPath", "Subsection",
+Cell[" genPath, pathErrs", "Subsection",
  CellChangeTimes->{{3.6731971912933097`*^9, 3.673197205105908*^9}, {
    3.673197904908923*^9, 3.6731979055026784`*^9}, {3.6731989030866156`*^9, 
    3.6731989083991623`*^9}, {3.6731994965168285`*^9, 3.673199496923094*^9}, 
    3.673199982308102*^9, {3.67327013605059*^9, 3.6732701374099765`*^9}, 
-   3.6732875954843287`*^9}],
+   3.6732875954843287`*^9, {3.673349243601606*^9, 3.673349250257868*^9}}],
 
 Cell[CellGroupData[{
 
@@ -2580,13 +2847,13 @@ Cell[BoxData[
 Cell[BoxData[
  RowBox[{
   StyleBox[
-   RowBox[{"InterpolatingFunction", "::", "dmval"}], "MessageName"], 
-  RowBox[{
-  ":", " "}], "\<\"Input value \[NoBreak]\\!\\(\\*RowBox[{\\\"{\\\", RowBox[{\
-\\\"0.19779748327581126`\\\", \\\",\\\", \\\"1.1057730363825737`\\\"}], \\\"}\
-\\\"}]\\)\[NoBreak] lies outside the range of data in the interpolating \
-function. Extrapolation will be used. \\!\\(\\*ButtonBox[\\\"\[RightSkeleton]\
-\\\", ButtonStyle->\\\"Link\\\", ButtonFrame->None, \
+   RowBox[{"InterpolatingFunction", "::", "dmval"}], "MessageName"], ":", 
+  " ", "\<\"Input value \[NoBreak]\\!\\(\\*RowBox[{\\\"{\\\", \
+RowBox[{\\\"0.19779748327581126`\\\", \\\",\\\", \
+\\\"1.1057730363825737`\\\"}], \\\"}\\\"}]\\)\[NoBreak] lies outside the \
+range of data in the interpolating function. Extrapolation will be used. \
+\\!\\(\\*ButtonBox[\\\"\[RightSkeleton]\\\", ButtonStyle->\\\"Link\\\", \
+ButtonFrame->None, \
 ButtonData:>\\\"paclet:ref/message/InterpolatingFunction/dmval\\\", \
 ButtonNote -> \\\"InterpolatingFunction::dmval\\\"]\\)\"\>"}]], "Message", \
 "MSG",
@@ -2598,13 +2865,13 @@ ButtonNote -> \\\"InterpolatingFunction::dmval\\\"]\\)\"\>"}]], "Message", \
 Cell[BoxData[
  RowBox[{
   StyleBox[
-   RowBox[{"InterpolatingFunction", "::", "dmval"}], "MessageName"], 
-  RowBox[{
-  ":", " "}], "\<\"Input value \[NoBreak]\\!\\(\\*RowBox[{\\\"{\\\", RowBox[{\
-\\\"0.19779748327581126`\\\", \\\",\\\", \\\"1.1057730363825737`\\\"}], \\\"}\
-\\\"}]\\)\[NoBreak] lies outside the range of data in the interpolating \
-function. Extrapolation will be used. \\!\\(\\*ButtonBox[\\\"\[RightSkeleton]\
-\\\", ButtonStyle->\\\"Link\\\", ButtonFrame->None, \
+   RowBox[{"InterpolatingFunction", "::", "dmval"}], "MessageName"], ":", 
+  " ", "\<\"Input value \[NoBreak]\\!\\(\\*RowBox[{\\\"{\\\", \
+RowBox[{\\\"0.19779748327581126`\\\", \\\",\\\", \
+\\\"1.1057730363825737`\\\"}], \\\"}\\\"}]\\)\[NoBreak] lies outside the \
+range of data in the interpolating function. Extrapolation will be used. \
+\\!\\(\\*ButtonBox[\\\"\[RightSkeleton]\\\", ButtonStyle->\\\"Link\\\", \
+ButtonFrame->None, \
 ButtonData:>\\\"paclet:ref/message/InterpolatingFunction/dmval\\\", \
 ButtonNote -> \\\"InterpolatingFunction::dmval\\\"]\\)\"\>"}]], "Message", \
 "MSG",
@@ -2616,13 +2883,13 @@ ButtonNote -> \\\"InterpolatingFunction::dmval\\\"]\\)\"\>"}]], "Message", \
 Cell[BoxData[
  RowBox[{
   StyleBox[
-   RowBox[{"InterpolatingFunction", "::", "dmval"}], "MessageName"], 
-  RowBox[{
-  ":", " "}], "\<\"Input value \[NoBreak]\\!\\(\\*RowBox[{\\\"{\\\", RowBox[{\
-\\\"0.19779748327581126`\\\", \\\",\\\", \\\"1.1057730363825737`\\\"}], \\\"}\
-\\\"}]\\)\[NoBreak] lies outside the range of data in the interpolating \
-function. Extrapolation will be used. \\!\\(\\*ButtonBox[\\\"\[RightSkeleton]\
-\\\", ButtonStyle->\\\"Link\\\", ButtonFrame->None, \
+   RowBox[{"InterpolatingFunction", "::", "dmval"}], "MessageName"], ":", 
+  " ", "\<\"Input value \[NoBreak]\\!\\(\\*RowBox[{\\\"{\\\", \
+RowBox[{\\\"0.19779748327581126`\\\", \\\",\\\", \
+\\\"1.1057730363825737`\\\"}], \\\"}\\\"}]\\)\[NoBreak] lies outside the \
+range of data in the interpolating function. Extrapolation will be used. \
+\\!\\(\\*ButtonBox[\\\"\[RightSkeleton]\\\", ButtonStyle->\\\"Link\\\", \
+ButtonFrame->None, \
 ButtonData:>\\\"paclet:ref/message/InterpolatingFunction/dmval\\\", \
 ButtonNote -> \\\"InterpolatingFunction::dmval\\\"]\\)\"\>"}]], "Message", \
 "MSG",
@@ -2634,9 +2901,8 @@ ButtonNote -> \\\"InterpolatingFunction::dmval\\\"]\\)\"\>"}]], "Message", \
 Cell[BoxData[
  RowBox[{
   StyleBox[
-   RowBox[{"General", "::", "stop"}], "MessageName"], 
-  RowBox[{
-  ":", " "}], "\<\"Further output of \
+   RowBox[{"General", "::", "stop"}], "MessageName"], ":", 
+  " ", "\<\"Further output of \
 \[NoBreak]\\!\\(\\*StyleBox[RowBox[{\\\"InterpolatingFunction\\\", \
 \\\"::\\\", \\\"dmval\\\"}], \\\"MessageName\\\"]\\)\[NoBreak] will be \
 suppressed during this calculation. \\!\\(\\*ButtonBox[\\\"\[RightSkeleton]\\\
@@ -2755,74 +3021,8 @@ Cell[BoxData[
    3.673275609816222*^9, 3.6732825194205017`*^9, 3.6732836676877975`*^9, 
    3.6732884478131065`*^9, 3.673291647329268*^9}]
 }, Open  ]]
-}, Open  ]],
-
-Cell[CellGroupData[{
-
-Cell["makeDREvalInterp", "Subsection",
- CellChangeTimes->{{3.67327235916508*^9, 3.673272364837002*^9}}],
-
-Cell[CellGroupData[{
-
-Cell[BoxData[
- RowBox[{"?", "makeDREvalInterp"}]], "Input",
- CellChangeTimes->{{3.673272376665221*^9, 3.6732723786808753`*^9}}],
-
-Cell[BoxData[
- StyleBox["\<\"makeDREvalInterp[drFunc_Function,distribSpec:{expctSpec:{{_\
-Symbol,_}..},regimeTransProbFunc_:{}},\\neqnsFunc:(_Function|_\
-CompiledFunction),gSpec:{toIgnore:{_Integer...},iOrd_Integer,{{_Integer,_?\
-NumberQ,_?NumberQ}..},numRegimes_:0}]\\n\\nreturns a list of two functions: \
-the second evaluates the error in the equations without interpolation, the \
-first uses interpolation\\n\"\>", "MSG"]], "Print", "PrintUsage",
- CellChangeTimes->{3.67329164767301*^9},
- CellTags->"Info1483673277247-5789906"]
-}, Open  ]],
-
-Cell[BoxData[
- RowBox[{"\[IndentingNewLine]", "\n", 
-  RowBox[{
-   RowBox[{
-    RowBox[{"{", 
-     RowBox[{"theInterp", ",", " ", "theNotInterp"}], "}"}], "=", 
-    RowBox[{"makeDREvalInterp", "[", 
-     RowBox[{
-     "simpRBCExactDR", ",", "theDist", ",", "Private`rbcEqnsFunctionalNext", 
-      ",", "aGSpec"}], "]"}]}], ";"}]}]], "Input",
- CellChangeTimes->{{3.673272566119875*^9, 3.673272603463906*^9}, {
-   3.6732727587292*^9, 3.6732727757024274`*^9}, 3.673288524524525*^9, 
-   3.6732901223354406`*^9, 3.6732907870284204`*^9}],
-
-Cell[CellGroupData[{
-
-Cell[BoxData[
- RowBox[{"{", 
-  RowBox[{
-   RowBox[{"theInterp", " ", "@@", " ", "anXEps"}], ",", 
-   RowBox[{"theNotInterp", " ", "@@", " ", "anXEps"}]}], "}"}]], "Input",
- CellChangeTimes->{{3.673272836959484*^9, 3.673272875520671*^9}}],
-
-Cell[BoxData[
- RowBox[{"{", 
-  RowBox[{
-   RowBox[{"{", 
-    RowBox[{
-     RowBox[{"{", 
-      RowBox[{"-", "1.595782720655032`*^-16"}], "}"}], ",", 
-     RowBox[{"{", "8.092661600497896`*^-18", "}"}], ",", 
-     RowBox[{"{", "0.`", "}"}]}], "}"}], ",", 
-   RowBox[{"{", 
-    RowBox[{
-     RowBox[{"{", 
-      RowBox[{"-", "4.440892098500626`*^-16"}], "}"}], ",", 
-     RowBox[{"{", "0.`", "}"}], ",", 
-     RowBox[{"{", "0.`", "}"}]}], "}"}]}], "}"}]], "Output",
- CellChangeTimes->{{3.6732728468672433`*^9, 3.673272876098792*^9}, 
-   3.673274714355343*^9, 3.673275622035067*^9, 3.6732825319625816`*^9, 
-   3.673283689344096*^9, 3.6732884554927373`*^9, 3.6732916549387045`*^9}]
 }, Open  ]]
-}, Open  ]]
-}, Closed]],
+}, Open  ]],
 
 Cell[CellGroupData[{
 
@@ -3150,7 +3350,7 @@ Cell[BoxData[
    3.673288456852111*^9, 3.6732916565949554`*^9}]
 }, Open  ]]
 }, Open  ]]
-}, Closed]],
+}, Open  ]],
 
 Cell[CellGroupData[{
 
@@ -3941,13 +4141,13 @@ Cell[BoxData[
 Cell[BoxData[
  RowBox[{
   StyleBox[
-   RowBox[{"InterpolatingFunction", "::", "dmval"}], "MessageName"], 
-  RowBox[{
-  ":", " "}], "\<\"Input value \[NoBreak]\\!\\(\\*RowBox[{\\\"{\\\", RowBox[{\
-\\\"0.08000576007581783`\\\", \\\",\\\", \\\"0.8780142197396383`\\\"}], \\\"}\
-\\\"}]\\)\[NoBreak] lies outside the range of data in the interpolating \
-function. Extrapolation will be used. \\!\\(\\*ButtonBox[\\\"\[RightSkeleton]\
-\\\", ButtonStyle->\\\"Link\\\", ButtonFrame->None, \
+   RowBox[{"InterpolatingFunction", "::", "dmval"}], "MessageName"], ":", 
+  " ", "\<\"Input value \[NoBreak]\\!\\(\\*RowBox[{\\\"{\\\", \
+RowBox[{\\\"0.08000576007581783`\\\", \\\",\\\", \
+\\\"0.8780142197396383`\\\"}], \\\"}\\\"}]\\)\[NoBreak] lies outside the \
+range of data in the interpolating function. Extrapolation will be used. \
+\\!\\(\\*ButtonBox[\\\"\[RightSkeleton]\\\", ButtonStyle->\\\"Link\\\", \
+ButtonFrame->None, \
 ButtonData:>\\\"paclet:ref/message/InterpolatingFunction/dmval\\\", \
 ButtonNote -> \\\"InterpolatingFunction::dmval\\\"]\\)\"\>"}]], "Message", \
 "MSG",
@@ -3959,13 +4159,13 @@ ButtonNote -> \\\"InterpolatingFunction::dmval\\\"]\\)\"\>"}]], "Message", \
 Cell[BoxData[
  RowBox[{
   StyleBox[
-   RowBox[{"InterpolatingFunction", "::", "dmval"}], "MessageName"], 
-  RowBox[{
-  ":", " "}], "\<\"Input value \[NoBreak]\\!\\(\\*RowBox[{\\\"{\\\", RowBox[{\
-\\\"0.08000576007581783`\\\", \\\",\\\", \\\"0.8780142197396383`\\\"}], \\\"}\
-\\\"}]\\)\[NoBreak] lies outside the range of data in the interpolating \
-function. Extrapolation will be used. \\!\\(\\*ButtonBox[\\\"\[RightSkeleton]\
-\\\", ButtonStyle->\\\"Link\\\", ButtonFrame->None, \
+   RowBox[{"InterpolatingFunction", "::", "dmval"}], "MessageName"], ":", 
+  " ", "\<\"Input value \[NoBreak]\\!\\(\\*RowBox[{\\\"{\\\", \
+RowBox[{\\\"0.08000576007581783`\\\", \\\",\\\", \
+\\\"0.8780142197396383`\\\"}], \\\"}\\\"}]\\)\[NoBreak] lies outside the \
+range of data in the interpolating function. Extrapolation will be used. \
+\\!\\(\\*ButtonBox[\\\"\[RightSkeleton]\\\", ButtonStyle->\\\"Link\\\", \
+ButtonFrame->None, \
 ButtonData:>\\\"paclet:ref/message/InterpolatingFunction/dmval\\\", \
 ButtonNote -> \\\"InterpolatingFunction::dmval\\\"]\\)\"\>"}]], "Message", \
 "MSG",
@@ -3977,13 +4177,13 @@ ButtonNote -> \\\"InterpolatingFunction::dmval\\\"]\\)\"\>"}]], "Message", \
 Cell[BoxData[
  RowBox[{
   StyleBox[
-   RowBox[{"InterpolatingFunction", "::", "dmval"}], "MessageName"], 
-  RowBox[{
-  ":", " "}], "\<\"Input value \[NoBreak]\\!\\(\\*RowBox[{\\\"{\\\", RowBox[{\
-\\\"0.08000576007581783`\\\", \\\",\\\", \\\"0.8780142197396383`\\\"}], \\\"}\
-\\\"}]\\)\[NoBreak] lies outside the range of data in the interpolating \
-function. Extrapolation will be used. \\!\\(\\*ButtonBox[\\\"\[RightSkeleton]\
-\\\", ButtonStyle->\\\"Link\\\", ButtonFrame->None, \
+   RowBox[{"InterpolatingFunction", "::", "dmval"}], "MessageName"], ":", 
+  " ", "\<\"Input value \[NoBreak]\\!\\(\\*RowBox[{\\\"{\\\", \
+RowBox[{\\\"0.08000576007581783`\\\", \\\",\\\", \
+\\\"0.8780142197396383`\\\"}], \\\"}\\\"}]\\)\[NoBreak] lies outside the \
+range of data in the interpolating function. Extrapolation will be used. \
+\\!\\(\\*ButtonBox[\\\"\[RightSkeleton]\\\", ButtonStyle->\\\"Link\\\", \
+ButtonFrame->None, \
 ButtonData:>\\\"paclet:ref/message/InterpolatingFunction/dmval\\\", \
 ButtonNote -> \\\"InterpolatingFunction::dmval\\\"]\\)\"\>"}]], "Message", \
 "MSG",
@@ -3995,9 +4195,8 @@ ButtonNote -> \\\"InterpolatingFunction::dmval\\\"]\\)\"\>"}]], "Message", \
 Cell[BoxData[
  RowBox[{
   StyleBox[
-   RowBox[{"General", "::", "stop"}], "MessageName"], 
-  RowBox[{
-  ":", " "}], "\<\"Further output of \
+   RowBox[{"General", "::", "stop"}], "MessageName"], ":", 
+  " ", "\<\"Further output of \
 \[NoBreak]\\!\\(\\*StyleBox[RowBox[{\\\"InterpolatingFunction\\\", \
 \\\"::\\\", \\\"dmval\\\"}], \\\"MessageName\\\"]\\)\[NoBreak] will be \
 suppressed during this calculation. \\!\\(\\*ButtonBox[\\\"\[RightSkeleton]\\\
@@ -4033,13 +4232,13 @@ Cell[BoxData[
 Cell[BoxData[
  RowBox[{
   StyleBox[
-   RowBox[{"InterpolatingFunction", "::", "dmval"}], "MessageName"], 
-  RowBox[{
-  ":", " "}], "\<\"Input value \[NoBreak]\\!\\(\\*RowBox[{\\\"{\\\", RowBox[{\
-\\\"0.08000576007581783`\\\", \\\",\\\", \\\"0.8780142197396383`\\\"}], \\\"}\
-\\\"}]\\)\[NoBreak] lies outside the range of data in the interpolating \
-function. Extrapolation will be used. \\!\\(\\*ButtonBox[\\\"\[RightSkeleton]\
-\\\", ButtonStyle->\\\"Link\\\", ButtonFrame->None, \
+   RowBox[{"InterpolatingFunction", "::", "dmval"}], "MessageName"], ":", 
+  " ", "\<\"Input value \[NoBreak]\\!\\(\\*RowBox[{\\\"{\\\", \
+RowBox[{\\\"0.08000576007581783`\\\", \\\",\\\", \
+\\\"0.8780142197396383`\\\"}], \\\"}\\\"}]\\)\[NoBreak] lies outside the \
+range of data in the interpolating function. Extrapolation will be used. \
+\\!\\(\\*ButtonBox[\\\"\[RightSkeleton]\\\", ButtonStyle->\\\"Link\\\", \
+ButtonFrame->None, \
 ButtonData:>\\\"paclet:ref/message/InterpolatingFunction/dmval\\\", \
 ButtonNote -> \\\"InterpolatingFunction::dmval\\\"]\\)\"\>"}]], "Message", \
 "MSG",
@@ -4049,13 +4248,13 @@ ButtonNote -> \\\"InterpolatingFunction::dmval\\\"]\\)\"\>"}]], "Message", \
 Cell[BoxData[
  RowBox[{
   StyleBox[
-   RowBox[{"InterpolatingFunction", "::", "dmval"}], "MessageName"], 
-  RowBox[{
-  ":", " "}], "\<\"Input value \[NoBreak]\\!\\(\\*RowBox[{\\\"{\\\", RowBox[{\
-\\\"0.08000576007581783`\\\", \\\",\\\", \\\"0.8780142197396383`\\\"}], \\\"}\
-\\\"}]\\)\[NoBreak] lies outside the range of data in the interpolating \
-function. Extrapolation will be used. \\!\\(\\*ButtonBox[\\\"\[RightSkeleton]\
-\\\", ButtonStyle->\\\"Link\\\", ButtonFrame->None, \
+   RowBox[{"InterpolatingFunction", "::", "dmval"}], "MessageName"], ":", 
+  " ", "\<\"Input value \[NoBreak]\\!\\(\\*RowBox[{\\\"{\\\", \
+RowBox[{\\\"0.08000576007581783`\\\", \\\",\\\", \
+\\\"0.8780142197396383`\\\"}], \\\"}\\\"}]\\)\[NoBreak] lies outside the \
+range of data in the interpolating function. Extrapolation will be used. \
+\\!\\(\\*ButtonBox[\\\"\[RightSkeleton]\\\", ButtonStyle->\\\"Link\\\", \
+ButtonFrame->None, \
 ButtonData:>\\\"paclet:ref/message/InterpolatingFunction/dmval\\\", \
 ButtonNote -> \\\"InterpolatingFunction::dmval\\\"]\\)\"\>"}]], "Message", \
 "MSG",
@@ -4065,13 +4264,13 @@ ButtonNote -> \\\"InterpolatingFunction::dmval\\\"]\\)\"\>"}]], "Message", \
 Cell[BoxData[
  RowBox[{
   StyleBox[
-   RowBox[{"InterpolatingFunction", "::", "dmval"}], "MessageName"], 
-  RowBox[{
-  ":", " "}], "\<\"Input value \[NoBreak]\\!\\(\\*RowBox[{\\\"{\\\", RowBox[{\
-\\\"0.08000576007581783`\\\", \\\",\\\", \\\"0.8780142197396383`\\\"}], \\\"}\
-\\\"}]\\)\[NoBreak] lies outside the range of data in the interpolating \
-function. Extrapolation will be used. \\!\\(\\*ButtonBox[\\\"\[RightSkeleton]\
-\\\", ButtonStyle->\\\"Link\\\", ButtonFrame->None, \
+   RowBox[{"InterpolatingFunction", "::", "dmval"}], "MessageName"], ":", 
+  " ", "\<\"Input value \[NoBreak]\\!\\(\\*RowBox[{\\\"{\\\", \
+RowBox[{\\\"0.08000576007581783`\\\", \\\",\\\", \
+\\\"0.8780142197396383`\\\"}], \\\"}\\\"}]\\)\[NoBreak] lies outside the \
+range of data in the interpolating function. Extrapolation will be used. \
+\\!\\(\\*ButtonBox[\\\"\[RightSkeleton]\\\", ButtonStyle->\\\"Link\\\", \
+ButtonFrame->None, \
 ButtonData:>\\\"paclet:ref/message/InterpolatingFunction/dmval\\\", \
 ButtonNote -> \\\"InterpolatingFunction::dmval\\\"]\\)\"\>"}]], "Message", \
 "MSG",
@@ -4081,9 +4280,8 @@ ButtonNote -> \\\"InterpolatingFunction::dmval\\\"]\\)\"\>"}]], "Message", \
 Cell[BoxData[
  RowBox[{
   StyleBox[
-   RowBox[{"General", "::", "stop"}], "MessageName"], 
-  RowBox[{
-  ":", " "}], "\<\"Further output of \
+   RowBox[{"General", "::", "stop"}], "MessageName"], ":", 
+  " ", "\<\"Further output of \
 \[NoBreak]\\!\\(\\*StyleBox[RowBox[{\\\"InterpolatingFunction\\\", \
 \\\"::\\\", \\\"dmval\\\"}], \\\"MessageName\\\"]\\)\[NoBreak] will be \
 suppressed during this calculation. \\!\\(\\*ButtonBox[\\\"\[RightSkeleton]\\\
@@ -4432,7 +4630,7 @@ Cell[BoxData[
    3.6732916307510104`*^9}]
 }, Open  ]]
 }, Open  ]]
-}, Closed]],
+}, Open  ]],
 
 Cell[CellGroupData[{
 
@@ -4483,6 +4681,10 @@ ProjectionMethodToolsJava/code\>\"", "]"}], ",", "\[IndentingNewLine]",
  RowBox[{
   RowBox[{"anX0Z0", "=", 
    RowBox[{"genX0Z0Funcs", "[", "linMod", "]"}]}], 
+  ";"}], "\[IndentingNewLine]", 
+ RowBox[{
+  RowBox[{"anx0z0", "=", 
+   RowBox[{"genx0z0Funcs", "[", "linMod", "]"}]}], 
   ";"}], "\[IndentingNewLine]", 
  RowBox[{
   RowBox[{"anXEps", "=", 
@@ -4581,7 +4783,8 @@ ProjectionMethodToolsJava/code\>\"", "]"}], ",", "\[IndentingNewLine]",
   3.6732608658594856`*^9, 3.6732608706407733`*^9}, {3.673260962360977*^9, 
   3.6732609765642047`*^9}, {3.67329013761681*^9, 3.6732901388512063`*^9}, {
   3.6732903453591533`*^9, 3.6732903463278985`*^9}, {3.6732905456966333`*^9, 
-  3.673290546634141*^9}, {3.673291031959523*^9, 3.673291039006455*^9}}],
+  3.673290546634141*^9}, {3.673291031959523*^9, 3.673291039006455*^9}, {
+  3.6733487324017344`*^9, 3.6733487551826725`*^9}}],
 
 Cell[CellGroupData[{
 
@@ -4603,7 +4806,7 @@ Cell[BoxData[
    3.6732755007209845`*^9, 3.673275623597579*^9, 3.673282402697373*^9, 
    3.6732825336338205`*^9, 3.6732835522032228`*^9, 3.67328369081285*^9, 
    3.673288312077632*^9, 3.673288456930237*^9, 3.6732915099406643`*^9, 
-   3.6732916566730814`*^9}],
+   3.6732916566730814`*^9, 3.6733487587451344`*^9, 3.6733500859006696`*^9}],
 
 Cell[BoxData["\<\"reading prepSimple.m\"\>"], "Print",
  CellChangeTimes->{
@@ -4614,7 +4817,7 @@ Cell[BoxData["\<\"reading prepSimple.m\"\>"], "Print",
    3.6732755007209845`*^9, 3.673275623597579*^9, 3.673282402697373*^9, 
    3.6732825336338205`*^9, 3.6732835522032228`*^9, 3.67328369081285*^9, 
    3.673288312077632*^9, 3.673288456930237*^9, 3.6732915099406643`*^9, 
-   3.6732916567355814`*^9}],
+   3.6732916566730814`*^9, 3.6733487587451344`*^9, 3.673350085947544*^9}],
 
 Cell[BoxData["\<\"done reading prepSimple.m\"\>"], "Print",
  CellChangeTimes->{
@@ -4625,7 +4828,7 @@ Cell[BoxData["\<\"done reading prepSimple.m\"\>"], "Print",
    3.6732755007209845`*^9, 3.673275623597579*^9, 3.673282402697373*^9, 
    3.6732825336338205`*^9, 3.6732835522032228`*^9, 3.67328369081285*^9, 
    3.673288312077632*^9, 3.673288456930237*^9, 3.6732915099406643`*^9, 
-   3.6732916567355814`*^9}],
+   3.6732916566730814`*^9, 3.6733487587451344`*^9, 3.6733500859631705`*^9}],
 
 Cell[BoxData[
  InterpretationBox[
@@ -4645,7 +4848,7 @@ Cell[BoxData[
    3.6732755007209845`*^9, 3.673275623597579*^9, 3.673282402697373*^9, 
    3.6732825336338205`*^9, 3.6732835522032228`*^9, 3.67328369081285*^9, 
    3.673288312077632*^9, 3.673288456930237*^9, 3.6732915099406643`*^9, 
-   3.673291656751207*^9}],
+   3.6732916566730814`*^9, 3.6733487587451344`*^9, 3.6733500859631705`*^9}],
 
 Cell[BoxData["\<\"using version in eclipse\"\>"], "Print",
  CellChangeTimes->{
@@ -4656,7 +4859,7 @@ Cell[BoxData["\<\"using version in eclipse\"\>"], "Print",
    3.6732755007209845`*^9, 3.673275623597579*^9, 3.673282402697373*^9, 
    3.6732825336338205`*^9, 3.6732835522032228`*^9, 3.67328369081285*^9, 
    3.673288312077632*^9, 3.673288456930237*^9, 3.6732915099406643`*^9, 
-   3.673291656829341*^9}],
+   3.6732916566730814`*^9, 3.6733487587451344`*^9, 3.6733500860100455`*^9}],
 
 Cell[BoxData[
  InterpretationBox[
@@ -4672,7 +4875,7 @@ Cell[BoxData[
    3.6732755007209845`*^9, 3.673275623597579*^9, 3.673282402697373*^9, 
    3.6732825336338205`*^9, 3.6732835522032228`*^9, 3.67328369081285*^9, 
    3.673288312077632*^9, 3.673288456930237*^9, 3.6732915099406643`*^9, 
-   3.6732916616731377`*^9}],
+   3.6732916566730814`*^9, 3.6733487587451344`*^9, 3.673350092166345*^9}],
 
 Cell[BoxData[
  InterpretationBox[
@@ -4690,7 +4893,7 @@ Cell[BoxData[
    3.6732755007209845`*^9, 3.673275623597579*^9, 3.673282402697373*^9, 
    3.6732825336338205`*^9, 3.6732835522032228`*^9, 3.67328369081285*^9, 
    3.673288312077632*^9, 3.673288456930237*^9, 3.6732915099406643`*^9, 
-   3.6732916616731377`*^9}]
+   3.6732916566730814`*^9, 3.6733487587451344`*^9, 3.673350092166345*^9}]
 }, Open  ]],
 
 Cell[BoxData[
@@ -4707,13 +4910,13 @@ Cell[BoxData[
    3.6732755132523546`*^9, 3.6732756334882956`*^9, 3.673282416504613*^9, 
    3.673282543395695*^9, 3.6732835636094923`*^9, 3.6732837031566057`*^9, 
    3.67328832448398*^9, 3.673288466445937*^9, 3.6732915223001375`*^9, 
-   3.673291668657552*^9}]
-}, Closed]]
-}, Closed]]
+   3.673291668657552*^9, 3.6733487689481506`*^9, 3.673350097947653*^9}]
+}, Open  ]]
+}, Open  ]]
 }, Open  ]]
 },
 WindowSize->{840, 888},
-WindowMargins->{{-1385, Automatic}, {Automatic, 30}},
+WindowMargins->{{-1761, Automatic}, {41, Automatic}},
 PrivateNotebookOptions->{"FileOutlineCache"->False},
 FrontEndVersion->"10.4 for Microsoft Windows (64-bit) (February 25, 2016)",
 StyleDefinitions->"Default.nb",

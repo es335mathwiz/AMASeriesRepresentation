@@ -26,6 +26,20 @@ PerfectForesight::usage="degenerate distribution implementing perfect foresight"
 
 (*usage updated*)
 
+genPathCompare::usage="genPathCompare[linMod:{theHMat_?MatrixQ,BB_?MatrixQ,phi_?MatrixQ,FF_?MatrixQ,psiEps_?MatrixQ,psiC_?MatrixQ,psiZ_?MatrixQ,psiZPreComp_?MatrixQ},
+	xzFunc_Function,XZFuncs:{_Function..},xtm1Val_?MatrixQ,epsVal_?MatrixQ]
+	
+	
+"
+
+compareFormula::usage="compareFormula[linMod:{theHMat_?MatrixQ,BB_?MatrixQ,phi_?MatrixQ,FF_?MatrixQ,psiEps_?MatrixQ,psiC_?MatrixQ,psiZ_?MatrixQ,psiZPreComp_?MatrixQ},
+	XZFuncs:{_Function..},xtm1Vars_?MatrixQ,epsVars_?MatrixQ,xtztVal_?MatrixQ]
+	
+	
+	
+	"
+
+
 
 genFRFunc::usage="genFRFunc[{numX_Integer,numEps_Integer,numZ_Integer},
 xkFunc:(_Function|_CompiledFunction),eqnsFunc:(_Function|_CompiledFunction)]
@@ -212,7 +226,7 @@ returns a pair of functions xz and XZ giving the xt values of x and z and giving
 
 
 genX0Z0Funcs::usage="genX0Z0Funcs[linMod:{theHMat_?MatrixQ,BB_?MatrixQ,phi_?MatrixQ,FF_?MatrixQ,psiEps_?MatrixQ,psiC_?MatrixQ,psiZ_?MatrixQ,psiZPreComp_?MatrixQ}]
-returns functions  expected X0(xtm1,eps) and Z0(xtm1,eps)   based on the linear reference model
+returns functions  expected X0(xtm1) and Z0(xtm1)   based on the linear reference model
 "
 genx0z0Funcs::usage="genX0Z0Funcs[linMod:{theHMat_?MatrixQ,BB_?MatrixQ,phi_?MatrixQ,FF_?MatrixQ,psiEps_?MatrixQ,psiC_?MatrixQ,psiZ_?MatrixQ,psiZPreComp_?MatrixQ}]
 returns functions x0(xtm1,eps) and z0(xtm1,eps)  based on the linear reference model

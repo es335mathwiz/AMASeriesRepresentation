@@ -34,8 +34,8 @@ pdf=NormalDistribution[0, sigVal];
 
 
     
-anX={.2,.18,1.1};
-anEps={0.01};
+anX=Transpose[{{.2,.18,1.1}}];
+anEps={{0.01}};
 anXEps=Join[anX,anEps]
 aZ={.1,.2,.3}
 anXEpsZs=Join[anXEps,aZ];

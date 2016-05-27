@@ -51,8 +51,8 @@ Get["arbGenPath.mth"]
 
 linModArb={theHMatArb,BBArb,phiArb,FFArb,psiEpsArb,psiCArb,psiZArb,psiZPreCompArb={{}}};
 exmplLen=150;
-initX={10,10,10};
-theEpsVal={5,5,5};
+initX=Transpose[{{10,10,10}}];
+theEpsVal=Transpose[{{5,5,5}}];
 somePts=Transpose[Partition[somePtsFlat=genXPath[initX,theEpsVal,exmplLen],3]];
 someZs=Join[
 		genZsFromPath[linModArb,somePtsFlat,theEpsVal],

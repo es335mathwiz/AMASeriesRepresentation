@@ -12,9 +12,8 @@ Switch[$System,
   "g:/git/ProjectionMethodTools/ProjectionMethodToolsJava/code"]]; 
 $ContextPath=DeleteCases[$ContextPath,"simpleRBCModel`"] 
 Needs["betterRBC`"]
- anXEps={1,.2,1,1.1,0.01}   
-  anX={1,.2,1,1.1}   
- 
+anXEps=Transpose[{{1,.2,1,1.1,0.01}}]
+anX=Transpose[{{1,.2,1,1.1}}] 
 thVal=(theta//.ssSolnSubsRE//.(simpParamSubs//N))//N;
 kVal = (kk /. Private`kSSSubRE//.(simpParamSubs//N))//N;
 cVal = (cc /. Private`cSSSubRE//.(simpParamSubs//N))//N ;

@@ -1,16 +1,16 @@
-genPiPath[init_?VectorQ,eps_?VectorQ,kk_Integer]:=
+genPiPath[init_?MatrixQ,eps_?MatrixQ,kk_Integer]:=
 		With[{theDigits=RealDigits[Pi,10,kk][[1]]},
 			 N[(Norm @ init)]/(1+N[Norm @ eps]) *theDigits]
-genOscilPath[init_?VectorQ,eps_?VectorQ,kk_Integer]:=
+genOscilPath[init_?MatrixQ,eps_?MatrixQ,kk_Integer]:=
 		With[{theOscil=NestList[-1*#&,1,kk-1]},
 			 N[(Norm @ init)]/(1+N[Norm @ eps])^2 *theOscil]
-genRandomPath[init_?VectorQ,eps_?VectorQ,kk_Integer]:=
+genRandomPath[init_?MatrixQ,eps_?MatrixQ,kk_Integer]:=
 		Module[{},SeedRandom[Round[200*N[(Norm @ init)]+Norm[eps]]]; 
 				  RandomReal[{-4,4},kk]]
-genXPath[init_?VectorQ,eps_?VectorQ,kk_Integer]:=
-		(Join[Transpose[{init}],(Through[
+genXPath[init_?MatrixQ,eps_?MatrixQ,kk_Integer]:=
+		Transpose[{(Join[init,(Through[
 				{genPiPath,
 				 genOscilPath,
 				 genRandomPath}[init,eps,kk+1]]//
-				 Transpose)]//Flatten)/;
+							   Transpose)]//Flatten)}]/;
 		And[Length[init]==Length[eps]==3]

@@ -80,7 +80,7 @@ thePairs:{{(_Function|CompiledFunction),(_Function|CompiledFunction)}..}}]
 makeDREvalInterp::usage="makeDREvalInterp[drFunc_Function,distribSpec:{expctSpec:{{_Symbol,_}..},regimeTransProbFunc_:{}},
 eqnsFunc:(_Function|_CompiledFunction),gSpec:{toIgnore:{_Integer...},iOrd_Integer,{{_Integer,_?NumberQ,_?NumberQ}..},numRegimes_:0}]
 
-returns a list of two functions: the second evaluates the error in the equations without interpolation, the first uses interpolation
+returns a list of two functions: the first evaluates the error in the equations without interpolation, the second uses interpolation
 "
 
 fSum::usage="fSum[linMod:{theHMat_?MatrixQ,BB_?MatrixQ,phi_?MatrixQ,FF_?MatrixQ,psiEps_?MatrixQ,psiC_?MatrixQ,psiZ_?MatrixQ,psiZPreComp_?MatrixQ},
@@ -265,7 +265,7 @@ returns List of vectors of equations errors
 evalPathErrDRREIntegrate::usage="evalPathErrDRREIntegrate[drFunc_Function,initVec_?MatrixQ,distribSpec:{expctSpec:{{_Symbol,_}..},regimeTransProbFunc_:{}},eqnsFunc:(_Function|_CompiledFunction)]
 
 uses decision rule to compute an unconditional expectations path of length 2, then applies eqnsFunc 
-returns a list containing  1 vector of equations errors
+returns a  vector of equations errors
 
 "
 
@@ -284,12 +284,12 @@ worstPathForErrDRREIntegrate::usage="worstPathForErrDRREIntegrate[drFunc_Functio
 returns the path corresponding to evalBadPathErrDRREIntegrate
 "
 
-genZsREWorst::usage="genZsREWorst[theDRFunc:(_Function|_CompiledFunction),initVec_?MatrixQ,distribSpec:{expctSpec:{{_Symbol,_}..},regimeTransProbFunc_:{}},
+genErrsREWorst::usage="genErrsREWorst[theDRFunc:(_Function|_CompiledFunction),initVec_?MatrixQ,distribSpec:{expctSpec:{{_Symbol,_}..},regimeTransProbFunc_:{}},
 	theSysFunc:(_Function|_CompiledFunction),iters_Integer]
 	
 	iterates the decision rule using iterateDRREIntegrate
 	applies worstPathForErrDRREIntegrate all along the path to return a list of
-	vectors of maximum infinity norm errors in the sysFunc equations
+	vectors corresponding to maximum infinity norm errors in the sysFunc equations
 	"
 
 genSeriesRepFunc::usage="genSeriesRepFunc[linMod:{theHMat_?MatrixQ,BB_?MatrixQ,phi_?MatrixQ,FF_?MatrixQ,psiEps_?MatrixQ,psiC_?MatrixQ,psiZ_?MatrixQ,psiZPreComp_?MatrixQ},
@@ -444,7 +444,7 @@ ReplacePart[theFunc,
 
 
 
-genZsREWorst[theDRFunc:(_Function|_CompiledFunction),initVec_?MatrixQ,distribSpec:{expctSpec:{{_Symbol,_}..},regimeTransProbFunc_:{}},
+genErrsREWorst[theDRFunc:(_Function|_CompiledFunction),initVec_?MatrixQ,distribSpec:{expctSpec:{{_Symbol,_}..},regimeTransProbFunc_:{}},
 	theSysFunc:(_Function|_CompiledFunction),iters_Integer]:=
 Module[{numEps=getNumEpsVars[distribSpec]},
 With[{numX=Length[initVec]-numEps,
@@ -452,7 +452,7 @@ With[{numX=Length[initVec]-numEps,
 With[{worstPaths=
   worstPathForErrDRREIntegrate[theDRFunc,thePath[[Range[numX]+numX*(#)]],distribSpec,theSysFunc]&/@
 				       Range[(Length[thePath]/numX)-1]},Print["done worstPaths",worstPaths,Range[(Length[thePath]/numX)-1]];
-      theSysFunc @@ Flatten[#]&/@worstPaths]
+      Transpose[{theSysFunc @@ Flatten[#]}]&/@worstPaths]
 ]]
 
 
@@ -468,7 +468,7 @@ funcName[tryEps:{_?NumberQ..}]:=
 	FindMaximum[{funcName[outerEVars],cons},maxArgs]]]]
 
 evalPathErrDRREIntegrate[drFunc_Function,initVec_?MatrixQ,distribSpec:{expctSpec:{{_Symbol,_}..},regimeTransProbFunc_:{}},eqnsFunc:(_Function|_CompiledFunction)]:=
-pathErrsDRREIntegrate[drFunc,initVec,distribSpec,eqnsFunc,2]
+pathErrsDRREIntegrate[drFunc,initVec,distribSpec,eqnsFunc,2]//First
 
 
 pathErrsDRREIntegrate[drFunc_Function,initVec_?MatrixQ,distribSpec:{expctSpec:{{_Symbol,_}..},regimeTransProbFunc_:{}},eqnsFunc:(_Function|_CompiledFunction),numPers_Integer]:=
@@ -476,27 +476,27 @@ With[{numEps=getNumEpsVars[distribSpec]},
 With[{pathNow=iterateDRREIntegrate[drFunc,initVec,distribSpec,numPers],numX=Length[initVec]-numEps},
 With[{firstArg=doFuncArg[pathNow,Identity[Reverse[initVec[[-Range[numEps]]]]],numX,0],
 	restArgs=(doFuncArg[pathNow,Table[{0},{numEps}],numX,#-2]&/@Range[3,numPers])},
-With[{first=eqnsFunc@@ Flatten[firstArg]},
-	With[{theRest=(eqnsFunc@@Flatten[#])&/@restArgs},
+With[{first=Transpose[{eqnsFunc@@ Flatten[firstArg]}]},
+	With[{theRest=Transpose[{(eqnsFunc@@Flatten[#])}]&/@restArgs},
 		Prepend[theRest,first]
 ]]]]]/;
 And[numPers>1]
  
 iterateDRPF[drFunc_Function,initVec_?MatrixQ,numEps_Integer,numPers_Integer]:=
-With[{firVal=drFunc @@ initVec,numX=Length[initVec]-numEps,theZeros=Table[0,{numEps}]},
+With[{firVal=drFunc @@ Flatten[initVec],numX=Length[initVec]-numEps,theZeros=Table[0,{numEps}]},
 With[{iterated=
 NestList[(drFunc @@ Flatten[Append[#[[Range[numX]]],theZeros]])&,firVal,numPers-1]},
-Join[Transpose[{initVec}][[Range[numX]]],Join @@ (#[[Range[numX]]]&/@iterated)]]]/;
+Join[initVec[[Range[numX]]],Join @@ (#[[Range[numX]]]&/@iterated)]]]/;
 And[numPers>0]
 
    
  
 pathErrsDRPF[drFunc_Function,initVec_?MatrixQ,numEps_Integer,eqnsFunc:(_Function|_CompiledFunction),numPers_Integer]:=
 With[{pathNow=iterateDRPF[drFunc,initVec,numEps,numPers],numX=Length[initVec]-numEps},
-With[{firstArg=doFuncArg[pathNow,Flatten[Reverse[initVec[[-Range[numEps]]]]],numX,0],
-	restArgs=(doFuncArg[pathNow,Table[0,{numEps}],numX,#-2]&/@Range[3,numPers])},
-With[{first=eqnsFunc@@firstArg},
-	With[{theRest=(eqnsFunc@@#)&/@restArgs},
+With[{firstArg=doFuncArg[pathNow,Identity[Reverse[initVec[[-Range[numEps]]]]],numX,0],
+	restArgs=(doFuncArg[pathNow,Table[{0},{numEps}],numX,#-2]&/@Range[3,numPers])},
+With[{first=Transpose[{eqnsFunc@@Flatten[firstArg]}]},
+	With[{theRest=Transpose[{(eqnsFunc@@Flatten[#])}]&/@restArgs},
 		Prepend[theRest,first]
 ]]]]/;
 And[numPers>1]
@@ -827,9 +827,9 @@ With[{xEpsArgs=Table[Unique["xeArgs"],{Length[toIgnore]+getNumVars[gSpec]}]},
 	With[{preInterp=
 	ReplacePart[
 	Function[xxxxxx,  
-  Transpose[
-     evalPathErrDRREIntegrate[drFunc, #, distribSpec,eqnsFunc]] & @xxxxxx],{1->xEpsArgs,{2,1}->xEpsArgs}]},
-     {makeInterpFunc[preInterp,gSpec],preInterp}
+  Identity[
+     evalPathErrDRREIntegrate[drFunc, Transpose[{#}], distribSpec,eqnsFunc]] & @xxxxxx],{1->xEpsArgs,{2,1}->xEpsArgs}]},
+     {preInterp,makeInterpFunc[preInterp,gSpec]}
 ]]
 (*flatten to identity*)
 doFuncArg[pathNow_?MatrixQ,epsVals_?MatrixQ,numX_Integer,oSet_Integer]:=

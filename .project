@@ -5,7 +5,6 @@
 	<projects>
 		<project>AMAModel</project>
 		<project>anisotropicSmolyak</project>
-		<project>MyMathUtilities</project>
 		<project>NumericAMA</project>
 		<project>ProtectedSymbolsProject</project>
 		<project>SymbolicAMA</project>

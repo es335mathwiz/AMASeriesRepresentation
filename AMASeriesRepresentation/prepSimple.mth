@@ -37,8 +37,15 @@ pdf=NormalDistribution[0, sigVal];
 anX=Transpose[{{.2,.18,1.1}}];
 anEps={{0.01}};
 anXEps=Join[anX,anEps]
-aZ={.1,.2,.3}
+aZ=Transpose[{{.1,.2,.3}}]
 anXEpsZs=Join[anXEps,aZ];
+
+anXFlat=anX//Flatten;
+anEpsFlat=anEps//Flatten;
+anXEpsFlat=anXEps//Flatten;
+aZFlat=aZ//Flatten;
+anXEpsZsFlat=anXEpsZs//Flatten;
+
 probDims={3,1,3};
 
 

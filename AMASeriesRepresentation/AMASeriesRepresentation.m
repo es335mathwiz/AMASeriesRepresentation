@@ -818,7 +818,11 @@ With[{fMinRes=evalBadPathErrDRREIntegrate[drFunc,noEpsVec,distribSpec,eqnsFunc]}
 
 
 
-makeDREvalInterp[drFunc_Function,distribSpec:{expctSpec:{{_Symbol,_}..},regimeTransProbFunc_:{}},eqnsFunc:(_Function|_CompiledFunction),gSpec:{toIgnore:{_Integer...},iOrd_Integer,{{_Integer,_?NumberQ,_?NumberQ}..},numRegimes_:0}]:=
+makeDREvalInterp[drFunc_Function,
+	distribSpec:{expctSpec:{{_Symbol,_}..},regimeTransProbFunc_:{}},
+	eqnsFunc:(_Function|_CompiledFunction),
+	gSpec:{toIgnore:{_Integer...},iOrd_Integer,{{_Integer,_?NumberQ,_?NumberQ}..},
+		numRegimes_:0}]:=
 With[{xEpsArgs=Table[Unique["xeArgs"],{Length[toIgnore]+getNumVars[gSpec]}]},
 	With[{preInterp=
 	ReplacePart[

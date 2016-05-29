@@ -186,7 +186,7 @@ recursively apply doIterREInterp numIters times
 doIterPF::usage="doIterPF[linMod:{theHMat_?MatrixQ,BB_?MatrixQ,phi_?MatrixQ,FF_?MatrixQ,psiEps_?MatrixQ,psiC_?MatrixQ,psiZ_?MatrixQ,psiZPreComp_?MatrixQ},XZFuncsNow:{_Function..},
 eqnsFunc:(_Function|_CompiledFunction)]
 
-given a reference linear model, (x,z,X,Z) function and an initial guess for the time t state and equation system
+given a reference linear model, (x,z,X,Z) functions  for the time t state and equation system
 extends (x,z,X,Z) an additional period using perfect foresight and recalculation of all the points along the path
 
 returns a pair of functions xz and XZ giving the xt values of x and z and giving the path of future values of X and Z
@@ -209,7 +209,7 @@ doIterRE::usage="doIterRE[linMod:{theHMat_?MatrixQ,BB_?MatrixQ,phi_?MatrixQ,FF_?
 eqnsFunc:(_Function|_CompiledFunction),distribSpec:{expctSpec:{{_Symbol,_}..},regimeTransProbFunc_:{}}]
 
 
-given a reference linear model, (x,z,X,Z) functions and an initial guess for the time t state and an equation system the function
+given a reference linear model, (x,z,X,Z) functions   and an equation system the function
 extends (x,z,X,Z) an additional period imposing rational expectations along with recalculation of all the points along the path
 
 returns a pair of functions xz and XZ giving the xt values of x and z and giving the unconditional expected path of future values of x and z
@@ -220,13 +220,14 @@ returns a pair of functions xz and XZ giving the xt values of x and z and giving
 
 doIterREInterp::usage="
 
-doIterREInterp[linMod:{theHMat_?MatrixQ,BB_?MatrixQ,phi_?MatrixQ,FF_?MatrixQ,psiEps_?MatrixQ,psiC_?MatrixQ,psiZ_?MatrixQ,psiZPreComp_?MatrixQ},XZFuncsNow:{_Function..},
+doIterREInterp[linMod:{theHMat_?MatrixQ,BB_?MatrixQ,phi_?MatrixQ,FF_?MatrixQ,psiEps_?MatrixQ,psiC_?MatrixQ,psiZ_?MatrixQ,psiZPreComp_?MatrixQ},
+XZFuncsNow:{_Function..},
 eqnsFunc:(_Function|_CompiledFunction)]
 
 
 
 
-given a reference linear model, (x,z,X,Z) function and an initial guess for the time t state and equation system
+given a reference linear model, (x,z,X,Z) function and  and equation system
 extends (x,z,X,Z) an additional period imposing rational expectations using interpolation to avoid recalculation of all the points along the path
 
 returns a pair of functions xz and XZ giving the xt values of x and z and giving the unconditional expected path of future values of x and z
@@ -395,7 +396,7 @@ iterateDRREIntegrate[drFunc:(_Function|_CompiledFunction),initVec_?MatrixQ,
 With[{numEps=getNumEpsVars[distribSpec],firVal=drFunc @@ Flatten[initVec]},
 	With[{numX=Length[initVec]-numEps,iterFunc=makeREIterFunc[drFunc,distribSpec]},
 With[{iterated=
-NestList[((*Print[#//InputForm];*)(Transpose[{Flatten[iterFunc @@ Flatten[#]]}]))&,firVal,numPers-1]},
+NestList[((Transpose[{Flatten[iterFunc @@ Flatten[#]]}]))&,firVal,numPers-1]},
 Join[initVec[[Range[numX]]],Join @@ (Identity[#[[Range[numX]]]]&/@iterated)]]]]/;
 And[numPers>0]
 
@@ -547,7 +548,9 @@ Inverse[IdentityMatrix[Length[xtm1Vars]]-FF] . phi . psiC+phi . psiEps . epsVars
 
 
 
-fSum[linMod:{theHMat_?MatrixQ,BB_?MatrixQ,phi_?MatrixQ,FF_?MatrixQ,psiEps_?MatrixQ,psiC_?MatrixQ,psiZ_?MatrixQ,psiZPreComp_?MatrixQ},{},xtGuess_?MatrixQ]:=
+fSum[linMod:{theHMat_?MatrixQ,BB_?MatrixQ,phi_?MatrixQ,FF_?MatrixQ,psiEps_?MatrixQ,psiC_?MatrixQ,psiZ_?MatrixQ,psiZPreComp_?MatrixQ},
+	{},
+	xtGuess_?MatrixQ]:=
 ConstantArray[0,{Length[psiZ],1}]
 
 fSum[linMod:{theHMat_?MatrixQ,BB_?MatrixQ,phi_?MatrixQ,FF_?MatrixQ,psiEps_?MatrixQ,psiC_?MatrixQ,psiZ_?MatrixQ,psiZPreComp_?MatrixQ},
@@ -668,10 +671,10 @@ Switch[getRegimeTransProbFuncType[distribSpec],
 	$transFuncNoShocks,Function[xxxx,Module[{},
 	Sum[(getProbFunc[distribSpec] @@
 		Append[intVarRes[[2]],ii-1])*
-	Transpose[{myNExpectation[(*Print["curious:",{getProbFunc[distribSpec] @@Append[intVarRes[[2]],ii-1],intVarRes[[2]],ii-1,#,(funcName[Append[intVarRes[[2]],ii-1],#])}];*)
+	Transpose[{myNExpectation[
 	(funcName[Append[intVarRes[[2]],ii-1],#]),intVarRes[[3]]]&/@Range[numX+numZ]}],{ii,numRegimes}]]],
 	$transFuncHasShocks,Function[xxxx,Module[{},
-	Transpose[{myNExpectation[(*Print["curious:",{getProbFunc[distribSpec] @@Append[intVarRes[[2]],ii-1],intVarRes[[2]],ii-1,#,(funcName[Append[intVarRes[[2]],ii-1],#])}];*)
+	Transpose[{myNExpectation[
 	Sum[(getProbFunc[distribSpec] @@
 		Append[intVarRes[[2]],ii-1])*(funcName[Append[intVarRes[[2]],ii-1],#]),{ii,numRegimes}],intVarRes[[3]]]&/@Range[numX+numZ]}]]]		
 	]},
@@ -813,7 +816,7 @@ genASeriesRep[linMod:{theHMat_?MatrixQ,BB_?MatrixQ,phi_?MatrixQ,FF_?MatrixQ,psiE
 	initVec_?MatrixQ,theZs:{_?MatrixQ..},len_Integer]:=
 	Module[{theZFuncs = Function @@ {{}, Join[Table[{0}, {Length[BB[[1]]]}], #]} & /@ 
    Drop[theZs[[Range[len]]], 1]},(*Print["theZFuncs",theZFuncs];*)
-   With[{maybe = genLilXkZkFunc[linMod,theZFuncs, Table[{0},{Length[BB]}]]},(*	Print["zzts",Join[initVec,theZs[[1]]]];*)
+   With[{maybe = genLilXkZkFunc[linMod,theZFuncs, Table[{notused(*functions are constants deterined by theZs*)},{Length[BB]}]]},(*	Print["zzts",Join[initVec,theZs[[1]]]];*)
    	maybe@@ Join[Flatten[initVec],Flatten[theZs[[1]]]]]]
 
 

@@ -2237,6 +2237,21 @@ Cell[CellGroupData[{
 Cell["genLilXkZkFunc", "Subsection",
  CellChangeTimes->{{3.6732843621850986`*^9, 3.673284367872644*^9}}],
 
+Cell[CellGroupData[{
+
+Cell[BoxData[
+ RowBox[{"?", "genLilXkZkFunc"}]], "Input",
+ CellChangeTimes->{{3.6735234923333464`*^9, 3.673523498817774*^9}}],
+
+Cell[BoxData[
+ StyleBox["\<\"genLilXkZkFunc[linMod:{theHMat_?MatrixQ,BB_?MatrixQ,phi_?\
+MatrixQ,FF_?MatrixQ,psiEps_?MatrixQ,psiC_?MatrixQ,psiZ_?MatrixQ,psiZPreComp_?\
+MatrixQ},\\n\\tXZFuncs:{_Function...},xtGuess_?MatrixQ]\\n\\t\\n\\t\\n\"\>", 
+  "MSG"]], "Print", "PrintUsage",
+ CellChangeTimes->{3.6735235000365458`*^9},
+ CellTags->"Info1743673509099-5789906"]
+}, Open  ]],
+
 Cell[BoxData[{
  RowBox[{
   RowBox[{"anX0Z0", "=", 
@@ -5379,7 +5394,7 @@ Cell[BoxData[
 }, Open  ]]
 },
 WindowSize->{846, 888},
-WindowMargins->{{-1030, Automatic}, {Automatic, 40}},
+WindowMargins->{{104, Automatic}, {Automatic, 46}},
 PrivateNotebookOptions->{"FileOutlineCache"->False},
 FrontEndVersion->"10.4 for Microsoft Windows (64-bit) (February 25, 2016)",
 StyleDefinitions->"Default.nb",

@@ -56,15 +56,17 @@ returns a function that solves the eqnsFunc system using the xkFuncs in the seri
 
 
 genFPFunc::usage="genFPFunc[linMod:{theHMat_?MatrixQ,BB_?MatrixQ,phi_?MatrixQ,FF_?MatrixQ,psiEps_?MatrixQ,psiC_?MatrixQ,psiZ_?MatrixQ,psiZPreComp_?MatrixQ},
-XZFuncs:{_Function..},xtGuess_?MatrixQ,eqnsFunc:(_Function|_CompiledFunction)]
+XZFuncs:{_Function..},eqnsFunc:(_Function|_CompiledFunction)]
 
 
-returns a function that guesses the correct value of xt to use in the conditional expectations function and iterates until the guess is consitent with the root finding solution
+returns a function (xtm1,eps) by  iterating  to get  the correct value of xt (zt) to use in the conditional expectations function and iterates until the guess is consitent with the root finding solution
 "
 
 genLilXkZkFunc::usage="genLilXkZkFunc[linMod:{theHMat_?MatrixQ,BB_?MatrixQ,phi_?MatrixQ,FF_?MatrixQ,psiEps_?MatrixQ,psiC_?MatrixQ,psiZ_?MatrixQ,psiZPreComp_?MatrixQ},
 	XZFuncs:{_Function...},xtGuess_?MatrixQ]
-	
+
+uses the guess to compute the F sum in AMA series expansion
+returns a function	(xtm1,eps,zvars) that returns a vector of{xtm1,xt,xtp1,eps) values
 	
 "
 	
@@ -548,7 +550,8 @@ Inverse[IdentityMatrix[Length[xtm1Vars]]-FF] . phi . psiC+phi . psiEps . epsVars
 fSum[linMod:{theHMat_?MatrixQ,BB_?MatrixQ,phi_?MatrixQ,FF_?MatrixQ,psiEps_?MatrixQ,psiC_?MatrixQ,psiZ_?MatrixQ,psiZPreComp_?MatrixQ},{},xtGuess_?MatrixQ]:=
 ConstantArray[0,{Length[psiZ],1}]
 
-fSum[linMod:{theHMat_?MatrixQ,BB_?MatrixQ,phi_?MatrixQ,FF_?MatrixQ,psiEps_?MatrixQ,psiC_?MatrixQ,psiZ_?MatrixQ,psiZPreComp_?MatrixQ},XZFuncs:{_Function..},xtGuess_?MatrixQ]:=
+fSum[linMod:{theHMat_?MatrixQ,BB_?MatrixQ,phi_?MatrixQ,FF_?MatrixQ,psiEps_?MatrixQ,psiC_?MatrixQ,psiZ_?MatrixQ,psiZPreComp_?MatrixQ},
+	XZFuncs:{_Function..},xtGuess_?MatrixQ]:=
 With[{numXVars=Length[BB],numZVars=Length[psiZ[[1]]]},
 With[{xzRes=#[[numXVars+Range[numZVars]]]&/@(Drop[FoldList[#2@@(Flatten[#1][[Range[numXVars]]])&,
 xtGuess,XZFuncs],1])},
@@ -580,14 +583,14 @@ xtVal[[Range[numXVars]]],XZFuncs]},Join[xtm1Val,Join @@xzRes]]]]
 doIterPF[linMod:{theHMat_?MatrixQ,BB_?MatrixQ,phi_?MatrixQ,FF_?MatrixQ,psiEps_?MatrixQ,psiC_?MatrixQ,psiZ_?MatrixQ,psiZPreComp_?MatrixQ},XZFuncsNow:{_Function..},
 xtGuess_?MatrixQ,eqnsFunc:(_Function|_CompiledFunction)]:=
 With[{numX=Length[BB],numEps=Length[psiEps[[1]]],numZ=Length[psiZ[[1]]]},
-With[{theFuncs=genFPFunc[linMod,XZFuncsNow,xtGuess,eqnsFunc]},
+With[{theFuncs=genFPFunc[linMod,XZFuncsNow,eqnsFunc]},
 {theFuncs,Prepend[XZFuncsNow,genXZFuncPF[{numX,numEps,numZ},theFuncs]]}]]
 
 
 doIterPFInterp[linMod:{theHMat_?MatrixQ,BB_?MatrixQ,phi_?MatrixQ,FF_?MatrixQ,psiEps_?MatrixQ,psiC_?MatrixQ,psiZ_?MatrixQ,psiZPreComp_?MatrixQ},XZFuncsNow:{(_Function|_InterpolatingFunction|_CompiledFunction)..},
 xtGuess_?MatrixQ,eqnsFunc:(_Function|_CompiledFunction),gSpec:{toIgnore:{_Integer...},iOrd_Integer,{{_Integer,_?NumberQ,_?NumberQ}..},numRegimes_:0}]:=
 With[{numX=Length[BB],numEps=Length[psiEps[[1]]],numZ=Length[psiZ[[1]]]},
-With[{theFuncs=makeInterpFunc[genFPFunc[linMod,XZFuncsNow,xtGuess,eqnsFunc],gSpec]},
+With[{theFuncs=makeInterpFunc[genFPFunc[linMod,XZFuncsNow,eqnsFunc],gSpec]},
 {theFuncs,Prepend[XZFuncsNow,genXZFuncPFInterp[{numX,numEps,numZ},theFuncs,gSpec]]}]]
 
 
@@ -595,14 +598,14 @@ With[{theFuncs=makeInterpFunc[genFPFunc[linMod,XZFuncsNow,xtGuess,eqnsFunc],gSpe
 doIterRE[linMod:{theHMat_?MatrixQ,BB_?MatrixQ,phi_?MatrixQ,FF_?MatrixQ,psiEps_?MatrixQ,psiC_?MatrixQ,psiZ_?MatrixQ,psiZPreComp_?MatrixQ},XZFuncsNow:{_Function..},
 xtGuess_?MatrixQ,eqnsFunc:(_Function|_CompiledFunction),distribSpec:{expctSpec:{{_Symbol,_}..},regimeTransProbFunc_:{}}]:=
 With[{numX=Length[BB],numEps=Length[psiEps[[1]]],numZ=Length[psiZ[[1]]]},
-With[{theFuncs=genFPFunc[linMod,XZFuncsNow,xtGuess,eqnsFunc]},
+With[{theFuncs=genFPFunc[linMod,XZFuncsNow,eqnsFunc]},
 {theFuncs,Prepend[XZFuncsNow,genXZFuncRE[{numX,numEps,numZ},theFuncs,distribSpec]]}]]
 
 
 doIterREInterp[linMod:{theHMat_?MatrixQ,BB_?MatrixQ,phi_?MatrixQ,FF_?MatrixQ,psiEps_?MatrixQ,psiC_?MatrixQ,psiZ_?MatrixQ,psiZPreComp_?MatrixQ},XZFuncsNow:{(_Function|_InterpolatingFunction|_CompiledFunction)..},
 xtGuess_?MatrixQ,eqnsFunc:(_Function|_CompiledFunction),gSpec:{toIgnore:{_Integer...},iOrd_Integer,{{_Integer,_?NumberQ,_?NumberQ}..},numRegimes_:0},distribSpec:{expctSpec:{{_Symbol,_}..},regimeTransProbFunc_:{}}]:=
 With[{numX=Length[BB],numEps=Length[psiEps[[1]]],numZ=Length[psiZ[[1]]]},
-With[{theFuncs=makeInterpFunc[genFPFunc[linMod,XZFuncsNow,xtGuess,eqnsFunc],gSpec]},
+With[{theFuncs=makeInterpFunc[genFPFunc[linMod,XZFuncsNow,eqnsFunc],gSpec]},
 {theFuncs,Prepend[XZFuncsNow,genXZFuncREInterp[{numX,numEps,numZ},theFuncs,gSpec,distribSpec]]}]]
 
 
@@ -679,7 +682,7 @@ With[{X0Z0=genX0Z0Funcs[linMod],numX=Length[BB],numEps=Length[psiEps[[1]]],numZ=
 With[{lilxz=
 genLilXkZkFunc[linMod, {X0Z0}, Join[anX,anEps]]},
 With[{fr=genFRFunc[{numX,numEps,numZ},lilxz,eqnsFunc]},
-With[{fp=genFPFunc[linMod,{X0Z0},{{}},eqnsFunc]},
+With[{fp=genFPFunc[linMod,{X0Z0},eqnsFunc]},
 {lilxz @@ Flatten[Join[anX,anEps,Table[0,{numZ}]]],
 fr @@ Flatten[Join[anX,anEps]],
 fp @@ Flatten[Join[anX,anEps]]
@@ -938,7 +941,7 @@ Transpose[{zVals}]]]],
 
 $fixedPointLimit=30;
 genFPFunc[linMod:{theHMat_?MatrixQ,BB_?MatrixQ,phi_?MatrixQ,FF_?MatrixQ,psiEps_?MatrixQ,psiC_?MatrixQ,psiZ_?MatrixQ,psiZPreComp_?MatrixQ},
-XZFuncs:{_Function..},xtGuess_?MatrixQ,eqnsFunc:(_Function|_CompiledFunction)]:=
+XZFuncs:{_Function..},eqnsFunc:(_Function|_CompiledFunction)]:=
 With[{numX=Length[BB],numEps=Length[psiEps[[1]]],numZ=Length[psiZ[[1]]]},
 With[{funcArgs=Table[Unique["theFPFuncArgs"],{numX+numEps}]},
 ReplacePart[

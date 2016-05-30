@@ -7,14 +7,8 @@ PrependTo[$Path,"../../AMASeriesRepresentation/AMASeriesRepresentation"];
 Print["reading simpleRBCModel.m"]
 BeginPackage["simpleRBCModel`",{"AMASeriesRepresentation`",(*"occBindRecur`",*)"ProtectedSymbols`","AMAModel`","SymbolicAMA`","NumericAMA`"(*,"ProjectionInterface`"*)}]
 
-simpRBCExactDR::usage="simpRBCExactDR"
-simpRBCExactCondExp::usage = "makeREIterFunc[simpRBCExactDR,theDist]simpRBCExactCondExp = makeREIterFunc[simpRBCExactDR,theDist]"
 
-
-aGSpec::usage="spec for interpolation"
-theDist::usage="theDist={{{ee,NormalDistribution[0,sigVal]}}};"
-thePFDist::usage="theDist={{{ee,PerfectForesight]}}};"
-linMod::usage="linear model matrices for approx"
+(*
 ratioThetaToC::usage="rbc model variable"
 cc::usage="rbc model variable"
 kk::usage="rbc model variable"
@@ -34,7 +28,7 @@ maxZsRE::usage="maxZsRE[theHmat_?MatrixQ,phi_?MatrixQ,FF_?MatrixQ,psiEps_?Matrix
 
 compBounds::usage="compBounds[theHmat_?MatrixQ,linMod:{BB_?MatrixQ,phi_?MatrixQ,FF_?MatrixQ,psiEps_?MatrixQ,psiC_?MatrixQ,psiZ_?MatrixQ,psiZPreComp_?MatrixQ},{{lowc_,highc_},{lowk_,highk_},{lowt_,hight_},{lowe_,highe_}},iters_Integer]"
 
-   
+   *)
 anX::usage="for test input";
 anEps::usage="for test input";
 anXEps::usage="for test input";
@@ -49,9 +43,13 @@ anXEpsZsFlat::usage="for test input";
 
 probDims::usage="for test input";
 
+simpRBCExactDR::usage="simpRBCExactDR"
 
-aGSpec={{1},1,{{4,kLow,kHigh},{3,thLow,thHigh},{3,sigLow,3*sigHigh}}};
-
+theDist::usage="theDist={{{ee,NormalDistribution[0,sigVal]}}};"
+thePFDist::usage="theDist={{{ee,PerfectForesight]}}};"
+linMod::usage="linear model matrices for approx"
+aGSpec::usage="aGSpec={{1},1,{{4,kLow,kHigh},{3,thLow,thHigh},{3,sigLow,3*sigHigh}}}";
+rbcEqnsFunctionalNext::usage="model equations function"
 Begin["Private`"]
 
 

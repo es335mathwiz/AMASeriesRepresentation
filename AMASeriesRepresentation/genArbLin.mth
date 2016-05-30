@@ -1,6 +1,6 @@
 PrependTo[$Path,"../../mathAMA/NumericAMA"];
 PrependTo[$Path,"../../mathAMA/SymbolicAMA"];
-PrependTo[$Path,"../../ProtectedSymbols"];
+(*PrependTo[$Path,"../../ProtectedSymbols"];*)
 Needs["NumericAMA`"]
 Needs["SymbolicAMA`"]
 Needs["AMASeriesRepresentation`"]

@@ -407,7 +407,7 @@ genZsREExact[linMod:{theHMat_?MatrixQ,BB_?MatrixQ,phi_?MatrixQ,FF_?MatrixQ,psiEp
 	initVec_?MatrixQ,distribSpec:{expctSpec:{{_Symbol,_}..},regimeTransProbFunc_:{}},theExactDR:(_Function|_CompiledFunction),iters_Integer]:=
 Module[{numEps=getNumEpsVars[distribSpec]},
 With[{numX=Length[initVec]-numEps,
- 	thePath=Flatten[iterateDRREIntegrate[theExactDR,initVec,distribSpec,iters+1]]},(*Print["done thePath"];*)
+ 	thePath=Flatten[iterateDRREIntegrate[theExactDR,initVec,distribSpec,iters+1]]},
  	With[{firstVal=theHMat .thePath[[Range[3*numX]]]- psiC - psiEps . Take[initVec,-numEps]},
  		With[{restVals=
       (theHMat .thePath[[Range[3*numX]+numX*#]] -psiC)&/@Range[(Length[thePath]/numX)-3]},

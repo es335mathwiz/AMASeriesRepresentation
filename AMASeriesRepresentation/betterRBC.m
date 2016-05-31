@@ -112,7 +112,7 @@ nlPartSSSubPF=(nlPart->(nlPartRHS/.xxxx_[t]->xxxx))//.{kSSSubPF,cSSSubPF,thSubsP
 ssSolnSubsPF=Flatten[{thSubsPF,kSSSubPF,cSSSubPF,nlPartSSSubPF}];
 
 
-betterExactDR = 
+simpRBCExactDRBetter = 
  Function[{cc, kk, nl, th, eps}, 
 With[{tht=(th^rho)*E^eps//.simpParamSubs//N},
 With[{kkt=(tht*alpha*delta*kk^alpha)//.simpParamSubs//N},
@@ -158,11 +158,11 @@ linModBetter={hmatSymbRE//N,bmatSymbRE // N, phimatSymbRE // N,
 
 
     
-anXBetter=Transpose[{{.2,.18,1.1}}];
+anXBetter=Transpose[{{.2,.18,1.0,1.1}}];
 anEpsBetter={{0.01}};
-anXEpsBetter=Join[anX,anEps]
-aZBetter=Transpose[{{.1,.2,.3}}]
-anXEpsZsBetter=Join[anXEps,aZ];
+anXEpsBetter=Join[anXBetter,anEpsBetter]
+aZBetter=Transpose[{{.1,.2,.3,.4}}]
+anXEpsZsBetter=Join[anXEpsBetter,aZBetter];
 
 anXFlatBetter=anXBetter//Flatten;
 anEpsFlatBetter=anEpsBetter//Flatten;
@@ -170,10 +170,21 @@ anXEpsFlatBetter=anXEpsBetter//Flatten;
 aZFlatBetter=aZBetter//Flatten;
 anXEpsZsFlatBetter=anXEpsZsBetter//Flatten;
 
-probDimsBetter={3,1,3};
+probDimsBetter={4,1,4};
 
 
-aGSpecBetter={{1},1,{{4,kLow,kHigh},{3,thLow,thHigh},{3,sigLow,3*sigHigh}}};
+thVal=(theta//.ssSolnSubsRE//.(simpParamSubs//N))//N;
+kVal = (kk //.kSSSubRE//.(simpParamSubs//N))//N;
+cVal = (cc //.cSSSubRE//.(simpParamSubs//N))//N ;
+kLow = 1/10*kVal//N;
+kHigh = 4*kVal//N;
+sigVal = sigma //. (simpParamSubs//N);
+sigLow = -3*sigVal;
+sigHigh = 3*sigVal;
+thLow = 9/10;
+thHigh = 11/10;
+Print["curious",{thVal,kVal,cVal,ssSolnSubsRE,simpParamSubs},Context/@{theta,kk,cc}];
+aGSpecBetter={{1,3},1,{{4,kLow,kHigh},{3,thLow,thHigh},{3,sigLow,3*sigHigh}}};
 
 End[] (* End Private Context *)
 

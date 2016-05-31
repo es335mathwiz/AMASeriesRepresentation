@@ -171,8 +171,8 @@ simpX0Z0=genX0Z0Funcs[linMod];
 
  
 thVal=(theta//.ssSolnSubsRE//.(simpParamSubs//N))//N;
-kVal = (kk /. Private`kSSSubRE//.(simpParamSubs//N))//N;
-cVal = (cc /. Private`cSSSubRE//.(simpParamSubs//N))//N ;
+kVal = (kk /.kSSSubRE//.(simpParamSubs//N))//N;
+cVal = (cc /.cSSSubRE//.(simpParamSubs//N))//N ;
 kLow = 1/10*kVal//N;
 kHigh = 4*kVal//N;
 sigVal = sigma //. (simpParamSubs//N);
@@ -181,7 +181,7 @@ sigHigh = 3*sigVal;
 thLow = 9/10;
 thHigh = 11/10;
 pdf=NormalDistribution[0, sigVal];
-
+Print["curious simp",{thVal,kVal,cVal,ssSolnSubsRE,simpParamSubs}];
 
     
 anX=Transpose[{{.2,.18,1.1}}];

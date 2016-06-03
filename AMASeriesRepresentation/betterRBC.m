@@ -183,7 +183,7 @@ sigLow = -3*sigVal;
 sigHigh = 3*sigVal;
 thLow = 9/10;
 thHigh = 11/10;
-Print["curious",{thVal,kVal,cVal,ssSolnSubsRE,simpParamSubs},Context/@{theta,kk,cc}];
+
 aGSpecBetter={{1,3},1,{{4,kLow,kHigh},{3,thLow,thHigh},{3,sigLow,3*sigHigh}}};
 
 End[] (* End Private Context *)

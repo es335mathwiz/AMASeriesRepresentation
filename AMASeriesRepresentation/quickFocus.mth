@@ -1,0 +1,152 @@
+Switch[$System,
+  "Mac OS X x86 (64-bit)", 
+  SetDirectory[
+   "/Users/garyanderson/git/ProjectionMethodTools/ProjectionMethodToolsJava/code"],
+  "Linux x86 (64-bit)", 
+  SetDirectory[
+   "~/git/ProjectionMethodTools/ProjectisteponMethodToolsJava/code"],
+  "Microsoft Windows (64-bit)", 
+  SetDirectory[
+   "g:/git/ProjectionMethodTools/ProjectionMethodToolsJava/code"]];
+PrependTo[$Path, 
+  "../../../AMASeriesRepresentation/AMASeriesRepresentation/"];
+PrependTo[$Path, 
+		  "../../ProtectedSymbols/"];
+Get["genArbLin.mth"]
+Needs["simpleRBCModel`"]
+Needs["betterRBC`"]
+
+
+
+(*just one period*)
+rbcExactRes=simpRBCExactDRBetter @@ anXEpsFlatBetter
+
+
+xzfunc$1$00 = genx0z0Funcs[linModBetter] ; xzfunc$1$00 @@ anXEpsFlatBetter
+XZfunc$1$00 = genX0Z0Funcs[linModBetter]; XZfunc$1$00 @@ anXFlatBetter
+
+
+{xzfunc$1$01, XZfunc$1$01} =  doIterREInterp[linModBetter, {XZfunc$1$00}, 
+   rbcEqnsFunctionalNextBetter, aGSpecBetter, theDistBetter];
+
+
+
+{xzfunc$1$02, XZfunc$1$02} =  doIterREInterp[linModBetter, {XZfunc$1$01[[1]]}, 
+   rbcEqnsFunctionalNextBetter, aGSpecBetter, theDistBetter];
+
+
+
+{xzfunc$1$03, XZfunc$1$03} =  doIterREInterp[linModBetter, {XZfunc$1$02[[1]]}, 
+   rbcEqnsFunctionalNextBetter, aGSpecBetter, theDistBetter];
+
+
+
+{xzfunc$1$04, XZfunc$1$04} =  doIterREInterp[linModBetter, {XZfunc$1$03[[1]]}, 
+   rbcEqnsFunctionalNextBetter, aGSpecBetter, theDistBetter];
+
+
+{xzfunc$1$05, XZfunc$1$05} =  doIterREInterp[linModBetter, {XZfunc$1$04[[1]]}, 
+   rbcEqnsFunctionalNextBetter, aGSpecBetter, theDistBetter];
+
+
+{xzfunc$1$06, XZfunc$1$06} =  doIterREInterp[linModBetter, {XZfunc$1$05[[1]]}, 
+   rbcEqnsFunctionalNextBetter, aGSpecBetter, theDistBetter];
+
+{xzfunc$1$07, XZfunc$1$07} =  doIterREInterp[linModBetter, {XZfunc$1$06[[1]]}, 
+   rbcEqnsFunctionalNextBetter, aGSpecBetter, theDistBetter];
+
+
+{xzfunc$1$08, XZfunc$1$08} =  doIterREInterp[linModBetter, {XZfunc$1$07[[1]]}, 
+   rbcEqnsFunctionalNextBetter, aGSpecBetter, theDistBetter];
+
+{xzfunc$1$09, XZfunc$1$09} =  doIterREInterp[linModBetter, {XZfunc$1$08[[1]]}, 
+   rbcEqnsFunctionalNextBetter, aGSpecBetter, theDistBetter];
+
+
+xzfunc$1$09 @@ anXEpsFlatBetter
+
+
+(*just two periods*)
+rbcExactRes=simpRBCExactDRBetter @@ anXEpsFlatBetter
+
+
+
+xzfunc$2$00 = genx0z0Funcs[linModBetter] ; xzfunc$2$00 @@ anXEpsFlatBetter
+XZfunc$2$00 = genX0Z0Funcs[linModBetter]; XZfunc$2$00 @@ anXFlatBetter
+
+extFunc$2$00=Function[{cc,kk,nl,tt},XZfunc$2$00 @@ Flatten[XZfunc$2$00[cc,kk,nl,tt][[Range[4]]]]]
+
+{xzfunc$2$01, XZfunc$2$01} =  doIterREInterp[linModBetter, {XZfunc$2$00,extFunc$2$00}, 
+   rbcEqnsFunctionalNextBetter, aGSpecBetter, theDistBetter];
+
+
+
+extFunc$2$01=Function[{cc,kk,nl,tt},XZfunc$2$01[[1]] @@ Flatten[XZfunc$2$01[[1]][cc,kk,nl,tt][[Range[4]]]]]
+
+{xzfunc$2$02, XZfunc$2$02} =  doIterREInterp[linModBetter, {XZfunc$2$01[[1]],extFunc$2$01}, 
+   rbcEqnsFunctionalNextBetter, aGSpecBetter, theDistBetter];
+
+
+
+
+
+extFunc$2$02=Function[{cc,kk,nl,tt},XZfunc$2$02[[1]] @@ Flatten[XZfunc$2$02[[1]][cc,kk,nl,tt][[Range[4]]]]]
+
+{xzfunc$2$03, XZfunc$2$03} =  doIterREInterp[linModBetter, {XZfunc$2$02[[1]],extFunc$2$02}, 
+   rbcEqnsFunctionalNextBetter, aGSpecBetter, theDistBetter];
+
+
+
+
+
+
+extFunc$2$03=Function[{cc,kk,nl,tt},XZfunc$2$03[[1]] @@ Flatten[XZfunc$2$03[[1]][cc,kk,nl,tt][[Range[4]]]]]
+
+{xzfunc$2$04, XZfunc$2$04} =  doIterREInterp[linModBetter, {XZfunc$2$03[[1]],extFunc$2$03}, 
+   rbcEqnsFunctionalNextBetter, aGSpecBetter, theDistBetter];
+
+twoStep[XZFunc_]:=
+		With[{extFunc=Function[{cc,kk,nl,tt},XZfunc[[1]] @@ Flatten[XZfunc[[1]][cc,kk,nl,tt][[Range[4]]]]]},
+doIterREInterp[linModBetter, {XZfunc[[1]],extFunc}, 
+			   rbcEqnsFunctionalNextBetter, aGSpecBetter, theDistBetter]]
+			 
+
+{xzfunc$2$05, XZfunc$2$05}=twoStep[XZFunc$2$04];
+
+
+theRes$2$=NestList[twoStep[#[[2]]]&,{ig,XZFunc$2$05},5];
+
+
+xzfunc$2$09 @@ anXEpsFlatBetter
+
+
+
+threeStep[XZfunc_]:=
+		With[{
+extFunc01=Function[{cc,kk,nl,tt},XZfunc[[1]] @@ Flatten[XZfunc[[1]][cc,kk,nl,tt][[Range[4]]]]],
+extFunc02=Function[{cc,kk,nl,tt},XZfunc[[1]] @@Flatten[
+		XZfunc[[1]] @@ Flatten[XZfunc[[1]][cc,kk,nl,tt][[Range[4]]]]][[Range[4]]]]},,
+doIterREInterp[linModBetter, {XZfunc[[1]],extFunc01,extFunc02}, 
+			   rbcEqnsFunctionalNextBetter, aGSpecBetter, theDistBetter]]
+			 
+
+
+XZfunc$3$00 = genX0Z0Funcs[linModBetter]; XZfunc$2$00 @@ anXFlatBetter
+
+t
+
+theRes$3$=NestList[threeStep[#[[2]]]&,{ig,{XZfunc$3$00}},5];
+
+
+
+
+multiStep[XZfunc_,numSteps_]:=
+With[{xtFunc01=Function[{cc,kk,nl,tt},
+	XZfunc[[1]] @@ Flatten[XZfunc[cc,kk,nl,tt][[Range[4]]]]]},
+Function[{cc,kk,nl,tt},
+ With[{theXVals=NestList[xtFunc01@@ Flatten[#]&,{cc,kk,nl,tt},numSteps-1]},
+	  ((XZfunc @@Flatten[#])[[4+Range[4]]] )& /@ theXVals]]]
+
+doIterREInterp[linModBetter, {XZfunc[[1]],extFunc01,extFunc02}, 
+			   rbcEqnsFunctionalNextBetter, aGSpecBetter, theDistBetter]]
+			 

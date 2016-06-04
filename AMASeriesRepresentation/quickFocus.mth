@@ -26,127 +26,117 @@ xzfunc$1$00 = genx0z0Funcs[linModBetter] ; xzfunc$1$00 @@ anXEpsFlatBetter
 XZfunc$1$00 = genX0Z0Funcs[linModBetter]; XZfunc$1$00 @@ anXFlatBetter
 
 
-{xzfunc$1$01, XZfunc$1$01} =  doIterREInterp[linModBetter, {XZfunc$1$00}, 
-   rbcEqnsFunctionalNextBetter, aGSpecBetter, theDistBetter];
 
 
 
-{xzfunc$1$02, XZfunc$1$02} =  doIterREInterp[linModBetter, {XZfunc$1$01[[1]]}, 
-   rbcEqnsFunctionalNextBetter, aGSpecBetter, theDistBetter];
+theRes01=  Timing[nestIterREInterp[linModBetter, {XZfunc$1$02,1}, 
+	   rbcEqnsFunctionalNextBetter, aGSpecBetter, theDistBetter,3]];
 
 
-
-{xzfunc$1$03, XZfunc$1$03} =  doIterREInterp[linModBetter, {XZfunc$1$02[[1]]}, 
-   rbcEqnsFunctionalNextBetter, aGSpecBetter, theDistBetter];
-
+theRes02=  Timing[nestIterREInterp[linModBetter, {XZfunc$1$02,2}, 
+	   rbcEqnsFunctionalNextBetter, aGSpecBetter, theDistBetter,3]];
 
 
-{xzfunc$1$04, XZfunc$1$04} =  doIterREInterp[linModBetter, {XZfunc$1$03[[1]]}, 
-   rbcEqnsFunctionalNextBetter, aGSpecBetter, theDistBetter];
+theRes05=  Timing[nestIterREInterp[linModBetter, {XZfunc$1$02,5}, 
+	   rbcEqnsFunctionalNextBetter, aGSpecBetter, theDistBetter,3]];
 
 
-{xzfunc$1$05, XZfunc$1$05} =  doIterREInterp[linModBetter, {XZfunc$1$04[[1]]}, 
-   rbcEqnsFunctionalNextBetter, aGSpecBetter, theDistBetter];
+theRes06=  Timing[nestIterREInterp[linModBetter, {XZfunc$1$02,6}, 
+	   rbcEqnsFunctionalNextBetter, aGSpecBetter, theDistBetter,3]];
 
 
-{xzfunc$1$06, XZfunc$1$06} =  doIterREInterp[linModBetter, {XZfunc$1$05[[1]]}, 
-   rbcEqnsFunctionalNextBetter, aGSpecBetter, theDistBetter];
-
-{xzfunc$1$07, XZfunc$1$07} =  doIterREInterp[linModBetter, {XZfunc$1$06[[1]]}, 
-   rbcEqnsFunctionalNextBetter, aGSpecBetter, theDistBetter];
+theRes12=  Timing[nestIterREInterp[linModBetter, {XZfunc$1$02,12}, 
+	   rbcEqnsFunctionalNextBetter, aGSpecBetter, theDistBetter,3]];
 
 
-{xzfunc$1$08, XZfunc$1$08} =  doIterREInterp[linModBetter, {XZfunc$1$07[[1]]}, 
-   rbcEqnsFunctionalNextBetter, aGSpecBetter, theDistBetter];
-
-{xzfunc$1$09, XZfunc$1$09} =  doIterREInterp[linModBetter, {XZfunc$1$08[[1]]}, 
-   rbcEqnsFunctionalNextBetter, aGSpecBetter, theDistBetter];
-
-
-xzfunc$1$09 @@ anXEpsFlatBetter
-
-
-(*just two periods*)
-rbcExactRes=simpRBCExactDRBetter @@ anXEpsFlatBetter
-
-
-
-xzfunc$2$00 = genx0z0Funcs[linModBetter] ; xzfunc$2$00 @@ anXEpsFlatBetter
-XZfunc$2$00 = genX0Z0Funcs[linModBetter]; XZfunc$2$00 @@ anXFlatBetter
-
-extFunc$2$00=Function[{cc,kk,nl,tt},XZfunc$2$00 @@ Flatten[XZfunc$2$00[cc,kk,nl,tt][[Range[4]]]]]
-
-{xzfunc$2$01, XZfunc$2$01} =  doIterREInterp[linModBetter, {XZfunc$2$00,extFunc$2$00}, 
-   rbcEqnsFunctionalNextBetter, aGSpecBetter, theDistBetter];
-
-
-
-extFunc$2$01=Function[{cc,kk,nl,tt},XZfunc$2$01[[1]] @@ Flatten[XZfunc$2$01[[1]][cc,kk,nl,tt][[Range[4]]]]]
-
-{xzfunc$2$02, XZfunc$2$02} =  doIterREInterp[linModBetter, {XZfunc$2$01[[1]],extFunc$2$01}, 
-   rbcEqnsFunctionalNextBetter, aGSpecBetter, theDistBetter];
+theRes13=  Timing[nestIterREInterp[linModBetter, {XZfunc$1$02,13}, 
+	   rbcEqnsFunctionalNextBetter, aGSpecBetter, theDistBetter,3]];
 
 
 
 
 
-extFunc$2$02=Function[{cc,kk,nl,tt},XZfunc$2$02[[1]] @@ Flatten[XZfunc$2$02[[1]][cc,kk,nl,tt][[Range[4]]]]]
-
-{xzfunc$2$03, XZfunc$2$03} =  doIterREInterp[linModBetter, {XZfunc$2$02[[1]],extFunc$2$02}, 
-   rbcEqnsFunctionalNextBetter, aGSpecBetter, theDistBetter];
+theRes12=  Timing[nestIterREInterp[linModBetter, {XZfunc$1$02,12}, 
+	   rbcEqnsFunctionalNextBetter, aGSpecBetter, theDistBetter,6]];
 
 
-
-
-
-
-extFunc$2$03=Function[{cc,kk,nl,tt},XZfunc$2$03[[1]] @@ Flatten[XZfunc$2$03[[1]][cc,kk,nl,tt][[Range[4]]]]]
-
-{xzfunc$2$04, XZfunc$2$04} =  doIterREInterp[linModBetter, {XZfunc$2$03[[1]],extFunc$2$03}, 
-   rbcEqnsFunctionalNextBetter, aGSpecBetter, theDistBetter];
-
-twoStep[XZFunc_]:=
-		With[{extFunc=Function[{cc,kk,nl,tt},XZfunc[[1]] @@ Flatten[XZfunc[[1]][cc,kk,nl,tt][[Range[4]]]]]},
-doIterREInterp[linModBetter, {XZfunc[[1]],extFunc}, 
-			   rbcEqnsFunctionalNextBetter, aGSpecBetter, theDistBetter]]
+theRes13=  Timing[nestIterREInterp[linModBetter, {XZfunc$1$02,13}, 
+	   rbcEqnsFunctionalNextBetter, aGSpecBetter, theDistBetter,6]];
+(*
+20 instead of 6 too 390 seconds instead of 130
+PF took  200 seconds instead of 390
+ *)
 			 
+theDistPF={{{betterRBC`Private`ee, PerfectForesight}}}
 
-{xzfunc$2$05, XZfunc$2$05}=twoStep[XZFunc$2$04];
-
-
-theRes$2$=NestList[twoStep[#[[2]]]&,{ig,XZFunc$2$05},5];
-
-
-xzfunc$2$09 @@ anXEpsFlatBetter
+theRes12PF=  Timing[nestIterREInterp[linModBetter, {XZfunc$1$02,12}, 
+	   rbcEqnsFunctionalNextBetter, aGSpecBetter, theDistPF,20]];
 
 
-
-threeStep[XZfunc_]:=
-		With[{
-extFunc01=Function[{cc,kk,nl,tt},XZfunc[[1]] @@ Flatten[XZfunc[[1]][cc,kk,nl,tt][[Range[4]]]]],
-extFunc02=Function[{cc,kk,nl,tt},XZfunc[[1]] @@Flatten[
-		XZfunc[[1]] @@ Flatten[XZfunc[[1]][cc,kk,nl,tt][[Range[4]]]]][[Range[4]]]]},,
-doIterREInterp[linModBetter, {XZfunc[[1]],extFunc01,extFunc02}, 
-			   rbcEqnsFunctionalNextBetter, aGSpecBetter, theDistBetter]]
-			 
-
-
-XZfunc$3$00 = genX0Z0Funcs[linModBetter]; XZfunc$2$00 @@ anXFlatBetter
-
-t
-
-theRes$3$=NestList[threeStep[#[[2]]]&,{ig,{XZfunc$3$00}},5];
+theRes13PF=  Timing[nestIterREInterp[linModBetter, {XZfunc$1$02,13}, 
+	   rbcEqnsFunctionalNextBetter, aGSpecBetter, theDistPF,20]];
 
 
 
+accurGrid={{1, 3}, 1, {{8, 0.018732441104784652, 0.7492976441913861}, {6, 9/10, 11/10},   {6, -0.03, 0.09}}};
 
-multiStep[XZfunc_,numSteps_]:=
-With[{xtFunc01=Function[{cc,kk,nl,tt},
-	XZfunc[[1]] @@ Flatten[XZfunc[cc,kk,nl,tt][[Range[4]]]]]},
-Function[{cc,kk,nl,tt},
- With[{theXVals=NestList[xtFunc01@@ Flatten[#]&,{cc,kk,nl,tt},numSteps-1]},
-	  ((XZfunc @@Flatten[#])[[4+Range[4]]] )& /@ theXVals]]]
 
-doIterREInterp[linModBetter, {XZfunc[[1]],extFunc01,extFunc02}, 
-			   rbcEqnsFunctionalNextBetter, aGSpecBetter, theDistBetter]]
-			 
+theRes12PFaccur=  Timing[nestIterREInterp[linModBetter, {XZfunc$1$02,12}, 
+	   rbcEqnsFunctionalNextBetter, accurGrid, theDistPF,5]];
+
+
+theRes13PFaccur=  Timing[nestIterREInterp[linModBetter, {XZfunc$1$02,13}, 
+	   rbcEqnsFunctionalNextBetter, accurGrid, theDistPF,5]];
+
+(*250 secs*)
+
+theRes12accur=  Timing[nestIterREInterp[linModBetter, {XZfunc$1$02,12}, 
+	   rbcEqnsFunctionalNextBetter, accurGrid, theDistBetter,5]];
+
+
+theRes13accur=  Timing[nestIterREInterp[linModBetter, {XZfunc$1$02,13}, 
+	   rbcEqnsFunctionalNextBetter, accurGrid, theDistBetter,5]];
+(*430 secs*)
+
+
+
+accurGrid={{1, 3}, 1, {{8, 0.018732441104784652, 0.7492976441913861}, {6, 9/10, 11/10},   {6, -0.03, 0.09}}};
+1687 secs for 21 iters
+
+
+accurGrid={{1, 3}, 2, {{8, 0.018732441104784652, 0.7492976441913861}, {6, 9/10, 11/10},   {6, -0.03, 0.09}}};
+	 
+
+
+
+
+
+
+accurGrid3={{1, 3}, 3, {{, 0.018732441104784652, 0.7492976441913861}, {12, 9/10, 11/10},   {12, -0.03, 0.09}}};
+	 
+
+rbcExactRes3=simpRBCExactDRBetter @@ anXEpsFlatBetter
+theRes12accur3=  Timing[nestIterREInterp[linModBetter, {XZfunc$1$02,12}, 
+	   rbcEqnsFunctionalNextBetter, accurGrid3, theDistBetter,20]];
+
+
+theRes13accur3=  Timing[nestIterREInterp[linModBetter, {XZfunc$1$02,13}, 
+   rbcEqnsFunctionalNextBetter, accurGrid3, theDistBetter,20]];
+
+
+secs 11504.348074
+
+
+	 
+
+rbcExactRes4=simpRBCExactDRBetter @@ anXEpsFlatBetter
+
+									 
+
+	 accurGrid4={{1, 3}, 3, {{24, 0.018732441104784652, 0.7492976441913861}, {24, 9/10, 11/10},   {24, -0.03, 0.09}}};
+
+
+theRes12accur4=  Timing[nestIterREInterp[linModBetter, {theRes13accur3[[2,-1,-1]],12}, 
+	   rbcEqnsFunctionalNextBetter, accurGrid4, theDistBetter,2]];
+
+{#[[1]]@@ anXEpsFlatBetter,#[[2]] @@ anXFlatBetter}& /@theRes13accur4[[2]]

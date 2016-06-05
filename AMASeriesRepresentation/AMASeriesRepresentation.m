@@ -41,12 +41,15 @@ compareFormula::usage="compareFormula[linMod:{theHMat_?MatrixQ,BB_?MatrixQ,phi_?
 	{XZFunc_Function,numSteps_Integer},xtm1Vars_?MatrixQ,epsVars_?MatrixQ,xtztVal_?MatrixQ]	
 	"
 
+genNSFunc::usage="genNSFunc[{numX_Integer,numEps_Integer,numZ_Integer},
+xkFunc:(_Function|_CompiledFunction),eqnsFunc:(_Function|_CompiledFunction)]
 
-
+returns a function that uses NSolve to solve the eqnsFunc system using the xkFuncs in the series approximation for the conditional expectations function
+"
 genFRFunc::usage="genFRFunc[{numX_Integer,numEps_Integer,numZ_Integer},
 xkFunc:(_Function|_CompiledFunction),eqnsFunc:(_Function|_CompiledFunction)]
 
-returns a function that solves the eqnsFunc system using the xkFuncs in the series approximation for the conditional expectations function
+returns a function that uses FindRoot to solve the eqnsFunc system using the xkFuncs in the series approximation for the conditional expectations function
 "
 
 
@@ -857,7 +860,20 @@ Transpose[{zVals}]]]],
 1->funcArgs]]]
 (* input   [function (xt,eps,zt)->(xtm1,xt,xtp1,eps), function (xtm1,xt,xtp1,eps)->me]*)
 (* output   [function  (xt,eps) ->(xt,zt)] *)
-
+ 
+genNSFunc[{numX_Integer,numEps_Integer,numZ_Integer},
+xkFunc:(_Function|_CompiledFunction),eqnsFunc:(_Function|_CompiledFunction)]:=
+With[{funcArgs=Table[Unique["theFRFuncArgs"],{numX+numEps}],
+zArgs=Table[Unique["theFRZArgs"],{numZ}]},
+With[{zArgsInit={#,0}&/@zArgs,funcName=Unique["fName"]},
+funcName[funcArgsNot:{_(*?NumberQ*)..}]:=
+Module[{theVars=Join[funcArgsNot]},(*Print["genFRFunc func",theVars,Flatten[xkFunc@@theVars]];*)
+eqnsFunc@@(Flatten[xkFunc@@theVars])];
+ReplacePart[
+Function[xxxx,With[{zVals=zArgs/.NSolve[funcName@Join[funcArgs,zArgs],zArgs,Reals]},
+Join[(xkFunc@@Join[funcArgs,zVals])[[numX+Range[numX]]],
+Transpose[{zVals}]]]],
+1->funcArgs]]]
 
 $fixedPointLimit=30;
 genFPFunc[linMod:{theHMat_?MatrixQ,BB_?MatrixQ,phi_?MatrixQ,FF_?MatrixQ,psiEps_?MatrixQ,psiC_?MatrixQ,psiZ_?MatrixQ,psiZPreComp_?MatrixQ},

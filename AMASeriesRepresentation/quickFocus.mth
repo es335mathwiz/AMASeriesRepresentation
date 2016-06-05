@@ -12,131 +12,16 @@ PrependTo[$Path,
   "../../../AMASeriesRepresentation/AMASeriesRepresentation/"];
 PrependTo[$Path, 
 		  "../../ProtectedSymbols/"];
-Get["genArbLin.mth"]
-Needs["simpleRBCModel`"]
-Needs["betterRBC`"]
+Needs["betterCnstrnRBC`"]
 
-
-
-(*just one period*)
-rbcExactRes=simpRBCExactDRBetter @@ anXEpsFlatBetter
-
-
-xzfunc$1$00 = genx0z0Funcs[linModBetter] ; xzfunc$1$00 @@ anXEpsFlatBetter
-XZfunc$1$00 = genX0Z0Funcs[linModBetter]; XZfunc$1$00 @@ anXFlatBetter
-
-
-
-
-
-theRes01=  Timing[nestIterREInterp[linModBetter, {XZfunc$1$02,1}, 
-	   rbcEqnsFunctionalNextBetter, aGSpecBetter, theDistBetter,3]];
-
-
-theRes02=  Timing[nestIterREInterp[linModBetter, {XZfunc$1$02,2}, 
-	   rbcEqnsFunctionalNextBetter, aGSpecBetter, theDistBetter,3]];
-
-
-theRes05=  Timing[nestIterREInterp[linModBetter, {XZfunc$1$02,5}, 
-	   rbcEqnsFunctionalNextBetter, aGSpecBetter, theDistBetter,3]];
-
-
-theRes06=  Timing[nestIterREInterp[linModBetter, {XZfunc$1$02,6}, 
-	   rbcEqnsFunctionalNextBetter, aGSpecBetter, theDistBetter,3]];
-
-
-theRes12=  Timing[nestIterREInterp[linModBetter, {XZfunc$1$02,12}, 
-	   rbcEqnsFunctionalNextBetter, aGSpecBetter, theDistBetter,3]];
-
-
-theRes13=  Timing[nestIterREInterp[linModBetter, {XZfunc$1$02,13}, 
-	   rbcEqnsFunctionalNextBetter, aGSpecBetter, theDistBetter,3]];
-
-
-
-
-
-theRes12=  Timing[nestIterREInterp[linModBetter, {XZfunc$1$02,12}, 
-	   rbcEqnsFunctionalNextBetter, aGSpecBetter, theDistBetter,6]];
-
-
-theRes13=  Timing[nestIterREInterp[linModBetter, {XZfunc$1$02,13}, 
-	   rbcEqnsFunctionalNextBetter, aGSpecBetter, theDistBetter,6]];
 (*
-20 instead of 6 too 390 seconds instead of 130
-PF took  200 seconds instead of 390
+anX0Z0 = genX0Z0Funcs[linModBetterCnstrn];
+lilxkzk = 
+  genLilXkZkFunc[linModBetterCnstrn, {anX0Z0, 1}, 
+   anX0Z0 @@ anXEpsFlatBetterCnstrn];
+
+nsf = genNSFunc[{6, 1, 6}, lilxkzk, rbcEqnsFunctionalNextBetterCnstrn];
+
+Trace[nsf @@ anXEpsFlatBetterCnstrn, NSolve[___], 
+ TraceForward -> True]//InputForm
  *)
-			 
-theDistPF={{{betterRBC`Private`ee, PerfectForesight}}}
-
-theRes12PF=  Timing[nestIterREInterp[linModBetter, {XZfunc$1$02,12}, 
-	   rbcEqnsFunctionalNextBetter, aGSpecBetter, theDistPF,20]];
-
-
-theRes13PF=  Timing[nestIterREInterp[linModBetter, {XZfunc$1$02,13}, 
-	   rbcEqnsFunctionalNextBetter, aGSpecBetter, theDistPF,20]];
-
-
-
-accurGrid={{1, 3}, 1, {{8, 0.018732441104784652, 0.7492976441913861}, {6, 9/10, 11/10},   {6, -0.03, 0.09}}};
-
-
-theRes12PFaccur=  Timing[nestIterREInterp[linModBetter, {XZfunc$1$02,12}, 
-	   rbcEqnsFunctionalNextBetter, accurGrid, theDistPF,5]];
-
-
-theRes13PFaccur=  Timing[nestIterREInterp[linModBetter, {XZfunc$1$02,13}, 
-	   rbcEqnsFunctionalNextBetter, accurGrid, theDistPF,5]];
-
-(*250 secs*)
-
-theRes12accur=  Timing[nestIterREInterp[linModBetter, {XZfunc$1$02,12}, 
-	   rbcEqnsFunctionalNextBetter, accurGrid, theDistBetter,5]];
-
-
-theRes13accur=  Timing[nestIterREInterp[linModBetter, {XZfunc$1$02,13}, 
-	   rbcEqnsFunctionalNextBetter, accurGrid, theDistBetter,5]];
-(*430 secs*)
-
-
-
-accurGrid={{1, 3}, 1, {{8, 0.018732441104784652, 0.7492976441913861}, {6, 9/10, 11/10},   {6, -0.03, 0.09}}};
-1687 secs for 21 iters
-
-
-accurGrid={{1, 3}, 2, {{8, 0.018732441104784652, 0.7492976441913861}, {6, 9/10, 11/10},   {6, -0.03, 0.09}}};
-	 
-
-
-
-
-
-
-accurGrid3={{1, 3}, 3, {{, 0.018732441104784652, 0.7492976441913861}, {12, 9/10, 11/10},   {12, -0.03, 0.09}}};
-	 
-
-rbcExactRes3=simpRBCExactDRBetter @@ anXEpsFlatBetter
-theRes12accur3=  Timing[nestIterREInterp[linModBetter, {XZfunc$1$02,12}, 
-	   rbcEqnsFunctionalNextBetter, accurGrid3, theDistBetter,20]];
-
-
-theRes13accur3=  Timing[nestIterREInterp[linModBetter, {XZfunc$1$02,13}, 
-   rbcEqnsFunctionalNextBetter, accurGrid3, theDistBetter,20]];
-
-
-secs 11504.348074
-
-
-	 
-
-rbcExactRes4=simpRBCExactDRBetter @@ anXEpsFlatBetter
-
-									 
-
-	 accurGrid4={{1, 3}, 3, {{24, 0.018732441104784652, 0.7492976441913861}, {24, 9/10, 11/10},   {24, -0.03, 0.09}}};
-
-
-theRes12accur4=  Timing[nestIterREInterp[linModBetter, {theRes13accur3[[2,-1,-1]],12}, 
-	   rbcEqnsFunctionalNextBetter, accurGrid4, theDistBetter,2]];
-
-{#[[1]]@@ anXEpsFlatBetter,#[[2]] @@ anXFlatBetter}& /@theRes13accur4[[2]]

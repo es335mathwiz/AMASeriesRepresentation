@@ -23,7 +23,7 @@ thePFDistBetter::usage="theDist={{{ee,PerfectForesight]}}};"
 linModBetter::usage="linear model matrices for approx"
 aGSpecBetter::usage="aGSpec={{1},1,{{4,kLow,kHigh},{3,thLow,thHigh},{3,sigLow,3*sigHigh}}}";
 rbcEqnsFunctionalNextBetter::usage="model equations function"
-Begin["`Private`"] (* Begin Private Context *) 
+Begin["Private`"] (* Begin Private Context *) 
 
 
 
@@ -110,6 +110,8 @@ kSSSubPF=Flatten[Solve[nxtK[kk,theta/.thSubsPF]==kk,kk]][[-1]];
 cSSSubPF=cc->(yNow[kk/.kSSSubPF,theta/.thSubsPF]-kk/.kSSSubPF);
 nlPartSSSubPF=(nlPart->(nlPartRHS/.xxxx_[t]->xxxx))//.{kSSSubPF,cSSSubPF,thSubsPF};
 ssSolnSubsPF=Flatten[{thSubsPF,kSSSubPF,cSSSubPF,nlPartSSSubPF}];
+
+
 
 
 simpRBCExactDRBetter = 

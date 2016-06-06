@@ -20,14 +20,16 @@ lilxkzk =
   genLilXkZkFunc[linModBetterCnstrn, {anX0Z0, 1}, 
    anX0Z0 @@ anXEpsFlatBetterCnstrn];
 
-nsf = genNSFunc[{6, 1, 6}, lilxkzk, rbcEqnsFunctionalNextBetterCnstrn];
+
+(*lower bound is 0.0182641*)
+nsf = genNSFunc[{6, 1, 6}, lilxkzk, rbcEqnsFunctionalNextBetterCnstrn,"JenkinsTraub"];
 
 
 
-Plot[(nsf @@ {0.2, 0, .187, 0, 1., aa, 0.01})[[2,1]], {aa, 0.8, 1.2}]
+Plot[(nsf @@ {0.2, 0, .187, 0, 1., aa, 0.01})[[{1,2},1]], {aa, 0.7, 1.2}]
 
 
 
-Plot[(nsf @@ {0.2, 0, kk, 0, 1., 1.0, 0.01})[[2, 1]], {kk, 0.1, .28}]
+Plot[(nsf @@ {0.2, 0, kk, 0, 1., 1.0, 0.01})[[{1,2}, 1]], {kk, 0.1, .3}]
 
 

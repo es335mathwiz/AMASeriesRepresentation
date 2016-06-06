@@ -23,3 +23,11 @@ lilxkzk =
 nsf = genNSFunc[{6, 1, 6}, lilxkzk, rbcEqnsFunctionalNextBetterCnstrn];
 
 
+
+Plot[(nsf @@ {0.2, 0, .187, 0, 1., aa, 0.01})[[2,1]], {aa, 0.8, 1.2}]
+
+
+
+Plot[(nsf @@ {0.2, 0, kk, 0, 1., 1.0, 0.01})[[2, 1]], {kk, 0.1, .28}]
+
+

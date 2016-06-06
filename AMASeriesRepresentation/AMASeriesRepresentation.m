@@ -870,7 +870,7 @@ funcName[funcArgsNot:{_(*?NumberQ*)..}]:=
 Module[{theVars=Join[funcArgsNot]},(*Print["genFRFunc func",theVars,Flatten[xkFunc@@theVars]];*)
 eqnsFunc@@(Flatten[xkFunc@@theVars])];
 ReplacePart[
-Function[xxxx,With[{zVals=zArgs/.NSolve[funcName@Join[funcArgs,zArgs],zArgs,Reals]},
+Function[xxxx,With[{zVals=zArgs/.NSolve[funcName@Join[funcArgs,zArgs],zArgs,Reals,Method->Legacy][[1]]},
 Join[(xkFunc@@Join[funcArgs,zVals])[[numX+Range[numX]]],
 Transpose[{zVals}]]]],
 1->funcArgs]]]

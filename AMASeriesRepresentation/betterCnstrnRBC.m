@@ -51,6 +51,18 @@ lambda[t]*(II[t]-gamma*IISSVal)
 }
 
 
+rbcEqnsCompSlack={
+CRRAUDrv[cc[t],1]-lambda[t]-
+(delta*(theta[t])*(nlPart[t+1]*((alpha *(kk[t]^(alpha-1)) ))))==0,
+cc[t] + kk[t]-((1-dd)*kk[t-1]+(theta[t-1])*(kk[t-1]^alpha))==0,
+nlPart[t] - (nlPartRHS=(1)* CRRAUDrv[cc[t],1])==0,
+theta[t]-E^(rho*Log[theta[t-1]] + eps[theta][t])==0,
+II[t] -(kk[t]-(1-dd)*kk[t-1])==0,
+(cc[t]>0&&(((II[t]>=gamma*IISSVal)&&lambda[t]==0)||
+((II[t]==gamma*IISSVal)&&lambda[t]>=0)))
+}
+
+
 
 
 (*parameters page 21 using state 1*)
@@ -119,7 +131,7 @@ thePFDistBetterCnstrn={{{ee,PerfectForesight}}};
 
 psiz=IdentityMatrix[6]
 
-Print["RE solutions"]
+Print["RE solutions"]==0
 hmatSymbRawRE=(((equationsToMatrix[
 rbcEqns/.simpParamSubs]//FullSimplify)/.{xxxx_[t+_.]->xxxx})//.ssSolnSubsRE)/.{eps[_]->0}//FullSimplify;
 psiepsSymbRE=-Transpose[{((D[#,eps[theta][t]]&/@ rbcEqns)/.{eps[_][_]->0,xxxx_[t+_.]->xxxx})//.ssSolnSubsRE}/.simpParamSubs]
@@ -176,7 +188,7 @@ aGSpecBetterCnstrn={{1,2,4,5},1,{{4,kLow,kHigh},{3,thLow,thHigh},{3,sigLow,3*sig
 
 
 
-rbcCompileGuts=((Thread[rbcEqns==0]/.{
+rbcCompileGuts=((rbcEqnsCompSlack/.{
 cc[t-1]->cctm1,kk[t-1]->kktm1,nlPart[t-1]->nltm1,theta[t-1]->thetatm1,
 lambda[t-1]->lamtm1,II[t-1]->IItm1,
 cc[t]->cct,kk[t]->kkt,nlPart[t]->nlt,theta[t]->thetat,

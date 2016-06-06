@@ -4,7 +4,7 @@ Switch[$System,
    "/Users/garyanderson/git/ProjectionMethodTools/ProjectionMethodToolsJava/code"],
   "Linux x86 (64-bit)", 
   SetDirectory[
-   "~/git/ProjectionMethodTools/ProjectisteponMethodToolsJava/code"],
+   "~/git/ProjectionMethodTools/ProjectionMethodToolsJava/code"],
   "Microsoft Windows (64-bit)", 
   SetDirectory[
    "g:/git/ProjectionMethodTools/ProjectionMethodToolsJava/code"]];
@@ -14,7 +14,7 @@ PrependTo[$Path,
 		  "../../ProtectedSymbols/"];
 Needs["betterCnstrnRBC`"]
 
-(*
+
 anX0Z0 = genX0Z0Funcs[linModBetterCnstrn];
 lilxkzk = 
   genLilXkZkFunc[linModBetterCnstrn, {anX0Z0, 1}, 
@@ -22,6 +22,4 @@ lilxkzk =
 
 nsf = genNSFunc[{6, 1, 6}, lilxkzk, rbcEqnsFunctionalNextBetterCnstrn];
 
-Trace[nsf @@ anXEpsFlatBetterCnstrn, NSolve[___], 
- TraceForward -> True]//InputForm
- *)
+

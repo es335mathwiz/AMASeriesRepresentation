@@ -802,6 +802,12 @@ With[{firstArg=Join[Identity[pathNow[[oSet*numX+Range[3*numX]]]],Identity[epsVal
 firstArg]
 
 
+genFVars[numVars_Integer]:=
+Module[{},
+genFVars[numVars]=
+Table[
+makeProtectedSymbol["fffSum$"<>ToString[ii]],{ii,numVars}]]/;And[numVars>=0]
+
 
 genXtm1Vars[numVars_Integer]:=
 Module[{},
@@ -838,36 +844,59 @@ makeProtectedSymbol["zzzVar$"<>ToString[ii]],{ii,numConstr}]]*)/;And[numConstr>=
 
 (*funxzfunc of xtm1vars,epsvars,zvars and a guess for xt*)
 genLilXkZkFunc[linMod:{theHMat_?MatrixQ,BB_?MatrixQ,phi_?MatrixQ,FF_?MatrixQ,psiEps_?MatrixQ,psiC_?MatrixQ,psiZ_?MatrixQ,psiZPreComp_?MatrixQ},
-	XZFuncs:({_Function,_Integer}),xtGuess_?MatrixQ]:=
+	XZFuncs:({_Function,_Integer}),xtGuess_?MatrixQ,drvPairs:{{aa_Integer,bb_Integer}...}:{}]:=
 	With[{fCon=fSum[linMod,XZFuncs,xtGuess]},
 		With[{theRes=genLilXkZkFunc[linMod,fCon]},
 theRes]]
 
 
+genFullVecSansFCon[linMod:{theHMat_?MatrixQ,BB_?MatrixQ,phi_?MatrixQ,FF_?MatrixQ,psiEps_?MatrixQ,psiC_?MatrixQ,psiZ_?MatrixQ,psiZPreComp_?MatrixQ}]:=
+With[{numXVars=Length[BB],
+numEpsVars=Length[psiEps[[1]]],numZVars=Length[psiZ[[1]]]},
+With[{xtm1Vars=genXtm1Vars[numXVars],fVars=Transpose[{genFVars[numXVars]}],
+epsVars=genEpsVars[numEpsVars],
+zVars=Reverse[Flatten[genZVars[0,numZVars]]]/.name_[t]->name},
+With[{},
+With[{xtVals=BB.Transpose[{xtm1Vars}]+
+Inverse[IdentityMatrix[Length[xtm1Vars]]-FF] . phi . psiC + phi . psiEps . Transpose[{epsVars}]+
+phi . psiZ . Transpose[{zVars}] +FF.fVars},
+With[{xtp1Vals=BB.xtVals+Inverse[IdentityMatrix[Length[xtm1Vars]]-FF] . phi . psiC+fVars},
+With[{fullVec=Join[Transpose[{xtm1Vars}],xtVals,xtp1Vals,Transpose[{epsVars}]]},
+fullVec]]]]]]
+
 genLilXkZkFunc[linMod:{theHMat_?MatrixQ,BB_?MatrixQ,phi_?MatrixQ,FF_?MatrixQ,psiEps_?MatrixQ,psiC_?MatrixQ,psiZ_?MatrixQ,psiZPreComp_?MatrixQ},
-	theZs:{_?MatrixQ..}]:=
+	theZs:{_?MatrixQ..},drvPairs:{{aa_Integer,bb_Integer}...}:{}]:=
 	With[{fCon=fSumC[phi,FF,psiZ,theZs]},
 		With[{theRes=genLilXkZkFunc[linMod,fCon]},
 theRes]]
 
 genLilXkZkFunc[linMod:{theHMat_?MatrixQ,BB_?MatrixQ,phi_?MatrixQ,FF_?MatrixQ,psiEps_?MatrixQ,psiC_?MatrixQ,psiZ_?MatrixQ,psiZPreComp_?MatrixQ},
-	fCon_?MatrixQ]:=
+	fCon_?MatrixQ,drvPairs:{{{aa_Integer,bb_Integer}...},eqnFunc:(_Function|_CompiledFunction)}:{{},{}}]:=
 With[{numXVars=Length[BB],
 numEpsVars=Length[psiEps[[1]]],numZVars=Length[psiZ[[1]]]},
 With[{xtm1Vars=genXtm1Vars[numXVars],
 epsVars=genEpsVars[numEpsVars],
 zVars=Reverse[Flatten[genZVars[0,numZVars]]]/.name_[t]->name},
 With[{},
-ReplacePart[
-Function[xxxx,
 With[{xtVals=BB.Transpose[{xtm1Vars}]+
 Inverse[IdentityMatrix[Length[xtm1Vars]]-FF] . phi . psiC + phi . psiEps . Transpose[{epsVars}]+
 phi . psiZ . Transpose[{zVars}] +FF.fCon},
-Join[Transpose[{xtm1Vars}],xtVals,
-BB.xtVals+Inverse[IdentityMatrix[Length[xtm1Vars]]-FF] . phi . psiC+fCon,
-Transpose[{epsVars}]]]],
-1->Join[xtm1Vars,epsVars,zVars]
-]]]]
+With[{xtp1Vals=BB.xtVals+Inverse[IdentityMatrix[Length[xtm1Vars]]-FF] . phi . psiC+fCon},
+With[{fullVec=Join[Transpose[{xtm1Vars}],xtVals,xtp1Vals,Transpose[{epsVars}]]},
+With[{theDrvs=doImplicit[fullVec,xtm1Vars,drvPairs]},
+ReplacePart[
+Function[xxxx,fullVec],{1->Join[xtm1Vars,epsVars,zVars]}]
+]]]]]]]
+
+doImplicitDrv[fullVec_?MatrixQ,xtm1Vars_?VectorQ,drvPairs:{{{aa_Integer,bb_Integer}...},
+	eqnFunc:(_Function|_CompiledFunction)}:{{},{}}]:="huh"
+
+	
+doEarlyPairSymb[theXt_?MatrixQ,theXVars_?VectorQ,aPair:{dyIndx_Integer,dxIndx_Integer}]:=
+With[{theXtm1=theXVars[[dxIndx]]},
+D[theXt[[dyIndx]],theXtm1]]/;And[0<=dyIndx<=numX,0<=dxIndx<=numX]
+
+doEarlyPairSymb[___]:="doPairSymbConfused"
 
 
 getXt[vecOrMat:_?MatrixQ,numX_Integer]:=vecOrMat[[Range[numX]]]

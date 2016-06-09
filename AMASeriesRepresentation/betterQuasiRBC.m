@@ -23,6 +23,7 @@ thePFDistBetterQuasi::usage="theDist={{{ee,PerfectForesight]}}};"
 linModBetterQuasi::usage="linear model matrices for approx"
 aGSpecBetterQuasi::usage="aGSpec={{1},1,{{4,kLow,kHigh},{3,thLow,thHigh},{3,sigLow,3*sigHigh}}}";
 rbcEqnsFunctionalNextBetterQuasi::usage="model equations function"
+rbcEqnsFunctionBetterQuasi::usage="rbcEqnsFunctionBetterQuasi"
 Begin["Private`"] (* Begin Private Context *) 
 
 
@@ -75,17 +76,22 @@ eps[theta][t]->epsVal
 }//.paramSubs)//N
 
 rbcEqnsFunctionalNextBetterQuasi=Compile @@ {
-{
+args={
 {cctm1,_Real},{kktm1,_Real},{kkDrvtm1,_Real},{nltm1,_Real},{thetatm1,_Real},
 {cct,_Real},{kkt,_Real},{kkDrvt,_Real},{nlt,_Real},{thetat,_Real},
 {cctp1,_Real},{kktp1,_Real},{kkDrvtp1,_Real},{nltp1,_Real},{thetatp1,_Real},
 {epsVal,_Real}
 },
-{cct^(-1) - (0.342*((1.)*(nltp1(*thetatp1/cctp1*))))/kkt^(16/25), 
+eqns={cct^(-1) - (0.342*((1.)*(nltp1(*thetatp1/cctp1*))))/kkt^(16/25), 
 cct + kkt - 1.*kktm1^(9/25)*thetat, 
 nlt - thetat/cct,
 thetat - 1.*2.718281828459045^epsVal*thetatm1^(19/20),
 kkDrvt},"RuntimeOptions"->{"RuntimeErrorHandler"->Function[$Failed],"CatchMachineOverflow"->True,"CatchMachineUnderflow"->True}}
+
+
+fArgs=First /@args;
+
+rbcEqnsFunctionBetterQuasi=Function @@{fArgs,eqns};
 
 
 Needs["CompiledFunctionTools`"]

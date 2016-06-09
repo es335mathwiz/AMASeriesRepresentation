@@ -41,7 +41,7 @@ closed form solution version  beta=1 geometric discounting
 chkcobb douglas production*)
 
 rbcEqns={
-CRRAUDrv[cc[t],1]-lambda[t]-
+CRRAUDrv[cc[t],1]+lambda[t]-
 (delta*(theta[t])*(nlPart[t+1]*((alpha *(kk[t]^(alpha-1)) )))),
 cc[t] + kk[t]-((1-dd)*kk[t-1]+(theta[t-1])*(kk[t-1]^alpha)),
 nlPart[t] - (nlPartRHS=(1)* CRRAUDrv[cc[t],1]),
@@ -52,7 +52,7 @@ lambda[t]*(II[t]-gamma*IISSVal)
 
 
 rbcEqnsCompSlack={
-CRRAUDrv[cc[t],1]-lambda[t]-
+CRRAUDrv[cc[t],1]+lambda[t]-
 (delta*(theta[t])*(nlPart[t+1]*((alpha *(kk[t]^(alpha-1)) ))))==0,
 cc[t] + kk[t]-((1-dd)*kk[t-1]+(theta[t-1])*(kk[t-1]^alpha))==0,
 nlPart[t] - (nlPartRHS=(1)* CRRAUDrv[cc[t],1])==0,
@@ -72,7 +72,7 @@ delta->95/100,
 rho->95/100,
 sigma->1/100,
 dd->1/10,
-gamma->975/1000(* from luca paper*)
+gamma->0/1000(* from luca paper*)
 } ;
 
 

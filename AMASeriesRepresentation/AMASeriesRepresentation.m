@@ -121,6 +121,16 @@ eqnsFunc:(_Function|_CompiledFunction)]
 
 
 
+genDrvXZFuncs::usage="genXZFuncRE[{numX_Integer,numEps_Integer,numZ_Integer},toIgnore:{_Integer...},
+aLilXkZkFunc_Function,distribSpec:{expctSpec:{{_Symbol,_}..},regimeTransProbFunc_:{}}]
+
+
+given problem dimensions and xz functions 
+returns  perfect foresight version functions for future unconditional expectations using interpolation to avoid recalculating all values along the path
+
+"
+
+
 genXZFuncRE::usage="genXZFuncRE[{numX_Integer,ignored_Integer,numZ_Integer},
 aLilXkZkFunc_Function,distribSpec:{expctSpec:{{_Symbol,_}..},regimeTransProbFunc_:{}}]
 
@@ -323,7 +333,7 @@ checkLinMod[linMod:{theHMat_?MatrixQ,BB_?MatrixQ,phi_?MatrixQ,FF_?MatrixQ,psiEps
 anX_?MatrixQ,anEps_?MatrixQ,numRegimes_Integer:0]:=
 With[{X0Z0=genX0Z0Funcs[linMod],numZ=Length[psiZ[[1]]]},
 With[{lilxz=genLilXkZkFunc[linMod, {X0Z0,2}, Join[anX,anEps]]},
-	{Eigenvalues[BB]//Abs,Eigenvalues[FF]//Abs,X0Z0 @@Flatten[anX],lilxz @@Join[anX,anEps,Table[{0},{numZ}]]}]]
+	{Eigenvalues[BB]//Abs,Eigenvalues[FF]//Abs,X0Z0 @@Flatten[anX],lilxz @@ Flatten[Join[anX,anEps,Table[{0},{numZ}]]]}]]
 
 
 
@@ -558,7 +568,43 @@ NestList[doIterREInterp[linMod,{#[[2]],numTerms},eqnsFunc,gSpec,distribSpec]&,{i
 
 
 
+genDrvXZFuncs[varSpec:{numX_Integer,numEps_Integer,numZ_Integer},toIgnore:{_Integer...},
+aLilXkZkFunc_Function,drvPrs:{{_Integer,_Integer}...}]:=
+Module[{funcArg=aLilXkZkFunc[[1]]},
+Function @@{funcArg,	If[FreeQ[aLilXkZkFunc,InterpolatingFunction],
+		doSymbolicDrv[varSpec,toIgnore,aLilXkZkFunc,drvPrs],
+		doInterpFuncDrv[varSpec,toIgnore,aLilXkZkFunc,drvPrs]
+]}]
+
+
+doInterpFuncDrv[varSpec:{numX_Integer,numEps_Integer,numZ_Integer},toIgnore:{_Integer...},
+aLilXkZkFunc_Function,drvPrs:{{_Integer,_Integer}...}]:=
+Module[{},
+doPairInterp[aLilXkZkFunc,#,varSpec,toIgnore]&/@drvPrs]
 	
+doPairInterp[xzFunc_Function,aPair:{dyIndx_Integer,dxIndx_Integer},varSpec:{numX_Integer,numEps_Integer,numZ_Integer},toIgnore:{_Integer...}]:=
+		With[{forDeriv=ReplacePart[Table[0,{numX-Length[toIgnore]}],dxIndx->1],theFunc=xzFunc[[2,numX+dyIndx,1]]},
+theFunc/.{ff_[xx__]->Derivative[Sequence @@forDeriv][ff]@@ {xx}}
+	]/;And[0<=dyIndx<=numX,0<=dxIndx<=numX-Length[toIgnore]]
+
+doPairInterp[___]:="doPairInterpConfused"
+
+
+
+doSymbolicDrv[varSpec:{numX_Integer,numEps_Integer,numZ_Integer},toIgnore:{_Integer...},
+aLilXkZkFunc_Function,drvPrs:{{_Integer,_Integer}...}]:=
+Module[{theXVars=Table[Unique["x"],{numX}],theEpsVars=Table[Unique["e"],{numEps}],theZVars=Table[Unique["z"],{numZ}]},
+	With[{theEval=aLilXkZkFunc @@ Join[theXVars,theEpsVars,theZVars]},doPairSymb[theEval,theXVars,#,varSpec,toIgnore]&/@drvPrs]]
+	
+doPairSymb[theEval_?MatrixQ,theXVars_?VectorQ,aPair:{dyIndx_Integer,dxIndx_Integer},varSpec:{numX_Integer,numEps_Integer,numZ_Integer},toIgnore:{_Integer...}]:=
+With[{dxIndxKeep=Complement[Range[numX],toIgnore]},
+	With[{theX=theXVars[[dxIndxKeep[[dxIndx]]]]},
+D[theEval[[numX+dyIndx,1]],theX]
+	]]/;And[0<=dyIndx<=numX,0<=dxIndx<=numX-Length[toIgnore]]
+
+doPairSymb[___]:="doPairSymbConfused"
+
+
 
 genXZFuncRE[{numX_Integer,ignored_Integer,numZ_Integer},
 aLilXkZkFunc_Function,distribSpec:{expctSpec:{{_Symbol,_}..},regimeTransProbFunc_:{}}]:=
@@ -591,11 +637,13 @@ distribSpec:{expctSpec:{{_Symbol,_}..},regimeTransProbFunc_:{}},anX_?MatrixQ,anE
 eqnsFunc:(_Function|_CompiledFunction)]:=
 With[{X0Z0=genX0Z0Funcs[linMod],numX=Length[BB],numEps=Length[psiEps[[1]]],numZ=Length[psiZ[[1]]]},
 With[{lilxz=
-genLilXkZkFunc[linMod, {X0Z0,2}, Join[anX,anEps]]},
-With[{fr=genFRFunc[{numX,numEps,numZ},lilxz,eqnsFunc]},
+genLilXkZkFunc[linMod, {X0Z0,1}, Join[anX,anEps]]},
+With[{	xzFuncNow=If[Head[eqnsFunc]===CompiledFunction,
+genFRFunc[{numX,numEps,numZ},lilxz,eqnsFunc],
+genNSFunc[{numX,numEps,numZ},lilxz,eqnsFunc]]},
 With[{fp=genFPFunc[linMod,{X0Z0,2},eqnsFunc]},
 {lilxz @@ Flatten[Join[anX,anEps,Table[0,{numZ}]]],
-fr @@ Flatten[Join[anX,anEps]],
+xzFuncNow @@ Flatten[Join[anX,anEps]],
 fp @@ Flatten[Join[anX,anEps]]
 }]]]]
 
@@ -648,7 +696,7 @@ oneDimGridPts[iPts_Integer,{xLow_?NumberQ,xHigh_?NumberQ}]:=
 If[iPts==0,{{(xLow+xHigh)2}},
 Table[ii,{ii,xLow,xHigh,N[xHigh-xLow]/iPts}]]/;iPts>=0
 
-
+fillIn[args___]:=Print["wrong args for fillIn",{args}];
 fillIn[{theRes:{_?NumberQ...},toIgnore:{_Integer...},shortVec:{_?NumberQ...}}]:=
 Module[{},
 If[toIgnore=={}==shortVec,theRes,
@@ -668,7 +716,8 @@ fillIn[{theRes:{_?NumberQ...},toIgnore:{_Integer...},shortVec:{_?NumberQ...}}]:=
 fillIn[{theRes,Sort[toIgnore],shortVec}]
 
 
-Print["makeInterpFunc not generic, tied to RBC"];
+
+
 makeInterpFunc[aVecFunc:(_Function|_CompiledFunction),gSpec:{toIgnore:{_Integer...},iOrd_Integer,{{_Integer,_?NumberQ,_?NumberQ}..},numRegimes_:0}]:=
 With[{interpData=genInterpData[aVecFunc,gSpec],numArgs=getNumVars[gSpec]},
 	With[{numFuncs=Length[interpData[[1,2]]],funcArgs=Table[Unique["fArgs"],{numArgs}]},
@@ -677,20 +726,23 @@ With[{interpData=genInterpData[aVecFunc,gSpec],numArgs=getNumVars[gSpec]},
 		interpFuncList=
 	Function[funcIdx,Interpolation[{#[[1]], #[[2, funcIdx, 1]]} & /@ 
 		interpData,InterpolationOrder -> iOrd]]/@Range[numFuncs]},
+		With[{applied=Transpose[{Through[interpFuncList@@funcArgs]}]},
 	(*	Print[	Function[xxxxxxx, Transpose[{Through[interpFuncList@@yyyyyyy]}]]//InputForm];*)
 	ReplacePart[
-	Function[xxxxxxx, Transpose[{Through[interpFuncList@@yyyyyyy]}]],
-		{1->longFuncArgs,{2, 1, 1, 1, 2}->funcArgs}]/.{xxxxxxx$->longFuncArgs}
+	Function[xxxxxxx, applied],
+		{1->longFuncArgs}]
 	]
-]]]
+]]]]
 
 
 
  
 genInterpData[aVecFunc:(_Function|P_CompiledFunction),gSpec:{toIgnore:{_Integer...},iOrd_Integer,{{_Integer,_?NumberQ,_?NumberQ}..},numRegimes_:0}]:=
 With[{thePts=gridPts[getGridPtTrips[gSpec],numRegimes]},
-With[{interpData=Map[{#,aVecFunc@@fillIn[{{},toIgnore,#}]}&,thePts]},
-interpData]]
+With[{filledPts=ParallelMap[fillIn[{{},toIgnore,#}]&,thePts]},
+With[{theVals=ParallelMap[(aVecFunc @@ #)&,filledPts]},
+With[{interpData=Transpose[{thePts,theVals}]},
+interpData]]]]
 
 
 
@@ -862,19 +914,23 @@ Transpose[{zVals}]]]],
 (* output   [function  (xt,eps) ->(xt,zt)] *)
  
 genNSFunc[{numX_Integer,numEps_Integer,numZ_Integer},
-xkFunc:(_Function|_CompiledFunction),eqnsFunc:(_Function|_CompiledFunction)]:=
+xkFunc:(_Function|_CompiledFunction),eqnsFunc:(_Function|_CompiledFunction),opts:OptionsPattern[]]:=
 With[{funcArgs=Table[Unique["theFRFuncArgs"],{numX+numEps}],
 zArgs=Table[Unique["theFRZArgs"],{numZ}]},
-With[{zArgsInit={#,0}&/@zArgs,funcName=Unique["fName"]},
 funcName[funcArgsNot:{_(*?NumberQ*)..}]:=
-Module[{theVars=Join[funcArgsNot]},(*Print["genFRFunc func",theVars,Flatten[xkFunc@@theVars]];*)
+Module[{theVars=Join[funcArgsNot]},
 eqnsFunc@@(Flatten[xkFunc@@theVars])];
 ReplacePart[
-Function[xxxx,With[{zVals=zArgs/.NSolve[funcName@Join[funcArgs,zArgs],zArgs,Reals,Method->Legacy][[1]]},
+Function[xxxx,With[{zVals=zArgs/.NSolve[funcName@Join[funcArgs,zArgs],zArgs,Reals,Sequence @@FilterRules[{opts},Options[NSolve]]][[1]]},
 Join[(xkFunc@@Join[funcArgs,zVals])[[numX+Range[numX]]],
 Transpose[{zVals}]]]],
-1->funcArgs]]]
+1->funcArgs]]
 
+myFixedPoint[firstArg_,secondArg_,thirdArg_]:=
+Module[{},
+FixedPoint[firstArg,secondArg,thirdArg]]
+	
+	
 $fixedPointLimit=30;
 genFPFunc[linMod:{theHMat_?MatrixQ,BB_?MatrixQ,phi_?MatrixQ,FF_?MatrixQ,psiEps_?MatrixQ,psiC_?MatrixQ,psiZ_?MatrixQ,psiZPreComp_?MatrixQ},
 XZFuncs:({_Function,_Integer}),eqnsFunc:(_Function|_CompiledFunction)]:=
@@ -882,9 +938,11 @@ With[{numX=Length[BB],numEps=Length[psiEps[[1]]],numZ=Length[psiZ[[1]]]},
 With[{funcArgs=Table[Unique["theFPFuncArgs"],{numX+numEps}]},
 ReplacePart[
 Function[xxxx,Sow[
-FixedPoint[With[{xzFuncNow=
-genFRFunc[{numX,numEps,numZ},genLilXkZkFunc[linMod,XZFuncs,#[[Range[numX]]]],
-eqnsFunc]},(*Print["infp:",XZFuncs[[1]]@@funcArgs];*)
+myFixedPoint[With[{
+	xzFuncNow=If[Head[eqnsFunc]===CompiledFunction,
+genFRFunc[{numX,numEps,numZ},genLilXkZkFunc[linMod,XZFuncs,#[[Range[numX]]]],eqnsFunc],
+genNSFunc[{numX,numEps,numZ},genLilXkZkFunc[linMod,XZFuncs,#[[Range[numX]]]],eqnsFunc,Method->"JenkinsTraub"]]
+},(*Print["infp:",XZFuncs[[1]]@@funcArgs];*)
 xzFuncNow @@funcArgs]&,(XZFuncs[[1]]@@funcArgs)[[Range[numX]]],$fixedPointLimit]]],
 1->funcArgs]]]
 (* input   [linMod,XZ, xguess,function (xt,eps,zt)->(xtm1,xt,xtp1,eps), function (xtm1,xt,xtp1,eps)->me]*)

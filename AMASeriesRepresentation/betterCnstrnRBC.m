@@ -58,7 +58,8 @@ cc[t] + kk[t]-((1-dd)*kk[t-1]+(theta[t-1])*(kk[t-1]^alpha))==0,
 nlPart[t] - (nlPartRHS=(1)* CRRAUDrv[cc[t],1])==0,
 theta[t]-E^(rho*Log[theta[t-1]] + eps[theta][t])==0,
 II[t] -(kk[t]-(1-dd)*kk[t-1])==0,
-(cc[t]>0&&(((II[t]>=gamma*IISSVal)&&lambda[t]==0)||
+(kk[t]>0&&theta[t]>0&&nlPart[t]>0&&cc[t]>0&&
+(((II[t]>=gamma*IISSVal)&&lambda[t]==0)||
 ((II[t]==gamma*IISSVal)&&lambda[t]>=0)))
 }
 
@@ -176,8 +177,8 @@ probDimsBetterCnstrn={6,1,6};
 thVal=(theta//.ssSolnSubsRE//.(simpParamSubs//N))//N;
 kVal = (kk //.kSSSubRE//.(simpParamSubs//N))//N;
 cVal = (cc //.cSSSubRE//.(simpParamSubs//N))//N ;
-kLow = 1/10*kVal//N;
-kHigh = 4*kVal//N;
+kLow = 0.8*kVal//N;(*to accomodate range in Luca toolkit paper*)
+kHigh = 1.2*kVal//N;
 sigVal = sigma //. (simpParamSubs//N);
 sigLow = -3*sigVal;
 sigHigh = 3*sigVal;

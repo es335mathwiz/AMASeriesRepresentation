@@ -1,33 +1,161 @@
+Get["pathSetup.mth"]
+
+
 Switch[$System,
   "Mac OS X x86 (64-bit)", 
   SetDirectory[
-   "/Users/garyanderson/git/ProjectionMethodTools/ProjectionMethodToolsJava/code"],
+   "/Users/garyanderson/git/AMASeriesRepresentation/AMASeriesRepresentation"],
   "Linux x86 (64-bit)", 
   SetDirectory[
-   "~/git/ProjectionMethodTools/ProjectionMethodToolsJava/code"],
+   "~/git/AMASeriesRepresentation/AMASeriesRepresentation"],
   "Microsoft Windows (64-bit)", 
   SetDirectory[
-   "g:/git/ProjectionMethodTools/ProjectionMethodToolsJava/code"]];
+   "g:/git/AMASeriesRepresentation/AMASeriesRepresentation"]];
 PrependTo[$Path, 
-  "../../../AMASeriesRepresentation/AMASeriesRepresentation/"];
+  "../../../"];
 PrependTo[$Path, 
 		  "../../ProtectedSymbols/"];
-Needs["betterCnstrnRBC`"]
+PrependTo[$Path, 
+		  "../../mathAMA/AMAModel/"];
+PrependTo[$Path, 
+		  "../../mathAMA/NumericAMA/"];
+PrependTo[$Path, 
+		  "../../mathAMA/SymbolicAMA/"];
+(*Needs["betterCnstrnRBC`"]*)
+Get["betterQuasiRBC`"]
+Needs["DifferentialEquations`InterpolatingFunctionAnatomy`"]
 
 
-anX0Z0 = genX0Z0Funcs[linModBetterCnstrn];
+anX0Z0 = genX0Z0Funcs[linModBetterQuasi];
+lilxkzk = genLilXkZkFunc[linModBetterQuasi, {anX0Z0, 2}, anX0Z0 @@ anXEpsFlatBetterQuasi];
+
+
+{nxtxz, nxtXZ} = 
+ doIterREInterp[linModBetterQuasi, {anX0Z0, 2},
+rbcEqnsFunctionalNextBetterQuasi,aGSpecBetterQuasi, theDistBetterQuasi];
+
+grip=Position[nxtxz,InterpolatingFunction]
+
+
+Print["nested interpolating functions inside the data for interpolations"]
+(*
+
+
+
+
+
+checkLinMod[linModBetterQuasi, anXBetterQuasi, {{0.01}}]
+checkMod[linModBetterQuasi, aGSpecBetterQuasi, theDistBetterQuasi, anXBetterQuasi, {{0.01}}, rbcEqnsFunctionalNextBetterQuasi]
+
+
+
+
+anX0Z0 = genX0Z0Funcs[linModBetterQuasi];
+aBunchREInterp = 
+  nestIterREInterp[linModBetterQuasi, {anX0Z0, 2}, 
+   rbcEqnsFunctionalNextBetterQuasi, aGSpecBetterQuasi, 
+   theDistBetterQuasi, 2];
+
+{aBunchREInterp[[-1, 1]] @@ anXEpsFlatBetterQuasi, 
+ aBunchREInterp[[-1, 2]] @@ anXEpsFlatBetterQuasi}
+
+
+
+
+
+
+alg = {{1}, 
+  1, {{1, 0.018732441104784652, 0.7492976441913861}, {1, 9/10, 11/10}, 
+     {1, -0.03, 0.09}}}
+
+tryFunc = 
+  Function[{ww, yy, zz, 
+    xx}, {{Sin[xx]*yy*E^zz}, {xx + yy/zz}, {99*zz}}];
+
+
+thePts=Private`gridPts[Private`getGridPtTrips[alg],0]
+fillFunc=
+(With[{fillPt=Private`fillIn[{{},{1},#}]},{#,tryFunc[Sequence @@ fillPt]}])&
+
+
+
+fillFunc=Function[xxx
+				  {xxx,tryFunc[Sequence @@(Private`fillIn[{{},{1},xxx}])]}]
+
+
+fillFunc=Private`fillIn[{{},{1},#}]&
+
+
+
+justOne=Map[fillFunc,thePts[[{1}]],{1}]
+
+
+
+
+Private`genInterpData[tryFunc, alg]
+
+LaunchKernels[]
+
+anX0Z0 = genX0Z0Funcs[linModBetter];
+theRes13=  Timing[nestIterREInterp[linModBetter, {anX0Z0,13}, 
+	   rbcEqnsFunctionalNextBetter, aGSpecBetter, theDistBetter,6]];
+accurGrid={{1, 3}, 1, {{8, 0.018732441104784652, 0.7492976441913861}, {6, 9/10, 11/10},   {6, -0.03, 0.09}}};
+
+
+Get["betterCnstrnRBC.m"]
+
+
+ *)
+
+(*
 lilxkzk = 
   genLilXkZkFunc[linModBetterCnstrn, {anX0Z0, 1}, 
    anX0Z0 @@ anXEpsFlatBetterCnstrn];
 
-nsf = genNSFunc[{6, 1, 6}, lilxkzk, rbcEqnsFunctionalNextBetterCnstrn];
+
+(*lower bound is 0.0182641*)
+nsf = genNSFunc[{6, 1, 6}, lilxkzk, rbcEqnsFunctionalNextBetterCnstrn,Method->"JenkinsTraub"];
+
+anX0Z0 = genX0Z0Funcs[linModBetterCnstrn];
+lilxkzk = 
+  genLilXkZkFunc[linModBetterCnstrn, {anX0Z0, 3}, 
+   anX0Z0 @@ anXEpsFlatBetterCnstrn];
+anX0Z0 = genX0Z0Funcs[linModBetterCnstrn];
+{nxtxz, nxtXZ} = 
+  doIterREInterp[linModBetterCnstrn, {anX0Z0, 2}, 
+   rbcEqnsFunctionalNextBetterCnstrn, aGSpecBetterCnstrn, 
+   theDistBetterCnstrn];
+thisOne = 
+  genXZFuncREInterp[{6, 1, 6}, nxtxz, aGSpecBetterCnstrn, 
+   theDistBetterCnstrn];
+
+fpf = genFPFunc[linModBetterCnstrn, {thisOne, 2}, 
+   rbcEqnsFunctionalNextBetterCnstrn];
+fpf @@ anXEpsFlatBetterCnstrn
 
 
 
-Plot[(nsf @@ {0.2, 0, .187, 0, 1., aa, 0.01})[[2,1]], {aa, 0.8, 1.2}]
+(*
+anX0Z0 = genX0Z0Funcs[linModBetterCnstrn];
+lilxkzk = 
+  genLilXkZkFunc[linModBetterCnstrn, {anX0Z0, 3}, 
+   anX0Z0 @@ anXEpsFlatBetterCnstrn];
+anX0Z0 = genX0Z0Funcs[linModBetterCnstrn];
+{nxtxz, nxtXZ} = 
+  doIterREInterp[linModBetterCnstrn, {anX0Z0, 2}, 
+   rbcEqnsFunctionalNextBetterCnstrn, aGSpecBetterCnstrn, 
+   theDistBetterCnstrn];
+
+(*
+
+Plot[(nsf @@ {0.2, 0, .187, 0, 1., aa, 0.01})[[{1,2},1]], {aa, 0.7, 1.2}]
 
 
 
-Plot[(nsf @@ {0.2, 0, kk, 0, 1., 1.0, 0.01})[[2, 1]], {kk, 0.1, .28}]
+Plot[(nsf @@ {0.2, 0, kk, 0, 1., 1.0, 0.01})[[{1,2}, 1]], {kk, 0.1, .3}]
 
 
+ *)
+
+ *)
+ *)

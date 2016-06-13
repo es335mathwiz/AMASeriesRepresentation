@@ -19,6 +19,7 @@ PrependTo[$Path,
 		  "../../mathAMA/AMAModel/"];
 PrependTo[$Path, 
 		  "../../mathAMA/NumericAMA/"];
+
 PrependTo[$Path, 
 		  "../../mathAMA/SymbolicAMA/"];
 (*Needs["betterCnstrnRBC`"]*)
@@ -27,19 +28,10 @@ Needs["DifferentialEquations`InterpolatingFunctionAnatomy`"]
 
 
 
-forDeriv=rbcEqnsFunctionBetterQuasi @@ Flatten [Private`genFullVecSansFCon[linModBetterQuasi]]
-
-zdrvs=Transpose[D[forDeriv,#]&/@{zzz$0$1, zzz$0$2, zzz$0$3, zzz$0$4, zzz$0$5}];
-xdrvs=Transpose[D[forDeriv,#]&/@{xxxtm1Var$2, xxxtm1Var$5}]
-
-dzdx=-Inverse[zdrvs] . xdrvs//Expand
-							  Print["needs impact full path"]
-
-
-
-(*
 anX0Z0 = genX0Z0Funcs[linModBetterQuasi];
 lilxkzk = genLilXkZkFunc[linModBetterQuasi, {anX0Z0, 2}, anX0Z0 @@ anXEpsFlatBetterQuasi];
+
+(*
 shap=genDrvXZFuncs[{5,1,5},{1,3,4},lilxkzk,{{1,2},{2,2},{3,2},{4,2},{5,2}}]
 
 

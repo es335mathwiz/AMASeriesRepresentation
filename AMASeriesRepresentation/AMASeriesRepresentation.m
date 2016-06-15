@@ -530,9 +530,9 @@ Function[xxxxx,
 With[{theFunc=
 	ReplacePart[
 	Function[xxxxx,
- With[{theXVals=NestList[xtFunc01@@ Flatten[#]&,xxxxx,numSteps-1]},Print["multiStep:theXVals=",{theXVals,((XZfunc @@Flatten[#])[[valRange]] )& /@ theXVals}];
+ With[{theXVals=NestList[xtFunc01@@ Flatten[#]&,xxxxx,numSteps-1]},(*Print["multiStep:theXVals=",{theXVals,((XZfunc @@Flatten[#])[[valRange]] )& /@ theXVals}];*)
 	  ((XZfunc @@Flatten[#])[[valRange]] )& /@ theXVals]],1->funcArgs]},
-With[{xxxxxPos=Position[theFunc,xxxxx$]},Print["xxxxxpos=",xxxxxPos];
+With[{xxxxxPos={{2,1,1,2,1,1,1,2,1,1,2},{2,1,1,2,2}}(*Position[theFunc,xxxxx$]*)},
 ReplacePart[
 theFunc,
 	  {xxxxxPos->funcArgs}]]]]]/;numSteps>0

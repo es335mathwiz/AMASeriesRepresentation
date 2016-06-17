@@ -121,9 +121,10 @@ eqnsFunc:(_Function|_CompiledFunction)]
 
 
 
-genDrvXZFuncs::usage="genXZFuncRE[{numX_Integer,numEps_Integer,numZ_Integer},toIgnore:{_Integer...},
-aLilXkZkFunc_Function,distribSpec:{expctSpec:{{_Symbol,_}..},regimeTransProbFunc_:{}}]
-
+genDrvLilXkZkFunc::usage="
+genDrvLilXkZkFunc[linMod:{theHMat_?MatrixQ,BB_?MatrixQ,phi_?MatrixQ,FF_?MatrixQ,psiEps_?MatrixQ,psiC_?MatrixQ,psiZ_?MatrixQ,psiZPreComp_?MatrixQ},
+	XZFuncs:({_Function,_Integer}),drvXZFuncs:({_Function,_Integer}),xtGuess_?MatrixQ,
+	drvPairs:{{{aa_Integer,bb_Integer}...},eqnFunc:(_Function|_CompiledFunction)}:{{},{}}]
 
 given problem dimensions and xz functions 
 returns  perfect foresight version functions for future unconditional expectations using interpolation to avoid recalculating all values along the path
@@ -928,7 +929,8 @@ Function[xxxx,fullVec],{1->Flatten[Join[xtm1Vars,epsVars,zVars]]}]
 
 (*funxzfunc of xtm1vars,epsvars,zvars and a guess for xt*)
 genDrvLilXkZkFunc[linMod:{theHMat_?MatrixQ,BB_?MatrixQ,phi_?MatrixQ,FF_?MatrixQ,psiEps_?MatrixQ,psiC_?MatrixQ,psiZ_?MatrixQ,psiZPreComp_?MatrixQ},
-	XZFuncs:({_Function,_Integer}),drvXZFuncs:({_Function,_Integer}),xtGuess_?MatrixQ,drvPairs:{{{aa_Integer,bb_Integer}...},eqnFunc:(_Function|_CompiledFunction)}:{{},{}}]:=
+	XZFuncs:({_Function,_Integer}),drvXZFuncs:({_Function,_Integer}),xtGuess_?MatrixQ,
+	drvPairs:{{{aa_Integer,bb_Integer}...},eqnFunc:(_Function|_CompiledFunction)}:{{},{}}]:=
 	With[{fCon=fSum[linMod,XZFuncs,xtGuess],drvFCon=drvFSum[linMod,XZFuncs,drvXZFuncs,xtGuess]},
 		With[{theRes=genDrvLilXkZkFunc[linMod,fCon,drvFCon,drvPairs]},
 theRes]]

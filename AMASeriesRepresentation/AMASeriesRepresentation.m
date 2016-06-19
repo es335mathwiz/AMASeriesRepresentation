@@ -929,16 +929,16 @@ Function[xxxx,fullVec],{1->Flatten[Join[xtm1Vars,epsVars,zVars]]}]
 
 
 (*funxzfunc of xtm1vars,epsvars,zvars and a guess for xt*)
-genLilXkZkRegimeFunc[linMod:{theHMat_?MatrixQ,BB_?MatrixQ,phi_?MatrixQ,FF_?MatrixQ,psiEps_?MatrixQ,psiC_?MatrixQ,psiZ_?MatrixQ,psiZPreComp_?MatrixQ},
+genLilXkZkRegimeFuncs[linMod:{theHMat_?MatrixQ,BB_?MatrixQ,phi_?MatrixQ,FF_?MatrixQ,psiEps_?MatrixQ,psiC_?MatrixQ,psiZ_?MatrixQ,psiZPreComp_?MatrixQ},
 	XZFuncs:{({_Function,_Integer})..},xtGuess_?MatrixQ,drvPairs:{{{aa_Integer,bb_Integer}...},eqnFunc:(_Function|_CompiledFunction)}:{{},{}}]:=
 	With[{fCons=fSum[linMod,#,xtGuess]&/@XZFuncs},
-		With[{theRes=genLilXkZkRegimeFunc[linMod,fCons,drvPairs]},
+		With[{theRes=genLilXkZkRegimeFuncs[linMod,fCons,drvPairs]},
 theRes]]
 
 reOrderForFunc[{rtm1Var:(_?MatrixQ|{}),rtVar:(_?MatrixQ|{}),rtp1Var:(_?MatrixQ|{}),xtm1Vars_?MatrixQ,epsVars_?MatrixQ,zVars_?MatrixQ}]:=
 {rtm1Var,xtm1Vars,epsVars,zVars}
 
-genLilXkZkRegimeFunc[linMod:{theHMat_?MatrixQ,BB_?MatrixQ,phi_?MatrixQ,FF_?MatrixQ,psiEps_?MatrixQ,psiC_?MatrixQ,psiZ_?MatrixQ,psiZPreComp_?MatrixQ},
+genLilXkZkRegimeFuncs[linMod:{theHMat_?MatrixQ,BB_?MatrixQ,phi_?MatrixQ,FF_?MatrixQ,psiEps_?MatrixQ,psiC_?MatrixQ,psiZ_?MatrixQ,psiZPreComp_?MatrixQ},
 	fCons:{_?MatrixQ..},drvPairs:{({}|{{aa_Integer,bb_Integer}...}),eqnFunc:({}|_Function|_CompiledFunction)}:{{},{}}]:=
 With[{numRegimes=Length[fCons]},
 With[{allFVVars=genFullVecVars[linMod,numRegimes]},
@@ -1094,7 +1094,7 @@ With[{funcArgs=Table[Unique["theFPFuncArgs"],{numX+numEps}]},
 ReplacePart[
 Function[xxxx,Sow[
 myFixedPoint[With[{
-	xzFuncNow=If[Head[eqnsFunc]===CompiledFunction,
+	xzFuncNow=If[Or[Head[eqnsFunc]===CompiledFunction,Head[eqnsFunc]===Function],
 genFRFunc[{numX,numEps,numZ},genLilXkZkFunc[linMod,XZFuncs,#[[Range[numX]]]],eqnsFunc],
 genNSFunc[{numX,numEps,numZ},genLilXkZkFunc[linMod,XZFuncs,#[[Range[numX]]]],eqnsFunc,Method->"JenkinsTraub"]]
 },(*Print["infp:",XZFuncs[[1]]@@funcArgs];*)
@@ -1116,7 +1116,7 @@ theRFuncs]]]
 (* output   [function  (xt,eps) ->(xt,zt)] *)
  
 genAnFRRegimeFunc[funcArgs_?VectorQ,zArgs_?VectorQ,zArgsInit:{{_Symbol,_?NumberQ}..},xkFunc:(_Function|_CompiledFunction),eqnsFunc:(_Function|_CompiledFunction),numX_Integer]:=
-With[{funcName=Unique["fName"]},Print["funcName=",funcName];
+With[{funcName=Unique["fName"]},(*Print["funcName=",funcName];*)
 funcName[funcArgsNot:{_?NumberQ..}]:=
 Module[{theVars=Join[funcArgsNot]},(*Print["genFRRegimeFunc func",funcName,theVars,Flatten[xkFunc@@theVars]];*)
 eqnsFunc@@(Flatten[xkFunc@@theVars])];
@@ -1126,7 +1126,7 @@ Join[(xkFunc@@Join[funcArgs,zVals])[[numX+1+Range[numX]]],
 Transpose[{zVals}]]]],
 1->funcArgs]]
  
-genNSRegimeFunc[{numX_Integer,numEps_Integer,numZ_Integer},
+genNSRegimeFuncs[{numX_Integer,numEps_Integer,numZ_Integer},
 xkFunc:(_Function|_CompiledFunction),eqnsFunc:(_Function|_CompiledFunction),opts:OptionsPattern[]]:=
 With[{funcArgs=Table[Unique["theFRFuncArgs"],{numX+numEps}],
 zArgs=Table[Unique["theFRZArgs"],{numZ}]},
@@ -1140,8 +1140,12 @@ Transpose[{zVals}]]]],
 1->funcArgs]]
 
 
+(* input   [linMod,XZ, xguess,function (xt,eps,zt)->(xtm1,xt,xtp1,eps), function (xtm1,xt,xtp1,eps)->me]*)
+(* output   [function  (xt,eps) ->(xt,zt)] *)
+
+	
 $fixedPointLimit=30;
-genFPRegimeFunc[linMod:{theHMat_?MatrixQ,BB_?MatrixQ,phi_?MatrixQ,FF_?MatrixQ,psiEps_?MatrixQ,psiC_?MatrixQ,psiZ_?MatrixQ,psiZPreComp_?MatrixQ},
+genFPRegimeFuncs[linMod:{theHMat_?MatrixQ,BB_?MatrixQ,phi_?MatrixQ,FF_?MatrixQ,psiEps_?MatrixQ,psiC_?MatrixQ,psiZ_?MatrixQ,psiZPreComp_?MatrixQ},
 XZFuncs:({_Function,_Integer}),eqnsFunc:(_Function|_CompiledFunction)]:=
 With[{numX=Length[BB],numEps=Length[psiEps[[1]]],numZ=Length[psiZ[[1]]]},
 With[{funcArgs=Table[Unique["theFPFuncArgs"],{numX+numEps}]},
@@ -1149,17 +1153,40 @@ ReplacePart[
 Function[xxxx,Sow[
 myFixedPoint[With[{
 	xzFuncNow=If[Head[eqnsFunc]===CompiledFunction,
-genFRRegimeFunc[{numX,numEps,numZ},genLilXkZkRegimeFunc[linMod,XZFuncs,#[[Range[numX+1]]]],eqnsFunc],
-genNSRegimeFunc[{numX,numEps,numZ},genLilXkZkRegimeFunc[linMod,XZFuncs,#[[Range[numX+1]]]],eqnsFunc,Method->"JenkinsTraub"]]
+genFRFunc[{numX,numEps,numZ},genLilXkZkFunc[linMod,XZFuncs,#[[Range[numX]]]],eqnsFunc],
+genNSFunc[{numX,numEps,numZ},genLilXkZkFunc[linMod,XZFuncs,#[[Range[numX]]]],eqnsFunc,Method->"JenkinsTraub"]]
 },(*Print["infp:",XZFuncs[[1]]@@funcArgs];*)
 xzFuncNow @@funcArgs]&,(XZFuncs[[1]]@@funcArgs)[[Range[numX]]],$fixedPointLimit]]],
 1->funcArgs]]]
 (* input   [linMod,XZ, xguess,function (xt,eps,zt)->(xtm1,xt,xtp1,eps), function (xtm1,xt,xtp1,eps)->me]*)
 (* output   [function  (xt,eps) ->(xt,zt)] *)
 
-
+ 
+(*
+(*genAnFRRegimeFunc[funcArgs_?VectorQ,zArgs_?VectorQ,zArgsInit:{{_Symbol,_?NumberQ}..},xkFunc:(_Function|_CompiledFunction),eqnsFunc:(_Function|_CompiledFunction),numX_Integer]:=*)
+genAnFPRegimeFunc[linMod:{theHMat_?MatrixQ,BB_?MatrixQ,phi_?MatrixQ,FF_?MatrixQ,psiEps_?MatrixQ,psiC_?MatrixQ,psiZ_?MatrixQ,psiZPreComp_?MatrixQ},
+XZFuncs:({{_Function,_Integer}..}),eqnsFunc:(_Function|_CompiledFunction)]:=
+With[{numX=Length[BB],numEps=Length[psiEps[[1]]],numZ=Length[psiZ[[1]]]},
+With[{funcArgs=Table[Unique["theFPFuncArgs"],{numX+numEps}]},
+ReplacePart[
+Function[xxxx,Sow[
+myFixedPoint[With[{
+	xzFuncNow=If[Or[Head[eqnsFunc]===CompiledFunction,Head[eqnsFunc]===Function],
+genFRRegimeFuncs[{numX,numEps,numZ},genLilXkZkRegimeFuncs[linMod,XZFuncs,#[[Range[numX+1]]]],eqnsFunc][[1]]&,
+genNSRegimeFuncs[{numX,numEps,numZ},genLilXkZkRegimeFuncs[linMod,XZFuncs,#[[Range[numX+1]]]],eqnsFunc,Method->"JenkinsTraub"]]
+},(*Print["infp:",XZFuncs[[1]]@@funcArgs];*)Print["xzfuncnow=",xzFuncNow//InputForm];
+xzFuncNow @@funcArgs]&,(XZFuncs[[1]]@@funcArgs)[[Range[numX]]],$fixedPointLimit]]],
+1->funcArgs]]]
 	
+*)
+	
+$fixedPointLimit=30;
+genAnFPRegimeFunc[linMod:{theHMat_?MatrixQ,BB_?MatrixQ,phi_?MatrixQ,FF_?MatrixQ,psiEps_?MatrixQ,psiC_?MatrixQ,psiZ_?MatrixQ,psiZPreComp_?MatrixQ},
+XZFuncs:{({_Function,_Integer})..},eqnsFunc:(_Function|_CompiledFunction)]:=
+genFPFunc[linMod,XZFuncs[[1]],eqnsFunc]
 
+
+ 
 genXZFuncREInterp[probDims:{numX_Integer,numEps_Integer,numZ_Integer},
 aLilXkZkFunc_Function,gSpec:{toIgnore:{_Integer...},iOrd_Integer,{{_Integer,_?NumberQ,_?NumberQ}..},numRegimes_:0},distribSpec:{expctSpec:{{_Symbol,_}..},regimeTransProbFunc_:{}}]:=
 With[{theFuncNow=genXZFuncRE[{numX,numEps,numZ},aLilXkZkFunc,distribSpec]},

@@ -2011,11 +2011,10 @@ Cell[BoxData["\<\"RE done now PF\"\>"], "Print",
 Cell[BoxData[
  RowBox[{
   StyleBox[
-   RowBox[{"Solve", "::", "ifun"}], "MessageName"], 
-  RowBox[{
-  ":", " "}], "\<\"Inverse functions are being used by \
-\[NoBreak]\\!\\(\\*RowBox[{\\\"Solve\\\"}]\\)\[NoBreak], so some solutions \
-may not be found; use Reduce for complete solution information. \
+   RowBox[{"Solve", "::", "ifun"}], "MessageName"], ":", 
+  " ", "\<\"Inverse functions are being used by \[NoBreak]\\!\\(\\*RowBox[{\\\
+\"Solve\\\"}]\\)\[NoBreak], so some solutions may not be found; use Reduce \
+for complete solution information. \
 \\!\\(\\*ButtonBox[\\\"\[RightSkeleton]\\\", ButtonStyle->\\\"Link\\\", \
 ButtonFrame->None, ButtonData:>\\\"paclet:ref/message/Solve/ifun\\\", \
 ButtonNote -> \\\"Solve::ifun\\\"]\\)\"\>"}]], "Message", "MSG",
@@ -2250,6 +2249,7 @@ Cell[BoxData[
      RowBox[{"tryFunc", ",", "aGSpec"}], "]"}]}], ";", 
    RowBox[{"huh", "[", 
     RowBox[{"2", ",", ".2", ",", "1", ",", ".01"}], "]"}]}], "\n"}]], "Input",
+ 
  CellChangeTimes->{{3.6743074074699125`*^9, 3.6743074074699125`*^9}}],
 
 Cell[BoxData[
@@ -2753,6 +2753,7 @@ Cell[BoxData[{
      RowBox[{"{", 
       RowBox[{"anX0Z0", ",", "3"}], "}"}], ",", 
      RowBox[{"anX0Z0", "@@", " ", "anXEpsFlat"}]}], "]"}]}], ";"}]}], "Input",
+ 
  CellChangeTimes->{{3.6732844467638984`*^9, 3.673284542858415*^9}, 
    3.6733683400261917`*^9, {3.673440173523451*^9, 3.6734402072112207`*^9}, {
    3.673440354618647*^9, 3.6734403626655855`*^9}, 3.6734411573743563`*^9, 
@@ -2903,9 +2904,11 @@ Cell[BoxData[
     RowBox[{"better", "=", 
      RowBox[{"Flatten", "[", 
       RowBox[{"nxtxz", " ", "@@", " ", "anXEpsZsFlat"}], "]"}]}], "}"}], ",", 
+   
    RowBox[{"{", 
     RowBox[{
      RowBox[{"lilxkzk", " ", "@@", " ", "anXEpsZsFlat"}], ",", "better", ",", 
+     
      RowBox[{"lilxkzk", " ", "@@", " ", 
       RowBox[{"Flatten", "[", 
        RowBox[{"Join", "[", 
@@ -3155,13 +3158,13 @@ Cell[BoxData[{
 Cell[BoxData[
  RowBox[{
   StyleBox[
-   RowBox[{"InterpolatingFunction", "::", "dmval"}], "MessageName"], 
-  RowBox[{
-  ":", " "}], "\<\"Input value \[NoBreak]\\!\\(\\*RowBox[{\\\"{\\\", RowBox[{\
-\\\"0.20515408184860492`\\\", \\\",\\\", \\\"1.1057730363825737`\\\"}], \\\"}\
-\\\"}]\\)\[NoBreak] lies outside the range of data in the interpolating \
-function. Extrapolation will be used. \\!\\(\\*ButtonBox[\\\"\[RightSkeleton]\
-\\\", ButtonStyle->\\\"Link\\\", ButtonFrame->None, \
+   RowBox[{"InterpolatingFunction", "::", "dmval"}], "MessageName"], ":", 
+  " ", "\<\"Input value \[NoBreak]\\!\\(\\*RowBox[{\\\"{\\\", \
+RowBox[{\\\"0.20515408184860492`\\\", \\\",\\\", \
+\\\"1.1057730363825737`\\\"}], \\\"}\\\"}]\\)\[NoBreak] lies outside the \
+range of data in the interpolating function. Extrapolation will be used. \
+\\!\\(\\*ButtonBox[\\\"\[RightSkeleton]\\\", ButtonStyle->\\\"Link\\\", \
+ButtonFrame->None, \
 ButtonData:>\\\"paclet:ref/message/InterpolatingFunction/dmval\\\", \
 ButtonNote -> \\\"InterpolatingFunction::dmval\\\"]\\)\"\>"}]], "Message", \
 "MSG",
@@ -3178,13 +3181,13 @@ ButtonNote -> \\\"InterpolatingFunction::dmval\\\"]\\)\"\>"}]], "Message", \
 Cell[BoxData[
  RowBox[{
   StyleBox[
-   RowBox[{"InterpolatingFunction", "::", "dmval"}], "MessageName"], 
-  RowBox[{
-  ":", " "}], "\<\"Input value \[NoBreak]\\!\\(\\*RowBox[{\\\"{\\\", RowBox[{\
-\\\"0.20515408184860492`\\\", \\\",\\\", \\\"1.1057730363825737`\\\"}], \\\"}\
-\\\"}]\\)\[NoBreak] lies outside the range of data in the interpolating \
-function. Extrapolation will be used. \\!\\(\\*ButtonBox[\\\"\[RightSkeleton]\
-\\\", ButtonStyle->\\\"Link\\\", ButtonFrame->None, \
+   RowBox[{"InterpolatingFunction", "::", "dmval"}], "MessageName"], ":", 
+  " ", "\<\"Input value \[NoBreak]\\!\\(\\*RowBox[{\\\"{\\\", \
+RowBox[{\\\"0.20515408184860492`\\\", \\\",\\\", \
+\\\"1.1057730363825737`\\\"}], \\\"}\\\"}]\\)\[NoBreak] lies outside the \
+range of data in the interpolating function. Extrapolation will be used. \
+\\!\\(\\*ButtonBox[\\\"\[RightSkeleton]\\\", ButtonStyle->\\\"Link\\\", \
+ButtonFrame->None, \
 ButtonData:>\\\"paclet:ref/message/InterpolatingFunction/dmval\\\", \
 ButtonNote -> \\\"InterpolatingFunction::dmval\\\"]\\)\"\>"}]], "Message", \
 "MSG",
@@ -3201,13 +3204,13 @@ ButtonNote -> \\\"InterpolatingFunction::dmval\\\"]\\)\"\>"}]], "Message", \
 Cell[BoxData[
  RowBox[{
   StyleBox[
-   RowBox[{"InterpolatingFunction", "::", "dmval"}], "MessageName"], 
-  RowBox[{
-  ":", " "}], "\<\"Input value \[NoBreak]\\!\\(\\*RowBox[{\\\"{\\\", RowBox[{\
-\\\"0.20515408184860492`\\\", \\\",\\\", \\\"1.1057730363825737`\\\"}], \\\"}\
-\\\"}]\\)\[NoBreak] lies outside the range of data in the interpolating \
-function. Extrapolation will be used. \\!\\(\\*ButtonBox[\\\"\[RightSkeleton]\
-\\\", ButtonStyle->\\\"Link\\\", ButtonFrame->None, \
+   RowBox[{"InterpolatingFunction", "::", "dmval"}], "MessageName"], ":", 
+  " ", "\<\"Input value \[NoBreak]\\!\\(\\*RowBox[{\\\"{\\\", \
+RowBox[{\\\"0.20515408184860492`\\\", \\\",\\\", \
+\\\"1.1057730363825737`\\\"}], \\\"}\\\"}]\\)\[NoBreak] lies outside the \
+range of data in the interpolating function. Extrapolation will be used. \
+\\!\\(\\*ButtonBox[\\\"\[RightSkeleton]\\\", ButtonStyle->\\\"Link\\\", \
+ButtonFrame->None, \
 ButtonData:>\\\"paclet:ref/message/InterpolatingFunction/dmval\\\", \
 ButtonNote -> \\\"InterpolatingFunction::dmval\\\"]\\)\"\>"}]], "Message", \
 "MSG",
@@ -3224,9 +3227,8 @@ ButtonNote -> \\\"InterpolatingFunction::dmval\\\"]\\)\"\>"}]], "Message", \
 Cell[BoxData[
  RowBox[{
   StyleBox[
-   RowBox[{"General", "::", "stop"}], "MessageName"], 
-  RowBox[{
-  ":", " "}], "\<\"Further output of \
+   RowBox[{"General", "::", "stop"}], "MessageName"], ":", 
+  " ", "\<\"Further output of \
 \[NoBreak]\\!\\(\\*StyleBox[RowBox[{\\\"InterpolatingFunction\\\", \
 \\\"::\\\", \\\"dmval\\\"}], \\\"MessageName\\\"]\\)\[NoBreak] will be \
 suppressed during this calculation. \\!\\(\\*ButtonBox[\\\"\[RightSkeleton]\\\
@@ -3555,13 +3557,13 @@ Cell[BoxData[
 Cell[BoxData[
  RowBox[{
   StyleBox[
-   RowBox[{"InterpolatingFunction", "::", "dmval"}], "MessageName"], 
-  RowBox[{
-  ":", " "}], "\<\"Input value \[NoBreak]\\!\\(\\*RowBox[{\\\"{\\\", RowBox[{\
-\\\"0.0833901506590167`\\\", \\\",\\\", \\\"0.8780142197396383`\\\"}], \
-\\\"}\\\"}]\\)\[NoBreak] lies outside the range of data in the interpolating \
-function. Extrapolation will be used. \\!\\(\\*ButtonBox[\\\"\[RightSkeleton]\
-\\\", ButtonStyle->\\\"Link\\\", ButtonFrame->None, \
+   RowBox[{"InterpolatingFunction", "::", "dmval"}], "MessageName"], ":", 
+  " ", "\<\"Input value \[NoBreak]\\!\\(\\*RowBox[{\\\"{\\\", \
+RowBox[{\\\"0.0833901506590167`\\\", \\\",\\\", \
+\\\"0.8780142197396383`\\\"}], \\\"}\\\"}]\\)\[NoBreak] lies outside the \
+range of data in the interpolating function. Extrapolation will be used. \
+\\!\\(\\*ButtonBox[\\\"\[RightSkeleton]\\\", ButtonStyle->\\\"Link\\\", \
+ButtonFrame->None, \
 ButtonData:>\\\"paclet:ref/message/InterpolatingFunction/dmval\\\", \
 ButtonNote -> \\\"InterpolatingFunction::dmval\\\"]\\)\"\>"}]], "Message", \
 "MSG",
@@ -3576,13 +3578,13 @@ ButtonNote -> \\\"InterpolatingFunction::dmval\\\"]\\)\"\>"}]], "Message", \
 Cell[BoxData[
  RowBox[{
   StyleBox[
-   RowBox[{"InterpolatingFunction", "::", "dmval"}], "MessageName"], 
-  RowBox[{
-  ":", " "}], "\<\"Input value \[NoBreak]\\!\\(\\*RowBox[{\\\"{\\\", RowBox[{\
-\\\"0.0833901506590167`\\\", \\\",\\\", \\\"0.8780142197396383`\\\"}], \
-\\\"}\\\"}]\\)\[NoBreak] lies outside the range of data in the interpolating \
-function. Extrapolation will be used. \\!\\(\\*ButtonBox[\\\"\[RightSkeleton]\
-\\\", ButtonStyle->\\\"Link\\\", ButtonFrame->None, \
+   RowBox[{"InterpolatingFunction", "::", "dmval"}], "MessageName"], ":", 
+  " ", "\<\"Input value \[NoBreak]\\!\\(\\*RowBox[{\\\"{\\\", \
+RowBox[{\\\"0.0833901506590167`\\\", \\\",\\\", \
+\\\"0.8780142197396383`\\\"}], \\\"}\\\"}]\\)\[NoBreak] lies outside the \
+range of data in the interpolating function. Extrapolation will be used. \
+\\!\\(\\*ButtonBox[\\\"\[RightSkeleton]\\\", ButtonStyle->\\\"Link\\\", \
+ButtonFrame->None, \
 ButtonData:>\\\"paclet:ref/message/InterpolatingFunction/dmval\\\", \
 ButtonNote -> \\\"InterpolatingFunction::dmval\\\"]\\)\"\>"}]], "Message", \
 "MSG",
@@ -3597,13 +3599,13 @@ ButtonNote -> \\\"InterpolatingFunction::dmval\\\"]\\)\"\>"}]], "Message", \
 Cell[BoxData[
  RowBox[{
   StyleBox[
-   RowBox[{"InterpolatingFunction", "::", "dmval"}], "MessageName"], 
-  RowBox[{
-  ":", " "}], "\<\"Input value \[NoBreak]\\!\\(\\*RowBox[{\\\"{\\\", RowBox[{\
-\\\"0.0833901506590167`\\\", \\\",\\\", \\\"0.8780142197396383`\\\"}], \
-\\\"}\\\"}]\\)\[NoBreak] lies outside the range of data in the interpolating \
-function. Extrapolation will be used. \\!\\(\\*ButtonBox[\\\"\[RightSkeleton]\
-\\\", ButtonStyle->\\\"Link\\\", ButtonFrame->None, \
+   RowBox[{"InterpolatingFunction", "::", "dmval"}], "MessageName"], ":", 
+  " ", "\<\"Input value \[NoBreak]\\!\\(\\*RowBox[{\\\"{\\\", \
+RowBox[{\\\"0.0833901506590167`\\\", \\\",\\\", \
+\\\"0.8780142197396383`\\\"}], \\\"}\\\"}]\\)\[NoBreak] lies outside the \
+range of data in the interpolating function. Extrapolation will be used. \
+\\!\\(\\*ButtonBox[\\\"\[RightSkeleton]\\\", ButtonStyle->\\\"Link\\\", \
+ButtonFrame->None, \
 ButtonData:>\\\"paclet:ref/message/InterpolatingFunction/dmval\\\", \
 ButtonNote -> \\\"InterpolatingFunction::dmval\\\"]\\)\"\>"}]], "Message", \
 "MSG",
@@ -3618,9 +3620,8 @@ ButtonNote -> \\\"InterpolatingFunction::dmval\\\"]\\)\"\>"}]], "Message", \
 Cell[BoxData[
  RowBox[{
   StyleBox[
-   RowBox[{"General", "::", "stop"}], "MessageName"], 
-  RowBox[{
-  ":", " "}], "\<\"Further output of \
+   RowBox[{"General", "::", "stop"}], "MessageName"], ":", 
+  " ", "\<\"Further output of \
 \[NoBreak]\\!\\(\\*StyleBox[RowBox[{\\\"InterpolatingFunction\\\", \
 \\\"::\\\", \\\"dmval\\\"}], \\\"MessageName\\\"]\\)\[NoBreak] will be \
 suppressed during this calculation. \\!\\(\\*ButtonBox[\\\"\[RightSkeleton]\\\
@@ -3962,6 +3963,7 @@ Cell[BoxData[
      "rbcEqnsFunctionalNext", ",", "anX", ",", 
      RowBox[{"{", 
       RowBox[{"{", "0.01", "}"}], "}"}], ",", "anX0Z0"}], "]"}]}]}]], "Input",
+ 
  CellChangeTimes->{{3.673197216012251*^9, 3.6731972172466416`*^9}, {
    3.673197317158967*^9, 3.6731973663468647`*^9}, {3.673197920690303*^9, 
    3.673197921284054*^9}, {3.67319798461269*^9, 3.6731979979565277`*^9}, {
@@ -5010,7 +5012,7 @@ Cell[BoxData[
 Cell[BoxData[
  RowBox[{
   RowBox[{"nana", "=", 
-   RowBox[{"AMASeriesRepresentation`Private`genFPRegimeFunc", "[", 
+   RowBox[{"AMASeriesRepresentation`Private`genAnFPRegimeFunc", "[", 
     RowBox[{"linModBetter", ",", 
      RowBox[{"{", 
       RowBox[{
@@ -5025,37 +5027,13 @@ Cell[BoxData[
   ";"}]], "Input",
  CellChangeTimes->{{3.675348031085699*^9, 3.6753480650232573`*^9}, {
    3.6753480966709075`*^9, 3.6753481268584576`*^9}, 3.675348304192724*^9, 
-   3.675350428423661*^9}],
+   3.675350428423661*^9, {3.675382700975244*^9, 3.675382701517606*^9}}],
 
 Cell[CellGroupData[{
 
 Cell[BoxData[
  RowBox[{"nana", " ", "@@", "anXEpsBetter"}]], "Input",
  CellChangeTimes->{{3.675348343302414*^9, 3.6753483723495207`*^9}}],
-
-Cell[BoxData[
- RowBox[{
-  StyleBox[
-   RowBox[{"Part", "::", "partw"}], "MessageName"], 
-  RowBox[{
-  ":", " "}], "\<\"Part \[NoBreak]\\!\\(\\*RowBox[{\\\"{\\\", RowBox[{\\\"1\\\
-\", \\\",\\\", \\\"2\\\", \\\",\\\", \\\"3\\\", \\\",\\\", \\\"4\\\", \\\",\\\
-\", \\\"5\\\"}], \\\"}\\\"}]\\)\[NoBreak] of \
-\[NoBreak]\\!\\(\\*RowBox[{RowBox[{\\\"{\\\", \
-RowBox[{RowBox[{\\\"Function\\\", \\\"[\\\", RowBox[{RowBox[{\\\"{\\\", \
-RowBox[{\\\"xxxtm1Var$1\\\", \\\",\\\", \\\"xxxtm1Var$2\\\", \\\",\\\", \
-\\\"xxxtm1Var$3\\\", \\\",\\\", \\\"xxxtm1Var$4\\\"}], \\\"}\\\"}], \
-\\\",\\\", RowBox[{\\\"\[LeftSkeleton]\\\", \\\"1\\\", \\\"\[RightSkeleton]\\\
-\"}]}], \\\"]\\\"}], \\\",\\\", \\\"2\\\"}], \\\"}\\\"}], \\\"[\\\", \
-RowBox[{RowBox[{\\\"{\\\", \\\"0.2`\\\", \\\"}\\\"}], \\\",\\\", \
-RowBox[{\\\"{\\\", \\\"0.18`\\\", \\\"}\\\"}], \\\",\\\", RowBox[{\\\"{\\\", \
-\\\"1.`\\\", \\\"}\\\"}], \\\",\\\", RowBox[{\\\"{\\\", \\\"1.1`\\\", \\\"}\\\
-\"}]}], \\\"]\\\"}]\\)\[NoBreak] does not exist. \\!\\(\\*ButtonBox[\\\"\
-\[RightSkeleton]\\\", ButtonStyle->\\\"Link\\\", ButtonFrame->None, \
-ButtonData:>\\\"paclet:ref/message/General/partw\\\", ButtonNote -> \
-\\\"Part::partw\\\"]\\)\"\>"}]], "Message", "MSG",
- CellChangeTimes->{{3.6753483642713304`*^9, 3.6753483732245264`*^9}, 
-   3.675350171830908*^9, 3.675350313797747*^9, 3.6753504324080677`*^9}],
 
 Cell[BoxData[
  InterpretationBox[
@@ -5065,7 +5043,7 @@ Cell[BoxData[
        ItemBox[
         TagBox[
          RowBox[{
-          RowBox[{"AMASeriesRepresentation`Private`genNSRegimeFunc", "[", 
+          RowBox[{"genFRFunc", "[", 
            RowBox[{
             RowBox[{"{", 
              RowBox[{"4", ",", "1", ",", "4"}], "}"}], ",", 
@@ -5087,7 +5065,9 @@ Cell[BoxData[
                RowBox[{
                "betterRSRBC`Private`rgmtm1", ",", "betterRSRBC`Private`cctm1",
                  ",", "betterRSRBC`Private`kktm1", ",", 
-                TemplateBox[{"10"},
+                "betterRSRBC`Private`nltm1", ",", "betterRSRBC`Private`thtm1",
+                 ",", 
+                TemplateBox[{"6"},
                  "OutputSizeLimit`Skeleton",
                  DisplayFunction->(FrameBox[
                    
@@ -5099,38 +5079,33 @@ Cell[BoxData[
                     ShowStringCharacters -> False}, BaselinePosition -> 
                    Baseline, ContentPadding -> False, FrameMargins -> 1, 
                    FrameStyle -> GrayLevel[0.75], RoundingRadius -> 7]& )], 
-                ",", "betterRSRBC`Private`nltp1", ",", 
-                "betterRSRBC`Private`thtp1", ",", 
+                ",", "betterRSRBC`Private`cctp1", ",", 
+                "betterRSRBC`Private`kktp1", ",", "betterRSRBC`Private`nltp1",
+                 ",", "betterRSRBC`Private`thtp1", ",", 
                 "betterRSRBC`Private`epsVal"}], "}"}], ",", 
-              RowBox[{"Which", "[", 
-               TemplateBox[{"1"},
-                "OutputSizeLimit`Skeleton",
-                DisplayFunction->(FrameBox[
-                  
-                  RowBox[{
-                   "\" \[CenterEllipsis]\"", #, "\"\[CenterEllipsis] \""}], 
-                  Background -> GrayLevel[0.75], 
-                  BaseStyle -> {
-                   "Deploy", FontColor -> GrayLevel[1], FontSize -> Smaller, 
-                    ShowStringCharacters -> False}, BaselinePosition -> 
-                  Baseline, ContentPadding -> False, FrameMargins -> 1, 
-                  FrameStyle -> GrayLevel[0.75], RoundingRadius -> 7]& )], 
-               "]"}]}], "]"}], ",", 
-            RowBox[{"Method", "\[Rule]", "\<\"JenkinsTraub\"\>"}]}], "]"}], 
-          "[", 
-          RowBox[{
-           RowBox[{"{", "0.2`", "}"}], ",", 
-           TemplateBox[{"3"},
-            "OutputSizeLimit`Skeleton",
-            DisplayFunction->(FrameBox[
-              RowBox[{"\" \[CenterEllipsis]\"", #, "\"\[CenterEllipsis] \""}],
-               Background -> GrayLevel[0.75], 
-              BaseStyle -> {
-               "Deploy", FontColor -> GrayLevel[1], FontSize -> Smaller, 
-                ShowStringCharacters -> False}, BaselinePosition -> Baseline, 
-              ContentPadding -> False, FrameMargins -> 1, FrameStyle -> 
-              GrayLevel[0.75], RoundingRadius -> 7]& )], ",", 
-           RowBox[{"{", "0.01`", "}"}]}], "]"}],
+              TemplateBox[{"1"},
+               "OutputSizeLimit`Skeleton",
+               DisplayFunction->(FrameBox[
+                 
+                 RowBox[{
+                  "\" \[CenterEllipsis]\"", #, "\"\[CenterEllipsis] \""}], 
+                 Background -> GrayLevel[0.75], 
+                 BaseStyle -> {
+                  "Deploy", FontColor -> GrayLevel[1], FontSize -> Smaller, 
+                   ShowStringCharacters -> False}, BaselinePosition -> 
+                 Baseline, ContentPadding -> False, FrameMargins -> 1, 
+                 FrameStyle -> GrayLevel[0.75], RoundingRadius -> 7]& )]}], 
+             "]"}]}], "]"}], "[", 
+          TemplateBox[{"1"},
+           "OutputSizeLimit`Skeleton",
+           DisplayFunction->(FrameBox[
+             RowBox[{"\" \[CenterEllipsis]\"", #, "\"\[CenterEllipsis] \""}], 
+             Background -> GrayLevel[0.75], 
+             BaseStyle -> {
+              "Deploy", FontColor -> GrayLevel[1], FontSize -> Smaller, 
+               ShowStringCharacters -> False}, BaselinePosition -> Baseline, 
+             ContentPadding -> False, FrameMargins -> 1, FrameStyle -> 
+             GrayLevel[0.75], RoundingRadius -> 7]& )], "]"}],
          Short[#, 5]& ],
         BaseStyle->{Deployed -> False},
         StripOnInput->False]},
@@ -5143,7 +5118,7 @@ Cell[BoxData[
               DynamicBox[ToBoxes[
                 FEPrivate`FrontEndResource[
                 "FEStrings", "sizeBriefExplanation"], StandardForm],
-               ImageSizeCache->{65., {3., 9.}}],
+               ImageSizeCache->{58., {2., 8.}}],
               StripOnInput->False,
               DynamicUpdating->True], "SuggestionsBarCategory",
              StripOnInput->False],
@@ -5165,7 +5140,7 @@ Cell[BoxData[
               DynamicBox[ToBoxes[
                 FEPrivate`FrontEndResource["FEStrings", "sizeShowLess"], 
                 StandardForm],
-               ImageSizeCache->{52., {1., 9.}}],
+               ImageSizeCache->{49., {0., 8.}}],
               StripOnInput->False,
               DynamicUpdating->True], "SuggestionsBarControl",
              StripOnInput->False], True->
@@ -5173,8 +5148,7 @@ Cell[BoxData[
              StyleBox[
               DynamicBox[ToBoxes[
                 FEPrivate`FrontEndResource["FEStrings", "sizeShowLess"], 
-                StandardForm],
-               ImageSizeCache->{52., {1., 9.}}],
+                StandardForm]],
               StripOnInput->False,
               DynamicUpdating->True], "SuggestionsBarControlActive",
              StripOnInput->False]}, Dynamic[
@@ -5185,7 +5159,7 @@ Cell[BoxData[
            Appearance->None,
            
            ButtonFunction:>OutputSizeLimit`ButtonFunction[
-            Identity, 51, 27603111032549970936, 5/2],
+            Identity, 54, 25947078377122454024, 5/2],
            Enabled->True,
            Evaluator->Automatic,
            Method->"Queued"], 
@@ -5196,7 +5170,7 @@ Cell[BoxData[
               DynamicBox[ToBoxes[
                 FEPrivate`FrontEndResource["FEStrings", "sizeShowMore"], 
                 StandardForm],
-               ImageSizeCache->{62., {1., 9.}}],
+               ImageSizeCache->{54., {0., 8.}}],
               StripOnInput->False,
               DynamicUpdating->True], "SuggestionsBarControl",
              StripOnInput->False], True->
@@ -5215,7 +5189,7 @@ Cell[BoxData[
            Appearance->None,
            
            ButtonFunction:>OutputSizeLimit`ButtonFunction[
-            Identity, 51, 27603111032549970936, 5 2],
+            Identity, 54, 25947078377122454024, 5 2],
            Enabled->True,
            Evaluator->Automatic,
            Method->"Queued"], 
@@ -5226,7 +5200,7 @@ Cell[BoxData[
               DynamicBox[ToBoxes[
                 FEPrivate`FrontEndResource["FEStrings", "sizeShowAll"], 
                 StandardForm],
-               ImageSizeCache->{44., {1., 9.}}],
+               ImageSizeCache->{40., {0., 8.}}],
               StripOnInput->False,
               DynamicUpdating->True], "SuggestionsBarControl",
              StripOnInput->False], True->
@@ -5245,7 +5219,7 @@ Cell[BoxData[
            Appearance->None,
            
            ButtonFunction:>OutputSizeLimit`ButtonFunction[
-            Identity, 51, 27603111032549970936, Infinity],
+            Identity, 54, 25947078377122454024, Infinity],
            Enabled->True,
            Evaluator->Automatic,
            Method->"Queued"], 
@@ -5256,7 +5230,7 @@ Cell[BoxData[
               DynamicBox[ToBoxes[
                 FEPrivate`FrontEndResource["FEStrings", "sizeChangeLimit"], 
                 StandardForm],
-               ImageSizeCache->{78., {1., 9.}}],
+               ImageSizeCache->{72., {0., 8.}}],
               StripOnInput->False,
               DynamicUpdating->True], "SuggestionsBarControl",
              StripOnInput->False], True->
@@ -5312,9 +5286,10 @@ Cell[BoxData[
     StripOnInput->False],
    Deploy,
    DefaultBaseStyle->"Deploy"],
-  Out[51]]], "Output",
+  Out[54]]], "Output",
  CellChangeTimes->{{3.6753483653026013`*^9, 3.6753483733495293`*^9}, 
-   3.675350171877784*^9, 3.675350313844623*^9, 3.675350432454955*^9}]
+   3.675350171877784*^9, 3.675350313844623*^9, 3.675350432454955*^9, {
+   3.675382687265271*^9, 3.675382711066855*^9}}]
 }, Open  ]]
 }, Open  ]]
 }, Open  ]],
@@ -8065,13 +8040,13 @@ Cell[BoxData[{
 Cell[BoxData[
  RowBox[{
   StyleBox[
-   RowBox[{"InterpolatingFunction", "::", "dmval"}], "MessageName"], 
-  RowBox[{
-  ":", " "}], "\<\"Input value \[NoBreak]\\!\\(\\*RowBox[{\\\"{\\\", RowBox[{\
-\\\"0.21657381194778136`\\\", \\\",\\\", \\\"1.1057730363825737`\\\"}], \\\"}\
-\\\"}]\\)\[NoBreak] lies outside the range of data in the interpolating \
-function. Extrapolation will be used. \\!\\(\\*ButtonBox[\\\"\[RightSkeleton]\
-\\\", ButtonStyle->\\\"Link\\\", ButtonFrame->None, \
+   RowBox[{"InterpolatingFunction", "::", "dmval"}], "MessageName"], ":", 
+  " ", "\<\"Input value \[NoBreak]\\!\\(\\*RowBox[{\\\"{\\\", \
+RowBox[{\\\"0.21657381194778136`\\\", \\\",\\\", \
+\\\"1.1057730363825737`\\\"}], \\\"}\\\"}]\\)\[NoBreak] lies outside the \
+range of data in the interpolating function. Extrapolation will be used. \
+\\!\\(\\*ButtonBox[\\\"\[RightSkeleton]\\\", ButtonStyle->\\\"Link\\\", \
+ButtonFrame->None, \
 ButtonData:>\\\"paclet:ref/message/InterpolatingFunction/dmval\\\", \
 ButtonNote -> \\\"InterpolatingFunction::dmval\\\"]\\)\"\>"}]], "Message", \
 "MSG",
@@ -8084,13 +8059,13 @@ ButtonNote -> \\\"InterpolatingFunction::dmval\\\"]\\)\"\>"}]], "Message", \
 Cell[BoxData[
  RowBox[{
   StyleBox[
-   RowBox[{"InterpolatingFunction", "::", "dmval"}], "MessageName"], 
-  RowBox[{
-  ":", " "}], "\<\"Input value \[NoBreak]\\!\\(\\*RowBox[{\\\"{\\\", RowBox[{\
-\\\"0.21657381194778136`\\\", \\\",\\\", \\\"1.1057730363825737`\\\"}], \\\"}\
-\\\"}]\\)\[NoBreak] lies outside the range of data in the interpolating \
-function. Extrapolation will be used. \\!\\(\\*ButtonBox[\\\"\[RightSkeleton]\
-\\\", ButtonStyle->\\\"Link\\\", ButtonFrame->None, \
+   RowBox[{"InterpolatingFunction", "::", "dmval"}], "MessageName"], ":", 
+  " ", "\<\"Input value \[NoBreak]\\!\\(\\*RowBox[{\\\"{\\\", \
+RowBox[{\\\"0.21657381194778136`\\\", \\\",\\\", \
+\\\"1.1057730363825737`\\\"}], \\\"}\\\"}]\\)\[NoBreak] lies outside the \
+range of data in the interpolating function. Extrapolation will be used. \
+\\!\\(\\*ButtonBox[\\\"\[RightSkeleton]\\\", ButtonStyle->\\\"Link\\\", \
+ButtonFrame->None, \
 ButtonData:>\\\"paclet:ref/message/InterpolatingFunction/dmval\\\", \
 ButtonNote -> \\\"InterpolatingFunction::dmval\\\"]\\)\"\>"}]], "Message", \
 "MSG",
@@ -8103,13 +8078,13 @@ ButtonNote -> \\\"InterpolatingFunction::dmval\\\"]\\)\"\>"}]], "Message", \
 Cell[BoxData[
  RowBox[{
   StyleBox[
-   RowBox[{"InterpolatingFunction", "::", "dmval"}], "MessageName"], 
-  RowBox[{
-  ":", " "}], "\<\"Input value \[NoBreak]\\!\\(\\*RowBox[{\\\"{\\\", RowBox[{\
-\\\"0.21657381194778136`\\\", \\\",\\\", \\\"1.1057730363825737`\\\"}], \\\"}\
-\\\"}]\\)\[NoBreak] lies outside the range of data in the interpolating \
-function. Extrapolation will be used. \\!\\(\\*ButtonBox[\\\"\[RightSkeleton]\
-\\\", ButtonStyle->\\\"Link\\\", ButtonFrame->None, \
+   RowBox[{"InterpolatingFunction", "::", "dmval"}], "MessageName"], ":", 
+  " ", "\<\"Input value \[NoBreak]\\!\\(\\*RowBox[{\\\"{\\\", \
+RowBox[{\\\"0.21657381194778136`\\\", \\\",\\\", \
+\\\"1.1057730363825737`\\\"}], \\\"}\\\"}]\\)\[NoBreak] lies outside the \
+range of data in the interpolating function. Extrapolation will be used. \
+\\!\\(\\*ButtonBox[\\\"\[RightSkeleton]\\\", ButtonStyle->\\\"Link\\\", \
+ButtonFrame->None, \
 ButtonData:>\\\"paclet:ref/message/InterpolatingFunction/dmval\\\", \
 ButtonNote -> \\\"InterpolatingFunction::dmval\\\"]\\)\"\>"}]], "Message", \
 "MSG",
@@ -8122,9 +8097,8 @@ ButtonNote -> \\\"InterpolatingFunction::dmval\\\"]\\)\"\>"}]], "Message", \
 Cell[BoxData[
  RowBox[{
   StyleBox[
-   RowBox[{"General", "::", "stop"}], "MessageName"], 
-  RowBox[{
-  ":", " "}], "\<\"Further output of \
+   RowBox[{"General", "::", "stop"}], "MessageName"], ":", 
+  " ", "\<\"Further output of \
 \[NoBreak]\\!\\(\\*StyleBox[RowBox[{\\\"InterpolatingFunction\\\", \
 \\\"::\\\", \\\"dmval\\\"}], \\\"MessageName\\\"]\\)\[NoBreak] will be \
 suppressed during this calculation. \\!\\(\\*ButtonBox[\\\"\[RightSkeleton]\\\
@@ -8508,13 +8482,13 @@ Cell[BoxData[
 Cell[BoxData[
  RowBox[{
   StyleBox[
-   RowBox[{"InterpolatingFunction", "::", "dmval"}], "MessageName"], 
-  RowBox[{
-  ":", " "}], "\<\"Input value \[NoBreak]\\!\\(\\*RowBox[{\\\"{\\\", RowBox[{\
-\\\"0.09413851497229064`\\\", \\\",\\\", \\\"0.8780142197396383`\\\"}], \\\"}\
-\\\"}]\\)\[NoBreak] lies outside the range of data in the interpolating \
-function. Extrapolation will be used. \\!\\(\\*ButtonBox[\\\"\[RightSkeleton]\
-\\\", ButtonStyle->\\\"Link\\\", ButtonFrame->None, \
+   RowBox[{"InterpolatingFunction", "::", "dmval"}], "MessageName"], ":", 
+  " ", "\<\"Input value \[NoBreak]\\!\\(\\*RowBox[{\\\"{\\\", \
+RowBox[{\\\"0.09413851497229064`\\\", \\\",\\\", \
+\\\"0.8780142197396383`\\\"}], \\\"}\\\"}]\\)\[NoBreak] lies outside the \
+range of data in the interpolating function. Extrapolation will be used. \
+\\!\\(\\*ButtonBox[\\\"\[RightSkeleton]\\\", ButtonStyle->\\\"Link\\\", \
+ButtonFrame->None, \
 ButtonData:>\\\"paclet:ref/message/InterpolatingFunction/dmval\\\", \
 ButtonNote -> \\\"InterpolatingFunction::dmval\\\"]\\)\"\>"}]], "Message", \
 "MSG",
@@ -8528,13 +8502,13 @@ ButtonNote -> \\\"InterpolatingFunction::dmval\\\"]\\)\"\>"}]], "Message", \
 Cell[BoxData[
  RowBox[{
   StyleBox[
-   RowBox[{"InterpolatingFunction", "::", "dmval"}], "MessageName"], 
-  RowBox[{
-  ":", " "}], "\<\"Input value \[NoBreak]\\!\\(\\*RowBox[{\\\"{\\\", RowBox[{\
-\\\"0.09413851497229064`\\\", \\\",\\\", \\\"0.8780142197396383`\\\"}], \\\"}\
-\\\"}]\\)\[NoBreak] lies outside the range of data in the interpolating \
-function. Extrapolation will be used. \\!\\(\\*ButtonBox[\\\"\[RightSkeleton]\
-\\\", ButtonStyle->\\\"Link\\\", ButtonFrame->None, \
+   RowBox[{"InterpolatingFunction", "::", "dmval"}], "MessageName"], ":", 
+  " ", "\<\"Input value \[NoBreak]\\!\\(\\*RowBox[{\\\"{\\\", \
+RowBox[{\\\"0.09413851497229064`\\\", \\\",\\\", \
+\\\"0.8780142197396383`\\\"}], \\\"}\\\"}]\\)\[NoBreak] lies outside the \
+range of data in the interpolating function. Extrapolation will be used. \
+\\!\\(\\*ButtonBox[\\\"\[RightSkeleton]\\\", ButtonStyle->\\\"Link\\\", \
+ButtonFrame->None, \
 ButtonData:>\\\"paclet:ref/message/InterpolatingFunction/dmval\\\", \
 ButtonNote -> \\\"InterpolatingFunction::dmval\\\"]\\)\"\>"}]], "Message", \
 "MSG",
@@ -8548,13 +8522,13 @@ ButtonNote -> \\\"InterpolatingFunction::dmval\\\"]\\)\"\>"}]], "Message", \
 Cell[BoxData[
  RowBox[{
   StyleBox[
-   RowBox[{"InterpolatingFunction", "::", "dmval"}], "MessageName"], 
-  RowBox[{
-  ":", " "}], "\<\"Input value \[NoBreak]\\!\\(\\*RowBox[{\\\"{\\\", RowBox[{\
-\\\"0.09413851497229064`\\\", \\\",\\\", \\\"0.8780142197396383`\\\"}], \\\"}\
-\\\"}]\\)\[NoBreak] lies outside the range of data in the interpolating \
-function. Extrapolation will be used. \\!\\(\\*ButtonBox[\\\"\[RightSkeleton]\
-\\\", ButtonStyle->\\\"Link\\\", ButtonFrame->None, \
+   RowBox[{"InterpolatingFunction", "::", "dmval"}], "MessageName"], ":", 
+  " ", "\<\"Input value \[NoBreak]\\!\\(\\*RowBox[{\\\"{\\\", \
+RowBox[{\\\"0.09413851497229064`\\\", \\\",\\\", \
+\\\"0.8780142197396383`\\\"}], \\\"}\\\"}]\\)\[NoBreak] lies outside the \
+range of data in the interpolating function. Extrapolation will be used. \
+\\!\\(\\*ButtonBox[\\\"\[RightSkeleton]\\\", ButtonStyle->\\\"Link\\\", \
+ButtonFrame->None, \
 ButtonData:>\\\"paclet:ref/message/InterpolatingFunction/dmval\\\", \
 ButtonNote -> \\\"InterpolatingFunction::dmval\\\"]\\)\"\>"}]], "Message", \
 "MSG",
@@ -8568,9 +8542,8 @@ ButtonNote -> \\\"InterpolatingFunction::dmval\\\"]\\)\"\>"}]], "Message", \
 Cell[BoxData[
  RowBox[{
   StyleBox[
-   RowBox[{"General", "::", "stop"}], "MessageName"], 
-  RowBox[{
-  ":", " "}], "\<\"Further output of \
+   RowBox[{"General", "::", "stop"}], "MessageName"], ":", 
+  " ", "\<\"Further output of \
 \[NoBreak]\\!\\(\\*StyleBox[RowBox[{\\\"InterpolatingFunction\\\", \
 \\\"::\\\", \\\"dmval\\\"}], \\\"MessageName\\\"]\\)\[NoBreak] will be \
 suppressed during this calculation. \\!\\(\\*ButtonBox[\\\"\[RightSkeleton]\\\
@@ -8950,11 +8923,10 @@ Cell[BoxData["\<\"RE done now PF\"\>"], "Print",
 Cell[BoxData[
  RowBox[{
   StyleBox[
-   RowBox[{"Solve", "::", "ifun"}], "MessageName"], 
-  RowBox[{
-  ":", " "}], "\<\"Inverse functions are being used by \
-\[NoBreak]\\!\\(\\*RowBox[{\\\"Solve\\\"}]\\)\[NoBreak], so some solutions \
-may not be found; use Reduce for complete solution information. \
+   RowBox[{"Solve", "::", "ifun"}], "MessageName"], ":", 
+  " ", "\<\"Inverse functions are being used by \[NoBreak]\\!\\(\\*RowBox[{\\\
+\"Solve\\\"}]\\)\[NoBreak], so some solutions may not be found; use Reduce \
+for complete solution information. \
 \\!\\(\\*ButtonBox[\\\"\[RightSkeleton]\\\", ButtonStyle->\\\"Link\\\", \
 ButtonFrame->None, ButtonData:>\\\"paclet:ref/message/Solve/ifun\\\", \
 ButtonNote -> \\\"Solve::ifun\\\"]\\)\"\>"}]], "Message", "MSG",
@@ -9384,11 +9356,10 @@ Cell[BoxData["\<\"RE done now PF\"\>"], "Print",
 Cell[BoxData[
  RowBox[{
   StyleBox[
-   RowBox[{"Solve", "::", "ifun"}], "MessageName"], 
-  RowBox[{
-  ":", " "}], "\<\"Inverse functions are being used by \
-\[NoBreak]\\!\\(\\*RowBox[{\\\"Solve\\\"}]\\)\[NoBreak], so some solutions \
-may not be found; use Reduce for complete solution information. \
+   RowBox[{"Solve", "::", "ifun"}], "MessageName"], ":", 
+  " ", "\<\"Inverse functions are being used by \[NoBreak]\\!\\(\\*RowBox[{\\\
+\"Solve\\\"}]\\)\[NoBreak], so some solutions may not be found; use Reduce \
+for complete solution information. \
 \\!\\(\\*ButtonBox[\\\"\[RightSkeleton]\\\", ButtonStyle->\\\"Link\\\", \
 ButtonFrame->None, ButtonData:>\\\"paclet:ref/message/Solve/ifun\\\", \
 ButtonNote -> \\\"Solve::ifun\\\"]\\)\"\>"}]], "Message", "MSG",
@@ -10034,13 +10005,12 @@ Cell[BoxData[
 Cell[BoxData[
  RowBox[{
   StyleBox[
-   RowBox[{"NIntegrate", "::", "izero"}], "MessageName"], 
-  RowBox[{
-  ":", " "}], "\<\"Integral and error estimates are 0 on all integration \
-subregions. Try increasing the value of the MinRecursion option. If value of \
-integral may be 0, specify a finite value for the AccuracyGoal option. \\!\\(\
-\\*ButtonBox[\\\"\[RightSkeleton]\\\", ButtonStyle->\\\"Link\\\", \
-ButtonFrame->None, ButtonData:>\\\"paclet:ref/NIntegrate\\\", ButtonNote -> \
+   RowBox[{"NIntegrate", "::", "izero"}], "MessageName"], ":", 
+  " ", "\<\"Integral and error estimates are 0 on all integration subregions. \
+Try increasing the value of the MinRecursion option. If value of integral may \
+be 0, specify a finite value for the AccuracyGoal option. \\!\\(\\*ButtonBox[\
+\\\"\[RightSkeleton]\\\", ButtonStyle->\\\"Link\\\", ButtonFrame->None, \
+ButtonData:>\\\"paclet:ref/NIntegrate\\\", ButtonNote -> \
 \\\"NIntegrate::izero\\\"]\\)\"\>"}]], "Message", "MSG",
  ShowCellLabel->True,
  CellChangeTimes->{3.6750162931185255`*^9, 3.6750163270406733`*^9, 
@@ -10050,13 +10020,12 @@ ButtonFrame->None, ButtonData:>\\\"paclet:ref/NIntegrate\\\", ButtonNote -> \
 Cell[BoxData[
  RowBox[{
   StyleBox[
-   RowBox[{"NIntegrate", "::", "izero"}], "MessageName"], 
-  RowBox[{
-  ":", " "}], "\<\"Integral and error estimates are 0 on all integration \
-subregions. Try increasing the value of the MinRecursion option. If value of \
-integral may be 0, specify a finite value for the AccuracyGoal option. \\!\\(\
-\\*ButtonBox[\\\"\[RightSkeleton]\\\", ButtonStyle->\\\"Link\\\", \
-ButtonFrame->None, ButtonData:>\\\"paclet:ref/NIntegrate\\\", ButtonNote -> \
+   RowBox[{"NIntegrate", "::", "izero"}], "MessageName"], ":", 
+  " ", "\<\"Integral and error estimates are 0 on all integration subregions. \
+Try increasing the value of the MinRecursion option. If value of integral may \
+be 0, specify a finite value for the AccuracyGoal option. \\!\\(\\*ButtonBox[\
+\\\"\[RightSkeleton]\\\", ButtonStyle->\\\"Link\\\", ButtonFrame->None, \
+ButtonData:>\\\"paclet:ref/NIntegrate\\\", ButtonNote -> \
 \\\"NIntegrate::izero\\\"]\\)\"\>"}]], "Message", "MSG",
  ShowCellLabel->True,
  CellChangeTimes->{3.6750162931185255`*^9, 3.6750163270406733`*^9, 
@@ -10066,13 +10035,12 @@ ButtonFrame->None, ButtonData:>\\\"paclet:ref/NIntegrate\\\", ButtonNote -> \
 Cell[BoxData[
  RowBox[{
   StyleBox[
-   RowBox[{"NIntegrate", "::", "izero"}], "MessageName"], 
-  RowBox[{
-  ":", " "}], "\<\"Integral and error estimates are 0 on all integration \
-subregions. Try increasing the value of the MinRecursion option. If value of \
-integral may be 0, specify a finite value for the AccuracyGoal option. \\!\\(\
-\\*ButtonBox[\\\"\[RightSkeleton]\\\", ButtonStyle->\\\"Link\\\", \
-ButtonFrame->None, ButtonData:>\\\"paclet:ref/NIntegrate\\\", ButtonNote -> \
+   RowBox[{"NIntegrate", "::", "izero"}], "MessageName"], ":", 
+  " ", "\<\"Integral and error estimates are 0 on all integration subregions. \
+Try increasing the value of the MinRecursion option. If value of integral may \
+be 0, specify a finite value for the AccuracyGoal option. \\!\\(\\*ButtonBox[\
+\\\"\[RightSkeleton]\\\", ButtonStyle->\\\"Link\\\", ButtonFrame->None, \
+ButtonData:>\\\"paclet:ref/NIntegrate\\\", ButtonNote -> \
 \\\"NIntegrate::izero\\\"]\\)\"\>"}]], "Message", "MSG",
  ShowCellLabel->True,
  CellChangeTimes->{3.6750162931185255`*^9, 3.6750163270406733`*^9, 
@@ -10082,9 +10050,8 @@ ButtonFrame->None, ButtonData:>\\\"paclet:ref/NIntegrate\\\", ButtonNote -> \
 Cell[BoxData[
  RowBox[{
   StyleBox[
-   RowBox[{"General", "::", "stop"}], "MessageName"], 
-  RowBox[{
-  ":", " "}], "\<\"Further output of \
+   RowBox[{"General", "::", "stop"}], "MessageName"], ":", 
+  " ", "\<\"Further output of \
 \[NoBreak]\\!\\(\\*StyleBox[RowBox[{\\\"NIntegrate\\\", \\\"::\\\", \\\"izero\
 \\\"}], \\\"MessageName\\\"]\\)\[NoBreak] will be suppressed during this \
 calculation. \\!\\(\\*ButtonBox[\\\"\[RightSkeleton]\\\", \
@@ -10146,6 +10113,7 @@ Cell[BoxData[
   RowBox[{
    RowBox[{"xhoopN", " ", "@@", " ", "anXEpsBetterQuasi"}], ",", 
    RowBox[{"zhoopN", " ", "@@", " ", "anXEpsBetterQuasi"}]}], "}"}]], "Input",
+ 
  CellChangeTimes->{{3.674904805420548*^9, 3.674904811670594*^9}, {
   3.6749048598060346`*^9, 3.674904893931308*^9}, {3.675016479651264*^9, 
   3.675016483120042*^9}}],
@@ -10294,11 +10262,10 @@ Cell[BoxData["\<\"RE done now PF\"\>"], "Print",
 Cell[BoxData[
  RowBox[{
   StyleBox[
-   RowBox[{"Solve", "::", "ifun"}], "MessageName"], 
-  RowBox[{
-  ":", " "}], "\<\"Inverse functions are being used by \
-\[NoBreak]\\!\\(\\*RowBox[{\\\"Solve\\\"}]\\)\[NoBreak], so some solutions \
-may not be found; use Reduce for complete solution information. \
+   RowBox[{"Solve", "::", "ifun"}], "MessageName"], ":", 
+  " ", "\<\"Inverse functions are being used by \[NoBreak]\\!\\(\\*RowBox[{\\\
+\"Solve\\\"}]\\)\[NoBreak], so some solutions may not be found; use Reduce \
+for complete solution information. \
 \\!\\(\\*ButtonBox[\\\"\[RightSkeleton]\\\", ButtonStyle->\\\"Link\\\", \
 ButtonFrame->None, ButtonData:>\\\"paclet:ref/message/Solve/ifun\\\", \
 ButtonNote -> \\\"Solve::ifun\\\"]\\)\"\>"}]], "Message", "MSG",
@@ -11140,13 +11107,12 @@ Cell[BoxData[{
 Cell[BoxData[
  RowBox[{
   StyleBox[
-   RowBox[{"NIntegrate", "::", "izero"}], "MessageName"], 
-  RowBox[{
-  ":", " "}], "\<\"Integral and error estimates are 0 on all integration \
-subregions. Try increasing the value of the MinRecursion option. If value of \
-integral may be 0, specify a finite value for the AccuracyGoal option. \\!\\(\
-\\*ButtonBox[\\\"\[RightSkeleton]\\\", ButtonStyle->\\\"Link\\\", \
-ButtonFrame->None, ButtonData:>\\\"paclet:ref/NIntegrate\\\", ButtonNote -> \
+   RowBox[{"NIntegrate", "::", "izero"}], "MessageName"], ":", 
+  " ", "\<\"Integral and error estimates are 0 on all integration subregions. \
+Try increasing the value of the MinRecursion option. If value of integral may \
+be 0, specify a finite value for the AccuracyGoal option. \\!\\(\\*ButtonBox[\
+\\\"\[RightSkeleton]\\\", ButtonStyle->\\\"Link\\\", ButtonFrame->None, \
+ButtonData:>\\\"paclet:ref/NIntegrate\\\", ButtonNote -> \
 \\\"NIntegrate::izero\\\"]\\)\"\>"}]], "Message", "MSG",
  CellChangeTimes->{3.67431386146033*^9, 3.6743160998327184`*^9, 
   3.674484297795525*^9, 3.674488975563857*^9, 3.6750122541992793`*^9, 
@@ -11156,9 +11122,8 @@ ButtonFrame->None, ButtonData:>\\\"paclet:ref/NIntegrate\\\", ButtonNote -> \
 Cell[BoxData[
  RowBox[{
   StyleBox[
-   RowBox[{"NIntegrate", "::", "ncvb"}], "MessageName"], 
-  RowBox[{
-  ":", " "}], "\<\"NIntegrate failed to converge to prescribed accuracy after \
+   RowBox[{"NIntegrate", "::", "ncvb"}], "MessageName"], ":", 
+  " ", "\<\"NIntegrate failed to converge to prescribed accuracy after \
 \[NoBreak]\\!\\(\\*RowBox[{\\\"9\\\"}]\\)\[NoBreak] recursive bisections in \
 \[NoBreak]\\!\\(\\*RowBox[{\\\"epIntV118378\\\"}]\\)\[NoBreak] near \
 \[NoBreak]\\!\\(\\*RowBox[{\\\"{\\\", \\\"epIntV118378\\\", \\\"}\\\"}]\\)\
@@ -11179,13 +11144,12 @@ ButtonData:>\\\"paclet:ref/message/NIntegrate/ncvb\\\", ButtonNote -> \
 Cell[BoxData[
  RowBox[{
   StyleBox[
-   RowBox[{"NIntegrate", "::", "izero"}], "MessageName"], 
-  RowBox[{
-  ":", " "}], "\<\"Integral and error estimates are 0 on all integration \
-subregions. Try increasing the value of the MinRecursion option. If value of \
-integral may be 0, specify a finite value for the AccuracyGoal option. \\!\\(\
-\\*ButtonBox[\\\"\[RightSkeleton]\\\", ButtonStyle->\\\"Link\\\", \
-ButtonFrame->None, ButtonData:>\\\"paclet:ref/NIntegrate\\\", ButtonNote -> \
+   RowBox[{"NIntegrate", "::", "izero"}], "MessageName"], ":", 
+  " ", "\<\"Integral and error estimates are 0 on all integration subregions. \
+Try increasing the value of the MinRecursion option. If value of integral may \
+be 0, specify a finite value for the AccuracyGoal option. \\!\\(\\*ButtonBox[\
+\\\"\[RightSkeleton]\\\", ButtonStyle->\\\"Link\\\", ButtonFrame->None, \
+ButtonData:>\\\"paclet:ref/NIntegrate\\\", ButtonNote -> \
 \\\"NIntegrate::izero\\\"]\\)\"\>"}]], "Message", "MSG",
  CellChangeTimes->{3.67431386146033*^9, 3.6743160998327184`*^9, 
   3.674484297795525*^9, 3.674488975563857*^9, 3.6750122541992793`*^9, 
@@ -11195,13 +11159,12 @@ ButtonFrame->None, ButtonData:>\\\"paclet:ref/NIntegrate\\\", ButtonNote -> \
 Cell[BoxData[
  RowBox[{
   StyleBox[
-   RowBox[{"NIntegrate", "::", "izero"}], "MessageName"], 
-  RowBox[{
-  ":", " "}], "\<\"Integral and error estimates are 0 on all integration \
-subregions. Try increasing the value of the MinRecursion option. If value of \
-integral may be 0, specify a finite value for the AccuracyGoal option. \\!\\(\
-\\*ButtonBox[\\\"\[RightSkeleton]\\\", ButtonStyle->\\\"Link\\\", \
-ButtonFrame->None, ButtonData:>\\\"paclet:ref/NIntegrate\\\", ButtonNote -> \
+   RowBox[{"NIntegrate", "::", "izero"}], "MessageName"], ":", 
+  " ", "\<\"Integral and error estimates are 0 on all integration subregions. \
+Try increasing the value of the MinRecursion option. If value of integral may \
+be 0, specify a finite value for the AccuracyGoal option. \\!\\(\\*ButtonBox[\
+\\\"\[RightSkeleton]\\\", ButtonStyle->\\\"Link\\\", ButtonFrame->None, \
+ButtonData:>\\\"paclet:ref/NIntegrate\\\", ButtonNote -> \
 \\\"NIntegrate::izero\\\"]\\)\"\>"}]], "Message", "MSG",
  CellChangeTimes->{3.67431386146033*^9, 3.6743160998327184`*^9, 
   3.674484297795525*^9, 3.674488975563857*^9, 3.6750122541992793`*^9, 
@@ -11211,9 +11174,8 @@ ButtonFrame->None, ButtonData:>\\\"paclet:ref/NIntegrate\\\", ButtonNote -> \
 Cell[BoxData[
  RowBox[{
   StyleBox[
-   RowBox[{"General", "::", "stop"}], "MessageName"], 
-  RowBox[{
-  ":", " "}], "\<\"Further output of \
+   RowBox[{"General", "::", "stop"}], "MessageName"], ":", 
+  " ", "\<\"Further output of \
 \[NoBreak]\\!\\(\\*StyleBox[RowBox[{\\\"NIntegrate\\\", \\\"::\\\", \\\"izero\
 \\\"}], \\\"MessageName\\\"]\\)\[NoBreak] will be suppressed during this \
 calculation. \\!\\(\\*ButtonBox[\\\"\[RightSkeleton]\\\", \
@@ -11641,13 +11603,12 @@ Cell[BoxData[{
 Cell[BoxData[
  RowBox[{
   StyleBox[
-   RowBox[{"NIntegrate", "::", "izero"}], "MessageName"], 
-  RowBox[{
-  ":", " "}], "\<\"Integral and error estimates are 0 on all integration \
-subregions. Try increasing the value of the MinRecursion option. If value of \
-integral may be 0, specify a finite value for the AccuracyGoal option. \\!\\(\
-\\*ButtonBox[\\\"\[RightSkeleton]\\\", ButtonStyle->\\\"Link\\\", \
-ButtonFrame->None, ButtonData:>\\\"paclet:ref/NIntegrate\\\", ButtonNote -> \
+   RowBox[{"NIntegrate", "::", "izero"}], "MessageName"], ":", 
+  " ", "\<\"Integral and error estimates are 0 on all integration subregions. \
+Try increasing the value of the MinRecursion option. If value of integral may \
+be 0, specify a finite value for the AccuracyGoal option. \\!\\(\\*ButtonBox[\
+\\\"\[RightSkeleton]\\\", ButtonStyle->\\\"Link\\\", ButtonFrame->None, \
+ButtonData:>\\\"paclet:ref/NIntegrate\\\", ButtonNote -> \
 \\\"NIntegrate::izero\\\"]\\)\"\>"}]], "Message", "MSG",
  ShowCellLabel->True,
  CellChangeTimes->{3.6742448823394175`*^9, 3.674316342758164*^9, 
@@ -11658,9 +11619,8 @@ ButtonFrame->None, ButtonData:>\\\"paclet:ref/NIntegrate\\\", ButtonNote -> \
 Cell[BoxData[
  RowBox[{
   StyleBox[
-   RowBox[{"NIntegrate", "::", "ncvb"}], "MessageName"], 
-  RowBox[{
-  ":", " "}], "\<\"NIntegrate failed to converge to prescribed accuracy after \
+   RowBox[{"NIntegrate", "::", "ncvb"}], "MessageName"], ":", 
+  " ", "\<\"NIntegrate failed to converge to prescribed accuracy after \
 \[NoBreak]\\!\\(\\*RowBox[{\\\"9\\\"}]\\)\[NoBreak] recursive bisections in \
 \[NoBreak]\\!\\(\\*RowBox[{\\\"epIntV120499\\\"}]\\)\[NoBreak] near \
 \[NoBreak]\\!\\(\\*RowBox[{\\\"{\\\", \\\"epIntV120499\\\", \\\"}\\\"}]\\)\
@@ -11682,13 +11642,12 @@ ButtonData:>\\\"paclet:ref/message/NIntegrate/ncvb\\\", ButtonNote -> \
 Cell[BoxData[
  RowBox[{
   StyleBox[
-   RowBox[{"NIntegrate", "::", "izero"}], "MessageName"], 
-  RowBox[{
-  ":", " "}], "\<\"Integral and error estimates are 0 on all integration \
-subregions. Try increasing the value of the MinRecursion option. If value of \
-integral may be 0, specify a finite value for the AccuracyGoal option. \\!\\(\
-\\*ButtonBox[\\\"\[RightSkeleton]\\\", ButtonStyle->\\\"Link\\\", \
-ButtonFrame->None, ButtonData:>\\\"paclet:ref/NIntegrate\\\", ButtonNote -> \
+   RowBox[{"NIntegrate", "::", "izero"}], "MessageName"], ":", 
+  " ", "\<\"Integral and error estimates are 0 on all integration subregions. \
+Try increasing the value of the MinRecursion option. If value of integral may \
+be 0, specify a finite value for the AccuracyGoal option. \\!\\(\\*ButtonBox[\
+\\\"\[RightSkeleton]\\\", ButtonStyle->\\\"Link\\\", ButtonFrame->None, \
+ButtonData:>\\\"paclet:ref/NIntegrate\\\", ButtonNote -> \
 \\\"NIntegrate::izero\\\"]\\)\"\>"}]], "Message", "MSG",
  ShowCellLabel->True,
  CellChangeTimes->{3.6742448823394175`*^9, 3.674316342758164*^9, 
@@ -11699,13 +11658,12 @@ ButtonFrame->None, ButtonData:>\\\"paclet:ref/NIntegrate\\\", ButtonNote -> \
 Cell[BoxData[
  RowBox[{
   StyleBox[
-   RowBox[{"NIntegrate", "::", "izero"}], "MessageName"], 
-  RowBox[{
-  ":", " "}], "\<\"Integral and error estimates are 0 on all integration \
-subregions. Try increasing the value of the MinRecursion option. If value of \
-integral may be 0, specify a finite value for the AccuracyGoal option. \\!\\(\
-\\*ButtonBox[\\\"\[RightSkeleton]\\\", ButtonStyle->\\\"Link\\\", \
-ButtonFrame->None, ButtonData:>\\\"paclet:ref/NIntegrate\\\", ButtonNote -> \
+   RowBox[{"NIntegrate", "::", "izero"}], "MessageName"], ":", 
+  " ", "\<\"Integral and error estimates are 0 on all integration subregions. \
+Try increasing the value of the MinRecursion option. If value of integral may \
+be 0, specify a finite value for the AccuracyGoal option. \\!\\(\\*ButtonBox[\
+\\\"\[RightSkeleton]\\\", ButtonStyle->\\\"Link\\\", ButtonFrame->None, \
+ButtonData:>\\\"paclet:ref/NIntegrate\\\", ButtonNote -> \
 \\\"NIntegrate::izero\\\"]\\)\"\>"}]], "Message", "MSG",
  ShowCellLabel->True,
  CellChangeTimes->{3.6742448823394175`*^9, 3.674316342758164*^9, 
@@ -11716,9 +11674,8 @@ ButtonFrame->None, ButtonData:>\\\"paclet:ref/NIntegrate\\\", ButtonNote -> \
 Cell[BoxData[
  RowBox[{
   StyleBox[
-   RowBox[{"General", "::", "stop"}], "MessageName"], 
-  RowBox[{
-  ":", " "}], "\<\"Further output of \
+   RowBox[{"General", "::", "stop"}], "MessageName"], ":", 
+  " ", "\<\"Further output of \
 \[NoBreak]\\!\\(\\*StyleBox[RowBox[{\\\"NIntegrate\\\", \\\"::\\\", \\\"izero\
 \\\"}], \\\"MessageName\\\"]\\)\[NoBreak] will be suppressed during this \
 calculation. \\!\\(\\*ButtonBox[\\\"\[RightSkeleton]\\\", \
@@ -11734,13 +11691,12 @@ ButtonData:>\\\"paclet:ref/message/General/stop\\\", ButtonNote -> \
 Cell[BoxData[
  RowBox[{
   StyleBox[
-   RowBox[{"NIntegrate", "::", "izero"}], "MessageName"], 
-  RowBox[{
-  ":", " "}], "\<\"Integral and error estimates are 0 on all integration \
-subregions. Try increasing the value of the MinRecursion option. If value of \
-integral may be 0, specify a finite value for the AccuracyGoal option. \\!\\(\
-\\*ButtonBox[\\\"\[RightSkeleton]\\\", ButtonStyle->\\\"Link\\\", \
-ButtonFrame->None, ButtonData:>\\\"paclet:ref/NIntegrate\\\", ButtonNote -> \
+   RowBox[{"NIntegrate", "::", "izero"}], "MessageName"], ":", 
+  " ", "\<\"Integral and error estimates are 0 on all integration subregions. \
+Try increasing the value of the MinRecursion option. If value of integral may \
+be 0, specify a finite value for the AccuracyGoal option. \\!\\(\\*ButtonBox[\
+\\\"\[RightSkeleton]\\\", ButtonStyle->\\\"Link\\\", ButtonFrame->None, \
+ButtonData:>\\\"paclet:ref/NIntegrate\\\", ButtonNote -> \
 \\\"NIntegrate::izero\\\"]\\)\"\>"}]], "Message", "MSG",
  ShowCellLabel->True,
  CellChangeTimes->{3.6742448823394175`*^9, 3.674316342758164*^9, 
@@ -11751,9 +11707,8 @@ ButtonFrame->None, ButtonData:>\\\"paclet:ref/NIntegrate\\\", ButtonNote -> \
 Cell[BoxData[
  RowBox[{
   StyleBox[
-   RowBox[{"NIntegrate", "::", "ncvb"}], "MessageName"], 
-  RowBox[{
-  ":", " "}], "\<\"NIntegrate failed to converge to prescribed accuracy after \
+   RowBox[{"NIntegrate", "::", "ncvb"}], "MessageName"], ":", 
+  " ", "\<\"NIntegrate failed to converge to prescribed accuracy after \
 \[NoBreak]\\!\\(\\*RowBox[{\\\"9\\\"}]\\)\[NoBreak] recursive bisections in \
 \[NoBreak]\\!\\(\\*RowBox[{\\\"epIntV120513\\\"}]\\)\[NoBreak] near \
 \[NoBreak]\\!\\(\\*RowBox[{\\\"{\\\", \\\"epIntV120513\\\", \\\"}\\\"}]\\)\
@@ -11775,13 +11730,12 @@ ButtonData:>\\\"paclet:ref/message/NIntegrate/ncvb\\\", ButtonNote -> \
 Cell[BoxData[
  RowBox[{
   StyleBox[
-   RowBox[{"NIntegrate", "::", "izero"}], "MessageName"], 
-  RowBox[{
-  ":", " "}], "\<\"Integral and error estimates are 0 on all integration \
-subregions. Try increasing the value of the MinRecursion option. If value of \
-integral may be 0, specify a finite value for the AccuracyGoal option. \\!\\(\
-\\*ButtonBox[\\\"\[RightSkeleton]\\\", ButtonStyle->\\\"Link\\\", \
-ButtonFrame->None, ButtonData:>\\\"paclet:ref/NIntegrate\\\", ButtonNote -> \
+   RowBox[{"NIntegrate", "::", "izero"}], "MessageName"], ":", 
+  " ", "\<\"Integral and error estimates are 0 on all integration subregions. \
+Try increasing the value of the MinRecursion option. If value of integral may \
+be 0, specify a finite value for the AccuracyGoal option. \\!\\(\\*ButtonBox[\
+\\\"\[RightSkeleton]\\\", ButtonStyle->\\\"Link\\\", ButtonFrame->None, \
+ButtonData:>\\\"paclet:ref/NIntegrate\\\", ButtonNote -> \
 \\\"NIntegrate::izero\\\"]\\)\"\>"}]], "Message", "MSG",
  ShowCellLabel->True,
  CellChangeTimes->{3.6742448823394175`*^9, 3.674316342758164*^9, 
@@ -11792,13 +11746,12 @@ ButtonFrame->None, ButtonData:>\\\"paclet:ref/NIntegrate\\\", ButtonNote -> \
 Cell[BoxData[
  RowBox[{
   StyleBox[
-   RowBox[{"NIntegrate", "::", "izero"}], "MessageName"], 
-  RowBox[{
-  ":", " "}], "\<\"Integral and error estimates are 0 on all integration \
-subregions. Try increasing the value of the MinRecursion option. If value of \
-integral may be 0, specify a finite value for the AccuracyGoal option. \\!\\(\
-\\*ButtonBox[\\\"\[RightSkeleton]\\\", ButtonStyle->\\\"Link\\\", \
-ButtonFrame->None, ButtonData:>\\\"paclet:ref/NIntegrate\\\", ButtonNote -> \
+   RowBox[{"NIntegrate", "::", "izero"}], "MessageName"], ":", 
+  " ", "\<\"Integral and error estimates are 0 on all integration subregions. \
+Try increasing the value of the MinRecursion option. If value of integral may \
+be 0, specify a finite value for the AccuracyGoal option. \\!\\(\\*ButtonBox[\
+\\\"\[RightSkeleton]\\\", ButtonStyle->\\\"Link\\\", ButtonFrame->None, \
+ButtonData:>\\\"paclet:ref/NIntegrate\\\", ButtonNote -> \
 \\\"NIntegrate::izero\\\"]\\)\"\>"}]], "Message", "MSG",
  ShowCellLabel->True,
  CellChangeTimes->{3.6742448823394175`*^9, 3.674316342758164*^9, 
@@ -11809,9 +11762,8 @@ ButtonFrame->None, ButtonData:>\\\"paclet:ref/NIntegrate\\\", ButtonNote -> \
 Cell[BoxData[
  RowBox[{
   StyleBox[
-   RowBox[{"General", "::", "stop"}], "MessageName"], 
-  RowBox[{
-  ":", " "}], "\<\"Further output of \
+   RowBox[{"General", "::", "stop"}], "MessageName"], ":", 
+  " ", "\<\"Further output of \
 \[NoBreak]\\!\\(\\*StyleBox[RowBox[{\\\"NIntegrate\\\", \\\"::\\\", \\\"izero\
 \\\"}], \\\"MessageName\\\"]\\)\[NoBreak] will be suppressed during this \
 calculation. \\!\\(\\*ButtonBox[\\\"\[RightSkeleton]\\\", \
@@ -11827,13 +11779,13 @@ ButtonData:>\\\"paclet:ref/message/General/stop\\\", ButtonNote -> \
 Cell[BoxData[
  RowBox[{
   StyleBox[
-   RowBox[{"InterpolatingFunction", "::", "dmval"}], "MessageName"], 
-  RowBox[{
-  ":", " "}], "\<\"Input value \[NoBreak]\\!\\(\\*RowBox[{\\\"{\\\", RowBox[{\
-\\\"0.23122585322024453`\\\", \\\",\\\", \\\"1.0949703972809617`\\\"}], \\\"}\
-\\\"}]\\)\[NoBreak] lies outside the range of data in the interpolating \
-function. Extrapolation will be used. \\!\\(\\*ButtonBox[\\\"\[RightSkeleton]\
-\\\", ButtonStyle->\\\"Link\\\", ButtonFrame->None, \
+   RowBox[{"InterpolatingFunction", "::", "dmval"}], "MessageName"], ":", 
+  " ", "\<\"Input value \[NoBreak]\\!\\(\\*RowBox[{\\\"{\\\", \
+RowBox[{\\\"0.23122585322024453`\\\", \\\",\\\", \
+\\\"1.0949703972809617`\\\"}], \\\"}\\\"}]\\)\[NoBreak] lies outside the \
+range of data in the interpolating function. Extrapolation will be used. \
+\\!\\(\\*ButtonBox[\\\"\[RightSkeleton]\\\", ButtonStyle->\\\"Link\\\", \
+ButtonFrame->None, \
 ButtonData:>\\\"paclet:ref/message/InterpolatingFunction/dmval\\\", \
 ButtonNote -> \\\"InterpolatingFunction::dmval\\\"]\\)\"\>"}]], "Message", \
 "MSG",
@@ -11846,13 +11798,13 @@ ButtonNote -> \\\"InterpolatingFunction::dmval\\\"]\\)\"\>"}]], "Message", \
 Cell[BoxData[
  RowBox[{
   StyleBox[
-   RowBox[{"InterpolatingFunction", "::", "dmval"}], "MessageName"], 
-  RowBox[{
-  ":", " "}], "\<\"Input value \[NoBreak]\\!\\(\\*RowBox[{\\\"{\\\", RowBox[{\
-\\\"0.23122585322024453`\\\", \\\",\\\", \\\"1.0949703972809617`\\\"}], \\\"}\
-\\\"}]\\)\[NoBreak] lies outside the range of data in the interpolating \
-function. Extrapolation will be used. \\!\\(\\*ButtonBox[\\\"\[RightSkeleton]\
-\\\", ButtonStyle->\\\"Link\\\", ButtonFrame->None, \
+   RowBox[{"InterpolatingFunction", "::", "dmval"}], "MessageName"], ":", 
+  " ", "\<\"Input value \[NoBreak]\\!\\(\\*RowBox[{\\\"{\\\", \
+RowBox[{\\\"0.23122585322024453`\\\", \\\",\\\", \
+\\\"1.0949703972809617`\\\"}], \\\"}\\\"}]\\)\[NoBreak] lies outside the \
+range of data in the interpolating function. Extrapolation will be used. \
+\\!\\(\\*ButtonBox[\\\"\[RightSkeleton]\\\", ButtonStyle->\\\"Link\\\", \
+ButtonFrame->None, \
 ButtonData:>\\\"paclet:ref/message/InterpolatingFunction/dmval\\\", \
 ButtonNote -> \\\"InterpolatingFunction::dmval\\\"]\\)\"\>"}]], "Message", \
 "MSG",
@@ -11865,13 +11817,13 @@ ButtonNote -> \\\"InterpolatingFunction::dmval\\\"]\\)\"\>"}]], "Message", \
 Cell[BoxData[
  RowBox[{
   StyleBox[
-   RowBox[{"InterpolatingFunction", "::", "dmval"}], "MessageName"], 
-  RowBox[{
-  ":", " "}], "\<\"Input value \[NoBreak]\\!\\(\\*RowBox[{\\\"{\\\", RowBox[{\
-\\\"0.23122585322024453`\\\", \\\",\\\", \\\"1.0949703972809617`\\\"}], \\\"}\
-\\\"}]\\)\[NoBreak] lies outside the range of data in the interpolating \
-function. Extrapolation will be used. \\!\\(\\*ButtonBox[\\\"\[RightSkeleton]\
-\\\", ButtonStyle->\\\"Link\\\", ButtonFrame->None, \
+   RowBox[{"InterpolatingFunction", "::", "dmval"}], "MessageName"], ":", 
+  " ", "\<\"Input value \[NoBreak]\\!\\(\\*RowBox[{\\\"{\\\", \
+RowBox[{\\\"0.23122585322024453`\\\", \\\",\\\", \
+\\\"1.0949703972809617`\\\"}], \\\"}\\\"}]\\)\[NoBreak] lies outside the \
+range of data in the interpolating function. Extrapolation will be used. \
+\\!\\(\\*ButtonBox[\\\"\[RightSkeleton]\\\", ButtonStyle->\\\"Link\\\", \
+ButtonFrame->None, \
 ButtonData:>\\\"paclet:ref/message/InterpolatingFunction/dmval\\\", \
 ButtonNote -> \\\"InterpolatingFunction::dmval\\\"]\\)\"\>"}]], "Message", \
 "MSG",
@@ -11884,9 +11836,8 @@ ButtonNote -> \\\"InterpolatingFunction::dmval\\\"]\\)\"\>"}]], "Message", \
 Cell[BoxData[
  RowBox[{
   StyleBox[
-   RowBox[{"General", "::", "stop"}], "MessageName"], 
-  RowBox[{
-  ":", " "}], "\<\"Further output of \
+   RowBox[{"General", "::", "stop"}], "MessageName"], ":", 
+  " ", "\<\"Further output of \
 \[NoBreak]\\!\\(\\*StyleBox[RowBox[{\\\"InterpolatingFunction\\\", \
 \\\"::\\\", \\\"dmval\\\"}], \\\"MessageName\\\"]\\)\[NoBreak] will be \
 suppressed during this calculation. \\!\\(\\*ButtonBox[\\\"\[RightSkeleton]\\\
@@ -12127,13 +12078,12 @@ Cell[BoxData[
 Cell[BoxData[
  RowBox[{
   StyleBox[
-   RowBox[{"NIntegrate", "::", "izero"}], "MessageName"], 
-  RowBox[{
-  ":", " "}], "\<\"Integral and error estimates are 0 on all integration \
-subregions. Try increasing the value of the MinRecursion option. If value of \
-integral may be 0, specify a finite value for the AccuracyGoal option. \\!\\(\
-\\*ButtonBox[\\\"\[RightSkeleton]\\\", ButtonStyle->\\\"Link\\\", \
-ButtonFrame->None, ButtonData:>\\\"paclet:ref/NIntegrate\\\", ButtonNote -> \
+   RowBox[{"NIntegrate", "::", "izero"}], "MessageName"], ":", 
+  " ", "\<\"Integral and error estimates are 0 on all integration subregions. \
+Try increasing the value of the MinRecursion option. If value of integral may \
+be 0, specify a finite value for the AccuracyGoal option. \\!\\(\\*ButtonBox[\
+\\\"\[RightSkeleton]\\\", ButtonStyle->\\\"Link\\\", ButtonFrame->None, \
+ButtonData:>\\\"paclet:ref/NIntegrate\\\", ButtonNote -> \
 \\\"NIntegrate::izero\\\"]\\)\"\>"}]], "Message", "MSG",
  CellChangeTimes->{3.6741382475230293`*^9, 3.674316569647696*^9, 
   3.6744847264008975`*^9, 3.6744894001807256`*^9, 3.675012683344209*^9, 
@@ -12143,9 +12093,8 @@ ButtonFrame->None, ButtonData:>\\\"paclet:ref/NIntegrate\\\", ButtonNote -> \
 Cell[BoxData[
  RowBox[{
   StyleBox[
-   RowBox[{"NIntegrate", "::", "ncvb"}], "MessageName"], 
-  RowBox[{
-  ":", " "}], "\<\"NIntegrate failed to converge to prescribed accuracy after \
+   RowBox[{"NIntegrate", "::", "ncvb"}], "MessageName"], ":", 
+  " ", "\<\"NIntegrate failed to converge to prescribed accuracy after \
 \[NoBreak]\\!\\(\\*RowBox[{\\\"9\\\"}]\\)\[NoBreak] recursive bisections in \
 \[NoBreak]\\!\\(\\*RowBox[{\\\"epIntV123018\\\"}]\\)\[NoBreak] near \
 \[NoBreak]\\!\\(\\*RowBox[{\\\"{\\\", \\\"epIntV123018\\\", \\\"}\\\"}]\\)\
@@ -12166,13 +12115,12 @@ ButtonData:>\\\"paclet:ref/message/NIntegrate/ncvb\\\", ButtonNote -> \
 Cell[BoxData[
  RowBox[{
   StyleBox[
-   RowBox[{"NIntegrate", "::", "izero"}], "MessageName"], 
-  RowBox[{
-  ":", " "}], "\<\"Integral and error estimates are 0 on all integration \
-subregions. Try increasing the value of the MinRecursion option. If value of \
-integral may be 0, specify a finite value for the AccuracyGoal option. \\!\\(\
-\\*ButtonBox[\\\"\[RightSkeleton]\\\", ButtonStyle->\\\"Link\\\", \
-ButtonFrame->None, ButtonData:>\\\"paclet:ref/NIntegrate\\\", ButtonNote -> \
+   RowBox[{"NIntegrate", "::", "izero"}], "MessageName"], ":", 
+  " ", "\<\"Integral and error estimates are 0 on all integration subregions. \
+Try increasing the value of the MinRecursion option. If value of integral may \
+be 0, specify a finite value for the AccuracyGoal option. \\!\\(\\*ButtonBox[\
+\\\"\[RightSkeleton]\\\", ButtonStyle->\\\"Link\\\", ButtonFrame->None, \
+ButtonData:>\\\"paclet:ref/NIntegrate\\\", ButtonNote -> \
 \\\"NIntegrate::izero\\\"]\\)\"\>"}]], "Message", "MSG",
  CellChangeTimes->{3.6741382475230293`*^9, 3.674316569647696*^9, 
   3.6744847264008975`*^9, 3.6744894001807256`*^9, 3.675012683344209*^9, 
@@ -12182,13 +12130,12 @@ ButtonFrame->None, ButtonData:>\\\"paclet:ref/NIntegrate\\\", ButtonNote -> \
 Cell[BoxData[
  RowBox[{
   StyleBox[
-   RowBox[{"NIntegrate", "::", "izero"}], "MessageName"], 
-  RowBox[{
-  ":", " "}], "\<\"Integral and error estimates are 0 on all integration \
-subregions. Try increasing the value of the MinRecursion option. If value of \
-integral may be 0, specify a finite value for the AccuracyGoal option. \\!\\(\
-\\*ButtonBox[\\\"\[RightSkeleton]\\\", ButtonStyle->\\\"Link\\\", \
-ButtonFrame->None, ButtonData:>\\\"paclet:ref/NIntegrate\\\", ButtonNote -> \
+   RowBox[{"NIntegrate", "::", "izero"}], "MessageName"], ":", 
+  " ", "\<\"Integral and error estimates are 0 on all integration subregions. \
+Try increasing the value of the MinRecursion option. If value of integral may \
+be 0, specify a finite value for the AccuracyGoal option. \\!\\(\\*ButtonBox[\
+\\\"\[RightSkeleton]\\\", ButtonStyle->\\\"Link\\\", ButtonFrame->None, \
+ButtonData:>\\\"paclet:ref/NIntegrate\\\", ButtonNote -> \
 \\\"NIntegrate::izero\\\"]\\)\"\>"}]], "Message", "MSG",
  CellChangeTimes->{3.6741382475230293`*^9, 3.674316569647696*^9, 
   3.6744847264008975`*^9, 3.6744894001807256`*^9, 3.675012683344209*^9, 
@@ -12198,9 +12145,8 @@ ButtonFrame->None, ButtonData:>\\\"paclet:ref/NIntegrate\\\", ButtonNote -> \
 Cell[BoxData[
  RowBox[{
   StyleBox[
-   RowBox[{"General", "::", "stop"}], "MessageName"], 
-  RowBox[{
-  ":", " "}], "\<\"Further output of \
+   RowBox[{"General", "::", "stop"}], "MessageName"], ":", 
+  " ", "\<\"Further output of \
 \[NoBreak]\\!\\(\\*StyleBox[RowBox[{\\\"NIntegrate\\\", \\\"::\\\", \\\"izero\
 \\\"}], \\\"MessageName\\\"]\\)\[NoBreak] will be suppressed during this \
 calculation. \\!\\(\\*ButtonBox[\\\"\[RightSkeleton]\\\", \
@@ -12332,12 +12278,11 @@ Cell[BoxData[
 Cell[BoxData[
  RowBox[{
   StyleBox[
-   RowBox[{"InterpolatingFunction", "::", "dmval"}], "MessageName"], 
-  RowBox[{
-  ":", " "}], "\<\"Input value \[NoBreak]\\!\\(\\*RowBox[{\\\"{\\\", RowBox[{\
-\\\"0\\\", \\\",\\\", \\\"0\\\", \\\",\\\", \\\"1.`\\\"}], \\\"}\\\"}]\\)\
-\[NoBreak] lies outside the range of data in the interpolating function. \
-Extrapolation will be used. \\!\\(\\*ButtonBox[\\\"\[RightSkeleton]\\\", \
+   RowBox[{"InterpolatingFunction", "::", "dmval"}], "MessageName"], ":", 
+  " ", "\<\"Input value \[NoBreak]\\!\\(\\*RowBox[{\\\"{\\\", RowBox[{\\\"0\\\
+\", \\\",\\\", \\\"0\\\", \\\",\\\", \\\"1.`\\\"}], \\\"}\\\"}]\\)\[NoBreak] \
+lies outside the range of data in the interpolating function. Extrapolation \
+will be used. \\!\\(\\*ButtonBox[\\\"\[RightSkeleton]\\\", \
 ButtonStyle->\\\"Link\\\", ButtonFrame->None, \
 ButtonData:>\\\"paclet:ref/message/InterpolatingFunction/dmval\\\", \
 ButtonNote -> \\\"InterpolatingFunction::dmval\\\"]\\)\"\>"}]], "Message", \
@@ -12348,12 +12293,11 @@ ButtonNote -> \\\"InterpolatingFunction::dmval\\\"]\\)\"\>"}]], "Message", \
 Cell[BoxData[
  RowBox[{
   StyleBox[
-   RowBox[{"InterpolatingFunction", "::", "dmval"}], "MessageName"], 
-  RowBox[{
-  ":", " "}], "\<\"Input value \[NoBreak]\\!\\(\\*RowBox[{\\\"{\\\", RowBox[{\
-\\\"0\\\", \\\",\\\", \\\"0\\\", \\\",\\\", \\\"1.`\\\"}], \\\"}\\\"}]\\)\
-\[NoBreak] lies outside the range of data in the interpolating function. \
-Extrapolation will be used. \\!\\(\\*ButtonBox[\\\"\[RightSkeleton]\\\", \
+   RowBox[{"InterpolatingFunction", "::", "dmval"}], "MessageName"], ":", 
+  " ", "\<\"Input value \[NoBreak]\\!\\(\\*RowBox[{\\\"{\\\", RowBox[{\\\"0\\\
+\", \\\",\\\", \\\"0\\\", \\\",\\\", \\\"1.`\\\"}], \\\"}\\\"}]\\)\[NoBreak] \
+lies outside the range of data in the interpolating function. Extrapolation \
+will be used. \\!\\(\\*ButtonBox[\\\"\[RightSkeleton]\\\", \
 ButtonStyle->\\\"Link\\\", ButtonFrame->None, \
 ButtonData:>\\\"paclet:ref/message/InterpolatingFunction/dmval\\\", \
 ButtonNote -> \\\"InterpolatingFunction::dmval\\\"]\\)\"\>"}]], "Message", \
@@ -12364,12 +12308,11 @@ ButtonNote -> \\\"InterpolatingFunction::dmval\\\"]\\)\"\>"}]], "Message", \
 Cell[BoxData[
  RowBox[{
   StyleBox[
-   RowBox[{"InterpolatingFunction", "::", "dmval"}], "MessageName"], 
-  RowBox[{
-  ":", " "}], "\<\"Input value \[NoBreak]\\!\\(\\*RowBox[{\\\"{\\\", RowBox[{\
-\\\"0\\\", \\\",\\\", \\\"0\\\", \\\",\\\", \\\"1.`\\\"}], \\\"}\\\"}]\\)\
-\[NoBreak] lies outside the range of data in the interpolating function. \
-Extrapolation will be used. \\!\\(\\*ButtonBox[\\\"\[RightSkeleton]\\\", \
+   RowBox[{"InterpolatingFunction", "::", "dmval"}], "MessageName"], ":", 
+  " ", "\<\"Input value \[NoBreak]\\!\\(\\*RowBox[{\\\"{\\\", RowBox[{\\\"0\\\
+\", \\\",\\\", \\\"0\\\", \\\",\\\", \\\"1.`\\\"}], \\\"}\\\"}]\\)\[NoBreak] \
+lies outside the range of data in the interpolating function. Extrapolation \
+will be used. \\!\\(\\*ButtonBox[\\\"\[RightSkeleton]\\\", \
 ButtonStyle->\\\"Link\\\", ButtonFrame->None, \
 ButtonData:>\\\"paclet:ref/message/InterpolatingFunction/dmval\\\", \
 ButtonNote -> \\\"InterpolatingFunction::dmval\\\"]\\)\"\>"}]], "Message", \
@@ -12380,9 +12323,8 @@ ButtonNote -> \\\"InterpolatingFunction::dmval\\\"]\\)\"\>"}]], "Message", \
 Cell[BoxData[
  RowBox[{
   StyleBox[
-   RowBox[{"General", "::", "stop"}], "MessageName"], 
-  RowBox[{
-  ":", " "}], "\<\"Further output of \
+   RowBox[{"General", "::", "stop"}], "MessageName"], ":", 
+  " ", "\<\"Further output of \
 \[NoBreak]\\!\\(\\*StyleBox[RowBox[{\\\"InterpolatingFunction\\\", \
 \\\"::\\\", \\\"dmval\\\"}], \\\"MessageName\\\"]\\)\[NoBreak] will be \
 suppressed during this calculation. \\!\\(\\*ButtonBox[\\\"\[RightSkeleton]\\\
@@ -12502,13 +12444,12 @@ Cell[BoxData[{
 Cell[BoxData[
  RowBox[{
   StyleBox[
-   RowBox[{"NIntegrate", "::", "izero"}], "MessageName"], 
-  RowBox[{
-  ":", " "}], "\<\"Integral and error estimates are 0 on all integration \
-subregions. Try increasing the value of the MinRecursion option. If value of \
-integral may be 0, specify a finite value for the AccuracyGoal option. \\!\\(\
-\\*ButtonBox[\\\"\[RightSkeleton]\\\", ButtonStyle->\\\"Link\\\", \
-ButtonFrame->None, ButtonData:>\\\"paclet:ref/NIntegrate\\\", ButtonNote -> \
+   RowBox[{"NIntegrate", "::", "izero"}], "MessageName"], ":", 
+  " ", "\<\"Integral and error estimates are 0 on all integration subregions. \
+Try increasing the value of the MinRecursion option. If value of integral may \
+be 0, specify a finite value for the AccuracyGoal option. \\!\\(\\*ButtonBox[\
+\\\"\[RightSkeleton]\\\", ButtonStyle->\\\"Link\\\", ButtonFrame->None, \
+ButtonData:>\\\"paclet:ref/NIntegrate\\\", ButtonNote -> \
 \\\"NIntegrate::izero\\\"]\\)\"\>"}]], "Message", "MSG",
  CellChangeTimes->{3.6741385267752647`*^9, 3.6741386083852787`*^9, 
   3.6752545764382906`*^9, 3.675279244898851*^9, 3.6752809866339493`*^9}],
@@ -12516,9 +12457,8 @@ ButtonFrame->None, ButtonData:>\\\"paclet:ref/NIntegrate\\\", ButtonNote -> \
 Cell[BoxData[
  RowBox[{
   StyleBox[
-   RowBox[{"NIntegrate", "::", "ncvb"}], "MessageName"], 
-  RowBox[{
-  ":", " "}], "\<\"NIntegrate failed to converge to prescribed accuracy after \
+   RowBox[{"NIntegrate", "::", "ncvb"}], "MessageName"], ":", 
+  " ", "\<\"NIntegrate failed to converge to prescribed accuracy after \
 \[NoBreak]\\!\\(\\*RowBox[{\\\"9\\\"}]\\)\[NoBreak] recursive bisections in \
 \[NoBreak]\\!\\(\\*RowBox[{\\\"epIntV125126\\\"}]\\)\[NoBreak] near \
 \[NoBreak]\\!\\(\\*RowBox[{\\\"{\\\", \\\"epIntV125126\\\", \\\"}\\\"}]\\)\
@@ -12537,13 +12477,12 @@ ButtonData:>\\\"paclet:ref/message/NIntegrate/ncvb\\\", ButtonNote -> \
 Cell[BoxData[
  RowBox[{
   StyleBox[
-   RowBox[{"NIntegrate", "::", "izero"}], "MessageName"], 
-  RowBox[{
-  ":", " "}], "\<\"Integral and error estimates are 0 on all integration \
-subregions. Try increasing the value of the MinRecursion option. If value of \
-integral may be 0, specify a finite value for the AccuracyGoal option. \\!\\(\
-\\*ButtonBox[\\\"\[RightSkeleton]\\\", ButtonStyle->\\\"Link\\\", \
-ButtonFrame->None, ButtonData:>\\\"paclet:ref/NIntegrate\\\", ButtonNote -> \
+   RowBox[{"NIntegrate", "::", "izero"}], "MessageName"], ":", 
+  " ", "\<\"Integral and error estimates are 0 on all integration subregions. \
+Try increasing the value of the MinRecursion option. If value of integral may \
+be 0, specify a finite value for the AccuracyGoal option. \\!\\(\\*ButtonBox[\
+\\\"\[RightSkeleton]\\\", ButtonStyle->\\\"Link\\\", ButtonFrame->None, \
+ButtonData:>\\\"paclet:ref/NIntegrate\\\", ButtonNote -> \
 \\\"NIntegrate::izero\\\"]\\)\"\>"}]], "Message", "MSG",
  CellChangeTimes->{3.6741385267752647`*^9, 3.6741386083852787`*^9, 
   3.6752545764382906`*^9, 3.675279244898851*^9, 3.6752809870245776`*^9}],
@@ -12551,13 +12490,12 @@ ButtonFrame->None, ButtonData:>\\\"paclet:ref/NIntegrate\\\", ButtonNote -> \
 Cell[BoxData[
  RowBox[{
   StyleBox[
-   RowBox[{"NIntegrate", "::", "izero"}], "MessageName"], 
-  RowBox[{
-  ":", " "}], "\<\"Integral and error estimates are 0 on all integration \
-subregions. Try increasing the value of the MinRecursion option. If value of \
-integral may be 0, specify a finite value for the AccuracyGoal option. \\!\\(\
-\\*ButtonBox[\\\"\[RightSkeleton]\\\", ButtonStyle->\\\"Link\\\", \
-ButtonFrame->None, ButtonData:>\\\"paclet:ref/NIntegrate\\\", ButtonNote -> \
+   RowBox[{"NIntegrate", "::", "izero"}], "MessageName"], ":", 
+  " ", "\<\"Integral and error estimates are 0 on all integration subregions. \
+Try increasing the value of the MinRecursion option. If value of integral may \
+be 0, specify a finite value for the AccuracyGoal option. \\!\\(\\*ButtonBox[\
+\\\"\[RightSkeleton]\\\", ButtonStyle->\\\"Link\\\", ButtonFrame->None, \
+ButtonData:>\\\"paclet:ref/NIntegrate\\\", ButtonNote -> \
 \\\"NIntegrate::izero\\\"]\\)\"\>"}]], "Message", "MSG",
  CellChangeTimes->{3.6741385267752647`*^9, 3.6741386083852787`*^9, 
   3.6752545764382906`*^9, 3.675279244898851*^9, 3.675280987227703*^9}],
@@ -12565,9 +12503,8 @@ ButtonFrame->None, ButtonData:>\\\"paclet:ref/NIntegrate\\\", ButtonNote -> \
 Cell[BoxData[
  RowBox[{
   StyleBox[
-   RowBox[{"General", "::", "stop"}], "MessageName"], 
-  RowBox[{
-  ":", " "}], "\<\"Further output of \
+   RowBox[{"General", "::", "stop"}], "MessageName"], ":", 
+  " ", "\<\"Further output of \
 \[NoBreak]\\!\\(\\*StyleBox[RowBox[{\\\"NIntegrate\\\", \\\"::\\\", \\\"izero\
 \\\"}], \\\"MessageName\\\"]\\)\[NoBreak] will be suppressed during this \
 calculation. \\!\\(\\*ButtonBox[\\\"\[RightSkeleton]\\\", \
@@ -12580,13 +12517,12 @@ ButtonData:>\\\"paclet:ref/message/General/stop\\\", ButtonNote -> \
 Cell[BoxData[
  RowBox[{
   StyleBox[
-   RowBox[{"NIntegrate", "::", "izero"}], "MessageName"], 
-  RowBox[{
-  ":", " "}], "\<\"Integral and error estimates are 0 on all integration \
-subregions. Try increasing the value of the MinRecursion option. If value of \
-integral may be 0, specify a finite value for the AccuracyGoal option. \\!\\(\
-\\*ButtonBox[\\\"\[RightSkeleton]\\\", ButtonStyle->\\\"Link\\\", \
-ButtonFrame->None, ButtonData:>\\\"paclet:ref/NIntegrate\\\", ButtonNote -> \
+   RowBox[{"NIntegrate", "::", "izero"}], "MessageName"], ":", 
+  " ", "\<\"Integral and error estimates are 0 on all integration subregions. \
+Try increasing the value of the MinRecursion option. If value of integral may \
+be 0, specify a finite value for the AccuracyGoal option. \\!\\(\\*ButtonBox[\
+\\\"\[RightSkeleton]\\\", ButtonStyle->\\\"Link\\\", ButtonFrame->None, \
+ButtonData:>\\\"paclet:ref/NIntegrate\\\", ButtonNote -> \
 \\\"NIntegrate::izero\\\"]\\)\"\>"}]], "Message", "MSG",
  CellChangeTimes->{3.6741385267752647`*^9, 3.6741386083852787`*^9, 
   3.6752545764382906`*^9, 3.675279244898851*^9, 3.6752809945871367`*^9}],
@@ -12594,13 +12530,12 @@ ButtonFrame->None, ButtonData:>\\\"paclet:ref/NIntegrate\\\", ButtonNote -> \
 Cell[BoxData[
  RowBox[{
   StyleBox[
-   RowBox[{"NIntegrate", "::", "izero"}], "MessageName"], 
-  RowBox[{
-  ":", " "}], "\<\"Integral and error estimates are 0 on all integration \
-subregions. Try increasing the value of the MinRecursion option. If value of \
-integral may be 0, specify a finite value for the AccuracyGoal option. \\!\\(\
-\\*ButtonBox[\\\"\[RightSkeleton]\\\", ButtonStyle->\\\"Link\\\", \
-ButtonFrame->None, ButtonData:>\\\"paclet:ref/NIntegrate\\\", ButtonNote -> \
+   RowBox[{"NIntegrate", "::", "izero"}], "MessageName"], ":", 
+  " ", "\<\"Integral and error estimates are 0 on all integration subregions. \
+Try increasing the value of the MinRecursion option. If value of integral may \
+be 0, specify a finite value for the AccuracyGoal option. \\!\\(\\*ButtonBox[\
+\\\"\[RightSkeleton]\\\", ButtonStyle->\\\"Link\\\", ButtonFrame->None, \
+ButtonData:>\\\"paclet:ref/NIntegrate\\\", ButtonNote -> \
 \\\"NIntegrate::izero\\\"]\\)\"\>"}]], "Message", "MSG",
  CellChangeTimes->{3.6741385267752647`*^9, 3.6741386083852787`*^9, 
   3.6752545764382906`*^9, 3.675279244898851*^9, 3.675280994946515*^9}],
@@ -12717,13 +12652,12 @@ Cell[BoxData[
 Cell[BoxData[
  RowBox[{
   StyleBox[
-   RowBox[{"NIntegrate", "::", "izero"}], "MessageName"], 
-  RowBox[{
-  ":", " "}], "\<\"Integral and error estimates are 0 on all integration \
-subregions. Try increasing the value of the MinRecursion option. If value of \
-integral may be 0, specify a finite value for the AccuracyGoal option. \\!\\(\
-\\*ButtonBox[\\\"\[RightSkeleton]\\\", ButtonStyle->\\\"Link\\\", \
-ButtonFrame->None, ButtonData:>\\\"paclet:ref/NIntegrate\\\", ButtonNote -> \
+   RowBox[{"NIntegrate", "::", "izero"}], "MessageName"], ":", 
+  " ", "\<\"Integral and error estimates are 0 on all integration subregions. \
+Try increasing the value of the MinRecursion option. If value of integral may \
+be 0, specify a finite value for the AccuracyGoal option. \\!\\(\\*ButtonBox[\
+\\\"\[RightSkeleton]\\\", ButtonStyle->\\\"Link\\\", ButtonFrame->None, \
+ButtonData:>\\\"paclet:ref/NIntegrate\\\", ButtonNote -> \
 \\\"NIntegrate::izero\\\"]\\)\"\>"}]], "Message", "MSG",
  CellChangeTimes->{3.6741386315066586`*^9, 3.6752547643293552`*^9, 
   3.675279431999725*^9, 3.675281175404712*^9}],
@@ -12731,9 +12665,8 @@ ButtonFrame->None, ButtonData:>\\\"paclet:ref/NIntegrate\\\", ButtonNote -> \
 Cell[BoxData[
  RowBox[{
   StyleBox[
-   RowBox[{"NIntegrate", "::", "ncvb"}], "MessageName"], 
-  RowBox[{
-  ":", " "}], "\<\"NIntegrate failed to converge to prescribed accuracy after \
+   RowBox[{"NIntegrate", "::", "ncvb"}], "MessageName"], ":", 
+  " ", "\<\"NIntegrate failed to converge to prescribed accuracy after \
 \[NoBreak]\\!\\(\\*RowBox[{\\\"9\\\"}]\\)\[NoBreak] recursive bisections in \
 \[NoBreak]\\!\\(\\*RowBox[{\\\"epIntV127242\\\"}]\\)\[NoBreak] near \
 \[NoBreak]\\!\\(\\*RowBox[{\\\"{\\\", \\\"epIntV127242\\\", \\\"}\\\"}]\\)\
@@ -12752,13 +12685,12 @@ ButtonData:>\\\"paclet:ref/message/NIntegrate/ncvb\\\", ButtonNote -> \
 Cell[BoxData[
  RowBox[{
   StyleBox[
-   RowBox[{"NIntegrate", "::", "izero"}], "MessageName"], 
-  RowBox[{
-  ":", " "}], "\<\"Integral and error estimates are 0 on all integration \
-subregions. Try increasing the value of the MinRecursion option. If value of \
-integral may be 0, specify a finite value for the AccuracyGoal option. \\!\\(\
-\\*ButtonBox[\\\"\[RightSkeleton]\\\", ButtonStyle->\\\"Link\\\", \
-ButtonFrame->None, ButtonData:>\\\"paclet:ref/NIntegrate\\\", ButtonNote -> \
+   RowBox[{"NIntegrate", "::", "izero"}], "MessageName"], ":", 
+  " ", "\<\"Integral and error estimates are 0 on all integration subregions. \
+Try increasing the value of the MinRecursion option. If value of integral may \
+be 0, specify a finite value for the AccuracyGoal option. \\!\\(\\*ButtonBox[\
+\\\"\[RightSkeleton]\\\", ButtonStyle->\\\"Link\\\", ButtonFrame->None, \
+ButtonData:>\\\"paclet:ref/NIntegrate\\\", ButtonNote -> \
 \\\"NIntegrate::izero\\\"]\\)\"\>"}]], "Message", "MSG",
  CellChangeTimes->{3.6741386315066586`*^9, 3.6752547643293552`*^9, 
   3.675279431999725*^9, 3.6752811757951775`*^9}],
@@ -12766,13 +12698,12 @@ ButtonFrame->None, ButtonData:>\\\"paclet:ref/NIntegrate\\\", ButtonNote -> \
 Cell[BoxData[
  RowBox[{
   StyleBox[
-   RowBox[{"NIntegrate", "::", "izero"}], "MessageName"], 
-  RowBox[{
-  ":", " "}], "\<\"Integral and error estimates are 0 on all integration \
-subregions. Try increasing the value of the MinRecursion option. If value of \
-integral may be 0, specify a finite value for the AccuracyGoal option. \\!\\(\
-\\*ButtonBox[\\\"\[RightSkeleton]\\\", ButtonStyle->\\\"Link\\\", \
-ButtonFrame->None, ButtonData:>\\\"paclet:ref/NIntegrate\\\", ButtonNote -> \
+   RowBox[{"NIntegrate", "::", "izero"}], "MessageName"], ":", 
+  " ", "\<\"Integral and error estimates are 0 on all integration subregions. \
+Try increasing the value of the MinRecursion option. If value of integral may \
+be 0, specify a finite value for the AccuracyGoal option. \\!\\(\\*ButtonBox[\
+\\\"\[RightSkeleton]\\\", ButtonStyle->\\\"Link\\\", ButtonFrame->None, \
+ButtonData:>\\\"paclet:ref/NIntegrate\\\", ButtonNote -> \
 \\\"NIntegrate::izero\\\"]\\)\"\>"}]], "Message", "MSG",
  CellChangeTimes->{3.6741386315066586`*^9, 3.6752547643293552`*^9, 
   3.675279431999725*^9, 3.6752811759982195`*^9}],
@@ -12780,9 +12711,8 @@ ButtonFrame->None, ButtonData:>\\\"paclet:ref/NIntegrate\\\", ButtonNote -> \
 Cell[BoxData[
  RowBox[{
   StyleBox[
-   RowBox[{"General", "::", "stop"}], "MessageName"], 
-  RowBox[{
-  ":", " "}], "\<\"Further output of \
+   RowBox[{"General", "::", "stop"}], "MessageName"], ":", 
+  " ", "\<\"Further output of \
 \[NoBreak]\\!\\(\\*StyleBox[RowBox[{\\\"NIntegrate\\\", \\\"::\\\", \\\"izero\
 \\\"}], \\\"MessageName\\\"]\\)\[NoBreak] will be suppressed during this \
 calculation. \\!\\(\\*ButtonBox[\\\"\[RightSkeleton]\\\", \
@@ -12795,13 +12725,12 @@ ButtonData:>\\\"paclet:ref/message/General/stop\\\", ButtonNote -> \
 Cell[BoxData[
  RowBox[{
   StyleBox[
-   RowBox[{"NIntegrate", "::", "izero"}], "MessageName"], 
-  RowBox[{
-  ":", " "}], "\<\"Integral and error estimates are 0 on all integration \
-subregions. Try increasing the value of the MinRecursion option. If value of \
-integral may be 0, specify a finite value for the AccuracyGoal option. \\!\\(\
-\\*ButtonBox[\\\"\[RightSkeleton]\\\", ButtonStyle->\\\"Link\\\", \
-ButtonFrame->None, ButtonData:>\\\"paclet:ref/NIntegrate\\\", ButtonNote -> \
+   RowBox[{"NIntegrate", "::", "izero"}], "MessageName"], ":", 
+  " ", "\<\"Integral and error estimates are 0 on all integration subregions. \
+Try increasing the value of the MinRecursion option. If value of integral may \
+be 0, specify a finite value for the AccuracyGoal option. \\!\\(\\*ButtonBox[\
+\\\"\[RightSkeleton]\\\", ButtonStyle->\\\"Link\\\", ButtonFrame->None, \
+ButtonData:>\\\"paclet:ref/NIntegrate\\\", ButtonNote -> \
 \\\"NIntegrate::izero\\\"]\\)\"\>"}]], "Message", "MSG",
  CellChangeTimes->{3.6741386315066586`*^9, 3.6752547643293552`*^9, 
   3.675279431999725*^9, 3.67528118358887*^9}],
@@ -12809,9 +12738,8 @@ ButtonFrame->None, ButtonData:>\\\"paclet:ref/NIntegrate\\\", ButtonNote -> \
 Cell[BoxData[
  RowBox[{
   StyleBox[
-   RowBox[{"NIntegrate", "::", "ncvb"}], "MessageName"], 
-  RowBox[{
-  ":", " "}], "\<\"NIntegrate failed to converge to prescribed accuracy after \
+   RowBox[{"NIntegrate", "::", "ncvb"}], "MessageName"], ":", 
+  " ", "\<\"NIntegrate failed to converge to prescribed accuracy after \
 \[NoBreak]\\!\\(\\*RowBox[{\\\"9\\\"}]\\)\[NoBreak] recursive bisections in \
 \[NoBreak]\\!\\(\\*RowBox[{\\\"epIntV127256\\\"}]\\)\[NoBreak] near \
 \[NoBreak]\\!\\(\\*RowBox[{\\\"{\\\", \\\"epIntV127256\\\", \\\"}\\\"}]\\)\
@@ -12830,13 +12758,12 @@ ButtonData:>\\\"paclet:ref/message/NIntegrate/ncvb\\\", ButtonNote -> \
 Cell[BoxData[
  RowBox[{
   StyleBox[
-   RowBox[{"NIntegrate", "::", "izero"}], "MessageName"], 
-  RowBox[{
-  ":", " "}], "\<\"Integral and error estimates are 0 on all integration \
-subregions. Try increasing the value of the MinRecursion option. If value of \
-integral may be 0, specify a finite value for the AccuracyGoal option. \\!\\(\
-\\*ButtonBox[\\\"\[RightSkeleton]\\\", ButtonStyle->\\\"Link\\\", \
-ButtonFrame->None, ButtonData:>\\\"paclet:ref/NIntegrate\\\", ButtonNote -> \
+   RowBox[{"NIntegrate", "::", "izero"}], "MessageName"], ":", 
+  " ", "\<\"Integral and error estimates are 0 on all integration subregions. \
+Try increasing the value of the MinRecursion option. If value of integral may \
+be 0, specify a finite value for the AccuracyGoal option. \\!\\(\\*ButtonBox[\
+\\\"\[RightSkeleton]\\\", ButtonStyle->\\\"Link\\\", ButtonFrame->None, \
+ButtonData:>\\\"paclet:ref/NIntegrate\\\", ButtonNote -> \
 \\\"NIntegrate::izero\\\"]\\)\"\>"}]], "Message", "MSG",
  CellChangeTimes->{3.6741386315066586`*^9, 3.6752547643293552`*^9, 
   3.675279431999725*^9, 3.675281183979336*^9}],
@@ -12844,13 +12771,12 @@ ButtonFrame->None, ButtonData:>\\\"paclet:ref/NIntegrate\\\", ButtonNote -> \
 Cell[BoxData[
  RowBox[{
   StyleBox[
-   RowBox[{"NIntegrate", "::", "izero"}], "MessageName"], 
-  RowBox[{
-  ":", " "}], "\<\"Integral and error estimates are 0 on all integration \
-subregions. Try increasing the value of the MinRecursion option. If value of \
-integral may be 0, specify a finite value for the AccuracyGoal option. \\!\\(\
-\\*ButtonBox[\\\"\[RightSkeleton]\\\", ButtonStyle->\\\"Link\\\", \
-ButtonFrame->None, ButtonData:>\\\"paclet:ref/NIntegrate\\\", ButtonNote -> \
+   RowBox[{"NIntegrate", "::", "izero"}], "MessageName"], ":", 
+  " ", "\<\"Integral and error estimates are 0 on all integration subregions. \
+Try increasing the value of the MinRecursion option. If value of integral may \
+be 0, specify a finite value for the AccuracyGoal option. \\!\\(\\*ButtonBox[\
+\\\"\[RightSkeleton]\\\", ButtonStyle->\\\"Link\\\", ButtonFrame->None, \
+ButtonData:>\\\"paclet:ref/NIntegrate\\\", ButtonNote -> \
 \\\"NIntegrate::izero\\\"]\\)\"\>"}]], "Message", "MSG",
  CellChangeTimes->{3.6741386315066586`*^9, 3.6752547643293552`*^9, 
   3.675279431999725*^9, 3.675281184182379*^9}],
@@ -12858,9 +12784,8 @@ ButtonFrame->None, ButtonData:>\\\"paclet:ref/NIntegrate\\\", ButtonNote -> \
 Cell[BoxData[
  RowBox[{
   StyleBox[
-   RowBox[{"General", "::", "stop"}], "MessageName"], 
-  RowBox[{
-  ":", " "}], "\<\"Further output of \
+   RowBox[{"General", "::", "stop"}], "MessageName"], ":", 
+  " ", "\<\"Further output of \
 \[NoBreak]\\!\\(\\*StyleBox[RowBox[{\\\"NIntegrate\\\", \\\"::\\\", \\\"izero\
 \\\"}], \\\"MessageName\\\"]\\)\[NoBreak] will be suppressed during this \
 calculation. \\!\\(\\*ButtonBox[\\\"\[RightSkeleton]\\\", \
@@ -12928,13 +12853,12 @@ Cell[BoxData[
 Cell[BoxData[
  RowBox[{
   StyleBox[
-   RowBox[{"InterpolatingFunction", "::", "dmval"}], "MessageName"], 
-  RowBox[{
-  ":", " "}], "\<\"Input value \[NoBreak]\\!\\(\\*RowBox[{\\\"{\\\", RowBox[{\
-\\\"0.1`\\\", \\\",\\\", \\\"1.`\\\", \\\",\\\", \\\"0.01`\\\"}], \\\"}\\\"}]\
-\\)\[NoBreak] lies outside the range of data in the interpolating function. \
-Extrapolation will be used. \\!\\(\\*ButtonBox[\\\"\[RightSkeleton]\\\", \
-ButtonStyle->\\\"Link\\\", ButtonFrame->None, \
+   RowBox[{"InterpolatingFunction", "::", "dmval"}], "MessageName"], ":", 
+  " ", "\<\"Input value \[NoBreak]\\!\\(\\*RowBox[{\\\"{\\\", \
+RowBox[{\\\"0.1`\\\", \\\",\\\", \\\"1.`\\\", \\\",\\\", \\\"0.01`\\\"}], \
+\\\"}\\\"}]\\)\[NoBreak] lies outside the range of data in the interpolating \
+function. Extrapolation will be used. \\!\\(\\*ButtonBox[\\\"\[RightSkeleton]\
+\\\", ButtonStyle->\\\"Link\\\", ButtonFrame->None, \
 ButtonData:>\\\"paclet:ref/message/InterpolatingFunction/dmval\\\", \
 ButtonNote -> \\\"InterpolatingFunction::dmval\\\"]\\)\"\>"}]], "Message", \
 "MSG",
@@ -12944,13 +12868,12 @@ ButtonNote -> \\\"InterpolatingFunction::dmval\\\"]\\)\"\>"}]], "Message", \
 Cell[BoxData[
  RowBox[{
   StyleBox[
-   RowBox[{"InterpolatingFunction", "::", "dmval"}], "MessageName"], 
-  RowBox[{
-  ":", " "}], "\<\"Input value \[NoBreak]\\!\\(\\*RowBox[{\\\"{\\\", RowBox[{\
-\\\"0.1`\\\", \\\",\\\", \\\"1.`\\\", \\\",\\\", \\\"0.01`\\\"}], \\\"}\\\"}]\
-\\)\[NoBreak] lies outside the range of data in the interpolating function. \
-Extrapolation will be used. \\!\\(\\*ButtonBox[\\\"\[RightSkeleton]\\\", \
-ButtonStyle->\\\"Link\\\", ButtonFrame->None, \
+   RowBox[{"InterpolatingFunction", "::", "dmval"}], "MessageName"], ":", 
+  " ", "\<\"Input value \[NoBreak]\\!\\(\\*RowBox[{\\\"{\\\", \
+RowBox[{\\\"0.1`\\\", \\\",\\\", \\\"1.`\\\", \\\",\\\", \\\"0.01`\\\"}], \
+\\\"}\\\"}]\\)\[NoBreak] lies outside the range of data in the interpolating \
+function. Extrapolation will be used. \\!\\(\\*ButtonBox[\\\"\[RightSkeleton]\
+\\\", ButtonStyle->\\\"Link\\\", ButtonFrame->None, \
 ButtonData:>\\\"paclet:ref/message/InterpolatingFunction/dmval\\\", \
 ButtonNote -> \\\"InterpolatingFunction::dmval\\\"]\\)\"\>"}]], "Message", \
 "MSG",
@@ -12960,13 +12883,12 @@ ButtonNote -> \\\"InterpolatingFunction::dmval\\\"]\\)\"\>"}]], "Message", \
 Cell[BoxData[
  RowBox[{
   StyleBox[
-   RowBox[{"InterpolatingFunction", "::", "dmval"}], "MessageName"], 
-  RowBox[{
-  ":", " "}], "\<\"Input value \[NoBreak]\\!\\(\\*RowBox[{\\\"{\\\", RowBox[{\
-\\\"0.1`\\\", \\\",\\\", \\\"1.`\\\", \\\",\\\", \\\"0.01`\\\"}], \\\"}\\\"}]\
-\\)\[NoBreak] lies outside the range of data in the interpolating function. \
-Extrapolation will be used. \\!\\(\\*ButtonBox[\\\"\[RightSkeleton]\\\", \
-ButtonStyle->\\\"Link\\\", ButtonFrame->None, \
+   RowBox[{"InterpolatingFunction", "::", "dmval"}], "MessageName"], ":", 
+  " ", "\<\"Input value \[NoBreak]\\!\\(\\*RowBox[{\\\"{\\\", \
+RowBox[{\\\"0.1`\\\", \\\",\\\", \\\"1.`\\\", \\\",\\\", \\\"0.01`\\\"}], \
+\\\"}\\\"}]\\)\[NoBreak] lies outside the range of data in the interpolating \
+function. Extrapolation will be used. \\!\\(\\*ButtonBox[\\\"\[RightSkeleton]\
+\\\", ButtonStyle->\\\"Link\\\", ButtonFrame->None, \
 ButtonData:>\\\"paclet:ref/message/InterpolatingFunction/dmval\\\", \
 ButtonNote -> \\\"InterpolatingFunction::dmval\\\"]\\)\"\>"}]], "Message", \
 "MSG",
@@ -12976,9 +12898,8 @@ ButtonNote -> \\\"InterpolatingFunction::dmval\\\"]\\)\"\>"}]], "Message", \
 Cell[BoxData[
  RowBox[{
   StyleBox[
-   RowBox[{"General", "::", "stop"}], "MessageName"], 
-  RowBox[{
-  ":", " "}], "\<\"Further output of \
+   RowBox[{"General", "::", "stop"}], "MessageName"], ":", 
+  " ", "\<\"Further output of \
 \[NoBreak]\\!\\(\\*StyleBox[RowBox[{\\\"InterpolatingFunction\\\", \
 \\\"::\\\", \\\"dmval\\\"}], \\\"MessageName\\\"]\\)\[NoBreak] will be \
 suppressed during this calculation. \\!\\(\\*ButtonBox[\\\"\[RightSkeleton]\\\
@@ -13034,13 +12955,12 @@ Cell[BoxData[
 Cell[BoxData[
  RowBox[{
   StyleBox[
-   RowBox[{"InterpolatingFunction", "::", "dmval"}], "MessageName"], 
-  RowBox[{
-  ":", " "}], "\<\"Input value \[NoBreak]\\!\\(\\*RowBox[{\\\"{\\\", RowBox[{\
-\\\"0.001010193857142857`\\\", \\\",\\\", \\\"1.`\\\", \\\",\\\", \\\"0.01`\\\
-\"}], \\\"}\\\"}]\\)\[NoBreak] lies outside the range of data in the \
-interpolating function. Extrapolation will be used. \\!\\(\\*ButtonBox[\\\"\
-\[RightSkeleton]\\\", ButtonStyle->\\\"Link\\\", ButtonFrame->None, \
+   RowBox[{"InterpolatingFunction", "::", "dmval"}], "MessageName"], ":", 
+  " ", "\<\"Input value \[NoBreak]\\!\\(\\*RowBox[{\\\"{\\\", \
+RowBox[{\\\"0.001010193857142857`\\\", \\\",\\\", \\\"1.`\\\", \\\",\\\", \
+\\\"0.01`\\\"}], \\\"}\\\"}]\\)\[NoBreak] lies outside the range of data in \
+the interpolating function. Extrapolation will be used. \\!\\(\\*ButtonBox[\\\
+\"\[RightSkeleton]\\\", ButtonStyle->\\\"Link\\\", ButtonFrame->None, \
 ButtonData:>\\\"paclet:ref/message/InterpolatingFunction/dmval\\\", \
 ButtonNote -> \\\"InterpolatingFunction::dmval\\\"]\\)\"\>"}]], "Message", \
 "MSG",
@@ -13050,13 +12970,12 @@ ButtonNote -> \\\"InterpolatingFunction::dmval\\\"]\\)\"\>"}]], "Message", \
 Cell[BoxData[
  RowBox[{
   StyleBox[
-   RowBox[{"InterpolatingFunction", "::", "dmval"}], "MessageName"], 
-  RowBox[{
-  ":", " "}], "\<\"Input value \[NoBreak]\\!\\(\\*RowBox[{\\\"{\\\", RowBox[{\
-\\\"0.001010193857142857`\\\", \\\",\\\", \\\"1.`\\\", \\\",\\\", \\\"0.01`\\\
-\"}], \\\"}\\\"}]\\)\[NoBreak] lies outside the range of data in the \
-interpolating function. Extrapolation will be used. \\!\\(\\*ButtonBox[\\\"\
-\[RightSkeleton]\\\", ButtonStyle->\\\"Link\\\", ButtonFrame->None, \
+   RowBox[{"InterpolatingFunction", "::", "dmval"}], "MessageName"], ":", 
+  " ", "\<\"Input value \[NoBreak]\\!\\(\\*RowBox[{\\\"{\\\", \
+RowBox[{\\\"0.001010193857142857`\\\", \\\",\\\", \\\"1.`\\\", \\\",\\\", \
+\\\"0.01`\\\"}], \\\"}\\\"}]\\)\[NoBreak] lies outside the range of data in \
+the interpolating function. Extrapolation will be used. \\!\\(\\*ButtonBox[\\\
+\"\[RightSkeleton]\\\", ButtonStyle->\\\"Link\\\", ButtonFrame->None, \
 ButtonData:>\\\"paclet:ref/message/InterpolatingFunction/dmval\\\", \
 ButtonNote -> \\\"InterpolatingFunction::dmval\\\"]\\)\"\>"}]], "Message", \
 "MSG",
@@ -13066,13 +12985,12 @@ ButtonNote -> \\\"InterpolatingFunction::dmval\\\"]\\)\"\>"}]], "Message", \
 Cell[BoxData[
  RowBox[{
   StyleBox[
-   RowBox[{"InterpolatingFunction", "::", "dmval"}], "MessageName"], 
-  RowBox[{
-  ":", " "}], "\<\"Input value \[NoBreak]\\!\\(\\*RowBox[{\\\"{\\\", RowBox[{\
-\\\"0.001010193857142857`\\\", \\\",\\\", \\\"1.`\\\", \\\",\\\", \\\"0.01`\\\
-\"}], \\\"}\\\"}]\\)\[NoBreak] lies outside the range of data in the \
-interpolating function. Extrapolation will be used. \\!\\(\\*ButtonBox[\\\"\
-\[RightSkeleton]\\\", ButtonStyle->\\\"Link\\\", ButtonFrame->None, \
+   RowBox[{"InterpolatingFunction", "::", "dmval"}], "MessageName"], ":", 
+  " ", "\<\"Input value \[NoBreak]\\!\\(\\*RowBox[{\\\"{\\\", \
+RowBox[{\\\"0.001010193857142857`\\\", \\\",\\\", \\\"1.`\\\", \\\",\\\", \
+\\\"0.01`\\\"}], \\\"}\\\"}]\\)\[NoBreak] lies outside the range of data in \
+the interpolating function. Extrapolation will be used. \\!\\(\\*ButtonBox[\\\
+\"\[RightSkeleton]\\\", ButtonStyle->\\\"Link\\\", ButtonFrame->None, \
 ButtonData:>\\\"paclet:ref/message/InterpolatingFunction/dmval\\\", \
 ButtonNote -> \\\"InterpolatingFunction::dmval\\\"]\\)\"\>"}]], "Message", \
 "MSG",
@@ -13082,9 +13000,8 @@ ButtonNote -> \\\"InterpolatingFunction::dmval\\\"]\\)\"\>"}]], "Message", \
 Cell[BoxData[
  RowBox[{
   StyleBox[
-   RowBox[{"General", "::", "stop"}], "MessageName"], 
-  RowBox[{
-  ":", " "}], "\<\"Further output of \
+   RowBox[{"General", "::", "stop"}], "MessageName"], ":", 
+  " ", "\<\"Further output of \
 \[NoBreak]\\!\\(\\*StyleBox[RowBox[{\\\"InterpolatingFunction\\\", \
 \\\"::\\\", \\\"dmval\\\"}], \\\"MessageName\\\"]\\)\[NoBreak] will be \
 suppressed during this calculation. \\!\\(\\*ButtonBox[\\\"\[RightSkeleton]\\\
@@ -13159,6 +13076,7 @@ Cell[BoxData[{
     RowBox[{"PrivateNotebookOptions", "\[Rule]", 
      RowBox[{"{", 
       RowBox[{"\"\<FileOutlineCache\>\"", "\[Rule]", "False"}], "}"}]}], ",", 
+    
     RowBox[{"TrackCellChangeTimes", "\[Rule]", "False"}]}], "]"}], 
   RowBox[{"(*", 
    RowBox[{
@@ -13210,6 +13128,9 @@ ProjectionMethodToolsJava/code\>\"", "]"}], ",", "\[IndentingNewLine]",
    3.673641070207438*^9}, {3.673641127145392*^9, 3.6736411333329425`*^9}, {
    3.674391695029475*^9, 3.6743917046858015`*^9}}],
 
+Cell[BoxData["\<\"using version in eclipse\"\>"], "Print",
+ CellChangeTimes->{3.675382685086986*^9}],
+
 Cell[BoxData[
  SuperscriptBox["Null", "2"]], "Output",
  CellChangeTimes->{3.674929538383148*^9, 3.675000805537024*^9, 
@@ -13217,20 +13138,21 @@ Cell[BoxData[
   3.6752473808480635`*^9, 3.6752534737758503`*^9, 3.675254785626399*^9, 
   3.6752780020525236`*^9, 3.67527945335927*^9, 3.675281196552327*^9, 
   3.6753352711132774`*^9, 3.6753398836567636`*^9, 3.675343917233206*^9, 
-  3.6753474873141956`*^9}]
+  3.6753474873141956`*^9, 3.675382687091949*^9}]
 }, Open  ]]
 }, Open  ]]
 }, Open  ]]
 },
 WindowSize->{852, 841},
-WindowMargins->{{-1254, Automatic}, {61, Automatic}},
+WindowMargins->{{0, Automatic}, {Automatic, 0}},
 PrintingCopies->1,
 PrintingPageRange->{32000, 32000},
 PrintingOptions->{"Magnification"->1.,
 "PaperOrientation"->"Portrait",
 "PaperSize"->{612, 792}},
 PrivateNotebookOptions->{"FileOutlineCache"->False},
-FrontEndVersion->"10.4 for Microsoft Windows (64-bit) (February 25, 2016)",
+FrontEndVersion->"10.4 for Mac OS X x86 (32-bit, 64-bit Kernel) (February 25, \
+2016)",
 StyleDefinitions->"Default.nb",
 $CellContext`TrackCellChangeTimes -> False
 ]

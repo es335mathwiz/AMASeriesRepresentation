@@ -1152,11 +1152,29 @@ With[{funcArgs=Table[Unique["theFPFuncArgs"],{numX+numEps}]},
 ReplacePart[
 Function[xxxx,Sow[
 myFixedPoint[With[{
-	xzFuncNow=If[Head[eqnsFunc]===CompiledFunction,
+xzFuncNow=If[Or[Head[eqnsFunc]===CompiledFunction,Head[eqnsFunc]===Function],
 genFRFunc[{numX,numEps,numZ},genLilXkZkFunc[linMod,XZFuncs,#[[Range[numX]]]],eqnsFunc],
 genNSFunc[{numX,numEps,numZ},genLilXkZkFunc[linMod,XZFuncs,#[[Range[numX]]]],eqnsFunc,Method->"JenkinsTraub"]]
 },(*Print["infp:",XZFuncs[[1]]@@funcArgs];*)
 xzFuncNow @@funcArgs]&,(XZFuncs[[1]]@@funcArgs)[[Range[numX]]],$fixedPointLimit]]],
+1->funcArgs]]]
+(* input   [linMod,XZ, xguess,function (xt,eps,zt)->(xtm1,xt,xtp1,eps), function (xtm1,xt,xtp1,eps)->me]*)
+(* output   [function  (xt,eps) ->(xt,zt)] *)
+
+	
+$fixedPointLimit=30;
+genAnFPRegimeFuncs[linMod:{theHMat_?MatrixQ,BB_?MatrixQ,phi_?MatrixQ,FF_?MatrixQ,psiEps_?MatrixQ,psiC_?MatrixQ,psiZ_?MatrixQ,psiZPreComp_?MatrixQ},
+XZFuncs:({_Function,_Integer}),eqnsFunc:(_Function|_CompiledFunction)]:=
+With[{numX=Length[BB],numEps=Length[psiEps[[1]]],numZ=Length[psiZ[[1]]]},
+With[{funcArgs=Table[Unique["theFPFuncArgs"],{numX+numEps}]},
+ReplacePart[
+Function[xxxx,Sow[
+myFixedPoint[With[{
+xzFuncNow=If[Or[Head[eqnsFunc]===CompiledFunction,Head[eqnsFunc]===Function],
+genFRFunc[{numX,numEps,numZ},genLilXkZkFunc[linMod,XZFuncs,#[[Range[numX]]]],eqnsFunc],
+genNSFunc[{numX,numEps,numZ},genLilXkZkFunc[linMod,XZFuncs,#[[Range[numX]]]],eqnsFunc,Method->"JenkinsTraub"]][[1]]
+},(*Print["infp:",XZFuncs[[1]]@@funcArgs];*)
+xzFuncNow @@funcArgs]&,(XZFuncs[[1,1]]@@funcArgs)[[Range[numX]]],$fixedPointLimit]]],
 1->funcArgs]]]
 (* input   [linMod,XZ, xguess,function (xt,eps,zt)->(xtm1,xt,xtp1,eps), function (xtm1,xt,xtp1,eps)->me]*)
 (* output   [function  (xt,eps) ->(xt,zt)] *)

@@ -6,7 +6,9 @@ Print["reading AMASeriesRepresentation`"]
 
 BeginPackage["AMASeriesRepresentation`", {"JLink`","ProtectedSymbols`",
 	"DifferentialEquations`InterpolatingFunctionAnatomy`"}]
-
+(*genX0Z0RegimeFuncs::usage="probably not useful
+genX0Z0RegimeFuncs[linMod:{theHMat_?MatrixQ,BB_?MatrixQ,phi_?MatrixQ,FF_?MatrixQ,psiEps_?MatrixQ,psiC_?MatrixQ,psiZ_?MatrixQ,psiZPreComp_?MatrixQ},
+numRegimes_Integer]"*)
 genDrvX0Z0Funcs::usage="genDrvX0Z0Funcs[linMod:{theHMat_?MatrixQ,BB_?MatrixQ,phi_?MatrixQ,FF_?MatrixQ,psiEps_?MatrixQ,psiC_?MatrixQ,psiZ_?MatrixQ,psiZPreComp_?MatrixQ}]"	
 $noTransFunc::usage="transfuncinfo";
 	
@@ -482,6 +484,16 @@ With[{compArgs=xtm1Vars},
 Function @@ {compArgs,Join[BB.Transpose[{xtm1Vars}]+
 Inverse[IdentityMatrix[Length[xtm1Vars]]-FF] . phi . psiC,ConstantArray[0,{numZVars,1}]]}]]]
 
+(*probably useless
+genX0Z0RegimeFuncs[linMod:{theHMat_?MatrixQ,BB_?MatrixQ,phi_?MatrixQ,FF_?MatrixQ,psiEps_?MatrixQ,psiC_?MatrixQ,psiZ_?MatrixQ,psiZPreComp_?MatrixQ},
+numRegimes_Integer,numTerms_Integer]:=
+With[{numXVars=Length[BB],numZVars=Length[psiZ[[1]]]},
+With[{xtm1Vars=genXtm1Vars[numXVars]},
+With[{compArgs=xtm1Vars},
+(Function @@ {compArgs,Join[{{#}},BB.Transpose[{xtm1Vars}]+
+Inverse[IdentityMatrix[Length[xtm1Vars]]-FF] . phi . psiC,ConstantArray[0,{numZVars,1}]]})&/@Range[numRegimes]
+]]]/;And[numTerms>0,numRegimes>0]
+*)
 
 genDrvX0Z0Funcs[linMod:{theHMat_?MatrixQ,BB_?MatrixQ,phi_?MatrixQ,FF_?MatrixQ,psiEps_?MatrixQ,psiC_?MatrixQ,psiZ_?MatrixQ,psiZPreComp_?MatrixQ}]:=
 With[{numXVars=Length[BB],numZVars=Length[psiZ[[1]]]},
@@ -1146,80 +1158,18 @@ Transpose[{zVals}]]]],
 	
 $fixedPointLimit=30;
 genFPRegimeFuncs[linMod:{theHMat_?MatrixQ,BB_?MatrixQ,phi_?MatrixQ,FF_?MatrixQ,psiEps_?MatrixQ,psiC_?MatrixQ,psiZ_?MatrixQ,psiZPreComp_?MatrixQ},
-XZFuncs:({_Function,_Integer}),eqnsFunc:(_Function|_CompiledFunction)]:=
-With[{numX=Length[BB],numEps=Length[psiEps[[1]]],numZ=Length[psiZ[[1]]]},
-With[{funcArgs=Table[Unique["theFPFuncArgs"],{numX+numEps}]},
-ReplacePart[
-Function[xxxx,Sow[
-myFixedPoint[With[{
-xzFuncNow=If[Or[Head[eqnsFunc]===CompiledFunction,Head[eqnsFunc]===Function],
-genFRFunc[{numX,numEps,numZ},genLilXkZkFunc[linMod,XZFuncs,#[[Range[numX]]]],eqnsFunc],
-genNSFunc[{numX,numEps,numZ},genLilXkZkFunc[linMod,XZFuncs,#[[Range[numX]]]],eqnsFunc,Method->"JenkinsTraub"]]
-},(*Print["infp:",XZFuncs[[1]]@@funcArgs];*)
-xzFuncNow @@funcArgs]&,(XZFuncs[[1]]@@funcArgs)[[Range[numX]]],$fixedPointLimit]]],
-1->funcArgs]]]
-(* input   [linMod,XZ, xguess,function (xt,eps,zt)->(xtm1,xt,xtp1,eps), function (xtm1,xt,xtp1,eps)->me]*)
-(* output   [function  (xt,eps) ->(xt,zt)] *)
-	
-$fixedPointLimit=30;
-genAnFPRegimeFuncs[linMod:{theHMat_?MatrixQ,BB_?MatrixQ,phi_?MatrixQ,FF_?MatrixQ,psiEps_?MatrixQ,psiC_?MatrixQ,psiZ_?MatrixQ,psiZPreComp_?MatrixQ},
-XZFuncs:({_Function,_Integer}),eqnsFunc:(_Function|_CompiledFunction)]:=
-     With[{regNo=1,numX=Length[BB],numEps=Length[psiEps[[1]]],numZ=Length[psiZ[[1]]]},
-With[{funcArgs=Table[Unique["theFPFuncArgs"],{numX+numEps}]},
-ReplacePart[
-Function[xxxx,Sow[
-myFixedPoint[With[{
-	xzFuncNow=If[Head[eqnsFunc]===CompiledFunction,
-genFRFunc[{numX,numEps,numZ},genLilXkZkFunc[linMod,XZFuncs,#[[Range[numX]]]],eqnsFunc],
-genNSFunc[{numX,numEps,numZ},genLilXkZkFunc[linMod,XZFuncs,#[[Range[numX]]]],eqnsFunc,Method->"JenkinsTraub"]][[regNo]]
-    },(*Print["infp:",XZFuncs[[1,regNo]]@@funcArgs];*)
-xzFuncNow @@funcArgs]&,(XZFuncs[[1]]@@funcArgs)[[Range[numX]]],$fixedPointLimit]]],
-1->funcArgs]]]
-(* input   [linMod,XZ, xguess,function (xt,eps,zt)->(xtm1,xt,xtp1,eps), function (xtm1,xt,xtp1,eps)->me]*)
-(* output   [function  (xt,eps) ->(xt,zt)] *)
-
-	
-$fixedPointLimit=30;
-genAnFPRegimeFuncs[linMod:{theHMat_?MatrixQ,BB_?MatrixQ,phi_?MatrixQ,FF_?MatrixQ,psiEps_?MatrixQ,psiC_?MatrixQ,psiZ_?MatrixQ,psiZPreComp_?MatrixQ},
-XZFuncs:({_Function,_Integer}),eqnsFunc:(_Function|_CompiledFunction)]:=
-With[{numX=Length[BB],numEps=Length[psiEps[[1]]],numZ=Length[psiZ[[1]]]},
-With[{funcArgs=Table[Unique["theFPFuncArgs"],{numX+numEps}]},
-ReplacePart[
-Function[xxxx,Sow[
-myFixedPoint[With[{
-xzFuncNow=If[Or[Head[eqnsFunc]===CompiledFunction,Head[eqnsFunc]===Function],
-genFRFunc[{numX,numEps,numZ},genLilXkZkRegimeFunc[linMod,XZFuncs,#[[Range[numX]]]],eqnsFunc],
-genNSFunc[{numX,numEps,numZ},genLilXkZkRegimeFunc[linMod,XZFuncs,#[[Range[numX]]]],eqnsFunc,Method->"JenkinsTraub"]][[1]]
-},(*Print["infp:",XZFuncs[[1]]@@funcArgs];*)
-xzFuncNow @@funcArgs]&,(XZFuncs[[1,1]]@@funcArgs)[[Range[numX]]],$fixedPointLimit]]],
-1->funcArgs]]]
-(* input   [linMod,XZ, xguess,function (xt,eps,zt)->(xtm1,xt,xtp1,eps), function (xtm1,xt,xtp1,eps)->me]*)
-(* output   [function  (xt,eps) ->(xt,zt)] *)
-
- 
-(*
-(*genAnFRRegimeFunc[funcArgs_?VectorQ,zArgs_?VectorQ,zArgsInit:{{_Symbol,_?NumberQ}..},xkFunc:(_Function|_CompiledFunction),eqnsFunc:(_Function|_CompiledFunction),numX_Integer]:=*)
-genAnFPRegimeFunc[linMod:{theHMat_?MatrixQ,BB_?MatrixQ,phi_?MatrixQ,FF_?MatrixQ,psiEps_?MatrixQ,psiC_?MatrixQ,psiZ_?MatrixQ,psiZPreComp_?MatrixQ},
 XZFuncs:({{_Function,_Integer}..}),eqnsFunc:(_Function|_CompiledFunction)]:=
-With[{numX=Length[BB],numEps=Length[psiEps[[1]]],numZ=Length[psiZ[[1]]]},
-With[{funcArgs=Table[Unique["theFPFuncArgs"],{numX+numEps}]},
+With[{numRegimes=Length[XZFuncs],numX=Length[BB],numEps=Length[psiEps[[1]]],numZ=Length[psiZ[[1]]]},
+With[{funcArgs=Table[Unique["theFPFuncArgs"],{numX+numEps+1}]},
 ReplacePart[
-Function[xxxx,Sow[
+Function[xxxx,Sow[ParallelMap[Function[indx,
 myFixedPoint[With[{
-	xzFuncNow=If[Or[Head[eqnsFunc]===CompiledFunction,Head[eqnsFunc]===Function],
-genFRRegimeFuncs[{numX,numEps,numZ},genLilXkZkRegimeFuncs[linMod,XZFuncs,#[[Range[numX+1]]]],eqnsFunc][[1]]&,
-genNSRegimeFuncs[{numX,numEps,numZ},genLilXkZkRegimeFuncs[linMod,XZFuncs,#[[Range[numX+1]]]],eqnsFunc,Method->"JenkinsTraub"]]
-},(*Print["infp:",XZFuncs[[1]]@@funcArgs];*)Print["xzfuncnow=",xzFuncNow//InputForm];
-xzFuncNow @@funcArgs]&,(XZFuncs[[1]]@@funcArgs)[[Range[numX]]],$fixedPointLimit]]],
+xzFuncNow=If[Or[Head[eqnsFunc]===CompiledFunction,Head[eqnsFunc]===Function],
+genFRRegimeFuncs[{numX,numEps,numZ},genLilXkZkRegimeFuncs[linMod,XZFuncs,#[[Range[numX]]]],eqnsFunc],
+genNSRegimeFuncs[{numX,numEps,numZ},genLilXkZkRegimeFuncs[linMod,XZFuncs,#[[Range[numX]]]],eqnsFunc,Method->"JenkinsTraub"]]
+},Print["infp:",{XZFuncs[[1,1]]@@funcArgs,xzFuncNow[[1]]@@ funcArgs,funcArgs}];
+xzFuncNow[[indx]] @@funcArgs]&,(XZFuncs[[1,1]]@@funcArgs)[[Range[numX+1]]],$fixedPointLimit]],Range[numRegimes]]]],
 1->funcArgs]]]
-	
-*)
-	
-$fixedPointLimit=30;
-genAnFPRegimeFunc[linMod:{theHMat_?MatrixQ,BB_?MatrixQ,phi_?MatrixQ,FF_?MatrixQ,psiEps_?MatrixQ,psiC_?MatrixQ,psiZ_?MatrixQ,psiZPreComp_?MatrixQ},
-XZFuncs:{({_Function,_Integer})..},eqnsFunc:(_Function|_CompiledFunction)]:=
-genFPFunc[linMod,XZFuncs[[1]],eqnsFunc]
-
 
  
 genXZFuncREInterp[probDims:{numX_Integer,numEps_Integer,numZ_Integer},

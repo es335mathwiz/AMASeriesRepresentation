@@ -141,7 +141,7 @@ rgmt== 0,
  -cct^(-1) + nlt, 
  tht - E^epsVal*
    thtm1^(19/20) - E^epsVal*
-   rgmt*thtm1^(19/20)},
+   thtm1^(19/20)},
 rgmt==1,
 {cct^(-1) - (171*nltp1*
     tht)/(500*kkt^(16/25)), 
@@ -150,7 +150,7 @@ rgmt==1,
  -cct^(-1) + nlt, 
  tht - E^epsVal*
    thtm1^(19/20) - E^epsVal*
-   rgmt*thtm1^(19/20)}]}
+   thtm1^(19/20)}]}
 
 
 (*

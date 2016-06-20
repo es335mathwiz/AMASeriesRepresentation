@@ -1188,8 +1188,8 @@ ReplacePart[
 Function[xxxx,Sow[
 myFixedPoint[With[{
 xzFuncNow=If[Or[Head[eqnsFunc]===CompiledFunction,Head[eqnsFunc]===Function],
-genFRFunc[{numX,numEps,numZ},genLilXkZkFunc[linMod,XZFuncs,#[[Range[numX]]]],eqnsFunc],
-genNSFunc[{numX,numEps,numZ},genLilXkZkFunc[linMod,XZFuncs,#[[Range[numX]]]],eqnsFunc,Method->"JenkinsTraub"]][[1]]
+genFRFunc[{numX,numEps,numZ},genLilXkZkRegimeFunc[linMod,XZFuncs,#[[Range[numX]]]],eqnsFunc],
+genNSFunc[{numX,numEps,numZ},genLilXkZkRegimeFunc[linMod,XZFuncs,#[[Range[numX]]]],eqnsFunc,Method->"JenkinsTraub"]][[1]]
 },(*Print["infp:",XZFuncs[[1]]@@funcArgs];*)
 xzFuncNow @@funcArgs]&,(XZFuncs[[1,1]]@@funcArgs)[[Range[numX]]],$fixedPointLimit]]],
 1->funcArgs]]]

@@ -125,15 +125,15 @@ rgmt==1,
 
 Needs["CompiledFunctionTools`"]
 
-rbcEqnsFunctionalBetterRSRBC=Function @@ {
+Print["should compile these functions in betterRSRBC.m"];
+rbcEqnsFunctionalBetterRSRBC=
+{Function @@ {
 {
 rgmtm1,cctm1,kktm1,nltm1,thtm1,
 rgmt,cct,kkt,nlt,tht,
 rgmtp1,cctp1,kktp1,nltp1,thtp1,
 epsVal
 },
-Which[
-rgmt== 0, 
 {cct^(-1) - (171*nltp1*
     tht)/(500*kkt^(16/25)), 
  cct + kkt - 
@@ -141,8 +141,14 @@ rgmt== 0,
  -cct^(-1) + nlt, 
  tht - E^epsVal*
    thtm1^(19/20) - E^epsVal*
-   thtm1^(19/20)},
-rgmt==1,
+   thtm1^(19/20)}},
+Function @@ {
+{
+rgmtm1,cctm1,kktm1,nltm1,thtm1,
+rgmt,cct,kkt,nlt,tht,
+rgmtp1,cctp1,kktp1,nltp1,thtp1,
+epsVal
+},
 {cct^(-1) - (171*nltp1*
     tht)/(500*kkt^(16/25)), 
  cct + kkt - 
@@ -150,7 +156,7 @@ rgmt==1,
  -cct^(-1) + nlt, 
  tht - E^epsVal*
    thtm1^(19/20) - E^epsVal*
-   thtm1^(19/20)}]}
+   thtm1^(19/20)}}}
 
 
 (*

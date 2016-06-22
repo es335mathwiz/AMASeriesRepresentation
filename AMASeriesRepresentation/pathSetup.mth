@@ -1,0 +1,4 @@
+PrependTo[$Path,"../../mathAMA/NumericAMA"];
+PrependTo[$Path,"../../mathAMA/SymbolicAMA"];
+PrependTo[$Path,"../../mathAMA/AMAModel"];
+PrependTo[$Path,"../../ProtectedSymbols"];

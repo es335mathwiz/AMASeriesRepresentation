@@ -8,8 +8,10 @@ Print["post prepsimp",Directory[]]
 Get["genArbLin.mth"]
 
 
+
 Print["occDir=",occDir]
-occDir="~/Dropbox/Apps/Texpad/paperProduction/occBind/docs/"
+(*occDir="~/Dropbox/Apps/Texpad/paperProduction/occBind/docs/"*)
+occDir="~/git/paperProduction/occBind/docs/"
 Print["occDir=",occDir]
 
 toOccDir[fName_String]:=CopyFile[fName,occDir <>fName,OverwriteTarget -> True];

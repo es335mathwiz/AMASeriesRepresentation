@@ -9,7 +9,7 @@ BeginPackage["AMASeriesRepresentation`", {"JLink`","ProtectedSymbols`",
 (*genX0Z0RegimeFuncs::usage="probably not useful
 genX0Z0RegimeFuncs[linMod:{theHMat_?MatrixQ,BB_?MatrixQ,phi_?MatrixQ,FF_?MatrixQ,psiEps_?MatrixQ,psiC_?MatrixQ,psiZ_?MatrixQ,psiZPreComp_?MatrixQ},
 numRegimes_Integer]"*)
-specialSolver::usage="specialSolver for replacing genFRFuncs or genNSFunc"
+specialSolver::usage="specialSolver for replacing genFRFunc or genNSFunc"
 genDrvX0Z0Funcs::usage="genDrvX0Z0Funcs[linMod:{theHMat_?MatrixQ,BB_?MatrixQ,phi_?MatrixQ,FF_?MatrixQ,psiEps_?MatrixQ,psiC_?MatrixQ,psiZ_?MatrixQ,psiZPreComp_?MatrixQ}]"	
 $noTransFunc::usage="transfuncinfo";
 	

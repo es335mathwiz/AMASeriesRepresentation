@@ -186,7 +186,9 @@ sigHigh = 3*sigVal;
 thLow = 9/10;
 thHigh = 11/10;
 
-aGSpecBetter={{1,3},1,{{4,kLow,kHigh},{3,thLow,thHigh},{3,sigLow,3*sigHigh}}};
+	(*
+	 aGSpecBetter={{1,3},1,{{4,kLow,kHigh},{3,thLow,thHigh},{3,sigLow,3*sigHigh}}};*)
+aGSpecBetter={{1,3},2,{{10,kLow,kHigh},{10,thLow,thHigh},{6,sigLow,3*sigHigh}}};
 
 End[] (* End Private Context *)
 

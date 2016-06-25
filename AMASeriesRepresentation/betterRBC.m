@@ -17,7 +17,7 @@ anXEpsZsFlatBetter::usage="for test input";
 probDimsBetter::usage="for test input";
 
 simpRBCExactDRBetter::usage="simpRBCExactDR"
-
+betterRBCExactCondExp::usage="betterRBCExactCondExp"
 theDistBetter::usage="theDist={{{ee,NormalDistribution[0,sigVal]}}};"
 thePFDistBetter::usage="theDist={{{ee,PerfectForesight]}}};"
 linModBetter::usage="linear model matrices for approx"
@@ -128,7 +128,7 @@ thePFDistBetter={{{ee,PerfectForesight}}};
 
 
 
-betterRBCExactCondExp = makeREIterFunc[betterRBCExactDR,theDist]
+betterRBCExactCondExp = makeREIterFunc[simpRBCExactDRBetter,theDist]
 
 
 psiz=IdentityMatrix[4]

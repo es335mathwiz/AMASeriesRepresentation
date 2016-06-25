@@ -311,6 +311,7 @@ numRegimes currently has no impact
 
 
 
+getH::usage="getB[linMod] H from linMod:{theHMat_?MatrixQ,BB_?MatrixQ,phi_?MatrixQ,FF_?MatrixQ,psiEps_?MatrixQ,psiC_?MatrixQ,psiZ_?MatrixQ,psiZPreComp_?MatrixQ}"
 getB::usage="getB[linMod] B from linMod:{theHMat_?MatrixQ,BB_?MatrixQ,phi_?MatrixQ,FF_?MatrixQ,psiEps_?MatrixQ,psiC_?MatrixQ,psiZ_?MatrixQ,psiZPreComp_?MatrixQ}"
 getF::usage="getF[linMod] F from linMod:{theHMat_?MatrixQ,BB_?MatrixQ,phi_?MatrixQ,FF_?MatrixQ,psiEps_?MatrixQ,psiC_?MatrixQ,psiZ_?MatrixQ,psiZPreComp_?MatrixQ}"
 getPhi::usage="getPhi[linMod] Phi from linMod:{theHMat_?MatrixQ,BB_?MatrixQ,phi_?MatrixQ,FF_?MatrixQ,psiEps_?MatrixQ,psiC_?MatrixQ,psiZ_?MatrixQ,psiZPreComp_?MatrixQ}"
@@ -322,6 +323,8 @@ getPsiZ::usage="getPsiz[linMod] PsiZ from linMod:{theHMat_?MatrixQ,BB_?MatrixQ,p
 
 Begin["`Private`"]
 
+getH[linMod:{theHMat_?MatrixQ,BB_?MatrixQ,phi_?MatrixQ,FF_?MatrixQ,psiEps_?MatrixQ,psiC_?MatrixQ,psiZ_?MatrixQ,psiZPreComp_?MatrixQ}]:=
+theHMat
 getB[linMod:{theHMat_?MatrixQ,BB_?MatrixQ,phi_?MatrixQ,FF_?MatrixQ,psiEps_?MatrixQ,psiC_?MatrixQ,psiZ_?MatrixQ,psiZPreComp_?MatrixQ}]:=
 BB
 getF[linMod:{theHMat_?MatrixQ,BB_?MatrixQ,phi_?MatrixQ,FF_?MatrixQ,psiEps_?MatrixQ,psiC_?MatrixQ,psiZ_?MatrixQ,psiZPreComp_?MatrixQ}]:=
@@ -419,14 +422,46 @@ funcName[tryEps:{_?NumberQ..}]:=
 	With[{outerEVars=Table[Unique["eVs"],{getNumEpsVars[distribSpec]}]},
 	With[{maxArgs={#,0}&/@outerEVars,cons=And @@  ((-0.01<=#<=0.01)&/@ outerEVars)},
 	FindMaximum[{funcName[outerEVars],cons},maxArgs]]]]
+evalBadPathErrDRREIntegrate[drFunc_Function,noEpsVec_?MatrixQ,distribSpec:{expctSpec:{{_Symbol,_}..},regimeTransProbFunc_:{}},eqnsFunc:(_Function|_CompiledFunction)]:=
+With[{funcName=Unique["fName"]},
+funcName[tryEps:{_?NumberQ..}]:=
+	With[{theVal=evalPathErrDRREIntegrate[drFunc,Join[noEpsVec,Transpose[{tryEps}]],distribSpec,eqnsFunc]},
+		(*Print["ex:",theVal,Norm[theVal,Infinity]];*)Norm[Transpose[theVal],Infinity]];
+	With[{outerEVars=Table[Unique["eVs"],{getNumEpsVars[distribSpec]}]},
+	With[{maxArgs={#,0}&/@outerEVars,cons=And @@  ((-0.01<=#<=0.01)&/@ outerEVars)},
+	FindMaximum[{funcName[outerEVars],cons},maxArgs]]]]
+
+
+evalBadPathErrDRREIntegrate[phi_?MatrixQ,
+drFunc_Function,noEpsVec_?MatrixQ,distribSpec:{expctSpec:{{_Symbol,_}..},regimeTransProbFunc_:{}},eqnsFunc:(_Function|_CompiledFunction)]:=
+With[{funcName=Unique["fName"]},
+funcName[tryEps:{_?NumberQ..}]:=
+With[{theVal=evalPathErrDRREIntegrate[drFunc,Join[noEpsVec,Transpose[{tryEps}]],distribSpec,eqnsFunc]},
+		(*Print["ex:",theVal,Norm[theVal,Infinity]];*)Norm[Transpose[theVal],Infinity]];
+	With[{outerEVars=Table[Unique["eVs"],{getNumEpsVars[distribSpec]}]},
+	With[{maxArgs={#,0}&/@outerEVars,cons=And @@  ((-0.01<=#<=0.01)&/@ outerEVars)},
+	FindMaximum[{funcName[outerEVars],cons},maxArgs]]]]
 
 evalPathErrDRREIntegrate[drFunc_Function,initVec_?MatrixQ,distribSpec:{expctSpec:{{_Symbol,_}..},regimeTransProbFunc_:{}},eqnsFunc:(_Function|_CompiledFunction)]:=
 pathErrsDRREIntegrate[drFunc,initVec,distribSpec,eqnsFunc,2]//First
 
 
+
+evalPathErrDRREIntegrate[phi_?MatrixQ,
+drFunc_Function,initVec_?MatrixQ,distribSpec:{expctSpec:{{_Symbol,_}..},regimeTransProbFunc_:{}},eqnsFunc:(_Function|_CompiledFunction)]:=
+phi . (pathErrsDRREIntegrate[drFunc,initVec,distribSpec,eqnsFunc,2])//First
+
+
+
+
+
+
+
+
+
 pathErrsDRREIntegrate[drFunc_Function,initVec_?MatrixQ,distribSpec:{expctSpec:{{_Symbol,_}..},regimeTransProbFunc_:{}},eqnsFunc:(_Function|_CompiledFunction),numPers_Integer]:=
 With[{numEps=getNumEpsVars[distribSpec]},
-With[{pathNow=iterateDRREIntegrate[drFunc,initVec,distribSpec,numPers],numX=Length[initVec]-numEps},
+With[{pathNow=iterateDRREIntegrate[drFunc,initVec,distribSpec,numPers],numX=Length[initVec]-numEps},(*Print["pathErrsDRREIntegrate:",pathNow];*)
 With[{firstArg=doFuncArg[pathNow,Identity[Reverse[initVec[[-Range[numEps]]]]],numX,0],
 	restArgs=(doFuncArg[pathNow,Table[{0},{numEps}],numX,#-2]&/@Range[3,numPers])},
 With[{first=Transpose[{eqnsFunc@@ Flatten[firstArg]}]},
@@ -722,7 +757,7 @@ Switch[getRegimeTransProbFuncType[distribSpec],
 
 checkMod[theSolver:(({genFRFunc,opts:OptionsPattern[]}|{genNSFunc,opts:OptionsPattern[]}|{specialSolver,opts:OptionsPattern[]})),linMod:{theHMat_?MatrixQ,BB_?MatrixQ,phi_?MatrixQ,FF_?MatrixQ,psiEps_?MatrixQ,psiC_?MatrixQ,psiZ_?MatrixQ,psiZPreComp_?MatrixQ},
 gSpec:{toIgnore:{_Integer...},iOrd_Integer,{{_Integer,_?NumberQ,_?NumberQ}..},numRegimes_:0},
-distribSpec:{expctSpec:{{_Symbol,_}..},regimeTransProbFunc_:{}},anX_?MatrixQ,anEps_?MatrixQ,
+distribSpec:{expctSpec:{{_Symbol,_}..},regimeTransProbFunc_:{}},anX_?MatrixQ,anEps_?MatrixQ,ss_?MatrixQ,
 eqnsFunc:(_Function|_CompiledFunction)]:=
 With[{X0Z0=genX0Z0Funcs[linMod],numX=Length[BB],numEps=Length[psiEps[[1]]],numZ=Length[psiZ[[1]]]},
 With[{lilxz=
@@ -731,7 +766,8 @@ With[{xzFuncNow=theSolver[[1]][{numX,numEps,numZ},lilxz,eqnsFunc,Method->"Jenkin
 With[{fp=genFPFunc[theSolver,linMod,{X0Z0,2},eqnsFunc]},
 {lilxz @@ Flatten[Join[anX,anEps,Table[0,{numZ}]]],
 xzFuncNow @@ Flatten[Join[anX,anEps]],
-fp @@ Flatten[Join[anX,anEps]]
+fp @@ Flatten[Join[anX,anEps]],
+eqnsFunc @@ Flatten[Join[ss,{{0}}]]
 }]]]]
 
 
@@ -864,6 +900,14 @@ genASeriesRep[linMod:{theHMat_?MatrixQ,BB_?MatrixQ,phi_?MatrixQ,FF_?MatrixQ,psiE
 
 worstPathForErrDRREIntegrate[drFunc_Function,noEpsVec_?MatrixQ,distribSpec:{expctSpec:{{_Symbol,_}..},regimeTransProbFunc_:{}},eqnsFunc:(_Function|_CompiledFunction)]:=
 With[{fMinRes=evalBadPathErrDRREIntegrate[drFunc,noEpsVec,distribSpec,eqnsFunc]},
+	With[{badEps=Transpose[{(First/@fMinRes[[2]])/.fMinRes[[2]]}]},
+	With[{badPath=iterateDRREIntegrate[drFunc,Join[noEpsVec,badEps],distribSpec,2]},
+		Join[badPath,badEps]]]]
+
+worstPathForErrDRREIntegrate[phi_?MatrixQ,
+drFunc_Function,noEpsVec_?MatrixQ,distribSpec:{expctSpec:{{_Symbol,_}..},regimeTransProbFunc_:{}},eqnsFunc:(_Function|_CompiledFunction)]:=
+With[{fMinRes=
+evalBadPathErrDRREIntegrate[phi,drFunc,noEpsVec,distribSpec,eqnsFunc]},
 	With[{badEps=Transpose[{(First/@fMinRes[[2]])/.fMinRes[[2]]}]},
 	With[{badPath=iterateDRREIntegrate[drFunc,Join[noEpsVec,badEps],distribSpec,2]},
 		Join[badPath,badEps]]]]

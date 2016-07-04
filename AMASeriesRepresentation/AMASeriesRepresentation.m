@@ -316,9 +316,8 @@ getB::usage="getB[linMod] B from linMod:{theHMat_?MatrixQ,BB_?MatrixQ,phi_?Matri
 getF::usage="getF[linMod] F from linMod:{theHMat_?MatrixQ,BB_?MatrixQ,phi_?MatrixQ,FF_?MatrixQ,psiEps_?MatrixQ,psiC_?MatrixQ,psiZ_?MatrixQ,psiZPreComp_?MatrixQ}"
 getPhi::usage="getPhi[linMod] Phi from linMod:{theHMat_?MatrixQ,BB_?MatrixQ,phi_?MatrixQ,FF_?MatrixQ,psiEps_?MatrixQ,psiC_?MatrixQ,psiZ_?MatrixQ,psiZPreComp_?MatrixQ}"
 getPsiZ::usage="getPsiz[linMod] PsiZ from linMod:{theHMat_?MatrixQ,BB_?MatrixQ,phi_?MatrixQ,FF_?MatrixQ,psiEps_?MatrixQ,psiC_?MatrixQ,psiZ_?MatrixQ,psiZPreComp_?MatrixQ}"
+getPsiC::usage="getPsiC[linMod] PsiZ from linMod:{theHMat_?MatrixQ,BB_?MatrixQ,phi_?MatrixQ,FF_?MatrixQ,psiEps_?MatrixQ,psiC_?MatrixQ,psiZ_?MatrixQ,psiZPreComp_?MatrixQ}"
 
-	
-	
 
 
 Begin["`Private`"]
@@ -335,6 +334,9 @@ phi
 
 getPsiZ[linMod:{theHMat_?MatrixQ,BB_?MatrixQ,phi_?MatrixQ,FF_?MatrixQ,psiEps_?MatrixQ,psiC_?MatrixQ,psiZ_?MatrixQ,psiZPreComp_?MatrixQ}]:=
 psiZ
+
+getPsiC[linMod:{theHMat_?MatrixQ,BB_?MatrixQ,phi_?MatrixQ,FF_?MatrixQ,psiEps_?MatrixQ,psiC_?MatrixQ,psiZ_?MatrixQ,psiZPreComp_?MatrixQ}]:=
+psiC
 
 checkLinMod[linMod:{theHMat_?MatrixQ,BB_?MatrixQ,phi_?MatrixQ,FF_?MatrixQ,psiEps_?MatrixQ,psiC_?MatrixQ,psiZ_?MatrixQ,psiZPreComp_?MatrixQ},
 anX_?MatrixQ,anEps_?MatrixQ,numRegimes_Integer:0]:=
@@ -377,22 +379,26 @@ genZsFromPath[linMod:{theHMat_?MatrixQ,BB_?MatrixQ,phi_?MatrixQ,FF_?MatrixQ,psiE
 								  Range[(Length[thePath]/numX)-3]},
      Join[{firstVal},restVals]]]]
 
-genSeriesReps[linMod:{theHMat_?MatrixQ,BB_?MatrixQ,phi_?MatrixQ,FF_?MatrixQ,psiEps_?MatrixQ,psiC_?MatrixQ,psiZ_?MatrixQ,psiZPreComp_?MatrixQ},
-	initVec_?MatrixQ,distribSpec:{expctSpec:{{_Symbol,_}..},regimeTransProbFunc_:{}},theExactDR:(_Function|_CompiledFunction),maxIters_Integer]:=
+genSeriesReps[
+linMod:{theHMat_?MatrixQ,BB_?MatrixQ,phi_?MatrixQ,FF_?MatrixQ,psiEps_?MatrixQ,psiC_?MatrixQ,psiZ_?MatrixQ,psiZPreComp_?MatrixQ},
+initVec_?MatrixQ,distribSpec:{expctSpec:{{_Symbol,_}..},regimeTransProbFunc_:{}},theExactDR:(_Function|_CompiledFunction),
+maxIters_Integer]:=
 With[{theZs=genZsREExact[linMod,initVec,distribSpec,theExactDR,maxIters]},
-	genASeriesRep[linMod,initVec,theZs,#]&/@Range[Length[theZs]]]
+	genASeriesRep[linMod,initVec,theZs[[Range[#]]]]&/@(Range[Length[theZs]])]
 	
 	
 	
 	
-genSeriesRepFunc[linMod:{theHMat_?MatrixQ,BB_?MatrixQ,phi_?MatrixQ,FF_?MatrixQ,psiEps_?MatrixQ,psiC_?MatrixQ,psiZ_?MatrixQ,psiZPreComp_?MatrixQ},
-distribSpec:{expctSpec:{{_Symbol,_}..},regimeTransProbFunc_:{}},theExactDR:(_Function|_CompiledFunction),terms_Integer]:=
+genSeriesRepFunc[
+linMod:{theHMat_?MatrixQ,BB_?MatrixQ,phi_?MatrixQ,FF_?MatrixQ,psiEps_?MatrixQ,psiC_?MatrixQ,psiZ_?MatrixQ,psiZPreComp_?MatrixQ},
+distribSpec:{expctSpec:{{_Symbol,_}..},regimeTransProbFunc_:{}},theExactDR:(_Function|_CompiledFunction),
+terms_Integer]:=
 Module[{numX=Length[BB[[1]]],numEps=Length[psiEps[[1]]]},
 With[{theArgs=Table[Unique["funArgs"],{numX+numEps}]},
 With[{theFunc=
 Function[xxxx,	
 With[{theZs=genZsREExact[linMod,xxxx,distribSpec,theExactDR,terms]},
-	genASeriesRep[linMod,xxxx,theZs,terms]]]},
+	genASeriesRep[linMod,xxxx,theZs]]]},
 With[{xxxxPos=Position[theFunc,xxxx$]},
 ReplacePart[theFunc,
 	xxxxPos->theArgs
@@ -400,7 +406,8 @@ ReplacePart[theFunc,
 
 
 
-genErrsREWorst[theDRFunc:(_Function|_CompiledFunction),initVec_?MatrixQ,distribSpec:{expctSpec:{{_Symbol,_}..},regimeTransProbFunc_:{}},
+genErrsREWorst[theDRFunc:(_Function|_CompiledFunction),initVec_?MatrixQ,distribSpec:{expctSpec:{{_Symbol,_}..},
+	regimeTransProbFunc_:{}},
 	theSysFunc:(_Function|_CompiledFunction),iters_Integer]:=
 Module[{numEps=getNumEpsVars[distribSpec]},
 With[{numX=Length[initVec]-numEps,
@@ -987,6 +994,13 @@ genLilXkZkFunc[linMod:{theHMat_?MatrixQ,BB_?MatrixQ,phi_?MatrixQ,FF_?MatrixQ,psi
 	With[{fCon=fSumC[phi,FF,psiZ,theZs]},
 		With[{theRes=genLilXkZkFunc[linMod,fCon]},
 theRes]]
+
+
+genLilXkZkFunc[linMod:{theHMat_?MatrixQ,BB_?MatrixQ,phi_?MatrixQ,FF_?MatrixQ,psiEps_?MatrixQ,psiC_?MatrixQ,psiZ_?MatrixQ,psiZPreComp_?MatrixQ},
+	{}]:=With[{numZ=Length[getPsiZ[linMod][[1]]]},
+	With[{fCon=ConstantArray[0,{1,numZ,1}]},
+		With[{theRes=genLilXkZkFunc[linMod,fCon]},
+theRes]]]
 
 genLilXkZkFunc[linMod:{theHMat_?MatrixQ,BB_?MatrixQ,phi_?MatrixQ,FF_?MatrixQ,psiEps_?MatrixQ,psiC_?MatrixQ,psiZ_?MatrixQ,psiZPreComp_?MatrixQ},
 	fCon_?MatrixQ,drvPairs:{({}|{{aa_Integer,bb_Integer}...}),eqnFunc:({}|_Function|_CompiledFunction)}:{{},{}}]:=

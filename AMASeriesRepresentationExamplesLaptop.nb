@@ -31232,7 +31232,8 @@ Cell[BoxData["\<\"using version in eclipse\"\>"], "Print",
   3.67448380442898*^9, 3.675281743824882*^9, 3.675282067347004*^9, {
    3.675382167236268*^9, 3.675382169856082*^9}, 3.675382415201054*^9, 
    3.675382481039935*^9, 3.675452444479438*^9, 3.675452742057393*^9, 
-   3.675705671480184*^9, 3.6765580145728416`*^9, 3.676560790153921*^9}]
+   3.675705671480184*^9, 3.6765580145728416`*^9, 3.676560790153921*^9, 
+   3.676645322019186*^9}]
 }, Open  ]],
 
 Cell[CellGroupData[{
@@ -31350,19 +31351,383 @@ Cell[BoxData[
 Cell[BoxData[""], "Input",
  CellChangeTimes->{{3.676561164367443*^9, 3.6765611659768457`*^9}}],
 
+Cell[CellGroupData[{
+
 Cell[BoxData[
- RowBox[{"\[IndentingNewLine]", "\[IndentingNewLine]", "\[IndentingNewLine]", 
-  "\[IndentingNewLine]", "\[IndentingNewLine]", 
-  "\[IndentingNewLine]"}]], "Input",
- CellChangeTimes->{{3.6765611376835613`*^9, 3.676561140536619*^9}}],
+ RowBox[{"\[IndentingNewLine]", "\[IndentingNewLine]", 
+  RowBox[{
+   RowBox[{"Get", "[", "\"\<pathSetup.mth\>\"", "]"}], "\n", 
+   RowBox[{"Get", "[", "\"\<simpleRBCModel`\>\"", "]"}], "\n", 
+   RowBox[{"Get", "[", "\"\<betterRBC.m\>\"", "]"}], "\[IndentingNewLine]", 
+   "\[IndentingNewLine]", "\[IndentingNewLine]", "\[IndentingNewLine]", 
+   "\n"}]}]], "Input",
+ CellChangeTimes->{{3.6765611376835613`*^9, 3.676561140536619*^9}, 
+   3.67664530910471*^9}],
+
+Cell[CellGroupData[{
+
+Cell[BoxData["\<\"reading simpleRBCModel.m\"\>"], "Print",
+ CellChangeTimes->{3.6766453311929502`*^9}],
+
+Cell[BoxData["\<\"RE solutions\"\>"], "Print",
+ CellChangeTimes->{3.676645331200122*^9}],
+
+Cell[BoxData["\<\"computing and simplifying the symbolic b phi f etc\"\>"], \
+"Print",
+ CellChangeTimes->{3.676645331238769*^9}],
+
+Cell[BoxData["\<\"defining exactdr\"\>"], "Print",
+ CellChangeTimes->{3.676645331254767*^9}],
+
+Cell[BoxData[
+ InterpretationBox[
+  RowBox[{"\<\"curious simp\"\>", "\[InvisibleSpace]", 
+   RowBox[{"{", 
+    RowBox[{
+    "1.0010005001667084`", ",", "0.18732441104784653`", ",", 
+     "0.36040778499848836`", ",", 
+     RowBox[{"{", 
+      RowBox[{
+       RowBox[{"theta", "\[Rule]", 
+        SuperscriptBox["\[ExponentialE]", 
+         RowBox[{"1", "/", "1000"}]]}], ",", 
+       RowBox[{"kk", "\[Rule]", 
+        FractionBox[
+         RowBox[{"513", " ", 
+          SuperscriptBox[
+           RowBox[{"(", 
+            FractionBox["3", "2"], ")"}], 
+           RowBox[{"1", "/", "8"}]], " ", 
+          SuperscriptBox["19", 
+           RowBox[{"9", "/", "16"}]], " ", 
+          SuperscriptBox["\[ExponentialE]", 
+           RowBox[{"1", "/", "640"}]]}], 
+         RowBox[{"5000", " ", 
+          SuperscriptBox["5", 
+           RowBox[{"11", "/", "16"}]]}]]}], ",", 
+       RowBox[{"cc", "\[Rule]", 
+        FractionBox[
+         RowBox[{"987", " ", 
+          SuperscriptBox[
+           RowBox[{"(", 
+            FractionBox["3", "2"], ")"}], 
+           RowBox[{"1", "/", "8"}]], " ", 
+          SuperscriptBox["19", 
+           RowBox[{"9", "/", "16"}]], " ", 
+          SuperscriptBox["\[ExponentialE]", 
+           RowBox[{"1", "/", "640"}]]}], 
+         RowBox[{"5000", " ", 
+          SuperscriptBox["5", 
+           RowBox[{"11", "/", "16"}]]}]]}], ",", 
+       RowBox[{"nlPart", "\[Rule]", 
+        FractionBox[
+         RowBox[{"5000", " ", 
+          SuperscriptBox[
+           RowBox[{"(", 
+            FractionBox["2", "3"], ")"}], 
+           RowBox[{"1", "/", "8"}]], " ", 
+          SuperscriptBox["5", 
+           RowBox[{"11", "/", "16"}]]}], 
+         RowBox[{"987", " ", 
+          SuperscriptBox["19", 
+           RowBox[{"9", "/", "16"}]], " ", 
+          SuperscriptBox["\[ExponentialE]", 
+           RowBox[{"1", "/", "640"}]]}]]}], ",", 
+       RowBox[{"II", "\[Rule]", 
+        FractionBox[
+         RowBox[{"513", " ", 
+          SuperscriptBox[
+           RowBox[{"(", 
+            FractionBox["3", "2"], ")"}], 
+           RowBox[{"1", "/", "8"}]], " ", 
+          SuperscriptBox["19", 
+           RowBox[{"9", "/", "16"}]], " ", 
+          SuperscriptBox["\[ExponentialE]", 
+           RowBox[{"1", "/", "640"}]]}], 
+         RowBox[{"50000", " ", 
+          SuperscriptBox["5", 
+           RowBox[{"11", "/", "16"}]]}]]}], ",", 
+       RowBox[{"IISSVal", "\[Rule]", 
+        FractionBox[
+         RowBox[{"513", " ", 
+          SuperscriptBox[
+           RowBox[{"(", 
+            FractionBox["3", "2"], ")"}], 
+           RowBox[{"1", "/", "8"}]], " ", 
+          SuperscriptBox["19", 
+           RowBox[{"9", "/", "16"}]], " ", 
+          SuperscriptBox["\[ExponentialE]", 
+           RowBox[{"1", "/", "640"}]]}], 
+         RowBox[{"50000", " ", 
+          SuperscriptBox["5", 
+           RowBox[{"11", "/", "16"}]]}]]}], ",", 
+       RowBox[{"lambda", "\[Rule]", "0"}]}], "}"}], ",", 
+     RowBox[{"{", 
+      RowBox[{
+       RowBox[{"alpha", "\[Rule]", 
+        FractionBox["9", "25"]}], ",", 
+       RowBox[{"delta", "\[Rule]", 
+        FractionBox["19", "20"]}], ",", 
+       RowBox[{"rho", "\[Rule]", 
+        FractionBox["19", "20"]}], ",", 
+       RowBox[{"sigma", "\[Rule]", 
+        FractionBox["1", "100"]}], ",", 
+       RowBox[{"nu", "\[Rule]", 
+        FractionBox[
+         RowBox[{"513", " ", 
+          SuperscriptBox[
+           RowBox[{"(", 
+            FractionBox["3", "2"], ")"}], 
+           RowBox[{"1", "/", "8"}]], " ", 
+          SuperscriptBox["19", 
+           RowBox[{"9", "/", "16"}]]}], 
+         RowBox[{"5000", " ", 
+          SuperscriptBox["5", 
+           RowBox[{"11", "/", "16"}]]}]]}]}], "}"}]}], "}"}]}],
+  SequenceForm[
+  "curious simp", {
+   1.0010005001667084`, 0.18732441104784653`, 0.36040778499848836`, {
+    Private`theta -> E^Rational[1, 1000], Private`kk -> 
+     Rational[513, 5000] Rational[3, 2]^Rational[1, 8] 5^Rational[-11, 16] 
+      19^Rational[9, 16] E^Rational[1, 640], Private`cc -> 
+     Rational[987, 5000] Rational[3, 2]^Rational[1, 8] 5^Rational[-11, 16] 
+      19^Rational[9, 16] E^Rational[1, 640], Private`nlPart -> 
+     Rational[5000, 987] Rational[2, 3]^Rational[1, 8] 5^Rational[11, 16] 
+      19^Rational[-9, 16] E^Rational[-1, 640], Private`II -> 
+     Rational[513, 50000] Rational[3, 2]^Rational[1, 8] 5^Rational[-11, 16] 
+      19^Rational[9, 16] E^Rational[1, 640], Private`IISSVal -> 
+     Rational[513, 50000] Rational[3, 2]^Rational[1, 8] 5^Rational[-11, 16] 
+      19^Rational[9, 16] E^Rational[1, 640], Private`lambda -> 0}, {
+    Private`alpha -> Rational[9, 25], Private`delta -> Rational[19, 20], 
+     Private`rho -> Rational[19, 20], Private`sigma -> Rational[1, 100], 
+     Private`nu -> 
+     Rational[513, 5000] Rational[3, 2]^Rational[1, 8] 5^Rational[-11, 16] 
+      19^Rational[9, 16]}}],
+  Editable->False]], "Print",
+ CellChangeTimes->{3.676645331268602*^9}],
+
+Cell[BoxData[
+ InterpretationBox[
+  RowBox[{"\<\"path=\"\>", "\[InvisibleSpace]", 
+   RowBox[{"{", 
+    RowBox[{
+     RowBox[{"{", 
+      RowBox[{"\<\"../../AMASeriesRepresentation/AMASeriesRepresentation\"\>",
+        ",", "\<\"../../protectedSymbolsDir/ProtectedSymbols\"\>", 
+       ",", "\<\"../../mathSmolyak/mathSmolyak/\"\>", 
+       ",", "\<\"../../mathAMA/SymbolicAMA\"\>", 
+       ",", "\<\"../../mathAMA/NumericAMA/\"\>", 
+       ",", "\<\"../../mathAMA/AMAModel/\"\>", 
+       ",", "\<\"../../ProtectedSymbols\"\>", 
+       ",", "\<\"../../mathAMA/AMAModel\"\>", 
+       ",", "\<\"../../mathAMA/SymbolicAMA\"\>", 
+       ",", "\<\"../../mathAMA/NumericAMA\"\>", 
+       ",", "\<\"../../mathAMA/SymbolicAMA\"\>", 
+       ",", "\<\"../../mathAMA/NumericAMA\"\>", 
+       ",", "\<\"../../ProtectedSymbols\"\>", 
+       ",", "\<\"../../mathAMA/AMAModel\"\>", 
+       ",", "\<\"../../mathAMA/SymbolicAMA\"\>", 
+       ",", "\<\"../../mathAMA/NumericAMA\"\>", 
+       ",", \
+"\<\"../../../AMASeriesRepresentation/AMASeriesRepresentation/\"\>", 
+       ",", "\<\"/Users/garyanderson/git/ProtectedSymbolsDir/\"\>", 
+       ",", "\<\"/Users/garyanderson/git/mathSmolyak\"\>", 
+       ",", "\<\"../../AMASeriesRepresentation/AMASeriesRepresentation\"\>", 
+       ",", "\<\"../../protectedSymbolsDir/ProtectedSymbols\"\>", 
+       ",", "\<\"../../mathSmolyak/mathSmolyak/\"\>", 
+       ",", "\<\"../../mathAMA/SymbolicAMA\"\>", 
+       ",", "\<\"../../mathAMA/NumericAMA/\"\>", 
+       ",", "\<\"../../mathAMA/AMAModel/\"\>", 
+       ",", "\<\"g:/git/mathAMA/SymbolicAMA\"\>", 
+       ",", "\<\"/Users/garyanderson/git/ProtectedSymbolsDir/\"\>", 
+       ",", "\<\"/Users/garyanderson/git/mathSmolyak\"\>", 
+       ",", "\<\"/Applications/Wolfram \
+Workbench.app/plugins/com.wolfram.eclipse.MEET_3.0.78/\
+MathematicaSourceVersioned/Head\"\>", 
+       ",", "\<\"/Applications/Wolfram \
+Workbench.app/plugins/com.wolfram.eclipse.MEET_3.0.78/MathematicaSource\"\>", 
+       ",", "\<\"/Applications/Wolfram \
+Workbench.app/configuration/org.eclipse.osgi/bundles/14/2/.cp/\
+MathematicaSourceVersioned/Head\"\>", 
+       ",", "\<\"/Applications/Wolfram \
+Workbench.app/configuration/org.eclipse.osgi/bundles/11/2/.cp/\
+MathematicaSource\"\>", 
+       ",", "\<\"/Users/garyanderson/git/mathAMA/SymbolicAMA\"\>", 
+       ",", "\<\"/Users/garyanderson/git/ProtectedSymbols\"\>", 
+       ",", "\<\"/Users/garyanderson/git/mathAMA/NumericAMA\"\>", 
+       ",", "\<\"/Users/garyanderson/git/mathSmolyak\"\>", 
+       ",", "\<\"/Users/garyanderson/git/mathAMA/AMAModel\"\>", 
+       ",", "\<\"/Users/garyanderson/git/AMASeriesRepresentation\"\>", 
+       ",", "\<\"/Applications/Mathematica.app/Contents/SystemFiles/Links\"\>\
+", ",", "\<\"/Users/garyanderson/Library/Mathematica/Kernel\"\>", 
+       ",", "\<\"/Users/garyanderson/Library/Mathematica/Autoload\"\>", 
+       ",", "\<\"/Users/garyanderson/Library/Mathematica/Applications\"\>", 
+       ",", "\<\"/Library/Mathematica/Kernel\"\>", 
+       ",", "\<\"/Library/Mathematica/Autoload\"\>", 
+       ",", "\<\"/Library/Mathematica/Applications\"\>", ",", "\<\".\"\>", 
+       ",", "\<\"/Users/garyanderson\"\>", 
+       ",", "\<\"/Applications/Mathematica.app/Contents/AddOns/Packages\"\>", 
+       ",", "\<\"/Applications/Mathematica.app/Contents/SystemFiles/Autoload\"\
+\>", ",", "\<\"/Applications/Mathematica.app/Contents/AddOns/Autoload\"\>", 
+       ",", "\<\"/Applications/Mathematica.app/Contents/AddOns/Applications\"\
+\>", ",", \
+"\<\"/Applications/Mathematica.app/Contents/AddOns/ExtraPackages\"\>", 
+       ",", "\<\"/Applications/Mathematica.app/Contents/SystemFiles/Kernel/\
+Packages\"\>", 
+       ",", "\<\"/Applications/Mathematica.app/Contents/Documentation/English/\
+System\"\>", 
+       ",", "\<\"/Applications/Mathematica.app/Contents/SystemFiles/Data/ICC\"\
+\>"}], "}"}], 
+     ",", "\<\"/Users/garyanderson/git/ProjectionMethodTools/\
+ProjectionMethodToolsJava/code\"\>"}], "}"}]}],
+  SequenceForm[
+  "path=", {{
+    "../../AMASeriesRepresentation/AMASeriesRepresentation", 
+     "../../protectedSymbolsDir/ProtectedSymbols", 
+     "../../mathSmolyak/mathSmolyak/", "../../mathAMA/SymbolicAMA", 
+     "../../mathAMA/NumericAMA/", "../../mathAMA/AMAModel/", 
+     "../../ProtectedSymbols", "../../mathAMA/AMAModel", 
+     "../../mathAMA/SymbolicAMA", "../../mathAMA/NumericAMA", 
+     "../../mathAMA/SymbolicAMA", "../../mathAMA/NumericAMA", 
+     "../../ProtectedSymbols", "../../mathAMA/AMAModel", 
+     "../../mathAMA/SymbolicAMA", "../../mathAMA/NumericAMA", 
+     "../../../AMASeriesRepresentation/AMASeriesRepresentation/", 
+     "/Users/garyanderson/git/ProtectedSymbolsDir/", 
+     "/Users/garyanderson/git/mathSmolyak", 
+     "../../AMASeriesRepresentation/AMASeriesRepresentation", 
+     "../../protectedSymbolsDir/ProtectedSymbols", 
+     "../../mathSmolyak/mathSmolyak/", "../../mathAMA/SymbolicAMA", 
+     "../../mathAMA/NumericAMA/", "../../mathAMA/AMAModel/", 
+     "g:/git/mathAMA/SymbolicAMA", 
+     "/Users/garyanderson/git/ProtectedSymbolsDir/", 
+     "/Users/garyanderson/git/mathSmolyak", 
+     "/Applications/Wolfram \
+Workbench.app/plugins/com.wolfram.eclipse.MEET_3.0.78/\
+MathematicaSourceVersioned/Head", 
+     "/Applications/Wolfram \
+Workbench.app/plugins/com.wolfram.eclipse.MEET_3.0.78/MathematicaSource", 
+     "/Applications/Wolfram \
+Workbench.app/configuration/org.eclipse.osgi/bundles/14/2/.cp/\
+MathematicaSourceVersioned/Head", 
+     "/Applications/Wolfram \
+Workbench.app/configuration/org.eclipse.osgi/bundles/11/2/.cp/\
+MathematicaSource", "/Users/garyanderson/git/mathAMA/SymbolicAMA", 
+     "/Users/garyanderson/git/ProtectedSymbols", 
+     "/Users/garyanderson/git/mathAMA/NumericAMA", 
+     "/Users/garyanderson/git/mathSmolyak", 
+     "/Users/garyanderson/git/mathAMA/AMAModel", 
+     "/Users/garyanderson/git/AMASeriesRepresentation", 
+     "/Applications/Mathematica.app/Contents/SystemFiles/Links", 
+     "/Users/garyanderson/Library/Mathematica/Kernel", 
+     "/Users/garyanderson/Library/Mathematica/Autoload", 
+     "/Users/garyanderson/Library/Mathematica/Applications", 
+     "/Library/Mathematica/Kernel", "/Library/Mathematica/Autoload", 
+     "/Library/Mathematica/Applications", ".", "/Users/garyanderson", 
+     "/Applications/Mathematica.app/Contents/AddOns/Packages", 
+     "/Applications/Mathematica.app/Contents/SystemFiles/Autoload", 
+     "/Applications/Mathematica.app/Contents/AddOns/Autoload", 
+     "/Applications/Mathematica.app/Contents/AddOns/Applications", 
+     "/Applications/Mathematica.app/Contents/AddOns/ExtraPackages", 
+     "/Applications/Mathematica.app/Contents/SystemFiles/Kernel/Packages", 
+     "/Applications/Mathematica.app/Contents/Documentation/English/System", 
+     "/Applications/Mathematica.app/Contents/SystemFiles/Data/ICC"}, 
+    "/Users/garyanderson/git/ProjectionMethodTools/ProjectionMethodToolsJava/\
+code"}],
+  Editable->False]], "Print",
+ CellChangeTimes->{3.676645331285255*^9}],
+
+Cell[BoxData["\<\"using version in eclipse\"\>"], "Print",
+ CellChangeTimes->{3.676645331299136*^9}],
+
+Cell[BoxData["\<\"done reading simpleRBCModel.m\"\>"], "Print",
+ CellChangeTimes->{3.676645332357133*^9}],
+
+Cell[BoxData["\<\"computing steady state subs\"\>"], "Print",
+ CellChangeTimes->{3.676645332365881*^9}],
+
+Cell[BoxData["\<\"RE done now PF\"\>"], "Print",
+ CellChangeTimes->{3.676645332410825*^9}]
+}, Open  ]],
+
+Cell[BoxData[
+ RowBox[{
+  StyleBox[
+   RowBox[{"Solve", "::", "ifun"}], "MessageName"], 
+  RowBox[{
+  ":", " "}], "\<\"Inverse functions are being used by \
+\[NoBreak]\\!\\(\\*RowBox[{\\\"Solve\\\"}]\\)\[NoBreak], so some solutions \
+may not be found; use Reduce for complete solution information. \
+\\!\\(\\*ButtonBox[\\\"\[RightSkeleton]\\\", ButtonStyle->\\\"Link\\\", \
+ButtonFrame->None, ButtonData:>\\\"paclet:ref/message/Solve/ifun\\\", \
+ButtonNote -> \\\"Solve::ifun\\\"]\\)\"\>"}]], "Message", "MSG",
+ CellChangeTimes->{3.676645332591754*^9}],
+
+Cell[CellGroupData[{
+
+Cell[BoxData["\<\"RE solutions\"\>"], "Print",
+ CellChangeTimes->{3.676645332599428*^9}],
+
+Cell[BoxData["\<\"computing and simplifying the symbolic b phi f etc\"\>"], \
+"Print",
+ CellChangeTimes->{3.6766453326599703`*^9}]
+}, Open  ]]
+}, Open  ]],
 
 Cell[BoxData[""], "Input",
- CellChangeTimes->{{3.676561062087543*^9, 3.676561063893148*^9}}]
+ CellChangeTimes->{{3.676561062087543*^9, 3.676561063893148*^9}}],
+
+Cell[CellGroupData[{
+
+Cell[BoxData[
+ RowBox[{"genZsREExact", "[", 
+  RowBox[{"linModArb", ",", 
+   RowBox[{"Join", "[", "anXEps", "]"}], ",", 
+   RowBox[{"{", 
+    RowBox[{"{", 
+     RowBox[{
+      RowBox[{"{", 
+       RowBox[{"ee", ",", "PerfectForesight"}], "}"}], ",", 
+      RowBox[{"{", 
+       RowBox[{"ee", ",", "PerfectForesight"}], "}"}], ",", 
+      RowBox[{"{", 
+       RowBox[{"ee", ",", "PerfectForesight"}], "}"}]}], "}"}], "}"}], ",", 
+   "simpRBCExactDR", ",", "0"}], "]"}]], "Input",
+ CellChangeTimes->{{3.6766453760423203`*^9, 3.676645376043659*^9}, 
+   3.676646166570413*^9}],
+
+Cell[BoxData[
+ RowBox[{
+  StyleBox[
+   RowBox[{"Part", "::", "partw"}], "MessageName"], 
+  RowBox[{
+  ":", " "}], "\<\"Part \[NoBreak]\\!\\(\\*RowBox[{\\\"{\\\", RowBox[{\\\"1\\\
+\", \\\",\\\", \\\"2\\\", \\\",\\\", \\\"3\\\"}], \\\"}\\\"}]\\)\[NoBreak] of \
+\[NoBreak]\\!\\(\\*RowBox[{\\\"{\\\", RowBox[{\\\"0.2`\\\", \\\",\\\", \
+\\\"0.39245511265743227`\\\"}], \\\"}\\\"}]\\)\[NoBreak] does not exist. \
+\\!\\(\\*ButtonBox[\\\"\[RightSkeleton]\\\", ButtonStyle->\\\"Link\\\", \
+ButtonFrame->None, ButtonData:>\\\"paclet:ref/message/General/partw\\\", \
+ButtonNote -> \\\"Part::partw\\\"]\\)\"\>"}]], "Message", "MSG",
+ CellChangeTimes->{3.676645635351342*^9, 3.676646179088854*^9}],
+
+Cell[BoxData[
+ RowBox[{
+  StyleBox[
+   RowBox[{"Part", "::", "partw"}], "MessageName"], 
+  RowBox[{
+  ":", " "}], "\<\"Part \[NoBreak]\\!\\(\\*RowBox[{\\\"{\\\", RowBox[{\\\"1\\\
+\", \\\",\\\", \\\"2\\\", \\\",\\\", \\\"3\\\"}], \\\"}\\\"}]\\)\[NoBreak] of \
+\[NoBreak]\\!\\(\\*RowBox[{\\\"{\\\", RowBox[{\\\"0.2`\\\", \\\",\\\", \
+\\\"0.39245511265743227`\\\"}], \\\"}\\\"}]\\)\[NoBreak] does not exist. \
+\\!\\(\\*ButtonBox[\\\"\[RightSkeleton]\\\", ButtonStyle->\\\"Link\\\", \
+ButtonFrame->None, ButtonData:>\\\"paclet:ref/message/General/partw\\\", \
+ButtonNote -> \\\"Part::partw\\\"]\\)\"\>"}]], "Message", "MSG",
+ CellChangeTimes->{3.676645635351342*^9, 3.676646179155903*^9}]
+}, Open  ]]
 }, Open  ]]
 }, Open  ]]
 },
 WindowSize->{852, 639},
-WindowMargins->{{Automatic, -89}, {-7, Automatic}},
+WindowMargins->{{Automatic, 69}, {3, Automatic}},
 PrintingCopies->1,
 PrintingPageRange->{32000, 32000},
 PrintingOptions->{"Magnification"->1.,

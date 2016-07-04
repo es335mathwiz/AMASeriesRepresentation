@@ -1,3 +1,4 @@
+Get["pathSetup.mth"]
 PrependTo[$Path,"../../mathAMA/NumericAMA"];
 PrependTo[$Path,"../../mathAMA/SymbolicAMA"];
 (*PrependTo[$Path,"../../ProtectedSymbols"];*)
@@ -50,7 +51,7 @@ Get["arbGenPath.mth"]
 
 
 linModArb={theHMatArb,BBArb,phiArb,FFArb,psiEpsArb,psiCArb,psiZArb,psiZPreCompArb={{}}};
-exmplLen=150;
+exmplLen=50;
 initX=Transpose[{{10,10,10}}];
 theEpsVal=Transpose[{{5,5,5}}];
 somePts=Transpose[Partition[Flatten[somePtsFlat=genXPath[initX,theEpsVal,exmplLen]],3]];
@@ -58,7 +59,7 @@ someZs=Join[
 		genZsFromPath[linModArb,somePtsFlat,theEpsVal],
 		ConstantArray[0,{1,3,1}]];
 
-bunchSeries=genASeriesRep[linModArb,Join[initX,theEpsVal],someZs,#]&/@Range[Length[someZs]];
+bunchSeries=genASeriesRep[linModArb,Join[initX,theEpsVal],someZs[[Range[#]]]]&/@(1+Range[Length[someZs]-1]);
 
 
 
@@ -98,3 +99,19 @@ If[FileExistsQ[occDir="../../paperProduction/occBind/docs/"],
 toOccDir/@{
 "arbTruncErr.pdf","piPath.pdf","oscillPath.pdf","pseudoPath.pdf","theZs.pdf"
 }];
+
+
+
+(*
+
+maybeAll = genLilXkZkFunc[linModArb,Drop[someZs,1]]
+
+maybeAll @@ Flatten[Join[initX,theEpsVal,Flatten[someZs[[1]]]]]
+
+Transpose[somePts][[2]]
+
+Get[AMASeriesRepresentation`"]
+genASeriesRep[linModArb, Transpose[{Flatten[Join[initX,theEpsVal]]}],someZs]
+
+
+*)

@@ -1,4 +1,5 @@
 Get["pathSetup.mth"]
+Get["betterRBC.m"]
 Get["betterJuillardRBC.m"]
 
 tMatNorm[kk_Integer]:=Norm[
@@ -20,15 +21,110 @@ gspec
 
 
 
+(*
 
+
+nTerms=4;nIters=2;
+{tim00,aBunch00}=Timing[nestIterREInterp[{genFRFunc},linModBetter,{genX0Z0Funcs[linModBetter],nTerms},rbcEqnsFunctionalNextBetter,aGSpecBetter,theDistBetter,nIters]];
+{(xz00=aBunch00[[-1,1]]) @@ anXEpsFlatBetter,
+ (XZ00=aBunch00[[-1,2]]) @@ anXFlatBetter}
+{tim00Juillard,aBunch00Juillard}=Timing[nestIterREInterp[{genFRFunc},linModBetterJuillard,{genX0Z0Funcs[linModBetterJuillard],nTerms},rbcEqnsFunctionalNextBetterJuillard,aGSpecBetterJuillard,theDistBetterJuillard,nIters]];
+{(xz00Juillard=aBunch00Juillard[[-1,1]]) @@ anXEpsFlatBetterJuillard,
+ (XZ00Juillard=aBunch00Juillard[[-1,2]]) @@ anXFlatBetterJuillard}
+
+actDiff00=
+(simpRBCExactDRBetter @@ anXEpsFlatBetter)-
+(xz00 @@anXEpsFlatBetter)[[Range[4]]]
+actDiffJuillard00=
+(simpRBCExactDRBetterJuillard @@ anXEpsFlatBetterJuillard)-
+(xz00Juillard @@anXEpsFlatBetterJuillard)[[Range[6]]]
+
+
+
+
+
+
+{tim00,aBunch00}=Timing[nestIterREInterp[{genFRFunc},linModBetter,{genX0Z0Funcs[linModBetter],2},rbcEqnsFunctionalNextBetter,aGSpecBetter,theDistBetter,5]];
+{(xz00=aBunch00[[-1,1]]) @@ anXEpsFlatBetter,
+ (XZ00=aBunch00[[-1,2]]) @@ anXFlatBetter}
+ 
+{tim00Juillard,aBunch00Juillard}=Timing[nestIterREInterp[{genFRFunc},linModBetterJuillard,{genX0Z0Funcs[linModBetterJuillard],2},rbcEqnsFunctionalNextBetterJuillard,aGSpecBetterJuillard,theDistBetterJuillard,5]];
+{(xz00Juillard=aBunch00Juillard[[-1,1]]) @@ anXEpsFlatBetterJuillard,
+ (XZ00Juillard=aBunch00Juillard[[-1,2]]) @@ anXFlatBetterJuillard}
+
+
+*)
+(*
 {tim00,aBunch00}=Timing[nestIterREInterp[{genFRFunc},linModBetterJuillard,{genX0Z0Funcs[linModBetterJuillard],2},rbcEqnsFunctionalNextBetterJuillard,aGSpecBetterJuillard,theDistBetterJuillard,5]];
 {(xz00=aBunch00[[-1,1]]) @@ anXEpsFlatBetterJuillard,
  (XZ00=aBunch00[[-1,2]]) @@ anXFlatBetterJuillard}
-
+*)
 (*
-ss=betterJuillardRBC`Private`ssSolnVecRE;
-bigSS=iterateDRREIntegrate[simpRBCExactDRBetterJuillard,Join[ss,{{0}}],theDistBetterJuillard,2]
-checkMod[{genFRFunc},linModBetter,aGSpecBetter,theDistBetter,anXBetter,{{0.01}},bigSS,rbcEqnsFunctionalNextBetter]
+ssJuillard=betterJuillardRBC`Private`ssSolnVecRE;
+bigSSJuillard=iterateDRREIntegrate[simpRBCExactDRBetterJuillard,Join[ssJuillard,{{0}}],theDistBetterJuillard,2]
+
+
+rbcEqnsFunctionalNextBetterJuillard @@ Flatten[Append[bigSSJuillard,0]]
+
+
+ss=betterRBC`Private`ssSolnVecRE;
+bigSS=iterateDRREIntegrate[simpRBCExactDRBetter,Join[ss,{{0}}],theDistBetter,2]
+
+rbcEqnsFunctionalNextBetter @@ Flatten[Append[bigSS,0]]
+
+bVJ=
+{
+betterJuillardRBC`Private`ccStartm1,
+betterJuillardRBC`Private`cctm1,
+betterJuillardRBC`Private`iitm1, 
+betterJuillardRBC`Private`kktm1, 
+betterJuillardRBC`Private`nltm1, 
+betterJuillardRBC`Private`thetatm1,
+betterJuillardRBC`Private`ccStart,
+betterJuillardRBC`Private`cct,
+betterJuillardRBC`Private`iit, 
+betterJuillardRBC`Private`kkt, 
+betterJuillardRBC`Private`nlt, 
+betterJuillardRBC`Private`thetat,
+betterJuillardRBC`Private`ccStartp1,
+betterJuillardRBC`Private`cctp1,
+betterJuillardRBC`Private`iitp1, 
+betterJuillardRBC`Private`kktp1, 
+betterJuillardRBC`Private`nltp1, 
+betterJuillardRBC`Private`thetatp1,
+betterJuillardRBC`Private`epsVal
+ }
+
+bVJSubs=Thread[bVJ->Append[bigSSJuillard,0]]
+betterJuillardRBC`Private`rbcCompileGuts/.bVJSubs
+
+
+bV=
+{
+betterRBC`Private`cctm1,
+betterRBC`Private`kktm1, 
+betterRBC`Private`nltm1, 
+betterRBC`Private`thtm1,
+betterRBC`Private`cct,
+betterRBC`Private`kkt, 
+betterRBC`Private`nlt, 
+betterRBC`Private`tht,
+betterRBC`Private`cctp1,
+betterRBC`Private`kktp1, 
+betterRBC`Private`nltp1, 
+betterRBC`Private`thtp1,
+betterRBC`Private`epsVal
+ }
+
+bVSubs=Thread[bV->Append[bigSS,0]]
+betterRBC`Private`rbcCompileGuts/.bVSubs
+
+
+
+
+
+
+checkMod[{genFRFunc},linModBetterJuillard,aGSpecBetterJuillard,theDistBetterJuillard,anXBetterJuillard,{{0.01}},bigSSJuillard,rbcEqnsFunctionalNextBetterJuillard]
 
 checkMod[{genFRFunc},linModBetterJuillard,aGSpecBetterJuillard,theDistBetterJuillard,anXBetterJuillard,{{0.01}},bigSS,rbcEqnsFunctionalNextBetterJuillard]
 
@@ -38,6 +134,7 @@ chkgd=iterateDRREIntegrate[xz00,Transpose[{{0.1, 0.3,0.2, 1., 1.0, -0.01}}],theD
 
  *)
 
+(*
 actDiff00=
 (simpRBCExactDRBetterJuillard @@ anXEpsFlatBetterJuillard)-
 (xz00 @@anXEpsFlatBetterJuillard)[[Range[4]]]
@@ -49,24 +146,41 @@ pth00=worstPathForErrDRREIntegrate[getPhi[linModBetterJuillard],xz00,anXBetterJu
 appxz00=rbcEqnsFunctionalNextBetterJuillard @@ Flatten[pth00]
 maxNormErrxz00=Norm[appxz00,Infinity]
 phiappNorm=Norm[getPhi[linModBetterJuillard]. Transpose[{appxz00}],Infinity]
+*)
 
+
+(*
 waypessimistic00=Norm[getPhi[linModBetterJuillard],Infinity]*tMatNorm[0]*maxNormErrxz00
 pessimistic00=		tMatNorm[0]*phiappNorm
 
 
-
+*)
 (*
 {{1., 2., 3., 5.}, 1., 
     {{4., 0.14986, 0.224789}, {3., 0.9, 1.1}, {3., -0.03, 0.09}}}
 
 {0.1, 0.2, 0.3,0.018, 1., 1.1, -0.1}
-rbcEqnsFunctionalNextBetterJuillard @@ (Append[chk=iterateDRREIntegrate[xz00,{0.1, 0.2, 0.3,0.018, 1., 1.1, -0.1},theDistBetterJuillard,2]//Flatten,anXEpsBetterJuillard[[-1,1]]])
+
+
+rbcEqnsFunctionalNextBetterJuillard @@
+(Append[chkJ=iterateDRREIntegrate[xzJ00,anXEpsBetterJuillard,theDistBetterJuillard,2]//Flatten,anXEpsBetterJuillard[[-1,1]]])
+
+
+
+rbcEqnsFunctionalNextBetter @@
+(Append[chk=iterateDRREIntegrate[xz00,anXEpsBetter,theDistBetter,2]//Flatten,anXEpsBetter[[-1,1]]])
+
+
+
+
+chk=iterateDRREIntegrate[xz00,Transpose[{{0.1, 0.2, 0.3,0.018, 1., 1.1, -0.1}}],theDistBetterJuillard,2]
+
 
 
 rbcEqnsFunctionalNextBetterJuillard @@ (Append[chk=iterateDRREIntegrate[xz00,anXEpsBetterJuillard,theDistBetterJuillard,2]//Flatten,anXEpsBetterJuillard[[-1,1]]])
  *)
 
-
+(*
 aBetterJuillardGSpecBetterJuillard=
 {{1, 3}, 1, {{5, 0.018732441104784652, 0.7492976441913861}, {5, 9/10, 11/10}, 
   {5, -0.03, 0.09}}}
@@ -95,7 +209,7 @@ phiappNorm=Norm[getPhi[linModBetterJuillard]. Transpose[{appxzcc}],Infinity]
 waypessimisticcc=Norm[getPhi[linModBetterJuillard],Infinity]*tMatNorm[0]*maxNormErrxzcc
 pessimisticcc=		tMatNorm[0]*phiappNorm
 
-
+*)
 
 (*
 truncerrmat

@@ -42,9 +42,9 @@ chkcobb douglas production*)
 
 rbcEqns={
 CRRAUDrv[cc[t],1]-
-(delta*(theta[t])*(nlPart[t+1]*((alpha *(kk[t]^(alpha-1)) )))),
-cc[t] + kk[t]-((theta[t-1])*(kk[t-1]^alpha)),
-nlPart[t] - (nlPartRHS=(1)* CRRAUDrv[cc[t],1]),
+(delta*(nlPart[t+1]*((alpha *(kk[t]^(alpha-1)) )))),
+cc[t] + kk[t]-((theta[t])*(kk[t-1]^alpha)),
+nlPart[t] - (nlPartRHS=(1)* (theta[t]*CRRAUDrv[cc[t],1])),
 theta[t]-E^(rho*Log[theta[t-1]] + eps[theta][t])
 }
 
@@ -134,6 +134,10 @@ betterRBCExactCondExp = makeREIterFunc[simpRBCExactDRBetter,theDist]
 psiz=IdentityMatrix[4]
 
 Print["RE solutions"]
+hmatSymbSlowRawRE00=(((equationsToMatrix[
+rbcEqns]//FullSimplify)));
+hmatSymbSlowRawRE01=(((equationsToMatrix[
+rbcEqns/.simpParamSubs]//FullSimplify)))//FullSimplify;
 hmatSymbRawRE=(((equationsToMatrix[
 rbcEqns/.simpParamSubs]//FullSimplify)/.{xxxx_[t+_.]->xxxx})//.ssSolnSubsRE)/.{eps[_]->0}//FullSimplify;
 psiepsSymbRE=-Transpose[{((D[#,eps[theta][t]]&/@ rbcEqns)/.{eps[_][_]->0,xxxx_[t+_.]->xxxx})//.ssSolnSubsRE}/.simpParamSubs]
@@ -187,9 +191,10 @@ thLow = 9/10;
 thHigh = 11/10;
 
 	(*
+aGSpecBetter={{1,3},2,{{6,kLow,kHigh},{10,thLow,thHigh},{6,sigLow,3*sigHigh}}};
 	 aGSpecBetter={{1,3},1,{{4,kLow,kHigh},{3,thLow,thHigh},{3,sigLow,3*sigHigh}}};*)
-aGSpecBetter={{1,3},2,{{10,kLow,kHigh},{10,thLow,thHigh},{6,sigLow,3*sigHigh}}};
 
+	 aGSpecBetter={{1,3},1,{{4,kLow,kHigh},{3,thLow,thHigh},{3,sigLow,3*sigHigh}}};
 End[] (* End Private Context *)
 
 EndPackage[]

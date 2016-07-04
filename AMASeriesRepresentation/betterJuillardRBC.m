@@ -42,9 +42,9 @@ chkcobb douglas production*)
 
 rbcEqns={
 CRRAUDrv[ccStar[t],1]-
-(delta*(theta[t])*(nlPart[t+1]*((alpha *(kk[t]^(alpha-1)) )))),
-ccStar[t] + kk[t]-((1-dd)*kk[t-1]+(theta[t-1])*(kk[t-1]^alpha)),
-nlPart[t] - (nlPartRHS=(1)* CRRAUDrv[ccStar[t],1]),
+(delta*(nlPart[t+1]*((alpha *(kk[t]^(alpha-1)) )))),
+ccStar[t] + kk[t]-((1-dd)*kk[t-1]+(theta[t])*(kk[t-1]^alpha)),
+nlPart[t] - (nlPartRHS=(1)* theta[t]*CRRAUDrv[ccStar[t],1]),
 theta[t]-E^(rho*Log[theta[t-1]] + eps[theta][t]),
 ii[t] -(kk[t]-(1-dd)*kk[t-1]),
 cc[t]-ccStar[t]
@@ -53,12 +53,12 @@ cc[t]-ccStar[t]
 
 rbcEqnsCompSlack={
 CRRAUDrv[ccStar[t],1]-
-(delta*(theta[t])*(nlPart[t+1]*((alpha *(kk[t]^(alpha-1)) )))),
-ccStar[t] + kk[t]-((1-dd)*kk[t-1]+(theta[t-1])*(kk[t-1]^alpha)),
-nlPart[t] - (nlPartRHS=(1)* CRRAUDrv[ccStar[t],1]),
+(delta*(nlPart[t+1]*((alpha *(kk[t]^(alpha-1)) )))),
+ccStar[t] + kk[t]-((1-dd)*kk[t-1]+(theta[t])*(kk[t-1]^alpha)),
+nlPart[t] - (nlPartRHS=(1)*theta[t]* CRRAUDrv[ccStar[t],1]),
 theta[t]-E^(rho*Log[theta[t-1]] + eps[theta][t]),
 ii[t] -(kk[t]-(1-dd)*kk[t-1]),
-cc[t] - Min[ccStar,(theta[t-1])*(kk[t-1]^alpha) - gamma*iiSSVal]
+cc[t] - Min[ccStar[t],(theta[t-1])*(kk[t-1]^alpha) - gamma*iiSSVal]
 }
 
 
@@ -68,8 +68,8 @@ alpha->36/100,
 delta->95/100,
 rho->95/100,
 sigma->1/100,
-dd->1/10,
-gamma->  -1000/1000(* from luca paper*)
+dd->10/10,
+gamma->  -10000/1000(* from luca paper*)
 } ;
 
 
@@ -103,7 +103,7 @@ kSSSubPF=Flatten[Solve[nxtK[kk,theta/.thSubsPF]==kk,kk]][[-1]];
 cStarSSSubPF=ccStar->(yNow[kk/.kSSSubPF,theta/.thSubsPF]-kk/.kSSSubPF);
 cSSSubPF=cc->(yNow[kk/.kSSSubPF,theta/.thSubsPF]-kk/.kSSSubPF);
 nlPartSSSubPF=(nlPart->(nlPartRHS/.xxxx_[t]->xxxx))//.{kSSSubPF,cSSSubPF,cStarSSSubPF,thSubsPF};
-ISSSubPF={ii->dd*kSSSubPF,iiSSVal->dd*kSSSubPF}/.simpParamSubs;
+  ISSSubPF={ii->dd*kSSSubPF,iiSSVal->dd*(kk/.kSSSubPF)}/.simpParamSubs;
 ssSolnSubsPF=
 Flatten[{thSubsPF,kSSSubPF,cSSSubPF,cStarSSSubPF,nlPartSSSubPF,ISSSubPF}];
 
@@ -139,7 +139,7 @@ psiepsSymbRE=-Transpose[{((D[#,eps[theta][t]]&/@ rbcEqns)/.{eps[_][_]->0,xxxx_[t
 Print["here mmm"]
 
 
-hmatSymbRE=hmatSymbRawRE//.simpSubs
+hmatSymbRE=hmatSymbRawRE//.simpSubs//.simpParamSubs
 hSumRE=hmatSymbRE[[All,Range[6]]]+hmatSymbRE[[All,6+Range[6]]]+hmatSymbRE[[All,12+Range[6]]];
 
 Print["here nnn"]
@@ -186,8 +186,8 @@ thVal=(theta//.ssSolnSubsRE//.(simpParamSubs//N))//N;
 kVal = (kk //.kSSSubRE//.(simpParamSubs//N))//N;
 cStarVal = (ccStar //.cStarSSSubRE//.(simpParamSubs//N))//N ;
 cVal = (ccStar //.cSSSubRE//.(simpParamSubs//N))//N ;
-kLow = 0.8*kVal//N;(*to accStaromodate range in Luca toolkit paper*)
-kHigh = 1.2*kVal//N;
+kLow = 1/10*kVal//N;(*to accStaromodate range in Luca toolkit paper*)
+kHigh = 4*kVal//N;
 sigVal = sigma //. (simpParamSubs//N);
 sigLow = -3*sigVal;
 sigHigh = 3*sigVal;

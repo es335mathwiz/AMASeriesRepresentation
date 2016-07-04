@@ -891,9 +891,9 @@ funcName@@Append[ReplacePart[{funcArgs},{{1,(-1)}->0}],idx]
 myNExpectation[funcName_Symbol[farg_List,idx_Integer],nArgs_List]:=Chop[NExpectation[funcName[farg,idx],nArgs]]
 
 genASeriesRep[linMod:{theHMat_?MatrixQ,BB_?MatrixQ,phi_?MatrixQ,FF_?MatrixQ,psiEps_?MatrixQ,psiC_?MatrixQ,psiZ_?MatrixQ,psiZPreComp_?MatrixQ},
-	initVec_?MatrixQ,theZs:{_?MatrixQ..},len_Integer]:=
+	initVec_?MatrixQ,theZs:{_?MatrixQ..}]:=
 	Module[{},(*Print["theZFuncs",theZFuncs];*)
-   With[{maybe = genLilXkZkFunc[linMod,theZs]},(*	Print["zzts",Join[initVec,theZs[[1]]]];*)
+   With[{maybe = genLilXkZkFunc[linMod,Drop[theZs,1]]},(*	Print["zzts",Join[initVec,theZs[[1]]]];*)
    	maybe@@ Join[Flatten[initVec],Flatten[theZs[[1]]]]]]
 
 

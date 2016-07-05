@@ -80,6 +80,7 @@ genErrsREWorst[simpleRBCExactDR,anXEps,theDist,rbcEqnsFunctionalNext,1]
 
 tMatNorm[kk_Integer]:=Norm[
 truncErrorMat @@ Append[Through[{getF,getPhi}[linModBetter]],kk],Infinity];
+(*
 sumHNorms=
 With[{theH=getH[linModBetter]},
 	 Plus @@ (Norm[#,Infinity]&/@
@@ -95,6 +96,7 @@ With[{theH=getH[linModBetter]},
 {tim00,aBunch00}=Timing[nestIterREInterp[{genFRFunc},linModBetter,{genX0Z0Funcs[linModBetter],2},rbcEqnsFunctionalNextBetter,aGSpecBetter,theDistBetter,5]];
 {(xz00=aBunch00[[-1,1]]) @@ anXEpsFlatBetter,
  (XZ00=aBunch00[[-1,2]]) @@ anXFlatBetter}
+*)
 (*
 
 
@@ -118,22 +120,22 @@ scl=genErrsREWorst[xz00,anXEpsBetter,theDistBetter,rbcEqnsFunctionalNextBetter,0
 bnd=Norm[scl[[1]],Infinity]*tMatNorm[0];
 {Norm[now-exct,Infinity],bnd}]
 
+*)
 
-
-chkbndMore[kP_Integer,tP_Integer,eP_Integer]:=
+chkbndMore[kP_Integer,tP_Integer,eP_Integer,nT_Integer]:=
 Module[{scl,bnd,now,exct,xz00,tim00,aBunch00,agp=
 {{1, 3}, 1, {{kP, 0.018732441104784652, 0.7492976441913861}, {tP, 9/10, 11/10}, 
   {eP, -0.03, 0.09}}}},
-{tim00,aBunch00}=Timing[nestIterREInterp[{genFRFunc},linModBetter,{genX0Z0Funcs[linModBetter],2},rbcEqnsFunctionalNextBetter,agp,theDistBetter,8]];
+{tim00,aBunch00}=Timing[nestIterREInterp[{genFRFunc},linModBetter,{genX0Z0Funcs[linModBetter],2},rbcEqnsFunctionalNextBetter,agp,theDistBetter,nT]];
 now=((xz00=aBunch00[[-1,1]]) @@ anXEpsFlatBetter)[[{1,2,4}]];
 Print["now=",{now,xz00}];
 exct=simpRBCExactDR @@ Flatten[anXEps];
-scl=genErrsREWorst[xz00,anXEpsBetter,theDistBetter,rbcEqnsFunctionalNextBetter,0];Print["scl=",scl];
+{tim01,scl}=Timing[genErrsREWorst[xz00,anXEpsBetter,theDistBetter,rbcEqnsFunctionalNextBetter,0]];Print["scl=",scl];
 bnd=Norm[scl[[1]],Infinity]*tMatNorm[0];
-{now,Norm[now-exct,Infinity],bnd}]
+{tim00,tim01,now,Norm[now-exct,Infinity],bnd}]
 
 
-*)
+
 
 
 

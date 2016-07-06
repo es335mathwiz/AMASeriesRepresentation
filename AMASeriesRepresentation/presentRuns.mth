@@ -1,8 +1,10 @@
+Get["genArbLin.mth"]
 Get["pathSetup.mth"]
 Get["simpleRBCModel`"]
 Get["betterRBC.m"]
+Get["betterZeroFRBC.m"]
 
-(*
+
 tMatNormSimpRBC[kk_Integer]:=Norm[
 truncErrorMat @@ Append[Through[{getF,getPhi}[linMod]],kk],Infinity];
 
@@ -34,7 +36,8 @@ arbNorm=Norm[theZ,Infinity]
 
 rbcNorm=Norm[genZsREExact[linMod,anXEps,theDist,simpRBCExactDR,1][[1]],Infinity]
 
-arbMax=tMatNormSimpArb/@Range[numT];
+numT=25;
+arbMax=tMatNormSimpArb/@Range[2*numT];
 rbcMax=tMatNormSimpRBC/@Range[numT];
 Export["arbTruncErrSimp.pdf",
 	   ListPlot[{arbNorm*arbMax,simpArbTrunc},
@@ -65,7 +68,7 @@ toOccDir/@{
 
 
 
-
+(*
 unneeded since machine precision 0
 genErrsREWorst[simpleRBCExactDR,anXEps,theDist,rbcEqnsFunctionalNext,1]
 
@@ -81,16 +84,13 @@ genErrsREWorst[simpleRBCExactDR,anXEps,theDist,rbcEqnsFunctionalNext,1]
 tMatNorm[kk_Integer]:=Norm[
 truncErrorMat @@ Append[Through[{getF,getPhi}[linModBetter]],kk],Infinity];
 (*
-sumHNorms=
-With[{theH=getH[linModBetter]},
-	 Plus @@ (Norm[#,Infinity]&/@
-	  {theH[[All,Range[4]]],
-	   theH[[All,4+Range[4]]],
-	   theH[[All,8+Range[4]]]})]
 
 
 
 
+{tim00,aBunch00}=Timing[nestIterREInterp[{genFRFunc},linModBetterZeroF,{genX0Z0Funcs[linModBetterZeroF],2},rbcEqnsFunctionalNextBetterZeroF,aGSpecBetterZeroF,theDistBetterZeroF,5]];
+{(xz00=aBunch00[[-1,1]]) @@ anXEpsFlatBetterZeroF,
+ (XZ00=aBunch00[[-1,2]]) @@ anXFlatBetterZeroF}
 
 
 {tim00,aBunch00}=Timing[nestIterREInterp[{genFRFunc},linModBetter,{genX0Z0Funcs[linModBetter],2},rbcEqnsFunctionalNextBetter,aGSpecBetter,theDistBetter,5]];

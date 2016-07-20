@@ -17,7 +17,7 @@ $transFuncHasShocks::usage="transfuncinfo";
 	
 $transFuncNoShocks::usage="transfuncinfo";
 
-
+genADRFADCEF::usage="genADRFADCEF"
 
 
 X0Z0::usage="from genX0Z0Funcs[linMod];"
@@ -368,6 +368,17 @@ With[{numX=Length[initVec]-numEps,
       (theHMat .thePath[[Range[3*numX]+numX*#]] -psiC)&/@Range[(Length[thePath]/numX)-3]},
       Join[{firstVal},restVals]
 ]]]]
+
+
+genADRFADCEF[theDR:(_Function|_CompiledFunction),
+	linMod:{theHMat_?MatrixQ,BB_?MatrixQ,phi_?MatrixQ,FF_?MatrixQ,psiEps_?MatrixQ,psiC_?MatrixQ,psiZ_?MatrixQ,psiZPreComp_?MatrixQ},
+	distribSpec:{expctSpec:{{_Symbol,_}..},regimeTransProbFunc_:{}}]:=
+With[{numX=Length[FF],numEps=Length[psiEps[[1]]],numZ=Length[FF[[1]]]},
+With[{theArgs=Table[{Slot[ii]},{ii,numX+numEps}]},
+With[{xtVal=theDR @@ Flatten[theArgs]},{xtVal,theDR @@ Flatten[Append[xtVal,eeepppsss]]}
+]]]
+
+
 
 genZsFromPath[linMod:{theHMat_?MatrixQ,BB_?MatrixQ,phi_?MatrixQ,FF_?MatrixQ,psiEps_?MatrixQ,psiC_?MatrixQ,psiZ_?MatrixQ,psiZPreComp_?MatrixQ},
 	thePath_?MatrixQ,theEps_?MatrixQ]:=
@@ -1196,7 +1207,7 @@ eqnsFuncs:{(_Function|_CompiledFunction)..},opts:OptionsPattern[]]:=
 With[{funcArgs=Table[Unique["theFRFuncArgs"],{numX+numEps+1}],
 zArgs=Table[Unique["theFRZArgs"],{numZ}]},
 With[{zArgsInit={#,0}&/@zArgs},
-With[{theRFuncs=ParallelMap[Function[xxx,
+With[{theRFuncs=Map[Function[xxx,
 genAnFRRegimeFunc[funcArgs,zArgs,zArgsInit,#,#2,numX]& @@ xxx],
 Transpose[{xkFuncs,eqnsFuncs}]]},
 (*Print["theRFuncs",theRFuncs];*)

@@ -318,6 +318,7 @@ getPhi::usage="getPhi[linMod] Phi from linMod:{theHMat_?MatrixQ,BB_?MatrixQ,phi_
 getPsiZ::usage="getPsiz[linMod] PsiZ from linMod:{theHMat_?MatrixQ,BB_?MatrixQ,phi_?MatrixQ,FF_?MatrixQ,psiEps_?MatrixQ,psiC_?MatrixQ,psiZ_?MatrixQ,psiZPreComp_?MatrixQ}"
 getPsiC::usage="getPsiC[linMod] PsiZ from linMod:{theHMat_?MatrixQ,BB_?MatrixQ,phi_?MatrixQ,FF_?MatrixQ,psiEps_?MatrixQ,psiC_?MatrixQ,psiZ_?MatrixQ,psiZPreComp_?MatrixQ}"
 
+getPsiEps::usage="getPsiC[linMod] PsiZ from linMod:{theHMat_?MatrixQ,BB_?MatrixQ,phi_?MatrixQ,FF_?MatrixQ,psiEps_?MatrixQ,psiC_?MatrixQ,psiZ_?MatrixQ,psiZPreComp_?MatrixQ}"
 
 
 Begin["`Private`"]
@@ -337,6 +338,10 @@ psiZ
 
 getPsiC[linMod:{theHMat_?MatrixQ,BB_?MatrixQ,phi_?MatrixQ,FF_?MatrixQ,psiEps_?MatrixQ,psiC_?MatrixQ,psiZ_?MatrixQ,psiZPreComp_?MatrixQ}]:=
 psiC
+
+
+getPsiEps[linMod:{theHMat_?MatrixQ,BB_?MatrixQ,phi_?MatrixQ,FF_?MatrixQ,psiEps_?MatrixQ,psiC_?MatrixQ,psiZ_?MatrixQ,psiZPreComp_?MatrixQ}]:=
+psiEps
 
 checkLinMod[linMod:{theHMat_?MatrixQ,BB_?MatrixQ,phi_?MatrixQ,FF_?MatrixQ,psiEps_?MatrixQ,psiC_?MatrixQ,psiZ_?MatrixQ,psiZPreComp_?MatrixQ},
 anX_?MatrixQ,anEps_?MatrixQ,numRegimes_Integer:0]:=
@@ -370,13 +375,27 @@ With[{numX=Length[initVec]-numEps,
 ]]]]
 
 
-genADRFADCEF[theDR:(_Function|_CompiledFunction),
+genADRFADCEF[theDR:(_Function|_CompiledFunction),eqnsFunc:(_Function|_CompiledFunction),
 	linMod:{theHMat_?MatrixQ,BB_?MatrixQ,phi_?MatrixQ,FF_?MatrixQ,psiEps_?MatrixQ,psiC_?MatrixQ,psiZ_?MatrixQ,psiZPreComp_?MatrixQ},
 	distribSpec:{expctSpec:{{_Symbol,_}..},regimeTransProbFunc_:{}}]:=
-With[{numX=Length[FF],numEps=Length[psiEps[[1]]],numZ=Length[FF[[1]]]},
-With[{theArgs=Table[{Slot[ii]},{ii,numX+numEps}]},
-With[{xtVal=theDR @@ Flatten[theArgs]},{xtVal,theDR @@ Flatten[Append[xtVal,eeepppsss]]}
-]]]
+With[{numX=Length[FF],numEps=Length[psiEps[[1]]],numZ=Length[FF[[1]]],
+	theEps=distribSpec[[1,1,1]],theDist=distribSpec[[1,1,2]]},
+With[{theFArgsAnon=Table[Slot[ii],{ii,numX+numEps}],theFArgs=Table[{Unique["anFArg"]},{ii,numX+numEps}],theCEFArgs=Table[{Slot[ii]},{ii,numX}]},
+With[{xtVal=theDR @@ Flatten[theFArgs],
+	xtFunc=Map[Function,(theDR @@ Flatten[theFArgsAnon]),{2}],fNames=Table[Unique["fName"],{numX}],cefNames=Table[Unique["cefName"],{numX}]},
+With[{fArgsBlanks=PatternTest[Pattern[#, Blank[]], NumberQ]&/@Drop[Flatten[theFArgs],0]},
+With[{fApps=(#1 @@fArgsBlanks)&/@fNames,cefApps=(#1 @@Drop[fArgsBlanks,0])&/@cefNames},
+With[{nexpFuncs=MapThread[(#1:=#2)&,{fApps,(Flatten[theDR @@ Flatten[Append[xtVal,theEps]]])}],
+	nrcexpFuncs=MapThread[(#1:=#2)&,{cefApps,(Flatten[theDR @@ Flatten[Drop[theFArgs,0]]])}]},
+With[{xtp1Func=Function[xxx,{Function @@ {NExpectation[xxx @@Drop[theFArgsAnon,0],theEps\[Distributed]theDist]}}]/@fNames,
+	cefFunc=Function[xxx,{Function @@ {NExpectation[xxx @@Append[Flatten[Drop[theFArgsAnon,-numEps]],theFArgs[[-1,1]]],theFArgs[[-1,1]]\[Distributed]theDist]}}]/@cefNames},
+With[{fullVec=Join[({Function @@ {#}})&/@(theFArgsAnon[[Range[numX]]]),xtFunc,xtp1Func ],
+	fullVecAnon=Join[({Function @@ {#}})&/@(theFArgsAnon[[Range[numX]]]),xtFunc,xtp1Func ]},
+With[{fullApp=Transpose[{Through[Flatten[fullVec] @@ # & @Flatten[theFArgs]]}],
+	fGuts=Join[First/@Flatten[fullVec],Flatten[Drop[theFArgsAnon,numX]]]},
+With[{bigFunc=Function[eqnsFunc @@ fGuts]},
+{xtFunc,xtp1Func,{fGuts,bigFunc},fullVec,cefFunc}
+]]]]]]]]]]
 
 
 

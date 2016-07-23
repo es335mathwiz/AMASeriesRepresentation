@@ -387,15 +387,31 @@ With[{fArgsBlanks=PatternTest[Pattern[#, Blank[]], NumberQ]&/@Drop[Flatten[theFA
 With[{fApps=(#1 @@fArgsBlanks)&/@fNames,cefApps=(#1 @@Drop[fArgsBlanks,0])&/@cefNames},
 With[{nexpFuncs=MapThread[(#1:=#2)&,{fApps,(Flatten[theDR @@ Flatten[Append[xtVal,theEps]]])}],
 	nrcexpFuncs=MapThread[(#1:=#2)&,{cefApps,(Flatten[theDR @@ Flatten[Drop[theFArgs,0]]])}]},
-With[{xtp1Func=Function[xxx,{Function @@ {NExpectation[xxx @@Drop[theFArgsAnon,0],theEps\[Distributed]theDist]}}]/@fNames,
-	cefFunc=Function[xxx,{Function @@ {NExpectation[xxx @@Append[Flatten[Drop[theFArgsAnon,-numEps]],theFArgs[[-1,1]]],theFArgs[[-1,1]]\[Distributed]theDist]}}]/@cefNames},
-With[{fullVec=Join[({Function @@ {#}})&/@(theFArgsAnon[[Range[numX]]]),xtFunc,xtp1Func ],
-	fullVecAnon=Join[({Function @@ {#}})&/@(theFArgsAnon[[Range[numX]]]),xtFunc,xtp1Func ]},
+With[{xtp1Func=Function[xxx,{Function @@ {myNewNExpectation[xxx @@Drop[theFArgsAnon,0],theEps\[Distributed]theDist]}}]/@fNames,
+	cefFunc=Function[xxx,{Function @@ {myNewNExpectation[xxx @@Append[Flatten[Drop[theFArgsAnon,-numEps]],theFArgs[[-1,1]]],theFArgs[[-1,1]]\[Distributed]theDist]}}]/@cefNames},
+	With[{newXtp1Func= Function /@ ((# @@ (First/@Flatten[xtFunc]))&/@(Flatten[cefFunc]))},
+With[{fullVec=Join[({Function @@ {#}})&/@(theFArgsAnon[[Range[numX]]]),xtFunc,newXtp1Func ],
+	fullVecAnon=Join[({Function @@ {#}})&/@(theFArgsAnon[[Range[numX]]]),xtFunc,newXtp1Func ]},
 With[{fullApp=Transpose[{Through[Flatten[fullVec] @@ # & @Flatten[theFArgs]]}],
 	fGuts=Join[First/@Flatten[fullVec],Flatten[Drop[theFArgsAnon,numX]]]},
 With[{bigFunc=Function[eqnsFunc @@ fGuts]},
-{xtFunc,xtp1Func,{fGuts,bigFunc},fullVec,cefFunc}
-]]]]]]]]]]
+{xtFunc,{xtp1Func,newXtp1Func},{fGuts,bigFunc},fullVec,cefFunc}
+]]]]]]]]]]]
+
+
+
+myNExpectation[funcName_Symbol[funcArgs_List,idx_Integer],anEpsVar_\[Distributed] PerfectForesight]:=
+funcName@@Append[ReplacePart[{funcArgs},{{(1),(-1)}->0}],idx]
+myNExpectation[funcName_Symbol[funcArgs_List,idx_Integer],{anEpsVar_\[Distributed] PerfectForesight}]:=
+funcName@@Append[ReplacePart[{funcArgs},{{1,(-1)}->0}],idx]
+
+myNExpectation[funcName_Symbol[farg_List,idx_Integer],nArgs_List]:=Chop[NExpectation[funcName[farg,idx],nArgs]]
+
+
+myNewNExpectation[fff_[fargs___],anEpsVar_\[Distributed] PerfectForesight]:=Module[{},Print["there",{(fff @@ {fargs}),{fargs}/.anEpsVar->0}];(fff @@ {fargs})/.anEpsVar->0]
+
+
+myNewNExpectation[fff_[fargs___],distStuff_]:=Module[{},Print["jhere",{(fff @@ {fargs}),{fargs}}];Chop[NExpectation[fff @@ {fargs},distStuff]]]
 
 
 
@@ -918,14 +934,6 @@ With[{numEps=getNumEpsVars[distribSpec]},
 With[{numX=Length[drFunc[[1]]]-numEps,numZ=0},
 	genXZFuncRE[{numX,numEps,numZ},drFunc,distribSpec]]]
 
-
-
-myNExpectation[funcName_Symbol[funcArgs_List,idx_Integer],anEpsVar_\[Distributed] PerfectForesight]:=
-funcName@@Append[ReplacePart[{funcArgs},{{(1),(-1)}->0}],idx]
-myNExpectation[funcName_Symbol[funcArgs_List,idx_Integer],{anEpsVar_\[Distributed] PerfectForesight}]:=
-funcName@@Append[ReplacePart[{funcArgs},{{1,(-1)}->0}],idx]
-
-myNExpectation[funcName_Symbol[farg_List,idx_Integer],nArgs_List]:=Chop[NExpectation[funcName[farg,idx],nArgs]]
 
 genASeriesRep[linMod:{theHMat_?MatrixQ,BB_?MatrixQ,phi_?MatrixQ,FF_?MatrixQ,psiEps_?MatrixQ,psiC_?MatrixQ,psiZ_?MatrixQ,psiZPreComp_?MatrixQ},
 	initVec_?MatrixQ,theZs:{_?MatrixQ..}]:=

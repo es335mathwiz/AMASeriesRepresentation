@@ -387,15 +387,14 @@ With[{fArgsBlanks=PatternTest[Pattern[#, Blank[]], NumberQ]&/@Drop[Flatten[theFA
 With[{fApps=(#1 @@fArgsBlanks)&/@fNames,cefApps=(#1 @@Drop[fArgsBlanks,0])&/@cefNames},
 With[{nexpFuncs=MapThread[(#1:=#2)&,{fApps,(Flatten[theDR @@ Flatten[Append[xtVal,theEps]]])}],
 	nrcexpFuncs=MapThread[(#1:=#2)&,{cefApps,(Flatten[theDR @@ Flatten[Drop[theFArgs,0]]])}]},
-With[{xtp1Func=Function[xxx,{Function @@ {myNewNExpectation[xxx @@Drop[theFArgsAnon,0],theEps\[Distributed]theDist]}}]/@fNames,
-	cefFunc=Function[xxx,{Function @@ {myNewNExpectation[xxx @@Append[Flatten[Drop[theFArgsAnon,-numEps]],theFArgs[[-1,1]]],theFArgs[[-1,1]]\[Distributed]theDist]}}]/@cefNames},
+With[{cefFunc=Function[xxx,{Function @@ {myNewNExpectation[xxx @@Append[Flatten[Drop[theFArgsAnon,-numEps]],theFArgs[[-1,1]]],theFArgs[[-1,1]]\[Distributed]theDist]}}]/@cefNames},
 	With[{newXtp1Func= Function /@ ((# @@ (First/@Flatten[xtFunc]))&/@(Flatten[cefFunc]))},
-With[{fullVec=Join[({Function @@ {#}})&/@(theFArgsAnon[[Range[numX]]]),xtFunc,newXtp1Func ],
-	fullVecAnon=Join[({Function @@ {#}})&/@(theFArgsAnon[[Range[numX]]]),xtFunc,newXtp1Func ]},
-With[{fullApp=Transpose[{Through[Flatten[fullVec] @@ # & @Flatten[theFArgs]]}],
+With[{fullVec=Join[({Function @@ {#}})&/@(theFArgsAnon[[Range[numX]]]),xtFunc,newXtp1Func ](*,
+	fullVecAnon=Join[({Function @@ {#}})&/@(theFArgsAnon[[Range[numX]]]),xtFunc,newXtp1Func ]*)},
+With[{(*fullApp=Transpose[{Through[Flatten[fullVec] @@ # & @Flatten[theFArgs]]}],*)
 	fGuts=Join[First/@Flatten[fullVec],Flatten[Drop[theFArgsAnon,numX]]]},
 With[{bigFunc=Function[eqnsFunc @@ fGuts]},
-{xtFunc,{xtp1Func,newXtp1Func},{fGuts,bigFunc},fullVec,cefFunc}
+{xtFunc,newXtp1Func,{fGuts,bigFunc},fullVec,cefFunc}
 ]]]]]]]]]]]
 
 

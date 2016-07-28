@@ -50,7 +50,7 @@ thePFDist::usage="theDist={{{ee,PerfectForesight]}}};"
 linMod::usage="linear model matrices for approx"
 aGSpec::usage="aGSpec={{1},1,{{4,kLow,kHigh},{3,thLow,thHigh},{3,sigLow,3*sigHigh}}}";
 rbcEqnsFunctionalNext::usage="model equations function"
-Begin["Private`"]
+Begin["`Private`"]
 
 
 
@@ -159,9 +159,9 @@ thetat - 1.*2.718281828459045^epsVal*thetatm1^(19/20)}]
 
 
 
-linMod={hmatSymbRE//N,Private`bmatSymbRE // N, Private`phimatSymbRE // N, 
-    Private`fmatSymbRE // N, Private`psiepsSymbRE // N, 
-    Private`psicSymbRE // N, Private`psiz // N,{{0}}};
+linMod={hmatSymbRE//N,bmatSymbRE // N, phimatSymbRE // N, 
+    fmatSymbRE // N, psiepsSymbRE // N, 
+    psicSymbRE // N, psiz // N,{{0}}};
     
 lilLinMod=linMod;
 lilHmat=hmat;

@@ -131,6 +131,10 @@ thePFDistBetter={{{ee,PerfectForesight}}};
 betterRBCExactCondExp = AMASeriesRepresentation`Private`makeREIterFunc[simpRBCExactDRBetter,theDistBetter]
 
 
+
+
+
+
 psiz=IdentityMatrix[4]
 
 Print["RE solutions"]

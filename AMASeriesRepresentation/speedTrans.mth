@@ -1,0 +1,8 @@
+
+Get["pathSetup.mth"]
+Get["betterRBC.m"]
+
+
+drFuncs=
+Table[genSeriesRepFunc[linModBetter,theDistBetter,simpRBCExactDRBetter,ii],
+		   {ii,20}];

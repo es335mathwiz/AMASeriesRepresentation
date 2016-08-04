@@ -19,7 +19,7 @@ Test[
 ] 
  
 Test[
-	With[{theFunc=Private`genLilXkZkFunc[linMod, {X0Z0},X0Z0@@anXtm1EpsZ]},
+	With[{theFunc=genLilXkZkFunc[linMod, {X0Z0,2},X0Z0@@anXtm1EpsZ]},
 		theFunc @@ anXtm1EpsZ]
 	,
 	{{1}, {0.18}, {1.1}, {0.3792309409344926}, {0.19778300683599365}, 
@@ -31,7 +31,7 @@ Test[
 
  (*should produce same result as one X0Z0 since all z's 0*)
 Test[
-	With[{theFunc=Private`genLilXkZkFunc[linMod, {X0Z0,X0Z0,X0Z0,X0Z0},X0Z0@@anXtm1EpsZ]},
+	With[{theFunc=genLilXkZkFunc[linMod, {X0Z0,4},X0Z0@@anXtm1EpsZ]},
 		theFunc @@ anXtm1EpsZ]
 	,
 	{{1}, {0.18}, {1.1}, {0.3792309409344926}, {0.19778300683599365}, 

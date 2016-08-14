@@ -1,6 +1,8 @@
 (* Wolfram Language Test file *)
 
  Get["AMASeriesRepresentation/prepSimple.mth"]   
+ anInit01=Transpose[{{1, .228,1, .07}}];
+ anInit02=Transpose[{{1, .58,1}}];
 Test[
 	Chop[Norm[iterateDRREIntegrate[simpRBCExactDR, anXEps, theDist, 5]-{{0.2}, {0.18}, {1.1}, {0.39245511265743227}, {0.20398122876723684}, {1.1057730363825737}, {0.4084912681688996}, {0.21231613026407847}, {1.1002830196188984}, {0.41246839320517137}, {0.2143832682008641}, {1.095092752772848}, {0.41205452466236536}, {0.21416815719533275}, {1.0901846789724177}, {0.4101516309906241}, {0.21317911519573474}, {1.0855423854733952}}]]
 	,
@@ -17,7 +19,7 @@ Test[
 	TestID->"TestApprox-20151108-F9V5S9"
 ]*)
 Test[
-Chop[Norm[evalPathErrDRREIntegrate[simpRBCExactDR, {1, .228,1, .07}, theDist, Private`rbcEqnsFunctionalNext]]]
+Chop[Norm[evalPathErrDRREIntegrate[simpRBCExactDR, anInit01, theDist, rbcEqnsFunctionalNext]]]
 	,
 	0
 	,
@@ -25,7 +27,7 @@ Chop[Norm[evalPathErrDRREIntegrate[simpRBCExactDR, {1, .228,1, .07}, theDist, Pr
 ]
 
 Test[
-Chop[Norm[evalPathErrDRREIntegrate[simpRBCExactDR, {1, .58,1, .07}, theDist, Private`rbcEqnsFunctionalNext]]]
+Chop[Norm[evalPathErrDRREIntegrate[simpRBCExactDR, anInit01, theDist, rbcEqnsFunctionalNext]]]
 	,
 	0
 	,
@@ -34,7 +36,7 @@ Chop[Norm[evalPathErrDRREIntegrate[simpRBCExactDR, {1, .58,1, .07}, theDist, Pri
 
 
 Test[
-Chop[Norm[evalPathErrDRREIntegrate[simpRBCExactDR, {1, .58,1.1, .07}, theDist, Private`rbcEqnsFunctionalNext]]]
+Chop[Norm[evalPathErrDRREIntegrate[simpRBCExactDR, anInit01, theDist, rbcEqnsFunctionalNext]]]
 	,
 	0
 	,
@@ -43,7 +45,7 @@ Chop[Norm[evalPathErrDRREIntegrate[simpRBCExactDR, {1, .58,1.1, .07}, theDist, P
 
 
 Test[
-	Chop[evalBadPathErrDRREIntegrate[simpRBCExactDR, {1, .228,1}, theDist, Private`rbcEqnsFunctionalNext][[1]]]
+	Chop[evalBadPathErrDRREIntegrate[simpRBCExactDR, anInit02, theDist, rbcEqnsFunctionalNext][[1]]]
 	,
 	0
 	,
@@ -54,8 +56,7 @@ Test[
 
 
 Test[
-	Chop[Norm[Private`rbcEqnsFunctionalNext@@ Flatten[Private`worstPathForErrDRREIntegrate[simpRBCExactDR, {1., .228, 
-  1.}, theDist, Private`rbcEqnsFunctionalNext]]]]
+	Chop[Norm[rbcEqnsFunctionalNext@@ Flatten[worstPathForErrDRREIntegrate[simpRBCExactDR, anInit02, theDist, rbcEqnsFunctionalNext]]]]
 	,
 	0
 	,
@@ -65,10 +66,10 @@ Test[
 
 Test[
 	Chop[Norm[
-  Private`rbcEqnsFunctionalNext @@ 
-   Flatten[Private`worstPathForErrDRREIntegrate[
-     simpRBCExactDR, {3, .228, 1.1}, theDist, 
-     Private`rbcEqnsFunctionalNext]]]]
+  rbcEqnsFunctionalNext @@ 
+   Flatten[worstPathForErrDRREIntegrate[
+     simpRBCExactDR, anInit02, theDist, 
+     rbcEqnsFunctionalNext]]]]
 	,
 	0
 	,
@@ -79,20 +80,20 @@ simpRBCExactDRNot =
  Function[{cc, kk, tt, ee}, 
   1.2*Drop[(simpRBCExactDR @@ {cc, kk, tt, ee}), 0]]
   
-theRes=Chop[evalPathErrDRREIntegrate[simpRBCExactDRNot, {1., .58,1.1, .07}, theDist, Private`rbcEqnsFunctionalNext]]
+theRes=Chop[evalPathErrDRREIntegrate[simpRBCExactDRNot, anInit01, theDist, rbcEqnsFunctionalNext]]
 Test[
-Norm[theRes-{{0, 0, 0.23483004444308975}}]
+Norm[theRes-{{0}, {0}, {0.21450163625084318}}]
 	,
 	0.
 	,
 	TestID->"TestApprox-341xx109-bbG2F6"
 ]
 
-chk=	evalBadPathErrDRREIntegrate[simpRBCExactDRNot,{1., .228,1.},theDist,Private`rbcEqnsFunctionalNext];
+chk=	evalBadPathErrDRREIntegrate[simpRBCExactDRNot,anInit02,theDist,rbcEqnsFunctionalNext];
 
-chkPath=Private`worstPathForErrDRREIntegrate[simpRBCExactDRNot,{1., .228,1.},theDist,Private`rbcEqnsFunctionalNext];
+chkPath=worstPathForErrDRREIntegrate[simpRBCExactDRNot,anInit02,theDist,rbcEqnsFunctionalNext];
 Test[
-Chop[chk[[1]]-(Private`rbcEqnsFunctionalNext@@ Flatten[chkPath])[[-1]]]
+Chop[chk[[1]]-(rbcEqnsFunctionalNext@@ Flatten[chkPath])[[-1]]]
 	,
 	0
 	,
@@ -101,9 +102,9 @@ Chop[chk[[1]]-(Private`rbcEqnsFunctionalNext@@ Flatten[chkPath])[[-1]]]
 
 
 
-theRes=Private`rbcEqnsFunctionalNext@@Flatten[Private`worstPathForErrDRREIntegrate[simpRBCExactDRNot, {1,.228,1}, theDist, Private`rbcEqnsFunctionalNext]];
+theRes=rbcEqnsFunctionalNext@@Flatten[worstPathForErrDRREIntegrate[simpRBCExactDRNot, anInit02, theDist, rbcEqnsFunctionalNext]];
 Test[
-	Chop[theRes[[-1]]-evalBadPathErrDRREIntegrate[simpRBCExactDRNot, {1.,.228,1.}, theDist, Private`rbcEqnsFunctionalNext][[1]]]
+	Chop[theRes[[-1]]-evalBadPathErrDRREIntegrate[simpRBCExactDRNot, anInit02, theDist, rbcEqnsFunctionalNext][[1]]]
 	,
 0
 	,
@@ -113,10 +114,10 @@ Test[
 
 Test[
 	Chop[Norm[
-  Private`rbcEqnsFunctionalNext @@ 
-   Flatten[Private`worstPathForErrDRREIntegrate[
-     simpRBCExactDR, {1, .228, 1}, theDist, 
-     Private`rbcEqnsFunctionalNext]]]]
+  rbcEqnsFunctionalNext @@ 
+   Flatten[worstPathForErrDRREIntegrate[
+     simpRBCExactDR, anInit02, theDist, 
+     rbcEqnsFunctionalNext]]]]
 	,
 	0
 	,
@@ -125,13 +126,13 @@ Test[
   
  (* 
 quickFunc01 = 
-  Private`condApproxExpREFunc[Private`hmatSymbRE, linMod,simpRBCExactDR, 1];
+  condApproxExpREFunc[hmatSymbRE, linMod,simpRBCExactDR, 1];
 quickFunc02 = 
-  Private`condApproxExpREFunc[Private`hmatSymbRE, linMod,simpRBCExactDR, 2];
+  condApproxExpREFunc[hmatSymbRE, linMod,simpRBCExactDR, 2];
 quickFunc03 = 
-  Private`condApproxExpREFunc[Private`hmatSymbRE, linMod,simpRBCExactDR, 3];
+  condApproxExpREFunc[hmatSymbRE, linMod,simpRBCExactDR, 3];
 quickFunc10 = 
-  Private`condApproxExpREFunc[Private`hmatSymbRE, linMod,simpRBCExactDR,10];
+  condApproxExpREFunc[hmatSymbRE, linMod,simpRBCExactDR,10];
 Test[
 	quickFunc01 @@ anXEps
 	,
@@ -165,7 +166,7 @@ Test[
 ]
 *)
 Test[
-	simpRBCExactDR @@ anXEps
+	simpRBCExactDR @@ anXEpsFlat
 	,
 	{{0.3924551126574322}, {0.20398122876723684}, {1.1057730363825737}}
 	,
@@ -175,11 +176,11 @@ Test[
 hip = iterateDRREIntegrate[simpRBCExactDR, 
    anXEps, {{{ee, NormalDistribution[0, 0.01]}}}, 5];
 dip=	(evalBadPathErrDRREIntegrate[simpRBCExactDR, 
- Flatten[hip[[ {4, 5, 6}]]], theDist, Private`rbcEqnsFunctionalNext]);
+ Identity[hip[[ {4, 5, 6}]]], theDist, rbcEqnsFunctionalNext]);
 
 Test[
-Chop[Identity[Private`rbcEqnsFunctionalNext@@Flatten[Private`worstPathForErrDRREIntegrate[simpRBCExactDR, 
- Flatten[hip[[ {4, 5, 6}]]], theDist, Private`rbcEqnsFunctionalNext]]]]
+Chop[Identity[rbcEqnsFunctionalNext@@Flatten[worstPathForErrDRREIntegrate[simpRBCExactDR, 
+ Identity[hip[[ {4, 5, 6}]]], theDist, rbcEqnsFunctionalNext]]]]
 	,
 	{0,0,0}
 	,
@@ -194,18 +195,18 @@ hip = iterateDRREIntegrate[simpRBCExactDR,
    anXEps, {{{ee, NormalDistribution[0, 0.01]}}}, 5];
 bip = 
  evalBadPathErrDRREIntegrate[simpRBCExactDRNot, 
-  Flatten[hip[[{4, 5, 6}]]], {{{ee, NormalDistribution[0, 0.01]}}}, 
-  Private`rbcEqnsFunctionalNext];
+  Identity[hip[[{4, 5, 6}]]], {{{ee, NormalDistribution[0, 0.01]}}}, 
+  rbcEqnsFunctionalNext];
 
 golly = 
- Private`worstPathForErrDRREIntegrate[simpRBCExactDRNot, 
-  Flatten[hip[[{4, 5, 6}]]], {{{ee, NormalDistribution[0, 0.01]}}}, 
-  Private`rbcEqnsFunctionalNext];
+ worstPathForErrDRREIntegrate[simpRBCExactDRNot, 
+  Identity[hip[[{4, 5, 6}]]], {{{ee, NormalDistribution[0, 0.01]}}}, 
+  rbcEqnsFunctionalNext];
 Print["golly",golly];
 Print["hip",hip];
 Print["bip",bip];
 Test[
-	Chop[bip[[1]]-(Private`rbcEqnsFunctionalNext@@ Flatten[golly])[[-1]]]
+	Chop[bip[[1]]-(rbcEqnsFunctionalNext@@ Flatten[golly])[[-1]]]
 		,
 0
 	,
@@ -215,7 +216,7 @@ Test[
 
 Test[
 	Chop[Norm[pathErrsDRREIntegrate[simpRBCExactDR, anXEps, theDist, \
-Private`rbcEqnsFunctionalNext, 2]]]
+rbcEqnsFunctionalNext, 2][[1]]]]
 	,
 	0
 	,

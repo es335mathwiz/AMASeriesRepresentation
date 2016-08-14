@@ -29,6 +29,7 @@ maxZsRE::usage="maxZsRE[theHmat_?MatrixQ,phi_?MatrixQ,FF_?MatrixQ,psiEps_?Matrix
 compBounds::usage="compBounds[theHmat_?MatrixQ,linMod:{BB_?MatrixQ,phi_?MatrixQ,FF_?MatrixQ,psiEps_?MatrixQ,psiC_?MatrixQ,psiZ_?MatrixQ,psiZPreComp_?MatrixQ},{{lowc_,highc_},{lowk_,highk_},{lowt_,hight_},{lowe_,highe_}},iters_Integer]"
 
    *)
+   simpParamSubs::usage="simpParamSubs=Join[paramSubs,forParamSubs]"
 anX::usage="for test input";
 anEps::usage="for test input";
 anXEps::usage="for test input";

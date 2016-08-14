@@ -611,18 +611,18 @@ ConstantArray[0,{Length[psiZ],1}]
 
 
 fSum[linMod:{theHMat_?MatrixQ,BB_?MatrixQ,phi_?MatrixQ,FF_?MatrixQ,psiEps_?MatrixQ,psiC_?MatrixQ,psiZ_?MatrixQ,psiZPreComp_?MatrixQ},
-	{XZFunc_Function,numSteps_Integer},xtGuess_?MatrixQ]:=
+	{XZFunc_Function,numSteps_Integer},xtGuess_?MatrixQ,numTerms_Integer]:=
 With[{numXVars=Length[BB],numZVars=Length[psiZ[[1]]]},
-With[{xzRes=multiStepZ[{XZFunc,numSteps},numXVars,numZVars]@@ Flatten[xtGuess]},
+With[{xzRes=multiStepZ[{XZFunc,numSteps},numXVars,numZVars,numTerms]@@ Flatten[xtGuess]},
 fSumC[phi,FF,psiZ,xzRes]]]
 
 
-multiStepZ[{XZfunc_Function,numSteps_Integer},numX_Integer,numZ_Integer]:=
-multiStep[{XZfunc,numSteps},numX,numX+Range[numZ]]
-multiStepX[{XZfunc_Function,numSteps_Integer},numX_Integer]:=
-multiStep[{XZfunc,numSteps},numX,Range[numX]]
+multiStepZ[{XZfunc_Function,numSteps_Integer},numX_Integer,numZ_Integer,numTerms_Integer]:=
+multiStep[{XZfunc,numSteps},numX,numX+Range[numZ],numTerms]
+multiStepX[{XZfunc_Function,numSteps_Integer},numX_Integer,numTerms_Integer]:=
+multiStep[{XZfunc,numSteps},numX,Range[numX],numTerms]
 
-multiStep[{XZfunc_Function,numSteps_Integer},numX_Integer,valRange:{_Integer..}]:=
+multiStep[{XZfunc_Function,numSteps_Integer},numX_Integer,valRange:{_Integer..},numTerms_Integer]:=
 With[{funcArgs=XZfunc[[1]]},
 With[{xtFunc01=
 ReplacePart[
@@ -631,7 +631,7 @@ Function[xxxxx,
 With[{theFunc=
 	ReplacePart[
 	Function[xxxxx,
- With[{theXVals=NestList[xtFunc01@@ Flatten[#]&,xxxxx,numSteps-1]},(*Print["multiStep:theXVals=",{theXVals,((XZfunc @@Flatten[#])[[valRange]] )& /@ theXVals}];*)
+ With[{theXVals=NestList[xtFunc01@@ Flatten[#]&,xxxxx,numTerms-1]},(*Print["multiStep:theXVals=",{theXVals,((XZfunc @@Flatten[#])[[valRange]] )& /@ theXVals}];*)
 	  ((XZfunc @@Flatten[#])[[valRange]] )& /@ theXVals]],1->funcArgs]},
 With[{xxxxxPos={{2,1,1,2,1,1,1,2,1,1,2},{2,1,1,2,2}}(*Position[theFunc,xxxxx$]*)},
 ReplacePart[
@@ -698,11 +698,11 @@ MapThread[Dot[#1,phi.psiZ.#2]&,{fPows , zPath}]]]]
 
 
 genPath[xzFunc_Function,
-{XZFunc_Function,numSteps_Integer},xtm1Val_?MatrixQ,epsVal_?MatrixQ]:=
+{XZFunc_Function,numSteps_Integer},xtm1Val_?MatrixQ,epsVal_?MatrixQ,numTerms_Integer]:=
 With[{numXVars=Length[xtm1Val]},
 With[{xtVal=xzFunc @@ Flatten[Join[xtm1Val,epsVal]]},
-With[{xzRes=multiStepX[{XZFunc,numSteps+1},numXVars]@@ Flatten[xtVal]},
-	Join[xtm1Val,Join @@xzRes]]]]
+With[{xzRes=If[numTerms==1,{},multiStepX[{XZFunc,numSteps},numXVars,numTerms-1]@@ Flatten[xtVal]]},
+	Join[xtm1Val,xtVal[[Range[numXVars]]],Join @@xzRes]]]]
 (*eqnsfuncs func of xtm1,xt,xtp1,eps  returns discrep*)
 (*xkfunc func of xtm1, eps zs returns xtm1,xt,xtp1,eps as matrices*)
 
@@ -1017,11 +1017,11 @@ genZVars[numConstr]=
 Table[
 makeProtectedSymbol["zzzVar$"<>ToString[ii]],{ii,numConstr}]]*)/;And[numConstr>=0]
 
-
+Print["must update genLilXkZkFunc for fSum Change"];
 (*funxzfunc of xtm1vars,epsvars,zvars and a guess for xt*)
 genLilXkZkFunc[linMod:{theHMat_?MatrixQ,BB_?MatrixQ,phi_?MatrixQ,FF_?MatrixQ,psiEps_?MatrixQ,psiC_?MatrixQ,psiZ_?MatrixQ,psiZPreComp_?MatrixQ},
 	XZFuncs:({_Function,_Integer}),xtGuess_?MatrixQ,drvPairs:{{{aa_Integer,bb_Integer}...},eqnFunc:(_Function|_CompiledFunction)}:{{},{}}]:=
-	With[{fCon=fSum[linMod,XZFuncs,xtGuess]},
+	With[{fCon=fSum[linMod,XZFuncs,xtGuess,2]},
 		With[{theRes=genLilXkZkFunc[linMod,fCon,drvPairs]},
 theRes]]
 
@@ -1052,11 +1052,11 @@ ReplacePart[
 Function[xxxx,fullVec],{1->Flatten[Join[xtm1Vars,epsVars,zVars]]}]
 ]]]]]]
 
-
+Print["must update genLilXkZkRegimeFunc for fSum Change"];
 (*funxzfunc of xtm1vars,epsvars,zvars and a guess for xt*)
 genLilXkZkRegimeFuncs[linMod:{theHMat_?MatrixQ,BB_?MatrixQ,phi_?MatrixQ,FF_?MatrixQ,psiEps_?MatrixQ,psiC_?MatrixQ,psiZ_?MatrixQ,psiZPreComp_?MatrixQ},
 	XZFuncs:{({_Function,_Integer})..},xtGuess_?MatrixQ,drvPairs:{{{aa_Integer,bb_Integer}...},eqnFunc:(_Function|_CompiledFunction)}:{{},{}}]:=
-	With[{fCons=fSum[linMod,#,xtGuess]&/@XZFuncs},
+	With[{fCons=fSum[linMod,#,xtGuess,5]&/@XZFuncs},
 		With[{theRes=genLilXkZkRegimeFuncs[linMod,fCons,drvPairs]},
 theRes]]
 
@@ -1093,12 +1093,12 @@ Join[rtm1Var,xtm1Vars,rtVar,xtVals,rtp1Var,xtp1Vals,epsVars]]]
 
 regimeOrNot[numRegimes_Integer]:=If[numRegimes>0,{{Unique["rgm"]}},{}]
 	
-
+Print["must update genDrvLilXkZkFunc for fSum Change"];
 (*funxzfunc of xtm1vars,epsvars,zvars and a guess for xt*)
 genDrvLilXkZkFunc[linMod:{theHMat_?MatrixQ,BB_?MatrixQ,phi_?MatrixQ,FF_?MatrixQ,psiEps_?MatrixQ,psiC_?MatrixQ,psiZ_?MatrixQ,psiZPreComp_?MatrixQ},
 	XZFuncs:({_Function,_Integer}),drvXZFuncs:({_Function,_Integer}),xtGuess_?MatrixQ,
 	drvPairs:{{{aa_Integer,bb_Integer}...},eqnFunc:(_Function|_CompiledFunction)}:{{},{}}]:=
-	With[{fCon=fSum[linMod,XZFuncs,xtGuess],drvFCon=drvFSum[linMod,XZFuncs,drvXZFuncs,xtGuess]},
+	With[{fCon=fSum[linMod,XZFuncs,xtGuess,5],drvFCon=drvFSum[linMod,XZFuncs,drvXZFuncs,xtGuess]},
 		With[{theRes=genDrvLilXkZkFunc[linMod,fCon,drvFCon,drvPairs]},
 theRes]]
 
@@ -1154,19 +1154,19 @@ getXt[vecOrMat:_?MatrixQ,numX_Integer]:=vecOrMat[[Range[numX]]]
 
 
 genPathCompare[linMod:{theHMat_?MatrixQ,BB_?MatrixQ,phi_?MatrixQ,FF_?MatrixQ,psiEps_?MatrixQ,psiC_?MatrixQ,psiZ_?MatrixQ,psiZPreComp_?MatrixQ},
-	xzFunc_Function,{XZFunc_Function,numSteps_Integer},xtm1Val_?MatrixQ,epsVal_?MatrixQ]:=
+	xzFunc_Function,{XZFunc_Function,numSteps_Integer},xtm1Val_?MatrixQ,epsVal_?MatrixQ,numTerms_Integer]:=
 With[{numXVars=Length[xtm1Val]},
 With[{xtVal=xzFunc @@ Flatten[Join[xtm1Val,epsVal]]},
-With[{xzRes=multiStepX[{XZFunc,numSteps+1},numXVars]@@ Flatten[xtVal]},
-	{Join[xtm1Val,Join @@xzRes],
-compareFormula[linMod,{XZFunc,numSteps},xtm1Val,epsVal,xtVal]}
+With[{xzRes=multiStepX[{XZFunc,numSteps},numXVars,numTerms]@@ Flatten[xtVal]},Print["genPathCompare:",{xzRes,xtVal,multiStep[{XZFunc,numSteps},3,Range[6],numTerms]@@ Flatten[xtVal]}//InputForm];
+	{Join[xtm1Val,xtVal[[Range[Length[BB]]]],Join @@xzRes],
+compareFormula[linMod,{XZFunc,numSteps},xtm1Val,epsVal,xtVal,numTerms]}
 ]]]
 
 compareFormula[linMod:{theHMat_?MatrixQ,BB_?MatrixQ,phi_?MatrixQ,FF_?MatrixQ,psiEps_?MatrixQ,psiC_?MatrixQ,psiZ_?MatrixQ,psiZPreComp_?MatrixQ},
-	{XZFunc_Function,numSteps_Integer},xtm1Vars_?MatrixQ,epsVars_?MatrixQ,xtztVal_?MatrixQ]:=
+	{XZFunc_Function,numSteps_Integer},xtm1Vars_?MatrixQ,epsVars_?MatrixQ,xtztVal_?MatrixQ,numTerms_Integer]:=
 	With[{numX=Length[BB],numZ=Length[psiZ[[1]]]},
 		With[{xtVal=xtztVal[[Range[numX]]],ztVal=xtztVal[[numX+Range[numZ]]]},
-With[{fCon=fSum[linMod,{XZFunc,numSteps},xtVal]},
+With[{fCon=fSum[linMod,{XZFunc,numSteps},xtVal,numTerms]},
 	With[{xtVals=BB.xtm1Vars+
 Inverse[IdentityMatrix[Length[xtm1Vars]]-FF] . phi . psiC + phi . psiEps . epsVars+
 phi . psiZ . ztVal +FF.fCon},

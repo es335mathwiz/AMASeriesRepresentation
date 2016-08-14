@@ -1,8 +1,115 @@
 
 Get["pathSetup.mth"]
 Get["betterRBC.m"]
+Get["simpleRBCModel.m"]
+
+(*
+linMod={{{0}},{{0., 0.6926315789473684, 0.34202807765803783}, 
+  {0., 0.36, 0.17777143246056068}, {0., 0., 0.9499525011874801}}, 
+ {{-0.04442366984873067, 0.658, 0.3600475573573294}, 
+  {0.04442366984873067, 0.342, 0.18713718026779125}, {0., 0., 1.}}, 
+ {{0.342, 0., -0.12313626461620665}, {-0.342, 0., 0.12313626461620665}, 
+  {0., 0., 0.}}, {{0.}, {0.}, {1.0009504513929297}}, 
+ {{-0.9988685455324166}, {-0.19718359057668058}, {0.05009757134342517}}, 
+ {{1., 0., 0.}, {0., 1., 0.}, {0., 0., 1.}}, {{0}}};
+
+
+ 	rbcEqnsFunctionalNext=Compile[
+{
+{ctm1,_Real},{kktm1,_Real},{thetatm1,_Real},
+{cct,_Real},{kkt,_Real},{thetat,_Real},
+{cctp1,_Real},{kktp1,_Real},{thetatp1,_Real},
+{epsVal,_Real}
+},
+{cct^(-1) - (0.342*((1.*thetatp1)/cctp1))/kkt^(16/25), 
+cct + kkt - 1.*kktm1^(9/25)*thetat, 
+thetat - 1.*2.718281828459045^epsVal*thetatm1^(19/20)}];
+
+aGSpec={{1}, 1, {{4, 0.018732441104784652, 0.7492976441913861}, {4, 9/10, 11/10}, 
+  {4, -0.03, 0.09}}}
+
+ *)
+
+ anXtm1EpsZ={1, .18, 1.1, 0.01, 0.01, -.02, .0001};
+thePFDist={{{ee, PerfectForesight}}}
+ 	X0Z0=genX0Z0Funcs[linMod];
+
+(*
+accurGSpec=
+{{1}, 1,
+{{20, 0.018732441104784652, 0.7492976441913861}, {20, 9/10, 11/10},{20, -0.03, 0.09}}}
+{xzFuncacc,iterXZFuncsPFacc}=doIterREInterp[{genFRFunc},linMod,{X0Z0,2},rbcEqnsFunctionalNext,accurGSpec,thePFDist]
+
+aBunch01=nestIterREInterp[{genFRFunc},linMod,{X0Z0,2},rbcEqnsFunctionalNext,aGSpec,thePFDist,6]
+
+bunchZs=genZsREExact[linMod,Transpose[{anXtm1EpsZ[[Range[4]]]}],thePFDist,aBunch01[[-1,1]],3]
+
+ *)
+
+(*
+
+{xzFunc01,iterXZFuncsPF01}=doIterREInterp[{genFRFunc},linMod,{X0Z0,2},rbcEqnsFunctionalNext,aGSpec,thePFDist]
+
+
+aPath01=genPath[xzFunc01,{iterXZFuncsPF01,2},Transpose[{anXtm1EpsZ[[Range[3]]]}],{anXtm1EpsZ[[{4}]]},3];
+
+iPath01=iterateDRPF[xzFunc01,Transpose[{anXtm1EpsZ[[Range[4]]]}],1,3]
+intPath01=iterateDRREIntegrate[xzFunc01,Transpose[{anXtm1EpsZ[[Range[4]]]}],thePFDist,3]
+
+
+
+{xzFunc02,iterXZFuncsPF02}=doIterREInterp[{genFRFunc},linMod,{iterXZFuncsPF01,2},rbcEqnsFunctionalNext,aGSpec,thePFDist]
+aPath02=genPath[xzFunc02,{iterXZFuncsPF02,2},Transpose[{anXtm1EpsZ[[Range[3]]]}],{anXtm1EpsZ[[{4}]]},3];
+
+iPath02=iterateDRPF[xzFunc02,Transpose[{anXtm1EpsZ[[Range[4]]]}],1,3]
+intPath02=iterateDRREIntegrate[xzFunc02,Transpose[{anXtm1EpsZ[[Range[4]]]}],thePFDist,3]
+
+
+
+
+{xzFunc03,iterXZFuncsPF03}=doIterREInterp[{genFRFunc},linMod,{iterXZFuncsPF02,2},rbcEqnsFunctionalNext,aGSpec,thePFDist]
+aPath03=genPath[xzFunc03,{iterXZFuncsPF03,2},Transpose[{anXtm1EpsZ[[Range[3]]]}],{anXtm1EpsZ[[{4}]]},3];
+
+iPath03=iterateDRPF[xzFunc03,Transpose[{anXtm1EpsZ[[Range[4]]]}],1,3]
+intPath03=iterateDRREIntegrate[xzFunc03,Transpose[{anXtm1EpsZ[[Range[4]]]}],thePFDist,3]
+
+
+
+
+
+
+theZs01=genZsREExact[linMod,Transpose[{anXtm1EpsZ[[Range[4]]]}],thePFDist,xzFunc01,30]
+
+someReps01=genSeriesReps[linMod,Transpose[{anXtm1EpsZ[[Range[4]]]}],thePFDist,xzFunc01,3]
+
+
+
+xtSee=xzFunc01 @@ anXtm1EpsZ
+xtp1See=xzFunc01 @@ Flatten[Append[xtSee[[Range[3]]],0]]
+xtp2See=xzFunc01 @@ Flatten[Append[xtp1See[[Range[3]]],0]]
+
+
+xtSeeIter=xzFunc01 @@ anXtm1EpsZ
+xtp1SeeIter=iterXZFuncsPF01 @@ Flatten[Append[xtSee[[Range[3]]],0]]
+xtp2SeeIter=iterXZFuncsPF01 @@ Flatten[Append[xtp1See[[Range[3]]],0]]
+
+msVals=AMASeriesRepresentation`Private`multiStep[{iterXZFuncsPF01,2},3,Range[6],5]@@ Flatten[xtSee]
+ *)
+
+(*
+xtAccur=xzFuncacc @@ anXtm1EpZs
+theZsaccur=genZsREExact[linMod,Transpose[{anXtm1EpsZ[[Range[4]]]}],thePFDist,xzFuncacc,30]
+
+
+xtp1Accur=xzFuncacc @@ Flatten[Append[xtAccur[[Range[3]]],0]]
+xtp2Accur=xzFuncacc @@ Flatten[Append[xtp1Accur[[Range[3]]],0]]
+
+
+
+
 
 
 drFuncs=
 Table[genSeriesRepFunc[linModBetter,theDistBetter,simpRBCExactDRBetter,ii],
 		   {ii,20}];
+ *)

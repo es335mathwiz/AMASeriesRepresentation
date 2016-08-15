@@ -13,6 +13,11 @@ linMod={{{0}},{{0., 0.6926315789473684, 0., 0.34202807765803783},
  anXtm1EpsZ={1, .18, 1.0,1.1, 0.01, 0.01, -.02,0.0, .0001};
  	X0Z0=genX0Z0Funcs[linMod];
  
+theDist={{{ee,NormalDistribution[0,0.02]}}};
+thePFDist = {{{ee, PerfectForesight}}};
+
+
+aGSpec={{1,3},1,{{4,.2,.5},{3,.9,1.1},{3,-3*.01,3*.01}}};
 
 rbcComp=Compile[{
 {cctm1,_Real},{kktm1,_Real},{nltm1,_Real},{thtm1,_Real},
@@ -22,15 +27,15 @@ rbcComp=Compile[{
 {cct^(-1) - (0.342*nltp1)/kkt^(16/25), cct + kkt - 1.*kktm1^(9/25)*tht, 
  nlt - (1.*tht)/cct, tht - 1.*2.718281828459045^epsVal*thtm1^(19/20)}]
  probDims={4,1,4};
-theLilFunc=Private`genLilXkZkFunc[linMod, {X0Z0},X0Z0@@anXtm1EpsZ];
-theFR=Private`genFRFunc[probDims,theLilFunc,rbcComp];
-theFP=Private`genFPFunc[linMod,{X0Z0},X0Z0@@anXtm1EpsZ,rbcComp];
-{xzFunc,iterXZFuncsPF}=doIterPF[linMod,{X0Z0},X0Z0@@anXtm1EpsZ,rbcComp]
-anXZFuncPF=genXZFuncPF[probDims,theFP];
+theLilFunc=genLilXkZkFunc[linMod, {X0Z0,2},X0Z0@@anXtm1EpsZ];
+theFR=genFRFunc[probDims,theLilFunc,rbcComp];
+theFP=genFPFunc[linMod,{X0Z0},X0Z0@@anXtm1EpsZ,rbcComp];
+{xzFunc,iterXZFuncsPF}=doIterREInterp[{genFRFunc},linMod,{X0Z0,2},rbcComp,aGSpec,thePFDist]
+anXZFuncPF=genXZFuncRE[probDims,xzFunc,thePFDist];
 
-
+Off[InterpolatingFunction::dmval]
 Test[
-	Chop[Norm[iterXZFuncsPF[[1]] @@anXtm1EpsZ-xzFunc @@Append[anXtm1EpsZ[[Range[4]]],0]]]==0
+	Chop[Norm[iterXZFuncsPF @@anXtm1EpsZ-xzFunc @@Append[anXtm1EpsZ[[Range[4]]],0]]]==0
 	,
 	True
 	,
@@ -41,17 +46,20 @@ Test[
 Test[
 	anXZFuncPF @@anXtm1EpsZ
 	,
-{{0.38873743325910703}, {0.2017642674103486}, {2.8162207113848416}, {1.09477041083488}, {-0.004216540849576706}, {-0.0008300529768194693}, {-0.003050625329344079}, {-0.0002749118147733487}}
-	,
+{{0.39053169474454}, {0.20295994949600366}, {2.790200259595386}, 
+ {1.0948251498115775}, {-0.00031948810871954003}, {0.0021299382616663393}, 
+ {-0.015395838724676217}, {-0.0002201728380758491}},
 	TestID->"TestDoIterPF-20151101-A7A1F3"
 ]
 
 
 
 Test[
-	iterXZFuncsPF[[1]] @@anXtm1EpsZ
-	,
-{{0.38873743325910703}, {0.2017642674103486}, {2.8162207113848416}, {1.09477041083488}, {-0.004216540849576706}, {-0.0008300529768194693}, {-0.003050625329344079}, {-0.0002749118147733487}}
+	iterXZFuncsPF @@anXtm1EpsZ
+	,{{0.39053169474454}, {0.20295994949600366}, {2.790200259595386}, 
+     {1.0948251498115775}, {-0.00031948810871954003}, 
+     {0.0021299382616663393}, {-0.015395838724676217}, 
+     {-0.0002201728380758491}}
 ,
 	TestID->"TestDoIterPF-20151101-C3L9F3"
 ]

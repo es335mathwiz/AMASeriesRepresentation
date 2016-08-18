@@ -14,9 +14,9 @@ Switch[$System,
 $ContextPath=DeleteCases[$ContextPath,"simpleRBCModel`"] 
 Print["after switch",$System];
 Get["prepBetter.m"];Get["betterRBC.m"];
-
+X0Z0=genX0Z0Funcs[linModBetter]
 Test[
-	ffs=fSum[linMod,{X0Z0,1},Table[{0},{4}],1]
+	ffs=fSum[linModBetter,{X0Z0,1},Table[{0},{4}]]
 	,
 	{{0.}, {0.}, {0.}, {0.}}
 	,
@@ -24,7 +24,7 @@ Test[
 ]
 
 Test[
-	ffs=fSum[linMod,{X0Z0,2},Table[{0},{4}],2]
+	ffs=fSum[linModBetter,{X0Z0,2},Table[{0},{4}]]
 	,
 	{{0.}, {0.}, {0.}, {0.}}
 	,
@@ -32,7 +32,7 @@ Test[
 ]
 
 Test[
-	ffs=fSum[linMod,{X0Z0,3},Table[{0},{4}],3]
+	ffs=fSum[linModBetter,{X0Z0,3},Table[{0},{4}]]
 	,
 	{{0.}, {0.}, {0.}, {0.}}
 	,
@@ -42,7 +42,7 @@ Test[
 
 
 Test[
-	ffs=fSum[linMod,{X0Z0,4},Table[{0},{4}],4]
+	ffs=fSum[linModBetter,{X0Z0,4},Table[{0},{4}]]
 	,
 	{{0.}, {0.}, {0.}, {0.}}
 	,

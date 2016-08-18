@@ -3,6 +3,7 @@ Get["pathSetup.mth"]
 Get["AMASeriesRepresentation`"]
 
 Get["betterRBC.m"]
+Get["betterCnstrnRBC.m"]
 Get["simpleRBCModel.m"]
 
 (*

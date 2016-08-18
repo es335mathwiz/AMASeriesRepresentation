@@ -22,15 +22,15 @@ rbcComp=Compile[{
 {cct^(-1) - (0.342*nltp1)/kkt^(16/25), cct + kkt - 1.*kktm1^(9/25)*tht, 
  nlt - (1.*tht)/cct, tht - 1.*2.718281828459045^epsVal*thtm1^(19/20)}]
  probDims={4,1,4};
-theLilFunc=Private`genLilXkZkFunc[linMod, {X0Z0},X0Z0@@anXtm1EpsZ];
-theFR=Private`genFRFunc[probDims,theLilFunc,rbcComp];
-theFP=Private`genFPFunc[linMod,{X0Z0},X0Z0@@anXtm1EpsZ,rbcComp];
+theLilFunc=genLilXkZkFunc[linMod, {X0Z0,2},X0Z0@@anXtm1EpsZ];
+theFR=genFRFunc[probDims,theLilFunc,rbcComp];
+theFP=genFPFunc[{genFRFunc},linMod,{X0Z0,2},rbcComp];
 
 
 
-theLilFuncMoreX0Z0=Private`genLilXkZkFunc[linMod, {X0Z0,X0Z0,X0Z0,X0Z0},X0Z0@@anXtm1EpsZ];
-theFRMoreX0Z0=Private`genFRFunc[probDims,theLilFuncMoreX0Z0,rbcComp];
-theFPMoreX0Z0=Private`genFPFunc[linMod,{X0Z0,X0Z0,X0Z0,X0Z0},X0Z0@@anXtm1EpsZ,rbcComp];
+theLilFuncMoreX0Z0=genLilXkZkFunc[linMod, {X0Z0,4},X0Z0@@anXtm1EpsZ];
+theFRMoreX0Z0=genFRFunc[probDims,theLilFuncMoreX0Z0,rbcComp];
+theFPMoreX0Z0=genFPFunc[{genFRFunc},linMod,{X0Z0,4},rbcComp];
 
 With[{frXtZt=theFR@@anXtm1EpsZ[[Range[5]]],
 	fpXtZt=theFP@@anXtm1EpsZ[[Range[5]]]},Print[Chop[Norm[frXtZt-fpXtZt]]]]

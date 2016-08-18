@@ -22,16 +22,16 @@ rbcComp=Compile[{
 {cct^(-1) - (0.342*nltp1)/kkt^(16/25), cct + kkt - 1.*kktm1^(9/25)*tht, 
  nlt - (1.*tht)/cct, tht - 1.*2.718281828459045^epsVal*thtm1^(19/20)}]
  probDims={4,1,4};
-theLilFunc=Private`genLilXkZkFunc[linMod, {X0Z0},X0Z0@@anXtm1EpsZ];
-theFR=Private`genFRFunc[probDims,theLilFunc,rbcComp];
+theLilFunc=genLilXkZkFunc[linMod, {X0Z0,2},X0Z0@@anXtm1EpsZ];
+theFR=genFRFunc[probDims,theLilFunc,rbcComp];
 
 
-theLilFuncMoreX0Z0=Private`genLilXkZkFunc[linMod, {X0Z0,X0Z0,X0Z0,X0Z0},X0Z0@@anXtm1EpsZ];
-theFRMoreX0Z0=Private`genFRFunc[probDims,theLilFuncMoreX0Z0,rbcComp];
+theLilFuncMoreX0Z0=genLilXkZkFunc[linMod, {X0Z0,4},X0Z0@@anXtm1EpsZ];
+theFRMoreX0Z0=genFRFunc[probDims,theLilFuncMoreX0Z0,rbcComp];
 
 Test[
 theFR@@anXtm1EpsZ[[Range[5]]],(*produces xtzt for a given xtm1,eps and conditional z functions*)
-{{0.3926985637359888}, {0.20373777768868015}, {2.8158316288775245}, {1.1057730363825737}, {-0.005480210873745504}, {-0.000915880995108354}, {-0.003442312382082321}, {0.0007182092189910172}}
+{{0.3926985637359889}, {0.2037377776886802}, {2.8158316288775245}, {1.1057730363825737}, {-0.005480210873745038}, {-0.000915880995108243}, {-0.003442312382082275}, {0.0007182092189910172}}
 	,
 	TestID->"TestGenFRFunc-20151101-L8W9H4"
 ]

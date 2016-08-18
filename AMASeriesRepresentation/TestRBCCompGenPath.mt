@@ -15,6 +15,10 @@ linMod={{{0}},{{0., 0.6926315789473684, 0., 0.34202807765803783},
  anXtm1EpsZ={1, .18, 1.0,1.1, 0.01, 0.01, -.02,0.0, .0001};
  	X0Z0=genX0Z0Funcs[linMod];
  
+aGSpec={{1,3}, 1, {{4, 0.018732441104784652, 0.7492976441913861}, {4, 9/10, 11/10}, 
+  {4, -0.03, 0.09}}}
+thePFDist={{{ee, PerfectForesight}}}
+
 
 rbcComp=Compile[{
 {cctm1,_Real},{kktm1,_Real},{nltm1,_Real},{thtm1,_Real},
@@ -25,109 +29,117 @@ rbcComp=Compile[{
  nlt - (1.*tht)/cct, tht - 1.*2.718281828459045^epsVal*thtm1^(19/20)}]
  probDims={4,1,4};
 
-theLilFunc=Private`genLilXkZkFunc[linMod, {X0Z0},X0Z0@@anXtm1EpsZ];
-theFR=Private`genFRFunc[probDims,theLilFunc,rbcComp];
-theFP=Private`genFPFunc[linMod,{X0Z0},X0Z0@@anXtm1EpsZ,rbcComp];
 
-{xzFunc01,iterXZFuncsPF01}=doIterPF[linMod,{X0Z0},X0Z0@@anXtm1EpsZ,rbcComp]
-aPath01=genPath[xzFunc01,Drop[iterXZFuncsPF01,1],Transpose[{anXtm1EpsZ[[Range[4]]]}],{anXtm1EpsZ[[{5}]]}];
-cPath01=Private`genPathCompare[linMod,xzFunc01,Drop[iterXZFuncsPF01,1],Transpose[{anXtm1EpsZ[[Range[4]]]}],{anXtm1EpsZ[[{5}]]}];
+{xzFunc01,iterXZFuncsPF01}=doIterREInterp[{genFRFunc},linMod,{X0Z0,2},rbcComp,aGSpec,thePFDist]
+aPath01=genPath[xzFunc01,{iterXZFuncsPF01,2},Transpose[{anXtm1EpsZ[[Range[4]]]}],{anXtm1EpsZ[[{5}]]},3];
+iPath01=iterateDRPF[xzFunc01,Transpose[{anXtm1EpsZ[[Range[5]]]}],1,3]
+intPath01=iterateDRREIntegrate[xzFunc01,Transpose[{anXtm1EpsZ[[Range[5]]]}],thePFDist,3]
 
 
 
-{xzFunc02,iterXZFuncsPF02}=doIterPF[linMod,iterXZFuncsPF01,X0Z0@@anXtm1EpsZ,rbcComp]
-aPath02=genPath[xzFunc02,Drop[iterXZFuncsPF02,1],Transpose[{anXtm1EpsZ[[Range[4]]]}],{anXtm1EpsZ[[{5}]]}];
-cPath02=Private`genPathCompare[linMod,xzFunc02,Drop[iterXZFuncsPF02,1],Transpose[{anXtm1EpsZ[[Range[4]]]}],{anXtm1EpsZ[[{5}]]}];
+{xzFunc02,iterXZFuncsPF02}=doIterREInterp[{genFRFunc},linMod,{iterXZFuncsPF01,2},rbcComp,aGSpec,thePFDist]
+aPath02=genPath[xzFunc02,{iterXZFuncsPF02,2},Transpose[{anXtm1EpsZ[[Range[4]]]}],{anXtm1EpsZ[[{5}]]},3];
+
+iPath02=iterateDRPF[xzFunc02,Transpose[{anXtm1EpsZ[[Range[5]]]}],1,3]
+intPath02=iterateDRREIntegrate[xzFunc02,Transpose[{anXtm1EpsZ[[Range[5]]]}],thePFDist,3]
 
 
 
-{xzFunc03,iterXZFuncsPF03}=doIterPF[linMod,iterXZFuncsPF02,X0Z0@@anXtm1EpsZ,rbcComp]
-aPath03=genPath[xzFunc03,Drop[iterXZFuncsPF03,1],Transpose[{anXtm1EpsZ[[Range[4]]]}],{anXtm1EpsZ[[{5}]]}];
-cPath03=Private`genPathCompare[linMod,xzFunc03,Drop[iterXZFuncsPF03,1],Transpose[{anXtm1EpsZ[[Range[4]]]}],{anXtm1EpsZ[[{5}]]}];
 
-Test[
-	Chop[Norm[rbcComp@@Append[Flatten[aPath01[[Range[12]]]],anXtm1EpsZ[[5]]]]]==0
-	,
-	True
-	,
-	TestID->"TestGenPath-2MM51101-H4ZZR9"
-]
+{xzFunc03,iterXZFuncsPF03}=doIterREInterp[{genFRFunc},linMod,{iterXZFuncsPF02,2},rbcComp,aGSpec,thePFDist]
+aPath03=genPath[xzFunc03,{iterXZFuncsPF03,2},Transpose[{anXtm1EpsZ[[Range[4]]]}],{anXtm1EpsZ[[{5}]]},3];
+
+iPath03=iterateDRPF[xzFunc03,Transpose[{anXtm1EpsZ[[Range[5]]]}],1,3]
+intPath03=iterateDRREIntegrate[xzFunc03,Transpose[{anXtm1EpsZ[[Range[5]]]}],thePFDist,3]
 
 
 Test[
-	Chop[Norm[aPath01[[Range[12]]]-cPath01[[2,Range[12]]]]]==0
+	Chop[Norm[aPath01-iPath01]]==0
 	,
 	True
 	,
 	TestID->"TestGenPath-20151101-H6L9U2"
 ]
 
-Print[{Length[aPath02],Length[cPath02[[2]]]}]
-
-Test[
-	Chop[Norm[aPath02[[Range[12]]]-cPath02[[2,Range[12]]]]]==0
-	,
-	True
-	,
-	TestID->"TestGenPath-20151177-H6L9U2"
-]
-
-Test[
-	Chop[Norm[aPath03[[Range[12]]]-cPath03[[2,Range[12]]]]]==0
-	,
-	True
-	,
-	TestID->"TestGenPath-70151177-H6L9U2"
-]
 
 
 Test[
-	Chop[Norm[rbcComp@@Append[Flatten[aPath02[[Range[12]]]],anXtm1EpsZ[[5]]]]]==0
+	Chop[Norm[intPath01-iPath01]]==0
 	,
 	True
 	,
-	TestID->"TestGenPath-20151101-H4ZZR9"
-]
-
-
-
-
-Test[
-	Chop[Norm[rbcComp@@Append[Flatten[aPath02[[4+Range[12]]]],0]]]==0
-	,
-	True
-	,
-	TestID->"TestGenPath-20151101-H4V0R9"
+	TestID->"TestGenPath-20151101-H6L92"
 ]
 
 
 
 Test[
-	Chop[Norm[rbcComp@@Append[Flatten[aPath03[[Range[12]]]],anXtm1EpsZ[[5]]]]]==0
+	Chop[Norm[aPath01-intPath01]]==0
 	,
 	True
 	,
-	TestID->"TestGenPath-20151101-H4MMR9"
+	TestID->"TestGenPath-2051101-H6L9U2"
 ]
 
 
 
 Test[
-	Chop[Norm[rbcComp@@Append[Flatten[aPath03[[4+Range[12]]]],0]]]==0
+	Chop[Norm[aPath02-iPath02]]==0
 	,
 	True
 	,
-	TestID->"TestGenPath-20151101-HTT0R9"
+	TestID->"TestGenPath-20251102-H6L9U2"
 ]
-
-
 
 
 
 Test[
-	Chop[Norm[rbcComp@@Append[Flatten[aPath03[[8+Range[12]]]],0]]]==0
+	Chop[Norm[intPath02-iPath02]]==0
 	,
 	True
 	,
-	TestID->"TestGenPath-201XX101-HTT0R9"
+	TestID->"TestGenPath-20251102-H6L92"
 ]
+
+
+
+Test[
+	Chop[Norm[aPath02-intPath02]]==0
+	,
+	True
+	,
+	TestID->"TestGenPath-2025102-H6L9U2"
+]
+
+
+
+Test[
+	Chop[Norm[aPath03-iPath03]]==0
+	,
+	True
+	,
+	TestID->"TestGenPath-20351103-H6L9U2"
+]
+
+
+
+Test[
+	Chop[Norm[intPath03-iPath03]]==0
+	,
+	True
+	,
+	TestID->"TestGenPath-2035103-H6L9U2"
+]
+
+
+
+Test[
+	Chop[Norm[aPath03-intPath03]]==0
+	,
+	True
+	,
+	TestID->"TestGenPath-2031103-H6L9U2"
+]
+
+
+

@@ -17,7 +17,7 @@ TestSuite[
 		"TestRBCCompIterDRPF.mt",(*okay*)
 		"TestRBCCompApprox.mt",
 				"TestCondExpComposition.mt",
-		"TestEmpty.mt",
-		"TestRegimes.mt"
+		"TestEmpty.mt"(*,
+		"TestRegimes.mt"*)
 	}
 ]

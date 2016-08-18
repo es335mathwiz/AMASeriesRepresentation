@@ -465,7 +465,7 @@ With[{worstPaths=
 
 
 
-   
+ (*  
 evalBadPathErrDRREIntegrate[drFunc_Function,noEpsVec_?MatrixQ,distribSpec:{expctSpec:{{_Symbol,_}..},regimeTransProbFunc_:{}},eqnsFunc:(_Function|_CompiledFunction)]:=
 With[{funcName=Unique["fName"]},
 funcName[tryEps:{_?NumberQ..}]:=
@@ -473,12 +473,13 @@ funcName[tryEps:{_?NumberQ..}]:=
 		(*Print["ex:",theVal,Norm[theVal,Infinity]];*)Norm[Transpose[theVal],Infinity]];
 	With[{outerEVars=Table[Unique["eVs"],{getNumEpsVars[distribSpec]}]},
 	With[{maxArgs={#,0}&/@outerEVars,cons=And @@  ((-0.01<=#<=0.01)&/@ outerEVars)},
-	FindMaximum[{funcName[outerEVars],cons},maxArgs]]]]
+	FindMaximum[{funcName[outerEVars],cons},maxArgs]]]]*)
 evalBadPathErrDRREIntegrate[drFunc_Function,noEpsVec_?MatrixQ,distribSpec:{expctSpec:{{_Symbol,_}..},regimeTransProbFunc_:{}},eqnsFunc:(_Function|_CompiledFunction)]:=
 With[{funcName=Unique["fName"]},
 funcName[tryEps:{_?NumberQ..}]:=
 	With[{theVal=evalPathErrDRREIntegrate[drFunc,Join[noEpsVec,Transpose[{tryEps}]],distribSpec,eqnsFunc]},
-		(*Print["ex:",theVal,Norm[theVal,Infinity]];*)Norm[Transpose[theVal],Infinity]];
+		With[{theNorm=Norm[theVal,Infinity]},
+		(*Print["stillex:",{tryEps,theVal,Norm[theVal,Infinity],theNorm}];*)theNorm]];
 	With[{outerEVars=Table[Unique["eVs"],{getNumEpsVars[distribSpec]}]},
 	With[{maxArgs={#,0}&/@outerEVars,cons=And @@  ((-0.01<=#<=0.01)&/@ outerEVars)},
 	FindMaximum[{funcName[outerEVars],cons},maxArgs]]]]
@@ -489,7 +490,7 @@ drFunc_Function,noEpsVec_?MatrixQ,distribSpec:{expctSpec:{{_Symbol,_}..},regimeT
 With[{funcName=Unique["fName"]},
 funcName[tryEps:{_?NumberQ..}]:=
 With[{theVal=evalPathErrDRREIntegrate[drFunc,Join[noEpsVec,Transpose[{tryEps}]],distribSpec,eqnsFunc]},
-		(*Print["ex:",theVal,Norm[theVal,Infinity]];*)Norm[Transpose[theVal],Infinity]];
+		(*Print["otherex:",theVal,Norm[theVal,Infinity]];*)Norm[theVal,Infinity]];
 	With[{outerEVars=Table[Unique["eVs"],{getNumEpsVars[distribSpec]}]},
 	With[{maxArgs={#,0}&/@outerEVars,cons=And @@  ((-0.01<=#<=0.01)&/@ outerEVars)},
 	FindMaximum[{funcName[outerEVars],cons},maxArgs]]]]
@@ -517,7 +518,7 @@ With[{pathNow=iterateDRREIntegrate[drFunc,initVec,distribSpec,numPers],numX=Leng
 With[{firstArg=doFuncArg[pathNow,Identity[Reverse[initVec[[-Range[numEps]]]]],numX,0],
 	restArgs=(doFuncArg[pathNow,Table[{0},{numEps}],numX,#-2]&/@Range[3,numPers])},
 With[{first=Transpose[{eqnsFunc@@ Flatten[firstArg]}]},
-	With[{theRest=Transpose[{(eqnsFunc@@Flatten[#])}]&/@restArgs},
+	With[{theRest=Transpose[{(eqnsFunc@@Flatten[#])}]&/@restArgs},(*Print["pathErrs:",{pathNow,theRest,first}];*)
 		Prepend[theRest,first]
 ]]]]]/;
 And[numPers>1]

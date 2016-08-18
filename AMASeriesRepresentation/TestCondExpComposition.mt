@@ -14,12 +14,9 @@ Switch[$System,
 $ContextPath=DeleteCases[$ContextPath,"simpleRBCModel`"] 
 Print["after switch",$System];
 Get["prepBetter.m"];Get["betterRBC.m"];
-Print["inTestCondExpComposition.mt",$Path,Directory[],{linMod,X0Z0}//InputForm];
-what=fSum[linMod,{X0Z0}];
-hat=fSum[linMod,{X0Z0},Table[{0},{4}]]
-Save["whyPblm.mth",{linMod,X0Z0,what,hat}]
+
 Test[
-	ffs=fSum[linMod,{X0Z0},Table[{0},{4}]]
+	ffs=fSum[linMod,{X0Z0,1},Table[{0},{4}],1]
 	,
 	{{0.}, {0.}, {0.}, {0.}}
 	,
@@ -27,7 +24,7 @@ Test[
 ]
 
 Test[
-	ffs=fSum[linMod,{X0Z0,X0Z0},Table[{0},{4}]]
+	ffs=fSum[linMod,{X0Z0,2},Table[{0},{4}],2]
 	,
 	{{0.}, {0.}, {0.}, {0.}}
 	,
@@ -35,7 +32,7 @@ Test[
 ]
 
 Test[
-	ffs=fSum[linMod,{X0Z0,X0Z0,X0Z0},Table[{0},{4}]]
+	ffs=fSum[linMod,{X0Z0,3},Table[{0},{4}],3]
 	,
 	{{0.}, {0.}, {0.}, {0.}}
 	,
@@ -45,7 +42,7 @@ Test[
 
 
 Test[
-	ffs=fSum[linMod,{X0Z0,X0Z0,X0Z0,X0Z0},Table[{0},{4}]]
+	ffs=fSum[linMod,{X0Z0,4},Table[{0},{4}],4]
 	,
 	{{0.}, {0.}, {0.}, {0.}}
 	,

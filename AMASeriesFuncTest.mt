@@ -138,7 +138,7 @@ Test[
 	{nxtxz, nxtXZ} = 
  doIterREInterp[{genFRFunc}, linModBetter, {genX0Z0Funcs[linModBetter], 1}, 
   rbcEqnsFunctionalNextBetter, aGSpecBetter, 
-  theDistBetter]; fSum[linModBetter, {nxtXZ, 1}, anXBetter]
+  theDistBetter]; fSum[linModBetter, {nxtXZ, 1}, anXBetter,1]
 	,
 {{-0.010599205055989908}, {-0.0072866894576790065}, {0.28806275017355887}, {-0.00007492535901258494}}
 ,
@@ -154,7 +154,7 @@ Test[
    theDistBetterCnstrn];
    On[NIntegrate::izero];
    	On[NIntegrate::ncvb];
-   fSum[linModBetterCnstrn, {nxtXZ, 1}, anXBetterCnstrn]
+   fSum[linModBetterCnstrn, {nxtXZ, 1}, anXBetterCnstrn,1]
 	,
 	{{0.13327212609663572}, {0.03427033593413339}, {0.03427033593413339}, {0.}, 
 {-0.6314356203014647}, {-0.00007492535901258141}}

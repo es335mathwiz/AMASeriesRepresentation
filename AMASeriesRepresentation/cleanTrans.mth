@@ -1,0 +1,11 @@
+
+Get["pathSetup.mth"]
+Get["cleanUp`"]
+
+Get["cleanUpRBC.m"]
+ 	X0Z0=genX0Z0Funcs[linModCleanUp]
+
+
+theFunc=
+
+theFunc @@ anXtm1EpsZ

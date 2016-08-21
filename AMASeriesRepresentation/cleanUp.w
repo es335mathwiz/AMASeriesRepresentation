@@ -58,8 +58,20 @@ EndPackage[]
 
 
 @d linMod
-@{linMod:{theHMat_?MatrixQ,BB_?MatrixQ,phi_?MatrixQ,FF_?MatrixQ,
-psiEps_?MatrixQ,psiC_?MatrixQ,psiZ_?MatrixQ,psiZPreComp_?MatrixQ}@}
+@{linMod:{theHMat_?MatrixQ BB_?MatrixQ phi_?MatrixQ FF_?MatrixQ 
+psiEps_?MatrixQ psiC_?MatrixQ psiZ_?MatrixQ psiZPreComp_?MatrixQ} 
+@|
+boo
+linMod
+BB
+phi
+FF
+psiZ
+psiEps
+xxxxtheHMat
+xxxxpsiC
+psiZPreComp 
+@}
 
 @d XZFuncs
 @{XZFuncs:({_Function,_Integer})@}
@@ -196,7 +208,14 @@ Length[getPsiZ[linMod][[1]]]
 @d gencall@{@1[@2]@}
 
 
+\subsection{Identifiers}
+\label{sec:identifiers}
 
+@u
+\subsection{Macros}
+\label{sec:macros}
+
+@m
 
 
 

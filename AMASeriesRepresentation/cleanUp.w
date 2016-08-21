@@ -20,8 +20,8 @@
 
 @o cleanUp.m
 @{
-BeginPackage["AMASeriesRepresentation`"
-(*, {"JLink`","ProtectedSymbols`"}*)]
+BeginPackage["cleanUp`",
+ {"JLink`","ProtectedSymbols`"}]
 @<usage definitions@>
 Begin["`Private`"]
 @<package code@>
@@ -42,6 +42,12 @@ EndPackage[]
 
 @<getNumZUsage@>
 
+@<fSumCUsage@>
+
+@<fSumUsage@>
+
+@<genX0Z0FuncsUsage@>
+
 (*End Usage Definitions*)
 @}
 
@@ -51,6 +57,18 @@ EndPackage[]
 
 @<genLilXkZkFunc@>
 
+@<fSumC@>
+
+@<fSum@>
+
+@<genXtm1Vars@>
+
+@<genXtOfXtm1@>
+
+@<genXtp1OfXtm1@>
+
+@<genX0Z0Funcs@>
+
 @}
 
 \subsection{Argument Specifications}
@@ -58,18 +76,17 @@ EndPackage[]
 
 
 @d linMod
-@{linMod:{theHMat_?MatrixQ BB_?MatrixQ phi_?MatrixQ FF_?MatrixQ 
-psiEps_?MatrixQ psiC_?MatrixQ psiZ_?MatrixQ psiZPreComp_?MatrixQ} 
+@{linMod:{theHMat_?MatrixQ,BB_?MatrixQ,phi_?MatrixQ,FF_?MatrixQ, 
+psiEps_?MatrixQ,psiC_?MatrixQ,psiZ_?MatrixQ,psiZPreComp_?MatrixQ} 
 @|
-boo
 linMod
 BB
 phi
 FF
 psiZ
 psiEps
-xxxxtheHMat
-xxxxpsiC
+theHMat
+psiC
 psiZPreComp 
 @}
 
@@ -180,7 +197,122 @@ Function[xxxx,fullVec],{1->Flatten[Join[xtm1Vars,epsVars,zVars]]}]
 ]]]]]]
 @}
 
+\subsection{fSumC}
+\label{sec:fsumc}
+@d fSumCUsage
+@{
+fSumC::usage=
+"compiled function computing the sum of the Zs weighted by F"
+@}
 
+@d fSumC
+@{
+fSumC=Compile[{{phi,_Real,2},{FF,_Real,2},{psiZ,_Real,2},{zPath,_Real,3}},
+With[{numXVars=Length[psiZ]},
+With[{fPows=Drop[NestList[FF.#&,IdentityMatrix[numXVars],Length[zPath]],-1]},
+Apply[Plus,
+MapThread[Dot[#1,phi.psiZ.#2]&,{fPows , zPath}]]]]]
+
+@}
+
+\subsection{fSum}
+\label{sec:fsum}
+
+@d fSumUsage
+@{
+fSum::usage=
+"place holder fSum"
+@}
+
+@d fSum
+@{
+fSum[linMod:{theHMat_?MatrixQ,BB_?MatrixQ,phi_?MatrixQ,FF_?MatrixQ,psiEps_?MatrixQ,psiC_?MatrixQ,psiZ_?MatrixQ,psiZPreComp_?MatrixQ},
+	{},
+	xtGuess_?MatrixQ]:=
+ConstantArray[0,{Length[psiZ],1}]
+
+fSum[linMod:{theHMat_?MatrixQ,BB_?MatrixQ,phi_?MatrixQ,FF_?MatrixQ,psiEps_?MatrixQ,psiC_?MatrixQ,psiZ_?MatrixQ,psiZPreComp_?MatrixQ},
+	{XZFunc_Function,numSteps_Integer},xtGuess_?MatrixQ]:=
+With[{numXVars=Length[BB],numZVars=Length[psiZ[[1]]]},
+With[{xzRes=Apply[multiStepZ[{XZFunc,numSteps},numXVars,numZVars,numSteps], Flatten[xtGuess]]},
+fSumC[phi,FF,psiZ,xzRes]]]
+@}
+
+
+\subsection{genXtm1Vars}
+\label{sec:genxtm1vars}
+
+
+@d genXtm1Vars
+@{
+(*begin code for genXtm1Vars*)
+genXtm1Vars[numVars_Integer]:=
+Module[{},
+genXtm1Vars[numVars]=
+Table[
+makeProtectedSymbol["xxxtm1Var"<>ToString[ii]],{ii,numVars}]]/;And[numVars>=0]
+
+(*end code for genXtm1Vars*)
+@}
+
+
+
+
+\subsection{genXtOfXtm1}
+\label{sec:genxtofxtm1}
+
+
+
+@d genXtOfXtm1
+@{
+(*begin code for genXtOfXtm1*)
+genXtOfXtm1[linMod:{theHMat_?MatrixQ,BB_?MatrixQ,phi_?MatrixQ,FF_?MatrixQ,psiEps_?MatrixQ,psiC_?MatrixQ,psiZ_?MatrixQ,psiZPreComp_?MatrixQ},xtm1Vars_?MatrixQ,epsVars_?MatrixQ,zVars_?MatrixQ,
+	fCon_?MatrixQ]:=
+With[{xtVals=BB.xtm1Vars+
+Inverse[IdentityMatrix[Length[xtm1Vars]]-FF] . phi . psiC + phi . psiEps . epsVars+
+phi . psiZ . zVars +FF.fCon},xtVals]
+
+(*end code for genXtOfXtm1*)
+@}
+
+
+\subsection{genXtp1OfXt}
+\label{sec:genxtp1ofxt}
+
+
+
+@d genXtp1OfXtm1
+@{
+(*begin code for genXtp1OfXtm1*)
+
+genXtp1OfXtm1[linMod:{theHMat_?MatrixQ,BB_?MatrixQ,phi_?MatrixQ,FF_?MatrixQ,psiEps_?MatrixQ,psiC_?MatrixQ,psiZ_?MatrixQ,psiZPreComp_?MatrixQ},xtVals_?MatrixQ,
+	fCon_?MatrixQ]:=
+With[{xtp1Vals=BB.xtVals+Inverse[IdentityMatrix[Length[xtVals]]-FF] . phi . psiC+fCon},xtp1Vals]
+
+
+(*end code for genXtp1OfXtm1*)
+@}
+
+\subsection{genX0Z0Funcs}
+\label{sec:genx0z0funcs}
+
+
+@d genX0Z0FuncsUsage
+@{genX0Z0Funcs::usage=
+"place holder for genX0Z0Funcs"
+@}
+
+@d genX0Z0Funcs
+@{
+(*begin code for genX0Z0Funcs*)
+genX0Z0Funcs[linMod:{theHMat_?MatrixQ,BB_?MatrixQ,phi_?MatrixQ,FF_?MatrixQ,psiEps_?MatrixQ,psiC_?MatrixQ,psiZ_?MatrixQ,psiZPreComp_?MatrixQ}]:=
+With[{numXVars=Length[BB],numZVars=Length[psiZ[[1]]]},
+With[{xtm1Vars=genXtm1Vars[numXVars]},
+With[{compArgs=xtm1Vars},
+Apply[Function, {compArgs,Join[BB.Transpose[{xtm1Vars}]+
+Inverse[IdentityMatrix[Length[xtm1Vars]]-FF] . phi . psiC,ConstantArray[0,{numZVars,1}]]}]]]]
+(*end code for genX0Z0Funcs*)
+@}
 
 
 \subsection{Getters and Setters}
@@ -201,6 +333,20 @@ Length[getPsiZ[linMod][[1]]]
 
 \subsection{nuweb Macro Definitions}
 \label{sec:nuweb-macro-defin}
+
+
+@d xxxxxxUsage
+@{xxxxxx::usage=
+"place holder for xxxxxx"
+@}
+
+@d xxxxxx
+@{
+(*begin code for xxxxxx*)
+
+(*end code for xxxxxx*)
+@}
+
 
 
 

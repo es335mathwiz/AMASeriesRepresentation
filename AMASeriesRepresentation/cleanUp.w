@@ -20,7 +20,8 @@
 
 @o cleanUp.m
 @{
-BeginPackage["AMASeriesRepresentation`"(*, {"JLink`","ProtectedSymbols`"}*)]
+BeginPackage["AMASeriesRepresentation`"
+(*, {"JLink`","ProtectedSymbols`"}*)]
 @<usage definitions@>
 Begin["`Private`"]
 @<package code@>
@@ -41,19 +42,14 @@ EndPackage[]
 
 @<getNumZUsage@>
 
-
 (*End Usage Definitions*)
 @}
 
 @d package code
 @{
-
 @<getNumZ@>
 
 @<genLilXkZkFunc@>
-
-
-
 
 @}
 
@@ -68,13 +64,20 @@ psiEps_?MatrixQ,psiC_?MatrixQ,psiZ_?MatrixQ,psiZPreComp_?MatrixQ}@}
 @d XZFuncs
 @{XZFuncs:({_Function,_Integer})@}
 
-@d theZMats
+@d theZs
 @{theZs:{_?MatrixQ..}@}
 
 
 @d drvPairs
 @{drvPairs:{{{aa_Integer,bb_Integer}...},
 eqnFunc:(_Function|_CompiledFunction)}:{{},{}}@}
+
+@d xtGuess
+@{xtGuess_?MatrixQ@}
+
+@d fCon
+@{fCon_?MatrixQ@}
+
 \subsection{genLilXkZkFunc}
 \label{sec:genlilxkzkfunc}
 
@@ -82,21 +85,37 @@ eqnFunc:(_Function|_CompiledFunction)}:{{},{}}@}
 @d genLilXkZkFuncUsage
 @{
 genLilXkZkFunc::usage=
-"@<gencall@(genLilXkZkFunc@,@<linMod@>,@<XZFuncs@>@)@>"<>
-"generate a function that computes x and z given a guess for xt"
+"@<genLilXkZkFunc full call@>"<>
+"\ngenerate a function that computes x and z given a guess for xt\n"<>
+"@<genLilXkZkFunc fcon call@>"<>
+"\ngenerate a function that computes x z based on an assumed F sum\n"<>
+"@<genLilXkZkFunc theZs call@>"<>
+"\ngenerate a function that computes x and z given sequence of Zs\n"<>
+"@<genLilXkZkFunc noZs call@>"<>
+"\ngenerate a function that computes x for Zs = 0\n"
 @}
 
+@d genLilXkZkFunc full call
+@{@<gencall@(genLilXkZkFunc@,@<linMod@>,@<XZFuncs@>,@<xtGuess@>,@<drvPairs@>@)@>@}
+
+@d genLilXkZkFunc fcon call
+@{@<gencall@(genLilXkZkFunc@,@<linMod@>,@<fCon@>,@<drvPairs@>@)@>@}
+
+@d genLilXkZkFunc theZs call
+@{@<gencall@(genLilXkZkFunc@,@<linMod@>,@<theZs@>@)@>@}
+
+@d genLilXkZkFunc noZs call
+@{ @<gencall@(genLilXkZkFunc@,@<linMod@>,{}@)@>@}
 
 
 @d genLilXkZkFunc
 @{
-@<gencall@(genLilXkZkFunc@,@<linMod@>,@<XZFuncs@>@,@<fConZero@>@)@>:=
+@<genLilXkZkFunc noZs call@>:=
 @<fConZero@>
 @}
 
 @d fConZero
-@{
-With[{numZ=getNumZ[linMod]},
+@{With[{numZ=getNumZ[linMod]},
 With[{fCon=ConstantArray[0,{1,numZ,1}]},
 With[{theRes=genLilXkZkFunc[linMod,fCon]},theRes]]]
 @}
@@ -104,16 +123,12 @@ With[{theRes=genLilXkZkFunc[linMod,fCon]},theRes]]]
 
 @d genLilXkZkFunc
 @{
-@<gencall@(genLilXkZkFunc@,@<linMod@>,@<theZMats@>@,@<Z Matrices Given@>@)@>:=
+@< genLilXkZkFunc theZs call@>:=
 @<Z Matrices Given@>
 @}
 
-
-
 @d Z Matrices Given
-@{
-
-With[{fCon=fSumC[phi,FF,psiZ,theZs]},
+@{With[{fCon=fSumC[phi,FF,psiZ,theZs]},
 With[{theRes=genLilXkZkFunc[linMod,fCon]},
 theRes]]
 
@@ -121,54 +136,40 @@ theRes]]
 
 @d genLilXkZkFunc
 @{
-@<gencall@(genLilXkZkFunc@,@<linMod@>,@<XZFuncs@>@,@<XZ Functions Given@>@)@>:=
+@<genLilXkZkFunc full call@>:=
 @<XZ Functions Given@>
 @}
 
-
 @d XZ Functions Given
-@{
-
-genLilXkZkFunc[linMod:{theHMat_?MatrixQ,BB_?MatrixQ,phi_?MatrixQ,FF_?MatrixQ,psiEps_?MatrixQ,psiC_?MatrixQ,psiZ_?MatrixQ,psiZPreComp_?MatrixQ},
-	XZFuncs:({_Function,_Integer}),xtGuess_?MatrixQ,drvPairs:{{{aa_Integer,bb_Integer}...},eqnFunc:(_Function|_CompiledFunction)}:{{},{}}]:=
-	With[{fCon=fSum[linMod,XZFuncs,xtGuess,2]},
-		With[{theRes=genLilXkZkFunc[linMod,fCon,drvPairs]},
+@{With[{fCon=fSum[linMod,XZFuncs,xtGuess,2]},
+With[{theRes=genLilXkZkFunc[linMod,fCon,drvPairs]},
 theRes]]
-
-
 @}
 
 @d genLilXkZkFunc
 @{
-@<gencall@(genLilXkZkFunc@,@<linMod@>,@<XZFuncs@>@,@<apply formula F...@>@)@>:=
+@<genLilXkZkFunc fcon call@>:=
 @<apply formula F...@>
 @}
 
 @d apply formula F contribution given
-@{
-genLilXkZkFunc[linMod:{theHMat_?MatrixQ,BB_?MatrixQ,phi_?MatrixQ,FF_?MatrixQ,psiEps_?MatrixQ,psiC_?MatrixQ,psiZ_?MatrixQ,psiZPreComp_?MatrixQ},
-	fCon_?MatrixQ,drvPairs:{({}|{{aa_Integer,bb_Integer}...}),eqnFunc:({}|_Function|_CompiledFunction)}:{{},{}}]:=
-With[{numXVars=Length[BB],numEpsVars=Length[psiEps[[1]]],numZVars=Length[psiZ[[1]]]},
-With[{xtm1Vars=Transpose[{genXtm1Vars[numXVars]}],epsVars=Transpose[{genEpsVars[numEpsVars]}],
+@{With[{numXVars=Length[BB],numEpsVars=Length[psiEps[[1]]],
+numZVars=Length[psiZ[[1]]]},
+With[{xtm1Vars=Transpose[{genXtm1Vars[numXVars]}],
+epsVars=Transpose[{genEpsVars[numEpsVars]}],
 zVars=Transpose[{Reverse[Flatten[genZVars[0,numZVars]]]/.name_[t]->name}]},
 With[{xtVals=genXtOfXtm1[linMod,xtm1Vars,epsVars,zVars,fCon]},
 With[{xtp1Vals=genXtp1OfXt[linMod,xtVals,fCon]},
 With[{fullVec=Join[xtm1Vars,xtVals,xtp1Vals,epsVars]},
-With[{(*theDrvs=doImplicitDrv[linMod,fullVec,zVars,xtm1Vars,epsVars,drvPairs]*)},(*Print["theDrvs",theDrvs];*)
+With[{(*theDrvs=doImplicitDrv[linMod,fullVec,
+zVars,xtm1Vars,epsVars,drvPairs]*)},(*Print["theDrvs",theDrvs];*)
 ReplacePart[
 Function[xxxx,fullVec],{1->Flatten[Join[xtm1Vars,epsVars,zVars]]}]
 ]]]]]]
-
 @}
 
 
 
-@d need to absorb
-@{
-(*
-
-*)
-@}
 
 \subsection{Getters and Setters}
 \label{sec:getters-setters}
@@ -182,7 +183,7 @@ getNumZ::usage=
 
 @d getNumZ
 @{
-@<gencall@(getNumZ@,@<linMod@>@,@)@>:=
+@<gencall@(getNumZ@,@<linMod@>@)@>:=
 Length[getPsiZ[linMod][[1]]]
 @}
 
@@ -191,12 +192,6 @@ Length[getPsiZ[linMod][[1]]]
 
 
 
-
-
-
-
-@d genusage@{@1::usage=
-"@1[@2]"<>@}
 
 @d gencall@{@1[@2]@}
 

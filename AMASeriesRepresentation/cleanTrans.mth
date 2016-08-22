@@ -5,7 +5,41 @@ Get["cleanUp`"]
 Get["cleanUpRBC.m"]
  	X0Z0=genX0Z0Funcs[linModCleanUp]
 
+the00=genLilXkZkFunc[linModCleanUp, {}]
+the00 @@ anXEpsZsFlatCleanUp
 
-theFunc=
 
-theFunc @@ anXtm1EpsZ
+theFunc=genLilXkZkFunc[linModCleanUp, {X0Z0,2},X0Z0@@anXEpsFlatCleanUp]
+theFunc @@ anXEpsZsFlatCleanUp
+
+ssVec=Join[cleanUpRBC`Private`ssSolnVecRE,cleanUpRBC`Private`ssSolnVecRE,cleanUpRBC`Private`ssSolnVecRE]//N;
+		   checkLinMod[linModCleanUp,anXCleanUp,{{0.01}}]
+checkMod[{genFRFunc},linModCleanUp,aGSpecCleanUp,theDistCleanUp,anXCleanUp,{{0.01}},ssVec,rbcEqnsFunctionalNextCleanUp]
+
+
+X0Z0=genX0Z0Funcs[linModCleanUp];
+theLilFunc=genLilXkZkFunc[linModCleanUp, {X0Z0,2},anXEpsCleanUp];
+theFR=genFRFunc[{4,1,4},theLilFunc,rbcEqnsFunctionalNextCleanUp];
+theFR@@anXEpsFlatCleanUp
+
+theFP=genFPFunc[{genFRFunc},linModCleanUp,{X0Z0,2},rbcEqnsFunctionalNextCleanUp];
+
+theFP@@anXEpsFlatCleanUp
+
+genInterpData[theFP,aGSpecCleanUp]
+
+
+
+theFuncsNow=makeInterpFunc[genFPFunc[{genFRFunc},linModCleanUp,{X0Z0,2},rbcEqnsFunctionalNextCleanUp],aGSpecCleanUp]
+
+theFuncsNow @@ anXEpsFlatCleanUp
+
+
+{xzFunc,iterXZFuncsPF}=doIterREInterp[{genFRFunc},linModCleanUp,{X0Z0,2},rbcEqnsFunctionalNextCleanUp,aGSpecCleanUp,thePFDistCleanUp]
+
+
+xzFunc @@ anXEpsFlatCleanUp
+iterXZFuncsPF @@ anXFlatCleanUp
+
+
+				 anXZFuncPF=genXZFuncRE[{4,1,4},xzFunc,thePFDistCleanUp];

@@ -37,22 +37,100 @@ EndPackage[]
 @d usage definitions
 @{
 (*Begin Usage Definitions*)
+PerfectForesight::usage="degenerate distribution implementing perfect foresight"
 
-@<genLilXkZkFuncUsage@>
+@<getRegimeTransProbFuncTypeUsage@>
+@<myNExpectationUsage@>
+@<getDistribsUsage@>
+@<genXZFuncREUsage@>
+@<genIntVarsUsage@>
+@<genXZREInterpFuncUsage@>
+
+@<genX0Z0FuncsUsage@>
+@<checkModUsage@>
+@<genFRFuncUsage@>
+@<genFPFuncUsage@>
+@<myFixedPointUsage@>
+@<getHUsage@>
+@<getBUsage@>
+@<getFUsage@>
+@<getGridPtTripsUsage@>
+
+@<getNumVarsUsage@>
+
+@<makeInterpFuncUsage@>
+@<nestIterREInterpUsage@>
+@<genInterpDataUsage@>
+@<oneDimGridPtsUsage@>
+@<gridPtsUsage@>
+@<fillInUsage@>
+@<fillInSymbUsage@>
+@<doIterREInterpUsage@> 
+
+
+@<getPhiUsage@>
+
+@<getPsiZUsage@>
+
+@<getPsiCUsage@>
+
+@<getPsiEpsUsage@>
 
 @<getNumZUsage@>
 
+@<getNumZUsage@>
+
+@<getNumZUsage@>
+
+@<getNumZUsage@>
+
+@<genZVarsUsage@>
+
+@<genEpsVarsUsage@>
+
+
+@<multiStepUsage@>
+@<multiStepZUsage@>
+@<multiStepXUsage@>
+@<checkLinModUsage@>
+@<genLilXkZkFuncUsage@>
 @<fSumCUsage@>
-
 @<fSumUsage@>
+@<getNumEpsVarsUsage@>
 
-@<genX0Z0FuncsUsage@>
 
-(*End Usage Definitions*)
 @}
 
 @d package code
 @{
+
+@<getRegimeTransProbFuncType@>
+
+
+@<getNumEpsVars@>
+@<myNExpectation@>
+@<getDistribs@>
+
+@<getNumVars@>
+
+
+@<getGridPtTrips@>
+
+
+@<getH@>
+
+@<getB@>
+
+@<getF@>
+
+@<getPhi@>
+
+@<getPsiZ@>
+
+@<getPsiC@>
+
+@<getPsiEps@>
+
 @<getNumZ@>
 
 @<genLilXkZkFunc@>
@@ -65,12 +143,41 @@ EndPackage[]
 
 @<genXtOfXtm1@>
 
-@<genXtp1OfXtm1@>
+@<genXtp1OfXt@>
 
 @<genX0Z0Funcs@>
 
-@}
+@<genZVars@>
 
+@<genEpsVars@>
+
+@<multiStep@>
+@<multiStepZ@>
+@<multiStepX@>
+
+
+@<checkLinMod@>
+
+@<checkMod@>
+@<genFRFunc@>
+@<genFPFunc@>
+@<myFixedPoint@>
+
+@<makeInterpFunc@>
+@<genInterpData@>
+@<gridPts@>
+@<oneDimGridPts@>
+@<fillIn@>
+@<fillInSymb@>
+@<doIterREInterp@>
+@<nestIterREInterp@>
+
+
+@<genXZREInterpFunc@>
+@<genXZFuncRE@>
+@<genIntVars@>
+
+@}
 \subsection{Argument Specifications}
 \label{sec:argum-spec}
 
@@ -98,8 +205,8 @@ psiZPreComp
 
 
 @d drvPairs
-@{drvPairs:{{{aa_Integer,bb_Integer}...},
-eqnFunc:(_Function|_CompiledFunction)}:{{},{}}@}
+@{drvPairs:({{{aa_Integer,bb_Integer}...},
+eqnFunc:(_Function|_CompiledFunction)}|{{},{}}):{{},{}}@}
 
 @d xtGuess
 @{xtGuess_?MatrixQ@}
@@ -170,7 +277,7 @@ theRes]]
 @}
 
 @d XZ Functions Given
-@{With[{fCon=fSum[linMod,XZFuncs,xtGuess,2]},
+@{With[{fCon=fSum[linMod,XZFuncs,xtGuess]},
 With[{theRes=genLilXkZkFunc[linMod,fCon,drvPairs]},
 theRes]]
 @}
@@ -238,6 +345,62 @@ With[{xzRes=Apply[multiStepZ[{XZFunc,numSteps},numXVars,numZVars,numSteps], Flat
 fSumC[phi,FF,psiZ,xzRes]]]
 @}
 
+\subsection{genZVars}
+\label{sec:genzvars}
+
+
+@d genZVarsUsage
+@{genZVars::usage=
+"place holder for genZVars"
+@}
+
+@d genZVars
+@{
+(*begin code for genZVars*)
+genZVars[horizons_Integer,numConstr_Integer]:=
+genZVars[horizons,numConstr,0]
+	
+genZVars[horizons_Integer,numConstr_Integer,offset_Integer]:=
+Module[{},
+genZVars[horizons,numConstr,offset]=
+Table[
+{makeProtectedSymbol["zzz$"<>ToString[forTime]<>"$"<>ToString[ii]][ProtectedSymbols`t]},
+{forTime,0-offset,horizons},{ii,numConstr,1,-1}]]/;offset<=0
+
+
+genZVars[numConstr_Integer]:=
+Reverse[Flatten[genZVars[0,numConstr]]](*
+Module[{},
+genZVars[numConstr]=
+Table[
+makeProtectedSymbol["zzzVar"<>ToString[ii]],{ii,numConstr}]]*)/;And[numConstr>=0]
+
+(*end code for genZVars*)
+@}
+
+
+\subsection{genEpsVars}
+\label{sec:genepsvars}
+
+
+@d genEpsVarsUsage
+@{
+genEpsVars::usage=
+"placehoder for usage"
+@}
+
+@d genEpsVars
+@{
+(*begin code for genXtm1Vars*)
+genEpsVars[numShocks_Integer]:=
+Module[{},
+genEpsVars[numShocks]=
+Table[
+makeProtectedSymbol["epsVar"<>ToString[ii]],{ii,numShocks}]]/;And[numShocks>=0]
+(*end code for genXtm1Vars*)
+@}
+
+
 
 \subsection{genXtm1Vars}
 \label{sec:genxtm1vars}
@@ -281,16 +444,16 @@ phi . psiZ . zVars +FF.fCon},xtVals]
 
 
 
-@d genXtp1OfXtm1
+@d genXtp1OfXt
 @{
-(*begin code for genXtp1OfXtm1*)
+(*begin code for genXtp1OfXt*)
 
-genXtp1OfXtm1[linMod:{theHMat_?MatrixQ,BB_?MatrixQ,phi_?MatrixQ,FF_?MatrixQ,psiEps_?MatrixQ,psiC_?MatrixQ,psiZ_?MatrixQ,psiZPreComp_?MatrixQ},xtVals_?MatrixQ,
+genXtp1OfXt[linMod:{theHMat_?MatrixQ,BB_?MatrixQ,phi_?MatrixQ,FF_?MatrixQ,psiEps_?MatrixQ,psiC_?MatrixQ,psiZ_?MatrixQ,psiZPreComp_?MatrixQ},xtVals_?MatrixQ,
 	fCon_?MatrixQ]:=
 With[{xtp1Vals=BB.xtVals+Inverse[IdentityMatrix[Length[xtVals]]-FF] . phi . psiC+fCon},xtp1Vals]
 
 
-(*end code for genXtp1OfXtm1*)
+(*end code for genXtp1OfXt*)
 @}
 
 \subsection{genX0Z0Funcs}
@@ -315,8 +478,723 @@ Inverse[IdentityMatrix[Length[xtm1Vars]]-FF] . phi . psiC,ConstantArray[0,{numZV
 @}
 
 
+\subsection{multiStep Functions}
+\label{sec:multistep-functions}
+
+@d multiStepUsage
+@{multiStep::usage=
+"place holder for multiStep"
+@}
+
+@d multiStep
+@{
+(*begin code for multiStep*)
+
+multiStep[{XZfunc_Function,numSteps_Integer},numX_Integer,valRange:{_Integer..},numTerms_Integer]:=
+With[{funcArgs=XZfunc[[1]]},
+With[{xtFunc01=
+ReplacePart[
+Function[xxxxx,
+	Flatten[(Apply[XZfunc, xxxxx])[[Range[numX]]]]],{1->funcArgs}]},
+With[{theFunc=
+	ReplacePart[
+	Function[xxxxx,
+ With[{theXVals=NestList[Apply[xtFunc01, Flatten[#]]&,xxxxx,numTerms-1]},(*Print["multiStep:theXVals=",{theXVals,Map[((Apply[XZfunc,Flatten[#]])[[valRange]] )& , theXVals]}];*)
+	  Map[((Apply[XZfunc,Flatten[#]])[[valRange]] )&, theXVals]]],1->funcArgs]},
+With[{xxxxxPos={{2,1,1,2,1,1,1,2,1,1,2},{2,1,1,2,2}}},
+ReplacePart[
+theFunc,
+	  {xxxxxPos->funcArgs}]]]]]/;numSteps>0
+
+
+(*end code for multiStep*)
+@}
+
+@d multiStepZUsage
+@{multiStepZ::usage=
+"place holder for multiStepZ"
+@}
+
+@d multiStepZ
+@{
+(*begin code for multiStepZ*)
+multiStepZ[{XZfunc_Function,numSteps_Integer},numX_Integer,numZ_Integer,numTerms_Integer]:=
+multiStep[{XZfunc,numSteps},numX,numX+Range[numZ],numTerms]
+
+(*end code for multiStepZ*)
+@}
+
+@d multiStepXUsage
+@{multiStepX::usage=
+"place holder for multiStepX"
+@}
+
+@d multiStepX
+@{
+(*begin code for multiStepX*)
+multiStepX[{XZfunc_Function,numSteps_Integer},numX_Integer,numTerms_Integer]:=
+multiStep[{XZfunc,numSteps},numX,Range[numX],numTerms]
+
+(*end code for multiStepX*)
+@}
+
+\subsection{checkLinMod}
+\label{sec:checklinmod}
+
+
+@d checkLinModUsage
+@{checkLinMod::usage=
+"place holder for checkLinMod"
+@}
+
+@d checkLinMod
+@{
+(*begin code for checkLinMod*)
+
+checkLinMod[linMod:{theHMat_?MatrixQ,BB_?MatrixQ,phi_?MatrixQ,FF_?MatrixQ,psiEps_?MatrixQ,psiC_?MatrixQ,psiZ_?MatrixQ,psiZPreComp_?MatrixQ},
+anX_?MatrixQ,anEps_?MatrixQ,numRegimes_Integer:0]:=
+With[{X0Z0=genX0Z0Funcs[linMod],numZ=Length[psiZ[[1]]]},
+With[{lilxz=genLilXkZkFunc[linMod, {X0Z0,2}, Join[anX,anEps]]},
+	{Eigenvalues[BB]//Abs,Eigenvalues[FF]//Abs,Apply[X0Z0,Flatten[anX]],Apply[lilxz,Flatten[Join[anX,anEps,Table[{0},{numZ}]]]]}]]
+
+
+(*end code for checkLinMod*)
+@}
+
+\subsection{checkMod}
+\label{sec:checkmod}
+
+
+@d checkModUsage
+@{checkMod::usage=
+"place holder for checkMod"
+@}
+
+@d checkMod
+@{
+(*begin code for checkMod*)
+
+
+
+checkMod[theSolver:(({genFRFunc,opts:OptionsPattern[]}|{genNSFunc,opts:OptionsPattern[]}|{specialSolver,opts:OptionsPattern[]})),linMod:{theHMat_?MatrixQ,BB_?MatrixQ,phi_?MatrixQ,FF_?MatrixQ,psiEps_?MatrixQ,psiC_?MatrixQ,psiZ_?MatrixQ,psiZPreComp_?MatrixQ},
+gSpec:{toIgnore:{_Integer...},iOrd_Integer,{{_Integer,_?NumberQ,_?NumberQ}..},numRegimes_:0},
+distribSpec:{expctSpec:{{_Symbol,_}..},regimeTransProbFunc_:{}},anX_?MatrixQ,anEps_?MatrixQ,ss_?MatrixQ,
+eqnsFunc:(_Function|_CompiledFunction)]:=
+With[{X0Z0=genX0Z0Funcs[linMod],numX=Length[BB],numEps=Length[psiEps[[1]]],numZ=Length[psiZ[[1]]]},
+With[{lilxz=
+genLilXkZkFunc[linMod, {X0Z0,1}, Join[anX,anEps]]},
+With[{xzFuncNow=theSolver[[1]][{numX,numEps,numZ},lilxz,eqnsFunc,Method->"JenkinsTraub"]},
+With[{fp=genFPFunc[theSolver,linMod,{X0Z0,2},eqnsFunc]},
+{Apply[lilxz,Flatten[Join[anX,anEps,Table[0,{numZ}]]]],
+Apply[xzFuncNow,Flatten[Join[anX,anEps]]],
+Apply[fp,Flatten[Join[anX,anEps]]],
+Apply[eqnsFunc,Flatten[Join[ss,{{0}}]]]
+}]]]]
+
+
+
+(*end code for checkMod*)
+@}
+
+\subsection{genFRFunc}
+\label{sec:genfrfunc}
+
+
+@d genFRFuncUsage
+@{genFRFunc::usage=
+"place holder for genFRFunc"
+@}
+
+@d genFRFunc
+@{
+
+(*begin code for genFRFunc*)
+ 
+genFRFunc[{numX_Integer,numEps_Integer,numZ_Integer},
+xkFunc:(_Function|_CompiledFunction),eqnsFunc:(_Function|_CompiledFunction),opts:OptionsPattern[]]:=
+With[{funcArgs=Table[Unique["theFRFuncArgs"],{numX+numEps}],
+zArgs=Table[Unique["theFRZArgs"],{numZ}]},
+With[{zArgsInit=Map[{#,0}&,zArgs],funcName=Unique["fName"]},
+funcName[funcArgsNot:{_?NumberQ..}]:=
+Module[{theVars=Join[funcArgsNot]},(*Print["genFRFunc func",theVars,
+Flatten[Apply[xkFunc,theVars]]];*)
+Apply[eqnsFunc,(Flatten[Apply[xkFunc,theVars]])]];
+ReplacePart[
+Function[xxxx,With[{zVals=zArgs/.FindRoot[funcName[Join[funcArgs,zArgs]],zArgsInit]},
+Join[(Apply[xkFunc,Join[funcArgs,zVals]])[[numX+Range[numX]]],
+Transpose[{zVals}]]]],
+1->funcArgs]]]
+(* input   [function (xt,eps,zt)->(xtm1,xt,xtp1,eps), function (xtm1,xt,xtp1,eps)->me]*)
+(* output   [function  (xt,eps) ->(xt,zt)] *)
+ 
+
+(*end code for genFRFunc*)
+@}
+
+\subsection{genFPFunc}
+\label{sec:genfpfunc}
+
+
+@d genFPFuncUsage
+@{genFPFunc::usage=
+"place holder for genFPFunc"
+@}
+
+@d genFPFunc
+@{
+(*begin code for genFPFunc*)
+	
+fixedPointLimit=30;
+genFPFunc[theSolver:(({genFRFunc,opts:OptionsPattern[]}|{genNSFunc,opts:OptionsPattern[]}|{specialSolver,opts:OptionsPattern[]})),
+	linMod:{theHMat_?MatrixQ,BB_?MatrixQ,phi_?MatrixQ,FF_?MatrixQ,psiEps_?MatrixQ,psiC_?MatrixQ,psiZ_?MatrixQ,psiZPreComp_?MatrixQ},
+XZFuncs:({_Function,_Integer}),eqnsFunc:(_Function|_CompiledFunction)]:=
+With[{numX=Length[BB],numEps=Length[psiEps[[1]]],numZ=Length[psiZ[[1]]]},
+With[{funcArgs=Table[Unique["theFPFuncArgs"],{numX+numEps}]},
+ReplacePart[
+Function[xxxx,Sow[
+myFixedPoint[With[{
+	xzFuncNow=theSolver[[1]][{numX,numEps,numZ},genLilXkZkFunc[linMod,XZFuncs,#[[Range[numX]]]],eqnsFunc,{opts}]
+},(*Print["infp:",Apply[XZFuncs[[1]],funcArgs]];*)
+Apply[xzFuncNow,funcArgs]]&,(Apply[XZFuncs[[1]],funcArgs])[[Range[numX]]],fixedPointLimit]]],
+1->funcArgs]]]
+(* input   [linMod,XZ, xguess,function (xt,eps,zt)->(xtm1,xt,xtp1,eps), function (xtm1,xt,xtp1,eps)->me]*)
+(* output   [function  (xt,eps) ->(xt,zt)] *)
+
+
+(*end code for genFPFunc*)
+@}
+
+\subsection{myFixedPoint}
+\label{sec:myfixedpoint}
+
+@d myFixedPointUsage
+@{myFixedPoint::usage=
+"place holder for myFixedPoint"
+@}
+
+@d myFixedPoint
+@{
+(*begin code for myFixedPoint*)
+
+myFixedPoint[firstArg_,secondArg_,thirdArg_]:=
+Module[{},
+FixedPoint[firstArg,secondArg,thirdArg]]
+	
+
+(*end code for myFixedPoint*)
+@}
+
+
+\subsection{makeInterpFunc}
+\label{sec:makeinterpfunc}
+
+
+
+
+@d makeInterpFuncUsage
+@{makeInterpFunc::usage=
+"place holder for makeInterpFunc"
+@}
+
+@d makeInterpFunc
+@{
+(*begin code for makeInterpFunc*)
+
+makeInterpFunc[aVecFunc:(_Function|_CompiledFunction),gSpec:{toIgnore:{_Integer...},iOrd_Integer,{{_Integer,_?NumberQ,_?NumberQ}..},numRegimes_:0}]:=
+With[{interpData=genInterpData[aVecFunc,gSpec],numArgs=getNumVars[gSpec]},
+	With[{numFuncs=Length[interpData[[1,2]]],funcArgs=Table[Unique["fArgs"],{numArgs}]},
+	With[{longFuncArgs=fillInSymb[{{},toIgnore,funcArgs}]},
+		With[{
+		interpFuncList=
+Map[Function[funcIdx,Interpolation[Map[{#[[1]], #[[2, funcIdx, 1]]} & , 
+		interpData],InterpolationOrder -> iOrd]],Range[numFuncs]]},
+		With[{applied=Transpose[{Through[Apply[interpFuncList,funcArgs]]}]},
+	(*	Print[	Function[xxxxxxx, Transpose[{Through[Apply[interpFuncList,yyyyyyy]]}]]//InputForm];*)
+	ReplacePart[
+	Function[xxxxxxx, applied],
+		{1->longFuncArgs}]
+	]
+]]]]
+
+
+
+
+(*end code for makeInterpFunc*)
+@}
+
+
+\subsection{genInterpData}
+\label{sec:geninterpdata}
+
+
+
+@d genInterpDataUsage
+@{genInterpData::usage=
+"place holder for genInterpData"
+@}
+
+@d genInterpData
+@{
+(*begin code for genInterpData*)
+
+ 
+genInterpData[aVecFunc:(_Function|P_CompiledFunction),gSpec:{toIgnore:{_Integer...},iOrd_Integer,{{_Integer,_?NumberQ,_?NumberQ}..},numRegimes_:0}]:=
+With[{thePts=gridPts[getGridPtTrips[gSpec],numRegimes]},
+With[{filledPts=ParallelMap[fillIn[{{},toIgnore,#}]&,thePts]},
+With[{theVals=ParallelMap[(Apply[aVecFunc,#])&,filledPts]},
+With[{interpData=Transpose[{thePts,theVals}]},
+interpData]]]]
+
+
+
+
+
+(*end code for genInterpData*)
+@}
+
+
+\subsection{gridPts}
+\label{sec:gridpts}
+
+
+
+@d gridPtsUsage
+@{gridPts::usage=
+"place holder for gridPts"
+@}
+
+@d gridPts
+@{
+(*begin code for gridPts*)
+ 
+gridPts[rngs:{{_Integer,_?NumberQ,_?NumberQ}..},numRegimes_:0]:=
+With[{funcForPts=(Function[xx,oneDimGridPts[xx[[1]],xx[[{2,3}]]]][#]) &},
+With[{oneDimPts=Map[funcForPts,rngs]},
+	With[{maybeRegimes=If[numRegimes==0,oneDimPts,
+		Prepend[Append[oneDimPts,Range[0,numRegimes-1]],Range[0,numRegimes-1]]]},
+With[{theOuter=Outer[List,Apply[Sequence,#]]&[maybeRegimes]},
+Flatten[theOuter,Depth[theOuter]-3]]]]]
+
+
+
+(*end code for gridPts*)
+@}
+
+
+\subsection{oneDimGridPts}
+\label{sec:onedimgridpts}
+
+
+@d oneDimGridPtsUsage
+@{oneDimGridPts::usage=
+"place holder for oneDimGridPts"
+@}
+
+@d oneDimGridPts
+@{
+(*begin code for oneDimGridPts*)
+
+oneDimGridPts[iPts_Integer,{xLow_?NumberQ,xHigh_?NumberQ}]:=
+If[iPts==0,{{(xLow+xHigh)2}},
+Table[ii,{ii,xLow,xHigh,N[xHigh-xLow]/iPts}]]/;iPts>=0
+
+
+(*end code for oneDimGridPts*)
+@}
+
+
+\subsection{fillIn}
+\label{sec:fillin}
+
+
+
+@d fillInUsage
+@{fillIn::usage=
+"place holder for fillIn"
+@}
+
+@d fillIn
+@{
+(*begin code for fillIn*)
+
+fillIn[args___]:=Print["wrong args for fillIn",{args}];
+fillIn[{theRes:{_?NumberQ...},toIgnore:{_Integer...},shortVec:{_?NumberQ...}}]:=
+Module[{},
+If[toIgnore=={}==shortVec,theRes,
+	If[MemberQ[toIgnore,Length[theRes]+1],fillIn[{Append[theRes,1],Drop[toIgnore,1],shortVec}],
+		fillIn[{Append[theRes,shortVec[[1]]],toIgnore,Drop[shortVec,1]}]]]]/;OrderedQ[toIgnore]
+
+
+(*end code for fillIn*)
+@}
+
+\subsection{fillInSymb}
+\label{sec:fillinsymb}
+
+
+
+@d fillInSymbUsage
+@{fillInSymb::usage=
+"place holder for fillInSymb"
+@}
+
+@d fillInSymb
+@{
+(*begin code for fillInSymb*)
+
+fillInSymb[{theRes:{___},toIgnore:{_Integer...},shortVec:{___}}]:=
+Module[{},
+If[toIgnore=={}==shortVec,theRes,
+	If[MemberQ[toIgnore,Length[theRes]+1],fillInSymb[{Append[theRes,Unique["ig"]],Drop[toIgnore,1],shortVec}],
+		fillInSymb[{Append[theRes,shortVec[[1]]],toIgnore,Drop[shortVec,1]}]]]]/;OrderedQ[toIgnore]
+
+fillInSymb[{theRes:{___},toIgnore:{_Integer...},shortVec:{___}}]:=
+fillInSymb[{theRes,Sort[toIgnore],shortVec}]
+
+fillIn[{theRes:{_?NumberQ...},toIgnore:{_Integer...},shortVec:{_?NumberQ...}}]:=
+fillIn[{theRes,Sort[toIgnore],shortVec}]
+
+
+(*end code for fillInSymb*)
+@}
+
+
+\subsection{doIterREInterp}
+\label{sec:doiterreinterp}
+
+
+
+@d doIterREInterpUsage
+@{doIterREInterp::usage=
+"place holder for doIterREInterp"
+@}
+
+@d doIterREInterp
+@{
+(*begin code for doIterREInterp*)
+doIterREInterp[theSolver:(({genFRFunc,opts:OptionsPattern[]}|{genNSFunc,opts:OptionsPattern[]}|{specialSolver,opts:OptionsPattern[]})),
+	linMod:{theHMat_?MatrixQ,BB_?MatrixQ,phi_?MatrixQ,FF_?MatrixQ,psiEps_?MatrixQ,psiC_?MatrixQ,psiZ_?MatrixQ,psiZPreComp_?MatrixQ},
+	XZFuncsNow:{(_Function|_InterpolatingFunction|_CompiledFunction),_Integer},
+eqnsFunc:(_Function|_CompiledFunction),gSpec:{toIgnore:{_Integer...},iOrd_Integer,{{_Integer,_?NumberQ,_?NumberQ}..},numRegimes_:0},distribSpec:{expctSpec:{{_Symbol,_}..},regimeTransProbFunc_:{}}]:=
+With[{numX=Length[BB],numEps=Length[psiEps[[1]]],numZ=Length[psiZ[[1]]]},
+With[{theFuncs=makeInterpFunc[genFPFunc[theSolver,linMod,XZFuncsNow,eqnsFunc],gSpec]},
+{theFuncs,genXZREInterpFunc[{numX,numEps,numZ},theFuncs,gSpec,distribSpec]}]]
+
+
+
+
+(*end code for doIterREInterp*)
+@}
+
+\subsection{nestIterREInterp}
+\label{sec:nestiterreinterp}
+
+
+@d nestIterREInterpUsage
+@{nestIterREInterp::usage=
+"place holder for nestIterREInterp"
+@}
+
+@d nestIterREInterp
+@{
+(*begin code for nestIterREInterp*)
+
+
+nestIterREInterp[theSolver:(({genFRFunc,opts:OptionsPattern[]}|{genNSFunc,opts:OptionsPattern[]}|{specialSolver,opts:OptionsPattern[]})),linMod:{theHMat_?MatrixQ,BB_?MatrixQ,phi_?MatrixQ,FF_?MatrixQ,psiEps_?MatrixQ,psiC_?MatrixQ,psiZ_?MatrixQ,psiZPreComp_?MatrixQ},
+{XZFuncNow:(_Function|_InterpolatingFunction|_CompiledFunction),numTerms_Integer},eqnsFunc:(_Function|_CompiledFunction),
+gSpec:{toIgnore:{_Integer...},iOrd_Integer,{{_Integer,_?NumberQ,_?NumberQ}..},numRegimes_:0},
+distribSpec:{expctSpec:{{_Symbol,_}..},regimeTransProbFunc_:{}},numIters_Integer]:=
+NestList[doIterREInterp[theSolver,linMod,{#[[2]],numTerms},eqnsFunc,gSpec,distribSpec]&,{ig,XZFuncNow},numIters]
+
+
+
+
+(*end code for nestIterREInterp*)
+@}
+
+\subsection{genXZREInterpFunc}
+\label{sec:genxzreinterpfunc}
+
+
+@d genXZREInterpFuncUsage
+@{genXZREInterpFunc::usage=
+"place holder for genXZREInterpFunc"
+@}
+
+@d genXZREInterpFunc
+@{
+(*begin code for genXZREInterpFunc*)
+ 
+genXZREInterpFunc[probDims:{numX_Integer,numEps_Integer,numZ_Integer},
+aLilXkZkFunc_Function,gSpec:{toIgnore:{_Integer...},iOrd_Integer,{{_Integer,_?NumberQ,_?NumberQ}..},numRegimes_:0},distribSpec:{expctSpec:{{_Symbol,_}..},regimeTransProbFunc_:{}}]:=
+With[{theFuncNow=genXZFuncRE[{numX,numEps,numZ},aLilXkZkFunc,distribSpec]},
+makeInterpFunc[theFuncNow,{toIgnore,gSpec[[2]],Drop[getGridPtTrips[gSpec],-(numEps-If[numRegimes>0,1,0])],numRegimes}]]
+  
+
+(*end code for genXZREInterpFunc*)
+@}
+
+
+
+\subsection{genXZFuncRE}
+\label{sec:genxzfuncreinterpfunc}
+
+
+@d genXZFuncREUsage
+@{genXZFuncRE::usage=
+"place holder for genXZFuncRE"
+@}
+
+@d genXZFuncRE
+@{
+(*begin code for genXZFuncRE*)
+
+genXZFuncRE[{numX_Integer,ignored_Integer,numZ_Integer},
+aLilXkZkFunc_Function,distribSpec:{expctSpec:{{_Symbol,_}..},regimeTransProbFunc_:{}}]:=
+With[{intVarRes=genIntVars[numX,distribSpec],
+funcName=Unique["fName"],numRegimes=getNumRegimes[distribSpec]},
+funcName[fNameArgs:{_?NumberQ..},idx_Integer]:=Module[{},
+(Apply[aLilXkZkFunc,fNameArgs])[[idx,1]]];
+With[{funcGuts=
+Switch[getRegimeTransProbFuncType[distribSpec],
+	noTransFunc,Function[xxxx,Module[{},
+	Transpose[{Map[myNExpectation[
+	(funcName[intVarRes[[2]],#]),intVarRes[[3]]]&,Range[numX+numZ]]}]]],
+	transFuncNoShocks,Function[xxxx,Module[{},
+	Sum[(Apply[getProbFunc[distribSpec],
+		Append[intVarRes[[2]],ii-1]])*
+	Transpose[{Map[myNExpectation[
+	(funcName[Append[intVarRes[[2]],ii-1],#]),intVarRes[[3]]]&,Range[numX+numZ]]}],{ii,numRegimes}]]],
+	transFuncHasShocks,Function[xxxx,Module[{},
+	Transpose[{Map[myNExpectation[
+	Sum[(Apply[getProbFunc[distribSpec],
+		Append[intVarRes[[2]],ii-1]])*(funcName[Append[intVarRes[[2]],ii-1],#]),{ii,numRegimes}],intVarRes[[3]]]&,Range[numX+numZ]]}]]]		
+	]},
+	ReplacePart[funcGuts,1->intVarRes[[1]]]]]
+
+
+
+(*end code for genXZFuncRE*)
+@}
+
+\subsection{genIntVars}
+\label{sec:genintvars}
+
+
+
+@d genIntVarsUsage
+@{genIntVars::usage=
+"place holder for genIntVars"
+@}
+
+@d genIntVars
+@{
+(*begin code for genIntVars*)
+ genIntVars[numX_Integer,distribSpec:{expctSpec:{{_Symbol,_}..},regimeTransProbFunc_:{}}]:=
+With[{xVars=Table[Unique["xV"],{numX}],
+	dists=getDistribs[distribSpec],
+	distVars=Table[Unique["epIntV"],{getNumEpsVars[distribSpec]}]},
+With[{xEpsVars=If[regimeTransProbFunc=={},
+	Join[xVars,distVars],Join[xVars,distVars(*,{Unique["regV"]}*)]],
+	intArg=MapThread[#1 \[Distributed] #2&,{distVars,dists}]},
+	{xVars,xEpsVars,intArg}]]
+
+
+(*end code for genIntVars*)
+@}
+
+
+\subsection{myNExpectation}
+\label{sec:mynexpectation}
+
+
+@d myNExpectationUsage
+@{myNExpectation::usage=
+"place holder for myNExpectation"
+@}
+
+@d myNExpectation
+@{
+(*begin code for myNExpectation*)
+
+
+
+myNExpectation[funcName_Symbol[funcArgs_List,idx_Integer],anEpsVar_\[Distributed] PerfectForesight]:=
+Apply[funcName,Append[ReplacePart[{funcArgs},{{(1),(-1)}->0}],idx]]
+myNExpectation[funcName_Symbol[funcArgs_List,idx_Integer],{anEpsVar_\[Distributed] PerfectForesight}]:=
+Apply[funcName,Append[ReplacePart[{funcArgs},{{1,(-1)}->0}],idx]]
+
+myNExpectation[funcName_Symbol[farg_List,idx_Integer],nArgs_List]:=Chop[NExpectation[funcName[farg,idx],nArgs]]
+
+
+myNewNExpectation[fff_[fargs___],anEpsVar_\[Distributed] PerfectForesight]:=Module[{},Print["there",{(Apply[fff,{fargs}]),{fargs}/.anEpsVar->0}];(Apply[fff,{fargs}])/.anEpsVar->0]
+
+
+myNewNExpectation[fff_[fargs___],distStuff_]:=Module[{},Print["jhere",{(Apply[fff,{fargs}]),{fargs}}];Chop[NExpectation[Applyp[fff,{fargs}],distStuff]]]
+
+
+
+(*end code for myNExpectation*)
+@}
+
+
+
+
 \subsection{Getters and Setters}
 \label{sec:getters-setters}
+
+
+@d getNumEpsVarsUsage
+@{getNumEpsVars::usage=
+"place holder for getNumEpsVars"
+@}
+
+@d getNumEpsVars
+@{
+(*begin code for getNumEpsVars*)
+getNumEpsVars[distribSpec:{expctSpec:{{_Symbol,_}..},regimeTransProbFunc_:{}}]:=Length[expctSpec]
+
+
+(*end code for getNumEpsVars*)
+@}
+
+
+
+
+@d getDistribsUsage
+@{getDistribs::usage=
+"place holder for getDistribs"
+@}
+
+@d getDistribs
+@{
+(*begin code for getDistribs*)
+
+getDistribs[distribSpec:{expctSpec:{{_Symbol,_}..},regimeTransProbFunc_:{}}]:= Map[Last,expctSpec]
+(*{numReg,tranType,tranFunc}*)
+
+(*end code for getDistribs*)
+@}
+
+
+
+@d getNumVarsUsage
+@{getNumVars::usage=
+"place holder for getNumVars"
+@}
+
+@d getNumVars
+@{
+(*begin code for getNumVars*)
+getNumVars[gSpec:{toIgnore:{_Integer...},iOrd_Integer,{{_Integer,_?NumberQ,_?NumberQ}..},numRegimes_:0}]:=
+(Length[getGridPtTrips[gSpec]]+If[numRegimes>0,2,0])
+
+(*end code for getNumVars*)
+@}
+
+
+
+
+
+@d getHUsage
+@{
+getH::usage=
+"@<gencall@(getH@,@<linMod@>@)@>"<>
+"number of z variables"
+@}
+
+@d getH
+@{
+@<gencall@(getH@,@<linMod@>@)@>:=
+theHMat
+@}
+
+
+@d getBUsage
+@{
+getB::usage=
+"@<gencall@(getB@,@<linMod@>@)@>"<>
+"number of z variables"
+@}
+
+@d getB
+@{
+@<gencall@(getB@,@<linMod@>@)@>:=
+BB
+@}
+
+
+@d getFUsage
+@{
+getF::usage=
+"@<gencall@(getF@,@<linMod@>@)@>"<>
+"number of z variables"
+@}
+
+@d getF
+@{
+@<gencall@(getF@,@<linMod@>@)@>:=
+FF
+@}
+
+
+@d getPhiUsage
+@{
+getPhi::usage=
+"@<gencall@(getPhi@,@<linMod@>@)@>"<>
+"number of z variables"
+@}
+
+@d getPhi
+@{
+@<gencall@(getPhi@,@<linMod@>@)@>:=
+phi
+@}
+
+
+@d getPsiZUsage
+@{
+getPsiZ::usage=
+"@<gencall@(getPsiZ@,@<linMod@>@)@>"<>
+"number of z variables"
+@}
+
+@d getPsiZ
+@{
+@<gencall@(getPsiZ@,@<linMod@>@)@>:=
+psiZ
+@}
+
+
+
+@d getPsiCUsage
+@{
+getPsiC::usage=
+"@<gencall@(getPsiC@,@<linMod@>@)@>"<>
+"number of z variables"
+@}
+
+@d getPsiC
+@{
+@<gencall@(getPsiC@,@<linMod@>@)@>:=
+psiC
+@}
+
+
+
+@d getPsiEpsUsage
+@{
+getPsiEps::usage=
+"@<gencall@(getPsiEps@,@<linMod@>@)@>"<>
+"number of z variables"
+@}
+
+@d getPsiEps
+@{
+@<gencall@(getPsiEps@,@<linMod@>@)@>:=
+psiEps
+@}
+
 
 @d getNumZUsage
 @{
@@ -330,6 +1208,45 @@ getNumZ::usage=
 @<gencall@(getNumZ@,@<linMod@>@)@>:=
 Length[getPsiZ[linMod][[1]]]
 @}
+
+@d getGridPtTripsUsage
+@{getGridPtTrips::usage=
+"place holder for getGridPtTrips"
+@}
+
+@d getGridPtTrips
+@{
+(*begin code for getGridPtTrips*)
+
+getGridPtTrips[gSpec:{toIgnore:{_Integer...},iOrd_Integer,{{_Integer,_?NumberQ,_?NumberQ}..},numRegimes_:0}]:=gSpec[[3]]
+  
+
+(*end code for getGridPtTrips*)
+@}
+
+\subsection{getRegimeTransProbFuncType}
+\label{sec:getr}
+
+
+
+@d getRegimeTransProbFuncTypeUsage
+@{getRegimeTransProbFuncType::usage=
+"place holder for getRegimeTransProbFuncType"
+@}
+
+@d getRegimeTransProbFuncType
+@{
+(*begin code for getRegimeTransProbFuncType*)
+getRegimeTransProbFuncType[distribSpec:{expctSpec:{{_Symbol,_}..},regimeTransProbFunc_:{}}]:=
+If[regimeTransProbFunc=={},noTransFunc,regimeTransProbFunc[[2]]]
+
+getRegimeTransProbFunc[distribSpec:{expctSpec:{{_Symbol,_}..},regimeTransProbFunc_:{}}]:=regimeTransProbFunc[[3]]
+
+(*end code for getRegimeTransProbFuncType*)
+@}
+
+
+
 
 \subsection{nuweb Macro Definitions}
 \label{sec:nuweb-macro-defin}

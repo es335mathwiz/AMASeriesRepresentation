@@ -38,14 +38,21 @@ EndPackage[]
 @{
 (*Begin Usage Definitions*)
 PerfectForesight::usage="degenerate distribution implementing perfect foresight"
-
+@<worstPathForErrDRREIntegrateUsage@>
+@<evalBadPathErrDRREIntegrateUsage@>
+@<evalPathErrDRREIntegrateUsage@>
+@<doFuncArgUsage@>
+@<pathErrsDRPFUsage@>
+@<pathErrsDRREIntegrateUsage@>
+@<iterateDRPFUsage@>
+@<genNSFuncUsage@>
+@<makeREIterFuncUsage@>
 @<getRegimeTransProbFuncTypeUsage@>
 @<myNExpectationUsage@>
 @<getDistribsUsage@>
 @<genXZFuncREUsage@>
 @<genIntVarsUsage@>
 @<genXZREInterpFuncUsage@>
-
 @<genX0Z0FuncsUsage@>
 @<checkModUsage@>
 @<genFRFuncUsage@>
@@ -55,9 +62,7 @@ PerfectForesight::usage="degenerate distribution implementing perfect foresight"
 @<getBUsage@>
 @<getFUsage@>
 @<getGridPtTripsUsage@>
-
 @<getNumVarsUsage@>
-
 @<makeInterpFuncUsage@>
 @<nestIterREInterpUsage@>
 @<genInterpDataUsage@>
@@ -66,29 +71,16 @@ PerfectForesight::usage="degenerate distribution implementing perfect foresight"
 @<fillInUsage@>
 @<fillInSymbUsage@>
 @<doIterREInterpUsage@> 
-
-
 @<getPhiUsage@>
-
 @<getPsiZUsage@>
-
 @<getPsiCUsage@>
-
 @<getPsiEpsUsage@>
-
 @<getNumZUsage@>
-
 @<getNumZUsage@>
-
 @<getNumZUsage@>
-
 @<getNumZUsage@>
-
 @<genZVarsUsage@>
-
 @<genEpsVarsUsage@>
-
-
 @<multiStepUsage@>
 @<multiStepZUsage@>
 @<multiStepXUsage@>
@@ -97,72 +89,54 @@ PerfectForesight::usage="degenerate distribution implementing perfect foresight"
 @<fSumCUsage@>
 @<fSumUsage@>
 @<getNumEpsVarsUsage@>
-
-
+@<iterateDRREIntegrateUsage@>
+@<genPathUsage@>
 @}
 
 @d package code
 @{
-
+@<worstPathForErrDRREIntegrate@>
+@<evalBadPathErrDRREIntegrate@>
+@<evalPathErrDRREIntegrate@>
+@<doFuncArg@>
+@<genPath@>
+@<pathErrsDRPF@>
+@<pathErrsDRREIntegrate@>
+@<iterateDRPF@>
+@<genNSFunc@>
+@<iterateDRREIntegrate@>
+@<makeREIterFunc@>
 @<getRegimeTransProbFuncType@>
-
-
 @<getNumEpsVars@>
 @<myNExpectation@>
 @<getDistribs@>
-
 @<getNumVars@>
-
-
 @<getGridPtTrips@>
-
-
 @<getH@>
-
 @<getB@>
-
 @<getF@>
-
 @<getPhi@>
-
 @<getPsiZ@>
-
 @<getPsiC@>
-
 @<getPsiEps@>
-
 @<getNumZ@>
-
 @<genLilXkZkFunc@>
-
 @<fSumC@>
-
 @<fSum@>
-
 @<genXtm1Vars@>
-
 @<genXtOfXtm1@>
-
 @<genXtp1OfXt@>
-
 @<genX0Z0Funcs@>
-
 @<genZVars@>
-
 @<genEpsVars@>
-
 @<multiStep@>
 @<multiStepZ@>
 @<multiStepX@>
-
-
 @<checkLinMod@>
-
 @<checkMod@>
 @<genFRFunc@>
 @<genFPFunc@>
 @<myFixedPoint@>
-
 @<makeInterpFunc@>
 @<genInterpData@>
 @<gridPts@>
@@ -171,12 +145,9 @@ PerfectForesight::usage="degenerate distribution implementing perfect foresight"
 @<fillInSymb@>
 @<doIterREInterp@>
 @<nestIterREInterp@>
-
-
 @<genXZREInterpFunc@>
 @<genXZFuncRE@>
 @<genIntVars@>
-
 @}
 \subsection{Argument Specifications}
 \label{sec:argum-spec}
@@ -1038,10 +1009,339 @@ myNewNExpectation[fff_[fargs___],distStuff_]:=Module[{},Print["jhere",{(Apply[ff
 @}
 
 
+\subsection{iterateDRREIntegrate}
+\label{sec:iteratedrreintegrate}
+
+
+
+@d iterateDRREIntegrateUsage
+@{iterateDRREIntegrate::usage=
+"place holder for iterateDRREIntegrate"
+@}
+
+@d iterateDRREIntegrate
+@{
+(*begin code for iterateDRREIntegrate*)
+iterateDRREIntegrate[drFunc:(_Function|_CompiledFunction),initVec_?MatrixQ,
+	distribSpec:{expctSpec:{{_Symbol,_}..},regimeTransProbFunc_:{}},numPers_Integer]:=
+With[{numEps=getNumEpsVars[distribSpec],firVal=Apply[drFunc,Flatten[initVec]]},
+	With[{numX=Length[initVec]-numEps,iterFunc=makeREIterFunc[drFunc,distribSpec]},
+With[{iterated=
+NestList[((Transpose[{Flatten[Apply[iterFunc,Flatten[#]]]}]))&,firVal,numPers-1]},
+Join[initVec[[Range[numX]]],Apply[Join,(Map[Identity[#[[Range[numX]]]]&,iterated])]]]]]/;
+And[numPers>0]
+
+
+(*end code for iterateDRREIntegrate*)
+@}
+
+\subsection{makeREIterFunc}
+\label{sec:makereiterfunc}
+
+
+
+
+
+@d makeREIterFuncUsage
+@{makeREIterFunc::usage=
+"place holder for makeREIterFunc"
+@}
+
+@d makeREIterFunc
+@{
+(*begin code for makeREIterFunc*)
+
+makeREIterFunc[drFunc:(_Function|_CompiledFunction),distribSpec:{expctSpec:{{_Symbol,_}..},regimeTransProbFunc_:{}}]:=
+With[{numEps=getNumEpsVars[distribSpec]},
+With[{numX=Length[drFunc[[1]]]-numEps,numZ=0},
+	genXZFuncRE[{numX,numEps,numZ},drFunc,distribSpec]]]
+
+
+(*end code for makeREIterFunc*)
+@}
+
+
+\subsection{genNSFunc}
+\label{sec:gennsfunc}
+
+
+
+@d genNSFuncUsage
+@{genNSFunc::usage=
+"place holder for genNSFunc"
+@}
+
+@d genNSFunc
+@{
+(*begin code for genNSFunc*)
+genNSFunc[{numX_Integer,numEps_Integer,numZ_Integer},
+xkFunc:(_Function|_CompiledFunction),eqnsFunc:(_Function|_CompiledFunction),opts:OptionsPattern[]]:=
+With[{funcArgs=Table[Unique["theFRFuncArgs"],{numX+numEps}],
+zArgs=Table[Unique["theFRZArgs"],{numZ}]},
+funcName[funcArgsNot:{_(*?NumberQ*)..}]:=
+Module[{theVars=Join[funcArgsNot]},
+Apply[eqnsFunc,(Flatten[Apply[xkFunc,theVars]])]];
+ReplacePart[
+Function[xxxx,With[{zVals=zArgs/.NSolve[funcName[Join[funcArgs,zArgs]],zArgs,Reals,Apply[Sequence,FilterRules[{opts},Options[NSolve]]]][[1]]},
+Join[(Apply[xkFunc,Join[funcArgs,zVals]])[[numX+Range[numX]]],
+Transpose[{zVals}]]]],
+1->funcArgs]]
+
+
+(*end code for genNSFunc*)
+@}
+
+
+
+\subsection{iterateDRPF}
+\label{sec:iteratedrpf}
+
+
+@d iterateDRPFUsage
+@{iterateDRPF::usage=
+"place holder for iterateDRPF"
+@}
+
+@d iterateDRPF
+@{
+(*begin code for iterateDRPF*)
+ 
+iterateDRPF[drFunc_Function,initVec_?MatrixQ,numEps_Integer,numPers_Integer]:=
+With[{firVal=Apply[drFunc,Flatten[initVec]],numX=Length[initVec]-numEps,theZeros=Table[0,{numEps}]},
+With[{iterated=
+NestList[(Apply[drFunc,Flatten[Append[#[[Range[numX]]],theZeros]]])&,firVal,numPers-1]},
+Join[initVec[[Range[numX]]],Apply[Join,(Map[#[[Range[numX]]]&,iterated])]]]]/;
+And[numPers>0]
+
+
+(*end code for iterateDRPF*)
+@}
+
+
+\subsection{genPath}
+\label{sec:genpath}
+
+
+@d genPathUsage
+@{genPath::usage=
+"place holder for genPath"
+@}
+
+@d genPath
+@{
+(*begin code for genPath*)
+
+
+genPath[xzFunc_Function,
+{XZFunc_Function,numSteps_Integer},xtm1Val_?MatrixQ,epsVal_?MatrixQ,numTerms_Integer]:=
+With[{numXVars=Length[xtm1Val]},
+With[{xtVal=Apply[xzFunc,Flatten[Join[xtm1Val,epsVal]]]},
+With[{xzRes=If[numTerms==1,{},
+Apply[multiStepX[{XZFunc,numSteps},numXVars,numTerms-1],Flatten[xtVal]]]},
+	Join[xtm1Val,xtVal[[Range[numXVars]]],Apply[Join,xzRes]]]]]
+(*end code for genPath*)
+@}
+
+
+
+\subsection{pathErrsDRPF}
+\label{sec:genpathcompare}
+
+
+
+@d pathErrsDRPFUsage
+@{pathErrsDRPF::usage=
+"place holder for pathErrsDRPF"
+@}
+
+@d pathErrsDRPF
+@{
+(*begin code for pathErrsDRPF*)
+   
+ 
+pathErrsDRPF[drFunc_Function,initVec_?MatrixQ,numEps_Integer,eqnsFunc:(_Function|_CompiledFunction),numPers_Integer]:=
+With[{pathNow=iterateDRPF[drFunc,initVec,numEps,numPers],numX=Length[initVec]-numEps},
+With[{firstArg=doFuncArg[pathNow,Identity[Reverse[initVec[[-Range[numEps]]]]],numX,0],
+	restArgs=(Map[doFuncArg[pathNow,Table[{0},{numEps}],numX,#-2]&,Range[3,numPers]])},
+With[{first=Transpose[{Apply[eqnsFunc,Flatten[firstArg]]}]},
+	With[{theRest=Map[Transpose[{(Apply[eqnsFunc,Flatten[#]])}]&,restArgs]},
+		Prepend[theRest,first]
+]]]]/;
+And[numPers>1]
+
+
+(*end code for pathErrsDRPF*)
+@}
+
+\subsection{pathErrsDRREIntegrate}
+\label{sec:genpathcompare}
+
+
+
+@d pathErrsDRREIntegrateUsage
+@{pathErrsDRREIntegrate::usage=
+"place holder for pathErrsDRREIntegrate"
+@}
+
+@d pathErrsDRREIntegrate
+@{
+(*begin code for pathErrsDRREIntegrate*)
+pathErrsDRREIntegrate[drFunc_Function,initVec_?MatrixQ,distribSpec:{expctSpec:{{_Symbol,_}..},regimeTransProbFunc_:{}},eqnsFunc:(_Function|_CompiledFunction),numPers_Integer]:=
+With[{numEps=getNumEpsVars[distribSpec]},
+With[{pathNow=iterateDRREIntegrate[drFunc,initVec,distribSpec,numPers],numX=Length[initVec]-numEps},(*Print["pathErrsDRREIntegrate:",pathNow];*)
+With[{firstArg=doFuncArg[pathNow,Identity[Reverse[initVec[[-Range[numEps]]]]],numX,0],
+	restArgs=(Map[doFuncArg[pathNow,Table[{0},{numEps}],numX,#-2]&,Range[3,numPers]])},
+With[{first=Transpose[{Apply[eqnsFunc,Flatten[firstArg]]}]},
+	With[{theRest=Map[Transpose[{(Apply[eqnsFunc,Flatten[#]])}]&,restArgs]},(*Print["pathErrs:",{pathNow,theRest,first}];*)
+		Prepend[theRest,first]
+]]]]]/;
+And[numPers>1]
+ 
+
+(*end code for pathErrsDRREIntegrate*)
+@}
+
+
+\subsection{doFuncArg}
+\label{sec:dofuncarg}
+
+@d doFuncArgUsage
+@{doFuncArg::usage=
+"place holder for doFuncArg"
+@}
+
+@d doFuncArg
+@{
+(*begin code for doFuncArg*)
+doFuncArg[pathNow_?MatrixQ,epsVals_?MatrixQ,numX_Integer,oSet_Integer]:=
+With[{firstArg=Join[Identity[pathNow[[oSet*numX+Range[3*numX]]]],Identity[epsVals]]},
+firstArg]
+
+
+(*end code for doFuncArg*)
+@}
+
+
+\subsection{genPathCompare}
+\label{sec:genpathcompare}
+
+
+
+@d genPathCompareUsage
+@{genPathCompare::usage=
+"place holder for genPathCompare"
+@}
+
+@d genPathCompare
+@{
+(*begin code for genPathCompare*)
+
+(*end code for genPathCompare*)
+@}
+
+
+\subsection{evalPathErrDRREIntegrate}
+\label{sec:evalp}
+
+@d evalPathErrDRREIntegrateUsage
+@{evalPathErrDRREIntegrate::usage=
+"place holder for evalPathErrDRREIntegrate"
+@}
+
+@d evalPathErrDRREIntegrate
+@{
+(*begin code for evalPathErrDRREIntegrate*)
+evalPathErrDRREIntegrate[drFunc_Function,initVec_?MatrixQ,distribSpec:{expctSpec:{{_Symbol,_}..},regimeTransProbFunc_:{}},eqnsFunc:(_Function|_CompiledFunction)]:=
+pathErrsDRREIntegrate[drFunc,initVec,distribSpec,eqnsFunc,2]//First
+
+
+
+evalPathErrDRREIntegrate[phi_?MatrixQ,
+drFunc_Function,initVec_?MatrixQ,distribSpec:{expctSpec:{{_Symbol,_}..},regimeTransProbFunc_:{}},eqnsFunc:(_Function|_CompiledFunction)]:=
+phi . (pathErrsDRREIntegrate[drFunc,initVec,distribSpec,eqnsFunc,2])//First
+
+
+
+
+(*end code for evalPathErrDRREIntegrate*)
+@}
+
+\subsection{evalBadPathErrDRREIntegrate}
+\label{sec:evalb}
+
+
+@d evalBadPathErrDRREIntegrateUsage
+@{evalBadPathErrDRREIntegrate::usage=
+"place holder for evalBadPathErrDRREIntegrate"
+@}
+
+@d evalBadPathErrDRREIntegrate
+@{
+(*begin code for evalBadPathErrDRREIntegrate*)
+evalBadPathErrDRREIntegrate[drFunc_Function,noEpsVec_?MatrixQ,distribSpec:{expctSpec:{{_Symbol,_}..},regimeTransProbFunc_:{}},eqnsFunc:(_Function|_CompiledFunction)]:=
+With[{funcName=Unique["fName"]},
+funcName[tryEps:{_?NumberQ..}]:=
+	With[{theVal=evalPathErrDRREIntegrate[drFunc,Join[noEpsVec,Transpose[{tryEps}]],distribSpec,eqnsFunc]},
+		With[{theNorm=Norm[theVal,Infinity]},
+		(*Print["stillex:",{tryEps,theVal,Norm[theVal,Infinity],theNorm}];*)theNorm]];
+	With[{outerEVars=Table[Unique["eVs"],{getNumEpsVars[distribSpec]}]},
+	With[{maxArgs=Map[{#,0}&,outerEVars],cons=Apply[And,  (Map[(-0.01<=#<=0.01)&, outerEVars])]},
+	FindMaximum[{funcName[outerEVars],cons},maxArgs]]]]
+
+
+evalBadPathErrDRREIntegrate[phi_?MatrixQ,
+drFunc_Function,noEpsVec_?MatrixQ,distribSpec:{expctSpec:{{_Symbol,_}..},regimeTransProbFunc_:{}},eqnsFunc:(_Function|_CompiledFunction)]:=
+With[{funcName=Unique["fName"]},
+funcName[tryEps:{_?NumberQ..}]:=
+With[{theVal=evalPathErrDRREIntegrate[drFunc,Join[noEpsVec,Transpose[{tryEps}]],distribSpec,eqnsFunc]},
+		(*Print["otherex:",theVal,Norm[theVal,Infinity]];*)Norm[theVal,Infinity]];
+	With[{outerEVars=Table[Unique["eVs"],{getNumEpsVars[distribSpec]}]},
+	With[{maxArgs=Map[{#,0}&,outerEVars],cons=Apply[And,  (Map[(-0.01<=#<=0.01)&, outerEVars])]},
+	FindMaximum[{funcName[outerEVars],cons},maxArgs]]]]
+
+(*end code for evalBadPathErrDRREIntegrate*)
+@}
+
+\subsection{worstPathForErrDRREIntegrate}
+\label{sec:worstp}
+
+
+
+
+@d worstPathForErrDRREIntegrateUsage
+@{worstPathForErrDRREIntegrate::usage=
+"place holder for worstPathForErrDRREIntegrate"
+@}
+
+@d worstPathForErrDRREIntegrate
+@{
+(*begin code for worstPathForErrDRREIntegrate*)
+
+worstPathForErrDRREIntegrate[drFunc_Function,noEpsVec_?MatrixQ,distribSpec:{expctSpec:{{_Symbol,_}..},regimeTransProbFunc_:{}},eqnsFunc:(_Function|_CompiledFunction)]:=
+With[{fMinRes=evalBadPathErrDRREIntegrate[drFunc,noEpsVec,distribSpec,eqnsFunc]},
+	With[{badEps=Transpose[{(Map[First,fMinRes[[2]]])/.fMinRes[[2]]}]},
+	With[{badPath=iterateDRREIntegrate[drFunc,Join[noEpsVec,badEps],distribSpec,2]},
+		Join[badPath,badEps]]]]
+
+worstPathForErrDRREIntegrate[phi_?MatrixQ,
+drFunc_Function,noEpsVec_?MatrixQ,distribSpec:{expctSpec:{{_Symbol,_}..},regimeTransProbFunc_:{}},eqnsFunc:(_Function|_CompiledFunction)]:=
+With[{fMinRes=
+evalBadPathErrDRREIntegrate[phi,drFunc,noEpsVec,distribSpec,eqnsFunc]},
+	With[{badEps=Transpose[{(Map[First,fMinRes[[2]]])/.fMinRes[[2]]}]},
+	With[{badPath=iterateDRREIntegrate[drFunc,Join[noEpsVec,badEps],distribSpec,2]},
+		Join[badPath,badEps]]]]
+
+(*end code for worstPathForErrDRREIntegrate*)
+@}
 
 
 \subsection{Getters and Setters}
 \label{sec:getters-setters}
+
+@d gettersSetters
+@{
+(*some setters*)
+@}
 
 
 @d getNumEpsVarsUsage
@@ -1244,6 +1544,7 @@ getRegimeTransProbFunc[distribSpec:{expctSpec:{{_Symbol,_}..},regimeTransProbFun
 
 (*end code for getRegimeTransProbFuncType*)
 @}
+
 
 
 

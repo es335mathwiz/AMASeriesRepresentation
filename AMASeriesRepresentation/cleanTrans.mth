@@ -59,3 +59,12 @@ nestIterREInterp[{genFRFunc},linModCleanUp, {anX0Z0, 2},
 
 aBunchREInterp[[-1,-1]] @@ anXFlatCleanUp
 
+
+pathNow=iterateDRPF[xzFunc,anXEpsCleanUp,1,5]
+
+pathErrs01=pathErrsDRPF[xzFunc,anXEpsCleanUp,1,rbcEqnsFunctionalNextCleanUp,2]
+
+
+oSet=0;
+	Norm[pathErrs01[[1]]-rbcEqnsFunctionalNextCleanUp@@Join[Flatten[pathNow[[oSet+Range[12]]]],Last[anXEpsCleanUp]]]<10^(-6)]
+	

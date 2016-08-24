@@ -9,3 +9,9 @@
 **.out
 .amateras
 **auto
+cleanUp.*
+*shell*
+AMASeriesRepresentation.m
+AMASeriesRepresentation.tex
+
+

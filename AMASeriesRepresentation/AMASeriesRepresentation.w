@@ -38,6 +38,8 @@ EndPackage[]
 @{
 (*Begin Usage Definitions*)
 PerfectForesight::usage="degenerate distribution implementing perfect foresight"
+@<genLilXkZkFuncUsage@>
+
 @<worstPathForErrDRREIntegrateUsage@>
 @<evalBadPathErrDRREIntegrateUsage@>
 @<evalPathErrDRREIntegrateUsage@>
@@ -76,9 +78,8 @@ PerfectForesight::usage="degenerate distribution implementing perfect foresight"
 @<getPsiCUsage@>
 @<getPsiEpsUsage@>
 @<getNumZUsage@>
-@<getNumZUsage@>
-@<getNumZUsage@>
-@<getNumZUsage@>
+@<getNumXUsage@>
+@<getNumEpsUsage@>
 @<genZVarsUsage@>
 @<genEpsVarsUsage@>
 @<multiStepUsage@>
@@ -95,6 +96,9 @@ PerfectForesight::usage="degenerate distribution implementing perfect foresight"
 
 @d package code
 @{
+
+
+
 @<worstPathForErrDRREIntegrate@>
 @<evalBadPathErrDRREIntegrate@>
 @<evalPathErrDRREIntegrate@>
@@ -120,6 +124,8 @@ PerfectForesight::usage="degenerate distribution implementing perfect foresight"
 @<getPsiC@>
 @<getPsiEps@>
 @<getNumZ@>
+@<getNumX@>
+@<getNumEps@>
 @<genLilXkZkFunc@>
 @<fSumC@>
 @<fSum@>
@@ -204,8 +210,9 @@ genLilXkZkFunc::usage=
 @d genLilXkZkFunc full call
 @{genLilXkZkFunc[@<linMod@>,@<XZFuncs@>,@<xtGuess@>,@<drvPairs@>]@}
 
-@d genLilXkZkFunc fcon call
+@d genLilXkZkFunc fcon call not
 @{genLilXkZkFunc[@<linMod@>,@<fCon@>,@<drvPairs@>]@}
+
 
 @d genLilXkZkFunc theZs call
 @{genLilXkZkFunc[@<linMod@>,@<theZs@>]@}
@@ -252,6 +259,8 @@ With[{theRes=genLilXkZkFunc[linMod,fCon,drvPairs]},
 theRes]]
 @}
 
+
+
 @d genLilXkZkFunc
 @{
 @<genLilXkZkFunc fcon call@>:=
@@ -271,6 +280,38 @@ With[{(*theDrvs=doImplicitDrv[linMod,fullVec,
 zVars,xtm1Vars,epsVars,drvPairs]*)},(*Print["theDrvs",theDrvs];*)
 ReplacePart[
 Function[xxxx,fullVec],{1->Flatten[Join[xtm1Vars,epsVars,zVars]]}]
+]]]]]]
+@}
+
+
+
+
+@d fixgenLilXkZkFuncUsage
+@{ (*fix stuff*)fixgenLilXkZkFunc::usage="place holder"@}
+
+@d genLilXkZkFunc fcon call
+@{genLilXkZkFunc[@<linMod@>,@<fCon@>,@<drvPairs@>]@}
+
+
+@d genLilXkZkFunc
+@{
+@<genLilXkZkFunc fcon call@>:=
+@<fix apply formula F...@>
+@}
+
+@d fix apply formula F contribution given
+@{With[{numXVars=getNumX[linMod],numEpsVars=getNumEps[linMod],
+numZVars=getNumZ[linMod]},
+With[{theSlots=Table[{Slot[ii]},{ii,numXVars+numEpsVars+numZVars}]},
+With[{xtm1Vars=theSlots[[Range[numXVars]]],
+epsVars=theSlots[[numXVars+Range[numEpsVars]]],
+zVars=theSlots[[numXVars+numEpsVars+Range[numZVars]]]},
+With[{xtVals=genXtOfXtm1[linMod,xtm1Vars,epsVars,zVars,fCon]},
+With[{xtp1Vals=genXtp1OfXt[linMod,xtVals,fCon]},
+With[{fullVec=Join[xtm1Vars,xtVals,xtp1Vals,epsVars]},
+With[{(*theDrvs=doImplicitDrv[linMod,fullVec,
+zVars,xtm1Vars,epsVars,drvPairs]*)},(*Print["theDrvs",theDrvs];*)
+Function[fullVec]]
 ]]]]]]
 @}
 
@@ -1398,13 +1439,13 @@ getNumVars[gSpec:{toIgnore:{_Integer...},iOrd_Integer,{{_Integer,_?NumberQ,_?Num
 @d getHUsage
 @{
 getH::usage=
-"getH(@<linMod@>)"<>
+"getH[@<linMod@>]"<>
 "number of z variables"
 @}
 
 @d getH
 @{
-getH(@<linMod@>):=
+getH[@<linMod@>]:=
 theHMat
 @}
 
@@ -1412,13 +1453,13 @@ theHMat
 @d getBUsage
 @{
 getB::usage=
-"getB(@<linMod@>)"<>
+"getB[@<linMod@>]"<>
 "number of z variables"
 @}
 
 @d getB
 @{
-getB(@<linMod@>):=
+getB[@<linMod@>]:=
 BB
 @}
 
@@ -1426,13 +1467,13 @@ BB
 @d getFUsage
 @{
 getF::usage=
-"getF(@<linMod@>)"<>
+"getF[@<linMod@>]"<>
 "number of z variables"
 @}
 
 @d getF
 @{
-getF(@<linMod@>):=
+getF[@<linMod@>]:=
 FF
 @}
 
@@ -1440,13 +1481,13 @@ FF
 @d getPhiUsage
 @{
 getPhi::usage=
-"getPhi(@<linMod@>)"<>
+"getPhi[@<linMod@>]"<>
 "number of z variables"
 @}
 
 @d getPhi
 @{
-getPhi(@<linMod@>):=
+getPhi[@<linMod@>]:=
 phi
 @}
 
@@ -1454,13 +1495,13 @@ phi
 @d getPsiZUsage
 @{
 getPsiZ::usage=
-"getPsiZ(@<linMod@>)"<>
+"getPsiZ[@<linMod@>]"<>
 "number of z variables"
 @}
 
 @d getPsiZ
 @{
-getPsiZ(@<linMod@>):=
+getPsiZ[@<linMod@>]:=
 psiZ
 @}
 
@@ -1469,13 +1510,13 @@ psiZ
 @d getPsiCUsage
 @{
 getPsiC::usage=
-"getPsiC(@<linMod@>)"<>
+"getPsiC[@<linMod@>]"<>
 "number of z variables"
 @}
 
 @d getPsiC
 @{
-getPsiC(@<linMod@>):=
+getPsiC[@<linMod@>]:=
 psiC
 @}
 
@@ -1484,13 +1525,13 @@ psiC
 @d getPsiEpsUsage
 @{
 getPsiEps::usage=
-"getPsiEps(@<linMod@>)"<>
+"getPsiEps[@<linMod@>]"<>
 "number of z variables"
 @}
 
 @d getPsiEps
 @{
-getPsiEps(@<linMod@>):=
+getPsiEps[@<linMod@>]:=
 psiEps
 @}
 
@@ -1498,14 +1539,42 @@ psiEps
 @d getNumZUsage
 @{
 getNumZ::usage=
-"getNumZ(@<linMod@>)"<>
+"getNumZ[@<linMod@>]"<>
 "number of z variables"
 @}
 
 @d getNumZ
 @{
-getNumZ(@<linMod@>):=
+getNumZ[@<linMod@>]:=
 Length[getPsiZ[linMod][[1]]]
+@}
+
+
+@d getNumXUsage
+@{
+getNumX::usage=
+"getNumX[@<linMod@>]"<>
+"number of x variables"
+@}
+
+@d getNumX
+@{
+getNumX[@<linMod@>]:=
+Length[getB[linMod]]
+@}
+
+
+@d getNumEpsUsage
+@{
+getNumEps::usage=
+"getNumEps[@<linMod@>]"<>
+"number of eps variables"
+@}
+
+@d getNumEps
+@{
+getNumEps[@<linMod@>]:=
+Length[getPsiEps[linMod][[1]]]
 @}
 
 @d getGridPtTripsUsage

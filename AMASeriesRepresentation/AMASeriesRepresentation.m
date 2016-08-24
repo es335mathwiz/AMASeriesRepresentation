@@ -66,23 +66,20 @@ myFixedPoint::usage=
 
 
 getH::usage=
-"getH[linMod:{theHMat_?MatrixQ,BB_?MatrixQ,phi_?MatrixQ,FF_?MatrixQ, 
-  psiEps_?MatrixQ,psiC_?MatrixQ,psiZ_?MatrixQ,psiZPreComp_?MatrixQ} 
-  ]"<>
+"getH(linMod:{theHMat_?MatrixQ,BB_?MatrixQ,phi_?MatrixQ,FF_?MatrixQ, 
+      psiEps_?MatrixQ,psiC_?MatrixQ,psiZ_?MatrixQ,psiZPreComp_?MatrixQ} )"<>
 "number of z variables"
 
 
 getB::usage=
-"getB[linMod:{theHMat_?MatrixQ,BB_?MatrixQ,phi_?MatrixQ,FF_?MatrixQ, 
-  psiEps_?MatrixQ,psiC_?MatrixQ,psiZ_?MatrixQ,psiZPreComp_?MatrixQ} 
-  ]"<>
+"getB(linMod:{theHMat_?MatrixQ,BB_?MatrixQ,phi_?MatrixQ,FF_?MatrixQ, 
+      psiEps_?MatrixQ,psiC_?MatrixQ,psiZ_?MatrixQ,psiZPreComp_?MatrixQ} )"<>
 "number of z variables"
 
 
 getF::usage=
-"getF[linMod:{theHMat_?MatrixQ,BB_?MatrixQ,phi_?MatrixQ,FF_?MatrixQ, 
-  psiEps_?MatrixQ,psiC_?MatrixQ,psiZ_?MatrixQ,psiZPreComp_?MatrixQ} 
-  ]"<>
+"getF(linMod:{theHMat_?MatrixQ,BB_?MatrixQ,phi_?MatrixQ,FF_?MatrixQ, 
+      psiEps_?MatrixQ,psiC_?MatrixQ,psiZ_?MatrixQ,psiZPreComp_?MatrixQ} )"<>
 "number of z variables"
 
 getGridPtTrips::usage=
@@ -117,58 +114,50 @@ doIterREInterp::usage=
  
 
 getPhi::usage=
-"getPhi[linMod:{theHMat_?MatrixQ,BB_?MatrixQ,phi_?MatrixQ,FF_?MatrixQ, 
-  psiEps_?MatrixQ,psiC_?MatrixQ,psiZ_?MatrixQ,psiZPreComp_?MatrixQ} 
-  ]"<>
+"getPhi(linMod:{theHMat_?MatrixQ,BB_?MatrixQ,phi_?MatrixQ,FF_?MatrixQ, 
+        psiEps_?MatrixQ,psiC_?MatrixQ,psiZ_?MatrixQ,psiZPreComp_?MatrixQ} )"<>
 "number of z variables"
 
 
 getPsiZ::usage=
-"getPsiZ[linMod:{theHMat_?MatrixQ,BB_?MatrixQ,phi_?MatrixQ,FF_?MatrixQ, 
-  psiEps_?MatrixQ,psiC_?MatrixQ,psiZ_?MatrixQ,psiZPreComp_?MatrixQ} 
-  ]"<>
+"getPsiZ(linMod:{theHMat_?MatrixQ,BB_?MatrixQ,phi_?MatrixQ,FF_?MatrixQ, 
+         psiEps_?MatrixQ,psiC_?MatrixQ,psiZ_?MatrixQ,psiZPreComp_?MatrixQ} )"<>
 "number of z variables"
 
 
 getPsiC::usage=
-"getPsiC[linMod:{theHMat_?MatrixQ,BB_?MatrixQ,phi_?MatrixQ,FF_?MatrixQ, 
-  psiEps_?MatrixQ,psiC_?MatrixQ,psiZ_?MatrixQ,psiZPreComp_?MatrixQ} 
-  ]"<>
+"getPsiC(linMod:{theHMat_?MatrixQ,BB_?MatrixQ,phi_?MatrixQ,FF_?MatrixQ, 
+         psiEps_?MatrixQ,psiC_?MatrixQ,psiZ_?MatrixQ,psiZPreComp_?MatrixQ} )"<>
 "number of z variables"
 
 
 getPsiEps::usage=
-"getPsiEps[linMod:{theHMat_?MatrixQ,BB_?MatrixQ,phi_?MatrixQ,FF_?MatrixQ, 
-  psiEps_?MatrixQ,psiC_?MatrixQ,psiZ_?MatrixQ,psiZPreComp_?MatrixQ} 
-  ]"<>
+"getPsiEps(linMod:{theHMat_?MatrixQ,BB_?MatrixQ,phi_?MatrixQ,FF_?MatrixQ, 
+           psiEps_?MatrixQ,psiC_?MatrixQ,psiZ_?MatrixQ,psiZPreComp_?MatrixQ} )"<>
 "number of z variables"
 
 
 getNumZ::usage=
-"getNumZ[linMod:{theHMat_?MatrixQ,BB_?MatrixQ,phi_?MatrixQ,FF_?MatrixQ, 
-  psiEps_?MatrixQ,psiC_?MatrixQ,psiZ_?MatrixQ,psiZPreComp_?MatrixQ} 
-  ]"<>
+"getNumZ(linMod:{theHMat_?MatrixQ,BB_?MatrixQ,phi_?MatrixQ,FF_?MatrixQ, 
+         psiEps_?MatrixQ,psiC_?MatrixQ,psiZ_?MatrixQ,psiZPreComp_?MatrixQ} )"<>
 "number of z variables"
 
 
 getNumZ::usage=
-"getNumZ[linMod:{theHMat_?MatrixQ,BB_?MatrixQ,phi_?MatrixQ,FF_?MatrixQ, 
-  psiEps_?MatrixQ,psiC_?MatrixQ,psiZ_?MatrixQ,psiZPreComp_?MatrixQ} 
-  ]"<>
+"getNumZ(linMod:{theHMat_?MatrixQ,BB_?MatrixQ,phi_?MatrixQ,FF_?MatrixQ, 
+         psiEps_?MatrixQ,psiC_?MatrixQ,psiZ_?MatrixQ,psiZPreComp_?MatrixQ} )"<>
 "number of z variables"
 
 
 getNumZ::usage=
-"getNumZ[linMod:{theHMat_?MatrixQ,BB_?MatrixQ,phi_?MatrixQ,FF_?MatrixQ, 
-  psiEps_?MatrixQ,psiC_?MatrixQ,psiZ_?MatrixQ,psiZPreComp_?MatrixQ} 
-  ]"<>
+"getNumZ(linMod:{theHMat_?MatrixQ,BB_?MatrixQ,phi_?MatrixQ,FF_?MatrixQ, 
+         psiEps_?MatrixQ,psiC_?MatrixQ,psiZ_?MatrixQ,psiZPreComp_?MatrixQ} )"<>
 "number of z variables"
 
 
 getNumZ::usage=
-"getNumZ[linMod:{theHMat_?MatrixQ,BB_?MatrixQ,phi_?MatrixQ,FF_?MatrixQ, 
-  psiEps_?MatrixQ,psiC_?MatrixQ,psiZ_?MatrixQ,psiZPreComp_?MatrixQ} 
-  ]"<>
+"getNumZ(linMod:{theHMat_?MatrixQ,BB_?MatrixQ,phi_?MatrixQ,FF_?MatrixQ, 
+         psiEps_?MatrixQ,psiC_?MatrixQ,psiZ_?MatrixQ,psiZPreComp_?MatrixQ} )"<>
 "number of z variables"
 
 genZVars::usage=
@@ -193,22 +182,18 @@ checkLinMod::usage=
 
 genLilXkZkFunc::usage=
 "genLilXkZkFunc[linMod:{theHMat_?MatrixQ,BB_?MatrixQ,phi_?MatrixQ,FF_?MatrixQ, 
-  psiEps_?MatrixQ,psiC_?MatrixQ,psiZ_?MatrixQ,psiZPreComp_?MatrixQ} 
-  ,XZFuncs:({_Function,_Integer}),xtGuess_?MatrixQ,drvPairs:({{{aa_Integer,bb_Integer}...},
-     eqnFunc:(_Function|_CompiledFunction)}|{{},{}}):{{},{}}]"<>
+                psiEps_?MatrixQ,psiC_?MatrixQ,psiZ_?MatrixQ,psiZPreComp_?MatrixQ} ,XZFuncs:({_Function,_Integer}),xtGuess_?MatrixQ,drvPairs:({{{aa_Integer,bb_Integer}...},
+                   eqnFunc:(_Function|_CompiledFunction)}|{{},{}}):{{},{}}]"<>
 "\ngenerate a function that computes x and z given a guess for xt\n"<>
 "genLilXkZkFunc[linMod:{theHMat_?MatrixQ,BB_?MatrixQ,phi_?MatrixQ,FF_?MatrixQ, 
-  psiEps_?MatrixQ,psiC_?MatrixQ,psiZ_?MatrixQ,psiZPreComp_?MatrixQ} 
-  ,fCon_?MatrixQ,drvPairs:({{{aa_Integer,bb_Integer}...},
-    eqnFunc:(_Function|_CompiledFunction)}|{{},{}}):{{},{}}]"<>
+                psiEps_?MatrixQ,psiC_?MatrixQ,psiZ_?MatrixQ,psiZPreComp_?MatrixQ} ,fCon_?MatrixQ,drvPairs:({{{aa_Integer,bb_Integer}...},
+                  eqnFunc:(_Function|_CompiledFunction)}|{{},{}}):{{},{}}]"<>
 "\ngenerate a function that computes x z based on an assumed F sum\n"<>
 "genLilXkZkFunc[linMod:{theHMat_?MatrixQ,BB_?MatrixQ,phi_?MatrixQ,FF_?MatrixQ, 
-  psiEps_?MatrixQ,psiC_?MatrixQ,psiZ_?MatrixQ,psiZPreComp_?MatrixQ} 
-  ,theZs:{_?MatrixQ..}]"<>
+                psiEps_?MatrixQ,psiC_?MatrixQ,psiZ_?MatrixQ,psiZPreComp_?MatrixQ} ,theZs:{_?MatrixQ..}]"<>
 "\ngenerate a function that computes x and z given sequence of Zs\n"<>
 " genLilXkZkFunc[linMod:{theHMat_?MatrixQ,BB_?MatrixQ,phi_?MatrixQ,FF_?MatrixQ, 
-   psiEps_?MatrixQ,psiC_?MatrixQ,psiZ_?MatrixQ,psiZPreComp_?MatrixQ} 
-   ,{}]"<>
+                 psiEps_?MatrixQ,psiC_?MatrixQ,psiZ_?MatrixQ,psiZPreComp_?MatrixQ} ,{}]"<>
 "\ngenerate a function that computes x for Zs = 0\n"
 
 
@@ -464,65 +449,55 @@ getGridPtTrips[gSpec:{toIgnore:{_Integer...},iOrd_Integer,{{_Integer,_?NumberQ,_
 (*end code for getGridPtTrips*)
 
 
-getH[linMod:{theHMat_?MatrixQ,BB_?MatrixQ,phi_?MatrixQ,FF_?MatrixQ, 
- psiEps_?MatrixQ,psiC_?MatrixQ,psiZ_?MatrixQ,psiZPreComp_?MatrixQ} 
- ]:=
+getH(linMod:{theHMat_?MatrixQ,BB_?MatrixQ,phi_?MatrixQ,FF_?MatrixQ, 
+     psiEps_?MatrixQ,psiC_?MatrixQ,psiZ_?MatrixQ,psiZPreComp_?MatrixQ} ):=
 theHMat
 
 
-getB[linMod:{theHMat_?MatrixQ,BB_?MatrixQ,phi_?MatrixQ,FF_?MatrixQ, 
- psiEps_?MatrixQ,psiC_?MatrixQ,psiZ_?MatrixQ,psiZPreComp_?MatrixQ} 
- ]:=
+getB(linMod:{theHMat_?MatrixQ,BB_?MatrixQ,phi_?MatrixQ,FF_?MatrixQ, 
+     psiEps_?MatrixQ,psiC_?MatrixQ,psiZ_?MatrixQ,psiZPreComp_?MatrixQ} ):=
 BB
 
 
-getF[linMod:{theHMat_?MatrixQ,BB_?MatrixQ,phi_?MatrixQ,FF_?MatrixQ, 
- psiEps_?MatrixQ,psiC_?MatrixQ,psiZ_?MatrixQ,psiZPreComp_?MatrixQ} 
- ]:=
+getF(linMod:{theHMat_?MatrixQ,BB_?MatrixQ,phi_?MatrixQ,FF_?MatrixQ, 
+     psiEps_?MatrixQ,psiC_?MatrixQ,psiZ_?MatrixQ,psiZPreComp_?MatrixQ} ):=
 FF
 
 
-getPhi[linMod:{theHMat_?MatrixQ,BB_?MatrixQ,phi_?MatrixQ,FF_?MatrixQ, 
- psiEps_?MatrixQ,psiC_?MatrixQ,psiZ_?MatrixQ,psiZPreComp_?MatrixQ} 
- ]:=
+getPhi(linMod:{theHMat_?MatrixQ,BB_?MatrixQ,phi_?MatrixQ,FF_?MatrixQ, 
+       psiEps_?MatrixQ,psiC_?MatrixQ,psiZ_?MatrixQ,psiZPreComp_?MatrixQ} ):=
 phi
 
 
-getPsiZ[linMod:{theHMat_?MatrixQ,BB_?MatrixQ,phi_?MatrixQ,FF_?MatrixQ, 
- psiEps_?MatrixQ,psiC_?MatrixQ,psiZ_?MatrixQ,psiZPreComp_?MatrixQ} 
- ]:=
+getPsiZ(linMod:{theHMat_?MatrixQ,BB_?MatrixQ,phi_?MatrixQ,FF_?MatrixQ, 
+        psiEps_?MatrixQ,psiC_?MatrixQ,psiZ_?MatrixQ,psiZPreComp_?MatrixQ} ):=
 psiZ
 
 
-getPsiC[linMod:{theHMat_?MatrixQ,BB_?MatrixQ,phi_?MatrixQ,FF_?MatrixQ, 
- psiEps_?MatrixQ,psiC_?MatrixQ,psiZ_?MatrixQ,psiZPreComp_?MatrixQ} 
- ]:=
+getPsiC(linMod:{theHMat_?MatrixQ,BB_?MatrixQ,phi_?MatrixQ,FF_?MatrixQ, 
+        psiEps_?MatrixQ,psiC_?MatrixQ,psiZ_?MatrixQ,psiZPreComp_?MatrixQ} ):=
 psiC
 
 
-getPsiEps[linMod:{theHMat_?MatrixQ,BB_?MatrixQ,phi_?MatrixQ,FF_?MatrixQ, 
- psiEps_?MatrixQ,psiC_?MatrixQ,psiZ_?MatrixQ,psiZPreComp_?MatrixQ} 
- ]:=
+getPsiEps(linMod:{theHMat_?MatrixQ,BB_?MatrixQ,phi_?MatrixQ,FF_?MatrixQ, 
+          psiEps_?MatrixQ,psiC_?MatrixQ,psiZ_?MatrixQ,psiZPreComp_?MatrixQ} ):=
 psiEps
 
 
-getNumZ[linMod:{theHMat_?MatrixQ,BB_?MatrixQ,phi_?MatrixQ,FF_?MatrixQ, 
- psiEps_?MatrixQ,psiC_?MatrixQ,psiZ_?MatrixQ,psiZPreComp_?MatrixQ} 
- ]:=
+getNumZ(linMod:{theHMat_?MatrixQ,BB_?MatrixQ,phi_?MatrixQ,FF_?MatrixQ, 
+        psiEps_?MatrixQ,psiC_?MatrixQ,psiZ_?MatrixQ,psiZPreComp_?MatrixQ} ):=
 Length[getPsiZ[linMod][[1]]]
 
 
  genLilXkZkFunc[linMod:{theHMat_?MatrixQ,BB_?MatrixQ,phi_?MatrixQ,FF_?MatrixQ, 
-  psiEps_?MatrixQ,psiC_?MatrixQ,psiZ_?MatrixQ,psiZPreComp_?MatrixQ} 
-  ,{}]:=
+                psiEps_?MatrixQ,psiC_?MatrixQ,psiZ_?MatrixQ,psiZPreComp_?MatrixQ} ,{}]:=
 With[{numZ=getNumZ[linMod]},
 With[{fCon=ConstantArray[0,{1,numZ,1}]},
 With[{theRes=genLilXkZkFunc[linMod,fCon]},theRes]]]
 
 
 genLilXkZkFunc[linMod:{theHMat_?MatrixQ,BB_?MatrixQ,phi_?MatrixQ,FF_?MatrixQ, 
- psiEps_?MatrixQ,psiC_?MatrixQ,psiZ_?MatrixQ,psiZPreComp_?MatrixQ} 
- ,theZs:{_?MatrixQ..}]:=
+               psiEps_?MatrixQ,psiC_?MatrixQ,psiZ_?MatrixQ,psiZPreComp_?MatrixQ} ,theZs:{_?MatrixQ..}]:=
 With[{fCon=fSumC[phi,FF,psiZ,theZs]},
 With[{theRes=genLilXkZkFunc[linMod,fCon]},
 theRes]]
@@ -530,18 +505,16 @@ theRes]]
 
 
 genLilXkZkFunc[linMod:{theHMat_?MatrixQ,BB_?MatrixQ,phi_?MatrixQ,FF_?MatrixQ, 
- psiEps_?MatrixQ,psiC_?MatrixQ,psiZ_?MatrixQ,psiZPreComp_?MatrixQ} 
- ,XZFuncs:({_Function,_Integer}),xtGuess_?MatrixQ,drvPairs:({{{aa_Integer,bb_Integer}...},
-    eqnFunc:(_Function|_CompiledFunction)}|{{},{}}):{{},{}}]:=
+               psiEps_?MatrixQ,psiC_?MatrixQ,psiZ_?MatrixQ,psiZPreComp_?MatrixQ} ,XZFuncs:({_Function,_Integer}),xtGuess_?MatrixQ,drvPairs:({{{aa_Integer,bb_Integer}...},
+                  eqnFunc:(_Function|_CompiledFunction)}|{{},{}}):{{},{}}]:=
 With[{fCon=fSum[linMod,XZFuncs,xtGuess]},
 With[{theRes=genLilXkZkFunc[linMod,fCon,drvPairs]},
 theRes]]
 
 
 genLilXkZkFunc[linMod:{theHMat_?MatrixQ,BB_?MatrixQ,phi_?MatrixQ,FF_?MatrixQ, 
- psiEps_?MatrixQ,psiC_?MatrixQ,psiZ_?MatrixQ,psiZPreComp_?MatrixQ} 
- ,fCon_?MatrixQ,drvPairs:({{{aa_Integer,bb_Integer}...},
-   eqnFunc:(_Function|_CompiledFunction)}|{{},{}}):{{},{}}]:=
+               psiEps_?MatrixQ,psiC_?MatrixQ,psiZ_?MatrixQ,psiZPreComp_?MatrixQ} ,fCon_?MatrixQ,drvPairs:({{{aa_Integer,bb_Integer}...},
+                 eqnFunc:(_Function|_CompiledFunction)}|{{},{}}):{{},{}}]:=
 With[{numXVars=Length[BB],numEpsVars=Length[psiEps[[1]]],
 numZVars=Length[psiZ[[1]]]},
 With[{xtm1Vars=Transpose[{genXtm1Vars[numXVars]}],

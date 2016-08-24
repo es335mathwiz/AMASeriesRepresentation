@@ -155,8 +155,7 @@ PerfectForesight::usage="degenerate distribution implementing perfect foresight"
 
 @d linMod
 @{linMod:{theHMat_?MatrixQ,BB_?MatrixQ,phi_?MatrixQ,FF_?MatrixQ, 
-psiEps_?MatrixQ,psiC_?MatrixQ,psiZ_?MatrixQ,psiZPreComp_?MatrixQ} 
-@|
+psiEps_?MatrixQ,psiC_?MatrixQ,psiZ_?MatrixQ,psiZPreComp_?MatrixQ} @|
 linMod
 BB
 phi
@@ -203,16 +202,16 @@ genLilXkZkFunc::usage=
 @}
 
 @d genLilXkZkFunc full call
-@{@<gencall@(genLilXkZkFunc@,@<linMod@>,@<XZFuncs@>,@<xtGuess@>,@<drvPairs@>@)@>@}
+@{genLilXkZkFunc[@<linMod@>,@<XZFuncs@>,@<xtGuess@>,@<drvPairs@>]@}
 
 @d genLilXkZkFunc fcon call
-@{@<gencall@(genLilXkZkFunc@,@<linMod@>,@<fCon@>,@<drvPairs@>@)@>@}
+@{genLilXkZkFunc[@<linMod@>,@<fCon@>,@<drvPairs@>]@}
 
 @d genLilXkZkFunc theZs call
-@{@<gencall@(genLilXkZkFunc@,@<linMod@>,@<theZs@>@)@>@}
+@{genLilXkZkFunc[@<linMod@>,@<theZs@>]@}
 
 @d genLilXkZkFunc noZs call
-@{ @<gencall@(genLilXkZkFunc@,@<linMod@>,{}@)@>@}
+@{ genLilXkZkFunc[@<linMod@>,{}]@}
 
 
 @d genLilXkZkFunc
@@ -1399,13 +1398,13 @@ getNumVars[gSpec:{toIgnore:{_Integer...},iOrd_Integer,{{_Integer,_?NumberQ,_?Num
 @d getHUsage
 @{
 getH::usage=
-"@<gencall@(getH@,@<linMod@>@)@>"<>
+"getH(@<linMod@>)"<>
 "number of z variables"
 @}
 
 @d getH
 @{
-@<gencall@(getH@,@<linMod@>@)@>:=
+getH(@<linMod@>):=
 theHMat
 @}
 
@@ -1413,13 +1412,13 @@ theHMat
 @d getBUsage
 @{
 getB::usage=
-"@<gencall@(getB@,@<linMod@>@)@>"<>
+"getB(@<linMod@>)"<>
 "number of z variables"
 @}
 
 @d getB
 @{
-@<gencall@(getB@,@<linMod@>@)@>:=
+getB(@<linMod@>):=
 BB
 @}
 
@@ -1427,13 +1426,13 @@ BB
 @d getFUsage
 @{
 getF::usage=
-"@<gencall@(getF@,@<linMod@>@)@>"<>
+"getF(@<linMod@>)"<>
 "number of z variables"
 @}
 
 @d getF
 @{
-@<gencall@(getF@,@<linMod@>@)@>:=
+getF(@<linMod@>):=
 FF
 @}
 
@@ -1441,13 +1440,13 @@ FF
 @d getPhiUsage
 @{
 getPhi::usage=
-"@<gencall@(getPhi@,@<linMod@>@)@>"<>
+"getPhi(@<linMod@>)"<>
 "number of z variables"
 @}
 
 @d getPhi
 @{
-@<gencall@(getPhi@,@<linMod@>@)@>:=
+getPhi(@<linMod@>):=
 phi
 @}
 
@@ -1455,13 +1454,13 @@ phi
 @d getPsiZUsage
 @{
 getPsiZ::usage=
-"@<gencall@(getPsiZ@,@<linMod@>@)@>"<>
+"getPsiZ(@<linMod@>)"<>
 "number of z variables"
 @}
 
 @d getPsiZ
 @{
-@<gencall@(getPsiZ@,@<linMod@>@)@>:=
+getPsiZ(@<linMod@>):=
 psiZ
 @}
 
@@ -1470,13 +1469,13 @@ psiZ
 @d getPsiCUsage
 @{
 getPsiC::usage=
-"@<gencall@(getPsiC@,@<linMod@>@)@>"<>
+"getPsiC(@<linMod@>)"<>
 "number of z variables"
 @}
 
 @d getPsiC
 @{
-@<gencall@(getPsiC@,@<linMod@>@)@>:=
+getPsiC(@<linMod@>):=
 psiC
 @}
 
@@ -1485,13 +1484,13 @@ psiC
 @d getPsiEpsUsage
 @{
 getPsiEps::usage=
-"@<gencall@(getPsiEps@,@<linMod@>@)@>"<>
+"getPsiEps(@<linMod@>)"<>
 "number of z variables"
 @}
 
 @d getPsiEps
 @{
-@<gencall@(getPsiEps@,@<linMod@>@)@>:=
+getPsiEps(@<linMod@>):=
 psiEps
 @}
 
@@ -1499,13 +1498,13 @@ psiEps
 @d getNumZUsage
 @{
 getNumZ::usage=
-"@<gencall@(getNumZ@,@<linMod@>@)@>"<>
+"getNumZ(@<linMod@>)"<>
 "number of z variables"
 @}
 
 @d getNumZ
 @{
-@<gencall@(getNumZ@,@<linMod@>@)@>:=
+getNumZ(@<linMod@>):=
 Length[getPsiZ[linMod][[1]]]
 @}
 

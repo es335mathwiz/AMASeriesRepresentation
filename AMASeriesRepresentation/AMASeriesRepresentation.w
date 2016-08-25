@@ -38,7 +38,9 @@ EndPackage[]
 @{
 (*Begin Usage Definitions*)
 PerfectForesight::usage="degenerate distribution implementing perfect foresight"
+@<fixgenLilXkZkFuncUsage@>
 @<genLilXkZkFuncUsage@>
+
 
 @<worstPathForErrDRREIntegrateUsage@>
 @<evalBadPathErrDRREIntegrateUsage@>
@@ -86,7 +88,6 @@ PerfectForesight::usage="degenerate distribution implementing perfect foresight"
 @<multiStepZUsage@>
 @<multiStepXUsage@>
 @<checkLinModUsage@>
-@<genLilXkZkFuncUsage@>
 @<fSumCUsage@>
 @<fSumUsage@>
 @<getNumEpsVarsUsage@>
@@ -126,6 +127,7 @@ PerfectForesight::usage="degenerate distribution implementing perfect foresight"
 @<getNumZ@>
 @<getNumX@>
 @<getNumEps@>
+@<fixgenLilXkZkFunc@>
 @<genLilXkZkFunc@>
 @<fSumC@>
 @<fSum@>
@@ -207,15 +209,9 @@ genLilXkZkFunc::usage=
 "\ngenerate a function that computes x for Zs = 0\n"
 @}
 
-@d genLilXkZkFunc full call
-@{genLilXkZkFunc[@<linMod@>,@<XZFuncs@>,@<xtGuess@>,@<drvPairs@>]@}
-
-@d genLilXkZkFunc fcon call not
-@{genLilXkZkFunc[@<linMod@>,@<fCon@>,@<drvPairs@>]@}
 
 
-@d genLilXkZkFunc theZs call
-@{genLilXkZkFunc[@<linMod@>,@<theZs@>]@}
+
 
 @d genLilXkZkFunc noZs call
 @{ genLilXkZkFunc[@<linMod@>,{}]@}
@@ -234,6 +230,9 @@ With[{theRes=genLilXkZkFunc[linMod,fCon]},theRes]]]
 @}
 
 
+@d genLilXkZkFunc theZs call
+@{genLilXkZkFunc[@<linMod@>,@<theZs@>]@}
+
 @d genLilXkZkFunc
 @{
 @< genLilXkZkFunc theZs call@>:=
@@ -244,8 +243,11 @@ With[{theRes=genLilXkZkFunc[linMod,fCon]},theRes]]]
 @{With[{fCon=fSumC[phi,FF,psiZ,theZs]},
 With[{theRes=genLilXkZkFunc[linMod,fCon]},
 theRes]]
-
 @}
+
+
+@d genLilXkZkFunc full call
+@{genLilXkZkFunc[@<linMod@>,@<XZFuncs@>,@<xtGuess@>,@<drvPairs@>]@}
 
 @d genLilXkZkFunc
 @{
@@ -259,7 +261,8 @@ With[{theRes=genLilXkZkFunc[linMod,fCon,drvPairs]},
 theRes]]
 @}
 
-
+@d genLilXkZkFunc fcon call
+@{genLilXkZkFunc[@<linMod@>,@<fCon@>,@<drvPairs@>]@}
 
 @d genLilXkZkFunc
 @{
@@ -289,13 +292,13 @@ Function[xxxx,fullVec],{1->Flatten[Join[xtm1Vars,epsVars,zVars]]}]
 @d fixgenLilXkZkFuncUsage
 @{ (*fix stuff*)fixgenLilXkZkFunc::usage="place holder"@}
 
-@d genLilXkZkFunc fcon call
-@{genLilXkZkFunc[@<linMod@>,@<fCon@>,@<drvPairs@>]@}
+@d fixgenLilXkZkFunc fcon call
+@{fixgenLilXkZkFunc[@<linMod@>,@<fCon@>,@<drvPairs@>]@}
 
 
-@d genLilXkZkFunc
+@d fixgenLilXkZkFunc
 @{
-@<genLilXkZkFunc fcon call@>:=
+@<fixgenLilXkZkFunc fcon call@>:=
 @<fix apply formula F...@>
 @}
 

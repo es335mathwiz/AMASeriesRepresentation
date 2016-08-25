@@ -38,10 +38,8 @@ EndPackage[]
 @{
 (*Begin Usage Definitions*)
 PerfectForesight::usage="degenerate distribution implementing perfect foresight"
-@<fixgenLilXkZkFuncUsage@>
 @<genLilXkZkFuncUsage@>
-
-
+@<gettersSettersUsage@>
 @<worstPathForErrDRREIntegrateUsage@>
 @<evalBadPathErrDRREIntegrateUsage@>
 @<evalPathErrDRREIntegrateUsage@>
@@ -98,7 +96,7 @@ PerfectForesight::usage="degenerate distribution implementing perfect foresight"
 @d package code
 @{
 
-
+@<gettersSetters@>
 
 @<worstPathForErrDRREIntegrate@>
 @<evalBadPathErrDRREIntegrate@>
@@ -127,7 +125,6 @@ PerfectForesight::usage="degenerate distribution implementing perfect foresight"
 @<getNumZ@>
 @<getNumX@>
 @<getNumEps@>
-@<fixgenLilXkZkFunc@>
 @<genLilXkZkFunc@>
 @<fSumC@>
 @<fSum@>
@@ -261,42 +258,22 @@ With[{theRes=genLilXkZkFunc[linMod,fCon,drvPairs]},
 theRes]]
 @}
 
+
+
+@d genLilXkZkFuncUsage
+@{ genLilXkZkFunc::usage="place holder"@}
+
 @d genLilXkZkFunc fcon call
 @{genLilXkZkFunc[@<linMod@>,@<fCon@>,@<drvPairs@>]@}
 
-@d apply formula F contribution given
-@{With[{numXVars=Length[BB],numEpsVars=Length[psiEps[[1]]],
-numZVars=Length[psiZ[[1]]]},
-With[{xtm1Vars=Transpose[{genXtm1Vars[numXVars]}],
-epsVars=Transpose[{genEpsVars[numEpsVars]}],
-zVars=Transpose[{Reverse[Flatten[genZVars[0,numZVars]]]/.name_[t]->name}]},
-With[{xtVals=genXtOfXtm1[linMod,xtm1Vars,epsVars,zVars,fCon]},
-With[{xtp1Vals=genXtp1OfXt[linMod,xtVals,fCon]},
-With[{fullVec=Join[xtm1Vars,xtVals,xtp1Vals,epsVars]},
-With[{(*theDrvs=doImplicitDrv[linMod,fullVec,
-zVars,xtm1Vars,epsVars,drvPairs]*)},(*Print["theDrvs",theDrvs];*)
-ReplacePart[
-Function[xxxx,fullVec],{1->Flatten[Join[xtm1Vars,epsVars,zVars]]}]
-]]]]]]
-@}
 
-
-
-
-@d fixgenLilXkZkFuncUsage
-@{ (*fix stuff*)fixgenLilXkZkFunc::usage="place holder"@}
-
-@d fixgenLilXkZkFunc fcon call
-@{genLilXkZkFunc[@<linMod@>,@<fCon@>,@<drvPairs@>]@}
-
-
-@d fixgenLilXkZkFunc
+@d genLilXkZkFunc
 @{
-@<fixgenLilXkZkFunc fcon call@>:=
-@<fix apply formula F...@>
+@<genLilXkZkFunc fcon call@>:=
+@<apply formula F...@>
 @}
 
-@d fix apply formula F contribution given
+@d apply formula F contribution given
 @{With[{numXVars=getNumX[linMod],numEpsVars=getNumEps[linMod],
 numZVars=getNumZ[linMod]},
 With[{theSlots=Table[{Slot[ii]},{ii,numXVars+numEpsVars+numZVars}]},
@@ -1182,7 +1159,7 @@ Apply[multiStepX[{XZFunc,numSteps},numXVars,numTerms-1],Flatten[xtVal]]]},
 
 
 \subsection{pathErrsDRPF}
-\label{sec:genpathcompare}
+\label{sec:patherrsdrpf}
 
 
 
@@ -1211,7 +1188,7 @@ And[numPers>1]
 @}
 
 \subsection{pathErrsDRREIntegrate}
-\label{sec:genpathcompare}
+\label{sec:patherrsdrreintegrate}
 
 
 
@@ -1258,23 +1235,6 @@ firstArg]
 (*end code for doFuncArg*)
 @}
 
-
-\subsection{genPathCompare}
-\label{sec:genpathcompare}
-
-
-
-@d genPathCompareUsage
-@{genPathCompare::usage=
-"place holder for genPathCompare"
-@}
-
-@d genPathCompare
-@{
-(*begin code for genPathCompare*)
-
-(*end code for genPathCompare*)
-@}
 
 
 \subsection{evalPathErrDRREIntegrate}
@@ -1375,9 +1335,13 @@ evalBadPathErrDRREIntegrate[phi,drFunc,noEpsVec,distribSpec,eqnsFunc]},
 \subsection{Getters and Setters}
 \label{sec:getters-setters}
 
+@d gettersSettersUsage
+@{
+(*some getters usage*)
+@}
 @d gettersSetters
 @{
-(*some setters*)
+(*some getters*)
 @}
 
 

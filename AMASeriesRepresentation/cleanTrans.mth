@@ -19,10 +19,9 @@ theFunc @@ anXEpsZsFlatBetter
 theFunc=genLilXkZkFunc[linModBetter,ConstantArray[0,{4,1}]]
 theFunc @@ anXEpsZsFlatBetter
 
-fixtheFunc=fixgenLilXkZkFunc[linModBetter,ConstantArray[0,{4,1}]]
-fixtheFunc @@ anXEpsZsFlatBetter
 
 (*
+
 
 ssVec=Join[betterRBC`Private`ssSolnVecRE,betterRBC`Private`ssSolnVecRE,betterRBC`Private`ssSolnVecRE]//N;
 		   checkLinMod[linModBetter,anXBetter,{{0.01}}]

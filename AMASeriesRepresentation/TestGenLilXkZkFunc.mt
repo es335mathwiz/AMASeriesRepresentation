@@ -19,24 +19,24 @@ Test[
 ] 
  
 Test[
-	With[{theFunc=genLilXkZkFunc[linMod, {X0Z0,2},X0Z0@@anXtm1EpsZ]},
-		theFunc @@ anXtm1EpsZ]
-	,
-	{{1}, {0.18}, {1.1}, {0.3792309409344926}, {0.19778300683599365}, 
+	tRes=With[{theFunc=genLilXkZkFunc[linMod, {X0Z0,2},X0Z0@@anXtm1EpsZ]},
+		theFunc @@ anXtm1EpsZ];
+	Norm[tRes-{{1}, {0.18}, {1.1}, {0.3792309409344926}, {0.19778300683599365}, 
  {1.1051548271635827}, {0.40327544295531254}, {0.20960516943877955}, 
- {1.0999421636068878}, {0.01}}
+ {1.0999421636068878}, {0.01}}]<10^(-8),
+ True
 	,
 	TestID->"TestGenLilXkZkFunc-20151031-D0D9A9"
 ]
 
  (*should produce same result as one X0Z0 since all z's 0*)
 Test[
-	With[{theFunc=genLilXkZkFunc[linMod, {X0Z0,4},X0Z0@@anXtm1EpsZ]},
-		theFunc @@ anXtm1EpsZ]
-	,
-	{{1}, {0.18}, {1.1}, {0.3792309409344926}, {0.19778300683599365}, 
+	tRes=With[{theFunc=genLilXkZkFunc[linMod, {X0Z0,4},X0Z0@@anXtm1EpsZ]},
+		theFunc @@ anXtm1EpsZ];
+	Norm[tRes-{{1}, {0.18}, {1.1}, {0.3792309409344926}, {0.19778300683599365}, 
  {1.1051548271635827}, {0.40327544295531254}, {0.20960516943877955}, 
- {1.0999421636068878}, {0.01}}
+ {1.0999421636068878}, {0.01}}]<10^(-8),
+ True
 	,
 	TestID->"TestGenLilXkZkFunc-20151031-D0AAA9"
 ]

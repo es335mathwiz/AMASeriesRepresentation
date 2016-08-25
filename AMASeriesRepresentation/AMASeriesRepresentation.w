@@ -264,12 +264,6 @@ theRes]]
 @d genLilXkZkFunc fcon call
 @{genLilXkZkFunc[@<linMod@>,@<fCon@>,@<drvPairs@>]@}
 
-@d genLilXkZkFunc
-@{
-@<genLilXkZkFunc fcon call@>:=
-@<apply formula F...@>
-@}
-
 @d apply formula F contribution given
 @{With[{numXVars=Length[BB],numEpsVars=Length[psiEps[[1]]],
 numZVars=Length[psiZ[[1]]]},
@@ -293,7 +287,7 @@ Function[xxxx,fullVec],{1->Flatten[Join[xtm1Vars,epsVars,zVars]]}]
 @{ (*fix stuff*)fixgenLilXkZkFunc::usage="place holder"@}
 
 @d fixgenLilXkZkFunc fcon call
-@{fixgenLilXkZkFunc[@<linMod@>,@<fCon@>,@<drvPairs@>]@}
+@{genLilXkZkFunc[@<linMod@>,@<fCon@>,@<drvPairs@>]@}
 
 
 @d fixgenLilXkZkFunc

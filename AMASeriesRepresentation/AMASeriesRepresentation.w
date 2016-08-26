@@ -80,11 +80,12 @@ PerfectForesight::usage="degenerate distribution implementing perfect foresight"
 @<getNumZUsage@>
 @<getNumXUsage@>
 @<getNumEpsUsage@>
-@<genZVarsUsage@>
-@<genEpsVarsUsage@>
 @<multiStepUsage@>
 @<multiStepZUsage@>
 @<multiStepXUsage@>
+@<fixmultiStepUsage@>
+@<fixmultiStepZUsage@>
+@<fixmultiStepXUsage@>
 @<checkLinModUsage@>
 @<fSumCUsage@>
 @<fSumUsage@>
@@ -132,11 +133,12 @@ PerfectForesight::usage="degenerate distribution implementing perfect foresight"
 @<genXtOfXtm1@>
 @<genXtp1OfXt@>
 @<genX0Z0Funcs@>
-@<genZVars@>
-@<genEpsVars@>
 @<multiStep@>
 @<multiStepZ@>
 @<multiStepX@>
+@<fixmultiStep@>
+@<fixmultiStepZ@>
+@<fixmultiStepX@>
 @<checkLinMod@>
 @<checkMod@>
 @<genFRFunc@>
@@ -397,8 +399,8 @@ makeProtectedSymbol["epsVar"<>ToString[ii]],{ii,numShocks}]]/;And[numShocks>=0]
 genXtm1Vars[numVars_Integer]:=
 Module[{},
 genXtm1Vars[numVars]=
-Table[
-makeProtectedSymbol["xxxtm1Var"<>ToString[ii]],{ii,numVars}]]/;And[numVars>=0]
+Table[Slot[ii],
+(*makeProtectedSymbol["xxxtm1Var"<>ToString[ii]],*){ii,numVars}]]/;And[numVars>=0]
 
 (*end code for genXtm1Vars*)
 @}
@@ -521,6 +523,67 @@ multiStepX[{XZfunc_Function,numSteps_Integer},numX_Integer,numTerms_Integer]:=
 multiStep[{XZfunc,numSteps},numX,Range[numX],numTerms]
 
 (*end code for multiStepX*)
+@}
+
+
+\subsection{fixmultiStep Functions}
+\label{sec:multistep-functions}
+
+@d fixmultiStepUsage
+@{fixmultiStep::usage=
+"place holder for fixmultiStep"
+@}
+
+@d fixmultiStep
+@{
+(*begin code for fixmultiStep*)
+
+fixmultiStep[{XZfunc_Function,numSteps_Integer},numX_Integer,valRange:{_Integer..},numTerms_Integer]:=
+With[{funcArgs=XZfunc[[1]]},
+With[{xtFunc01=
+ReplacePart[
+Function[xxxxx,
+	Flatten[(Apply[XZfunc, xxxxx])[[Range[numX]]]]],{1->funcArgs}]},
+With[{theFunc=
+	ReplacePart[
+	Function[xxxxx,
+ With[{theXVals=NestList[Apply[xtFunc01, Flatten[#]]&,xxxxx,numTerms-1]},(*Print["fixmultiStep:theXVals=",{theXVals,Map[((Apply[XZfunc,Flatten[#]])[[valRange]] )& , theXVals]}];*)
+	  Map[((Apply[XZfunc,Flatten[#]])[[valRange]] )&, theXVals]]],1->funcArgs]},
+With[{xxxxxPos={{2,1,1,2,1,1,1,2,1,1,2},{2,1,1,2,2}}},
+ReplacePart[
+theFunc,
+	  {xxxxxPos->funcArgs}]]]]]/;numSteps>0
+
+
+(*end code for fixmultiStep*)
+@}
+
+@d fixmultiStepZUsage
+@{fixmultiStepZ::usage=
+"place holder for fixmultiStepZ"
+@}
+
+@d fixmultiStepZ
+@{
+(*begin code for fixmultiStepZ*)
+fixmultiStepZ[{XZfunc_Function,numSteps_Integer},numX_Integer,numZ_Integer,numTerms_Integer]:=
+fixmultiStep[{XZfunc,numSteps},numX,numX+Range[numZ],numTerms]
+
+(*end code for fixmultiStepZ*)
+@}
+
+@d fixmultiStepXUsage
+@{fixmultiStepX::usage=
+"place holder for fixmultiStepX"
+@}
+
+@d fixmultiStepX
+@{
+(*begin code for fixmultiStepX*)
+fixmultiStepX[{XZfunc_Function,numSteps_Integer},numX_Integer,numTerms_Integer]:=
+fixmultiStep[{XZfunc,numSteps},numX,Range[numX],numTerms]
+
+(*end code for fixmultiStepX*)
 @}
 
 \subsection{checkLinMod}

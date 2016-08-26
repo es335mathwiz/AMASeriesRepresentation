@@ -129,7 +129,7 @@ PerfectForesight::usage="degenerate distribution implementing perfect foresight"
 @<genLilXkZkFunc@>
 @<fSumC@>
 @<fSum@>
-@<genXtm1Vars@>
+@<genSlots@>
 @<genXtOfXtm1@>
 @<genXtp1OfXt@>
 @<genX0Z0Funcs@>
@@ -407,6 +407,23 @@ Table[Slot[ii],
 
 
 
+\subsection{genSlots}
+\label{sec:genxtm1vars}
+
+
+@d genSlots
+@{
+(*begin code for genSlots*)
+genSlots[numVars_Integer]:=
+Module[{},
+genSlots[numVars]=
+Table[Slot[ii],{ii,numVars}]]/;And[numVars>=0]
+
+(*end code for genSlots*)
+@}
+
+
+
 
 \subsection{genXtOfXtm1}
 \label{sec:genxtofxtm1}
@@ -457,9 +474,9 @@ With[{xtp1Vals=BB.xtVals+Inverse[IdentityMatrix[Length[xtVals]]-FF] . phi . psiC
 (*begin code for genX0Z0Funcs*)
 genX0Z0Funcs[linMod:{theHMat_?MatrixQ,BB_?MatrixQ,phi_?MatrixQ,FF_?MatrixQ,psiEps_?MatrixQ,psiC_?MatrixQ,psiZ_?MatrixQ,psiZPreComp_?MatrixQ}]:=
 With[{numXVars=Length[BB],numZVars=Length[psiZ[[1]]]},
-With[{xtm1Vars=genXtm1Vars[numXVars]},
+With[{xtm1Vars=genSlots[numXVars]},
 With[{compArgs=xtm1Vars},
-Apply[Function, {compArgs,Join[BB.Transpose[{xtm1Vars}]+
+Apply[Function, {Join[BB.Transpose[{xtm1Vars}]+
 Inverse[IdentityMatrix[Length[xtm1Vars]]-FF] . phi . psiC,ConstantArray[0,{numZVars,1}]]}]]]]
 (*end code for genX0Z0Funcs*)
 @}
@@ -478,20 +495,16 @@ Inverse[IdentityMatrix[Length[xtm1Vars]]-FF] . phi . psiC,ConstantArray[0,{numZV
 (*begin code for multiStep*)
 
 multiStep[{XZfunc_Function,numSteps_Integer},numX_Integer,valRange:{_Integer..},numTerms_Integer]:=
-With[{funcArgs=XZfunc[[1]]},
-With[{xtFunc01=
-ReplacePart[
-Function[xxxxx,
-	Flatten[(Apply[XZfunc, xxxxx])[[Range[numX]]]]],{1->funcArgs}]},
-With[{theFunc=
-	ReplacePart[
-	Function[xxxxx,
- With[{theXVals=NestList[Apply[xtFunc01, Flatten[#]]&,xxxxx,numTerms-1]},(*Print["multiStep:theXVals=",{theXVals,Map[((Apply[XZfunc,Flatten[#]])[[valRange]] )& , theXVals]}];*)
-	  Map[((Apply[XZfunc,Flatten[#]])[[valRange]] )&, theXVals]]],1->funcArgs]},
-With[{xxxxxPos={{2,1,1,2,1,1,1,2,1,1,2},{2,1,1,2,2}}},
-ReplacePart[
-theFunc,
-	  {xxxxxPos->funcArgs}]]]]]/;numSteps>0
+With[{funcArgs=genSlots[numX]},
+With[{appGuts=(Apply[XZfunc,funcArgs][[Range[numX]]])},
+With[{xtFunc01=Function[appGuts]},
+Print["xtfunc=",xtFunc01];
+With[{iterGuts=NestList[Apply[xtFunc01,Flatten[#]]&,funcArgs,numTerms-1]},
+Print["iterGuts=",iterGuts];
+With[{theXZGuts=Map[(Print["curio=",#];Apply[XZfunc,Flatten[#]][[valRange]])&,iterGuts]},
+With[{theFunc=Function[theXZGuts]},
+Print["multiStep:theXVals=",{iterGuts,theFunc}];
+theFunc]]]]]]/;numSteps>0
 
 
 (*end code for multiStep*)

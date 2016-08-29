@@ -673,21 +673,25 @@ Apply[eqnsFunc,Flatten[Join[ss,{{0}}]]]
  
 genFRFunc[{numX_Integer,numEps_Integer,numZ_Integer},
 xkFunc:(_Function|_CompiledFunction),eqnsFunc:(_Function|_CompiledFunction),opts:OptionsPattern[]]:=
-With[{funcArgs=Table[Unique["theFRFuncArgs"],{numX+numEps}],
+With[{funcArgs=genSlots[numX+numEps],
 zArgs=Table[Unique["theFRZArgs"],{numZ}]},
 With[{zArgsInit=Map[{#,0}&,zArgs],funcName=Unique["fName"]},
-funcName[funcArgsNot:{_?NumberQ..}]:=
-Module[{theVars=Join[funcArgsNot]},(*Print["genFRFunc func",theVars,
-Flatten[Apply[xkFunc,theVars]]];*)
-Apply[eqnsFunc,(Flatten[Apply[xkFunc,theVars]])]];
-ReplacePart[
-Function[xxxx,With[{zVals=zArgs/.FindRoot[funcName[Join[funcArgs,zArgs]],zArgsInit]},
-Join[(Apply[xkFunc,Join[funcArgs,zVals]])[[numX+Range[numX]]],
-Transpose[{zVals}]]]],
-1->funcArgs]]]
+funcName[theVars:{_?NumberQ..}]:=
+Module[{},Print["genFRFunc in shield func",{theVars,
+Flatten[Apply[xkFunc,theVars]]}];
+Apply[eqnsFunc,Flatten[Apply[xkFunc,theVars]]]
+];
+With[{(*funcGuts=Apply[FindRoot,{funcName[Join[funcArgs,zArgs]],zArgsInit}],*)
+otherGuts=FindRoot[funcName[Join[funcArgs,zArgs]],zArgsInit]},
+Print["fguts=",{funcGuts,zArgsInit}];
+Function[otherGuts]]]]
+
 (* input   [function (xt,eps,zt)->(xtm1,xt,xtp1,eps), function (xtm1,xt,xtp1,eps)->me]*)
 (* output   [function  (xt,eps) ->(xt,zt)] *)
  
+cmpZVals[theZArgs:{_Symbol..},theFunc_Symbol,theFuncArgs]:=
+theZArgs/.FindRoot[theFunc[Join[theFuncArgs,theZArgs]],theZArgsInit]
+
 
 (*end code for genFRFunc*)
 @}

@@ -4,6 +4,12 @@ Get["AMASeriesRepresentation`"]
 Get["betterRBC.m"]
  	X0Z0=genX0Z0Funcs[linModBetter]
 
+X0Z0=genX0Z0Funcs[linModBetter];
+theLilFunc=genLilXkZkFunc[linModBetter, {X0Z0,2},anXEpsBetter];
+theFR=genFRFunc[{4,1,4},theLilFunc,rbcEqnsFunctionalNextBetter];
+
+
+(*
 
 oldX0Z0=Function @@ {{cc,kk,nn,tt},X0Z0 @@ {cc,kk,nn,tt}}
 
@@ -32,7 +38,7 @@ theFunc @@ anXEpsZsFlatBetter
 theFunc=genLilXkZkFunc[linModBetter,ConstantArray[0,{4,1}]]
 theFunc @@ anXEpsZsFlatBetter
 
-
+*)
 
 
 (*

@@ -1,70 +1,103 @@
-
 Get["pathSetup.mth"]
-Get["cleanUp`"]
+Get["AMASeriesRepresentation`"]
 
-Get["cleanUpRBC.m"]
- 	X0Z0=genX0Z0Funcs[linModCleanUp]
+Get["betterRBC.m"]
+ 	X0Z0=genX0Z0Funcs[linModBetter]
 
-the00=genLilXkZkFunc[linModCleanUp, {}]
-the00 @@ anXEpsZsFlatCleanUp
-
-
-theFunc=genLilXkZkFunc[linModCleanUp, {X0Z0,2},X0Z0@@anXEpsFlatCleanUp]
-theFunc @@ anXEpsZsFlatCleanUp
-
-ssVec=Join[cleanUpRBC`Private`ssSolnVecRE,cleanUpRBC`Private`ssSolnVecRE,cleanUpRBC`Private`ssSolnVecRE]//N;
-		   checkLinMod[linModCleanUp,anXCleanUp,{{0.01}}]
-checkMod[{genFRFunc},linModCleanUp,aGSpecCleanUp,theDistCleanUp,anXCleanUp,{{0.01}},ssVec,rbcEqnsFunctionalNextCleanUp]
+X0Z0=genX0Z0Funcs[linModBetter];
+theLilFunc=genLilXkZkFunc[linModBetter, {X0Z0,2},anXEpsBetter];
+theFR=genFRFunc[{4,1,4},theLilFunc,rbcEqnsFunctionalNextBetter];
 
 
-X0Z0=genX0Z0Funcs[linModCleanUp];
-theLilFunc=genLilXkZkFunc[linModCleanUp, {X0Z0,2},anXEpsCleanUp];
-theFR=genFRFunc[{4,1,4},theLilFunc,rbcEqnsFunctionalNextCleanUp];
-theFR@@anXEpsFlatCleanUp
+(*
 
-theFP=genFPFunc[{genFRFunc},linModCleanUp,{X0Z0,2},rbcEqnsFunctionalNextCleanUp];
+oldX0Z0=Function @@ {{cc,kk,nn,tt},X0Z0 @@ {cc,kk,nn,tt}}
 
-theFP@@anXEpsFlatCleanUp
-
-genInterpData[theFP,aGSpecCleanUp]
+oldX0Z0@@ anXFlatBetter
 
 
-
-theFuncsNow=makeInterpFunc[genFPFunc[{genFRFunc},linModCleanUp,{X0Z0,2},rbcEqnsFunctionalNextCleanUp],aGSpecCleanUp]
-
-theFuncsNow @@ anXEpsFlatCleanUp
+buh=multiStep[{X0Z0,1},4,Range[8],3]
 
 
-{xzFunc,iterXZFuncsPF}=doIterREInterp[{genFRFunc},linModCleanUp,{X0Z0,2},rbcEqnsFunctionalNextCleanUp,aGSpecCleanUp,thePFDistCleanUp]
+huh=fixmultiStep[{oldX0Z0,1},4,Range[8],3]
+{aa=huh @@anXEpsZsFlatBetter,bb=buh @@anXEpsZsFlatBetter}
 
 
-xzFunc @@ anXEpsFlatCleanUp
-iterXZFuncsPF @@ anXFlatCleanUp
-
-				 anXZFuncPF=genXZFuncRE[{4,1,4},xzFunc,thePFDistCleanUp];
+the00=genLilXkZkFunc[linModBetter, {}]
+the00 @@ anXEpsZsFlatBetter
 
 
-anX0Z0 = genX0Z0Funcs[linModCleanUp];
+theFunc=genLilXkZkFunc[linModBetter, {X0Z0,2},X0Z0@@anXEpsFlatBetter]
+
+multiStep[{X0Z0,1},4,Range[9],1]
+
+
+theFunc @@ anXEpsZsFlatBetter
+
+
+theFunc=genLilXkZkFunc[linModBetter,ConstantArray[0,{4,1}]]
+theFunc @@ anXEpsZsFlatBetter
+
+*)
+
+
+(*
+
+
+ssVec=Join[betterRBC`Private`ssSolnVecRE,betterRBC`Private`ssSolnVecRE,betterRBC`Private`ssSolnVecRE]//N;
+		   checkLinMod[linModBetter,anXBetter,{{0.01}}]
+checkMod[{genFRFunc},linModBetter,aGSpecBetter,theDistBetter,anXBetter,{{0.01}},ssVec,rbcEqnsFunctionalNextBetter]
+
+
+X0Z0=genX0Z0Funcs[linModBetter];
+theLilFunc=genLilXkZkFunc[linModBetter, {X0Z0,2},anXEpsBetter];
+theFR=genFRFunc[{4,1,4},theLilFunc,rbcEqnsFunctionalNextBetter];
+theFR@@anXEpsFlatBetter
+
+theFP=genFPFunc[{genFRFunc},linModBetter,{X0Z0,2},rbcEqnsFunctionalNextBetter];
+
+theFP@@anXEpsFlatBetter
+
+genInterpData[theFP,aGSpecBetter]
+
+
+
+theFuncsNow=makeInterpFunc[genFPFunc[{genFRFunc},linModBetter,{X0Z0,2},rbcEqnsFunctionalNextBetter],aGSpecBetter]
+
+theFuncsNow @@ anXEpsFlatBetter
+
+
+{xzFunc,iterXZFuncsPF}=doIterREInterp[{genFRFunc},linModBetter,{X0Z0,2},rbcEqnsFunctionalNextBetter,aGSpecBetter,thePFDistBetter]
+
+
+xzFunc @@ anXEpsFlatBetter
+iterXZFuncsPF @@ anXFlatBetter
+
+				 anXZFuncPF=genXZFuncRE[{4,1,4},xzFunc,thePFDistBetter];
+
+
+anX0Z0 = genX0Z0Funcs[linModBetter];
 aBunchREInterp = 
-nestIterREInterp[{genFRFunc},linModCleanUp, {anX0Z0, 2}, 
-   rbcEqnsFunctionalNextCleanUp, aGSpecCleanUp, 
-   theDistCleanUp, 2];
+nestIterREInterp[{genFRFunc},linModBetter, {anX0Z0, 2}, 
+   rbcEqnsFunctionalNextBetter, aGSpecBetter, 
+   theDistBetter, 2];
 
 
 aBunchREInterp[[-1,-1]] aBunchREInterp = 
-nestIterREInterp[{genFRFunc},linModCleanUp, {anX0Z0, 2}, 
-   rbcEqnsFunctionalNextCleanUp, aGSpecCleanUp, 
-   theDistCleanUp, 2];
+nestIterREInterp[{genFRFunc},linModBetter, {anX0Z0, 2}, 
+   rbcEqnsFunctionalNextBetter, aGSpecBetter, 
+   theDistBetter, 2];
 
 
-aBunchREInterp[[-1,-1]] @@ anXFlatCleanUp
+aBunchREInterp[[-1,-1]] @@ anXFlatBetter
 
 
-pathNow=iterateDRPF[xzFunc,anXEpsCleanUp,1,5]
+pathNow=iterateDRPF[xzFunc,anXEpsBetter,1,5]
 
-pathErrs01=pathErrsDRPF[xzFunc,anXEpsCleanUp,1,rbcEqnsFunctionalNextCleanUp,2]
+pathErrs01=pathErrsDRPF[xzFunc,anXEpsBetter,1,rbcEqnsFunctionalNextBetter,2]
 
 
 oSet=0;
-	Norm[pathErrs01[[1]]-rbcEqnsFunctionalNextCleanUp@@Join[Flatten[pathNow[[oSet+Range[12]]]],Last[anXEpsCleanUp]]]<10^(-6)]
+	Norm[pathErrs01[[1]]-rbcEqnsFunctionalNextBetter@@Join[Flatten[pathNow[[oSet+Range[12]]]],Last[anXEpsBetter]]]<10^(-6)]
 	
+*)

@@ -30,8 +30,9 @@ theLilFuncMoreX0Z0=genLilXkZkFunc[linMod, {X0Z0,4},X0Z0@@anXtm1EpsZ];
 theFRMoreX0Z0=genFRFunc[probDims,theLilFuncMoreX0Z0,rbcComp];
 
 Test[
-theFR@@anXtm1EpsZ[[Range[5]]],(*produces xtzt for a given xtm1,eps and conditional z functions*)
-{{0.3926985637359889}, {0.2037377776886802}, {2.8158316288775245}, {1.1057730363825737}, {-0.005480210873745038}, {-0.000915880995108243}, {-0.003442312382082275}, {0.0007182092189910172}}
+Norm[theFR@@anXtm1EpsZ[[Range[5]]]-(*produces xtzt for a given xtm1,eps and conditional z functions*)
+{{0.3926985637359889}, {0.2037377776886802}, {2.8158316288775245}, {1.1057730363825737}, {-0.005480210873745038}, {-0.000915880995108243}, {-0.003442312382082275}, {0.0007182092189910172}}]<10^(-8),
+True
 	,
 	TestID->"TestGenFRFunc-20151101-L8W9H4"
 ]

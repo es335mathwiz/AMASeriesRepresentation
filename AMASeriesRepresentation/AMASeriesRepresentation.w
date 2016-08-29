@@ -18,9 +18,9 @@
 
 
 
-@o cleanUp.m
+@o AMASeriesRepresentation.m
 @{
-BeginPackage["cleanUp`",
+BeginPackage["AMASeriesRepresentation`",
  {"JLink`","ProtectedSymbols`"}]
 @<usage definitions@>
 Begin["`Private`"]
@@ -38,6 +38,8 @@ EndPackage[]
 @{
 (*Begin Usage Definitions*)
 PerfectForesight::usage="degenerate distribution implementing perfect foresight"
+@<genLilXkZkFuncUsage@>
+@<gettersSettersUsage@>
 @<worstPathForErrDRREIntegrateUsage@>
 @<evalBadPathErrDRREIntegrateUsage@>
 @<evalPathErrDRREIntegrateUsage@>
@@ -76,16 +78,15 @@ PerfectForesight::usage="degenerate distribution implementing perfect foresight"
 @<getPsiCUsage@>
 @<getPsiEpsUsage@>
 @<getNumZUsage@>
-@<getNumZUsage@>
-@<getNumZUsage@>
-@<getNumZUsage@>
-@<genZVarsUsage@>
-@<genEpsVarsUsage@>
+@<getNumXUsage@>
+@<getNumEpsUsage@>
 @<multiStepUsage@>
 @<multiStepZUsage@>
 @<multiStepXUsage@>
+@<fixmultiStepUsage@>
+@<fixmultiStepZUsage@>
+@<fixmultiStepXUsage@>
 @<checkLinModUsage@>
-@<genLilXkZkFuncUsage@>
 @<fSumCUsage@>
 @<fSumUsage@>
 @<getNumEpsVarsUsage@>
@@ -95,6 +96,9 @@ PerfectForesight::usage="degenerate distribution implementing perfect foresight"
 
 @d package code
 @{
+
+@<gettersSetters@>
+
 @<worstPathForErrDRREIntegrate@>
 @<evalBadPathErrDRREIntegrate@>
 @<evalPathErrDRREIntegrate@>
@@ -120,18 +124,21 @@ PerfectForesight::usage="degenerate distribution implementing perfect foresight"
 @<getPsiC@>
 @<getPsiEps@>
 @<getNumZ@>
+@<getNumX@>
+@<getNumEps@>
 @<genLilXkZkFunc@>
 @<fSumC@>
 @<fSum@>
-@<genXtm1Vars@>
+@<genSlots@>
 @<genXtOfXtm1@>
 @<genXtp1OfXt@>
 @<genX0Z0Funcs@>
-@<genZVars@>
-@<genEpsVars@>
 @<multiStep@>
 @<multiStepZ@>
 @<multiStepX@>
+@<fixmultiStep@>
+@<fixmultiStepZ@>
+@<fixmultiStepX@>
 @<checkLinMod@>
 @<checkMod@>
 @<genFRFunc@>
@@ -201,14 +208,9 @@ genLilXkZkFunc::usage=
 "\ngenerate a function that computes x for Zs = 0\n"
 @}
 
-@d genLilXkZkFunc full call
-@{genLilXkZkFunc[@<linMod@>,@<XZFuncs@>,@<xtGuess@>,@<drvPairs@>]@}
 
-@d genLilXkZkFunc fcon call
-@{genLilXkZkFunc[@<linMod@>,@<fCon@>,@<drvPairs@>]@}
 
-@d genLilXkZkFunc theZs call
-@{genLilXkZkFunc[@<linMod@>,@<theZs@>]@}
+
 
 @d genLilXkZkFunc noZs call
 @{ genLilXkZkFunc[@<linMod@>,{}]@}
@@ -227,6 +229,9 @@ With[{theRes=genLilXkZkFunc[linMod,fCon]},theRes]]]
 @}
 
 
+@d genLilXkZkFunc theZs call
+@{genLilXkZkFunc[@<linMod@>,@<theZs@>]@}
+
 @d genLilXkZkFunc
 @{
 @< genLilXkZkFunc theZs call@>:=
@@ -237,8 +242,11 @@ With[{theRes=genLilXkZkFunc[linMod,fCon]},theRes]]]
 @{With[{fCon=fSumC[phi,FF,psiZ,theZs]},
 With[{theRes=genLilXkZkFunc[linMod,fCon]},
 theRes]]
-
 @}
+
+
+@d genLilXkZkFunc full call
+@{genLilXkZkFunc[@<linMod@>,@<XZFuncs@>,@<xtGuess@>,@<drvPairs@>]@}
 
 @d genLilXkZkFunc
 @{
@@ -252,6 +260,15 @@ With[{theRes=genLilXkZkFunc[linMod,fCon,drvPairs]},
 theRes]]
 @}
 
+
+
+@d genLilXkZkFuncUsage
+@{ genLilXkZkFunc::usage="place holder"@}
+
+@d genLilXkZkFunc fcon call
+@{genLilXkZkFunc[@<linMod@>,@<fCon@>,@<drvPairs@>]@}
+
+
 @d genLilXkZkFunc
 @{
 @<genLilXkZkFunc fcon call@>:=
@@ -259,18 +276,18 @@ theRes]]
 @}
 
 @d apply formula F contribution given
-@{With[{numXVars=Length[BB],numEpsVars=Length[psiEps[[1]]],
-numZVars=Length[psiZ[[1]]]},
-With[{xtm1Vars=Transpose[{genXtm1Vars[numXVars]}],
-epsVars=Transpose[{genEpsVars[numEpsVars]}],
-zVars=Transpose[{Reverse[Flatten[genZVars[0,numZVars]]]/.name_[t]->name}]},
+@{With[{numXVars=getNumX[linMod],numEpsVars=getNumEps[linMod],
+numZVars=getNumZ[linMod]},
+With[{theSlots=Table[{Slot[ii]},{ii,numXVars+numEpsVars+numZVars}]},
+With[{xtm1Vars=theSlots[[Range[numXVars]]],
+epsVars=theSlots[[numXVars+Range[numEpsVars]]],
+zVars=theSlots[[numXVars+numEpsVars+Range[numZVars]]]},
 With[{xtVals=genXtOfXtm1[linMod,xtm1Vars,epsVars,zVars,fCon]},
 With[{xtp1Vals=genXtp1OfXt[linMod,xtVals,fCon]},
 With[{fullVec=Join[xtm1Vars,xtVals,xtp1Vals,epsVars]},
 With[{(*theDrvs=doImplicitDrv[linMod,fullVec,
 zVars,xtm1Vars,epsVars,drvPairs]*)},(*Print["theDrvs",theDrvs];*)
-ReplacePart[
-Function[xxxx,fullVec],{1->Flatten[Join[xtm1Vars,epsVars,zVars]]}]
+Function[fullVec]]
 ]]]]]]
 @}
 
@@ -382,10 +399,27 @@ makeProtectedSymbol["epsVar"<>ToString[ii]],{ii,numShocks}]]/;And[numShocks>=0]
 genXtm1Vars[numVars_Integer]:=
 Module[{},
 genXtm1Vars[numVars]=
-Table[
-makeProtectedSymbol["xxxtm1Var"<>ToString[ii]],{ii,numVars}]]/;And[numVars>=0]
+Table[Slot[ii],
+(*makeProtectedSymbol["xxxtm1Var"<>ToString[ii]],*){ii,numVars}]]/;And[numVars>=0]
 
 (*end code for genXtm1Vars*)
+@}
+
+
+
+\subsection{genSlots}
+\label{sec:genxtm1vars}
+
+
+@d genSlots
+@{
+(*begin code for genSlots*)
+genSlots[numVars_Integer]:=
+Module[{},
+genSlots[numVars]=
+Table[Slot[ii],{ii,numVars}]]/;And[numVars>=0]
+
+(*end code for genSlots*)
 @}
 
 
@@ -440,9 +474,9 @@ With[{xtp1Vals=BB.xtVals+Inverse[IdentityMatrix[Length[xtVals]]-FF] . phi . psiC
 (*begin code for genX0Z0Funcs*)
 genX0Z0Funcs[linMod:{theHMat_?MatrixQ,BB_?MatrixQ,phi_?MatrixQ,FF_?MatrixQ,psiEps_?MatrixQ,psiC_?MatrixQ,psiZ_?MatrixQ,psiZPreComp_?MatrixQ}]:=
 With[{numXVars=Length[BB],numZVars=Length[psiZ[[1]]]},
-With[{xtm1Vars=genXtm1Vars[numXVars]},
+With[{xtm1Vars=genSlots[numXVars]},
 With[{compArgs=xtm1Vars},
-Apply[Function, {compArgs,Join[BB.Transpose[{xtm1Vars}]+
+Apply[Function, {Join[BB.Transpose[{xtm1Vars}]+
 Inverse[IdentityMatrix[Length[xtm1Vars]]-FF] . phi . psiC,ConstantArray[0,{numZVars,1}]]}]]]]
 (*end code for genX0Z0Funcs*)
 @}
@@ -461,20 +495,16 @@ Inverse[IdentityMatrix[Length[xtm1Vars]]-FF] . phi . psiC,ConstantArray[0,{numZV
 (*begin code for multiStep*)
 
 multiStep[{XZfunc_Function,numSteps_Integer},numX_Integer,valRange:{_Integer..},numTerms_Integer]:=
-With[{funcArgs=XZfunc[[1]]},
-With[{xtFunc01=
-ReplacePart[
-Function[xxxxx,
-	Flatten[(Apply[XZfunc, xxxxx])[[Range[numX]]]]],{1->funcArgs}]},
-With[{theFunc=
-	ReplacePart[
-	Function[xxxxx,
- With[{theXVals=NestList[Apply[xtFunc01, Flatten[#]]&,xxxxx,numTerms-1]},(*Print["multiStep:theXVals=",{theXVals,Map[((Apply[XZfunc,Flatten[#]])[[valRange]] )& , theXVals]}];*)
-	  Map[((Apply[XZfunc,Flatten[#]])[[valRange]] )&, theXVals]]],1->funcArgs]},
-With[{xxxxxPos={{2,1,1,2,1,1,1,2,1,1,2},{2,1,1,2,2}}},
-ReplacePart[
-theFunc,
-	  {xxxxxPos->funcArgs}]]]]]/;numSteps>0
+With[{funcArgs=genSlots[numX]},
+With[{appGuts=(Apply[XZfunc,funcArgs][[Range[numX]]])},
+With[{xtFunc01=Function[appGuts]},
+Print["xtfunc=",xtFunc01];
+With[{iterGuts=NestList[Apply[xtFunc01,Flatten[#]]&,funcArgs,numTerms-1]},
+Print["iterGuts=",iterGuts];
+With[{theXZGuts=Map[(Print["curio=",#];Apply[XZfunc,Flatten[#]][[valRange]])&,iterGuts]},
+With[{theFunc=Function[theXZGuts]},
+Print["multiStep:theXVals=",{iterGuts,theFunc}];
+theFunc]]]]]]/;numSteps>0
 
 
 (*end code for multiStep*)
@@ -506,6 +536,67 @@ multiStepX[{XZfunc_Function,numSteps_Integer},numX_Integer,numTerms_Integer]:=
 multiStep[{XZfunc,numSteps},numX,Range[numX],numTerms]
 
 (*end code for multiStepX*)
+@}
+
+
+\subsection{fixmultiStep Functions}
+\label{sec:multistep-functions}
+
+@d fixmultiStepUsage
+@{fixmultiStep::usage=
+"place holder for fixmultiStep"
+@}
+
+@d fixmultiStep
+@{
+(*begin code for fixmultiStep*)
+
+fixmultiStep[{XZfunc_Function,numSteps_Integer},numX_Integer,valRange:{_Integer..},numTerms_Integer]:=
+With[{funcArgs=XZfunc[[1]]},
+With[{xtFunc01=
+ReplacePart[
+Function[xxxxx,
+	Flatten[(Apply[XZfunc, xxxxx])[[Range[numX]]]]],{1->funcArgs}]},
+With[{theFunc=
+	ReplacePart[
+	Function[xxxxx,
+ With[{theXVals=NestList[Apply[xtFunc01, Flatten[#]]&,xxxxx,numTerms-1]},(*Print["fixmultiStep:theXVals=",{theXVals,Map[((Apply[XZfunc,Flatten[#]])[[valRange]] )& , theXVals]}];*)
+	  Map[((Apply[XZfunc,Flatten[#]])[[valRange]] )&, theXVals]]],1->funcArgs]},
+With[{xxxxxPos={{2,1,1,2,1,1,1,2,1,1,2},{2,1,1,2,2}}},
+ReplacePart[
+theFunc,
+	  {xxxxxPos->funcArgs}]]]]]/;numSteps>0
+
+
+(*end code for fixmultiStep*)
+@}
+
+@d fixmultiStepZUsage
+@{fixmultiStepZ::usage=
+"place holder for fixmultiStepZ"
+@}
+
+@d fixmultiStepZ
+@{
+(*begin code for fixmultiStepZ*)
+fixmultiStepZ[{XZfunc_Function,numSteps_Integer},numX_Integer,numZ_Integer,numTerms_Integer]:=
+fixmultiStep[{XZfunc,numSteps},numX,numX+Range[numZ],numTerms]
+
+(*end code for fixmultiStepZ*)
+@}
+
+@d fixmultiStepXUsage
+@{fixmultiStepX::usage=
+"place holder for fixmultiStepX"
+@}
+
+@d fixmultiStepX
+@{
+(*begin code for fixmultiStepX*)
+fixmultiStepX[{XZfunc_Function,numSteps_Integer},numX_Integer,numTerms_Integer]:=
+fixmultiStep[{XZfunc,numSteps},numX,Range[numX],numTerms]
+
+(*end code for fixmultiStepX*)
 @}
 
 \subsection{checkLinMod}
@@ -582,21 +673,25 @@ Apply[eqnsFunc,Flatten[Join[ss,{{0}}]]]
  
 genFRFunc[{numX_Integer,numEps_Integer,numZ_Integer},
 xkFunc:(_Function|_CompiledFunction),eqnsFunc:(_Function|_CompiledFunction),opts:OptionsPattern[]]:=
-With[{funcArgs=Table[Unique["theFRFuncArgs"],{numX+numEps}],
+With[{funcArgs=genSlots[numX+numEps],
 zArgs=Table[Unique["theFRZArgs"],{numZ}]},
 With[{zArgsInit=Map[{#,0}&,zArgs],funcName=Unique["fName"]},
-funcName[funcArgsNot:{_?NumberQ..}]:=
-Module[{theVars=Join[funcArgsNot]},(*Print["genFRFunc func",theVars,
-Flatten[Apply[xkFunc,theVars]]];*)
-Apply[eqnsFunc,(Flatten[Apply[xkFunc,theVars]])]];
-ReplacePart[
-Function[xxxx,With[{zVals=zArgs/.FindRoot[funcName[Join[funcArgs,zArgs]],zArgsInit]},
-Join[(Apply[xkFunc,Join[funcArgs,zVals]])[[numX+Range[numX]]],
-Transpose[{zVals}]]]],
-1->funcArgs]]]
+funcName[theVars:{_?NumberQ..}]:=
+Module[{},Print["genFRFunc in shield func",{theVars,
+Flatten[Apply[xkFunc,theVars]]}];
+Apply[eqnsFunc,Flatten[Apply[xkFunc,theVars]]]
+];
+With[{(*funcGuts=Apply[FindRoot,{funcName[Join[funcArgs,zArgs]],zArgsInit}],*)
+otherGuts=FindRoot[funcName[Join[funcArgs,zArgs]],zArgsInit]},
+Print["fguts=",{funcGuts,zArgsInit}];
+Function[otherGuts]]]]
+
 (* input   [function (xt,eps,zt)->(xtm1,xt,xtp1,eps), function (xtm1,xt,xtp1,eps)->me]*)
 (* output   [function  (xt,eps) ->(xt,zt)] *)
  
+cmpZVals[theZArgs:{_Symbol..},theFunc_Symbol,theFuncArgs]:=
+theZArgs/.FindRoot[theFunc[Join[theFuncArgs,theZArgs]],theZArgsInit]
+
 
 (*end code for genFRFunc*)
 @}
@@ -1144,7 +1239,7 @@ Apply[multiStepX[{XZFunc,numSteps},numXVars,numTerms-1],Flatten[xtVal]]]},
 
 
 \subsection{pathErrsDRPF}
-\label{sec:genpathcompare}
+\label{sec:patherrsdrpf}
 
 
 
@@ -1173,7 +1268,7 @@ And[numPers>1]
 @}
 
 \subsection{pathErrsDRREIntegrate}
-\label{sec:genpathcompare}
+\label{sec:patherrsdrreintegrate}
 
 
 
@@ -1220,23 +1315,6 @@ firstArg]
 (*end code for doFuncArg*)
 @}
 
-
-\subsection{genPathCompare}
-\label{sec:genpathcompare}
-
-
-
-@d genPathCompareUsage
-@{genPathCompare::usage=
-"place holder for genPathCompare"
-@}
-
-@d genPathCompare
-@{
-(*begin code for genPathCompare*)
-
-(*end code for genPathCompare*)
-@}
 
 
 \subsection{evalPathErrDRREIntegrate}
@@ -1337,9 +1415,13 @@ evalBadPathErrDRREIntegrate[phi,drFunc,noEpsVec,distribSpec,eqnsFunc]},
 \subsection{Getters and Setters}
 \label{sec:getters-setters}
 
+@d gettersSettersUsage
+@{
+(*some getters usage*)
+@}
 @d gettersSetters
 @{
-(*some setters*)
+(*some getters*)
 @}
 
 
@@ -1398,13 +1480,13 @@ getNumVars[gSpec:{toIgnore:{_Integer...},iOrd_Integer,{{_Integer,_?NumberQ,_?Num
 @d getHUsage
 @{
 getH::usage=
-"getH(@<linMod@>)"<>
+"getH[@<linMod@>]"<>
 "number of z variables"
 @}
 
 @d getH
 @{
-getH(@<linMod@>):=
+getH[@<linMod@>]:=
 theHMat
 @}
 
@@ -1412,13 +1494,13 @@ theHMat
 @d getBUsage
 @{
 getB::usage=
-"getB(@<linMod@>)"<>
+"getB[@<linMod@>]"<>
 "number of z variables"
 @}
 
 @d getB
 @{
-getB(@<linMod@>):=
+getB[@<linMod@>]:=
 BB
 @}
 
@@ -1426,13 +1508,13 @@ BB
 @d getFUsage
 @{
 getF::usage=
-"getF(@<linMod@>)"<>
+"getF[@<linMod@>]"<>
 "number of z variables"
 @}
 
 @d getF
 @{
-getF(@<linMod@>):=
+getF[@<linMod@>]:=
 FF
 @}
 
@@ -1440,13 +1522,13 @@ FF
 @d getPhiUsage
 @{
 getPhi::usage=
-"getPhi(@<linMod@>)"<>
+"getPhi[@<linMod@>]"<>
 "number of z variables"
 @}
 
 @d getPhi
 @{
-getPhi(@<linMod@>):=
+getPhi[@<linMod@>]:=
 phi
 @}
 
@@ -1454,13 +1536,13 @@ phi
 @d getPsiZUsage
 @{
 getPsiZ::usage=
-"getPsiZ(@<linMod@>)"<>
+"getPsiZ[@<linMod@>]"<>
 "number of z variables"
 @}
 
 @d getPsiZ
 @{
-getPsiZ(@<linMod@>):=
+getPsiZ[@<linMod@>]:=
 psiZ
 @}
 
@@ -1469,13 +1551,13 @@ psiZ
 @d getPsiCUsage
 @{
 getPsiC::usage=
-"getPsiC(@<linMod@>)"<>
+"getPsiC[@<linMod@>]"<>
 "number of z variables"
 @}
 
 @d getPsiC
 @{
-getPsiC(@<linMod@>):=
+getPsiC[@<linMod@>]:=
 psiC
 @}
 
@@ -1484,13 +1566,13 @@ psiC
 @d getPsiEpsUsage
 @{
 getPsiEps::usage=
-"getPsiEps(@<linMod@>)"<>
+"getPsiEps[@<linMod@>]"<>
 "number of z variables"
 @}
 
 @d getPsiEps
 @{
-getPsiEps(@<linMod@>):=
+getPsiEps[@<linMod@>]:=
 psiEps
 @}
 
@@ -1498,14 +1580,42 @@ psiEps
 @d getNumZUsage
 @{
 getNumZ::usage=
-"getNumZ(@<linMod@>)"<>
+"getNumZ[@<linMod@>]"<>
 "number of z variables"
 @}
 
 @d getNumZ
 @{
-getNumZ(@<linMod@>):=
+getNumZ[@<linMod@>]:=
 Length[getPsiZ[linMod][[1]]]
+@}
+
+
+@d getNumXUsage
+@{
+getNumX::usage=
+"getNumX[@<linMod@>]"<>
+"number of x variables"
+@}
+
+@d getNumX
+@{
+getNumX[@<linMod@>]:=
+Length[getB[linMod]]
+@}
+
+
+@d getNumEpsUsage
+@{
+getNumEps::usage=
+"getNumEps[@<linMod@>]"<>
+"number of eps variables"
+@}
+
+@d getNumEps
+@{
+getNumEps[@<linMod@>]:=
+Length[getPsiEps[linMod][[1]]]
 @}
 
 @d getGridPtTripsUsage

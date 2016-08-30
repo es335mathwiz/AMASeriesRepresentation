@@ -89,13 +89,16 @@ PerfectForesight::usage="degenerate distribution implementing perfect foresight"
 @<getNumEpsVarsUsage@>
 @<iterateDRREIntegrateUsage@>
 @<genPathUsage@>
+@<getNumIgnoredUsage@>
+@<getNumInterpVarsUsage@>
 @}
 
 @d package code
 @{
 
 @<gettersSetters@>
-
+@<getNumIgnored@>
+@<getNumInterpVars@>
 @<worstPathForErrDRREIntegrate@>
 @<evalBadPathErrDRREIntegrate@>
 @<evalPathErrDRREIntegrate@>
@@ -185,6 +188,11 @@ eqnFunc:(_Function|_CompiledFunction)}|{{},{}}):{{},{}}@}
 @d fCon
 @{fCon_?MatrixQ@}
 
+@d gSpec
+@{gSpec:{toIgnore:{_Integer...},iOrd_Integer,{{_Integer,_?NumberQ,_?NumberQ}..},numRegimes_:0}@}
+
+@d distribSpec
+@{distribSpec:{expctSpec:{{_Symbol,_}..},regimeTransProbFunc_:{}}@}
 \subsection{genLilXkZkFunc}
 \label{sec:genlilxkzkfunc}
 
@@ -469,9 +477,8 @@ With[{xtp1Vals=BB.xtVals+Inverse[IdentityMatrix[Length[xtVals]]-FF] . phi . psiC
 genX0Z0Funcs[linMod:{theHMat_?MatrixQ,BB_?MatrixQ,phi_?MatrixQ,FF_?MatrixQ,psiEps_?MatrixQ,psiC_?MatrixQ,psiZ_?MatrixQ,psiZPreComp_?MatrixQ}]:=
 With[{numXVars=Length[BB],numZVars=Length[psiZ[[1]]]},
 With[{xtm1Vars=genSlots[numXVars]},
-With[{compArgs=xtm1Vars},
 Apply[Function, {Join[BB.Transpose[{xtm1Vars}]+
-Inverse[IdentityMatrix[Length[xtm1Vars]]-FF] . phi . psiC,ConstantArray[0,{numZVars,1}]]}]]]]
+Inverse[IdentityMatrix[Length[xtm1Vars]]-FF] . phi . psiC,ConstantArray[0,{numZVars,1}]]}]]]
 (*end code for genX0Z0Funcs*)
 @}
 
@@ -533,66 +540,6 @@ multiStep[{XZfunc,numSteps},numX,Range[numX],numTerms]
 @}
 
 
-\subsection{fixmultiStep Functions}
-\label{sec:multistep-functions}
-
-@d fixmultiStepUsage
-@{fixmultiStep::usage=
-"place holder for fixmultiStep"
-@}
-
-@d fixmultiStep
-@{
-(*begin code for fixmultiStep*)
-
-fixmultiStep[{XZfunc_Function,numSteps_Integer},numX_Integer,valRange:{_Integer..},numTerms_Integer]:=
-With[{funcArgs=XZfunc[[1]]},
-With[{xtFunc01=
-ReplacePart[
-Function[xxxxx,
-	Flatten[(Apply[XZfunc, xxxxx])[[Range[numX]]]]],{1->funcArgs}]},
-With[{theFunc=
-	ReplacePart[
-	Function[xxxxx,
- With[{theXVals=NestList[Apply[xtFunc01, Flatten[#]]&,xxxxx,numTerms-1]},(*Print["fixmultiStep:theXVals=",{theXVals,Map[((Apply[XZfunc,Flatten[#]])[[valRange]] )& , theXVals]}];*)
-	  Map[((Apply[XZfunc,Flatten[#]])[[valRange]] )&, theXVals]]],1->funcArgs]},
-With[{xxxxxPos={{2,1,1,2,1,1,1,2,1,1,2},{2,1,1,2,2}}},
-ReplacePart[
-theFunc,
-	  {xxxxxPos->funcArgs}]]]]]/;numSteps>0
-
-
-(*end code for fixmultiStep*)
-@}
-
-@d fixmultiStepZUsage
-@{fixmultiStepZ::usage=
-"place holder for fixmultiStepZ"
-@}
-
-@d fixmultiStepZ
-@{
-(*begin code for fixmultiStepZ*)
-fixmultiStepZ[{XZfunc_Function,numSteps_Integer},numX_Integer,numZ_Integer,numTerms_Integer]:=
-fixmultiStep[{XZfunc,numSteps},numX,numX+Range[numZ],numTerms]
-
-(*end code for fixmultiStepZ*)
-@}
-
-@d fixmultiStepXUsage
-@{fixmultiStepX::usage=
-"place holder for fixmultiStepX"
-@}
-
-@d fixmultiStepX
-@{
-(*begin code for fixmultiStepX*)
-fixmultiStepX[{XZfunc_Function,numSteps_Integer},numX_Integer,numTerms_Integer]:=
-fixmultiStep[{XZfunc,numSteps},numX,Range[numX],numTerms]
-
-(*end code for fixmultiStepX*)
-@}
-
 \subsection{checkLinMod}
 \label{sec:checklinmod}
 
@@ -632,7 +579,7 @@ With[{lilxz=genLilXkZkFunc[linMod, {X0Z0,2}, Join[anX,anEps]]},
 
 
 checkMod[theSolver:(({genFRFunc,opts:OptionsPattern[]}|{genNSFunc,opts:OptionsPattern[]}|{specialSolver,opts:OptionsPattern[]})),linMod:{theHMat_?MatrixQ,BB_?MatrixQ,phi_?MatrixQ,FF_?MatrixQ,psiEps_?MatrixQ,psiC_?MatrixQ,psiZ_?MatrixQ,psiZPreComp_?MatrixQ},
-gSpec:{toIgnore:{_Integer...},iOrd_Integer,{{_Integer,_?NumberQ,_?NumberQ}..},numRegimes_:0},
+@<gSpec@>,
 distribSpec:{expctSpec:{{_Symbol,_}..},regimeTransProbFunc_:{}},anX_?MatrixQ,anEps_?MatrixQ,ss_?MatrixQ,
 eqnsFunc:(_Function|_CompiledFunction)]:=
 With[{X0Z0=genX0Z0Funcs[linMod],numX=Length[BB],numEps=Length[psiEps[[1]]],numZ=Length[psiZ[[1]]]},
@@ -756,7 +703,7 @@ FixedPoint[firstArg,secondArg,thirdArg]]
 @{
 (*begin code for makeInterpFunc*)
 
-makeInterpFunc[aVecFunc:(_Function|_CompiledFunction),gSpec:{toIgnore:{_Integer...},iOrd_Integer,{{_Integer,_?NumberQ,_?NumberQ}..},numRegimes_:0}]:=
+makeInterpFunc[aVecFunc:(_Function|_CompiledFunction),@<gSpec@>]:=
 With[{interpData=genInterpData[aVecFunc,gSpec],numArgs=getNumVars[gSpec]},
 	With[{numFuncs=Length[interpData[[1,2]]],funcArgs=Table[Unique["fArgs"],{numArgs}]},
 	With[{longFuncArgs=fillInSymb[{{},toIgnore,funcArgs}]},
@@ -794,7 +741,7 @@ Map[Function[funcIdx,Interpolation[Map[{#[[1]], #[[2, funcIdx, 1]]} & ,
 (*begin code for genInterpData*)
 
  
-genInterpData[aVecFunc:(_Function|P_CompiledFunction),gSpec:{toIgnore:{_Integer...},iOrd_Integer,{{_Integer,_?NumberQ,_?NumberQ}..},numRegimes_:0}]:=
+genInterpData[aVecFunc:(_Function|P_CompiledFunction),@<gSpec@>]:=
 With[{thePts=gridPts[getGridPtTrips[gSpec],numRegimes]},
 With[{filledPts=ParallelMap[fillIn[{{},toIgnore,#}]&,thePts]},
 With[{theVals=ParallelMap[(Apply[aVecFunc,#])&,filledPts]},
@@ -931,7 +878,7 @@ fillIn[{theRes,Sort[toIgnore],shortVec}]
 doIterREInterp[theSolver:(({genFRFunc,opts:OptionsPattern[]}|{genNSFunc,opts:OptionsPattern[]}|{specialSolver,opts:OptionsPattern[]})),
 	linMod:{theHMat_?MatrixQ,BB_?MatrixQ,phi_?MatrixQ,FF_?MatrixQ,psiEps_?MatrixQ,psiC_?MatrixQ,psiZ_?MatrixQ,psiZPreComp_?MatrixQ},
 	XZFuncsNow:{(_Function|_InterpolatingFunction|_CompiledFunction),_Integer},
-eqnsFunc:(_Function|_CompiledFunction),gSpec:{toIgnore:{_Integer...},iOrd_Integer,{{_Integer,_?NumberQ,_?NumberQ}..},numRegimes_:0},distribSpec:{expctSpec:{{_Symbol,_}..},regimeTransProbFunc_:{}}]:=
+eqnsFunc:(_Function|_CompiledFunction),@<gSpec@>,distribSpec:{expctSpec:{{_Symbol,_}..},regimeTransProbFunc_:{}}]:=
 With[{numX=Length[BB],numEps=Length[psiEps[[1]]],numZ=Length[psiZ[[1]]]},
 With[{theFuncs=makeInterpFunc[genFPFunc[theSolver,linMod,XZFuncsNow,eqnsFunc],gSpec]},
 {theFuncs,genXZREInterpFunc[{numX,numEps,numZ},theFuncs,gSpec,distribSpec]}]]
@@ -958,7 +905,7 @@ With[{theFuncs=makeInterpFunc[genFPFunc[theSolver,linMod,XZFuncsNow,eqnsFunc],gS
 
 nestIterREInterp[theSolver:(({genFRFunc,opts:OptionsPattern[]}|{genNSFunc,opts:OptionsPattern[]}|{specialSolver,opts:OptionsPattern[]})),linMod:{theHMat_?MatrixQ,BB_?MatrixQ,phi_?MatrixQ,FF_?MatrixQ,psiEps_?MatrixQ,psiC_?MatrixQ,psiZ_?MatrixQ,psiZPreComp_?MatrixQ},
 {XZFuncNow:(_Function|_InterpolatingFunction|_CompiledFunction),numTerms_Integer},eqnsFunc:(_Function|_CompiledFunction),
-gSpec:{toIgnore:{_Integer...},iOrd_Integer,{{_Integer,_?NumberQ,_?NumberQ}..},numRegimes_:0},
+@<gSpec@>,
 distribSpec:{expctSpec:{{_Symbol,_}..},regimeTransProbFunc_:{}},numIters_Integer]:=
 NestList[doIterREInterp[theSolver,linMod,{#[[2]],numTerms},eqnsFunc,gSpec,distribSpec]&,{ig,XZFuncNow},numIters]
 
@@ -982,7 +929,7 @@ NestList[doIterREInterp[theSolver,linMod,{#[[2]],numTerms},eqnsFunc,gSpec,distri
 (*begin code for genXZREInterpFunc*)
  
 genXZREInterpFunc[probDims:{numX_Integer,numEps_Integer,numZ_Integer},
-aLilXkZkFunc_Function,gSpec:{toIgnore:{_Integer...},iOrd_Integer,{{_Integer,_?NumberQ,_?NumberQ}..},numRegimes_:0},distribSpec:{expctSpec:{{_Symbol,_}..},regimeTransProbFunc_:{}}]:=
+aLilXkZkFunc_Function,@<gSpec@>,distribSpec:{expctSpec:{{_Symbol,_}..},regimeTransProbFunc_:{}}]:=
 With[{theFuncNow=genXZFuncRE[{numX,numEps,numZ},aLilXkZkFunc,distribSpec]},
 makeInterpFunc[theFuncNow,{toIgnore,gSpec[[2]],Drop[getGridPtTrips[gSpec],-(numEps-If[numRegimes>0,1,0])],numRegimes}]]
   
@@ -1004,6 +951,8 @@ makeInterpFunc[theFuncNow,{toIgnore,gSpec[[2]],Drop[getGridPtTrips[gSpec],-(numE
 @d genXZFuncRE
 @{
 (*begin code for genXZFuncRE*)
+
+
 
 genXZFuncRE[{numX_Integer,ignored_Integer,numZ_Integer},
 aLilXkZkFunc_Function,distribSpec:{expctSpec:{{_Symbol,_}..},regimeTransProbFunc_:{}}]:=
@@ -1458,7 +1407,7 @@ getDistribs[distribSpec:{expctSpec:{{_Symbol,_}..},regimeTransProbFunc_:{}}]:= M
 @d getNumVars
 @{
 (*begin code for getNumVars*)
-getNumVars[gSpec:{toIgnore:{_Integer...},iOrd_Integer,{{_Integer,_?NumberQ,_?NumberQ}..},numRegimes_:0}]:=
+getNumVars[@<gSpec@>]:=
 (Length[getGridPtTrips[gSpec]]+If[numRegimes>0,2,0])
 
 (*end code for getNumVars*)
@@ -1609,6 +1558,33 @@ getNumEps[@<linMod@>]:=
 Length[getPsiEps[linMod][[1]]]
 @}
 
+
+@d getNumIgnoredUsage
+@{
+getNumIgnored::usage=
+"getNumIgnored[@<linMod@>]"<>
+"number of eps variables"
+@}
+
+@d getNumIgnored
+@{
+getNumIgnored[@<gSpec@>]:=
+Length[gSpec[[1]]]
+@}
+
+@d getNumInterpVarsUsage
+@{
+getNumInterpVars::usage=
+"getNumInterpVars[@<linMod@>]"<>
+"number of eps variables"
+@}
+
+@d getNumInterpVars
+@{
+getNumInterpVars[@<gSpec@>]:=
+Length[gSpec[[3]]]
+@}
+
 @d getGridPtTripsUsage
 @{getGridPtTrips::usage=
 "place holder for getGridPtTrips"
@@ -1618,7 +1594,7 @@ Length[getPsiEps[linMod][[1]]]
 @{
 (*begin code for getGridPtTrips*)
 
-getGridPtTrips[gSpec:{toIgnore:{_Integer...},iOrd_Integer,{{_Integer,_?NumberQ,_?NumberQ}..},numRegimes_:0}]:=gSpec[[3]]
+getGridPtTrips[@<gSpec@>]:=gSpec[[3]]
   
 
 (*end code for getGridPtTrips*)

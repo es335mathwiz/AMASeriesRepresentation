@@ -83,9 +83,6 @@ PerfectForesight::usage="degenerate distribution implementing perfect foresight"
 @<multiStepUsage@>
 @<multiStepZUsage@>
 @<multiStepXUsage@>
-@<fixmultiStepUsage@>
-@<fixmultiStepZUsage@>
-@<fixmultiStepXUsage@>
 @<checkLinModUsage@>
 @<fSumCUsage@>
 @<fSumUsage@>
@@ -136,9 +133,6 @@ PerfectForesight::usage="degenerate distribution implementing perfect foresight"
 @<multiStep@>
 @<multiStepZ@>
 @<multiStepX@>
-@<fixmultiStep@>
-@<fixmultiStepZ@>
-@<fixmultiStepX@>
 @<checkLinMod@>
 @<checkMod@>
 @<genFRFunc@>
@@ -676,21 +670,18 @@ xkFunc:(_Function|_CompiledFunction),eqnsFunc:(_Function|_CompiledFunction),opts
 With[{funcArgs=genSlots[numX+numEps],
 zArgs=Table[Unique["theFRZArgs"],{numZ}]},
 With[{zArgsInit=Map[{#,0}&,zArgs],funcName=Unique["fName"]},
-funcName[theVars:{_?NumberQ..}]:=
-Module[{},Print["genFRFunc in shield func",{theVars,
-Flatten[Apply[xkFunc,theVars]]}];
-Apply[eqnsFunc,Flatten[Apply[xkFunc,theVars]]]
-];
-With[{(*funcGuts=Apply[FindRoot,{funcName[Join[funcArgs,zArgs]],zArgsInit}],*)
-otherGuts=FindRoot[funcName[Join[funcArgs,zArgs]],zArgsInit]},
-Print["fguts=",{funcGuts,zArgsInit}];
-Function[otherGuts]]]]
+funcName[theVars:{_?NumberQ..}]:=Apply[eqnsFunc,Flatten[Apply[xkFunc,theVars]]];Off[FindRoot::nlnum];
+With[{frRes=FindRoot[funcName[Join[funcArgs,zArgs]],zArgsInit],
+xzRes=Drop[Apply[xkFunc,Join[funcArgs,zArgs]],numX][[Range[numX]]]},
+With[{otherGuts=cmpXZVals[xzRes,zArgs,frRes]},
+On[FindRoot::nlnum];
+Function[otherGuts]]]]]
 
 (* input   [function (xt,eps,zt)->(xtm1,xt,xtp1,eps), function (xtm1,xt,xtp1,eps)->me]*)
 (* output   [function  (xt,eps) ->(xt,zt)] *)
  
-cmpZVals[theZArgs:{_Symbol..},theFunc_Symbol,theFuncArgs]:=
-theZArgs/.FindRoot[theFunc[Join[theFuncArgs,theZArgs]],theZArgsInit]
+cmpXZVals[xzVals_?MatrixQ,theZArgs:{_Symbol..},theResult:{(_->_)..}]:=
+Transpose[{Flatten[Join[xzVals,theZArgs]/.theResult]}]
 
 
 (*end code for genFRFunc*)

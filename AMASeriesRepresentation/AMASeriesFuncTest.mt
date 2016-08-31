@@ -1,5 +1,5 @@
 (* Wolfram Language Test file *)
-Needs["simpleRBCModel`"]
+Get["simpleRBCModel`"]
 Test[
 	anX0Z0 = genX0Z0Funcs[linMod];
 lilxkzk = genLilXkZkFunc[linMod, {anX0Z0, 3}, anX0Z0 @@ anXEpsFlat];

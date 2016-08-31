@@ -189,7 +189,7 @@ eqnFunc:(_Function|_CompiledFunction)}|{{},{}}):{{},{}}@}
 @{fCon_?MatrixQ@}
 
 @d gSpec
-@{gSpec:{toIgnore:{_Integer...},iOrd_Integer,{{_Integer,_?NumberQ,_?NumberQ}..},numRegimes_:0}@}
+@{gSpec:{toIgnore:{_Integer...},iOrd_Integer,rngs:{{_Integer,_?NumberQ,_?NumberQ}..},numRegimes_:0}@}
 
 @d distribSpec
 @{distribSpec:{expctSpec:{{_Symbol,_}..},regimeTransProbFunc_:{}}@}
@@ -580,7 +580,7 @@ With[{lilxz=genLilXkZkFunc[linMod, {X0Z0,2}, Join[anX,anEps]]},
 
 checkMod[theSolver:(({genFRFunc,opts:OptionsPattern[]}|{genNSFunc,opts:OptionsPattern[]}|{specialSolver,opts:OptionsPattern[]})),linMod:{theHMat_?MatrixQ,BB_?MatrixQ,phi_?MatrixQ,FF_?MatrixQ,psiEps_?MatrixQ,psiC_?MatrixQ,psiZ_?MatrixQ,psiZPreComp_?MatrixQ},
 @<gSpec@>,
-distribSpec:{expctSpec:{{_Symbol,_}..},regimeTransProbFunc_:{}},anX_?MatrixQ,anEps_?MatrixQ,ss_?MatrixQ,
+@<distribSpec@>,anX_?MatrixQ,anEps_?MatrixQ,ss_?MatrixQ,
 eqnsFunc:(_Function|_CompiledFunction)]:=
 With[{X0Z0=genX0Z0Funcs[linMod],numX=Length[BB],numEps=Length[psiEps[[1]]],numZ=Length[psiZ[[1]]]},
 With[{lilxz=
@@ -878,7 +878,7 @@ fillIn[{theRes,Sort[toIgnore],shortVec}]
 doIterREInterp[theSolver:(({genFRFunc,opts:OptionsPattern[]}|{genNSFunc,opts:OptionsPattern[]}|{specialSolver,opts:OptionsPattern[]})),
 	linMod:{theHMat_?MatrixQ,BB_?MatrixQ,phi_?MatrixQ,FF_?MatrixQ,psiEps_?MatrixQ,psiC_?MatrixQ,psiZ_?MatrixQ,psiZPreComp_?MatrixQ},
 	XZFuncsNow:{(_Function|_InterpolatingFunction|_CompiledFunction),_Integer},
-eqnsFunc:(_Function|_CompiledFunction),@<gSpec@>,distribSpec:{expctSpec:{{_Symbol,_}..},regimeTransProbFunc_:{}}]:=
+eqnsFunc:(_Function|_CompiledFunction),@<gSpec@>,@<distribSpec@>]:=
 With[{numX=Length[BB],numEps=Length[psiEps[[1]]],numZ=Length[psiZ[[1]]]},
 With[{theFuncs=makeInterpFunc[genFPFunc[theSolver,linMod,XZFuncsNow,eqnsFunc],gSpec]},
 {theFuncs,genXZREInterpFunc[{numX,numEps,numZ},theFuncs,gSpec,distribSpec]}]]
@@ -906,7 +906,7 @@ With[{theFuncs=makeInterpFunc[genFPFunc[theSolver,linMod,XZFuncsNow,eqnsFunc],gS
 nestIterREInterp[theSolver:(({genFRFunc,opts:OptionsPattern[]}|{genNSFunc,opts:OptionsPattern[]}|{specialSolver,opts:OptionsPattern[]})),linMod:{theHMat_?MatrixQ,BB_?MatrixQ,phi_?MatrixQ,FF_?MatrixQ,psiEps_?MatrixQ,psiC_?MatrixQ,psiZ_?MatrixQ,psiZPreComp_?MatrixQ},
 {XZFuncNow:(_Function|_InterpolatingFunction|_CompiledFunction),numTerms_Integer},eqnsFunc:(_Function|_CompiledFunction),
 @<gSpec@>,
-distribSpec:{expctSpec:{{_Symbol,_}..},regimeTransProbFunc_:{}},numIters_Integer]:=
+@<distribSpec@>,numIters_Integer]:=
 NestList[doIterREInterp[theSolver,linMod,{#[[2]],numTerms},eqnsFunc,gSpec,distribSpec]&,{ig,XZFuncNow},numIters]
 
 
@@ -929,7 +929,7 @@ NestList[doIterREInterp[theSolver,linMod,{#[[2]],numTerms},eqnsFunc,gSpec,distri
 (*begin code for genXZREInterpFunc*)
  
 genXZREInterpFunc[probDims:{numX_Integer,numEps_Integer,numZ_Integer},
-aLilXkZkFunc_Function,@<gSpec@>,distribSpec:{expctSpec:{{_Symbol,_}..},regimeTransProbFunc_:{}}]:=
+aLilXkZkFunc_Function,@<gSpec@>,@<distribSpec@>]:=
 With[{theFuncNow=genXZFuncRE[{numX,numEps,numZ},aLilXkZkFunc,distribSpec]},
 makeInterpFunc[theFuncNow,{toIgnore,gSpec[[2]],Drop[getGridPtTrips[gSpec],-(numEps-If[numRegimes>0,1,0])],numRegimes}]]
   
@@ -955,7 +955,7 @@ makeInterpFunc[theFuncNow,{toIgnore,gSpec[[2]],Drop[getGridPtTrips[gSpec],-(numE
 
 
 genXZFuncRE[{numX_Integer,ignored_Integer,numZ_Integer},
-aLilXkZkFunc_Function,distribSpec:{expctSpec:{{_Symbol,_}..},regimeTransProbFunc_:{}}]:=
+aLilXkZkFunc_Function,@<distribSpec@>]:=
 With[{intVarRes=genIntVars[numX,distribSpec],
 funcName=Unique["fName"],numRegimes=getNumRegimes[distribSpec]},
 funcName[fNameArgs:{_?NumberQ..},idx_Integer]:=Module[{},
@@ -995,7 +995,7 @@ Switch[getRegimeTransProbFuncType[distribSpec],
 @d genIntVars
 @{
 (*begin code for genIntVars*)
- genIntVars[numX_Integer,distribSpec:{expctSpec:{{_Symbol,_}..},regimeTransProbFunc_:{}}]:=
+ genIntVars[numX_Integer,@<distribSpec@>]:=
 With[{xVars=Table[Unique["xV"],{numX}],
 	dists=getDistribs[distribSpec],
 	distVars=Table[Unique["epIntV"],{getNumEpsVars[distribSpec]}]},
@@ -1057,7 +1057,7 @@ myNewNExpectation[fff_[fargs___],distStuff_]:=Module[{},Print["jhere",{(Apply[ff
 @{
 (*begin code for iterateDRREIntegrate*)
 iterateDRREIntegrate[drFunc:(_Function|_CompiledFunction),initVec_?MatrixQ,
-	distribSpec:{expctSpec:{{_Symbol,_}..},regimeTransProbFunc_:{}},numPers_Integer]:=
+	@<distribSpec@>,numPers_Integer]:=
 With[{numEps=getNumEpsVars[distribSpec],firVal=Apply[drFunc,Flatten[initVec]]},
 	With[{numX=Length[initVec]-numEps,iterFunc=makeREIterFunc[drFunc,distribSpec]},
 With[{iterated=
@@ -1085,7 +1085,7 @@ And[numPers>0]
 @{
 (*begin code for makeREIterFunc*)
 
-makeREIterFunc[drFunc:(_Function|_CompiledFunction),distribSpec:{expctSpec:{{_Symbol,_}..},regimeTransProbFunc_:{}}]:=
+makeREIterFunc[drFunc:(_Function|_CompiledFunction),@<distribSpec@>]:=
 With[{numEps=getNumEpsVars[distribSpec]},
 With[{numX=Length[drFunc[[1]]]-numEps,numZ=0},
 	genXZFuncRE[{numX,numEps,numZ},drFunc,distribSpec]]]
@@ -1220,7 +1220,7 @@ And[numPers>1]
 @d pathErrsDRREIntegrate
 @{
 (*begin code for pathErrsDRREIntegrate*)
-pathErrsDRREIntegrate[drFunc_Function,initVec_?MatrixQ,distribSpec:{expctSpec:{{_Symbol,_}..},regimeTransProbFunc_:{}},eqnsFunc:(_Function|_CompiledFunction),numPers_Integer]:=
+pathErrsDRREIntegrate[drFunc_Function,initVec_?MatrixQ,@<distribSpec@>,eqnsFunc:(_Function|_CompiledFunction),numPers_Integer]:=
 With[{numEps=getNumEpsVars[distribSpec]},
 With[{pathNow=iterateDRREIntegrate[drFunc,initVec,distribSpec,numPers],numX=Length[initVec]-numEps},(*Print["pathErrsDRREIntegrate:",pathNow];*)
 With[{firstArg=doFuncArg[pathNow,Identity[Reverse[initVec[[-Range[numEps]]]]],numX,0],
@@ -1268,13 +1268,13 @@ firstArg]
 @d evalPathErrDRREIntegrate
 @{
 (*begin code for evalPathErrDRREIntegrate*)
-evalPathErrDRREIntegrate[drFunc_Function,initVec_?MatrixQ,distribSpec:{expctSpec:{{_Symbol,_}..},regimeTransProbFunc_:{}},eqnsFunc:(_Function|_CompiledFunction)]:=
+evalPathErrDRREIntegrate[drFunc_Function,initVec_?MatrixQ,@<distribSpec@>,eqnsFunc:(_Function|_CompiledFunction)]:=
 pathErrsDRREIntegrate[drFunc,initVec,distribSpec,eqnsFunc,2]//First
 
 
 
 evalPathErrDRREIntegrate[phi_?MatrixQ,
-drFunc_Function,initVec_?MatrixQ,distribSpec:{expctSpec:{{_Symbol,_}..},regimeTransProbFunc_:{}},eqnsFunc:(_Function|_CompiledFunction)]:=
+drFunc_Function,initVec_?MatrixQ,@<distribSpec@>,eqnsFunc:(_Function|_CompiledFunction)]:=
 phi . (pathErrsDRREIntegrate[drFunc,initVec,distribSpec,eqnsFunc,2])//First
 
 
@@ -1295,7 +1295,7 @@ phi . (pathErrsDRREIntegrate[drFunc,initVec,distribSpec,eqnsFunc,2])//First
 @d evalBadPathErrDRREIntegrate
 @{
 (*begin code for evalBadPathErrDRREIntegrate*)
-evalBadPathErrDRREIntegrate[drFunc_Function,noEpsVec_?MatrixQ,distribSpec:{expctSpec:{{_Symbol,_}..},regimeTransProbFunc_:{}},eqnsFunc:(_Function|_CompiledFunction)]:=
+evalBadPathErrDRREIntegrate[drFunc_Function,noEpsVec_?MatrixQ,@<distribSpec@>,eqnsFunc:(_Function|_CompiledFunction)]:=
 With[{funcName=Unique["fName"]},
 funcName[tryEps:{_?NumberQ..}]:=
 	With[{theVal=evalPathErrDRREIntegrate[drFunc,Join[noEpsVec,Transpose[{tryEps}]],distribSpec,eqnsFunc]},
@@ -1307,7 +1307,7 @@ funcName[tryEps:{_?NumberQ..}]:=
 
 
 evalBadPathErrDRREIntegrate[phi_?MatrixQ,
-drFunc_Function,noEpsVec_?MatrixQ,distribSpec:{expctSpec:{{_Symbol,_}..},regimeTransProbFunc_:{}},eqnsFunc:(_Function|_CompiledFunction)]:=
+drFunc_Function,noEpsVec_?MatrixQ,@<distribSpec@>,eqnsFunc:(_Function|_CompiledFunction)]:=
 With[{funcName=Unique["fName"]},
 funcName[tryEps:{_?NumberQ..}]:=
 With[{theVal=evalPathErrDRREIntegrate[drFunc,Join[noEpsVec,Transpose[{tryEps}]],distribSpec,eqnsFunc]},
@@ -1334,14 +1334,14 @@ With[{theVal=evalPathErrDRREIntegrate[drFunc,Join[noEpsVec,Transpose[{tryEps}]],
 @{
 (*begin code for worstPathForErrDRREIntegrate*)
 
-worstPathForErrDRREIntegrate[drFunc_Function,noEpsVec_?MatrixQ,distribSpec:{expctSpec:{{_Symbol,_}..},regimeTransProbFunc_:{}},eqnsFunc:(_Function|_CompiledFunction)]:=
+worstPathForErrDRREIntegrate[drFunc_Function,noEpsVec_?MatrixQ,@<distribSpec@>,eqnsFunc:(_Function|_CompiledFunction)]:=
 With[{fMinRes=evalBadPathErrDRREIntegrate[drFunc,noEpsVec,distribSpec,eqnsFunc]},
 	With[{badEps=Transpose[{(Map[First,fMinRes[[2]]])/.fMinRes[[2]]}]},
 	With[{badPath=iterateDRREIntegrate[drFunc,Join[noEpsVec,badEps],distribSpec,2]},
 		Join[badPath,badEps]]]]
 
 worstPathForErrDRREIntegrate[phi_?MatrixQ,
-drFunc_Function,noEpsVec_?MatrixQ,distribSpec:{expctSpec:{{_Symbol,_}..},regimeTransProbFunc_:{}},eqnsFunc:(_Function|_CompiledFunction)]:=
+drFunc_Function,noEpsVec_?MatrixQ,@<distribSpec@>,eqnsFunc:(_Function|_CompiledFunction)]:=
 With[{fMinRes=
 evalBadPathErrDRREIntegrate[phi,drFunc,noEpsVec,distribSpec,eqnsFunc]},
 	With[{badEps=Transpose[{(Map[First,fMinRes[[2]]])/.fMinRes[[2]]}]},
@@ -1373,7 +1373,7 @@ evalBadPathErrDRREIntegrate[phi,drFunc,noEpsVec,distribSpec,eqnsFunc]},
 @d getNumEpsVars
 @{
 (*begin code for getNumEpsVars*)
-getNumEpsVars[distribSpec:{expctSpec:{{_Symbol,_}..},regimeTransProbFunc_:{}}]:=Length[expctSpec]
+getNumEpsVars[@<distribSpec@>]:=Length[expctSpec]
 
 
 (*end code for getNumEpsVars*)
@@ -1391,7 +1391,7 @@ getNumEpsVars[distribSpec:{expctSpec:{{_Symbol,_}..},regimeTransProbFunc_:{}}]:=
 @{
 (*begin code for getDistribs*)
 
-getDistribs[distribSpec:{expctSpec:{{_Symbol,_}..},regimeTransProbFunc_:{}}]:= Map[Last,expctSpec]
+getDistribs[@<distribSpec@>]:= Map[Last,expctSpec]
 (*{numReg,tranType,tranFunc}*)
 
 (*end code for getDistribs*)
@@ -1613,10 +1613,10 @@ getGridPtTrips[@<gSpec@>]:=gSpec[[3]]
 @d getRegimeTransProbFuncType
 @{
 (*begin code for getRegimeTransProbFuncType*)
-getRegimeTransProbFuncType[distribSpec:{expctSpec:{{_Symbol,_}..},regimeTransProbFunc_:{}}]:=
+getRegimeTransProbFuncType[@<distribSpec@>]:=
 If[regimeTransProbFunc=={},noTransFunc,regimeTransProbFunc[[2]]]
 
-getRegimeTransProbFunc[distribSpec:{expctSpec:{{_Symbol,_}..},regimeTransProbFunc_:{}}]:=regimeTransProbFunc[[3]]
+getRegimeTransProbFunc[@<distribSpec@>]:=regimeTransProbFunc[[3]]
 
 (*end code for getRegimeTransProbFuncType*)
 @}

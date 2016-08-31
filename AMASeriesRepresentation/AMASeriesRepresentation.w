@@ -742,7 +742,7 @@ Map[Function[funcIdx,Interpolation[Map[{#[[1]], #[[2, funcIdx, 1]]} & ,
 
  
 genInterpData[aVecFunc:(_Function|P_CompiledFunction),@<gSpec@>]:=
-With[{thePts=gridPts[getGridPtTrips[gSpec],numRegimes]},
+With[{thePts=gridPts[gSpec]},
 With[{filledPts=ParallelMap[fillIn[{{},toIgnore,#}]&,thePts]},
 With[{theVals=ParallelMap[(Apply[aVecFunc,#])&,filledPts]},
 With[{interpData=Transpose[{thePts,theVals}]},
@@ -770,7 +770,7 @@ interpData]]]]
 @{
 (*begin code for gridPts*)
  
-gridPts[rngs:{{_Integer,_?NumberQ,_?NumberQ}..},numRegimes_:0]:=
+gridPts[@<gSpec@>]:=
 With[{funcForPts=(Function[xx,oneDimGridPts[xx[[1]],xx[[{2,3}]]]][#]) &},
 With[{oneDimPts=Map[funcForPts,rngs]},
 	With[{maybeRegimes=If[numRegimes==0,oneDimPts,

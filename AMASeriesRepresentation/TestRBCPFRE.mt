@@ -1,5 +1,5 @@
 (* Wolfram Language Test file *)
-Get["AMASeriesRepresentation/prepBetter.mth"]
+
 {x1z1Func, X1Z1Func} = 
   doIterREInterp[{genFRFunc},linModBetter, {genX0Z0Funcs[linModBetter],2},rbcEqnsFunctionalNextBetter,aGSpecBetter,theDistBetter];
 Test[

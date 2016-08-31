@@ -49,7 +49,6 @@ PerfectForesight::usage="degenerate distribution implementing perfect foresight"
 @<iterateDRPFUsage@>
 @<genNSFuncUsage@>
 @<makeREIterFuncUsage@>
-@<getRegimeTransProbFuncTypeUsage@>
 @<myNExpectationUsage@>
 @<getDistribsUsage@>
 @<genXZFuncREUsage@>
@@ -110,7 +109,6 @@ PerfectForesight::usage="degenerate distribution implementing perfect foresight"
 @<genNSFunc@>
 @<iterateDRREIntegrate@>
 @<makeREIterFunc@>
-@<getRegimeTransProbFuncType@>
 @<getNumEpsVars@>
 @<myNExpectation@>
 @<getDistribs@>
@@ -189,10 +187,10 @@ eqnFunc:(_Function|_CompiledFunction)}|{{},{}}):{{},{}}@}
 @{fCon_?MatrixQ@}
 
 @d gSpec
-@{gSpec:{toIgnore:{_Integer...},iOrd_Integer,rngs:{{_Integer,_?NumberQ,_?NumberQ}..},numRegimes_:0}@}
+@{gSpec:{toIgnore:{_Integer...},iOrd_Integer,rngs:{{_Integer,_?NumberQ,_?NumberQ}..}}@}
 
 @d distribSpec
-@{distribSpec:{expctSpec:{{_Symbol,_}..},regimeTransProbFunc_:{}}@}
+@{distribSpec:{expctSpec:{{_Symbol,_}..}}@}
 \subsection{genLilXkZkFunc}
 \label{sec:genlilxkzkfunc}
 
@@ -333,80 +331,6 @@ With[{numXVars=Length[BB],numZVars=Length[psiZ[[1]]]},
 With[{xzRes=Apply[multiStepZ[{XZFunc,numSteps},numXVars,numZVars,numSteps], Flatten[xtGuess]]},
 fSumC[phi,FF,psiZ,xzRes]]]
 @}
-
-\subsection{genZVars}
-\label{sec:genzvars}
-
-
-@d genZVarsUsage
-@{genZVars::usage=
-"place holder for genZVars"
-@}
-
-@d genZVars
-@{
-(*begin code for genZVars*)
-genZVars[horizons_Integer,numConstr_Integer]:=
-genZVars[horizons,numConstr,0]
-	
-genZVars[horizons_Integer,numConstr_Integer,offset_Integer]:=
-Module[{},
-genZVars[horizons,numConstr,offset]=
-Table[
-{makeProtectedSymbol["zzz$"<>ToString[forTime]<>"$"<>ToString[ii]][ProtectedSymbols`t]},
-{forTime,0-offset,horizons},{ii,numConstr,1,-1}]]/;offset<=0
-
-
-genZVars[numConstr_Integer]:=
-Reverse[Flatten[genZVars[0,numConstr]]](*
-Module[{},
-genZVars[numConstr]=
-Table[
-makeProtectedSymbol["zzzVar"<>ToString[ii]],{ii,numConstr}]]*)/;And[numConstr>=0]
-
-(*end code for genZVars*)
-@}
-
-
-\subsection{genEpsVars}
-\label{sec:genepsvars}
-
-
-@d genEpsVarsUsage
-@{
-genEpsVars::usage=
-"placehoder for usage"
-@}
-
-@d genEpsVars
-@{
-(*begin code for genXtm1Vars*)
-genEpsVars[numShocks_Integer]:=
-Module[{},
-genEpsVars[numShocks]=
-Table[
-makeProtectedSymbol["epsVar"<>ToString[ii]],{ii,numShocks}]]/;And[numShocks>=0]
-(*end code for genXtm1Vars*)
-@}
-
-
-
-\subsection{genXtm1Vars}
-\label{sec:genxtm1vars}
-
-
-@d genXtm1Vars
-@{
-(*begin code for genXtm1Vars*)
-genXtm1Vars[numVars_Integer]:=
-Module[{},
-genXtm1Vars[numVars]=
-Table[Slot[ii],
-(*makeProtectedSymbol["xxxtm1Var"<>ToString[ii]],*){ii,numVars}]]/;And[numVars>=0]
-
-(*end code for genXtm1Vars*)
-@}
-
 
 
 \subsection{genSlots}
@@ -554,7 +478,7 @@ multiStep[{XZfunc,numSteps},numX,Range[numX],numTerms]
 (*begin code for checkLinMod*)
 
 checkLinMod[linMod:{theHMat_?MatrixQ,BB_?MatrixQ,phi_?MatrixQ,FF_?MatrixQ,psiEps_?MatrixQ,psiC_?MatrixQ,psiZ_?MatrixQ,psiZPreComp_?MatrixQ},
-anX_?MatrixQ,anEps_?MatrixQ,numRegimes_Integer:0]:=
+anX_?MatrixQ,anEps_?MatrixQ]:=
 With[{X0Z0=genX0Z0Funcs[linMod],numZ=Length[psiZ[[1]]]},
 With[{lilxz=genLilXkZkFunc[linMod, {X0Z0,2}, Join[anX,anEps]]},
 	{Eigenvalues[BB]//Abs,Eigenvalues[FF]//Abs,Apply[X0Z0,Flatten[anX]],Apply[lilxz,Flatten[Join[anX,anEps,Table[{0},{numZ}]]]]}]]
@@ -773,10 +697,8 @@ interpData]]]]
 gridPts[@<gSpec@>]:=
 With[{funcForPts=(Function[xx,oneDimGridPts[xx[[1]],xx[[{2,3}]]]][#]) &},
 With[{oneDimPts=Map[funcForPts,rngs]},
-	With[{maybeRegimes=If[numRegimes==0,oneDimPts,
-		Prepend[Append[oneDimPts,Range[0,numRegimes-1]],Range[0,numRegimes-1]]]},
-With[{theOuter=Outer[List,Apply[Sequence,#]]&[maybeRegimes]},
-Flatten[theOuter,Depth[theOuter]-3]]]]]
+With[{theOuter=Outer[List,Apply[Sequence,#]]&[oneDimPts]},
+Flatten[theOuter,Depth[theOuter]-3]]]]
 
 
 
@@ -931,8 +853,10 @@ NestList[doIterREInterp[theSolver,linMod,{#[[2]],numTerms},eqnsFunc,gSpec,distri
 genXZREInterpFunc[probDims:{numX_Integer,numEps_Integer,numZ_Integer},
 aLilXkZkFunc_Function,@<gSpec@>,@<distribSpec@>]:=
 With[{theFuncNow=genXZFuncRE[{numX,numEps,numZ},aLilXkZkFunc,distribSpec]},
-makeInterpFunc[theFuncNow,{toIgnore,gSpec[[2]],Drop[getGridPtTrips[gSpec],-(numEps-If[numRegimes>0,1,0])],numRegimes}]]
+makeInterpFunc[theFuncNow,elimGSpecShocks[gSpec,numEps]]]
   
+elimGSpecShocks[@<gSpec@>,numEps_Integer]:=
+{toIgnore,gSpec[[2]],Drop[getGridPtTrips[gSpec],-(numEps)]}
 
 (*end code for genXZREInterpFunc*)
 @}
@@ -957,24 +881,13 @@ makeInterpFunc[theFuncNow,{toIgnore,gSpec[[2]],Drop[getGridPtTrips[gSpec],-(numE
 genXZFuncRE[{numX_Integer,ignored_Integer,numZ_Integer},
 aLilXkZkFunc_Function,@<distribSpec@>]:=
 With[{intVarRes=genIntVars[numX,distribSpec],
-funcName=Unique["fName"],numRegimes=getNumRegimes[distribSpec]},
+funcName=Unique["fName"]},
 funcName[fNameArgs:{_?NumberQ..},idx_Integer]:=Module[{},
 (Apply[aLilXkZkFunc,fNameArgs])[[idx,1]]];
 With[{funcGuts=
-Switch[getRegimeTransProbFuncType[distribSpec],
-	noTransFunc,Function[xxxx,Module[{},
+Function[xxxx,Module[{},
 	Transpose[{Map[myNExpectation[
-	(funcName[intVarRes[[2]],#]),intVarRes[[3]]]&,Range[numX+numZ]]}]]],
-	transFuncNoShocks,Function[xxxx,Module[{},
-	Sum[(Apply[getProbFunc[distribSpec],
-		Append[intVarRes[[2]],ii-1]])*
-	Transpose[{Map[myNExpectation[
-	(funcName[Append[intVarRes[[2]],ii-1],#]),intVarRes[[3]]]&,Range[numX+numZ]]}],{ii,numRegimes}]]],
-	transFuncHasShocks,Function[xxxx,Module[{},
-	Transpose[{Map[myNExpectation[
-	Sum[(Apply[getProbFunc[distribSpec],
-		Append[intVarRes[[2]],ii-1]])*(funcName[Append[intVarRes[[2]],ii-1],#]),{ii,numRegimes}],intVarRes[[3]]]&,Range[numX+numZ]]}]]]		
-	]},
+	(funcName[intVarRes[[2]],#]),intVarRes[[3]]]&,Range[numX+numZ]]}]]]},
 	ReplacePart[funcGuts,1->intVarRes[[1]]]]]
 
 
@@ -999,8 +912,7 @@ Switch[getRegimeTransProbFuncType[distribSpec],
 With[{xVars=Table[Unique["xV"],{numX}],
 	dists=getDistribs[distribSpec],
 	distVars=Table[Unique["epIntV"],{getNumEpsVars[distribSpec]}]},
-With[{xEpsVars=If[regimeTransProbFunc=={},
-	Join[xVars,distVars],Join[xVars,distVars(*,{Unique["regV"]}*)]],
+With[{xEpsVars=Join[xVars,distVars],
 	intArg=MapThread[#1 \[Distributed] #2&,{distVars,dists}]},
 	{xVars,xEpsVars,intArg}]]
 
@@ -1408,7 +1320,7 @@ getDistribs[@<distribSpec@>]:= Map[Last,expctSpec]
 @{
 (*begin code for getNumVars*)
 getNumVars[@<gSpec@>]:=
-(Length[getGridPtTrips[gSpec]]+If[numRegimes>0,2,0])
+(Length[getGridPtTrips[gSpec]])
 
 (*end code for getNumVars*)
 @}
@@ -1599,29 +1511,6 @@ getGridPtTrips[@<gSpec@>]:=gSpec[[3]]
 
 (*end code for getGridPtTrips*)
 @}
-
-\subsection{getRegimeTransProbFuncType}
-\label{sec:getr}
-
-
-
-@d getRegimeTransProbFuncTypeUsage
-@{getRegimeTransProbFuncType::usage=
-"place holder for getRegimeTransProbFuncType"
-@}
-
-@d getRegimeTransProbFuncType
-@{
-(*begin code for getRegimeTransProbFuncType*)
-getRegimeTransProbFuncType[@<distribSpec@>]:=
-If[regimeTransProbFunc=={},noTransFunc,regimeTransProbFunc[[2]]]
-
-getRegimeTransProbFunc[@<distribSpec@>]:=regimeTransProbFunc[[3]]
-
-(*end code for getRegimeTransProbFuncType*)
-@}
-
-
 
 
 

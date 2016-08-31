@@ -334,9 +334,9 @@ fSum[@<linMod@>,
 ConstantArray[0,{Length[psiZ],1}]
 
 fSum[@<linMod@>,
-	{XZFunc_Function,numSteps_Integer},xtGuess_?MatrixQ]:=
+	@<XZFuncs@>,xtGuess_?MatrixQ]:=
 With[{numXVars=Length[BB],numZVars=Length[psiZ[[1]]]},
-With[{xzRes=Apply[multiStepZ[{XZFunc,numSteps},numXVars,numZVars,numSteps], Flatten[xtGuess]]},
+With[{xzRes=Apply[multiStepZ[XZFuncs,numXVars,numZVars,numSteps], Flatten[xtGuess]]},
 fSumC[phi,FF,psiZ,xzRes]]]
 @}
 
@@ -427,14 +427,14 @@ Inverse[IdentityMatrix[Length[xtm1Vars]]-FF] . phi . psiC,ConstantArray[0,{numZV
 @{
 (*begin code for multiStep*)
 
-multiStep[{XZfunc_Function,numSteps_Integer},numX_Integer,valRange:{_Integer..},numTerms_Integer]:=
+multiStep[@<XZFuncs@>,numX_Integer,valRange:{_Integer..},numTerms_Integer]:=
 With[{funcArgs=genSlots[numX]},
-With[{appGuts=(Apply[XZfunc,funcArgs][[Range[numX]]])},
+With[{appGuts=(Apply[XZFuncs[[1]],funcArgs][[Range[numX]]])},
 With[{xtFunc01=Function[appGuts]},
 Print["xtfunc=",xtFunc01];
 With[{iterGuts=NestList[Apply[xtFunc01,Flatten[#]]&,funcArgs,numTerms-1]},
 Print["iterGuts=",iterGuts];
-With[{theXZGuts=Map[(Print["curio=",#];Apply[XZfunc,Flatten[#]][[valRange]])&,iterGuts]},
+With[{theXZGuts=Map[(Print["curio=",#];Apply[XZFuncs[[1]],Flatten[#]][[valRange]])&,iterGuts]},
 With[{theFunc=Function[theXZGuts]},
 Print["multiStep:theXVals=",{iterGuts,theFunc}];
 theFunc]]]]]]/;numSteps>0
@@ -451,8 +451,8 @@ theFunc]]]]]]/;numSteps>0
 @d multiStepZ
 @{
 (*begin code for multiStepZ*)
-multiStepZ[{XZfunc_Function,numSteps_Integer},numX_Integer,numZ_Integer,numTerms_Integer]:=
-multiStep[{XZfunc,numSteps},numX,numX+Range[numZ],numTerms]
+multiStepZ[@<XZFuncs@>,numX_Integer,numZ_Integer,numTerms_Integer]:=
+multiStep[XZFuncs,numX,numX+Range[numZ],numTerms]
 
 (*end code for multiStepZ*)
 @}
@@ -465,8 +465,8 @@ multiStep[{XZfunc,numSteps},numX,numX+Range[numZ],numTerms]
 @d multiStepX
 @{
 (*begin code for multiStepX*)
-multiStepX[{XZfunc_Function,numSteps_Integer},numX_Integer,numTerms_Integer]:=
-multiStep[{XZfunc,numSteps},numX,Range[numX],numTerms]
+multiStepX[@<XZFuncs@>,numX_Integer,numTerms_Integer]:=
+multiStep[XZFuncs,numX,Range[numX],numTerms]
 
 (*end code for multiStepX*)
 @}
@@ -1087,11 +1087,11 @@ And[numPers>0]
 
 
 genPath[xzFunc_Function,
-{XZFunc_Function,numSteps_Integer},xtm1Val_?MatrixQ,epsVal_?MatrixQ,numTerms_Integer]:=
+@<XZFuncs@>,xtm1Val_?MatrixQ,epsVal_?MatrixQ,numTerms_Integer]:=
 With[{numXVars=Length[xtm1Val]},
 With[{xtVal=Apply[xzFunc,Flatten[Join[xtm1Val,epsVal]]]},
 With[{xzRes=If[numTerms==1,{},
-Apply[multiStepX[{XZFunc,numSteps},numXVars,numTerms-1],Flatten[xtVal]]]},
+Apply[multiStepX[XZFuncs,numXVars,numTerms-1],Flatten[xtVal]]]},
 	Join[xtm1Val,xtVal[[Range[numXVars]]],Apply[Join,xzRes]]]]]
 (*end code for genPath*)
 @}

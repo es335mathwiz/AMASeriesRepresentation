@@ -286,17 +286,15 @@ theRes]]
 @d apply formula F contribution given
 @{With[{numXVars=getNumX[linMod],numEpsVars=getNumEps[linMod],
 numZVars=getNumZ[linMod]},
-With[{theSlots=Table[{Slot[ii]},{ii,numXVars+numEpsVars+numZVars}]},
+With[{theSlots=genSlots[numXVars+numEpsVars+numZVars]},
 With[{xtm1Vars=theSlots[[Range[numXVars]]],
 epsVars=theSlots[[numXVars+Range[numEpsVars]]],
 zVars=theSlots[[numXVars+numEpsVars+Range[numZVars]]]},
 With[{xtVals=genXtOfXtm1[linMod,xtm1Vars,epsVars,zVars,fCon]},
 With[{xtp1Vals=genXtp1OfXt[linMod,xtVals,fCon]},
 With[{fullVec=Join[xtm1Vars,xtVals,xtp1Vals,epsVars]},
-With[{(*theDrvs=doImplicitDrv[linMod,fullVec,
-zVars,xtm1Vars,epsVars,drvPairs]*)},(*Print["theDrvs",theDrvs];*)
 Function[fullVec]]
-]]]]]]
+]]]]]
 @}
 
 \subsection{fSumC}
@@ -309,11 +307,12 @@ fSumC::usage=
 
 @d fSumC
 @{
+
 fSumC=Compile[{{phi,_Real,2},{FF,_Real,2},{psiZ,_Real,2},{zPath,_Real,3}},
 With[{numXVars=Length[psiZ]},
-With[{fPows=Drop[NestList[FF.#&,IdentityMatrix[numXVars],Length[zPath]],-1]},
+With[{fPows=Drop[NestList[Function[xx,FF. xx],IdentityMatrix[numXVars],Length[zPath]],-1]},
 Apply[Plus,
-MapThread[Dot[#1,phi.psiZ.#2]&,{fPows , zPath}]]]]]
+MapThread[Function[{xx,yy},Dot[xx,phi.psiZ.yy]],{fPows , zPath}]]]]]
 
 @}
 
@@ -351,7 +350,16 @@ fSumC[phi,FF,psiZ,xzRes]]]
 genSlots[numVars_Integer]:=
 Module[{},
 genSlots[numVars]=
-Table[Slot[ii],{ii,numVars}]]/;And[numVars>=0]
+replaceMySlotStandIn[Table[{mySlotStandIn[ii]},{ii,numVars}]]]/;And[numVars>=0]
+
+replaceMySlotStandIn[xx_]:=xx/.mySlotStandIn->Slot
+
+
+
+genSlot[slotNum_Integer]:=
+Module[{},
+genSlot[slotNum]=
+replaceMySlotStandIn[mySlotStandIn[slotNum]]]/;And[slotNum>0]
 
 (*end code for genSlots*)
 @}
@@ -409,7 +417,7 @@ With[{xtp1Vals=BB.xtVals+Inverse[IdentityMatrix[Length[xtVals]]-FF] . phi . psiC
 genX0Z0Funcs[@<linMod@>]:=
 With[{numXVars=Length[BB],numZVars=Length[psiZ[[1]]]},
 With[{xtm1Vars=genSlots[numXVars]},
-Apply[Function, {Join[BB.Transpose[{xtm1Vars}]+
+Apply[Function, {Join[BB.xtm1Vars+
 Inverse[IdentityMatrix[Length[xtm1Vars]]-FF] . phi . psiC,ConstantArray[0,{numZVars,1}]]}]]]
 (*end code for genX0Z0Funcs*)
 @}
@@ -428,13 +436,16 @@ Inverse[IdentityMatrix[Length[xtm1Vars]]-FF] . phi . psiC,ConstantArray[0,{numZV
 (*begin code for multiStep*)
 
 multiStep[@<XZFuncs@>,numX_Integer,valRange:{_Integer..},numTerms_Integer]:=
-With[{funcArgs=genSlots[numX]},
+With[{funcArgs=Flatten[genSlots[numX]]},
 With[{appGuts=(Apply[XZFuncs[[1]],funcArgs][[Range[numX]]])},
 With[{xtFunc01=Function[appGuts]},
 Print["xtfunc=",xtFunc01];
-With[{iterGuts=NestList[Apply[xtFunc01,Flatten[#]]&,funcArgs,numTerms-1]},
+With[{iterGuts=
+NestList[Function[xx,Apply[xtFunc01,Flatten[xx]]],funcArgs,numTerms-1]},
 Print["iterGuts=",iterGuts];
-With[{theXZGuts=Map[(Print["curio=",#];Apply[XZFuncs[[1]],Flatten[#]][[valRange]])&,iterGuts]},
+With[{theXZGuts=Map[(Function[xx,
+Print["curio=",xx];
+Apply[XZFuncs[[1]],xx][[valRange]]]),iterGuts]},
 With[{theFunc=Function[theXZGuts]},
 Print["multiStep:theXVals=",{iterGuts,theFunc}];
 theFunc]]]]]]/;numSteps>0
@@ -546,10 +557,11 @@ Apply[eqnsFunc,Flatten[Join[ss,{{0}}]]]
  
 genFRFunc[{numX_Integer,numEps_Integer,numZ_Integer},
 xkFunc:(_Function|_CompiledFunction),@<eqnsFunc@>,opts:OptionsPattern[]]:=
-With[{funcArgs=genSlots[numX+numEps],
+With[{funcArgs=Flatten[genSlots[numX+numEps]],
 zArgs=Table[Unique["theFRZArgs"],{numZ}]},
-With[{zArgsInit=Map[{#,0}&,zArgs],funcName=Unique["fName"]},
-funcName[theVars:{_?NumberQ..}]:=Apply[eqnsFunc,Flatten[Apply[xkFunc,theVars]]];Off[FindRoot::nlnum];
+With[{zArgsInit=Map[Function[xx,{xx,0}],zArgs],funcName=Unique["fName"]},
+funcName[theVars:{_?NumberQ..}]:=
+Apply[eqnsFunc,Flatten[Apply[xkFunc,theVars]]];Off[FindRoot::nlnum];
 With[{frRes=FindRoot[funcName[Join[funcArgs,zArgs]],zArgsInit],
 xzRes=Drop[Apply[xkFunc,Join[funcArgs,zArgs]],numX][[Range[numX]]]},
 With[{otherGuts=cmpXZVals[xzRes,zArgs,frRes]},
@@ -580,17 +592,18 @@ Transpose[{Flatten[Join[xzVals,theZArgs]/.theResult]}]
 (*begin code for genFPFunc*)
 	
 fixedPointLimit=30;
-genFPFunc[@<theSolver@>,
-	@<linMod@>,
-@<XZFuncs@>,@<eqnsFunc@>]:=
+genFPFunc[@<theSolver@>,@<linMod@>,@<XZFuncs@>,@<eqnsFunc@>]:=
 With[{numX=Length[BB],numEps=Length[psiEps[[1]]],numZ=Length[psiZ[[1]]]},
 With[{funcArgs=Table[Unique["theFPFuncArgs"],{numX+numEps}]},
 ReplacePart[
 Function[xxxx,Sow[
-myFixedPoint[With[{
-	xzFuncNow=theSolver[[1]][{numX,numEps,numZ},genLilXkZkFunc[linMod,XZFuncs,#[[Range[numX]]]],eqnsFunc,{opts}]
-},(*Print["infp:",Apply[XZFuncs[[1]],funcArgs]];*)
-Apply[xzFuncNow,funcArgs]]&,(Apply[XZFuncs[[1]],funcArgs])[[Range[numX]]],fixedPointLimit]]],
+myFixedPoint[Function[xx,With[{
+xzFuncNow=theSolver[[1]][
+{numX,numEps,numZ},
+genLilXkZkFunc[linMod,XZFuncs,xx[[Range[numX]]]],
+eqnsFunc,{opts}]},
+Apply[xzFuncNow,funcArgs]]],(Apply[XZFuncs[[1]],funcArgs])[[Range[numX]]],
+fixedPointLimit]]],
 1->funcArgs]]]
 (* input   [linMod,XZ, xguess,function (xt,eps,zt)->(xtm1,xt,xtp1,eps), function (xtm1,xt,xtp1,eps)->me]*)
 (* output   [function  (xt,eps) ->(xt,zt)] *)
@@ -637,14 +650,17 @@ FixedPoint[firstArg,secondArg,thirdArg]]
 
 makeInterpFunc[aVecFunc:(_Function|_CompiledFunction),@<gSpec@>]:=
 With[{interpData=genInterpData[aVecFunc,gSpec],numArgs=getNumVars[gSpec]},
-	With[{numFuncs=Length[interpData[[1,2]]],funcArgs=Table[Unique["fArgs"],{numArgs}]},
-	With[{longFuncArgs=fillInSymb[{{},toIgnore,funcArgs}]},
-		With[{
-		interpFuncList=
-Map[Function[funcIdx,Interpolation[Map[{#[[1]], #[[2, funcIdx, 1]]} & , 
+Print["interpData=",interpData];
+With[{numFuncs=Length[interpData[[1,2]]],
+funcArgs=Table[Unique["fArgs"],{numArgs}]},
+With[{longFuncArgs=fillInSymb[{{},toIgnore,funcArgs}]},
+Print["longFuncArgs=",longFuncArgs];
+With[{interpFuncList=
+Map[Function[funcIdx,Interpolation[
+Map[Function[xx,{xx[[1]], xx[[2, funcIdx, 1]]}] , 
 		interpData],InterpolationOrder -> iOrd]],Range[numFuncs]]},
+Print["interpFuncList=",interpFuncList];
 		With[{applied=Transpose[{Through[Apply[interpFuncList,funcArgs]]}]},
-	(*	Print[	Function[xxxxxxx, Transpose[{Through[Apply[interpFuncList,yyyyyyy]]}]]//InputForm];*)
 	ReplacePart[
 	Function[xxxxxxx, applied],
 		{1->longFuncArgs}]
@@ -675,9 +691,15 @@ Map[Function[funcIdx,Interpolation[Map[{#[[1]], #[[2, funcIdx, 1]]} & ,
  
 genInterpData[aVecFunc:(_Function|P_CompiledFunction),@<gSpec@>]:=
 With[{thePts=gridPts[gSpec]},
-With[{filledPts=ParallelMap[fillIn[{{},toIgnore,#}]&,thePts]},
-With[{theVals=ParallelMap[(Apply[aVecFunc,#])&,filledPts]},
+Print["genInterpData:",thePts];
+With[{filledPts=Map[
+Function[xx,fillIn[{{},toIgnore,xx}]],thePts]},
+Print["genInterpData:",filledPts];
+With[{theVals=Map[
+Function[xx,(Apply[aVecFunc,xx])],filledPts]},
+Print["genInterpData:",filledPts];
 With[{interpData=Transpose[{thePts,theVals}]},
+Print["genInterpData:",interpData];
 interpData]]]]
 
 
@@ -703,9 +725,11 @@ interpData]]]]
 (*begin code for gridPts*)
  
 gridPts[@<gSpec@>]:=
-With[{funcForPts=(Function[xx,oneDimGridPts[xx[[1]],xx[[{2,3}]]]][#]) &},
+With[{funcForPts=
+Function[yy,
+(Function[xx,oneDimGridPts[xx[[1]],xx[[{2,3}]]]][yy])]},
 With[{oneDimPts=Map[funcForPts,rngs]},
-With[{theOuter=Outer[List,Apply[Sequence,#]]&[oneDimPts]},
+With[{theOuter=Function[xx,Outer[List,Apply[Sequence,xx]]][oneDimPts]},
 Flatten[theOuter,Depth[theOuter]-3]]]]
 
 
@@ -754,8 +778,9 @@ fillIn[args___]:=Print["wrong args for fillIn",{args}];
 fillIn[{theRes:{_?NumberQ...},toIgnore:{_Integer...},shortVec:{_?NumberQ...}}]:=
 Module[{},
 If[toIgnore=={}==shortVec,theRes,
-	If[MemberQ[toIgnore,Length[theRes]+1],fillIn[{Append[theRes,1],Drop[toIgnore,1],shortVec}],
-		fillIn[{Append[theRes,shortVec[[1]]],toIgnore,Drop[shortVec,1]}]]]]/;OrderedQ[toIgnore]
+If[MemberQ[toIgnore,
+Length[theRes]+1],fillIn[{Append[theRes,1],Drop[toIgnore,1],shortVec}],
+fillIn[{Append[theRes,shortVec[[1]]],toIgnore,Drop[shortVec,1]}]]]]/;OrderedQ[toIgnore]
 
 
 (*end code for fillIn*)
@@ -810,7 +835,9 @@ doIterREInterp[@<theSolver@>,
 	@<XZFuncs@>,
 @<eqnsFunc@>,@<gSpec@>,@<distribSpec@>]:=
 With[{numX=Length[BB],numEps=Length[psiEps[[1]]],numZ=Length[psiZ[[1]]]},
+Print["doIterREInterp before"];
 With[{theFuncs=makeInterpFunc[genFPFunc[theSolver,linMod,XZFuncs,eqnsFunc],gSpec]},
+Print["doIterREInterp after"];
 {theFuncs,genXZREInterpFunc[{numX,numEps,numZ},theFuncs,gSpec,distribSpec]}]]
 
 
@@ -837,7 +864,7 @@ nestIterREInterp[@<theSolver@>,@<linMod@>,
 @<XZFuncs@>,@<eqnsFunc@>,
 @<gSpec@>,
 @<distribSpec@>,numIters_Integer]:=
-NestList[doIterREInterp[theSolver,linMod,{#[[2]],numSteps},eqnsFunc,gSpec,distribSpec]&,{ig,XZFuncs[[1]]},numIters]
+NestList[doIterREInterp[theSolver,linMod,{genSlot[1][[2]],numSteps},eqnsFunc,gSpec,distribSpec]&,{ig,XZFuncs[[1]]},numIters]
 
 
 
@@ -861,6 +888,7 @@ NestList[doIterREInterp[theSolver,linMod,{#[[2]],numSteps},eqnsFunc,gSpec,distri
 genXZREInterpFunc[probDims:{numX_Integer,numEps_Integer,numZ_Integer},
 aLilXkZkFunc_Function,@<gSpec@>,@<distribSpec@>]:=
 With[{theFuncNow=genXZFuncRE[{numX,numEps,numZ},aLilXkZkFunc,distribSpec]},
+Print["genXZREInterp:pre"];
 makeInterpFunc[theFuncNow,elimGSpecShocks[gSpec,numEps]]]
   
 elimGSpecShocks[@<gSpec@>,numEps_Integer]:=
@@ -894,8 +922,8 @@ funcName[fNameArgs:{_?NumberQ..},idx_Integer]:=Module[{},
 (Apply[aLilXkZkFunc,fNameArgs])[[idx,1]]];
 With[{funcGuts=
 Function[xxxx,Module[{},
-	Transpose[{Map[myNExpectation[
-	(funcName[intVarRes[[2]],#]),intVarRes[[3]]]&,Range[numX+numZ]]}]]]},
+Transpose[{Map[Function[xx,myNExpectation[
+	(funcName[intVarRes[[2]],xx]),intVarRes[[3]]]],Range[numX+numZ]]}]]]},
 	ReplacePart[funcGuts,1->intVarRes[[1]]]]]
 
 
@@ -921,7 +949,8 @@ With[{xVars=Table[Unique["xV"],{numX}],
 	dists=getDistribs[distribSpec],
 	distVars=Table[Unique["epIntV"],{getNumEpsVars[distribSpec]}]},
 With[{xEpsVars=Join[xVars,distVars],
-	intArg=MapThread[#1 \[Distributed] #2&,{distVars,dists}]},
+	intArg=Function[{xx,yy},
+MapThread[xx \[Distributed] yy],{distVars,dists}]},
 	{xVars,xEpsVars,intArg}]]
 
 
@@ -981,8 +1010,8 @@ iterateDRREIntegrate[drFunc:(_Function|_CompiledFunction),initVec_?MatrixQ,
 With[{numEps=getNumEpsVars[distribSpec],firVal=Apply[drFunc,Flatten[initVec]]},
 	With[{numX=Length[initVec]-numEps,iterFunc=makeREIterFunc[drFunc,distribSpec]},
 With[{iterated=
-NestList[((Transpose[{Flatten[Apply[iterFunc,Flatten[#]]]}]))&,firVal,numPers-1]},
-Join[initVec[[Range[numX]]],Apply[Join,(Map[Identity[#[[Range[numX]]]]&,iterated])]]]]]/;
+NestList[((Transpose[{Flatten[Apply[iterFunc,genSlot[1]]]}]))&,firVal,numPers-1]},
+Join[initVec[[Range[numX]]],Apply[Join,(Map[Identity[genSlot[1][[Range[numX]]]]&,iterated])]]]]]/;
 And[numPers>0]
 
 
@@ -1063,8 +1092,8 @@ Transpose[{zVals}]]]],
 iterateDRPF[drFunc_Function,initVec_?MatrixQ,numEps_Integer,numPers_Integer]:=
 With[{firVal=Apply[drFunc,Flatten[initVec]],numX=Length[initVec]-numEps,theZeros=Table[0,{numEps}]},
 With[{iterated=
-NestList[(Apply[drFunc,Flatten[Append[#[[Range[numX]]],theZeros]]])&,firVal,numPers-1]},
-Join[initVec[[Range[numX]]],Apply[Join,(Map[#[[Range[numX]]]&,iterated])]]]]/;
+NestList[(Apply[drFunc,Flatten[Append[genSlot[1][[Range[numX]]],theZeros]]])&,firVal,numPers-1]},
+Join[initVec[[Range[numX]]],Apply[Join,(Map[genSlot[1][[Range[numX]]]&,iterated])]]]]/;
 And[numPers>0]
 
 
@@ -1116,9 +1145,9 @@ Apply[multiStepX[XZFuncs,numXVars,numTerms-1],Flatten[xtVal]]]},
 pathErrsDRPF[drFunc_Function,initVec_?MatrixQ,numEps_Integer,@<eqnsFunc@>,numPers_Integer]:=
 With[{pathNow=iterateDRPF[drFunc,initVec,numEps,numPers],numX=Length[initVec]-numEps},
 With[{firstArg=doFuncArg[pathNow,Identity[Reverse[initVec[[-Range[numEps]]]]],numX,0],
-	restArgs=(Map[doFuncArg[pathNow,Table[{0},{numEps}],numX,#-2]&,Range[3,numPers]])},
+	restArgs=(Map[doFuncArg[pathNow,Table[{0},{numEps}],numX,genSlot[1]-2]&,Range[3,numPers]])},
 With[{first=Transpose[{Apply[eqnsFunc,Flatten[firstArg]]}]},
-	With[{theRest=Map[Transpose[{(Apply[eqnsFunc,Flatten[#]])}]&,restArgs]},
+	With[{theRest=Map[Transpose[{(Apply[eqnsFunc,Flatten[genSlot[1]]])}]&,restArgs]},
 		Prepend[theRest,first]
 ]]]]/;
 And[numPers>1]
@@ -1144,9 +1173,9 @@ pathErrsDRREIntegrate[drFunc_Function,initVec_?MatrixQ,@<distribSpec@>,@<eqnsFun
 With[{numEps=getNumEpsVars[distribSpec]},
 With[{pathNow=iterateDRREIntegrate[drFunc,initVec,distribSpec,numPers],numX=Length[initVec]-numEps},(*Print["pathErrsDRREIntegrate:",pathNow];*)
 With[{firstArg=doFuncArg[pathNow,Identity[Reverse[initVec[[-Range[numEps]]]]],numX,0],
-	restArgs=(Map[doFuncArg[pathNow,Table[{0},{numEps}],numX,#-2]&,Range[3,numPers]])},
+	restArgs=(Map[doFuncArg[pathNow,Table[{0},{numEps}],numX,genSlot[1]-2]&,Range[3,numPers]])},
 With[{first=Transpose[{Apply[eqnsFunc,Flatten[firstArg]]}]},
-	With[{theRest=Map[Transpose[{(Apply[eqnsFunc,Flatten[#]])}]&,restArgs]},(*Print["pathErrs:",{pathNow,theRest,first}];*)
+	With[{theRest=Map[Transpose[{(Apply[eqnsFunc,Flatten[genSlot[1]]])}]&,restArgs]},(*Print["pathErrs:",{pathNow,theRest,first}];*)
 		Prepend[theRest,first]
 ]]]]]/;
 And[numPers>1]
@@ -1222,7 +1251,7 @@ funcName[tryEps:{_?NumberQ..}]:=
 		With[{theNorm=Norm[theVal,Infinity]},
 		(*Print["stillex:",{tryEps,theVal,Norm[theVal,Infinity],theNorm}];*)theNorm]];
 	With[{outerEVars=Table[Unique["eVs"],{getNumEpsVars[distribSpec]}]},
-	With[{maxArgs=Map[{#,0}&,outerEVars],cons=Apply[And,  (Map[(-0.01<=#<=0.01)&, outerEVars])]},
+	With[{maxArgs=Map[{genSlot[1],0}&,outerEVars],cons=Apply[And,  (Map[(-0.01<=genSlot[1]<=0.01)&, outerEVars])]},
 	FindMaximum[{funcName[outerEVars],cons},maxArgs]]]]
 
 
@@ -1233,7 +1262,7 @@ funcName[tryEps:{_?NumberQ..}]:=
 With[{theVal=evalPathErrDRREIntegrate[drFunc,Join[noEpsVec,Transpose[{tryEps}]],distribSpec,eqnsFunc]},
 		(*Print["otherex:",theVal,Norm[theVal,Infinity]];*)Norm[theVal,Infinity]];
 	With[{outerEVars=Table[Unique["eVs"],{getNumEpsVars[distribSpec]}]},
-	With[{maxArgs=Map[{#,0}&,outerEVars],cons=Apply[And,  (Map[(-0.01<=#<=0.01)&, outerEVars])]},
+	With[{maxArgs=Map[{genSlot[1],0}&,outerEVars],cons=Apply[And,  (Map[(-0.01<=genSlot[1]<=0.01)&, outerEVars])]},
 	FindMaximum[{funcName[outerEVars],cons},maxArgs]]]]
 
 (*end code for evalBadPathErrDRREIntegrate*)

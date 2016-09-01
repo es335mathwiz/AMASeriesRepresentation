@@ -1,5 +1,34 @@
 Get["pathSetup.mth"]
 Get["AMASeriesRepresentation`"]
+Get["betterRBC.m"]
+LaunchKernels[]
+
+
+
+
+X0Z0=genX0Z0Funcs[linModBetter];
+DistributeDefinitions[X0Z0,linModBetter,genFRFunc,rbcEqnsFunctionalNextBetter] 
+
+theFP=genFPFunc[{genFRFunc},linModBetter,{X0Z0,2},rbcEqnsFunctionalNextBetter];
+
+
+(*
+theLilFunc=genLilXkZkFunc[linModBetter, {X0Z0,2},anXEpsBetter];
+theFR=genFRFunc[{4,1,4},theLilFunc,rbcEqnsFunctionalNextBetter];
+theFR@@anXEpsFlatBetter
+
+
+{x1z1Func, X1Z1Func} = 
+  doIterREInterp[{genFRFunc},linModBetter, {genX0Z0Funcs[linModBetter],2},rbcEqnsFunctionalNextBetter,aGSpecBetter,theDistBetter];
+
+
+	{nxtxz, nxtXZ} = 
+  doIterREInterp[{genFRFunc}, linMod, {genX0Z0Funcs[linMod], 2}, 
+   rbcEqnsFunctionalNext, aGSpec, theDist];
+thisOne = genXZREInterpFunc[{3, 1, 3}, nxtxz, aGSpec, theDist];
+
+Get["simpleRBCModel`"]
+
 
 Get["betterRBC.m"]
  	X0Z0=genX0Z0Funcs[linModBetter]
@@ -8,7 +37,7 @@ X0Z0=genX0Z0Funcs[linModBetter];
 theLilFunc=genLilXkZkFunc[linModBetter, {X0Z0,2},anXEpsBetter];
 theFR=genFRFunc[{4,1,4},theLilFunc,rbcEqnsFunctionalNextBetter];
 
-
+ *)
 (*
 
 oldX0Z0=Function @@ {{cc,kk,nn,tt},X0Z0 @@ {cc,kk,nn,tt}}

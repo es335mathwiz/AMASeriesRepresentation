@@ -64,8 +64,10 @@ PerfectForesight::usage="degenerate distribution implementing perfect foresight"
 @<getFUsage@>
 @<getGridPtTripsUsage@>
 @<getNumVarsUsage@>
+@<parallelMakeInterpFuncUsage@>
 @<makeInterpFuncUsage@>
 @<nestIterREInterpUsage@>
+@<parallelGenInterpDataUsage@>
 @<genInterpDataUsage@>
 @<oneDimGridPtsUsage@>
 @<gridPtsUsage@>
@@ -139,7 +141,9 @@ PerfectForesight::usage="degenerate distribution implementing perfect foresight"
 @<genFRFunc@>
 @<genFPFunc@>
 @<myFixedPoint@>
+@<parallelMakeInterpFunc@>
 @<makeInterpFunc@>
+@<parallelGenInterpData@>
 @<genInterpData@>
 @<gridPts@>
 @<oneDimGridPts@>
@@ -667,6 +671,44 @@ Map[Function[xx,{xx[[1]], xx[[2, funcIdx, 1]]}] ,
 @}
 
 
+\subsection{parallelMakeInterpFunc}
+\label{sec:makeinterpfunc}
+
+
+
+
+@d parallelMakeInterpFuncUsage
+@{parallelMakeInterpFunc::usage=
+"place holder for parallelMakeInterpFunc"
+@}
+
+@d parallelMakeInterpFunc
+@{
+(*begin code for parallelMakeInterpFunc*)
+
+parallelMakeInterpFunc[aVecFunc:(_Function|_CompiledFunction),@<gSpec@>]:=
+With[{interpData=parallelGenInterpData[aVecFunc,gSpec],numArgs=getNumVars[gSpec]},
+With[{numFuncs=Length[interpData[[1,2]]],
+funcArgs=Table[Unique["fArgs"],{numArgs}]},
+With[{longFuncArgs=fillInSymb[{{},toIgnore,funcArgs}]},
+With[{interpFuncList=
+Map[Function[funcIdx,Interpolation[
+Map[Function[xx,{xx[[1]], xx[[2, funcIdx, 1]]}] , 
+		interpData],InterpolationOrder -> iOrd]],Range[numFuncs]]},
+		With[{applied=Transpose[{Through[Apply[interpFuncList,funcArgs]]}]},
+	ReplacePart[
+	Function[xxxxxxx, applied],
+		{1->longFuncArgs}]
+	]
+]]]]
+
+
+
+
+(*end code for parallelMakeInterpFunc*)
+@}
+
+
 \subsection{genInterpData}
 \label{sec:geninterpdata}
 
@@ -696,6 +738,38 @@ interpData]]]]
 
 
 (*end code for genInterpData*)
+@}
+
+
+\subsection{parallelGenInterpData}
+\label{sec:geninterpdata}
+
+
+
+@d parallelGenInterpDataUsage
+@{parallelGenInterpData::usage=
+"place holder for parallelGenInterpData"
+@}
+
+@d parallelGenInterpData
+@{
+(*begin code for parallelGenInterpData*)
+
+ 
+parallelGenInterpData[aVecFunc:(_Function|P_CompiledFunction),@<gSpec@>]:=
+With[{thePts=gridPts[gSpec]},
+With[{filledPts=ParallelMap[
+Function[xx,fillIn[{{},toIgnore,xx}]],thePts]},
+With[{theVals=ParallelMap[
+Function[xx,(Apply[aVecFunc,xx])],filledPts]},
+With[{interpData=Transpose[{thePts,theVals}]},
+interpData]]]]
+
+
+
+
+
+(*end code for parallelGenInterpData*)
 @}
 
 

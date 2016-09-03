@@ -1,17 +1,23 @@
+(*
+*)
+
+
+
+
 Get["pathSetup.mth"]
 Get["AMASeriesRepresentation`"]
 Get["betterRBC.m"]
 LaunchKernels[]
-
-
-
+DistributeDefinitions["AMASeriesRepresentation`"]
 
 X0Z0=genX0Z0Funcs[linModBetter];
-DistributeDefinitions[X0Z0,linModBetter,genFRFunc,rbcEqnsFunctionalNextBetter] 
 
 theFP=genFPFunc[{genFRFunc},linModBetter,{X0Z0,2},rbcEqnsFunctionalNextBetter];
+DistributeDefinitions[X0Z0,linModBetter,genFRFunc,rbcEqnsFunctionalNextBetter,theFP] 
 
-
+theRes=Timing[makeInterpFunc[theFP,aGSpecBetter]]
+parallelRes=Timing[parallelMakeInterpFunc[theFP,aGSpecBetter]]
+{theRes[[1]],parallelRes[[1]]}
 (*
 theLilFunc=genLilXkZkFunc[linModBetter, {X0Z0,2},anXEpsBetter];
 theFR=genFRFunc[{4,1,4},theLilFunc,rbcEqnsFunctionalNextBetter];

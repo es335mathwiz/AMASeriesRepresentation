@@ -11,20 +11,6 @@ lilxkzk @@ anXEpsZsFlat
 	TestID->"AMASeriesFuncTest-20160621-U2T2N5"
 ]
 
-Test[
-	anX0Z0 = genX0Z0Funcs[linModBetterQuasi];
-lilxkzk = 
- genLilXkZkFunc[linModBetterQuasi, {anX0Z0, 2}, 
-  anX0Z0 @@ anXFlatBetterQuasi, {{{1, 2}}, 
-   rbcEqnsFunctionBetterQuasi}];
-   lilxkzk  @@ anXEpsZsFlatBetterQuasi
-	,
-	{{0.2}, {0.18}, {0}, {1.}, {1.1}, {0.5181368277192597}, {0.2760564773022188}, {0.5}, 
- {1.8603422701233614}, {1.5050548271635829}, {0.6033499453621338}, {0.31359526035539487}, 
- {0.}, {0.9043206867400233}, {1.4798281688317612}, {0.01}}
-	,
-	TestID->"AMASeriesFuncTest-20160621-J1G9K7"
-]
 
 Test[
 	anX0Z0 = genX0Z0Funcs[linModBetter];

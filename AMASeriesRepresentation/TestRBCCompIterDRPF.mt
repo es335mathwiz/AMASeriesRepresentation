@@ -28,11 +28,11 @@ aGSpec={{1,3}, 1, {{4, 0.018732441104784652, 0.7492976441913861}, {4, 9/10, 11/1
   {4, -0.03, 0.09}}}
 thePFDist={{{ee, PerfectForesight}}}
 Off[InterpolatingFunction::dmval]
-{xzFunc01,iterXZFuncsPF01}=doIterREInterp[{genFRFunc},linMod,{X0Z0,2},rbcComp,aGSpec,thePFDist]
+{xzFunc01,iterXZFuncsPF01}=parallelDoIterREInterp[{genFRFunc},linMod,{X0Z0,2},rbcComp,aGSpec,thePFDist]
 
-{xzFunc02,iterXZFuncsPF02}=doIterREInterp[{genFRFunc},linMod,{iterXZFuncsPF01,2},rbcComp,aGSpec,thePFDist]
+{xzFunc02,iterXZFuncsPF02}=parallelDoIterREInterp[{genFRFunc},linMod,{iterXZFuncsPF01,2},rbcComp,aGSpec,thePFDist]
 
-{xzFunc03,iterXZFuncsPF03}=doIterREInterp[{genFRFunc},linMod,{iterXZFuncsPF02,2},rbcComp,aGSpec,thePFDist]
+{xzFunc03,iterXZFuncsPF03}=parallelDoIterREInterp[{genFRFunc},linMod,{iterXZFuncsPF02,2},rbcComp,aGSpec,thePFDist]
 
 theArg=Transpose[{anXtm1EpsZ[[Range[5]]]}]
 pathErrs01=pathErrsDRPF[xzFunc01,theArg,1,rbcComp,4]

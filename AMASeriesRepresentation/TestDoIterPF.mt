@@ -1,7 +1,7 @@
 (* Wolfram Language Test file *)
 
 {xzFunc,iterXZFuncsPF}=
-doIterREInterp[{genFRFunc},linModBetter,{anX0Z0=genX0Z0Funcs[linModBetter],2},rbcEqnsFunctionalNextBetter,aGSpecBetter,thePFDistBetter];
+parallelDoIterREInterp[{genFRFunc},linModBetter,{anX0Z0=genX0Z0Funcs[linModBetter],2},rbcEqnsFunctionalNextBetter,aGSpecBetter,thePFDistBetter];
 anXZFuncPF=genXZFuncRE[{4,1,4},xzFunc,thePFDistBetter];
 
 
@@ -10,7 +10,7 @@ Test[
 	,
 	True
 	,
-	TestID->"TestDoIterPF-20151101-C2H9V8"
+	TestID->"TestparallelDoIterPF-20151101-C2H9V8"
 ]
 
 
@@ -21,7 +21,7 @@ Test[
 	,
 	True
 	,
-	TestID->"TestDoIterPF-20151101-A7A1F3"
+	TestID->"TestparallelDoIterPF-20151101-A7A1F3"
 ]
 
 
@@ -33,5 +33,5 @@ Test[
 	,
 True
 	,
-	TestID->"TestDoIterPF-20151101-C3L9F3"
+	TestID->"TestparallelDoIterPF-20151101-C3L9F3"
 ]

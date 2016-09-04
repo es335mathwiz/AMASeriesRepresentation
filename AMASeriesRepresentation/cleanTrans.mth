@@ -8,19 +8,15 @@ Get["pathSetup.mth"]
 Get["AMASeriesRepresentation`"]
 Get["betterRBC.m"]
 LaunchKernels[]
+DistributeDefinitions["AMASeriesRepresentation`"]
 ParallelEvaluate[Off[NIntegrate::ncvb]]
 ParallelEvaluate[Off[InterpolatingFunction::dmval]]
 Off[NIntegrate::ncvb]
 Off[InterpolatingFunction::dmval]
 
-DistributeDefinitions["AMASeriesRepresentation`"]
 
 X0Z0=genX0Z0Funcs[linModBetter];
-theFP=genFPFunc[{genFRFunc},linModBetter,{X0Z0,2},rbcEqnsFunctionalNextBetter];
-DistributeDefinitions[X0Z0]
-DistributeDefinitions[rbcEqnsFunctionalNextBetter] 
-DistributeDefinitions[linModBetter] 
-DistributeDefinitions[theFP] 
+
 
 doComp[gVal_Integer,iters_Integer]:=
 Module[{theRes666,parallelRes666,
@@ -33,7 +29,12 @@ parallelRes666=Timing[parallelNestIterREInterp[{genFRFunc},linModBetter, {genX0Z
 
 (*
 
+DistributeDefinitions[X0Z0]
+DistributeDefinitions[rbcEqnsFunctionalNextBetter] 
+DistributeDefinitions[linModBetter] 
 
+DistributeDefinitions[theFP] 
+theFP=genFPFunc[{genFRFunc},linModBetter,{X0Z0,2},rbcEqnsFunctionalNextBetter];
 
 theRes=Timing[{x1z1Func, X1Z1Func} = 
 			  doIterREInterp[{genFRFunc},linModBetter, {genX0Z0Funcs[linModBetter],2},rbcEqnsFunctionalNextBetter,aGSpecBetter,theDistBetter]];

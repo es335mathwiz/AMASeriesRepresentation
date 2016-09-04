@@ -30,7 +30,7 @@ rbcComp=Compile[{
 theLilFunc=genLilXkZkFunc[linMod, {X0Z0,2},X0Z0@@anXtm1EpsZ];
 theFR=genFRFunc[probDims,theLilFunc,rbcComp];
 theFP=genFPFunc[linMod,{X0Z0},X0Z0@@anXtm1EpsZ,rbcComp];
-{xzFunc,iterXZFuncsPF}=doIterREInterp[{genFRFunc},linMod,{X0Z0,2},rbcComp,aGSpec,thePFDist]
+{xzFunc,iterXZFuncsPF}=parallelDoIterREInterp[{genFRFunc},linMod,{X0Z0,2},rbcComp,aGSpec,thePFDist]
 anXZFuncPF=genXZFuncRE[probDims,xzFunc,thePFDist];
 
 Off[InterpolatingFunction::dmval]
@@ -39,7 +39,7 @@ Test[
 	,
 	True
 	,
-	TestID->"TestDoIterPF-20151101-C2H9V8"
+	TestID->"TestparallelDoIterPF-20151101-C2H9V8"
 ]
 
 
@@ -49,7 +49,7 @@ Norm[tRes-{{0.39053169474454}, {0.20295994949600366}, {2.790200259595386},
  {1.0948251498115775}, {-0.00031948810871954003}, {0.0021299382616663393}, 
  {-0.015395838724676217}, {-0.0002201728380758491}}]<10^(-8),
  True,
-	TestID->"TestDoIterPF-20151101-A7A1F3"
+	TestID->"TestparallelDoIterPF-20151101-A7A1F3"
 ]
 
 
@@ -62,5 +62,5 @@ Test[
      {-0.0002201728380758491}}]<10^(-8),
      True
 ,
-	TestID->"TestDoIterPF-20151101-C3L9F3"
+	TestID->"TestparallelDoIterPF-20151101-C3L9F3"
 ]

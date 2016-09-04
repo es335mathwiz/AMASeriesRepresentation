@@ -1,7 +1,7 @@
 (* Wolfram Language Test file *)
 
 {x1z1Func, X1Z1Func} = 
-  doIterREInterp[{genFRFunc},linModBetter, {genX0Z0Funcs[linModBetter],2},rbcEqnsFunctionalNextBetter,aGSpecBetter,theDistBetter];
+  parallelDoIterREInterp[{genFRFunc},linModBetter, {genX0Z0Funcs[linModBetter],2},rbcEqnsFunctionalNextBetter,aGSpecBetter,theDistBetter];
 Test[
 	Norm[(X1Z1Func @@anXEpsFlatBetter)-{{0.3785961351933357}, {0.1950002329961874}, {3.1045685320887886}, 
  {1.0949705528856826}, {-0.026330856144866164}, {-0.017844902107835115}, 
@@ -13,7 +13,7 @@ Test[
 ]
 
 bunch=
-  nestIterREInterp[{genFRFunc},linModBetter, {genX0Z0Funcs[linModBetter],2},rbcEqnsFunctionalNextBetter,aGSpecBetter,theDistBetter,1]
+  parallelNestIterREInterp[{genFRFunc},linModBetter, {genX0Z0Funcs[linModBetter],2},rbcEqnsFunctionalNextBetter,aGSpecBetter,theDistBetter,1]
 Test[
 	Norm[(bunch[[-1,2]] @@anXEpsFlatBetter)-{{0.3785961351933357}, {0.1950002329961874}, {3.1045685320887886}, 
  {1.0949705528856826}, {-0.026330856144866164}, {-0.017844902107835115}, 

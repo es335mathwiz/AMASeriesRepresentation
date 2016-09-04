@@ -30,14 +30,14 @@ rbcComp=Compile[{
  probDims={4,1,4};
 
 
-{xzFunc01,iterXZFuncsPF01}=doIterREInterp[{genFRFunc},linMod,{X0Z0,2},rbcComp,aGSpec,thePFDist]
+{xzFunc01,iterXZFuncsPF01}=parallelDoIterREInterp[{genFRFunc},linMod,{X0Z0,2},rbcComp,aGSpec,thePFDist]
 aPath01=genPath[xzFunc01,{iterXZFuncsPF01,2},Transpose[{anXtm1EpsZ[[Range[4]]]}],{anXtm1EpsZ[[{5}]]},3];
 iPath01=iterateDRPF[xzFunc01,Transpose[{anXtm1EpsZ[[Range[5]]]}],1,3]
 intPath01=iterateDRREIntegrate[xzFunc01,Transpose[{anXtm1EpsZ[[Range[5]]]}],thePFDist,3]
 
 
 
-{xzFunc02,iterXZFuncsPF02}=doIterREInterp[{genFRFunc},linMod,{iterXZFuncsPF01,2},rbcComp,aGSpec,thePFDist]
+{xzFunc02,iterXZFuncsPF02}=parallelDoIterREInterp[{genFRFunc},linMod,{iterXZFuncsPF01,2},rbcComp,aGSpec,thePFDist]
 aPath02=genPath[xzFunc02,{iterXZFuncsPF02,2},Transpose[{anXtm1EpsZ[[Range[4]]]}],{anXtm1EpsZ[[{5}]]},3];
 
 iPath02=iterateDRPF[xzFunc02,Transpose[{anXtm1EpsZ[[Range[5]]]}],1,3]
@@ -46,7 +46,7 @@ intPath02=iterateDRREIntegrate[xzFunc02,Transpose[{anXtm1EpsZ[[Range[5]]]}],theP
 
 
 
-{xzFunc03,iterXZFuncsPF03}=doIterREInterp[{genFRFunc},linMod,{iterXZFuncsPF02,2},rbcComp,aGSpec,thePFDist]
+{xzFunc03,iterXZFuncsPF03}=parallelDoIterREInterp[{genFRFunc},linMod,{iterXZFuncsPF02,2},rbcComp,aGSpec,thePFDist]
 aPath03=genPath[xzFunc03,{iterXZFuncsPF03,2},Transpose[{anXtm1EpsZ[[Range[4]]]}],{anXtm1EpsZ[[{5}]]},3];
 
 iPath03=iterateDRPF[xzFunc03,Transpose[{anXtm1EpsZ[[Range[5]]]}],1,3]

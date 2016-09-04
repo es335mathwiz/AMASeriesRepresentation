@@ -24,14 +24,14 @@ aGSpec={{1}, 1, {{4, 0.018732441104784652, 0.7492976441913861}, {4, 9/10, 11/10}
   {4, -0.03, 0.09}}}
 thePFDist={{{ee, PerfectForesight}}}
 
-{xzFunc01,iterXZFuncsPF01}=doIterREInterp[{genFRFunc},linMod,{X0Z0,2},rbcEqnsFunctionalNext,aGSpec,thePFDist]
+{xzFunc01,iterXZFuncsPF01}=parallelDoIterREInterp[{genFRFunc},linMod,{X0Z0,2},rbcEqnsFunctionalNext,aGSpec,thePFDist]
 aPath01=genPath[xzFunc01,{iterXZFuncsPF01,2},Transpose[{anXtm1EpsZ[[Range[3]]]}],{anXtm1EpsZ[[{4}]]},3];
 iPath01=iterateDRPF[xzFunc01,Transpose[{anXtm1EpsZ[[Range[4]]]}],1,3]
 intPath01=iterateDRREIntegrate[xzFunc01,Transpose[{anXtm1EpsZ[[Range[4]]]}],thePFDist,3]
 
 
 
-{xzFunc02,iterXZFuncsPF02}=doIterREInterp[{genFRFunc},linMod,{iterXZFuncsPF01,2},rbcEqnsFunctionalNext,aGSpec,thePFDist]
+{xzFunc02,iterXZFuncsPF02}=parallelDoIterREInterp[{genFRFunc},linMod,{iterXZFuncsPF01,2},rbcEqnsFunctionalNext,aGSpec,thePFDist]
 aPath02=genPath[xzFunc02,{iterXZFuncsPF02,2},Transpose[{anXtm1EpsZ[[Range[3]]]}],{anXtm1EpsZ[[{4}]]},3];
 
 iPath02=iterateDRPF[xzFunc02,Transpose[{anXtm1EpsZ[[Range[4]]]}],1,3]
@@ -40,7 +40,7 @@ intPath02=iterateDRREIntegrate[xzFunc02,Transpose[{anXtm1EpsZ[[Range[4]]]}],theP
 
 
 
-{xzFunc03,iterXZFuncsPF03}=doIterREInterp[{genFRFunc},linMod,{iterXZFuncsPF02,2},rbcEqnsFunctionalNext,aGSpec,thePFDist]
+{xzFunc03,iterXZFuncsPF03}=parallelDoIterREInterp[{genFRFunc},linMod,{iterXZFuncsPF02,2},rbcEqnsFunctionalNext,aGSpec,thePFDist]
 aPath03=genPath[xzFunc03,{iterXZFuncsPF03,2},Transpose[{anXtm1EpsZ[[Range[3]]]}],{anXtm1EpsZ[[{4}]]},3];
 
 iPath03=iterateDRPF[xzFunc03,Transpose[{anXtm1EpsZ[[Range[4]]]}],1,3]

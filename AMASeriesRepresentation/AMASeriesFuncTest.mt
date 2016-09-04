@@ -108,7 +108,7 @@ Norm[fpf @@ anXEpsFlat-
 
 Test[
 	{nxtxz, nxtXZ} = 
-  doIterREInterp[{genFRFunc}, linMod, {genX0Z0Funcs[linMod], 2}, 
+  parallelDoIterREInterp[{genFRFunc}, linMod, {genX0Z0Funcs[linMod], 2}, 
    rbcEqnsFunctionalNext, aGSpec, theDist];
 thisOne = genXZREInterpFunc[{3, 1, 3}, nxtxz, aGSpec, theDist];
 Norm[Flatten[Through[{thisOne, nxtXZ} @@ # &[anXEpsFlat]]-
@@ -122,7 +122,7 @@ Norm[Flatten[Through[{thisOne, nxtXZ} @@ # &[anXEpsFlat]]-
 ]
 Test[
 	{nxtxz, nxtXZ} = 
- doIterREInterp[{genFRFunc}, linModBetter, {genX0Z0Funcs[linModBetter], 1}, 
+ parallelDoIterREInterp[{genFRFunc}, linModBetter, {genX0Z0Funcs[linModBetter], 1}, 
   rbcEqnsFunctionalNextBetter, aGSpecBetter, 
   theDistBetter]; 
   Norm[fSum[linModBetter, {nxtXZ, 1}, anXBetter]-
@@ -137,7 +137,7 @@ Test[
 	Off[NIntegrate::ncvb];
 	Off[NIntegrate::slwcon];
 	{nxtxz, nxtXZ} = 
-  doIterREInterp[{genNSFunc}, linModBetterCnstrn, {genX0Z0Funcs[linModBetterCnstrn], 1}, 
+  parallelDoIterREInterp[{genNSFunc}, linModBetterCnstrn, {genX0Z0Funcs[linModBetterCnstrn], 1}, 
    rbcEqnsFunctionalNextBetterCnstrn, aGSpecBetterCnstrn, 
    theDistBetterCnstrn];
    On[NIntegrate::izero];

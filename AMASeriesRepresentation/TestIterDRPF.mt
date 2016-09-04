@@ -1,16 +1,16 @@
 (* Wolfram Language Test file *)
 Off[InterpolatingFunction::dmval]
-{xzFunc01,iterXZFuncsPF01}=doIterREInterp[{genFRFunc},linModBetter,{genX0Z0Funcs[linModBetter],2},rbcEqnsFunctionalNextBetter,aGSpecBetter,theDistBetter];
+{xzFunc01,iterXZFuncsPF01}=parallelDoIterREInterp[{genFRFunc},linModBetter,{genX0Z0Funcs[linModBetter],2},rbcEqnsFunctionalNextBetter,aGSpecBetter,theDistBetter];
 aPath01=genPath[xzFunc01,{iterXZFuncsPF01,1},anXBetter,{Last[anXEpsBetter]}];
 	
 
-{xzFunc02,iterXZFuncsPF02}=doIterREInterp[{genFRFunc},linModBetter,{iterXZFuncsPF01,2},rbcEqnsFunctionalNextBetter,aGSpecBetter,theDistBetter];
+{xzFunc02,iterXZFuncsPF02}=parallelDoIterREInterp[{genFRFunc},linModBetter,{iterXZFuncsPF01,2},rbcEqnsFunctionalNextBetter,aGSpecBetter,theDistBetter];
 aPath02=genPath[xzFunc02,{iterXZFuncsPF01,1},anXBetter,{Last[anXEpsBetter]}];
 	
 
 	
 
-{xzFunc03,iterXZFuncsPF03}=doIterREInterp[{genFRFunc},linModBetter,{iterXZFuncsPF02,2},rbcEqnsFunctionalNextBetter,aGSpecBetter,theDistBetter];
+{xzFunc03,iterXZFuncsPF03}=parallelDoIterREInterp[{genFRFunc},linModBetter,{iterXZFuncsPF02,2},rbcEqnsFunctionalNextBetter,aGSpecBetter,theDistBetter];
 aPath03=genPath[xzFunc03,{iterXZFuncsPF02,1},anXBetter,{Last[anXEpsBetter]}];
 	
 

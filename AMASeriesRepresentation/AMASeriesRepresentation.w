@@ -53,6 +53,7 @@ PerfectForesight::usage="degenerate distribution implementing perfect foresight"
 @<getDistribsUsage@>
 @<genXZFuncREUsage@>
 @<genIntVarsUsage@>
+@<parallelGenXZREInterpFuncUsage@>
 @<genXZREInterpFuncUsage@>
 @<genX0Z0FuncsUsage@>
 @<checkModUsage@>
@@ -73,6 +74,8 @@ PerfectForesight::usage="degenerate distribution implementing perfect foresight"
 @<gridPtsUsage@>
 @<fillInUsage@>
 @<fillInSymbUsage@>
+@<parallelNestIterREInterpUsage@> 
+@<parallelDoIterREInterpUsage@> 
 @<doIterREInterpUsage@> 
 @<getPhiUsage@>
 @<getPsiZUsage@>
@@ -149,8 +152,11 @@ PerfectForesight::usage="degenerate distribution implementing perfect foresight"
 @<oneDimGridPts@>
 @<fillIn@>
 @<fillInSymb@>
+@<parallelNestIterREInterp@> 
+@<parallelDoIterREInterp@> 
 @<doIterREInterp@>
 @<nestIterREInterp@>
+@<parallelGenXZREInterpFunc@>
 @<genXZREInterpFunc@>
 @<genXZFuncRE@>
 @<genIntVars@>
@@ -179,10 +185,6 @@ psiZPreComp
 @d theZs
 @{theZs:{_?MatrixQ..}@}
 
-
-@d drvPairs
-@{drvPairs:({{{aa_Integer,bb_Integer}...},
-eqnFunc:(_Function|_CompiledFunction)}|{{},{}}):{{},{}}@}
 
 @d xtGuess
 @{xtGuess_?MatrixQ@}
@@ -898,13 +900,48 @@ doIterREInterp[@<theSolver@>,
 	@<XZFuncs@>,
 @<eqnsFunc@>,@<gSpec@>,@<distribSpec@>]:=
 With[{numX=Length[BB],numEps=Length[psiEps[[1]]],numZ=Length[psiZ[[1]]]},
+tn=AbsoluteTime[];
 With[{theFuncs=makeInterpFunc[genFPFunc[theSolver,linMod,XZFuncs,eqnsFunc],gSpec]},
-{theFuncs,genXZREInterpFunc[{numX,numEps,numZ},theFuncs,gSpec,distribSpec]}]]
+Print["makeInterpTime=",(tn2=AbsoluteTime[])-tn];
+With[{XZRE=genXZREInterpFunc[{numX,numEps,numZ},theFuncs,gSpec,distribSpec]},
+Print["genXZREInterpTime=",(AbsoluteTime[])-tn2];
+{theFuncs,XZRE}]]]
 
 
 
 
 (*end code for doIterREInterp*)
+@}
+
+
+\subsection{parallelDoIterREInterp}
+\label{sec:doiterreinterp}
+
+
+
+@d parallelDoIterREInterpUsage
+@{parallelDoIterREInterp::usage=
+"place holder for parallelDoIterREInterp"
+@}
+
+@d parallelDoIterREInterp
+@{
+(*begin code for parallelDoIterREInterp*)
+parallelDoIterREInterp[@<theSolver@>,
+	@<linMod@>,
+	@<XZFuncs@>,
+@<eqnsFunc@>,@<gSpec@>,@<distribSpec@>]:=
+With[{numX=Length[BB],numEps=Length[psiEps[[1]]],numZ=Length[psiZ[[1]]]},tn=AbsoluteTime[];
+With[{theFuncs=parallelMakeInterpFunc[genFPFunc[theSolver,linMod,XZFuncs,eqnsFunc],gSpec]},
+Print["parallelMakeInterpTime=",(tn2=AbsoluteTime[])-tn];
+With[{XZRE=parallelGenXZREInterpFunc[{numX,numEps,numZ},theFuncs,gSpec,distribSpec]},
+Print["parallelgenXZREInterpTime=",(AbsoluteTime[])-tn2];
+{theFuncs,XZRE}]]]
+
+
+
+
+(*end code for parallelDoIterREInterp*)
 @}
 
 \subsection{nestIterREInterp}
@@ -934,6 +971,33 @@ NestList[Function[xx,doIterREInterp[theSolver,linMod,
 (*end code for nestIterREInterp*)
 @}
 
+\subsection{parallelNestIterREInterp}
+\label{sec:nestiterreinterp}
+
+
+@d parallelNestIterREInterpUsage
+@{parallelNestIterREInterp::usage=
+"place holder for parallelNestIterREInterp"
+@}
+
+@d parallelNestIterREInterp
+@{
+(*begin code for parallelNestIterREInterp*)
+
+
+parallelNestIterREInterp[@<theSolver@>,@<linMod@>,
+@<XZFuncs@>,@<eqnsFunc@>,
+@<gSpec@>,
+@<distribSpec@>,numIters_Integer]:=
+NestList[Function[xx,parallelDoIterREInterp[theSolver,linMod,
+{xx[[2]],numSteps},eqnsFunc,gSpec,distribSpec]],{ig,XZFuncs[[1]]},numIters]
+
+
+
+
+(*end code for parallelNestIterREInterp*)
+@}
+
 \subsection{genXZREInterpFunc}
 \label{sec:genxzreinterpfunc}
 
@@ -956,6 +1020,31 @@ elimGSpecShocks[@<gSpec@>,numEps_Integer]:=
 {toIgnore,gSpec[[2]],Drop[getGridPtTrips[gSpec],-(numEps)]}
 
 (*end code for genXZREInterpFunc*)
+@}
+
+
+\subsection{parallelGenXZREInterpFunc}
+\label{sec:genxzreinterpfunc}
+
+
+@d parallelGenXZREInterpFuncUsage
+@{parallelGenXZREInterpFunc::usage=
+"place holder for parallelGenXZREInterpFunc"
+@}
+
+@d parallelGenXZREInterpFunc
+@{
+(*begin code for parallelGenXZREInterpFunc*)
+ 
+parallelGenXZREInterpFunc[probDims:{numX_Integer,numEps_Integer,numZ_Integer},
+aLilXkZkFunc_Function,@<gSpec@>,@<distribSpec@>]:=
+With[{theFuncNow=genXZFuncRE[{numX,numEps,numZ},aLilXkZkFunc,distribSpec]},
+parallelMakeInterpFunc[theFuncNow,elimGSpecShocks[gSpec,numEps]]]
+  
+elimGSpecShocks[@<gSpec@>,numEps_Integer]:=
+{toIgnore,gSpec[[2]],Drop[getGridPtTrips[gSpec],-(numEps)]}
+
+(*end code for parallelGenXZREInterpFunc*)
 @}
 
 
@@ -1613,28 +1702,6 @@ getGridPtTrips[@<gSpec@>]:=gSpec[[3]]
 @}
 
 
-
-\subsection{nuweb Macro Definitions}
-\label{sec:nuweb-macro-defin}
-
-
-@d xxxxxxUsage
-@{xxxxxx::usage=
-"place holder for xxxxxx"
-@}
-
-@d xxxxxx
-@{
-(*begin code for xxxxxx*)
-
-(*end code for xxxxxx*)
-@}
-
-
-
-
-
-@d gencall@{@1[@2]@}
 
 
 \subsection{Identifiers}

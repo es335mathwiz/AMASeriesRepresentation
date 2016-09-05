@@ -21,7 +21,7 @@
 @o AMASeriesRepresentation.m
 @{
 BeginPackage["AMASeriesRepresentation`",
- {"JLink`","ProtectedSymbols`"}]
+ {"JLink`","ProtectedSymbols`","mathSmolyak`"}]
 @<usage definitions@>
 Begin["`Private`"]
 @<package code@>
@@ -38,6 +38,8 @@ EndPackage[]
 @{
 (*Begin Usage Definitions*)
 PerfectForesight::usage="degenerate distribution implementing perfect foresight"
+@<smolyakInterpolationUsage@>
+@<smolyakInterpolationPrepUsage@>
 @<genLilXkZkFuncUsage@>
 @<gettersSettersUsage@>
 @<worstPathForErrDRREIntegrateUsage@>
@@ -65,6 +67,7 @@ PerfectForesight::usage="degenerate distribution implementing perfect foresight"
 @<getFUsage@>
 @<getGridPtTripsUsage@>
 @<getNumVarsUsage@>
+@<makeSmolyakInterpFuncUsage@>
 @<parallelMakeInterpFuncUsage@>
 @<makeInterpFuncUsage@>
 @<nestIterREInterpUsage@>
@@ -99,7 +102,8 @@ PerfectForesight::usage="degenerate distribution implementing perfect foresight"
 
 @d package code
 @{
-
+@<smolyakInterpolation@>
+@<smolyakInterpolationPrep@>
 @<gettersSetters@>
 @<getNumIgnored@>
 @<getNumInterpVars@>
@@ -144,6 +148,7 @@ PerfectForesight::usage="degenerate distribution implementing perfect foresight"
 @<genFRFunc@>
 @<genFPFunc@>
 @<myFixedPoint@>
+@<makeSmolyakInterpFunc@>
 @<parallelMakeInterpFunc@>
 @<makeInterpFunc@>
 @<parallelGenInterpData@>
@@ -711,8 +716,70 @@ Map[Function[xx,{xx[[1]], xx[[2, funcIdx, 1]]}] ,
 @}
 
 
+
+\subsection{makeSmolyakInterpFunc}
+\label{sec:makeinterpfunc}
+
+
+
+
+@d makeSmolyakInterpFuncUsage
+@{makeSmolyakInterpFunc::usage=
+"place holder for makeSmolyakInterpFunc"
+@}
+
+@d makeSmolyakInterpFunc
+@{
+(*begin code for makeSmolyakInterpFunc*)
+
+(*end code for makeSmolyakInterpFunc*)
+@}
+
+\subsection{smolyakInterpolation}
+\label{sec:smolyakinterpolation}
+
+
+@d smolyakInterpolationUsage
+@{smolyakInterpolation::usage=
+"place holder for makeSmolyakInterpFunc"
+@}
+
+@d smolyakInterpolation
+@{
+smolyakInterpolation[fVals:{_?NumberQ..},
+linSolver_LinearSolveFunction,ranges_?MatrixQ,thePolys_List]:=
+With[{wts=linSolver[fVals],numVars=Length[ranges]},
+With[{theXs=Table[xx[ii],{ii,numVars}]},
+Apply[Function,({(wts.thePolys)/.MapThread[adjstX,{theXs,ranges}]})]]]
+
+@}
+
+
+\subsection{smolyakInterpolationPrep}
+\label{sec:smoly}
+
+@d smolyakInterpolationPrepUsage
+@{smolyakInterpolationPrep::usage="place holder"@}
+
+@d smolyakInterpolationPrep
+@{
+smolyakInterpolationPrep[approxLevels_?listOfIntegersQ,ranges_?MatrixQ,
+@<distribSpec@>]:=
+Module[{smolRes=sparseGridEvalPolysAtPts[approxLevels],
+numVars=Length[approxLevels],numEps=Length[distribSpec[[1]]]},
+With[{thePts=smolRes[[1]],thePolys=smolRes[[2]],theMat=smolRes[[3]]},
+With[{numPolys=Length[thePolys]},
+{thePts,LinearSolve[theMat],thePolys}]]]/;
+And[Length[ranges]==Length[approxLevels]]
+
+adjstX[theVar:(xVar_[ii_Integer]),range:{lowVal_?NumberQ,highVal_?NumberQ}]:=
+theVar->xForm[genSlot[ii],lowVal,highVal]
+@}
+
 \subsection{genInterpData}
 \label{sec:geninterpdata}
+
+
 
 
 

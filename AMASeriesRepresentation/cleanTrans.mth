@@ -7,6 +7,14 @@
 Get["pathSetup.mth"]
 Get["AMASeriesRepresentation`"]
 Get["betterRBC.m"]
+Needs["mathSmolyak`"]
+
+{pt,tf,ply}=smolyakInterpolationPrep[{1},trng={{-10,10}},theDistBetter]
+fvals=Range[3]
+smolyakInterpolation[fvals,tf,trng,ply]
+(silly[xFormFromChebInterval[#,-10,10]]&) @@ #&/@pt
+
+
 LaunchKernels[]
 DistributeDefinitions["AMASeriesRepresentation`"]
 ParallelEvaluate[Off[NIntegrate::ncvb]]
@@ -30,6 +38,20 @@ chkConv[gVal_Integer,iters_Integer,aVal_?MatrixQ]:=
 	  With[{
 aBunch=parallelNestIterREInterp[{genFRFunc},linModBetter, {genX0Z0Funcs[linModBetter],2},rbcEqnsFunctionalNextBetter,gs666,theDistBetter,iters]},
 		   {(#[[1]] @@ 	 Flatten[aVal]),(#[[2]] @@ 	 Flatten[aVal])}& /@ Drop[aBunch,1]]]
+
+
+rngs= #[[{2,3}]]& /@ aGSpecBetter[[-1]]
+appLevels={2,2,2};wts=Table[Unique["www"],{25}];
+genCheb[appLevels_?listOfIntegersQ,ranges_?MatrixQ,wts_?VectorQ]:=
+Module[{},
+  {thePts,thePolys,theMat}=sparseGridEvalPolysAtPts[appLevels];
+  {Function @@ ({{kk,th,ep},wts.thePolys}/.{xx[1]->kk,xx[2]->th,xx[3]->ep}),theMat}]
+
+
+
+
+twts=Inverse[theMat] . Range[25];
+{tFunc,tMat}=genCheb[appLevels,rngs,twts]
 
 (*
 

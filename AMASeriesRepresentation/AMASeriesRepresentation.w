@@ -71,6 +71,8 @@ PerfectForesight::usage="degenerate distribution implementing perfect foresight"
 @<parallelMakeInterpFuncUsage@>
 @<makeInterpFuncUsage@>
 @<nestIterREInterpUsage@>
+@<parallelSmolyakGenInterpDataUsage@>
+@<smolyakGenInterpDataUsage@>
 @<parallelGenInterpDataUsage@>
 @<genInterpDataUsage@>
 @<oneDimGridPtsUsage@>
@@ -102,6 +104,8 @@ PerfectForesight::usage="degenerate distribution implementing perfect foresight"
 
 @d package code
 @{
+@<parallelSmolyakGenInterpData@>
+@<smolyakGenInterpData@>
 @<smolyakInterpolation@>
 @<smolyakInterpolationPrep@>
 @<gettersSetters@>
@@ -732,6 +736,25 @@ Map[Function[xx,{xx[[1]], xx[[2, funcIdx, 1]]}] ,
 @{
 (*begin code for makeSmolyakInterpFunc*)
 
+
+makeSmolyakInterpFunc[aVecFunc:(_Function|_CompiledFunction),@<gSpec@>]:=
+With[{interpData=genInterpData[aVecFunc,gSpec],numArgs=getNumVars[gSpec]},
+With[{numFuncs=Length[interpData[[1,2]]],
+funcArgs=Table[Unique["fArgs"],{numArgs}]},
+With[{longFuncArgs=fillInSymb[{{},toIgnore,funcArgs}]},
+With[{interpFuncList=
+Map[Function[funcIdx,Interpolation[
+Map[Function[xx,{xx[[1]], xx[[2, funcIdx, 1]]}] , 
+		interpData],InterpolationOrder -> iOrd]],Range[numFuncs]]},
+		With[{applied=Transpose[{Through[Apply[interpFuncList,funcArgs]]}]},
+	ReplacePart[
+	Function[xxxxxxx, applied],
+		{1->longFuncArgs}]
+	]
+]]]]
+
+
+
 (*end code for makeSmolyakInterpFunc*)
 @}
 
@@ -793,7 +816,7 @@ theVar->xForm[genSlot[ii],lowVal,highVal]
 (*begin code for genInterpData*)
 
  
-genInterpData[aVecFunc:(_Function|P_CompiledFunction),@<gSpec@>]:=
+genInterpData[aVecFunc:(_Function|_CompiledFunction),@<gSpec@>]:=
 With[{thePts=gridPts[gSpec]},
 With[{filledPts=Map[
 Function[xx,fillIn[{{},toIgnore,xx}]],thePts]},
@@ -825,7 +848,7 @@ interpData]]]]
 (*begin code for parallelGenInterpData*)
 
  
-parallelGenInterpData[aVecFunc:(_Function|P_CompiledFunction),@<gSpec@>]:=
+parallelGenInterpData[aVecFunc:(_Function|_CompiledFunction),@<gSpec@>]:=
 With[{thePts=gridPts[gSpec]},
 With[{filledPts=ParallelMap[
 Function[xx,fillIn[{{},toIgnore,xx}]],thePts]},
@@ -840,6 +863,73 @@ interpData]]]]
 
 (*end code for parallelGenInterpData*)
 @}
+
+\subsection{smolyakGenInterpData}
+\label{sec:geninterpdata}
+
+
+
+
+
+@d smolyakGenInterpDataUsage
+@{smolyakGenInterpData::usage=
+"place holder for smolyakGenInterpData"
+@}
+
+@d smolyakGenInterpData
+@{
+(*begin code for smolyakGenInterpData*)
+
+ 
+smolyakGenInterpData[
+aVecFunc:(_Function|_CompiledFunction),toIgnore:{_Integer...},
+smolyakPts_?MatrixQ]:=
+With[{filledPts=Map[
+Function[xx,fillIn[{{},toIgnore,xx}]],smolyakPts]},
+With[{theVals=Map[
+Function[xx,(Apply[aVecFunc,xx])],filledPts]},
+With[{interpData=Transpose[{smolyakPts,theVals}]},
+interpData]]]
+
+
+
+
+
+(*end code for smolyakGenInterpData*)
+@}
+
+
+\subsection{parallelSmolyakGenInterpData}
+\label{sec:geninterpdata}
+
+
+
+@d parallelSmolyakGenInterpDataUsage
+@{parallelSmolyakGenInterpData::usage=
+"place holder for parallelSmolyakGenInterpData"
+@}
+
+@d parallelSmolyakGenInterpData
+@{
+(*begin code for parallelSmolyakGenInterpData*)
+
+ 
+parallelSmolyakGenInterpData[aVecFunc:(_Function|_CompiledFunction),@<gSpec@>]:=
+With[{filledPts=ParallelMap[
+Function[xx,fillIn[{{},toIgnore,xx}]],smolyakPts]},
+With[{theVals=ParallelMap[
+Function[xx,(Apply[aVecFunc,xx])],filledPts]},
+With[{interpData=Transpose[{smolyakPts,theVals}]},
+interpData]]]
+
+
+
+
+
+(*end code for parallelSmolyakGenInterpData*)
+@}
+
+
 
 
 \subsection{gridPts}

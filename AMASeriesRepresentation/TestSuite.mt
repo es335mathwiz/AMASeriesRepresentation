@@ -19,6 +19,7 @@ TestSuite[
 				"TestCondExpComposition.mt",
 		"TestEmpty.mt",(*,
 		"TestRegimes.mt"*)
-		"AMASeriesFuncTest.mt"
+		"AMASeriesFuncTest.mt",
+		"TestParallelSerial.mt"
 	}
 ]

@@ -737,15 +737,21 @@ Map[Function[xx,{xx[[1]], xx[[2, funcIdx, 1]]}] ,
 (*begin code for makeSmolyakInterpFunc*)
 
 
-makeSmolyakInterpFunc[aVecFunc:(_Function|_CompiledFunction),@<gSpec@>]:=
-With[{interpData=genInterpData[aVecFunc,gSpec],numArgs=getNumVars[gSpec]},
-With[{numFuncs=Length[interpData[[1,2]]],
+makeSmolyakInterpFunc[aVecFunc:(_Function|_CompiledFunction),toIgnore:{_Integer...},ranges_?MatrixQ,evalPts_?MatrixQ,theMat_?MatrixQ,thePolys_?VectorQ]:=
+With[{interpData=smolyakGenInterpData[aVecFunc,toIgnore,evalPts],
+numArgs=Length[evalPts[[1]]]},Print["makeSmol:",interpData];
+With[{numFuncs=Length[interpData],
 funcArgs=Table[Unique["fArgs"],{numArgs}]},
 With[{longFuncArgs=fillInSymb[{{},toIgnore,funcArgs}]},
 With[{interpFuncList=
-Map[Function[funcIdx,Interpolation[
-Map[Function[xx,{xx[[1]], xx[[2, funcIdx, 1]]}] , 
-		interpData],InterpolationOrder -> iOrd]],Range[numFuncs]]},
+Map[Function[funcIdx,
+With[{smolApp=smolyakInterpolation[
+Map[Function[xx,xx[[funcIdx]]] , 
+		interpData],theMat,ranges,thePolys]},
+Print[smolApp];
+smolApp]],
+Range[numFuncs]]},
+Print["interpFuncList",interpFuncList];
 		With[{applied=Transpose[{Through[Apply[interpFuncList,funcArgs]]}]},
 	ReplacePart[
 	Function[xxxxxxx, applied],
@@ -769,11 +775,12 @@ Map[Function[xx,{xx[[1]], xx[[2, funcIdx, 1]]}] ,
 
 @d smolyakInterpolation
 @{
-smolyakInterpolation[fVals:{_?NumberQ..},
-linSolver_LinearSolveFunction,ranges_?MatrixQ,thePolys_List]:=
-With[{wts=linSolver[fVals],numVars=Length[ranges]},
-With[{theXs=Table[xx[ii],{ii,numVars}]},
-Apply[Function,({(wts.thePolys)/.MapThread[adjstX,{theXs,ranges}]})]]]
+smolyakInterpolation[fVals:{_?NumberQ..},theMat_?MatrixQ,
+ranges_?MatrixQ,thePolys_List]:=
+With[{wts=LinearSolve[theMat,fVals],numVars=Length[ranges]},
+With[{origXs=Table[xx[ii],{ii,numVars}],
+theXs=Table[Unique["xx"],{ii,numVars}]},
+Apply[Function,({theXs,(wts.(thePolys/.Thread[origXs->theXs]))/.Thread[theXs->MapThread[xformXValToCheb,{theXs,ranges}]]})]]]
 
 @}
 
@@ -791,12 +798,24 @@ smolyakInterpolationPrep[approxLevels_?listOfIntegersQ,ranges_?MatrixQ,
 Module[{smolRes=sparseGridEvalPolysAtPts[approxLevels],
 numVars=Length[approxLevels],numEps=Length[distribSpec[[1]]]},
 With[{thePts=smolRes[[1]],thePolys=smolRes[[2]],theMat=smolRes[[3]]},
+With[{xPts=Map[Function[xx,xformToXVec[xx,ranges]],thePts]},
+Print["smolyPrep:",{xPts,thePts}];
 With[{numPolys=Length[thePolys]},
-{thePts,LinearSolve[theMat],thePolys}]]]/;
+{xPts,theMat,thePolys}]]]]/;
 And[Length[ranges]==Length[approxLevels]]
 
-adjstX[theVar:(xVar_[ii_Integer]),range:{lowVal_?NumberQ,highVal_?NumberQ}]:=
-theVar->xForm[genSlot[ii],lowVal,highVal]
+xformXValToCheb[xVal_,
+range:{lowVal_?NumberQ,highVal_?NumberQ}]:=
+xFormToChebInterval[xVal,lowVal,highVal]
+
+xformChebValToX[chebVal_,
+range:{lowVal_?NumberQ,highVal_?NumberQ}]:=
+xFormFromChebInterval[chebVal,lowVal,highVal]
+
+xformToXVec[chebPt_?VectorQ,ranges_?MatrixQ]:=
+MapThread[xformChebValToX,{chebPt,ranges}]
+
+
 @}
 
 \subsection{genInterpData}
@@ -886,9 +905,10 @@ aVecFunc:(_Function|_CompiledFunction),toIgnore:{_Integer...},
 smolyakPts_?MatrixQ]:=
 With[{filledPts=Map[
 Function[xx,fillIn[{{},toIgnore,xx}]],smolyakPts]},
+Print["smolyakGenInterpData:",filledPts//InputForm];
 With[{theVals=Map[
 Function[xx,(Apply[aVecFunc,xx])],filledPts]},
-With[{interpData=Transpose[{smolyakPts,theVals}]},
+With[{interpData=Map[Flatten,theVals]},
 interpData]]]
 
 

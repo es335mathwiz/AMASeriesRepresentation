@@ -9,6 +9,9 @@
 \maketitle
 
 
+\tableofcontents
+
+
 \section{Introduction and Summary}
 \label{sec:introduction-summary}
 
@@ -55,7 +58,9 @@ PerfectForesight::usage="degenerate distribution implementing perfect foresight"
 @<getDistribsUsage@>
 @<genXZFuncREUsage@>
 @<genIntVarsUsage@>
+
 @<parallelGenXZREInterpFuncUsage@>
+@<genSmolyakXZREInterpFuncUsage@>
 @<genXZREInterpFuncUsage@>
 @<genX0Z0FuncsUsage@>
 @<checkModUsage@>
@@ -70,7 +75,6 @@ PerfectForesight::usage="degenerate distribution implementing perfect foresight"
 @<makeSmolyakInterpFuncUsage@>
 @<parallelMakeInterpFuncUsage@>
 @<makeInterpFuncUsage@>
-@<nestIterREInterpUsage@>
 @<parallelSmolyakGenInterpDataUsage@>
 @<smolyakGenInterpDataUsage@>
 @<parallelGenInterpDataUsage@>
@@ -81,7 +85,10 @@ PerfectForesight::usage="degenerate distribution implementing perfect foresight"
 @<fillInSymbUsage@>
 @<parallelNestIterREInterpUsage@> 
 @<parallelDoIterREInterpUsage@> 
+@<nestIterREInterpUsage@>
 @<doIterREInterpUsage@> 
+@<nestSmolyakIterREInterpUsage@>
+@<doSmolyakIterREInterpUsage@>
 @<getPhiUsage@>
 @<getPsiZUsage@>
 @<getPsiCUsage@>
@@ -163,9 +170,12 @@ PerfectForesight::usage="degenerate distribution implementing perfect foresight"
 @<fillInSymb@>
 @<parallelNestIterREInterp@> 
 @<parallelDoIterREInterp@> 
-@<doIterREInterp@>
 @<nestIterREInterp@>
+@<doIterREInterp@>
+@<nestSmolyakIterREInterp@>
+@<doSmolyakIterREInterp@>
 @<parallelGenXZREInterpFunc@>
+@<genSmolyakXZREInterpFunc@>
 @<genXZREInterpFunc@>
 @<genXZFuncRE@>
 @<genIntVars@>
@@ -1091,6 +1101,39 @@ Print["genXZREInterpTime=",(AbsoluteTime[])-tn2];
 @}
 
 
+
+\subsection{doSmolyakIterREInterp}
+\label{sec:doiterreinterp}
+
+
+
+@d doSmolyakIterREInterpUsage
+@{doSmolyakIterREInterp::usage=
+"place holder for doSmolyakIterREInterp"
+@}
+
+@d doSmolyakIterREInterp
+@{
+(*begin code for doSmolyakIterREInterp*)
+doSmolyakIterREInterp[@<theSolver@>,
+	@<linMod@>,
+	@<XZFuncs@>,
+@<eqnsFunc@>,toIgnore:{_Integer...},ranges_?MatrixQ,evalPts_?MatrixQ,theMat_?MatrixQ,thePolys_?VectorQ,@<gSpec@>,@<distribSpec@>]:=
+With[{numX=Length[BB],numEps=Length[psiEps[[1]]],numZ=Length[psiZ[[1]]]},
+tn=AbsoluteTime[];
+With[{theFuncs=makeSmolyakInterpFunc[genFPFunc[theSolver,linMod,XZFuncs,eqnsFunc],toIgnore,ranges,evalPts,theMat,thePolys]},
+Print["makeSmolyakInterpTime=",(tn2=AbsoluteTime[])-tn];
+With[{XZRE=genXZREInterpFunc[{numX,numEps,numZ},theFuncs(*,toIgnore,ranges,evalPts,theMat,thePolys*),gSpec,distribSpec]},
+Print["genXZREInterpTime=",(AbsoluteTime[])-tn2];
+{theFuncs,XZRE}]]]
+
+
+
+
+(*end code for doSmolyakIterREInterp*)
+@}
+
+
 \subsection{parallelDoIterREInterp}
 \label{sec:doiterreinterp}
 
@@ -1152,6 +1195,33 @@ NestList[Function[xx,doIterREInterp[theSolver,linMod,
 (*end code for nestIterREInterp*)
 @}
 
+\subsection{nestSmolyakIterREInterp}
+\label{sec:nestiterreinterp}
+
+
+@d nestSmolyakIterREInterpUsage
+@{nestSmolyakIterREInterp::usage=
+"place holder for nestSmolyakIterREInterp"
+@}
+
+@d nestSmolyakIterREInterp
+@{
+(*begin code for nestSmolyakIterREInterp*)
+
+
+nestSmolyakIterREInterp[@<theSolver@>,@<linMod@>,
+@<XZFuncs@>,@<eqnsFunc@>,
+@<gSpec@>,
+@<distribSpec@>,numIters_Integer]:=
+NestList[Function[xx,doIterREInterp[theSolver,linMod,
+{xx[[2]],numSteps},eqnsFunc,gSpec,distribSpec]],{ig,XZFuncs[[1]]},numIters]
+
+
+
+
+(*end code for nestSmolyakIterREInterp*)
+@}
+
 \subsection{parallelNestIterREInterp}
 \label{sec:nestiterreinterp}
 
@@ -1201,6 +1271,32 @@ elimGSpecShocks[@<gSpec@>,numEps_Integer]:=
 {toIgnore,gSpec[[2]],Drop[getGridPtTrips[gSpec],-(numEps)]}
 
 (*end code for genXZREInterpFunc*)
+@}
+
+
+\subsection{genSmolyakXZREInterpFunc}
+\label{sec:genxzreinterpfunc}
+
+
+@d genSmolyakXZREInterpFuncUsage
+@{genSmolyakXZREInterpFunc::usage=
+"place holder for genSmolyakXZREInterpFunc"
+@}
+
+@d genSmolyakXZREInterpFunc
+@{
+(*begin code for genSmolyakXZREInterpFunc*)
+ 
+genSmolyakXZREInterpFunc[probDims:{numX_Integer,numEps_Integer,numZ_Integer},
+aLilXkZkFunc_Function,toIgnore:{_Integer...},ranges_?MatrixQ,evalPts_?MatrixQ,theMat_?MatrixQ,thePolys_?VectorQ,@<gSpec@>,@<distribSpec@>]:=
+With[{theFuncNow=genXZFuncRE[{numX,numEps,numZ},aLilXkZkFunc,distribSpec]},
+Print["genSmol:",InputForm[theFuncNow]];
+makeInterpFunc[theFuncNow,elimGSpecShocks[gSpec,numEps]]]
+  
+elimGSpecShocks[@<gSpec@>,numEps_Integer]:=
+{toIgnore,gSpec[[2]],Drop[getGridPtTrips[gSpec],-(numEps)]}
+
+(*end code for genSmolyakXZREInterpFunc*)
 @}
 
 

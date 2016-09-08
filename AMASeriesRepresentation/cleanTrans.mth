@@ -30,16 +30,23 @@ siData=smolyakGenInterpData[theFP,sgSpec];
 
 bip=smolyakInterpolation[siData[[All,1]],sgSpec]
 
-theFPInterp=makeSmolyakInterpFunc[theFP,sgSpec]
-dit=doSmolyakIterREInterp[{genFRFunc},linModBetter, {genX0Z0Funcs[linModBetter],2},rbcEqnsFunctionalNextBetter,aGSpecBetter,sgSpec,theDistBetter];
+{tmSmol,ig}=Timing[theSmolFPInterp=makeSmolyakInterpFunc[theFP,sgSpec]];
 
+{tm,ig}=Timing[makeInterpFunc[theFP,aGSpecBetter]]
 
-theRes999=Timing[makeInterpFunc[theFP,aGSpecBetter]]
+{tmgnxzpar,ig}=Timing[XZRE=parallelGenXZREInterpFunc[{4,1,4},theFP,aGSpecBetter,theDistBetter]];
+{smoltmgnxzpar,ig}=smolXZRE=parallelGenXZREInterpFunc[{4,1,4},theSmolFPInterp,aGSpecBetter,theDistBetter]
 
-
-
+(*
+{tmgxz,XZInterp}=Timing[genXZREInterpFunc[{4, 1, 4},theFP,aGSpecBetter,theDistBetter]];
+{smoltmgxz,smolXZInterp}=Timing[genXZREInterpFunc[{4, 1, 4},theSmolFPInterp,aGSpecBetter,theDistBetter]];
 
 gxz=genSmolyakXZREInterpFunc[{4,1,4},theFPInterp,toIg,smolRng,pt,tf,ply,aGSpecBetter,theDistBetter]
+
+dit=doSmolyakIterREInterp[{genFRFunc},linModBetter, {genX0Z0Funcs[linModBetter],2},rbcEqnsFunctionalNextBetter,aGSpecBetter,sgSpec,theDistBetter];
+
+ *)
+
 
 
 

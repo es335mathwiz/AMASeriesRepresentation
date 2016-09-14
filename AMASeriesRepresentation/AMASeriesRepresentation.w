@@ -216,7 +216,7 @@ psiZPreComp
 
 
 @d smolGSpec
-@{smolGSpec:{smolToIgnore:{_Integer...},smolRngs:{{_?NumberQ,_?NumberQ}..},smolPts_?MatrixQ,smolMat_?MatrixQ,smolPolys_?VectorQ,smolIntPolys_?VectorQ}@}
+@{smolGSpec:{smolToIgnore:{_Integer...},smolRngs:{{_?NumberQ,_?NumberQ}..},smolPts_?MatrixQ,smolMat_?MatrixQ,smolPolys_?VectorQ,smolIntPolys_?VectorQ,numEps_Integer}@}
 
 
 @d distribSpec
@@ -754,7 +754,8 @@ Map[Function[xx,{xx[[1]], xx[[2, funcIdx, 1]]}] ,
 
 makeSmolyakInterpFunc[aVecFunc:(_Function|_CompiledFunction),@<smolGSpec@>]:=
 With[{interpData=smolyakGenInterpData[aVecFunc,smolGSpec],
-numArgs=Length[smolPts[[1]]]},Print["makeSmol:",interpData];
+numArgs=Length[smolPts[[1]]]},
+(*Print["makeSmol:",interpData];*)
 With[{numFuncs=Length[interpData],
 funcArgs=Table[Unique["fArgs"],{numArgs}]},
 With[{longFuncArgs=fillInSymb[{{},smolToIgnore,funcArgs}]},
@@ -763,10 +764,10 @@ Map[Function[funcIdx,
 With[{smolApp=smolyakInterpolation[
 Map[Function[xx,xx[[funcIdx]]] , 
 		interpData],smolGSpec]},
-Print["smolApp=",smolApp];
+(*Print["smolApp=",smolApp];*)
 smolApp]],
 Range[numFuncs]]},
-Print["interpFuncList",interpFuncList];
+(*Print["interpFuncList",interpFuncList];*)
 		With[{applied=Transpose[{Through[Apply[interpFuncList,funcArgs]]}]},
 	ReplacePart[
 	Function[xxxxxxx, applied],
@@ -794,7 +795,9 @@ smolyakInterpolation[fVals:{_?NumberQ..},@<smolGSpec@>]:=
 With[{wts=LinearSolve[smolMat,fVals],numVars=Length[smolRngs]},
 With[{origXs=Table[xx[ii],{ii,numVars}],
 theXs=Table[Unique["xx"],{ii,numVars}]},
-Apply[Function,({theXs,(wts.(smolPolys/.Thread[origXs->theXs]))/.Thread[theXs->MapThread[xformXValToCheb,{theXs,smolRngs}]]})]]]
+{Apply[Function,({theXs,Simplify[(wts.(smolPolys/.Thread[origXs->theXs]))/.Thread[theXs->MapThread[xformXValToCheb,{theXs,smolRngs}]]]})],
+Apply[Function,({Drop[theXs,-numEps],Simplify[(wts.(smolIntPolys/.
+Thread[Drop[origXs,-numEps]->Drop[theXs,-numEps]]))/.Thread[theXs->MapThread[xformXValToCheb,{theXs,smolRngs}]]]})]}]]
 
 @}
 
@@ -813,14 +816,25 @@ Module[{smolRes=sparseGridEvalPolysAtPts[approxLevels],
 numVars=Length[approxLevels],numEps=Length[distribSpec[[1]]]},
 With[{thePts=smolRes[[1]],smolPolys=smolRes[[2]],smolMat=smolRes[[3]]},
 With[{xPts=Map[Function[xx,xformToXVec[xx,smolRngs]],thePts]},
-Print["smolyPrep:",{xPts,thePts}];
+(*Print["smolyPrep:",{xPts,thePts}];*)
 With[{numPolys=Length[smolPolys]},
-{xPts,smolMat,smolPolys}]]]]/;
+{xPts,smolMat,smolPolys,{}}]]]]/;
+And[Length[smolRngs]==Length[approxLevels]]
+
+newSmolyakInterpolationPrep[approxLevels_?listOfIntegersQ,smolRngs_?MatrixQ,
+momSubs:{{(_->_)..}...}]:=
+Module[{smolRes=sparseGridEvalPolysAtPts[approxLevels],
+numVars=Length[approxLevels],numEps=Length[momSubs]},
+With[{thePts=smolRes[[1]],smolPolys=smolRes[[2]],smolMat=smolRes[[3]]},
+With[{xPts=Map[Function[xx,xformToXVec[xx,smolRngs]],thePts]},
+(*Print["smolyPrep:",{xPts,thePts}];*)
+With[{numPolys=Length[smolPolys]},
+{xPts,smolMat,smolPolys,compRawMoments[smolPolys,xx[3]]/.Flatten[momSubs]}]]]]/;
 And[Length[smolRngs]==Length[approxLevels]]
 
 
-compCumulants[expr_,errVar:anX_Symbol[ii_Integer]]:=
-expr/.{errVar^nn_Integer->cum[ii,nn],errVar->cum[ii,1]}
+compRawMoments[expr_,errVar:anX_Symbol[ii_Integer]]:=
+expr/.{errVar^nn_Integer->mom[ii,nn],errVar->mom[ii,1]}
 
 
 xformXValToCheb[xVal_,
@@ -922,8 +936,8 @@ interpData]]]]
 smolyakGenInterpData[
 aVecFunc:(_Function|_CompiledFunction),@<smolGSpec@>]:=
 With[{filledPts=Map[
-Function[xx,fillIn[{{},smolToIgnore,xx}]],smolPts]},
-Print["smolyakGenInterpData:",filledPts//InputForm];
+Function[xx,fillIn[{{},smolToIgnore,xx}]],N[smolPts]]},
+(*Print["smolyakGenInterpData:",filledPts//InputForm];*)
 With[{theVals=Map[
 Function[xx,(Apply[aVecFunc,xx])],filledPts]},
 With[{interpData=Map[Flatten,theVals]},
@@ -1419,7 +1433,7 @@ myNExpectation[funcName_Symbol[farg_List,idx_Integer],nArgs_List]:=Chop[NExpecta
 myNewNExpectation[fff_[fargs___],anEpsVar_\[Distributed] PerfectForesight]:=Module[{},Print["there",{(Apply[fff,{fargs}]),{fargs}/.anEpsVar->0}];(Apply[fff,{fargs}])/.anEpsVar->0]
 
 
-myNewNExpectation[fff_[fargs___],distStuff_]:=Module[{},Print["jhere",{(Apply[fff,{fargs}]),{fargs}}];Chop[NExpectation[Applyp[fff,{fargs}],distStuff]]]
+myNewNExpectation[fff_[fargs___],distStuff_]:=Module[{},Print["jhere",{(Apply[fff,{fargs}]),{fargs}}];Chop[NExpectation[Apply[fff,{fargs}],distStuff]]]
 
 
 

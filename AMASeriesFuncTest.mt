@@ -10,7 +10,7 @@ lilxkzk @@ anXEpsZsFlat
 	,
 	TestID->"AMASeriesFuncTest-20160621-U2T2N5"
 ]
-
+(*
 Test[
 	anX0Z0 = genX0Z0Funcs[linModBetterQuasi];
 lilxkzk = 
@@ -24,7 +24,7 @@ lilxkzk =
  {0.}, {0.9043206867400233}, {1.4798281688317612}, {0.01}}
 	,
 	TestID->"AMASeriesFuncTest-20160621-J1G9K7"
-]
+]*)
 
 Test[
 	anX0Z0 = genX0Z0Funcs[linModBetter];

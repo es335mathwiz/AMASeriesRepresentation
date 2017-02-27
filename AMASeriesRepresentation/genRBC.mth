@@ -2,10 +2,47 @@ PrependTo[$Path,"../../../AMASeriesRepresentation/AMASeriesRepresentation/"]
 
 (*"../../../paperProduction/occBind/docs/"*)
 
-Print["pre prepsimp",Directory[]]
-Get["prepSimple.mth"]
-Print["post prepsimp",Directory[]]
+Print["pre prep",Directory[]]
+Get["redoPrepRBC.mth"]
+Print["post prep",Directory[]]
 Get["genArbLin.mth"]
+
+genSeriesReps[
+linMod:{theHMat_?MatrixQ,BB_?MatrixQ,phi_?MatrixQ,FF_?MatrixQ,psiEps_?MatrixQ,psiC_?MatrixQ,psiZ_?MatrixQ,psiZPreComp_?MatrixQ},
+initVec_?MatrixQ,distribSpec:{expctSpec:{{_Symbol,_}..},regimeTransProbFunc_:{}},theExactDR:(_Function|_CompiledFunction),
+maxIters_Integer]:=
+With[{theZs=genZsREExact[linMod,initVec,distribSpec,theExactDR,maxIters]},
+	genASeriesRep[linMod,initVec,theZs[[Range[#]]]]&/@(Range[Length[theZs]])]
+	
+	
+
+	
+genSeriesRepFunc[
+linMod:{theHMat_?MatrixQ,BB_?MatrixQ,phi_?MatrixQ,FF_?MatrixQ,psiEps_?MatrixQ,psiC_?MatrixQ,psiZ_?MatrixQ,psiZPreComp_?MatrixQ},
+distribSpec:{expctSpec:{{_Symbol,_}..},regimeTransProbFunc_:{}},theExactDR:(_Function|_CompiledFunction),
+terms_Integer]:=
+Module[{numX=Length[BB[[1]]],numEps=Length[psiEps[[1]]]},
+With[{theArgs=Table[Unique["funArgs"],{numX+numEps}]},
+With[{theFunc=
+Function[xxxx,	
+With[{theZs=genZsREExact[linMod,xxxx,distribSpec,theExactDR,terms]},
+	genASeriesRep[linMod,xxxx,theZs]]]},
+With[{xxxxPos=Position[theFunc,xxxx$]},
+ReplacePart[theFunc,
+	xxxxPos->theArgs
+]]]]]
+
+
+genZsREExact[linMod:{theHMat_?MatrixQ,BB_?MatrixQ,phi_?MatrixQ,FF_?MatrixQ,psiEps_?MatrixQ,psiC_?MatrixQ,psiZ_?MatrixQ,psiZPreComp_?MatrixQ},
+	initVec_?MatrixQ,distribSpec:{expctSpec:{{_Symbol,_}..},regimeTransProbFunc_:{}},theExactDR:(_Function|_CompiledFunction),iters_Integer]:=
+Module[{numEps=getNumEpsVars[distribSpec]},
+With[{numX=Length[initVec]-numEps,
+ 	thePath=Flatten[iterateDRREIntegrate[theExactDR,initVec,distribSpec,iters+1]]},
+ 	With[{firstVal=theHMat .thePath[[Range[3*numX]]]- psiC - psiEps . Take[initVec,-numEps]},
+ 		With[{restVals=
+      (theHMat .thePath[[Range[3*numX]+numX*#]] -psiC)&/@Range[(Length[thePath]/numX)-3]},
+      Join[{firstVal},restVals]
+]]]]
 
 
 
@@ -57,7 +94,47 @@ If[FileExistsQ[occDir="../../paperProduction/occBind/docs/"],
 toOccDir/@{
 "simpBoundsVActual.pdf"
 }];
+
+
+
+
+Needs["betterRBC`"]
+Export["RBCHmatSymb.pdf", MatrixForm[betterRBC`Private`hmatSymbRE//N]];
+Export["RBCBmatSymb.pdf", MatrixForm[betterRBC`Private`bmatSymbRE//N]];
+Export["RBCPhimatSymb.pdf", MatrixForm[betterRBC`Private`phimatSymbRE//N]];
+Export["RBCFmatSymb.pdf", MatrixForm[betterRBC`Private`fmatSymbRE//N]];
+Export["RBCHSum.pdf",MatrixForm[
+(betterRBC`Private`hmatSymbRE[[All,Range[4]]]+ betterRBC`Private`hmatSymbRE[[All,4+Range[4]]]+betterRBC`Private`hmatSymbRE[[All,8+Range[4]]])//N]];
+Export["RBCSS.pdf", MatrixForm[betterRBC`Private`ssSolnVecRE//N]];
+
+Export["RBCPsissSymb.pdf",MatrixForm[
+((betterRBC`Private`hmatSymbRE[[All,Range[4]]]+ betterRBC`Private`hmatSymbRE[[All,4+Range[4]]]+betterRBC`Private`hmatSymbRE[[All,8+Range[4]]]).
+betterRBC`Private`ssSolnVecRE)//N]];
+
+
+toOccDir[fName_String]:=CopyFile[fName,occDir <>fName,OverwriteTarget -> True];
+occDir="~/git/paperProduction/occBind/docs/"(*occDir="../../../paperProduction/occBind/docs/"*)
+toOccDir/@{
+"RBCHmatSymb.pdf","RBCBmatSymb.pdf","RBCPhimatSymb.pdf","RBCFmatSymb.pdf",
+"RBCHSum.pdf","RBCSS.pdf","RBCPsissSymb.pdf"
+};
+If[FileExistsQ[occDir="../../../DropBox/Apps/Texpad/paperProduction/occBind/docs/"],
+toOccDir/@{
+"RBCHmatSymb.pdf","RBCBmatSymb.pdf","RBCPhimatSymb.pdf","RBCFmatSymb.pdf",
+"RBCHSum.pdf","RBCSS.pdf","RBCPsissSymb.pdf"
+}];
+
+
+
 (*
+Print["make sure simpleRBCModel.m computes the symbolic bmat etc"]
+Export["RBCBmatSymb.pdf", MatrixForm[Private`bmatExt//.Private`tog//N]];
+Export["RBCPhimatSymb.pdf", MatrixForm[Private`phimatExt//.Private`tog//N]];
+Export["RBCFmatSymb.pdf", MatrixForm[Private`fmatExt//.Private`tog//N]];
+Export["RBCPsissSymb.pdf", MatrixForm[Private`psicExt//.Private`tog//N]];
+Export["RBCHSum.pdf",MatrixForm[
+(Private`hmatExt[[All,Range[4]]]+ Private`hmatExt[[All,4+Range[4]]]+Private`hmatExt[[All,8+Range[4]]])//.Private`tog//N]]
+Export["RBCSS.pdf", MatrixForm[Private`ssSolnVecExt//.Private`tog//N]];
 
 
 Print["pre prep",Directory[]]

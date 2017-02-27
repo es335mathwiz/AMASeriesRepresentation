@@ -8,7 +8,7 @@ Print["reading simpleRBCModel.m"]
 BeginPackage["simpleRBCModel`",{"AMASeriesRepresentation`",(*"occBindRecur`",*)"ProtectedSymbols`","AMAModel`","SymbolicAMA`","NumericAMA`"(*,"ProjectionInterface`"*)}]
 
 
-(*
+
 ratioThetaToC::usage="rbc model variable"
 cc::usage="rbc model variable"
 kk::usage="rbc model variable"
@@ -21,7 +21,11 @@ rbcEqns::usage="rbc model equations"
 simpParamSubs::usage="simpParamSubs=Join[paramSubs,forParamSubs]"
 ssSolnSubsRE::usage="rational expectations steady state"
 ssSolnSubsPF::usage="perfect foresight steady state"
-
+kSSSubRE::usage="rational expectations steady state"
+kSSSubsPF::usage="perfect foresight steady state"
+cSSSubRE::usage="rational expectations steady state"
+cSSSubsPF::usage="perfect foresight steady state"
+(*
 compApproxRE::usage="compApproxRE[theHmat_?MatrixQ,linMod:{BB_?MatrixQ,phi_?MatrixQ,FF_?MatrixQ,psiEps_?MatrixQ,psiC_?MatrixQ,psiZ_?MatrixQ,psiZPreComp_?MatrixQ},kk_,theta_,epsNow_,iters_Integer]"
 compApproxDiffRE::usage="compApproxDiffRE[theHmat_?MatrixQ,linMod:{BB_?MatrixQ,phi_?MatrixQ,FF_?MatrixQ,psiEps_?MatrixQ,psiC_?MatrixQ,psiZ_?MatrixQ,psiZPreComp_?MatrixQ},kk_,theta_,epsNow_,iters_Integer]"
 maxZsRE::usage="maxZsRE[theHmat_?MatrixQ,phi_?MatrixQ,FF_?MatrixQ,psiEps_?MatrixQ,psiC_?Matrix,{{lowc_,highc_},{lowk_,highk_},{lowt_,hight_},{lowe_,highe_}},iters_Integer]"

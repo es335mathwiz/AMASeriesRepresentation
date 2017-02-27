@@ -206,7 +206,7 @@ probDims={3,1,3};
 
 aGSpec={{1},1,{{4,kLow,kHigh},{3,thLow,thHigh},{3,sigLow,3*sigHigh}}};
 Print["path=",{$Path,Directory[]}]
-Get["genArbLin.mth"]
+(*Get["genArbLin.mth"]*)
 End[]
 EndPackage[]
 Print["done reading simpleRBCModel.m"]

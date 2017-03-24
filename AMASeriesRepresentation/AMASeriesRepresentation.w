@@ -1,5 +1,5 @@
 \documentclass[12pt]{article}
-
+\usepackage[english]{babel}
 \usepackage{hyperref}
 \usepackage{datetime}
 \title{Mathematica Code for AMASeriesRepresentation Package}
@@ -33,14 +33,11 @@ EndPackage[]
 
 
 @}
-
-
-
-
 @d usage definitions
 @{
 (*Begin Usage Definitions*)
 PerfectForesight::usage="degenerate distribution implementing perfect foresight"
+@<callGraphUsage@>
 @<smolyakInterpolationUsage@>
 @<smolyakInterpolationPrepUsage@>
 @<genLilXkZkFuncUsage@>
@@ -58,6 +55,10 @@ PerfectForesight::usage="degenerate distribution implementing perfect foresight"
 @<getDistribsUsage@>
 @<genXZFuncREUsage@>
 @<genIntVarsUsage@>
+@}
+@d usage definitions
+@{
+
 
 @<parallelGenXZREInterpFuncUsage@>
 @<genSmolyakXZREInterpFuncUsage@>
@@ -80,6 +81,11 @@ PerfectForesight::usage="degenerate distribution implementing perfect foresight"
 @<parallelGenInterpDataUsage@>
 @<genInterpDataUsage@>
 @<oneDimGridPtsUsage@>
+
+@}
+@d usage definitions
+@{
+
 @<gridPtsUsage@>
 @<fillInUsage@>
 @<fillInSymbUsage@>
@@ -132,6 +138,9 @@ PerfectForesight::usage="degenerate distribution implementing perfect foresight"
 @<getNumEpsVars@>
 @<myNExpectation@>
 @<getDistribs@>
+@}
+@d usage definitions
+@{
 @<getNumVars@>
 @<getGridPtTrips@>
 @<getH@>
@@ -152,6 +161,9 @@ PerfectForesight::usage="degenerate distribution implementing perfect foresight"
 @<genXtp1OfXt@>
 @<genX0Z0Funcs@>
 @<multiStep@>
+@}
+@d usage definitions
+@{
 @<multiStepZ@>
 @<multiStepX@>
 @<checkLinMod@>
@@ -264,6 +276,12 @@ genLilXkZkFunc::usage=
 @{With[{numZ=getNumZ[linMod]},
 With[{fCon=ConstantArray[0,{1,numZ,1}]},
 With[{theRes=genLilXkZkFunc[linMod,fCon]},theRes]]]
+
+
+AMASeriesRepCallGraph=
+Join[AMASeriesRepCallGraph,Map["genLilXkZkFunc"->#&,{"genLilXkZkFunc"}]];
+
+
 @}
 
 
@@ -280,6 +298,11 @@ With[{theRes=genLilXkZkFunc[linMod,fCon]},theRes]]]
 @{With[{fCon=fSumC[phi,FF,psiZ,theZs]},
 With[{theRes=genLilXkZkFunc[linMod,fCon]},
 theRes]]
+
+AMASeriesRepCallGraph=
+Join[AMASeriesRepCallGraph,Map["genLilXkZkFunc"->#&,{"fSumC"}]];
+
+
 @}
 
 
@@ -290,12 +313,19 @@ theRes]]
 @{
 @<genLilXkZkFunc full call@>:=
 @<XZ Functions Given@>
+
+AMASeriesRepCallGraph=
+Join[AMASeriesRepCallGraph,Map["genLilXkZkFunc"->#&,{"fSum"}]];
+
 @}
 
 @d XZ Functions Given
 @{With[{fCon=fSum[linMod,XZFuncs,xtGuess]},
 With[{theRes=genLilXkZkFunc[linMod,fCon]},
 theRes]]
+
+
+
 @}
 
 
@@ -311,6 +341,10 @@ theRes]]
 @{
 @<genLilXkZkFunc fcon call@>:=
 @<apply formula F...@>
+
+AMASeriesRepCallGraph=
+Join[AMASeriesRepCallGraph,Map["genLilXkZkFunc"->#&,{"genSlots","getNumX","getNumEps","getNumZ","genXtOfXtm1","genXtp1OfXt"}]];
+
 @}
 
 @d apply formula F contribution given
@@ -364,9 +398,14 @@ ConstantArray[0,{Length[psiZ],1}]
 
 fSum[@<linMod@>,
 	@<XZFuncs@>,xtGuess_?MatrixQ]:=
-With[{numXVars=Length[BB],numZVars=Length[psiZ[[1]]]},
+With[{numXVars=getNumX[linMod],numZVars=getNumZ[linMod]},
 With[{xzRes=Apply[multiStepZ[XZFuncs,numXVars,numZVars,numSteps], Flatten[xtGuess]]},
 fSumC[phi,FF,psiZ,xzRes]]]
+
+AMASeriesRepCallGraph=
+Join[AMASeriesRepCallGraph,Map["fSum"->#&,{"numXVars","numZVars","multiStepZ","fSumC"}]];
+
+
 @}
 
 
@@ -382,6 +421,11 @@ Module[{},
 genSlots[numVars]=
 replaceMySlotStandIn[Table[{mySlotStandIn[ii]},{ii,numVars}]]]/;And[numVars>=0]
 
+AMASeriesRepCallGraph=
+Join[AMASeriesRepCallGraph,Map["genSlots"->#&,{"replaceMySlotStandIn","mySlotStandin"}]];
+
+
+
 replaceMySlotStandIn[xx_]:=xx/.mySlotStandIn->Slot
 
 
@@ -390,6 +434,10 @@ genSlot[slotNum_Integer]:=
 Module[{},
 genSlot[slotNum]=
 replaceMySlotStandIn[mySlotStandIn[slotNum]]]/;And[slotNum>0]
+
+AMASeriesRepCallGraph=
+Join[AMASeriesRepCallGraph,Map["genSlot"->#&,{"replaceMySlotStandIn","mySlotStandIn"}]];
+
 
 (*end code for genSlots*)
 @}
@@ -410,6 +458,8 @@ genXtOfXtm1[@<linMod@>,xtm1Vars_?MatrixQ,epsVars_?MatrixQ,zVars_?MatrixQ,
 With[{xtVals=BB.xtm1Vars+
 Inverse[IdentityMatrix[Length[xtm1Vars]]-FF] . phi . psiC + phi . psiEps . epsVars+
 phi . psiZ . zVars +FF.fCon},xtVals]
+
+
 
 (*end code for genXtOfXtm1*)
 @}
@@ -445,10 +495,15 @@ With[{xtp1Vals=BB.xtVals+Inverse[IdentityMatrix[Length[xtVals]]-FF] . phi . psiC
 @{
 (*begin code for genX0Z0Funcs*)
 genX0Z0Funcs[@<linMod@>]:=
-With[{numXVars=Length[BB],numZVars=Length[psiZ[[1]]]},
+With[{numXVars=getNumX[linMod],numZVars=getNumZ[linMod]},
 With[{xtm1Vars=genSlots[numXVars]},
 Apply[Function, {Join[BB.xtm1Vars+
 Inverse[IdentityMatrix[Length[xtm1Vars]]-FF] . phi . psiC,ConstantArray[0,{numZVars,1}]]}]]]
+
+
+AMASeriesRepCallGraph=
+Join[AMASeriesRepCallGraph,Map["genX0Z0Funcs"->#&,{"getNumX","getNumZ","genSlots"}]];
+
 (*end code for genX0Z0Funcs*)
 @}
 
@@ -477,6 +532,11 @@ With[{theFunc=Function[theXZGuts]},
 theFunc]]]]]]/;numSteps>0
 
 
+
+AMASeriesRepCallGraph=
+Join[AMASeriesRepCallGraph,Map["multiStep"->#&,{"genSlots"}]];
+
+
 (*end code for multiStep*)
 @}
 
@@ -491,6 +551,10 @@ theFunc]]]]]]/;numSteps>0
 multiStepZ[@<XZFuncs@>,numX_Integer,numZ_Integer,numTerms_Integer]:=
 multiStep[XZFuncs,numX,numX+Range[numZ],numTerms]
 
+AMASeriesRepCallGraph=
+Join[AMASeriesRepCallGraph,Map["multiStepZ"->#&,{"multiStep"}]];
+
+
 (*end code for multiStepZ*)
 @}
 
@@ -504,6 +568,9 @@ multiStep[XZFuncs,numX,numX+Range[numZ],numTerms]
 (*begin code for multiStepX*)
 multiStepX[@<XZFuncs@>,numX_Integer,numTerms_Integer]:=
 multiStep[XZFuncs,numX,Range[numX],numTerms]
+
+AMASeriesRepCallGraph=
+Join[AMASeriesRepCallGraph,Map["multiStepX"->#&,{"multiStep"}]];
 
 (*end code for multiStepX*)
 @}
@@ -524,9 +591,13 @@ multiStep[XZFuncs,numX,Range[numX],numTerms]
 
 checkLinMod[@<linMod@>,
 anX_?MatrixQ,anEps_?MatrixQ]:=
-With[{X0Z0=genX0Z0Funcs[linMod],numZ=Length[psiZ[[1]]]},
+With[{X0Z0=genX0Z0Funcs[linMod],numZ=genNumZ[linMod]},
 With[{lilxz=genLilXkZkFunc[linMod, {X0Z0,2}, Join[anX,anEps]]},
 	{Eigenvalues[BB]//Abs,Eigenvalues[FF]//Abs,Apply[X0Z0,Flatten[anX]],Apply[lilxz,Flatten[Join[anX,anEps,Table[{0},{numZ}]]]]}]]
+
+
+AMASeriesRepCallGraph=
+Join[AMASeriesRepCallGraph,Map["chkLinMod"->#&,{"genLilXkZkFunc","genX0Z0Funcs"}]];
 
 
 (*end code for checkLinMod*)
@@ -551,7 +622,7 @@ checkMod[@<theSolver@>,@<linMod@>,
 @<gSpec@>,
 @<distribSpec@>,anX_?MatrixQ,anEps_?MatrixQ,ss_?MatrixQ,
 @<eqnsFunc@>]:=
-With[{X0Z0=genX0Z0Funcs[linMod],numX=Length[BB],numEps=Length[psiEps[[1]]],numZ=Length[psiZ[[1]]]},
+With[{X0Z0=genX0Z0Funcs[linMod],numX=getNumX[linMod],numEps=getNumEps[linMod],numZ=getNumZ[linMod]},
 With[{lilxz=
 genLilXkZkFunc[linMod, {X0Z0,1}, Join[anX,anEps]]},
 With[{xzFuncNow=theSolver[[1]][{numX,numEps,numZ},lilxz,eqnsFunc,Method->"JenkinsTraub"]},
@@ -562,6 +633,9 @@ Apply[fp,Flatten[Join[anX,anEps]]],
 Apply[eqnsFunc,Flatten[Join[ss,{{0}}]]]
 }]]]]
 
+
+AMASeriesRepCallGraph=
+Join[AMASeriesRepCallGraph,Map["checkMod"->#&,{"genLilXkZkFunc","genX0Z0Funcs","getNumX","getNumEps","getNumZ","genFPFunc"}]];
 
 
 (*end code for checkMod*)
@@ -600,6 +674,10 @@ Function[otherGuts]]]]]
 cmpXZVals[xzVals_?MatrixQ,theZArgs:{_Symbol..},theResult:{(_->_)..}]:=
 Transpose[{Flatten[Join[xzVals,theZArgs]/.theResult]}]
 
+AMASeriesRepCallGraph=
+Join[AMASeriesRepCallGraph,Map["genFRFunc"->#&,{"genSlots","cmpXZVals"}]];
+
+
 
 (*end code for genFRFunc*)
 @}
@@ -634,6 +712,9 @@ fixedPointLimit]]],
 (* input   [linMod,XZ, xguess,function (xt,eps,zt)->(xtm1,xt,xtp1,eps), function (xtm1,xt,xtp1,eps)->me]*)
 (* output   [function  (xt,eps) ->(xt,zt)] *)
 
+
+AMASeriesRepCallGraph=
+Join[AMASeriesRepCallGraph,Map["genFPFunc"->#&,{"genSlots","cmpXZVals","getNumX","getNumEps","getNumZ","myFixedPoint","genLilXkZkFunc"}]];
 
 (*end code for genFPFunc*)
 @}
@@ -691,6 +772,8 @@ Map[Function[xx,{xx[[1]], xx[[2, funcIdx, 1]]}] ,
 ]]]]
 
 
+AMASeriesRepCallGraph=
+Join[AMASeriesRepCallGraph,Map["parallelMakeInterpFunc"->#&,{"fillInSymb","genInterpData","fillInSymb","getNumVars"}]];
 
 
 (*end code for makeInterpFunc*)
@@ -729,6 +812,8 @@ Map[Function[xx,{xx[[1]], xx[[2, funcIdx, 1]]}] ,
 ]]]]
 
 
+AMASeriesRepCallGraph=
+Join[AMASeriesRepCallGraph,Map["parallelMakeInterpFunc"->#&,{"fillInSymb","parallelGenInterpData","fillInSymb","getNumVars"}]];
 
 
 (*end code for parallelMakeInterpFunc*)
@@ -737,7 +822,7 @@ Map[Function[xx,{xx[[1]], xx[[2, funcIdx, 1]]}] ,
 
 
 \subsection{makeSmolyakInterpFunc}
-\label{sec:makeinterpfunc}
+\label{sec:makesmolinterpfunc}
 
 
 
@@ -776,9 +861,19 @@ Range[numFuncs]]},
 ]]]]
 
 
+AMASeriesRepCallGraph=
+Join[AMASeriesRepCallGraph,Map["makeSmolyakInterpFunc"->#&,{"smolyakInterpolation","smolyakGenInterpData","fillInSymb"}]];
+
+
 
 (*end code for makeSmolyakInterpFunc*)
 @}
+\subsection{callGraph}
+@d callGraphUsage
+@{
+AMASeriesRepCallGraph::usage="AMASeriesRepCallGraph";AMASeriesRepCallGraph={};
+@}
+
 
 \subsection{smolyakInterpolation}
 \label{sec:smolyakinterpolation}
@@ -799,6 +894,8 @@ theXs=Table[Unique["xx"],{ii,numVars}]},
 Apply[Function,({Drop[theXs,-numEps],Simplify[(wts.(smolIntPolys/.
 Thread[Drop[origXs,-numEps]->Drop[theXs,-numEps]]))/.Thread[theXs->MapThread[xformXValToCheb,{theXs,smolRngs}]]]})]}]]
 
+AMASeriesRepCallGraph=
+Join[AMASeriesRepCallGraph,Map["smolyakInterpolation"->#&,{"xformXValToCheb"}]];
 @}
 
 
@@ -821,6 +918,10 @@ With[{numPolys=Length[smolPolys]},
 {xPts,smolMat,smolPolys,{}}]]]]/;
 And[Length[smolRngs]==Length[approxLevels]]
 
+AMASeriesRepCallGraph=
+Join[AMASeriesRepCallGraph,Map["smolyakInterpolationPrep"->#&,{"sparseGridEvalPolysAtPts","xformToXVec"}]];
+
+
 newSmolyakInterpolationPrep[approxLevels_?listOfIntegersQ,smolRngs_?MatrixQ,
 momSubs:{{(_->_)..}...}]:=
 Module[{smolRes=sparseGridEvalPolysAtPts[approxLevels],
@@ -833,6 +934,9 @@ With[{numPolys=Length[smolPolys]},
 And[Length[smolRngs]==Length[approxLevels]]
 
 
+AMASeriesRepCallGraph=
+Join[AMASeriesRepCallGraph,Map["newSmolyakInterpolationPrep"->#&,{"sparseGridEvalPolysAtPts","xformToXVec","compRawMoments"}]];
+
 compRawMoments[expr_,errVar:anX_Symbol[ii_Integer]]:=
 expr/.{errVar^nn_Integer->mom[ii,nn],errVar->mom[ii,1]}
 
@@ -841,13 +945,25 @@ xformXValToCheb[xVal_,
 range:{lowVal_?NumberQ,highVal_?NumberQ}]:=
 xFormToChebInterval[xVal,lowVal,highVal]
 
+AMASeriesRepCallGraph=
+Join[AMASeriesRepCallGraph,Map["xformXValToCheb"->#&,{"xFormToChebInterval"}]];
+
+
+
 xformChebValToX[chebVal_,
 range:{lowVal_?NumberQ,highVal_?NumberQ}]:=
 xFormFromChebInterval[chebVal,lowVal,highVal]
 
+
+AMASeriesRepCallGraph=
+Join[AMASeriesRepCallGraph,Map["xformChebValToX"->#&,{"xFormFromChebInterval"}]];
+
+
 xformToXVec[chebPt_?VectorQ,ranges_?MatrixQ]:=
 MapThread[xformChebValToX,{chebPt,ranges}]
 
+AMASeriesRepCallGraph=
+Join[AMASeriesRepCallGraph,Map["xformToXVec"->#&,{"xformChebValToX"}]];
 
 @}
 
@@ -878,6 +994,8 @@ With[{interpData=Transpose[{thePts,theVals}]},
 interpData]]]]
 
 
+AMASeriesRepCallGraph=
+Join[AMASeriesRepCallGraph,Map["genInterpData"->#&,{"gridPts","fillIn"}]];
 
 
 
@@ -911,6 +1029,8 @@ interpData]]]]
 
 
 
+AMASeriesRepCallGraph=
+Join[AMASeriesRepCallGraph,Map["parallelGenInterpData"->#&,{"gridPts","fillIn"}]];
 
 
 (*end code for parallelGenInterpData*)
@@ -944,6 +1064,8 @@ With[{interpData=Map[Flatten,theVals]},
 interpData]]]
 
 
+AMASeriesRepCallGraph=
+Join[AMASeriesRepCallGraph,Map["smolyakGenInterpData"->#&,{"fillIn"}]];
 
 
 
@@ -976,7 +1098,9 @@ interpData]]]
 
 
 
-
+  
+AMASeriesRepCallGraph=
+Join[AMASeriesRepCallGraph,Map["parallelSmolyakGenInterpData"->#&,{"fillIn"}]];
 
 (*end code for parallelSmolyakGenInterpData*)
 @}
@@ -1006,6 +1130,9 @@ With[{oneDimPts=Map[funcForPts,rngs]},
 With[{theOuter=Function[xx,Outer[List,Apply[Sequence,xx]]][oneDimPts]},
 Flatten[theOuter,Depth[theOuter]-3]]]]
 
+
+AMASeriesRepCallGraph=
+Join[AMASeriesRepCallGraph,Map["gridPts"->#&,{"oneDimGridPts"}]];
 
 
 (*end code for gridPts*)
@@ -1056,6 +1183,8 @@ If[MemberQ[toIgnore,
 Length[theRes]+1],fillIn[{Append[theRes,1],Drop[toIgnore,1],shortVec}],
 fillIn[{Append[theRes,shortVec[[1]]],toIgnore,Drop[shortVec,1]}]]]]/;OrderedQ[toIgnore]
 
+AMASeriesRepCallGraph=
+Join[AMASeriesRepCallGraph,Map["fillIn"->#&,{"fillIn"}]];
 
 (*end code for fillIn*)
 @}
@@ -1086,6 +1215,8 @@ fillInSymb[{theRes,Sort[toIgnore],shortVec}]
 fillIn[{theRes:{_?NumberQ...},toIgnore:{_Integer...},shortVec:{_?NumberQ...}}]:=
 fillIn[{theRes,Sort[toIgnore],shortVec}]
 
+AMASeriesRepCallGraph=
+Join[AMASeriesRepCallGraph,Map["fillInSymb"->#&,{"fillInSymb"}]];
 
 (*end code for fillInSymb*)
 @}
@@ -1108,7 +1239,7 @@ doIterREInterp[@<theSolver@>,
 	@<linMod@>,
 	@<XZFuncs@>,
 @<eqnsFunc@>,@<gSpec@>,@<distribSpec@>]:=
-With[{numX=Length[BB],numEps=Length[psiEps[[1]]],numZ=Length[psiZ[[1]]]},
+With[{numX=getNumX[linMod],numEps=getNumEps[linMod],numZ=getNumZ[linMod]},
 tn=AbsoluteTime[];
 With[{theFuncs=makeInterpFunc[genFPFunc[theSolver,linMod,XZFuncs,eqnsFunc],gSpec]},
 Print["makeInterpTime=",(tn2=AbsoluteTime[])-tn];
@@ -1117,6 +1248,8 @@ Print["genXZREInterpTime=",(AbsoluteTime[])-tn2];
 {theFuncs,XZRE}]]]
 
 
+AMASeriesRepCallGraph=
+Join[AMASeriesRepCallGraph,Map["doIterREInterp"->#&,{"makeInterpFunc","genFPFunc","getNumX","getNumEps","getNumZ","parallelGenXZREInterpFunc"}]];
 
 
 (*end code for doIterREInterp*)
@@ -1149,6 +1282,8 @@ With[{XZRE=genXZREInterpFunc[{numX,numEps,numZ},theFuncs(*,smolToIgnore,smolRngs
 Print["genXZREInterpTime=",(AbsoluteTime[])-tn2];
 {theFuncs,XZRE}]]]
 
+AMASeriesRepCallGraph=
+Join[AMASeriesRepCallGraph,Map["doSmolyakIterREInterp"->#&,{"makeSmolyakInterpFunc","genFPFunc","getNumX","getNumEps","getNumZ","genXZREInterpFunc"}]];
 
 
 
@@ -1173,7 +1308,7 @@ parallelDoIterREInterp[@<theSolver@>,
 	@<linMod@>,
 	@<XZFuncs@>,
 @<eqnsFunc@>,@<gSpec@>,@<distribSpec@>]:=
-With[{numX=Length[BB],numEps=Length[psiEps[[1]]],numZ=Length[psiZ[[1]]]},
+With[{numX=getNumX[linMod],numEps=getNumEps[linMod],numZ=getNumZ[linMod]},
 tn=AbsoluteTime[];
 DistributeDefinitions[XZFuncs[[1]]];
 DistributeDefinitions[eqnsFunc];
@@ -1185,6 +1320,9 @@ Print["parallelgenXZREInterpTime=",(AbsoluteTime[])-tn2];
 {theFuncs,XZRE}]]]
 
 
+
+AMASeriesRepCallGraph=
+Join[AMASeriesRepCallGraph,Map["parallelDoIterREInterp"->#&,{"parallelMakeInterpFunc","genFPFunc","getNumX","getNumEps","getNumZ","parallelGenXZREInterpFunc"}]];
 
 
 (*end code for parallelDoIterREInterp*)
@@ -1212,6 +1350,8 @@ NestList[Function[xx,doIterREInterp[theSolver,linMod,
 {xx[[2]],numSteps},eqnsFunc,gSpec,distribSpec]],{ig,XZFuncs[[1]]},numIters]
 
 
+AMASeriesRepCallGraph=
+Join[AMASeriesRepCallGraph,Map["nestIterREInterp"->#&,{"doIterREInterp"}]];
 
 
 (*end code for nestIterREInterp*)
@@ -1235,9 +1375,11 @@ nestSmolyakIterREInterp[@<theSolver@>,@<linMod@>,
 @<XZFuncs@>,@<eqnsFunc@>,
 @<gSpec@>,
 @<distribSpec@>,numIters_Integer]:=
-NestList[Function[xx,doIterREInterp[theSolver,linMod,
+NestList[Function[xx,doSmolyakIterREInterp[theSolver,linMod,
 {xx[[2]],numSteps},eqnsFunc,gSpec,distribSpec]],{ig,XZFuncs[[1]]},numIters]
 
+AMASeriesRepCallGraph=
+Join[AMASeriesRepCallGraph,Map["nestIterREInterp"->#&,{"doSmolyakIterREInterp"}]];
 
 
 
@@ -1265,6 +1407,8 @@ parallelNestIterREInterp[@<theSolver@>,@<linMod@>,
 NestList[Function[xx,parallelDoIterREInterp[theSolver,linMod,
 {xx[[2]],numSteps},eqnsFunc,gSpec,distribSpec]],{ig,XZFuncs[[1]]},numIters]
 
+AMASeriesRepCallGraph=
+Join[AMASeriesRepCallGraph,Map["parallelNestIterREInterp"->#&,{"parallelDoIterREInterp"}]];
 
 
 
@@ -1289,8 +1433,8 @@ aLilXkZkFunc_Function,@<gSpec@>,@<distribSpec@>]:=
 With[{theFuncNow=genXZFuncRE[{numX,numEps,numZ},aLilXkZkFunc,distribSpec]},
 makeInterpFunc[theFuncNow,elimGSpecShocks[gSpec,numEps]]]
   
-elimGSpecShocks[@<gSpec@>,numEps_Integer]:=
-{toIgnore,gSpec[[2]],Drop[getGridPtTrips[gSpec],-(numEps)]}
+AMASeriesRepCallGraph=
+Join[AMASeriesRepCallGraph,Map["genXZREInterpFunc"->#&,{"genXZFuncRE","makeInterpFunc","elimGSpecShocks"}]];
 
 (*end code for genXZREInterpFunc*)
 @}
@@ -1315,8 +1459,18 @@ With[{theFuncNow=genXZFuncRE[{numX,numEps,numZ},aLilXkZkFunc,distribSpec]},
 Print["genSmol:",InputForm[theFuncNow]];
 makeInterpFunc[theFuncNow,elimGSpecShocks[gSpec,numEps]]]
   
+
+AMASeriesRepCallGraph=
+Join[AMASeriesRepCallGraph,Map["genSmolyakXZREInterpFunc"->#&,{"genXZFuncRE","makeInterpFunc","elimGSpecShocks"}]];
+
+
 elimGSpecShocks[@<gSpec@>,numEps_Integer]:=
 {toIgnore,gSpec[[2]],Drop[getGridPtTrips[gSpec],-(numEps)]}
+
+AMASeriesRepCallGraph=
+Join[AMASeriesRepCallGraph,Map["elimGSpecShocks"->#&,{"getGridPtTrips"}]];
+
+
 
 (*end code for genSmolyakXZREInterpFunc*)
 @}
@@ -1340,8 +1494,14 @@ aLilXkZkFunc_Function,@<gSpec@>,@<distribSpec@>]:=
 With[{theFuncNow=genXZFuncRE[{numX,numEps,numZ},aLilXkZkFunc,distribSpec]},
 parallelMakeInterpFunc[theFuncNow,elimGSpecShocks[gSpec,numEps]]]
   
-elimGSpecShocks[@<gSpec@>,numEps_Integer]:=
-{toIgnore,gSpec[[2]],Drop[getGridPtTrips[gSpec],-(numEps)]}
+AMASeriesRepCallGraph=
+Join[AMASeriesRepCallGraph,Map["parallelGenXZInterpFunc"->#&,{"genXZFuncRE","parallelMakeInterpFunc","elimGSpecShocks"}]];
+
+
+
+AMASeriesRepCallGraph=
+Join[AMASeriesRepCallGraph,Map["elimGSpecShock"->#&,{"getGridPtTrips"}]];
+
 
 (*end code for parallelGenXZREInterpFunc*)
 @}
@@ -1376,6 +1536,9 @@ Transpose[{Map[Function[xx,myNExpectation[
 	ReplacePart[funcGuts,1->intVarRes[[1]]]]]
 
 
+AMASeriesRepCallGraph=
+Join[AMASeriesRepCallGraph,Map["genXZFuncRE"->#&,{"myNExpectation","genIntVars"}]];
+
 
 (*end code for genXZFuncRE*)
 @}
@@ -1402,6 +1565,8 @@ With[{xEpsVars=Join[xVars,distVars],
 MapThread[Function[{xx,yy},xx \[Distributed] yy],{distVars,dists}]},
 	{xVars,xEpsVars,intArg}]]
 
+AMASeriesRepCallGraph=
+Join[AMASeriesRepCallGraph,Map["genIntVars"->#&,{"getDistribs","getNumEpsVars"}]];
 
 (*end code for genIntVars*)
 @}
@@ -1464,6 +1629,9 @@ Join[initVec[[Range[numX]]],Apply[Join,
 (Map[Function[xx,Identity[xx[[Range[numX]]]]],iterated])]]]]]/;
 And[numPers>0]
 
+AMASeriesRepCallGraph=
+Join[AMASeriesRepCallGraph,Map["iterateDRREIntegrate"->#&,{"getNumEpsVars","makeREIterFunc"}]];
+
 
 (*end code for iterateDRREIntegrate*)
 @}
@@ -1489,6 +1657,8 @@ With[{numEps=getNumEpsVars[distribSpec]},
 With[{numX=Length[drFunc[[1]]]-numEps,numZ=0},
 	genXZFuncRE[{numX,numEps,numZ},drFunc,distribSpec]]]
 
+AMASeriesRepCallGraph=
+Join[AMASeriesRepCallGraph,Map["makeREIterFunc"->#&,{"getNumEpsVars","genXZFuncRE"}]];
 
 (*end code for makeREIterFunc*)
 @}
@@ -1547,6 +1717,7 @@ Join[initVec[[Range[numX]]],Apply[Join,(Map[Function[xx,xx[[Range[numX]]]],itera
 And[numPers>0]
 
 
+
 (*end code for iterateDRPF*)
 @}
 
@@ -1572,6 +1743,10 @@ With[{xtVal=Apply[xzFunc,Flatten[Join[xtm1Val,epsVal]]]},
 With[{xzRes=If[numTerms==1,{},
 Apply[multiStepX[XZFuncs,numXVars,numTerms-1],Flatten[xtVal]]]},
 	Join[xtm1Val,xtVal[[Range[numXVars]]],Apply[Join,xzRes]]]]]
+
+AMASeriesRepCallGraph=
+Join[AMASeriesRepCallGraph,Map["genPath"->#&,{"multiStep"}]];
+
 (*end code for genPath*)
 @}
 
@@ -1604,6 +1779,9 @@ With[{first=Transpose[{Apply[eqnsFunc,Flatten[firstArg]]}]},
 And[numPers>1]
 
 
+AMASeriesRepCallGraph=
+Join[AMASeriesRepCallGraph,Map["pathErrsDRPF"->#&,{"doFuncArg","iterateDRPF"}]];
+
 (*end code for pathErrsDRPF*)
 @}
 
@@ -1632,6 +1810,8 @@ With[{first=Transpose[{Apply[eqnsFunc,Flatten[firstArg]]}]},
 And[numPers>1]
  
 
+AMASeriesRepCallGraph=
+Join[AMASeriesRepCallGraph,Map["pathErrsDRPF"->#&,{"doFuncArg","iterateDRREIntegrate","getNumEpsVars"}]];
 (*end code for pathErrsDRREIntegrate*)
 @}
 
@@ -1678,6 +1858,8 @@ drFunc_Function,initVec_?MatrixQ,@<distribSpec@>,@<eqnsFunc@>]:=
 phi . (pathErrsDRREIntegrate[drFunc,initVec,distribSpec,eqnsFunc,2])//First
 
 
+AMASeriesRepCallGraph=
+Join[AMASeriesRepCallGraph,Map["evalPathErrorDRREIntegrate"->#&,{"pathErrsDRREIntegrate"}]];
 
 
 (*end code for evalPathErrDRREIntegrate*)
@@ -1716,6 +1898,9 @@ With[{theVal=evalPathErrDRREIntegrate[drFunc,Join[noEpsVec,Transpose[{tryEps}]],
 	With[{maxArgs=Map[Function[xx,{xx,0}],outerEVars],cons=Apply[And,  (Map[Function[xx,(-0.01<=xx<=0.01)], outerEVars])]},
 	FindMaximum[{funcName[outerEVars],cons},maxArgs]]]]
 
+AMASeriesRepCallGraph=
+Join[AMASeriesRepCallGraph,Map["evalBadPathErrorDRREIntegrate"->#&,{"evalPathErrDRREIntegrate","iterateDRREIntegrate"}]];
+
 (*end code for evalBadPathErrDRREIntegrate*)
 @}
 
@@ -1747,6 +1932,13 @@ evalBadPathErrDRREIntegrate[phi,drFunc,noEpsVec,distribSpec,eqnsFunc]},
 	With[{badEps=Transpose[{(Map[First,fMinRes[[2]]])/.fMinRes[[2]]}]},
 	With[{badPath=iterateDRREIntegrate[drFunc,Join[noEpsVec,badEps],distribSpec,2]},
 		Join[badPath,badEps]]]]
+
+
+
+AMASeriesRepCallGraph=
+Join[AMASeriesRepCallGraph,Map["worstPathForErrorDRREIntegrate"->#&,{"evalBadPathErrDRREIntegrate","iterateDRREIntegrate"}]];
+
+
 
 (*end code for worstPathForErrDRREIntegrate*)
 @}
@@ -1809,6 +2001,11 @@ getDistribs[@<distribSpec@>]:= Map[Last,expctSpec]
 (*begin code for getNumVars*)
 getNumVars[@<gSpec@>]:=
 (Length[getGridPtTrips[gSpec]])
+
+AMASeriesRepCallGraph=
+Join[AMASeriesRepCallGraph,Map["getNumVars"->#&,{"getGridPtTrips"}]];
+
+
 
 (*end code for getNumVars*)
 @}
@@ -1928,6 +2125,12 @@ getNumZ::usage=
 @{
 getNumZ[@<linMod@>]:=
 Length[getPsiZ[linMod][[1]]]
+
+
+AMASeriesRepCallGraph=
+Join[AMASeriesRepCallGraph,Map["getNumZ"->#&,{"getPsiZ"}]];
+
+
 @}
 
 
@@ -1942,6 +2145,13 @@ getNumX::usage=
 @{
 getNumX[@<linMod@>]:=
 Length[getB[linMod]]
+
+
+AMASeriesRepCallGraph=
+Join[AMASeriesRepCallGraph,Map["getNumX"->#&,{"getB"}]];
+
+
+
 @}
 
 
@@ -1956,6 +2166,10 @@ getNumEps::usage=
 @{
 getNumEps[@<linMod@>]:=
 Length[getPsiEps[linMod][[1]]]
+
+AMASeriesRepCallGraph=
+Join[AMASeriesRepCallGraph,Map["getNumEps"->#&,{"getPsiEps"}]];
+
 @}
 
 

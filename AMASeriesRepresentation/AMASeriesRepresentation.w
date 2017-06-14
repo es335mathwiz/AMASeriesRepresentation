@@ -37,6 +37,7 @@ EndPackage[]
 @{
 (*Begin Usage Definitions*)
 PerfectForesight::usage="degenerate distribution implementing perfect foresight"
+@<getterSetterTestsUsage@>
 @<callGraphUsage@>
 @<smolyakInterpolationUsage@>
 @<smolyakInterpolationPrepUsage@>
@@ -594,6 +595,12 @@ anX_?MatrixQ,anEps_?MatrixQ]:=
 With[{X0Z0=genX0Z0Funcs[linMod],numZ=genNumZ[linMod]},
 With[{lilxz=genLilXkZkFunc[linMod, {X0Z0,2}, Join[anX,anEps]]},
 	{Eigenvalues[BB]//Abs,Eigenvalues[FF]//Abs,Apply[X0Z0,Flatten[anX]],Apply[lilxz,Flatten[Join[anX,anEps,Table[{0},{numZ}]]]]}]]
+
+genNumZ[linMod:{theHMat_?MatrixQ,BB_?MatrixQ,phi_?MatrixQ,FF_?MatrixQ, 
+            psiEps_?MatrixQ,psiC_?MatrixQ,psiZ_?MatrixQ,psiZPreComp_?MatrixQ} ,
+anX_?MatrixQ,anEps_?MatrixQ]:=Length[psiZ[[1]]]
+
+
 
 
 AMASeriesRepCallGraph=
@@ -1971,7 +1978,12 @@ getNumEpsVars[@<distribSpec@>]:=Length[expctSpec]
 (*end code for getNumEpsVars*)
 @}
 
+@d getterSetterTests
+@{
+getterSetterTests=Append[getterSetterTests,
+VerificationTest[getNumEpsVars[theDist]==1,TestID->"getNumEpsVars:linMod"]]
 
+@}
 
 
 @d getDistribsUsage
@@ -1988,7 +2000,13 @@ getDistribs[@<distribSpec@>]:= Map[Last,expctSpec]
 
 (*end code for getDistribs*)
 @}
+@d getterSetterTests
+@{
+getterSetterTests=Append[getterSetterTests,
+VerificationTest[getDistribs[theDist]=={NormalDistribution[0, 1/100]},
+TestID->"getDistribs:theDist"]]
 
+@}
 
 
 @d getNumVarsUsage
@@ -2010,6 +2028,13 @@ Join[AMASeriesRepCallGraph,Map["getNumVars"->#&,{"getGridPtTrips"}]];
 (*end code for getNumVars*)
 @}
 
+@d getterSetterTests
+@{
+getterSetterTests=Append[getterSetterTests,
+VerificationTest[getNumVars[aGSpec]==3,
+TestID->"getNumVars:aGSpec"]]
+
+@}
 
 
 
@@ -2025,6 +2050,12 @@ getH::usage=
 @{
 getH[@<linMod@>]:=
 theHMat
+@}
+@d getterSetterTests
+@{
+getterSetterTests=Append[getterSetterTests,
+VerificationTest[getH[linMod]==simpleRBCModel`Private`hmatSymbRE//N,
+TestID->"getH:linMod"]]
 @}
 
 
@@ -2215,8 +2246,21 @@ getGridPtTrips[@<gSpec@>]:=gSpec[[3]]
 @}
 
 
+\section{Tests}
 
+@o AMASeriesRepresentationTests.m
+@{
+$Path=Join[$Path,{"../../ProtectedSymbols","../../mathSmolyak"}]
+Needs["AMASeriesRepresentation`"]
+Needs["simpleRBCModel`"]
+getterSetterTests={};
+@<getterSetterTests@>
 
+@}
+@d getterSetterTestsUsage
+@{
+getterSetterTests::usage="getterSetterTestsUsage"
+@}
 \subsection{Identifiers}
 \label{sec:identifiers}
 

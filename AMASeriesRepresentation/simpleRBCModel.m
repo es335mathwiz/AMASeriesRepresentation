@@ -186,7 +186,7 @@ sigHigh = 3*sigVal;
 thLow = 9/10;
 thHigh = 11/10;
 pdf=NormalDistribution[0, sigVal];
-Print["curious simp",{thVal,kVal,cVal,ssSolnSubsRE,simpParamSubs}];
+(*Print["curious simp",{thVal,kVal,cVal,ssSolnSubsRE,simpParamSubs}];*)
 
     
 anX=Transpose[{{.2,.18,1.1}}];
@@ -205,7 +205,7 @@ probDims={3,1,3};
 
 
 aGSpec={{1},1,{{4,kLow,kHigh},{3,thLow,thHigh},{3,sigLow,3*sigHigh}}};
-Print["path=",{$Path,Directory[]}]
+(*Print["path=",{$Path,Directory[]}]*)
 (*Get["genArbLin.mth"]*)
 End[]
 EndPackage[]

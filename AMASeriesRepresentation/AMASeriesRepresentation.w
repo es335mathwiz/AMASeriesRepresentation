@@ -11,12 +11,279 @@
 
 \tableofcontents
 
-
+\newpage
 \section{Introduction and Summary}
 \label{sec:introduction-summary}
 
-\appendix
-\section{Function Definitions}
+\section{Smolyak Code}
+\label{sec:smolyak-code}
+
+
+\subsection{smolyakInterpolation}
+\label{sec:smolyakinterpolation}
+
+
+@d smolyakInterpolationUsage
+@{smolyakInterpolation::usage=
+"place holder for makeSmolyakInterpFunc"
+@}
+
+@d smolyakInterpolation
+@{
+smolyakInterpolation[fVals:{_?NumberQ..},@<smolGSpec@>]:=
+With[{wts=LinearSolve[smolMat,fVals],numVars=Length[smolRngs]},
+With[{origXs=Table[xx[ii],{ii,numVars}],
+theXs=Table[Unique["xx"],{ii,numVars}]},
+{Apply[Function,({theXs,Simplify[(wts.(smolPolys/.Thread[origXs->theXs]))/.Thread[theXs->MapThread[xformXValToCheb,{theXs,smolRngs}]]]})],
+Apply[Function,({Drop[theXs,-numEps],Simplify[(wts.(smolIntPolys/.
+Thread[Drop[origXs,-numEps]->Drop[theXs,-numEps]]))/.Thread[theXs->MapThread[xformXValToCheb,{theXs,smolRngs}]]]})]}]]
+
+AMASeriesRepCallGraph=
+Join[AMASeriesRepCallGraph,Map["smolyakInterpolation"->#&,{"xformXValToCheb"}]];
+@}
+
+
+\subsection{smolyakInterpolationPrep}
+\label{sec:smoly}
+
+@d smolyakInterpolationPrepUsage
+@{smolyakInterpolationPrep::usage="place holder"@}
+
+@d smolyakInterpolationPrep
+@{
+smolyakInterpolationPrep[approxLevels_?listOfIntegersQ,smolRngs_?MatrixQ,
+@<distribSpec@>]:=
+Module[{smolRes=sparseGridEvalPolysAtPts[approxLevels],
+numVars=Length[approxLevels],numEps=Length[distribSpec[[1]]]},
+With[{thePts=smolRes[[1]],smolPolys=smolRes[[2]],smolMat=smolRes[[3]]},
+With[{xPts=Map[Function[xx,xformToXVec[xx,smolRngs]],thePts]},
+(*Print["smolyPrep:",{xPts,thePts}];*)
+With[{numPolys=Length[smolPolys]},
+{xPts,smolMat,smolPolys,{}}]]]]/;
+And[Length[smolRngs]==Length[approxLevels]]
+
+AMASeriesRepCallGraph=
+Join[AMASeriesRepCallGraph,Map["smolyakInterpolationPrep"->#&,{"sparseGridEvalPolysAtPts","xformToXVec"}]];
+
+
+newSmolyakInterpolationPrep[approxLevels_?listOfIntegersQ,smolRngs_?MatrixQ,
+momSubs:{{(_->_)..}...}]:=
+Module[{smolRes=sparseGridEvalPolysAtPts[approxLevels],
+numVars=Length[approxLevels],numEps=Length[momSubs]},
+With[{thePts=smolRes[[1]],smolPolys=smolRes[[2]],smolMat=smolRes[[3]]},
+With[{xPts=Map[Function[xx,xformToXVec[xx,smolRngs]],thePts]},
+(*Print["smolyPrep:",{xPts,thePts}];*)
+With[{numPolys=Length[smolPolys]},
+{xPts,smolMat,smolPolys,compRawMoments[smolPolys,xx[3]]/.Flatten[momSubs]}]]]]/;
+And[Length[smolRngs]==Length[approxLevels]]
+
+
+AMASeriesRepCallGraph=
+Join[AMASeriesRepCallGraph,Map["newSmolyakInterpolationPrep"->#&,{"sparseGridEvalPolysAtPts","xformToXVec","compRawMoments"}]];
+
+compRawMoments[expr_,errVar:anX_Symbol[ii_Integer]]:=
+expr/.{errVar^nn_Integer->mom[ii,nn],errVar->mom[ii,1]}
+
+
+xformXValToCheb[xVal_,
+range:{lowVal_?NumberQ,highVal_?NumberQ}]:=
+xFormToChebInterval[xVal,lowVal,highVal]
+
+AMASeriesRepCallGraph=
+Join[AMASeriesRepCallGraph,Map["xformXValToCheb"->#&,{"xFormToChebInterval"}]];
+
+
+
+xformChebValToX[chebVal_,
+range:{lowVal_?NumberQ,highVal_?NumberQ}]:=
+xFormFromChebInterval[chebVal,lowVal,highVal]
+
+
+AMASeriesRepCallGraph=
+Join[AMASeriesRepCallGraph,Map["xformChebValToX"->#&,{"xFormFromChebInterval"}]];
+
+
+xformToXVec[chebPt_?VectorQ,ranges_?MatrixQ]:=
+MapThread[xformChebValToX,{chebPt,ranges}]
+
+AMASeriesRepCallGraph=
+Join[AMASeriesRepCallGraph,Map["xformToXVec"->#&,{"xformChebValToX"}]];
+
+@}
+
+\subsection{smolyakGenInterpData}
+\label{sec:geninterpdata}
+
+
+
+
+
+@d smolyakGenInterpDataUsage
+@{smolyakGenInterpData::usage=
+"place holder for smolyakGenInterpData"
+@}
+
+@d smolyakGenInterpData
+@{
+(*begin code for smolyakGenInterpData*)
+
+ 
+smolyakGenInterpData[
+aVecFunc:(_Function|_CompiledFunction),@<smolGSpec@>]:=
+With[{filledPts=Map[
+Function[xx,fillIn[{{},smolToIgnore,xx}]],N[smolPts]]},
+(*Print["smolyakGenInterpData:",filledPts//InputForm];*)
+With[{theVals=Map[
+Function[xx,(Apply[aVecFunc,xx])],filledPts]},
+With[{interpData=Map[Flatten,theVals]},
+interpData]]]
+
+
+AMASeriesRepCallGraph=
+Join[AMASeriesRepCallGraph,Map["smolyakGenInterpData"->#&,{"fillIn"}]];
+
+
+
+(*end code for smolyakGenInterpData*)
+@}
+
+
+\subsection{parallelSmolyakGenInterpData}
+\label{sec:geninterpdata}
+
+
+
+@d parallelSmolyakGenInterpDataUsage
+@{parallelSmolyakGenInterpData::usage=
+"place holder for parallelSmolyakGenInterpData"
+@}
+
+@d parallelSmolyakGenInterpData
+@{
+(*begin code for parallelSmolyakGenInterpData*)
+
+ 
+parallelSmolyakGenInterpData[aVecFunc:(_Function|_CompiledFunction),@<gSpec@>,@<smolGSpec@>]:=
+With[{filledPts=ParallelMap[
+Function[xx,fillIn[{{},smolToIgnore,xx}]],smolyakPts]},
+With[{theVals=ParallelMap[
+Function[xx,(Apply[aVecFunc,xx])],filledPts]},
+With[{interpData=Transpose[{smolyakPts,theVals}]},
+interpData]]]
+
+
+
+  
+AMASeriesRepCallGraph=
+Join[AMASeriesRepCallGraph,Map["parallelSmolyakGenInterpData"->#&,{"fillIn"}]];
+
+(*end code for parallelSmolyakGenInterpData*)
+@}
+
+
+
+\subsection{doSmolyakIterREInterp}
+\label{sec:doiterreinterp}
+
+
+
+@d doSmolyakIterREInterpUsage
+@{doSmolyakIterREInterp::usage=
+"place holder for doSmolyakIterREInterp"
+@}
+
+@d doSmolyakIterREInterp
+@{
+(*begin code for doSmolyakIterREInterp*)
+doSmolyakIterREInterp[@<theSolver@>,
+	@<linMod@>,
+	@<XZFuncs@>,
+@<eqnsFunc@>,@<gSpec@>,@<smolGSpec@>,@<distribSpec@>]:=
+With[{numX=Length[BB],numEps=Length[psiEps[[1]]],numZ=Length[psiZ[[1]]]},
+tn=AbsoluteTime[];
+With[{theFuncs=makeSmolyakInterpFunc[genFPFunc[theSolver,linMod,XZFuncs,eqnsFunc],smolGSpec]},
+Print["makeSmolyakInterpTime=",(tn2=AbsoluteTime[])-tn];
+With[{XZRE=genXZREInterpFunc[{numX,numEps,numZ},theFuncs(*,smolToIgnore,smolRngs,smolPts,smolMat,smolPolys*),gSpec,distribSpec]},
+Print["genXZREInterpTime=",(AbsoluteTime[])-tn2];
+{theFuncs,XZRE}]]]
+
+AMASeriesRepCallGraph=
+Join[AMASeriesRepCallGraph,Map["doSmolyakIterREInterp"->#&,{"makeSmolyakInterpFunc","genFPFunc","getNumX","getNumEps","getNumZ","genXZREInterpFunc"}]];
+
+
+
+(*end code for doSmolyakIterREInterp*)
+@}
+
+
+\subsection{genSmolyakXZREInterpFunc}
+\label{sec:genxzreinterpfunc}
+
+
+@d genSmolyakXZREInterpFuncUsage
+@{genSmolyakXZREInterpFunc::usage=
+"place holder for genSmolyakXZREInterpFunc"
+@}
+
+@d genSmolyakXZREInterpFunc
+@{
+(*begin code for genSmolyakXZREInterpFunc*)
+ 
+genSmolyakXZREInterpFunc[probDims:{numX_Integer,numEps_Integer,numZ_Integer},
+aLilXkZkFunc_Function,toIgnore:{_Integer...},ranges_?MatrixQ,smolPts_?MatrixQ,smolMat_?MatrixQ,smolPolys_?VectorQ,@<gSpec@>,@<distribSpec@>]:=
+With[{theFuncNow=genXZFuncRE[{numX,numEps,numZ},aLilXkZkFunc,distribSpec]},
+Print["genSmol:",InputForm[theFuncNow]];
+makeInterpFunc[theFuncNow,elimGSpecShocks[gSpec,numEps]]]
+  
+
+AMASeriesRepCallGraph=
+Join[AMASeriesRepCallGraph,Map["genSmolyakXZREInterpFunc"->#&,{"genXZFuncRE","makeInterpFunc","elimGSpecShocks"}]];
+
+
+elimGSpecShocks[@<gSpec@>,numEps_Integer]:=
+{toIgnore,gSpec[[2]],Drop[getGridPtTrips[gSpec],-(numEps)]}
+
+AMASeriesRepCallGraph=
+Join[AMASeriesRepCallGraph,Map["elimGSpecShocks"->#&,{"getGridPtTrips"}]];
+
+
+
+(*end code for genSmolyakXZREInterpFunc*)
+@}
+
+
+
+\subsection{nestSmolyakIterREInterp}
+\label{sec:nestiterreinterp}
+
+
+@d nestSmolyakIterREInterpUsage
+@{nestSmolyakIterREInterp::usage=
+"place holder for nestSmolyakIterREInterp"
+@}
+
+@d nestSmolyakIterREInterp
+@{
+(*begin code for nestSmolyakIterREInterp*)
+
+
+nestSmolyakIterREInterp[@<theSolver@>,@<linMod@>,
+@<XZFuncs@>,@<eqnsFunc@>,
+@<gSpec@>,
+@<distribSpec@>,numIters_Integer]:=
+NestList[Function[xx,doSmolyakIterREInterp[theSolver,linMod,
+{xx[[2]],numSteps},eqnsFunc,gSpec,distribSpec]],{ig,XZFuncs[[1]]},numIters]
+
+AMASeriesRepCallGraph=
+Join[AMASeriesRepCallGraph,Map["nestIterREInterp"->#&,{"doSmolyakIterREInterp"}]];
+
+
+
+(*end code for nestSmolyakIterREInterp*)
+@}
+
+
+\section{Package  Definition}
 \label{sec:function-definitions}
 
 
@@ -33,6 +300,13 @@ EndPackage[]
 
 
 @}
+\appendix
+
+\section{Usage Definitions}
+\label{sec:usage-definitions}
+
+
+
 @d usage definitions
 @{
 (*Begin Usage Definitions*)
@@ -115,6 +389,9 @@ PerfectForesight::usage="degenerate distribution implementing perfect foresight"
 @<getNumIgnoredUsage@>
 @<getNumInterpVarsUsage@>
 @}
+
+\section{Package Code}
+\label{sec:usage-definitions}
 
 @d package code
 @{
@@ -882,98 +1159,6 @@ AMASeriesRepCallGraph::usage="AMASeriesRepCallGraph";AMASeriesRepCallGraph={};
 @}
 
 
-\subsection{smolyakInterpolation}
-\label{sec:smolyakinterpolation}
-
-
-@d smolyakInterpolationUsage
-@{smolyakInterpolation::usage=
-"place holder for makeSmolyakInterpFunc"
-@}
-
-@d smolyakInterpolation
-@{
-smolyakInterpolation[fVals:{_?NumberQ..},@<smolGSpec@>]:=
-With[{wts=LinearSolve[smolMat,fVals],numVars=Length[smolRngs]},
-With[{origXs=Table[xx[ii],{ii,numVars}],
-theXs=Table[Unique["xx"],{ii,numVars}]},
-{Apply[Function,({theXs,Simplify[(wts.(smolPolys/.Thread[origXs->theXs]))/.Thread[theXs->MapThread[xformXValToCheb,{theXs,smolRngs}]]]})],
-Apply[Function,({Drop[theXs,-numEps],Simplify[(wts.(smolIntPolys/.
-Thread[Drop[origXs,-numEps]->Drop[theXs,-numEps]]))/.Thread[theXs->MapThread[xformXValToCheb,{theXs,smolRngs}]]]})]}]]
-
-AMASeriesRepCallGraph=
-Join[AMASeriesRepCallGraph,Map["smolyakInterpolation"->#&,{"xformXValToCheb"}]];
-@}
-
-
-\subsection{smolyakInterpolationPrep}
-\label{sec:smoly}
-
-@d smolyakInterpolationPrepUsage
-@{smolyakInterpolationPrep::usage="place holder"@}
-
-@d smolyakInterpolationPrep
-@{
-smolyakInterpolationPrep[approxLevels_?listOfIntegersQ,smolRngs_?MatrixQ,
-@<distribSpec@>]:=
-Module[{smolRes=sparseGridEvalPolysAtPts[approxLevels],
-numVars=Length[approxLevels],numEps=Length[distribSpec[[1]]]},
-With[{thePts=smolRes[[1]],smolPolys=smolRes[[2]],smolMat=smolRes[[3]]},
-With[{xPts=Map[Function[xx,xformToXVec[xx,smolRngs]],thePts]},
-(*Print["smolyPrep:",{xPts,thePts}];*)
-With[{numPolys=Length[smolPolys]},
-{xPts,smolMat,smolPolys,{}}]]]]/;
-And[Length[smolRngs]==Length[approxLevels]]
-
-AMASeriesRepCallGraph=
-Join[AMASeriesRepCallGraph,Map["smolyakInterpolationPrep"->#&,{"sparseGridEvalPolysAtPts","xformToXVec"}]];
-
-
-newSmolyakInterpolationPrep[approxLevels_?listOfIntegersQ,smolRngs_?MatrixQ,
-momSubs:{{(_->_)..}...}]:=
-Module[{smolRes=sparseGridEvalPolysAtPts[approxLevels],
-numVars=Length[approxLevels],numEps=Length[momSubs]},
-With[{thePts=smolRes[[1]],smolPolys=smolRes[[2]],smolMat=smolRes[[3]]},
-With[{xPts=Map[Function[xx,xformToXVec[xx,smolRngs]],thePts]},
-(*Print["smolyPrep:",{xPts,thePts}];*)
-With[{numPolys=Length[smolPolys]},
-{xPts,smolMat,smolPolys,compRawMoments[smolPolys,xx[3]]/.Flatten[momSubs]}]]]]/;
-And[Length[smolRngs]==Length[approxLevels]]
-
-
-AMASeriesRepCallGraph=
-Join[AMASeriesRepCallGraph,Map["newSmolyakInterpolationPrep"->#&,{"sparseGridEvalPolysAtPts","xformToXVec","compRawMoments"}]];
-
-compRawMoments[expr_,errVar:anX_Symbol[ii_Integer]]:=
-expr/.{errVar^nn_Integer->mom[ii,nn],errVar->mom[ii,1]}
-
-
-xformXValToCheb[xVal_,
-range:{lowVal_?NumberQ,highVal_?NumberQ}]:=
-xFormToChebInterval[xVal,lowVal,highVal]
-
-AMASeriesRepCallGraph=
-Join[AMASeriesRepCallGraph,Map["xformXValToCheb"->#&,{"xFormToChebInterval"}]];
-
-
-
-xformChebValToX[chebVal_,
-range:{lowVal_?NumberQ,highVal_?NumberQ}]:=
-xFormFromChebInterval[chebVal,lowVal,highVal]
-
-
-AMASeriesRepCallGraph=
-Join[AMASeriesRepCallGraph,Map["xformChebValToX"->#&,{"xFormFromChebInterval"}]];
-
-
-xformToXVec[chebPt_?VectorQ,ranges_?MatrixQ]:=
-MapThread[xformChebValToX,{chebPt,ranges}]
-
-AMASeriesRepCallGraph=
-Join[AMASeriesRepCallGraph,Map["xformToXVec"->#&,{"xformChebValToX"}]];
-
-@}
-
 \subsection{genInterpData}
 \label{sec:geninterpdata}
 
@@ -1042,76 +1227,6 @@ Join[AMASeriesRepCallGraph,Map["parallelGenInterpData"->#&,{"gridPts","fillIn"}]
 
 (*end code for parallelGenInterpData*)
 @}
-
-\subsection{smolyakGenInterpData}
-\label{sec:geninterpdata}
-
-
-
-
-
-@d smolyakGenInterpDataUsage
-@{smolyakGenInterpData::usage=
-"place holder for smolyakGenInterpData"
-@}
-
-@d smolyakGenInterpData
-@{
-(*begin code for smolyakGenInterpData*)
-
- 
-smolyakGenInterpData[
-aVecFunc:(_Function|_CompiledFunction),@<smolGSpec@>]:=
-With[{filledPts=Map[
-Function[xx,fillIn[{{},smolToIgnore,xx}]],N[smolPts]]},
-(*Print["smolyakGenInterpData:",filledPts//InputForm];*)
-With[{theVals=Map[
-Function[xx,(Apply[aVecFunc,xx])],filledPts]},
-With[{interpData=Map[Flatten,theVals]},
-interpData]]]
-
-
-AMASeriesRepCallGraph=
-Join[AMASeriesRepCallGraph,Map["smolyakGenInterpData"->#&,{"fillIn"}]];
-
-
-
-(*end code for smolyakGenInterpData*)
-@}
-
-
-\subsection{parallelSmolyakGenInterpData}
-\label{sec:geninterpdata}
-
-
-
-@d parallelSmolyakGenInterpDataUsage
-@{parallelSmolyakGenInterpData::usage=
-"place holder for parallelSmolyakGenInterpData"
-@}
-
-@d parallelSmolyakGenInterpData
-@{
-(*begin code for parallelSmolyakGenInterpData*)
-
- 
-parallelSmolyakGenInterpData[aVecFunc:(_Function|_CompiledFunction),@<gSpec@>,@<smolGSpec@>]:=
-With[{filledPts=ParallelMap[
-Function[xx,fillIn[{{},smolToIgnore,xx}]],smolyakPts]},
-With[{theVals=ParallelMap[
-Function[xx,(Apply[aVecFunc,xx])],filledPts]},
-With[{interpData=Transpose[{smolyakPts,theVals}]},
-interpData]]]
-
-
-
-  
-AMASeriesRepCallGraph=
-Join[AMASeriesRepCallGraph,Map["parallelSmolyakGenInterpData"->#&,{"fillIn"}]];
-
-(*end code for parallelSmolyakGenInterpData*)
-@}
-
 
 
 
@@ -1263,41 +1378,6 @@ Join[AMASeriesRepCallGraph,Map["doIterREInterp"->#&,{"makeInterpFunc","genFPFunc
 @}
 
 
-
-\subsection{doSmolyakIterREInterp}
-\label{sec:doiterreinterp}
-
-
-
-@d doSmolyakIterREInterpUsage
-@{doSmolyakIterREInterp::usage=
-"place holder for doSmolyakIterREInterp"
-@}
-
-@d doSmolyakIterREInterp
-@{
-(*begin code for doSmolyakIterREInterp*)
-doSmolyakIterREInterp[@<theSolver@>,
-	@<linMod@>,
-	@<XZFuncs@>,
-@<eqnsFunc@>,@<gSpec@>,@<smolGSpec@>,@<distribSpec@>]:=
-With[{numX=Length[BB],numEps=Length[psiEps[[1]]],numZ=Length[psiZ[[1]]]},
-tn=AbsoluteTime[];
-With[{theFuncs=makeSmolyakInterpFunc[genFPFunc[theSolver,linMod,XZFuncs,eqnsFunc],smolGSpec]},
-Print["makeSmolyakInterpTime=",(tn2=AbsoluteTime[])-tn];
-With[{XZRE=genXZREInterpFunc[{numX,numEps,numZ},theFuncs(*,smolToIgnore,smolRngs,smolPts,smolMat,smolPolys*),gSpec,distribSpec]},
-Print["genXZREInterpTime=",(AbsoluteTime[])-tn2];
-{theFuncs,XZRE}]]]
-
-AMASeriesRepCallGraph=
-Join[AMASeriesRepCallGraph,Map["doSmolyakIterREInterp"->#&,{"makeSmolyakInterpFunc","genFPFunc","getNumX","getNumEps","getNumZ","genXZREInterpFunc"}]];
-
-
-
-(*end code for doSmolyakIterREInterp*)
-@}
-
-
 \subsection{parallelDoIterREInterp}
 \label{sec:doiterreinterp}
 
@@ -1364,35 +1444,6 @@ Join[AMASeriesRepCallGraph,Map["nestIterREInterp"->#&,{"doIterREInterp"}]];
 (*end code for nestIterREInterp*)
 @}
 
-\subsection{nestSmolyakIterREInterp}
-\label{sec:nestiterreinterp}
-
-
-@d nestSmolyakIterREInterpUsage
-@{nestSmolyakIterREInterp::usage=
-"place holder for nestSmolyakIterREInterp"
-@}
-
-@d nestSmolyakIterREInterp
-@{
-(*begin code for nestSmolyakIterREInterp*)
-
-
-nestSmolyakIterREInterp[@<theSolver@>,@<linMod@>,
-@<XZFuncs@>,@<eqnsFunc@>,
-@<gSpec@>,
-@<distribSpec@>,numIters_Integer]:=
-NestList[Function[xx,doSmolyakIterREInterp[theSolver,linMod,
-{xx[[2]],numSteps},eqnsFunc,gSpec,distribSpec]],{ig,XZFuncs[[1]]},numIters]
-
-AMASeriesRepCallGraph=
-Join[AMASeriesRepCallGraph,Map["nestIterREInterp"->#&,{"doSmolyakIterREInterp"}]];
-
-
-
-(*end code for nestSmolyakIterREInterp*)
-@}
-
 \subsection{parallelNestIterREInterp}
 \label{sec:nestiterreinterp}
 
@@ -1444,42 +1495,6 @@ AMASeriesRepCallGraph=
 Join[AMASeriesRepCallGraph,Map["genXZREInterpFunc"->#&,{"genXZFuncRE","makeInterpFunc","elimGSpecShocks"}]];
 
 (*end code for genXZREInterpFunc*)
-@}
-
-
-\subsection{genSmolyakXZREInterpFunc}
-\label{sec:genxzreinterpfunc}
-
-
-@d genSmolyakXZREInterpFuncUsage
-@{genSmolyakXZREInterpFunc::usage=
-"place holder for genSmolyakXZREInterpFunc"
-@}
-
-@d genSmolyakXZREInterpFunc
-@{
-(*begin code for genSmolyakXZREInterpFunc*)
- 
-genSmolyakXZREInterpFunc[probDims:{numX_Integer,numEps_Integer,numZ_Integer},
-aLilXkZkFunc_Function,toIgnore:{_Integer...},ranges_?MatrixQ,smolPts_?MatrixQ,smolMat_?MatrixQ,smolPolys_?VectorQ,@<gSpec@>,@<distribSpec@>]:=
-With[{theFuncNow=genXZFuncRE[{numX,numEps,numZ},aLilXkZkFunc,distribSpec]},
-Print["genSmol:",InputForm[theFuncNow]];
-makeInterpFunc[theFuncNow,elimGSpecShocks[gSpec,numEps]]]
-  
-
-AMASeriesRepCallGraph=
-Join[AMASeriesRepCallGraph,Map["genSmolyakXZREInterpFunc"->#&,{"genXZFuncRE","makeInterpFunc","elimGSpecShocks"}]];
-
-
-elimGSpecShocks[@<gSpec@>,numEps_Integer]:=
-{toIgnore,gSpec[[2]],Drop[getGridPtTrips[gSpec],-(numEps)]}
-
-AMASeriesRepCallGraph=
-Join[AMASeriesRepCallGraph,Map["elimGSpecShocks"->#&,{"getGridPtTrips"}]];
-
-
-
-(*end code for genSmolyakXZREInterpFunc*)
 @}
 
 

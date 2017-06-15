@@ -14,7 +14,7 @@ Begin["`Private`"]
 
 FVSubs={rr->0.10,delta->0.60,sigma->0.01,dLow->0,dHigh->1};
 
-aGSpecFV={{2},2,{{6,dLow,dHigh},{6,-3*sigma,3*sigma}}}/.FVSubs;
+aGSpecFV={{2},2,{{3,dLow,dHigh},{3,-3*sigma,3*sigma}}}/.FVSubs;
 
 
 FVEqns={

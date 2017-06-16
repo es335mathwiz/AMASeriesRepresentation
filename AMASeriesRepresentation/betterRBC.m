@@ -22,7 +22,7 @@ theDistBetter::usage="theDist={{{ee,NormalDistribution[0,sigVal]}}};"
 thePFDistBetter::usage="theDist={{{ee,PerfectForesight]}}};"
 linModBetter::usage="linear model matrices for approx"
 aGSpecBetter::usage="aGSpec={{1},1,{{4,kLow,kHigh},{3,thLow,thHigh},{3,sigLow,3*sigHigh}}}";
-rbcEqnsFunctionalNextBetter::usage="model equations function"
+eqnsCompiledBetter::usage="model equations function"
 Begin["`Private`"] (* Begin Private Context *) 
 
 
@@ -73,7 +73,7 @@ cc[t+1]->cctp1,kk[t+1]->kktp1,nlPart[t+1]->nltp1,theta[t+1]->thtp1,
 eps[theta][t]->epsVal
 }//.paramSubs)//N
 
-rbcEqnsFunctionalNextBetter=Compile @@ {
+eqnsCompiledBetter=Compile @@ {
 {
 {cctm1,_Real},{kktm1,_Real},{nltm1,_Real},{thetatm1,_Real},
 {cct,_Real},{kkt,_Real},{nlt,_Real},{thetat,_Real},

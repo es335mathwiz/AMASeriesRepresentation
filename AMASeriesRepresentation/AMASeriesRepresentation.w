@@ -28,7 +28,7 @@ This data provides a sapecification for the smolyak points.
 
 @d smolyakInterpolationUsage
 @{smolyakInterpolation::usage=
-"place holder for makeSmolyakInterpFunc"
+"place holder for makeSmolyakInterpFuncs"
 @}
 
 The Smolyak grid specification has 7 components:
@@ -39,7 +39,7 @@ components of the essential state vector.
 This tally includes time t shocks.
 \item[smolPts] a matrix containing the smolyak points.  ??? can generate these 
 points.(?? why ranges needed ??)
-\item[smolMat] ???
+\item[smolMat] for computing the weights
 \item[smolPolys] the polynomials corresponding to the anisotropic formulation
 \item[smolIntPolys] the polynomials integrated apriori to speed the calculation
 \item[numEps] the number of shocks.  shocks are at the end of the vector x.
@@ -71,7 +71,8 @@ Out[88]//InputForm=
 \subsection{smolyakGenInterpData}
 \label{sec:geninterpdata}
 
-This code takes a function and a Smolyak ``grid'' specification and generates the data:  application of function at the Smolyak points.
+This code takes a function and a Smolyak ``grid'' specification and 
+generates the data:  application of function at the Smolyak points.
 
 
 
@@ -154,7 +155,7 @@ Takes model specification and prepares inputs for smolyakInterpolation function.
 
 @d smolyakInterpolationPrep
 @{
-Print["smolyakInterpolationPrep:need to compute expected values"];
+
 smolyakInterpolationPrep[approxLevels_?listOfIntegersQ,smolRngs_?MatrixQ,
 @<distribSpec@>]:=
 Module[{smolRes=sparseGridEvalPolysAtPts[approxLevels],
@@ -163,8 +164,20 @@ With[{thePts=smolRes[[1]],smolPolys=smolRes[[2]],smolMat=smolRes[[3]]},
 With[{xPts=Map[Function[xx,xformToXVec[xx,smolRngs]],thePts]},
 (*Print["smolyPrep:",{xPts,thePts}];*)
 With[{numPolys=Length[smolPolys]},
-{xPts,smolMat,smolPolys,{}}]]]]/;
-And[Length[smolRngs]==Length[approxLevels]]
+{xPts,smolMat,smolPolys,smolPolyExp[smolPolys,distribSpec]}]]]]/;
+And[Length[smolRngs]==Length[approxLevels]]\
+
+smolPolyExp[aSmolPoly_,@<distribSpec@>]:=
+With[{numEps=Length[distribSpec[[1]]],
+polyVars=Sort[Cases[aSmolPoly,xx[_Integer]]]},
+With[{numX=Length[polyVars]-numEps},
+With[{intVarRes=genIntVars[numX,distribSpec]},
+With[{polyEps=Drop[polyVars,numX],intEps=Drop[intVarRes[[2]],numX]},
+With[{epsSubs=MapThread[#1->#2&,{polyEps,intEps}]},
+With[{funcGuts=(aSmolPoly/.epsSubs)},
+myExpectation[funcGuts,intVarRes[[3]]]]]]]]]
+
+
 
 AMASeriesRepCallGraph=
 Join[AMASeriesRepCallGraph,
@@ -264,50 +277,56 @@ Map["parallelSmolyakGenInterpData"->#&,
 
 
 
-\subsection{makeSmolyakInterpFunc}
+\subsection{makeSmolyakInterpFuncs}
 \label{sec:makesmolinterpfunc}
 
 
 
 
-@d makeSmolyakInterpFuncUsage
-@{makeSmolyakInterpFunc::usage=
-"place holder for makeSmolyakInterpFunc"
+@d makeSmolyakInterpFuncsUsage
+@{makeSmolyakInterpFuncs::usage=
+"place holder for makeSmolyakInterpFuncs"
 @}
 
-@d makeSmolyakInterpFunc
+@d makeSmolyakInterpFuncs
 @{
-(*begin code for makeSmolyakInterpFunc*)
+(*begin code for makeSmolyakInterpFuncs*)
 
 
-makeSmolyakInterpFunc[aVecFunc:(_Function|_CompiledFunction),@<smolGSpec@>]:=
+makeSmolyakInterpFuncs[aVecFunc:(_Function|_CompiledFunction),@<smolGSpec@>]:=
 With[{interpData=smolyakGenInterpData[aVecFunc,smolGSpec],
 numArgs=Length[smolPts[[1]]]},
-Print["makeSmol:",interpData];
 With[{numFuncs=Length[interpData[[1]]],
 funcArgs=Table[Unique["fArgs"],{numArgs}]},
 With[{longFuncArgs=fillInSymb[{{},smolToIgnore,funcArgs}]},
 With[{interpFuncList=
 Map[Function[funcIdx,
-With[{smolApp=smolyakInterpolation[interpData[[All,funcIdx]],smolGSpec][[1]]},
-(*Print["smolApp=",smolApp];*)
-smolApp]],
-Range[numFuncs]]},
-Print["makeSmolyak:interpFuncList",{Dimensions[interpData],interpFuncList//InputForm}];
-		With[{applied=Transpose[{Through[Apply[interpFuncList,funcArgs]]}]},
-	ReplacePart[
+With[{theInterps=smolyakInterpolation[interpData[[All,funcIdx]],smolGSpec]},
+With[{smolApp=theInterps},
+smolApp]]],Range[numFuncs]]},
+With[
+{applied=
+Transpose[{Through[Apply[Map[First,interpFuncList],funcArgs]]}],
+appliedExp=
+Transpose[{Through[Apply[Map[Last,interpFuncList],funcArgs]]}]},
+{
+ReplacePart[
 	Function[xxxxxxx, applied],
-		{1->longFuncArgs}]
+		{1->longFuncArgs}],
+ReplacePart[
+	Function[xxxxxxx, appliedExp],
+		{1->Drop[longFuncArgs,-numEps]}]
+}
 	]
 ]]]]
 
 
 AMASeriesRepCallGraph=
-Join[AMASeriesRepCallGraph,Map["makeSmolyakInterpFunc"->#&,{"smolyakInterpolation","smolyakGenInterpData","fillInSymb"}]];
+Join[AMASeriesRepCallGraph,Map["makeSmolyakInterpFuncs"->#&,{"smolyakInterpolation","smolyakGenInterpData","fillInSymb"}]];
 
 
 
-(*end code for makeSmolyakInterpFunc*)
+(*end code for makeSmolyakInterpFuncs*)
 @}
 
 
@@ -327,23 +346,18 @@ Join[AMASeriesRepCallGraph,Map["makeSmolyakInterpFunc"->#&,{"smolyakInterpolatio
 doSmolyakIterREInterp[@<theSolver@>,
 	@<linMod@>,
 	@<XZFuncs@>,
-@<eqnsFunc@>,@<gSpec@>,@<smolGSpec@>,@<distribSpec@>]:=
-With[{numX=Length[BB],numEps=Length[psiEps[[1]]],numZ=Length[psiZ[[1]]]},
+@<eqnsFunc@>,@<smolGSpec@>,@<distribSpec@>]:=
+With[{numX=Length[BB],numZ=Length[psiZ[[1]]]},
 tn=AbsoluteTime[];
 With[{theFuncs=
-makeSmolyakInterpFunc[
+makeSmolyakInterpFuncs[
 genFPFunc[theSolver,linMod,XZFuncs,eqnsFunc],smolGSpec]},
-Print["makeSmolyakInterpTime=",(tn2=AbsoluteTime[])-tn];
-With[{XZRE=genXZREInterpFunc[{numX,numEps,numZ},theFuncs
-(*,smolToIgnore,smolRngs,smolPts,smolMat,smolPolys*),
-gSpec,distribSpec]},
-Print["genXZREInterpTime=",(AbsoluteTime[])-tn2];
-{theFuncs,XZRE}]]]
+theFuncs]]
 
 AMASeriesRepCallGraph=
 Join[AMASeriesRepCallGraph,
 Map["doSmolyakIterREInterp"->#&,
-{"makeSmolyakInterpFunc","genFPFunc","getNumX",
+{"makeSmolyakInterpFuncs","genFPFunc","getNumX",
 "getNumEps","getNumZ","genXZREInterpFunc"}]];
 
 
@@ -409,11 +423,10 @@ Join[AMASeriesRepCallGraph,Map["elimGSpecShocks"->#&,{"getGridPtTrips"}]];
 
 
 nestSmolyakIterREInterp[@<theSolver@>,@<linMod@>,
-@<XZFuncs@>,@<eqnsFunc@>,
-@<gSpec@>,
+@<XZFuncs@>,@<eqnsFunc@>,@<smolGSpec@>,
 @<distribSpec@>,numIters_Integer]:=
 NestList[Function[xx,doSmolyakIterREInterp[theSolver,linMod,
-{xx[[2]],numSteps},eqnsFunc,gSpec,distribSpec]],{ig,XZFuncs[[1]]},numIters]
+{xx[[2]],numSteps},eqnsFunc,smolGSpec,distribSpec]],{99,XZFuncs[[1]]},numIters]
 
 AMASeriesRepCallGraph=
 Join[AMASeriesRepCallGraph,Map["nestIterREInterp"->#&,{"doSmolyakIterREInterp"}]];
@@ -687,11 +700,10 @@ With[{interpFuncList=
 Map[Function[funcIdx,Interpolation[
 Map[Function[xx,{xx[[1]], xx[[2, funcIdx, 1]]}] , 
 		interpData],InterpolationOrder -> iOrd]],Range[numFuncs]]},
-Print["makeInterpFunc:interpFuncList",interpFuncList//InputForm];
 		With[{applied=Transpose[{Through[Apply[interpFuncList,funcArgs]]}]},
 	ReplacePart[
 	Function[xxxxxxx, applied],
-		{1->longFuncArgs}]
+		{1->Drop[longFuncArgs]}]
 	]
 ]]]]
 
@@ -855,7 +867,7 @@ nestIterREInterp[@<theSolver@>,@<linMod@>,
 @<gSpec@>,
 @<distribSpec@>,numIters_Integer]:=
 NestList[Function[xx,doIterREInterp[theSolver,linMod,
-{xx[[2]],numSteps},eqnsFunc,gSpec,distribSpec]],{ig,XZFuncs[[1]]},numIters]
+{xx[[2]],numSteps},eqnsFunc,gSpec,distribSpec]],{99,XZFuncs[[1]]},numIters]
 
 
 AMASeriesRepCallGraph=
@@ -1016,7 +1028,7 @@ PerfectForesight::usage="degenerate distribution implementing perfect foresight"
 @<getFUsage@>
 @<getGridPtTripsUsage@>
 @<getNumVarsUsage@>
-@<makeSmolyakInterpFuncUsage@>
+@<makeSmolyakInterpFuncsUsage@>
 @<parallelMakeInterpFuncUsage@>
 @<makeInterpFuncUsage@>
 @<parallelSmolyakGenInterpDataUsage@>
@@ -1117,7 +1129,7 @@ PerfectForesight::usage="degenerate distribution implementing perfect foresight"
 @<genFRFunc@>
 @<genFPFunc@>
 @<myFixedPoint@>
-@<makeSmolyakInterpFunc@>
+@<makeSmolyakInterpFuncs@>
 @<parallelMakeInterpFunc@>
 @<makeInterpFunc@>
 @<parallelGenInterpData@>
@@ -1780,6 +1792,14 @@ myNExpectation[funcName_Symbol[funcArgs_List,idx_Integer],{anEpsVar_\[Distribute
 Apply[funcName,Append[ReplacePart[{funcArgs},{{1,(-1)}->0}],idx]]
 
 myNExpectation[funcName_Symbol[farg_List,idx_Integer],nArgs_List]:=Chop[NExpectation[funcName[farg,idx],nArgs]]
+
+
+myExpectation[farg_List,nArgs_List]:=
+Chop[Expectation[farg,nArgs]]
+
+
+
+
 
 
 myNewNExpectation[fff_[fargs___],anEpsVar_\[Distributed] PerfectForesight]:=Module[{},Print["there",{(Apply[fff,{fargs}]),{fargs}/.anEpsVar->0}];(Apply[fff,{fargs}])/.anEpsVar->0]

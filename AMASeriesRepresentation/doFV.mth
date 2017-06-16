@@ -1,0 +1,86 @@
+Get["pathSetup.mth"]
+Needs["AMASeriesRepresentation`"]
+Needs["mathSmolyak`"]
+Get["firmValue`"]
+X0Z0=genX0Z0Funcs[linModFV];
+
+anXEpsFV={{1},{2},{3}};
+anXEpsFlatFV=Flatten[anXEpsFV];
+anXFV=Drop[anXEpsFV,-1]
+anXFlatFV=Flatten[anXFV];
+
+theLilFunc=genLilXkZkFunc[linModFV, {X0Z0,2},anXEpsFV];
+
+
+theFR=genFRFunc[{2,1,2},theLilFunc,eqnsCompiledFV];
+theFR@@anXEpsFlatFV
+
+theFP=genFPFunc[{genFRFunc},linModFV,{X0Z0,2},eqnsCompiledFV];
+
+theFP@@anXEpsFlatFV
+
+
+
+
+
+(*
+
+{tm,tintf}=Timing[theFPInterp=makeInterpFunc[theFP,aGSpecFV]]
+
+
+{tmgnxzpar,ig}=Timing[XZRE=parallelGenXZREInterpFunc[{2,1,2},theFPInterp,aGSpecFV,theDistFV]];
+
+
+ig @@anXEpsFlatFV
+
+
+
+
+theRes=Timing[{x1z1Func, X1Z1Func} = 
+			  doIterREInterp[{genFRFunc},linModFV, {genX0Z0Funcs[linModFV],2},eqnsCompiledFV,aGSpecFV,theDistFV]];
+
+theNestRes=Timing[{x1z1Func, X1Z1Func} = 
+			  nestIterREInterp[{genFRFunc},linModFV, {genX0Z0Funcs[linModFV],2},eqnsCompiledFV,aGSpecFV,theDistFV,2]];
+
+
+
+{x1z1Func @@anXEpsFlatFV,X1Z1Func @@Drop[anXEpsFlatFV,-1]}
+
+parallelRes=Timing[{x1z1Func, X1Z1Func} = 
+  parallelDoIterREInterp[{genFRFunc},linModFV, {genX0Z0Funcs[linModFV],2},eqnsCompiledFV,aGSpecFV,theDistFV]];
+*)
+
+smolRng=#[[{2,3}]]&/@Drop[aGSpecFV,2][[1]];
+{pt,tf,ply,ig}=smolyakInterpolationPrep[{1,1},smolRng,theDistFV];
+sgSpec={{2},smolRng,pt,tf,ply,ply/.xx[2]->0,1};
+{tmSmol,ig}=Timing[{theSmolFPInterp,theSmolFPInterpExp}=makeSmolyakInterpFuncs[theFP,sgSpec]];
+{theSmolFPInterp @@ anXEpsFlatFV,theSmolFPInterpExp @@ anXFlatFV,theFP @@ anXEpsFlatFV}
+
+
+{tmSmol,ig}=Timing[anIter=doSmolyakIterREInterp[{genFRFunc},linModFV, {genX0Z0Funcs[linModFV],2},eqnsCompiledFV,sgSpec,theDistFV]];
+
+{tmSmol,ig}=Timing[moreIters=nestSmolyakIterREInterp[{genFRFunc},linModFV, {genX0Z0Funcs[linModFV],2},eqnsCompiledFV,sgSpec,theDistFV,3]];
+
+
+(*
+
+
+
+
+
+
+
+
+siData=smolyakGenInterpData[theFP,sgSpec];
+
+
+
+bip=smolyakInterpolation[siData[[All,1]],sgSpec]
+
+Print["needs intply"]
+
+{tmSmol,ig}=Timing[theSmolFPInterp=makeSmolyakInterpFuncs[theFP,sgSpec]]
+
+
+
+*)

@@ -55,6 +55,8 @@ siData=smolyakGenInterpData[theFP,sgSpec];
 (*
 tryX=pt;tryY=Flatten[First/@siData];
 InstallJava[]
+svmt = JavaNew["libsvm.trainGuts"];
+svmt[mmaUreadUproblemPoly[Transpose[tryX],tryY, {100, .001, 10, .2, 1}]]
 
 
 svmDoer = 

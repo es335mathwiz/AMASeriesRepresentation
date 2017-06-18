@@ -61,6 +61,10 @@ sgSpec={{2},smolRng,pt,tf,ply,ply/.xx[2]->0,1};
 
 {tmSmol,ig}=Timing[moreIters=nestSmolyakIterREInterp[{genFRFunc},linModFV, {genX0Z0Funcs[linModFV],2},eqnsCompiledFV,sgSpec,theDistFV,3]];
 
+siData=smolyakGenInterpData[theFP,sgSpec];
+
+
+
 
 (*
 

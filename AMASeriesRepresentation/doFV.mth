@@ -1,10 +1,12 @@
 Get["pathSetup.mth"]
 Needs["AMASeriesRepresentation`"]
 Needs["mathSmolyak`"]
+Needs["Format`"]
+Needs["MmaModelToC`"]
 Get["firmValue`"]
 X0Z0=genX0Z0Funcs[linModFV];
 
-anXEpsFV={{1},{2},{3}};
+anXEpsFV={{.5},{2},{0.1}};
 anXEpsFlatFV=Flatten[anXEpsFV];
 anXFV=Drop[anXEpsFV,-1]
 anXFlatFV=Flatten[anXFV];
@@ -20,9 +22,35 @@ theFP=genFPFunc[{genFRFunc},linModFV,{X0Z0,2},eqnsCompiledFV];
 theFP@@anXEpsFlatFV
 
 
+smolRng=#[[{2,3}]]&/@Drop[aGSpecFV,2][[1]];
+{pt,tf,ply,ig}=smolyakInterpolationPrep[{1,1},smolRng,theDistFV];
+sgSpec={{2},smolRng,pt,tf,ply,ply/.xx[2]->0,1};
+siData=smolyakGenInterpData[theFP,sgSpec];
+
+tryX=pt//N;tryY=First/@siData;
+InstallJava[]
+AddToClassPath["/msu/home/m1gsa00/NetBeansProjects/myLibsvm/build/classes"]
+
+newX={{0.5, 0.}, {0.5, -0.03}, {0.5, 0.03}, {0., 0.}, {1., 0.}}
+newY={0.2, 0.17, 0.23, 0., 0.4}
+
+svmDoer = 
+ JavaNew["libsvm.svm"];
 
 
+boo=cnstrctExpKern[Transpose[newX],newY,dotProdKernel,1,.01,theDistFV]
 
+writeExpKern["dwell",boo[[1]],boo[[2]],boo[[3]]]
+
+
+boo=cnstrctExpKern[Transpose[newX],newY,dotProdKernel,1,.01,theDistFV]
+writeExpKern["dwell",boo[[1]],boo[[2]],boo[[3]]]
+!javac forImport/dwell.java
+
+{svf,esvf}=svmRegressionLinear[tryY,sgSpec,{1,0.01}];
+wrapper[(x1_)?NumberQ,(x2_)?NumberQ] := svf[{x1, x2}]
+NExpectation[wrapper[anXEpsFlatFV[[1]],eps],eps \[Distributed] NormalDistribution[0, 0.01]]
+esvf[anXEpsFlatFV[[{1}]]]
 (*
 
 {tm,tintf}=Timing[theFPInterp=makeInterpFunc[theFP,aGSpecFV]]
@@ -61,7 +89,7 @@ sgSpec={{2},smolRng,pt,tf,ply,ply/.xx[2]->0,1};
 
 {tmSmol,ig}=Timing[moreIters=nestSmolyakIterREInterp[{genFRFunc},linModFV, {genX0Z0Funcs[linModFV],2},eqnsCompiledFV,sgSpec,theDistFV,3]];
 
-siData=smolyakGenInterpData[theFP,sgSpec];
+
 
 
 

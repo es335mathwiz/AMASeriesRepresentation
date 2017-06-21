@@ -138,6 +138,241 @@ Map["smolyakInterpolation"->#&,{"xformXValToCheb"}]];
 @}
 
 
+\subsection{svmRegressionLinear}
+\label{sec:svmRegressionlinear}
+
+The function returns both the level and the derivative approximating functions.
+
+@d svmRegressionLinearUsage
+@{svmRegressionLinear::usage=
+"place holder for svmRegressionLinear"
+@}
+
+
+@d svmRegressionLinear
+@{
+svmRegressionLinear[fVals:{_?NumberQ..},@<smolGSpec@>,svmArgs:{_?NumberQ,_?NumberQ}]:=
+Module[{svmtLinear = JavaNew["libsvm.trainGuts"],svindLinear,modLinear},
+svmtLinear[mmaUreadUproblemLinear[smolPts//N,fVals//N, svmArgs]];
+modLinear = 
+     libsvm`svm`svmUtrain[svmtLinear[prob],svmtLinear[param]];
+svindLinear = modLinear[svUindices];
+linFunc=Function[xx,(libsvm`svm`svmUpredict[modLinear, xx] )];
+expLinFunc=Function[xx,(libsvm`svm`svmUpredictUExpectedUvalues[modLinear, xx] )];
+{linFunc,expLinFunc}]
+
+AMASeriesRepCallGraph=
+Join[AMASeriesRepCallGraph,
+Map["svmRegressionLinear"->#&,{"xformXValToCheb"}]];
+@}
+
+\subsection{svmRegressionPoly}
+\label{sec:smregressionpoly}
+
+The function returns both the level and the derivative approximating functions.
+
+@d svmRegressionPolyUsage
+@{svmRegressionPoly::usage=
+"place holder for svmRegressionPoly"
+@}
+
+
+@d svmRegressionPoly
+@{
+svmRegressionPoly[fVals:{_?NumberQ..},@<smolGSpec@>,svmArgs:{_?NumberQ,_?NumberQ}]:=
+Module[{svmtPoly = JavaNew["libsvm.trainGuts"],svindPoly,modPoly},
+svmtPoly[mmaUreadUproblemPoly[smolPts//N,fVals//N, svmArgs]];
+modPoly = 
+     libsvm`svm`svmUtrain[svmtPoly[prob],svmtPoly[param]];
+svindPoly = modPoly[svUindices];
+linFunc=Function[xx,(libsvm`svm`svmUpredict[modPoly, xx] )];
+{linFunc,Map[linFunc, (smolPts//N)]}]
+
+AMASeriesRepCallGraph=
+Join[AMASeriesRepCallGraph,
+Map["svmRegressionPoly"->#&,{"xformXValToCheb"}]];
+@}
+
+@d expectation templates
+@{
+expKernTop=
+"package forImport;
+//``
+public class `` {
+public static double [] testExpKern(double[] xNow)   {
+   double [] theExpVals = new double[``];
+"
+
+expKernBottom="
+   return(theExpVals);
+} 
+}
+"
+
+
+
+@}
+
+@d writeExpKern
+@{
+writeExpKern[theFile_String,expEqns_List,expCode_String,defines_String]:=
+Module[{javaFile="forImport/"<>theFile<>".java"},
+WriteString[javaFile,TemplateApply[expKernTop,
+{DateString[],theFile,Length[expEqns]}]];
+WriteString[javaFile,defines];
+WriteString[javaFile,expCode];
+WriteString[javaFile,expKernBottom];
+       Close[javaFile]]
+
+@<expectation templates@>
+
+@}
+
+@d theExpValsUsage
+@{
+theExpVals::usage="place holder"
+@}
+@d xNowUsage
+@{
+xNow::usage="place holder"
+@}
+
+
+@d writeExpKernUsage
+@{
+writeExpKern::usage="writeExpKern[theFile_String]"
+@}
+
+@d ExpKernCode
+@{
+cnstrctExpKern[xData_?MatrixQ,yData_?VectorQ,
+theKernel_Function,CC_?NumberQ,epsilon_?NumberQ,@<distribSpec@>]:=
+With[{numEps=Length[expctSpec]},
+With[{xvars=Transpose[{genXVars[Length[xData]-numEps]}],
+epsvars=Map[{First[#]}&,expctSpec],
+intVars=Map[#[[1]] \[Distributed]#[[2]]&,expctSpec]},
+With[{numExamples=Length[xData[[1]]],
+xSubs=genXSubs[xvars]},Print["xSubs:",xSubs];
+With[{kernelPart=Flatten[Map[theKernel[Transpose[{#}],Join[xvars,epsvars]]&,
+Transpose[xData]]]},
+With[{expVals=myExpectation[kernelPart,intVars]},
+With[{expCode=StringReplace[
+myCAssign[theExpVals,expVals,AssignEnd->";\n",
+AssignOptimize->True,OptimizationSymbol -> okay],
+Join[xSubs,{"pow("->"Math.pow("}]]},
+{expVals,expCode,genDefines[expCode],kernelPart}]]]]]]/;
+And[Length[xData]>0,Length[xData[[1]]]>0]
+
+
+cnstrctF[qpSubs_List,xData_?MatrixQ,yData_?VectorQ,
+theKernel_Function,CC_?NumberQ,epsilon_?NumberQ]:=
+With[{xvars=Transpose[{genXVars[Length[xData]]}],
+numExamples=Length[xData[[1]]]},
+With[{pVars=genPlusVars[numExamples],mVars=genMinusVars[numExamples]},
+With[{kernelPart=
+Flatten[Map[
+theKernel[Transpose[{#}],xvars]&,Transpose[xData]]]},
+Print["xvars:",{xvars,pVars,mVars,kernelPart}];
+Print["approxB=",approxB[qpSubs,xData,yData,theKernel,CC,epsilon]];
+	 Function @@{Flatten[xvars],(-1)*((pVars-mVars)/.qpSubs) . kernelPart+
+approxB[qpSubs,xData,yData,theKernel,CC,epsilon]}]]]/;
+And[Length[xData]>0,Length[xData[[1]]]>0]
+
+
+
+approxB[qpSubs_List,xData_?MatrixQ,yData_?VectorQ,
+theKernel_Function,CC_?NumberQ,epsilon_?NumberQ]:=
+With[{minusBs=(Flatten[
+yData[[onMinusBoundaryTube[qpSubs,CC]]] +
+(Map[(wExprn[xData,theKernel,Transpose[{#}]]/.qpSubs)&,
+Transpose[xData[[All,onMinusBoundaryTube[qpSubs,CC]]]]])+
+epsilon]),
+plusBs=(Flatten[
+yData[[onPlusBoundaryTube[qpSubs,CC]]] +
+(Map[(wExprn[xData,theKernel,Transpose[{#}]]/.qpSubs)&,
+Transpose[xData[[All,onPlusBoundaryTube[qpSubs,CC]]]]])-
+epsilon])},Print["approxB:",{minusBs,plusBs}];
+	 With[{finite=DeleteCases[{Max[minusBs],Min[plusBs]},Infinity|-Infinity]},If[Length[finite]==0,0,(Plus @@finite)/Length[finite]]]]
+
+
+wExprn[xData_?MatrixQ]:=
+With[{numExamples=Length[xData[[1]]]},
+With[{pVars=genPlusVars[numExamples],mVars=genMinusVars[numExamples]},
+(pVars-mVars).Transpose[xData]]]/;
+And[Length[xData]>0,Length[xData[[1]]]>0]
+
+
+wExprn[xData_?MatrixQ,kernelFunc_Function,particularX_?MatrixQ]:=
+With[{numExamples=Length[xData[[1]]]},
+With[{pVars=genPlusVars[numExamples],mVars=genMinusVars[numExamples]},
+Flatten[
+	(pVars-mVars). (Map[kernelFunc[Transpose[{#1}],particularX]&,Transpose[xData]])	
+]]]/;
+And[Length[xData]>0,Length[xData[[1]]]>0]
+
+
+
+
+genXSubs[xVars_List]:=
+MapIndexed[ToString[#]->"xNow["<>ToString[#2[[1]]-1]<>"]"&,Flatten[xVars]]
+
+
+genXVars[numFeatures_Integer]:=
+Table[
+Symbol["x$"<>ToString[ii]],
+{ii,numFeatures}]
+
+genEpsVars[numFeatures_Integer]:=
+Table[
+Symbol["eps$"<>ToString[ii]],
+{ii,numFeatures}]
+
+
+dotProdKernel=Function[{xx,yy},Transpose[xx] . yy];
+
+
+
+makeSymbolicKernel[]:=
+With[{myX=Unique["xx"],myY=Unique["yy"]},
+	 Apply[Function,{{myX,myY},ffff[myX,myY]}]]
+
+makePolynomialKernel[aPow_Integer]:=
+With[{myX=Unique["xx"],myY=Unique["yy"]},
+Apply[Function,{{myX,myY},(1+Transpose[myX] . myY)^aPow}]]
+
+
+makeRBFKernel[aRadius_Integer]:=
+Function[{myX,myY},E^(-Outer[Norm[Plus[#1,#2]]&,Transpose[myX],-Transpose[myY],1]/(2*(aRadius^2)))]
+
+@}
+@d makeSymbolicKernelUsage
+@{
+makeSymbolicKernel::usage="place holder"
+@}
+@d dotProdKernelUsage
+@{
+dotProdKernel::usage="place holder"
+@}
+@d makePolynomialKernelUsage
+@{
+makePolynomialKernel::usage="place holder"
+@}
+@d makeRBFKernelUsage
+@{
+makeRBFKernel::usage="place holder"
+@}
+
+@d cnstrctFUsage
+@{
+cnstrctF::usage="cnstrctF[qpSubs_List,xData_?MatrixQ,yData_?VectorQ,theKernel_Function,CC_?NumberQ,epsilon_?NumberQ]"
+@}
+
+@d cnstrctExpKernUsage
+@{
+cnstrctExpKern::usage="cnstrctExpKern[xData_?MatrixQ,yData_?VectorQ,
+theKernel_Function,CC_?NumberQ,epsilon_?NumberQ,numEps_Integer]"
+@}
+
 \subsection{smolyakInterpolationPrep}
 \label{sec:smoly}
 
@@ -971,7 +1206,7 @@ Join[AMASeriesRepCallGraph,Map["elimGSpecShock"->#&,{"getGridPtTrips"}]];
 @o AMASeriesRepresentation.m
 @{
 BeginPackage["AMASeriesRepresentation`",
- {"JLink`","ProtectedSymbols`","mathSmolyak`"}]
+ {"JLink`","ProtectedSymbols`","mathSmolyak`","MmaModelToC`"}]
 @<usage definitions@>
 Begin["`Private`"]
 @<package code@>
@@ -991,6 +1226,16 @@ EndPackage[]
 @{
 (*Begin Usage Definitions*)
 PerfectForesight::usage="degenerate distribution implementing perfect foresight"
+@<cnstrctFUsage@>
+@<xNowUsage@>
+@<theExpValsUsage@>
+@<makeRBFKernelUsage@>
+@<makePolynomialKernelUsage@>
+@<makeSymbolicKernelUsage@>
+@<dotProdKernelUsage@>
+@<cnstrctExpKernUsage@>
+@<svmRegressionLinearUsage@>
+@<svmRegressionPolyUsage@>
 @<getterSetterTestsUsage@>
 @<callGraphUsage@>
 @<smolyakInterpolationUsage@>
@@ -1068,6 +1313,7 @@ PerfectForesight::usage="degenerate distribution implementing perfect foresight"
 @<genPathUsage@>
 @<getNumIgnoredUsage@>
 @<getNumInterpVarsUsage@>
+@<writeExpKernUsage@>
 @}
 
 \section{Package Code}
@@ -1075,7 +1321,11 @@ PerfectForesight::usage="degenerate distribution implementing perfect foresight"
 
 @d package code
 @{
+@<ExpKernCode@>
+@<writeExpKern@>
 @<parallelSmolyakGenInterpData@>
+@<svmRegressionLinear@>
+@<svmRegressionPoly@>
 @<smolyakGenInterpData@>
 @<smolyakInterpolation@>
 @<smolyakInterpolationPrep@>
@@ -2461,6 +2711,9 @@ getterSetterTests={};
 @{
 getterSetterTests::usage="getterSetterTestsUsage"
 @}
+
+
+
 \subsection{Identifiers}
 \label{sec:identifiers}
 

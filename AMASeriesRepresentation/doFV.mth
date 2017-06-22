@@ -35,23 +35,40 @@ newX={{0.5, 0.}, {0.5, -0.03}, {0.5, 0.03}, {0., 0.}, {1., 0.}}
 newY={0.2, 0.17, 0.23, 0., 0.4}
 
 svmDoer = 
- JavaNew["libsvm.svm"];
+ LoadJavaClass["libsvm.svm"];
 
-
+(*
 boo=cnstrctExpKern[Transpose[newX],newY,dotProdKernel,1,.01,theDistFV]
 
-writeExpKern["dwell",boo[[1]],boo[[2]],boo[[3]]]
+writeExpKern["dwell",boo[[1]],boo[[2]],boo[[3]],boo[[5]],boo[[6]]]
 
-
+*)
 boo=cnstrctExpKern[Transpose[newX],newY,dotProdKernel,1,.01,theDistFV]
-writeExpKern["dwell",boo[[1]],boo[[2]],boo[[3]]]
-!javac forImport/dwell.java
+writeExpKern["dwell",boo[[1]],boo[[2]],boo[[3]],boo[[5]],boo[[6]]]
+Print["compiling java"];
+Run["(source ~/.bashrc;javac forImport/dwell.java)"]
 
 {svf,esvf}=svmRegressionLinear[tryY,sgSpec,{1,0.01}];
-wrapper[(x1_)?NumberQ,(x2_)?NumberQ] := svf[{x1, x2}]
+{polysvf,polyesvf}=svmRegressionPoly[tryY,sgSpec,{1,0.01,1,.2,10}];
+{rbfsvf,rbfesvf}=svmRegressionRBF[tryY,sgSpec,{1,0.01,1}];
+{sigsvf,sigesvf}=svmRegressionSigmoid[tryY,sgSpec,{1,0.01,1,1}];
+
+{theSmolFPInterp,theSmolFPInterpExp}=makeSmolyakInterpFuncs[theFP,sgSpec]
+{gtheSmolFPInterp,gtheSmolFPInterpExp}=makeGenericInterpFuncs[theFP,sgSpec,smolyakInterpolation]
+
+
+wrapper[(x1_)?NumberQ,(x2_)?NumberQ] := svf[x1, x2]
 NExpectation[wrapper[anXEpsFlatFV[[1]],eps],eps \[Distributed] NormalDistribution[0, 0.01]]
-esvf[anXEpsFlatFV[[{1}]]]
+wrapper[(x1_)?NumberQ,(x2_)?NumberQ] := polysvf[x1, x2]
+NExpectation[wrapper[anXEpsFlatFV[[1]],eps],eps \[Distributed] NormalDistribution[0, 0.01]]
+
 (*
+
+libsvm`svm`mysvmUpredictUExpectedUvalues[AMASeriesRepresentation`Private`modLinear$1599, #]& @ {.2}
+
+betterFunc=Function[{x1,x2},libsvm`svm`mysvmUpredictUvalues[AMASeriesRepresentation`Private`modLinear$1599, #]& @ {x1,x2}]
+
+
 
 {tm,tintf}=Timing[theFPInterp=makeInterpFunc[theFP,aGSpecFV]]
 

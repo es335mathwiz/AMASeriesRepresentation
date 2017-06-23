@@ -72,6 +72,13 @@ dit=doGenericIterREInterp[{genFRFunc},linModFV, {genX0Z0Funcs[linModFV],2},eqnsC
 dit=doGenericIterREInterp[{genFRFunc},linModFV, {genX0Z0Funcs[linModFV],2},eqnsCompiledFV,sgSpec,theDistFV,svmRegressionSigmoid,{1,0.01,1,1}];
 
 
+{pt,tf,ply,ig}=smolyakInterpolationPrep[{4,4},smolRng,theDistFV];
+sgSpec={{2},smolRng,pt,tf,ply,ply/.xx[2]->0,1};
+
+
+odit=nestIterREInterp[{genFRFunc},linModFV, {genX0Z0Funcs[linModFV],2},eqnsCompiledFV,aGSpecFV,theDistFV,2];
+
+
 dit=nestGenericIterREInterp[{genFRFunc},linModFV, {genX0Z0Funcs[linModFV],2},eqnsCompiledFV,sgSpec,theDistFV,smolyakInterpolation,{},2];
 dit=nestGenericIterREInterp[{genFRFunc},linModFV, {genX0Z0Funcs[linModFV],2},eqnsCompiledFV,sgSpec,theDistFV,svmRegressionLinear,{1.0,0.01},2];
 dit=nestGenericIterREInterp[{genFRFunc},linModFV, {genX0Z0Funcs[linModFV],2},eqnsCompiledFV,sgSpec,theDistFV,svmRegressionPoly,{1,0.01,1,.2,10},2];
@@ -153,5 +160,28 @@ Print["needs intply"]
 {tmSmol,ig}=Timing[theSmolFPInterp=makeSmolyakInterpFuncs[theFP,sgSpec]]
 
 
+
+*)
+(*
+
+Through[dit[[2]] @@ # &[anXEpsFlatBetter]]
+
+Through[dit[[-1]]@@#&@{x1,x2,e1}]//Chop
+shows components of 
+firmValue`Private`bmatSymbRE
+firmValue`Private`phimatSymbRE
+
+
+
+well=doGenericIterREInterp[{genFRFunc},linModFV, {genX0Z0Funcs[linModFV],2},eqnsCompiledFV,sgSpec,theDistFV,svmRegressionLinear,{100.0,0.0001}]
+
+theLilFunc=genLilXkZkFunc[linModFV, {well[[2]],2},anXEpsFV];
+
+theFR=genFRFunc[{2,1,2},theLilFunc,eqnsCompiledFV];
+theFR@@anXEpsFlatFV
+
+theFP=genFPFunc[{genFRFunc},linModFV,{X0Z0,2},eqnsCompiledFV];
+
+theFP@@anXEpsFlatFV
 
 *)

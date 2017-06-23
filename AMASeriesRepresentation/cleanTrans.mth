@@ -72,13 +72,13 @@ siData=smolyakGenInterpData[theFP,sgSpec];
 
 bip=smolyakInterpolation[siData[[All,1]],sgSpec]
 
-{tmSmol,ig}=Timing[theSmolFPInterp=makeSmolyakInterpFunc[theFP,sgSpec]];
+{tmSmol,ig}=Timing[theSmolFPInterp=makeSmolyakInterpFunc[theFP,sgSpec]];{tmSmol,ig}=Timing[theSmolFPInterp=makeSmolyakInterpFunc[theFP,sgSpec]];
 
 {tm,ig}=Timing[theFPInterp=makeInterpFunc[theFP,aGSpecBetter]]
 
 (*
 {tmgnxzpar,ig}=Timing[XZRE=parallelGenXZREInterpFunc[{4,1,4},theFPInterp,aGSpecBetter,theDistBetter]];
-{smoltmgnxzpar,ig}=Timing[smolXZRE=parallelGenXZREInterpFunc[{4,1,4},theSmolFPInterp,aGSpecBetter,theDistBetter]]
+{smoltmgnxzpar,ig}=Timing[smolXZRE=parallelGenXZREInterpFunc[{4,1,4},theSmolFPInterp,aGSpecBetter,theDistBetter]]{smoltmgnxzpar,ig}=Timing[smolXZRE=parallelGenXZREInterpFunc[{4,1,4},theSmolFPInterp,aGSpecBetter,theDistBetter]]
  *)
 (*
 {tmgxz,XZInterp}=Timing[genXZREInterpFunc[{4, 1, 4},theFP,aGSpecBetter,theDistBetter]];

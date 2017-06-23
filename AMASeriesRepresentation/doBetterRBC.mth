@@ -2,6 +2,13 @@ Get["pathSetup.mth"]
 Needs["AMASeriesRepresentation`"]
 Needs["mathSmolyak`"]
 Get["betterRBC`"]
+InstallJava[]
+AddToClassPath["/msu/home/m1gsa00/NetBeansProjects/myLibsvm/build/classes"]
+
+svmDoer = 
+ LoadJavaClass["libsvm.svm"];
+
+
 X0Z0=genX0Z0Funcs[linModBetter];
 
 theLilFunc=genLilXkZkFunc[linModBetter, {X0Z0,2},anXEpsBetter];
@@ -34,5 +41,11 @@ sgSpec={{1,3},smolRng,pt,tf,ply,iply,1};
 {tmSmol20,ig}=Timing[moreIters20=nestSmolyakIterREInterp[{genFRFunc},linModBetter, {genX0Z0Funcs[linModBetter],20},eqnsCompiledBetter,sgSpec,theDistBetter,20]];
 
 *)
-dit=nestGenericIterREInterp[{genFRFunc},linModBetter, {genX0Z0Funcs[linModBetter],2},eqnsCompiledBetter,sgSpec,theDistBetter,smolyakInterpolation,{},2];
+dit=nestGenericIterREInterp[{genFRFunc},linModBetter, {genX0Z0Funcs[linModBetter],2},eqnsCompiledBetter,sgSpec,theDistBetter,smolyakInterpolation,{},3];
 dit=nestGenericIterREInterp[{genFRFunc},linModBetter, {genX0Z0Funcs[linModBetter],2},eqnsCompiledBetter,sgSpec,theDistBetter,svmRegressionLinear,{1.0,.01},2];
+
+
+(*
+
+Through[dit[[2]] @@ # &[anXEpsFlatBetter]]
+*)

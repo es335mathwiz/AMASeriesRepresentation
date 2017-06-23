@@ -88,12 +88,20 @@ generates the data:  application of function at the Smolyak points.
  
 smolyakGenInterpData[
 aVecFunc:(_Function|_CompiledFunction),@<smolGSpec@>]:=
+Module[{wrapper},Print["smolyakGenInterpData:"];
+Print["insgenidata"];
+wrapper[x1_?NumberQ,x2_?NumberQ,x3_?NumberQ]:=aVecFunc[x1,x2,x3];
+Print[wrapper[.3,.2,.01]];
+Print["b",Apply[wrapper,filledPts[[1]]]];
+Print["c",Function[xx,(Apply[wrapper,xx])][filledPts[[1]]]];
+Print["d",Map[Function[xx,(Apply[wrapper,xx])],filledPts]];
 With[{filledPts=Map[
 Function[xx,fillIn[{{},smolToIgnore,xx}]],N[smolPts]]},
-With[{theVals=Map[
-Function[xx,(Apply[aVecFunc,xx])],filledPts]},
+With[{theVals=Map[Function[xx,(Apply[wrapper,xx])],filledPts]},
+Print["theVals",
+{theVals,filledPts,wrapper,Apply[wrapper,filledPts[[1]]]}//InputForm];
 With[{interpData=Map[Flatten,theVals]},
-interpData]]]
+interpData]]]]
 
 
 AMASeriesRepCallGraph=
@@ -673,24 +681,23 @@ Join[AMASeriesRepCallGraph,Map["makeSmolyakInterpFuncs"->#&,{"smolyakInterpolati
 
 makeGenericInterpFuncs[aVecFunc:(_Function|_CompiledFunction),@<smolGSpec@>,
 genericInterp:(smolyakInterpolation|svmRegressionLinear|svmRegressionPoly|svmRegressionRBF|svmRegressionSigmoid),svmArgs:{_?NumberQ...}]:=
+Module[{},
+Print["at begin makegenericinterpfu"];
 With[{interpData=smolyakGenInterpData[aVecFunc,smolGSpec],
-numArgs=Length[smolPts[[1]]]},
+numArgs=Length[smolPts[[1]]]},Print["near begin makegenericinterpfu",interpData];
 With[{numFuncs=Length[interpData[[1]]],
 funcArgs=Table[Unique["fArgs"],{numArgs}]},
 With[{longFuncArgs=fillInSymb[{{},smolToIgnore,funcArgs}]},
 With[{interpFuncList=
 Map[Function[funcIdx,
 With[{theInterps=genericInterp[interpData[[All,funcIdx]],smolGSpec,svmArgs]},
-Print["theInterps=",theInterps];
 With[{smolApp=theInterps},
-smolApp]]],Range[numFuncs]]},
-Print["theInterpFuncList=",interpFuncList,
-toSub=MapThread[#1->#2&,{interpFuncList[[1,1,1]],funcArgs}]];
+smolApp]]],Range[numFuncs]]},Print["pre with"];
 With[
-{applied=Map[notApply[#,funcArgs]/.makeSubs[#,funcArgs]&,
-Map[First,interpFuncList]],
-appliedExp=Map[notApply[#,funcArgs]/.makeSubs[#,Drop[funcArgs,-numEps]]&,
-Map[Last,interpFuncList]]},
+{applied=Transpose[{Map[notApply[#,funcArgs]/.makeSubs[#,funcArgs]&,
+Map[First,interpFuncList]]}],
+appliedExp=Transpose[{Map[notApply[#,funcArgs]/.makeSubs[#,Drop[funcArgs,-numEps]]&,
+Map[Last,interpFuncList]]}]},Print["post with",{applied,appliedExp}];
 {
 ReplacePart[
 	Function[xxxxxxx, applied],
@@ -700,7 +707,7 @@ ReplacePart[
 		{1->Drop[longFuncArgs,-numEps]}]/.notApply->Apply
 }
 	]
-]]]]
+]]]]]
 
 makeSubs[thisFunc_Function,someArgs_List]:=
 MapThread[#1->#2&,{thisFunc[[1]],someArgs}]
@@ -765,12 +772,12 @@ doGenericIterREInterp[@<theSolver@>,
 	@<XZFuncs@>,
 @<eqnsFunc@>,@<smolGSpec@>,@<distribSpec@>,
 genericInterp:(smolyakInterpolation|svmRegressionLinear|svmRegressionPoly|svmRegressionRBF|svmRegressionSigmoid),svmArgs:{_?NumberQ...}]:=
-With[{numX=Length[BB],numZ=Length[psiZ[[1]]]},
+With[{numX=Length[BB],numZ=Length[psiZ[[1]]]},Print["near begin dogenericreintep"];
 tn=AbsoluteTime[];
 With[{theFuncs=
 makeGenericInterpFuncs[
 genFPFunc[theSolver,linMod,XZFuncs,eqnsFunc],smolGSpec,
-genericInterp,svmArgs]},
+genericInterp,svmArgs]},Print["after make call"];
 theFuncs]]
 
 AMASeriesRepCallGraph=
@@ -872,7 +879,7 @@ nestGenericIterREInterp[@<theSolver@>,@<linMod@>,
 @<distribSpec@>,
 genericInterp:(smolyakInterpolation|svmRegressionLinear|svmRegressionPoly|svmRegressionRBF|svmRegressionSigmoid),svmArgs:{_?NumberQ...},
 numIters_Integer]:=
-NestList[Function[xx,doGenericIterREInterp[theSolver,linMod,
+NestList[Function[xx,Print["innestlistfunc"];doGenericIterREInterp[theSolver,linMod,
 {xx[[2]],numSteps},eqnsFunc,smolGSpec,distribSpec,genericInterp,svmArgs]],{99,XZFuncs[[1]]},numIters]
 
 AMASeriesRepCallGraph=
@@ -1643,7 +1650,7 @@ psiZPreComp
 @}
 
 @d XZFuncs
-@{XZFuncs:{(_Function|_InterpolatingFunction|_CompiledFunction),numSteps_Integer}@}
+@{XZFuncs:{(_Function|_InterpolatingFunction|_CompiledFunction|_Symbol),numSteps_Integer}@}
 
 @d theZs
 @{theZs:{_?MatrixQ..}@}
@@ -2094,10 +2101,13 @@ xkFunc:(_Function|_CompiledFunction),@<eqnsFunc@>,opts:OptionsPattern[]]:=
 With[{funcArgs=Flatten[genSlots[numX+numEps]],
 zArgs=Table[Unique["theFRZArgs"],{numZ}]},
 With[{zArgsInit=Map[Function[xx,{xx,0}],zArgs],funcName=Unique["fName"]},
+Print["pre findroot"];
 funcName[theVars:{_?NumberQ..}]:=
 Apply[eqnsFunc,Flatten[Apply[xkFunc,theVars]]];Off[FindRoot::nlnum];
 With[{frRes=FindRoot[funcName[Join[funcArgs,zArgs]],zArgsInit],
 xzRes=Drop[Apply[xkFunc,Join[funcArgs,zArgs]],numX][[Range[numX]]]},
+Print["xzRes:",{xkFunc,xzRes,funcArgs,zArgs}];
+If[Not[FreeQ[xzRes,$Failed]],Throw[$Failed,"xzRes"]];
 With[{otherGuts=cmpXZVals[xzRes,zArgs,frRes]},
 On[FindRoot::nlnum];
 Function[otherGuts]]]]]
@@ -2139,7 +2149,7 @@ myFixedPoint[Function[xx,With[{
 xzFuncNow=theSolver[[1]][
 {numX,numEps,numZ},
 genLilXkZkFunc[linMod,XZFuncs,xx[[Range[numX]]]],
-eqnsFunc,{opts}]},
+eqnsFunc,{opts}]},Print["xzFuncNow=",{xzFuncNow$,funcArgs,genLilXkZkFunc[linMod,XZFuncs,xx[[Range[numX]]]]}];
 Apply[xzFuncNow,funcArgs]]],(Apply[XZFuncs[[1]],funcArgs])[[Range[numX]]],
 fixedPointLimit]]],
 1->funcArgs]]]

@@ -672,7 +672,7 @@ Join[AMASeriesRepCallGraph,Map["makeSmolyakInterpFuncs"->#&,{"smolyakInterpolati
 
 
 makeGenericInterpFuncs[aVecFunc:(_Function|_CompiledFunction),@<smolGSpec@>,
-genericInterp:(smolyakInterpolation|svmRegressionLinear),svmArgs:{_?NumberQ...}]:=
+genericInterp:(smolyakInterpolation|svmRegressionLinear|svmRegressionPoly|svmRegressionRBF|svmRegressionSigmoid),svmArgs:{_?NumberQ...}]:=
 With[{interpData=smolyakGenInterpData[aVecFunc,smolGSpec],
 numArgs=Length[smolPts[[1]]]},
 With[{numFuncs=Length[interpData[[1]]],
@@ -681,15 +681,16 @@ With[{longFuncArgs=fillInSymb[{{},smolToIgnore,funcArgs}]},
 With[{interpFuncList=
 Map[Function[funcIdx,
 With[{theInterps=genericInterp[interpData[[All,funcIdx]],smolGSpec,svmArgs]},
+Print["theInterps=",theInterps];
 With[{smolApp=theInterps},
 smolApp]]],Range[numFuncs]]},
+Print["theInterpFuncList=",interpFuncList,
+toSub=MapThread[#1->#2&,{interpFuncList[[1,1,1]],funcArgs}]];
 With[
-{applied=Map[notApply[#,funcArgs]&,
-Map[First,interpFuncList]/.
-interpFuncList[[1,1,1]]->funcArgs],
-appliedExp=Map[notApply[#,funcArgs]&,
-Map[Last,interpFuncList]/.
-interpFuncList[[1,1,1]]->funcArgs]},
+{applied=Map[notApply[#,funcArgs]/.makeSubs[#,funcArgs]&,
+Map[First,interpFuncList]],
+appliedExp=Map[notApply[#,funcArgs]/.makeSubs[#,Drop[funcArgs,-numEps]]&,
+Map[Last,interpFuncList]]},
 {
 ReplacePart[
 	Function[xxxxxxx, applied],
@@ -700,6 +701,9 @@ ReplacePart[
 }
 	]
 ]]]]
+
+makeSubs[thisFunc_Function,someArgs_List]:=
+MapThread[#1->#2&,{thisFunc[[1]],someArgs}]
 
 
 AMASeriesRepCallGraph=
@@ -733,6 +737,40 @@ tn=AbsoluteTime[];
 With[{theFuncs=
 makeSmolyakInterpFuncs[
 genFPFunc[theSolver,linMod,XZFuncs,eqnsFunc],smolGSpec]},
+theFuncs]]
+
+AMASeriesRepCallGraph=
+Join[AMASeriesRepCallGraph,
+Map["doSmolyakIterREInterp"->#&,
+{"makeSmolyakInterpFuncs","genFPFunc","getNumX",
+"getNumEps","getNumZ","genXZREInterpFunc"}]];
+
+
+
+(*end code for doSmolyakIterREInterp*)
+@}
+
+
+@d doGenericIterREInterpUsage
+@{doGenericIterREInterp::usage=
+"place holder for info"
+@}
+
+
+@d doGenericIterREInterp
+@{
+(*begin code for doSmolyakIterREInterp*)
+doGenericIterREInterp[@<theSolver@>,
+	@<linMod@>,
+	@<XZFuncs@>,
+@<eqnsFunc@>,@<smolGSpec@>,@<distribSpec@>,
+genericInterp:(smolyakInterpolation|svmRegressionLinear|svmRegressionPoly|svmRegressionRBF|svmRegressionSigmoid),svmArgs:{_?NumberQ...}]:=
+With[{numX=Length[BB],numZ=Length[psiZ[[1]]]},
+tn=AbsoluteTime[];
+With[{theFuncs=
+makeGenericInterpFuncs[
+genFPFunc[theSolver,linMod,XZFuncs,eqnsFunc],smolGSpec,
+genericInterp,svmArgs]},
 theFuncs]]
 
 AMASeriesRepCallGraph=
@@ -815,6 +853,37 @@ Join[AMASeriesRepCallGraph,Map["nestIterREInterp"->#&,{"doSmolyakIterREInterp"}]
 
 (*end code for nestSmolyakIterREInterp*)
 @}
+
+
+
+@d nestGenericIterREInterpUsage
+@{nestGenericIterREInterp::usage=
+"place holder for info"
+@}
+
+
+@d nestGenericIterREInterp
+@{
+(*begin code for nestGenericIterREInterp*)
+
+
+nestGenericIterREInterp[@<theSolver@>,@<linMod@>,
+@<XZFuncs@>,@<eqnsFunc@>,@<smolGSpec@>,
+@<distribSpec@>,
+genericInterp:(smolyakInterpolation|svmRegressionLinear|svmRegressionPoly|svmRegressionRBF|svmRegressionSigmoid),svmArgs:{_?NumberQ...},
+numIters_Integer]:=
+NestList[Function[xx,doGenericIterREInterp[theSolver,linMod,
+{xx[[2]],numSteps},eqnsFunc,smolGSpec,distribSpec,genericInterp,svmArgs]],{99,XZFuncs[[1]]},numIters]
+
+AMASeriesRepCallGraph=
+Join[AMASeriesRepCallGraph,Map["nestIterREInterp"->#&,{"doGenericIterREInterp"}]];
+
+
+
+(*end code for nestGenericIterREInterp*)
+@}
+
+
 
 
 \subsection{fillIn}
@@ -1462,6 +1531,8 @@ PerfectForesight::usage="degenerate distribution implementing perfect foresight"
 @<getNumIgnoredUsage@>
 @<getNumInterpVarsUsage@>
 @<writeExpKernUsage@>
+@<doGenericIterREInterpUsage@>
+@<nestGenericIterREInterpUsage@>
 @}
 
 \section{Package Code}
@@ -1469,6 +1540,8 @@ PerfectForesight::usage="degenerate distribution implementing perfect foresight"
 
 @d package code
 @{
+@<nestGenericIterREInterp@>
+@<doGenericIterREInterp@>
 @<ExpKernCode@>
 @<writeExpKern@>
 @<makeGenericInterpFuncs@>

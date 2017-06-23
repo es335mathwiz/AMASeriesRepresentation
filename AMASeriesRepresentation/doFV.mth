@@ -54,7 +54,29 @@ Run["(source ~/.bashrc;javac forImport/dwell.java)"]
 {sigsvf,sigesvf}=svmRegressionSigmoid[tryY,sgSpec,{1,0.01,1,1}];
 
 {theSmolFPInterp,theSmolFPInterpExp}=makeSmolyakInterpFuncs[theFP,sgSpec]
-{gtheSmolFPInterp,gtheSmolFPInterpExp}=makeGenericInterpFuncs[theFP,sgSpec,smolyakInterpolation]
+{gtheSmolFPInterp,gtheSmolFPInterpExp}=makeGenericInterpFuncs[theFP,sgSpec,smolyakInterpolation,{}]
+
+{slin,slinExp}=makeGenericInterpFuncs[theFP,sgSpec,svmRegressionLinear,{1.0,0.01}]
+{spoly,spolyExp}=makeGenericInterpFuncs[theFP,sgSpec,svmRegressionPoly,{1,0.01,1,.2,10}]
+{srbf,srbfExp}=makeGenericInterpFuncs[theFP,sgSpec,svmRegressionRBF,{1,0.01,1}]
+{ssig,ssigExp}=makeGenericInterpFuncs[theFP,sgSpec,svmRegressionSigmoid,{1,0.01,1,1}]
+
+
+
+dit=doSmolyakIterREInterp[{genFRFunc},linModFV, {genX0Z0Funcs[linModFV],2},eqnsCompiledFV,sgSpec,theDistFV];
+
+dit=doGenericIterREInterp[{genFRFunc},linModFV, {genX0Z0Funcs[linModFV],2},eqnsCompiledFV,sgSpec,theDistFV,smolyakInterpolation,{}];
+dit=doGenericIterREInterp[{genFRFunc},linModFV, {genX0Z0Funcs[linModFV],2},eqnsCompiledFV,sgSpec,theDistFV,svmRegressionLinear,{1.0,0.01}];
+dit=doGenericIterREInterp[{genFRFunc},linModFV, {genX0Z0Funcs[linModFV],2},eqnsCompiledFV,sgSpec,theDistFV,svmRegressionPoly,{1,0.01,1,.2,10}];
+dit=doGenericIterREInterp[{genFRFunc},linModFV, {genX0Z0Funcs[linModFV],2},eqnsCompiledFV,sgSpec,theDistFV,svmRegressionRBF,{1,0.01,1}];
+dit=doGenericIterREInterp[{genFRFunc},linModFV, {genX0Z0Funcs[linModFV],2},eqnsCompiledFV,sgSpec,theDistFV,svmRegressionSigmoid,{1,0.01,1,1}];
+
+
+dit=nestGenericIterREInterp[{genFRFunc},linModFV, {genX0Z0Funcs[linModFV],2},eqnsCompiledFV,sgSpec,theDistFV,smolyakInterpolation,{},2];
+dit=nestGenericIterREInterp[{genFRFunc},linModFV, {genX0Z0Funcs[linModFV],2},eqnsCompiledFV,sgSpec,theDistFV,svmRegressionLinear,{1.0,0.01},2];
+dit=nestGenericIterREInterp[{genFRFunc},linModFV, {genX0Z0Funcs[linModFV],2},eqnsCompiledFV,sgSpec,theDistFV,svmRegressionPoly,{1,0.01,1,.2,10},2];
+dit=nestGenericIterREInterp[{genFRFunc},linModFV, {genX0Z0Funcs[linModFV],2},eqnsCompiledFV,sgSpec,theDistFV,svmRegressionRBF,{1,0.01,1},2];
+dit=nestGenericIterREInterp[{genFRFunc},linModFV, {genX0Z0Funcs[linModFV],2},eqnsCompiledFV,sgSpec,theDistFV,svmRegressionSigmoid,{1,0.01,1,1},2];
 
 
 wrapper[(x1_)?NumberQ,(x2_)?NumberQ] := svf[x1, x2]

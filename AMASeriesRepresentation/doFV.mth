@@ -62,7 +62,7 @@ Run["(source ~/.bashrc;javac forImport/dwell.java)"]
 {ssig,ssigExp}=makeGenericInterpFuncs[theFP,sgSpec,svmRegressionSigmoid,{1,0.01,1,1}]
 
 
-
+(*
 dit=doSmolyakIterREInterp[{genFRFunc},linModFV, {genX0Z0Funcs[linModFV],2},eqnsCompiledFV,sgSpec,theDistFV];
 
 dit=doGenericIterREInterp[{genFRFunc},linModFV, {genX0Z0Funcs[linModFV],2},eqnsCompiledFV,sgSpec,theDistFV,smolyakInterpolation,{}];
@@ -184,4 +184,14 @@ theFP=genFPFunc[{genFRFunc},linModFV,{X0Z0,2},eqnsCompiledFV];
 
 theFP@@anXEpsFlatFV
 
+*)
+
+
+(*
+With[{nn=3},With[{boo=multiStep[{X0Z0,2},2,{1,2,3,4},nn],coo=newMultiStep[{X0Z0,2},2,{1,2,3,4},nn]},
+{{coo,coo[[-1]] @@ anXEpsFlatFV},
+{boo,boo @@ anXEpsFlatFV}}]
+]
+
+*)
 *)

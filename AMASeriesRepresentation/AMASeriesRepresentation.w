@@ -1171,7 +1171,7 @@ Join[AMASeriesRepCallGraph,Map["parallelMakeInterpFunc"->#&,{"fillInSymb","genIn
 (*end code for makeInterpFunc*)
 @}
 \begin{verbatim}
-In[103]:= {tm,tintf}=Timing[theFPInterp=makeInterpFunc[theFP,aGSpecFV]]
+prinIn[103]:= {tm,tintf}=Timing[theFPInterp=makeInterpFunc[theFP,aGSpecFV]]
 
 Out[103]= {0.028, Function[{fArgs1992, ig1994, fArgs1993}, 
  
@@ -1253,9 +1253,7 @@ doIterREInterp[@<theSolver@>,
 With[{numX=getNumX[linMod],numEps=getNumEps[linMod],numZ=getNumZ[linMod]},
 tn=AbsoluteTime[];
 With[{theFuncs=makeInterpFunc[genFPFunc[theSolver,linMod,XZFuncs,eqnsFunc],gSpec]},
-Print["makeInterpTime=",(tn2=AbsoluteTime[])-tn];
 With[{XZRE=genXZREInterpFunc[{numX,numEps,numZ},theFuncs,gSpec,distribSpec]},
-Print["genXZREInterpTime=",(AbsoluteTime[])-tn2];
 {theFuncs,XZRE}]]]
 
 
@@ -1429,6 +1427,11 @@ Join[AMASeriesRepCallGraph,Map["elimGSpecShock"->#&,{"getGridPtTrips"}]];
 BeginPackage["AMASeriesRepresentation`",
  {"JLink`","ProtectedSymbols`","mathSmolyak`","MmaModelToC`"}]
 @<usage definitions@>
+
+newMultiStep::usage="delete this"
+Print["newMultiStep::usage=delete this"];
+
+
 Begin["`Private`"]
 @<package code@>
 End[]
@@ -1828,11 +1831,11 @@ fSum::usage=
 @{
 fSum[@<linMod@>,
 	{},
-	xtGuess_?MatrixQ]:=
+	xtGuess:{{_?NumberQ..}..}]:=
 ConstantArray[0,{Length[psiZ],1}]
 
 fSum[@<linMod@>,
-	@<XZFuncs@>,xtGuess_?MatrixQ]:=
+	@<XZFuncs@>,xtGuess:{{_?NumberQ..}..}]:=
 With[{numXVars=getNumX[linMod],numZVars=getNumZ[linMod]},
 With[{xzRes=Apply[multiStepZ[XZFuncs,numXVars,numZVars,numSteps], Flatten[xtGuess]]},
 fSumC[phi,FF,psiZ,xzRes]]]
@@ -1963,6 +1966,22 @@ With[{iterGuts=
 NestList[Function[xx,Apply[xtFunc01,Flatten[xx]]],funcArgs,numTerms-1]},
 With[{theXZGuts=Map[(Function[xx,
 Apply[XZFuncs[[1]],Flatten[xx]][[valRange]]]),iterGuts]},
+With[{theFunc=Function[theXZGuts]},
+theFunc]]]]]]/;numSteps>0
+
+
+newMultiStep[@<XZFuncs@>,numX_Integer,valRange:{_Integer..},numTerms_Integer]:=
+Module[{xfName=Unique["msXFName"],xzfName=Unique["msXZFName"]},
+With[{slotArgs=Flatten[genSlots[numX]],
+funcArgs=Unique["msArgs"]},
+With[{appGuts=(notApply[XZFuncs[[1]],theArgs$])},
+xfName[theArgs:{_?NumberQ..}]:=
+Flatten[Apply[XZFuncs[[1]],theArgs$]][[Range[numX]]];
+xzfName[theArgs:{_?NumberQ..}]:=
+Apply[XZFuncs[[1]],theArgs$];
+With[{iterGuts=
+NestList[xfName,funcArgs,numTerms-1]/.funcArgs-> slotArgs},
+With[{theXZGuts=Map[xzfName,iterGuts]},
 With[{theFunc=Function[theXZGuts]},
 theFunc]]]]]]/;numSteps>0
 
@@ -2101,12 +2120,10 @@ xkFunc:(_Function|_CompiledFunction),@<eqnsFunc@>,opts:OptionsPattern[]]:=
 With[{funcArgs=Flatten[genSlots[numX+numEps]],
 zArgs=Table[Unique["theFRZArgs"],{numZ}]},
 With[{zArgsInit=Map[Function[xx,{xx,0}],zArgs],funcName=Unique["fName"]},
-Print["pre findroot"];
 funcName[theVars:{_?NumberQ..}]:=
 Apply[eqnsFunc,Flatten[Apply[xkFunc,theVars]]];Off[FindRoot::nlnum];
 With[{frRes=FindRoot[funcName[Join[funcArgs,zArgs]],zArgsInit],
 xzRes=Drop[Apply[xkFunc,Join[funcArgs,zArgs]],numX][[Range[numX]]]},
-Print["xzRes:",{xkFunc,xzRes,funcArgs,zArgs}];
 If[Not[FreeQ[xzRes,$Failed]],Throw[$Failed,"xzRes"]];
 With[{otherGuts=cmpXZVals[xzRes,zArgs,frRes]},
 On[FindRoot::nlnum];
@@ -2149,7 +2166,7 @@ myFixedPoint[Function[xx,With[{
 xzFuncNow=theSolver[[1]][
 {numX,numEps,numZ},
 genLilXkZkFunc[linMod,XZFuncs,xx[[Range[numX]]]],
-eqnsFunc,{opts}]},Print["xzFuncNow=",{xzFuncNow$,funcArgs,genLilXkZkFunc[linMod,XZFuncs,xx[[Range[numX]]]]}];
+eqnsFunc,{opts}]},
 Apply[xzFuncNow,funcArgs]]],(Apply[XZFuncs[[1]],funcArgs])[[Range[numX]]],
 fixedPointLimit]]],
 1->funcArgs]]]

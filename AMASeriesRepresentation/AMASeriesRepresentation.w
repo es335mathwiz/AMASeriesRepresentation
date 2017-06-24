@@ -88,18 +88,10 @@ generates the data:  application of function at the Smolyak points.
  
 smolyakGenInterpData[
 aVecFunc:(_Function|_CompiledFunction),@<smolGSpec@>]:=
-Module[{wrapper},Print["smolyakGenInterpData:"];
-Print["insgenidata"];
-wrapper[x1_?NumberQ,x2_?NumberQ,x3_?NumberQ]:=aVecFunc[x1,x2,x3];
-Print[wrapper[.3,.2,.01]];
-Print["b",Apply[wrapper,filledPts[[1]]]];
-Print["c",Function[xx,(Apply[wrapper,xx])][filledPts[[1]]]];
-Print["d",Map[Function[xx,(Apply[wrapper,xx])],filledPts]];
+Module[{},
 With[{filledPts=Map[
 Function[xx,fillIn[{{},smolToIgnore,xx}]],N[smolPts]]},
-With[{theVals=Map[Function[xx,(Apply[wrapper,xx])],filledPts]},
-Print["theVals",
-{theVals,filledPts,wrapper,Apply[wrapper,filledPts[[1]]]}//InputForm];
+With[{theVals=Map[Function[xx,(Apply[aVecFunc,xx])],filledPts]},
 With[{interpData=Map[Flatten,theVals]},
 interpData]]]]
 
@@ -344,7 +336,7 @@ writeExpKern::usage="writeExpKern[theFile_String]"
 
 @d ExpKernCode
 @{
-cnstrctExpKern[xData_?MatrixQ,yData_?VectorQ,
+cnstrctExpKern[xData_?MatrixQ,
 theKernel_Function,CC_?NumberQ,epsilon_?NumberQ,@<distribSpec@>]:=
 With[{numEps=Length[expctSpec]},
 With[{xvars=Transpose[{genXVars[Length[xData]-numEps]}],
@@ -639,7 +631,7 @@ With[{longFuncArgs=fillInSymb[{{},smolToIgnore,funcArgs}]},
 With[{interpFuncList=
 Map[Function[funcIdx,
 With[{theInterps=smolyakInterpolation[interpData[[All,funcIdx]],smolGSpec]},
-With[{smolApp=theInterps},
+With[{smolApp=theInterps},Print["interpdata=",interpData];
 smolApp]]],Range[numFuncs]]},
 With[
 {applied=
@@ -682,9 +674,8 @@ Join[AMASeriesRepCallGraph,Map["makeSmolyakInterpFuncs"->#&,{"smolyakInterpolati
 makeGenericInterpFuncs[aVecFunc:(_Function|_CompiledFunction),@<smolGSpec@>,
 genericInterp:(smolyakInterpolation|svmRegressionLinear|svmRegressionPoly|svmRegressionRBF|svmRegressionSigmoid),svmArgs:{_?NumberQ...}]:=
 Module[{},
-Print["at begin makegenericinterpfu"];
 With[{interpData=smolyakGenInterpData[aVecFunc,smolGSpec],
-numArgs=Length[smolPts[[1]]]},Print["near begin makegenericinterpfu",interpData];
+numArgs=Length[smolPts[[1]]]},
 With[{numFuncs=Length[interpData[[1]]],
 funcArgs=Table[Unique["fArgs"],{numArgs}]},
 With[{longFuncArgs=fillInSymb[{{},smolToIgnore,funcArgs}]},
@@ -692,12 +683,12 @@ With[{interpFuncList=
 Map[Function[funcIdx,
 With[{theInterps=genericInterp[interpData[[All,funcIdx]],smolGSpec,svmArgs]},
 With[{smolApp=theInterps},
-smolApp]]],Range[numFuncs]]},Print["pre with"];
+smolApp]]],Range[numFuncs]]},
 With[
 {applied=Transpose[{Map[notApply[#,funcArgs]/.makeSubs[#,funcArgs]&,
 Map[First,interpFuncList]]}],
 appliedExp=Transpose[{Map[notApply[#,funcArgs]/.makeSubs[#,Drop[funcArgs,-numEps]]&,
-Map[Last,interpFuncList]]}]},Print["post with",{applied,appliedExp}];
+Map[Last,interpFuncList]]}]},
 {
 ReplacePart[
 	Function[xxxxxxx, applied],
@@ -772,12 +763,12 @@ doGenericIterREInterp[@<theSolver@>,
 	@<XZFuncs@>,
 @<eqnsFunc@>,@<smolGSpec@>,@<distribSpec@>,
 genericInterp:(smolyakInterpolation|svmRegressionLinear|svmRegressionPoly|svmRegressionRBF|svmRegressionSigmoid),svmArgs:{_?NumberQ...}]:=
-With[{numX=Length[BB],numZ=Length[psiZ[[1]]]},Print["near begin dogenericreintep"];
+With[{numX=Length[BB],numZ=Length[psiZ[[1]]]},
 tn=AbsoluteTime[];
 With[{theFuncs=
 makeGenericInterpFuncs[
 genFPFunc[theSolver,linMod,XZFuncs,eqnsFunc],smolGSpec,
-genericInterp,svmArgs]},Print["after make call"];
+genericInterp,svmArgs]},
 theFuncs]]
 
 AMASeriesRepCallGraph=
@@ -879,7 +870,7 @@ nestGenericIterREInterp[@<theSolver@>,@<linMod@>,
 @<distribSpec@>,
 genericInterp:(smolyakInterpolation|svmRegressionLinear|svmRegressionPoly|svmRegressionRBF|svmRegressionSigmoid),svmArgs:{_?NumberQ...},
 numIters_Integer]:=
-NestList[Function[xx,Print["innestlistfunc"];doGenericIterREInterp[theSolver,linMod,
+NestList[Function[xx,doGenericIterREInterp[theSolver,linMod,
 {xx[[2]],numSteps},eqnsFunc,smolGSpec,distribSpec,genericInterp,svmArgs]],{99,XZFuncs[[1]]},numIters]
 
 AMASeriesRepCallGraph=
@@ -1428,8 +1419,6 @@ BeginPackage["AMASeriesRepresentation`",
  {"JLink`","ProtectedSymbols`","mathSmolyak`","MmaModelToC`"}]
 @<usage definitions@>
 
-newMultiStep::usage="delete this"
-Print["newMultiStep::usage=delete this"];
 
 
 Begin["`Private`"]
@@ -1958,7 +1947,7 @@ Join[AMASeriesRepCallGraph,Map["genX0Z0Funcs"->#&,{"getNumX","getNumZ","genSlots
 @{
 (*begin code for multiStep*)
 
-multiStep[@<XZFuncs@>,numX_Integer,valRange:{_Integer..},numTerms_Integer]:=
+oldmultiStep[@<XZFuncs@>,numX_Integer,valRange:{_Integer..},numTerms_Integer]:=
 With[{funcArgs=Flatten[genSlots[numX]]},
 With[{appGuts=(Apply[XZFuncs[[1]],Flatten[funcArgs]][[Range[numX]]])},
 With[{xtFunc01=Function[appGuts]},
@@ -1970,7 +1959,7 @@ With[{theFunc=Function[theXZGuts]},
 theFunc]]]]]]/;numSteps>0
 
 
-newMultiStep[@<XZFuncs@>,numX_Integer,valRange:{_Integer..},numTerms_Integer]:=
+multiStep[@<XZFuncs@>,numX_Integer,valRange:{_Integer..},numTerms_Integer]:=
 Module[{xfName=Unique["msXFName"],xzfName=Unique["msXZFName"]},
 With[{slotArgs=Flatten[genSlots[numX]],
 funcArgs=Unique["msArgs"]},
@@ -1982,7 +1971,7 @@ Apply[XZFuncs[[1]],theArgs$];
 With[{iterGuts=
 NestList[xfName,funcArgs,numTerms-1]/.funcArgs-> slotArgs},
 With[{theXZGuts=Map[xzfName,iterGuts]},
-With[{theFunc=Function[theXZGuts]},
+With[{theFunc=Function[Map[Function[xx,xx[[valRange]]],theXZGuts]]},
 theFunc]]]]]]/;numSteps>0
 
 

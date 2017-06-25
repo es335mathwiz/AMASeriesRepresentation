@@ -188,6 +188,7 @@ betterArgs=Table[Unique["arg"],{Length[smolRngs]}]},
 svmtLinear[mmaUreadUproblemLinear[smolPts//N,fVals//N, svmArgs]];
 modLinear = 
      libsvm`svm`svmUtrain[svmtLinear[prob],svmtLinear[param]];
+Sow[huh=modLinear[svUindices],"svIndices"];
 linFunc=Function[xx,(libsvm`svm`mysvmUpredictUvalues[modLinear, xx] )];
 expLinFunc=Function[xx,(libsvm`svm`mysvmUpredictUExpectedUvalues[modLinear, xx] )];
 {linFunc/.xx$->betterArgs,expLinFunc/.xx$->Drop[betterArgs,-numEps]}]
@@ -662,7 +663,10 @@ Join[AMASeriesRepCallGraph,Map["makeSmolyakInterpFuncs"->#&,{"smolyakInterpolati
 
 
 @d makeGenericInterpFuncsUsage
-@{makeGenericInterpFuncs::usage=
+@{
+parallelMakeGenericInterpFuncs::usage=
+"place holder for makeGenericInterpFuncs";
+makeGenericInterpFuncs::usage=
 "place holder for makeGenericInterpFuncs"
 @}
 
@@ -682,6 +686,7 @@ With[{longFuncArgs=fillInSymb[{{},smolToIgnore,funcArgs}]},
 With[{interpFuncList=
 Map[Function[funcIdx,
 With[{theInterps=genericInterp[interpData[[All,funcIdx]],smolGSpec,svmArgs]},
+(*Print["theInterps=",{interpData,theInterps,interpFuncList}//InputForm];*)
 With[{smolApp=theInterps},
 smolApp]]],Range[numFuncs]]},
 With[
@@ -689,6 +694,8 @@ With[
 Map[First,interpFuncList]]}],
 appliedExp=Transpose[{Map[notApply[#,funcArgs]/.makeSubs[#,Drop[funcArgs,-numEps]]&,
 Map[Last,interpFuncList]]}]},
+(*Print["applied=",{applied,appliedExp}//InputForm];*)
+With[{thePair=
 {
 ReplacePart[
 	Function[xxxxxxx, applied],
@@ -696,12 +703,49 @@ ReplacePart[
 ReplacePart[
 	Function[xxxxxxx, appliedExp],
 		{1->Drop[longFuncArgs,-numEps]}]/.notApply->Apply
-}
+}},
+thePair
 	]
-]]]]]
+]]]]]]
+
+parallelMakeGenericInterpFuncs[aVecFunc:(_Function|_CompiledFunction),@<smolGSpec@>,
+genericInterp:(smolyakInterpolation|svmRegressionLinear|svmRegressionPoly|svmRegressionRBF|svmRegressionSigmoid),svmArgs:{_?NumberQ...}]:=
+Module[{},
+With[{interpData=smolyakGenInterpData[aVecFunc,smolGSpec],
+numArgs=Length[smolPts[[1]]]},
+With[{numFuncs=Length[interpData[[1]]],
+funcArgs=Table[Unique["fArgs"],{numArgs}]},
+With[{longFuncArgs=fillInSymb[{{},smolToIgnore,funcArgs}]},
+With[{interpFuncList=
+Map[Function[funcIdx,
+With[{theInterps=genericInterp[interpData[[All,funcIdx]],smolGSpec,svmArgs]},
+(*Print["theInterps=",{interpData,theInterps,interpFuncList}//InputForm];*)
+With[{smolApp=theInterps},
+smolApp]]],Range[numFuncs]]},
+With[
+{applied=Transpose[{Map[notApply[#,funcArgs]/.makeSubs[#,funcArgs]&,
+Map[First,interpFuncList]]}],
+appliedExp=Transpose[{Map[notApply[#,funcArgs]/.makeSubs[#,Drop[funcArgs,-numEps]]&,
+Map[Last,interpFuncList]]}]},
+(*Print["applied=",{applied,appliedExp}//InputForm];*)
+With[{thePair=
+{
+ReplacePart[
+	Function[xxxxxxx, applied],
+		{1->longFuncArgs}]/.notApply->Apply,
+ReplacePart[
+	Function[xxxxxxx, appliedExp],
+		{1->Drop[longFuncArgs,-numEps]}]/.notApply->Apply
+}},
+thePair
+	]
+]]]]]]
 
 makeSubs[thisFunc_Function,someArgs_List]:=
 MapThread[#1->#2&,{thisFunc[[1]],someArgs}]
+
+
+
 
 
 AMASeriesRepCallGraph=
@@ -750,8 +794,11 @@ Map["doSmolyakIterREInterp"->#&,
 
 
 @d doGenericIterREInterpUsage
-@{doGenericIterREInterp::usage=
-"place holder for info"
+@{
+parallelDoGenericIterREInterp::usage=
+"place holder for info";
+doGenericIterREInterp::usage=
+"place holder for info";
 @}
 
 
@@ -767,6 +814,19 @@ With[{numX=Length[BB],numZ=Length[psiZ[[1]]]},
 tn=AbsoluteTime[];
 With[{theFuncs=
 makeGenericInterpFuncs[
+genFPFunc[theSolver,linMod,XZFuncs,eqnsFunc],smolGSpec,
+genericInterp,svmArgs]},
+theFuncs]]
+
+parallelDoGenericIterREInterp[@<theSolver@>,
+	@<linMod@>,
+	@<XZFuncs@>,
+@<eqnsFunc@>,@<smolGSpec@>,@<distribSpec@>,
+genericInterp:(smolyakInterpolation|svmRegressionLinear|svmRegressionPoly|svmRegressionRBF|svmRegressionSigmoid),svmArgs:{_?NumberQ...}]:=
+With[{numX=Length[BB],numZ=Length[psiZ[[1]]]},
+tn=AbsoluteTime[];
+With[{theFuncs=
+parallelMakeGenericInterpFuncs[
 genFPFunc[theSolver,linMod,XZFuncs,eqnsFunc],smolGSpec,
 genericInterp,svmArgs]},
 theFuncs]]
@@ -855,7 +915,10 @@ Join[AMASeriesRepCallGraph,Map["nestIterREInterp"->#&,{"doSmolyakIterREInterp"}]
 
 
 @d nestGenericIterREInterpUsage
-@{nestGenericIterREInterp::usage=
+@{
+parallelNestGenericIterREInterp::usage=
+"place holder for info";
+nestGenericIterREInterp::usage=
 "place holder for info"
 @}
 
@@ -871,6 +934,15 @@ nestGenericIterREInterp[@<theSolver@>,@<linMod@>,
 genericInterp:(smolyakInterpolation|svmRegressionLinear|svmRegressionPoly|svmRegressionRBF|svmRegressionSigmoid),svmArgs:{_?NumberQ...},
 numIters_Integer]:=
 NestList[Function[xx,doGenericIterREInterp[theSolver,linMod,
+{xx[[2]],numSteps},eqnsFunc,smolGSpec,distribSpec,genericInterp,svmArgs]],{99,XZFuncs[[1]]},numIters]
+
+
+parallelNestGenericIterREInterp[@<theSolver@>,@<linMod@>,
+@<XZFuncs@>,@<eqnsFunc@>,@<smolGSpec@>,
+@<distribSpec@>,
+genericInterp:(smolyakInterpolation|svmRegressionLinear|svmRegressionPoly|svmRegressionRBF|svmRegressionSigmoid),svmArgs:{_?NumberQ...},
+numIters_Integer]:=
+NestList[Function[xx,parallelDoGenericIterREInterp[theSolver,linMod,
 {xx[[2]],numSteps},eqnsFunc,smolGSpec,distribSpec,genericInterp,svmArgs]],{99,XZFuncs[[1]]},numIters]
 
 AMASeriesRepCallGraph=
@@ -2106,6 +2178,7 @@ Join[AMASeriesRepCallGraph,Map["checkMod"->#&,{"genLilXkZkFunc","genX0Z0Funcs","
  
 genFRFunc[{numX_Integer,numEps_Integer,numZ_Integer},
 xkFunc:(_Function|_CompiledFunction),@<eqnsFunc@>,opts:OptionsPattern[]]:=
+Module[{},
 With[{funcArgs=Flatten[genSlots[numX+numEps]],
 zArgs=Table[Unique["theFRZArgs"],{numZ}]},
 With[{zArgsInit=Map[Function[xx,{xx,0}],zArgs],funcName=Unique["fName"]},
@@ -2115,8 +2188,10 @@ With[{frRes=FindRoot[funcName[Join[funcArgs,zArgs]],zArgsInit],
 xzRes=Drop[Apply[xkFunc,Join[funcArgs,zArgs]],numX][[Range[numX]]]},
 If[Not[FreeQ[xzRes,$Failed]],Throw[$Failed,"xzRes"]];
 With[{otherGuts=cmpXZVals[xzRes,zArgs,frRes]},
+If[Not[Apply[And,Map[Or[MachineNumberQ[#],IntegerQ[#]]&,Cases[xzRes,_?NumberQ,Infinity]]]],
+Throw[{$Failed,{xzRes,funcName[Join[funcArgs,zArgs]],zArgsInit}//InputForm},"otherGuts not machine number"]];
 On[FindRoot::nlnum];
-Function[otherGuts]]]]]
+Function[otherGuts]]]]]]
 
 (* input   [function (xt,eps,zt)->(xtm1,xt,xtp1,eps), function (xtm1,xt,xtp1,eps)->me]*)
 (* output   [function  (xt,eps) ->(xt,zt)] *)
@@ -2316,18 +2391,18 @@ myNewNExpectation[fff_[fargs___],distStuff_]:=Module[{},Print["jhere",{(Apply[ff
 @d iterateDRREIntegrate
 @{
 (*begin code for iterateDRREIntegrate*)
-iterateDRREIntegrate[drFunc:(_Function|_CompiledFunction),initVec_?MatrixQ,
-	@<distribSpec@>,numPers_Integer]:=
-With[{numEps=getNumEpsVars[distribSpec],firVal=Apply[drFunc,Flatten[initVec]]},
-	With[{numX=Length[initVec]-numEps,iterFunc=makeREIterFunc[drFunc,distribSpec]},
+iterateDRREIntegrate[drFunc:(_Function|_CompiledFunction),
+drExpFunc:(_Function|_CompiledFunction),initVec_?MatrixQ,numEps_Integer,numPers_Integer]:=
+With[{firVal=Apply[drFunc,Flatten[initVec]]},
+	With[{numX=Length[initVec]-numEps},
 With[{iterated=
-NestList[Function[xx,((Transpose[{Flatten[Apply[iterFunc,Flatten[xx]]]}]))],firVal,numPers-1]},
+NestList[Function[xx,((Transpose[{Flatten[Apply[drExpFunc,Flatten[xx]]]}]))],firVal,numPers-1]},
 Join[initVec[[Range[numX]]],Apply[Join,
 (Map[Function[xx,Identity[xx[[Range[numX]]]]],iterated])]]]]]/;
 And[numPers>0]
 
 AMASeriesRepCallGraph=
-Join[AMASeriesRepCallGraph,Map["iterateDRREIntegrate"->#&,{"getNumEpsVars","makeREIterFunc"}]];
+Join[AMASeriesRepCallGraph,Map["iterateDRREIntegrate"->#&,{}]];
 
 
 (*end code for iterateDRREIntegrate*)
@@ -2407,7 +2482,8 @@ Transpose[{zVals}]]]],
 (*begin code for iterateDRPF*)
  
 iterateDRPF[drFunc_Function,initVec_?MatrixQ,numEps_Integer,numPers_Integer]:=
-With[{firVal=Apply[drFunc,Flatten[initVec]],numX=Length[initVec]-numEps,theZeros=Table[0,{numEps}]},
+With[{firVal=Apply[drFunc,Flatten[initVec]],
+numX=Length[initVec]-numEps,theZeros=Table[0,{numEps}]},Print["firVal=",firVal];
 With[{iterated=
 NestList[Function[xx,(Apply[drFunc,Flatten[Append[xx[[Range[numX]]],theZeros]]])],firVal,numPers-1]},
 Join[initVec[[Range[numX]]],Apply[Join,(Map[Function[xx,xx[[Range[numX]]]],iterated])]]]]/;
@@ -2495,20 +2571,24 @@ Join[AMASeriesRepCallGraph,Map["pathErrsDRPF"->#&,{"doFuncArg","iterateDRPF"}]];
 @d pathErrsDRREIntegrate
 @{
 (*begin code for pathErrsDRREIntegrate*)
-pathErrsDRREIntegrate[drFunc_Function,initVec_?MatrixQ,@<distribSpec@>,@<eqnsFunc@>,numPers_Integer]:=
-With[{numEps=getNumEpsVars[distribSpec]},
-With[{pathNow=iterateDRREIntegrate[drFunc,initVec,distribSpec,numPers],numX=Length[initVec]-numEps},(*Print["pathErrsDRREIntegrate:",pathNow];*)
+pathErrsDRREIntegrate[drFunc_Function,drExpFunc_Function,
+initVec_?MatrixQ,numEps_Integer,@<eqnsFunc@>,numPers_Integer]:=
+With[{pathNow=iterateDRREIntegrate[drFunc,drExpFunc,initVec,numEps,numPers],numX=Length[initVec]-numEps},Print["pathErrsDRREIntegrate:",pathNow];
 With[{firstArg=doFuncArg[pathNow,Identity[Reverse[initVec[[-Range[numEps]]]]],numX,0],
-	restArgs=(Map[doFuncArg[pathNow,Table[{0},{numEps}],numX,genSlot[1]-2]&,Range[3,numPers]])},
+restArgs=(Map[Function[xx,
+doFuncArg[pathNow,Table[{0},{numEps}],numX,xx-2]],Range[3,numPers]])
+},Print["args",{firstArg,restArgs}];
 With[{first=Transpose[{Apply[eqnsFunc,Flatten[firstArg]]}]},
-	With[{theRest=Map[Transpose[{(Apply[eqnsFunc,Flatten[genSlot[1]]])}]&,restArgs]},(*Print["pathErrs:",{pathNow,theRest,first}];*)
+	With[{theRest=Map[Function[xx,Transpose[{(Apply[eqnsFunc,Flatten[xx]])}]],restArgs]
+},
+(*Print["pathErrs:",{pathNow,theRest,first}];*)
 		Prepend[theRest,first]
-]]]]]/;
+]]]]/;
 And[numPers>1]
  
 
 AMASeriesRepCallGraph=
-Join[AMASeriesRepCallGraph,Map["pathErrsDRPF"->#&,{"doFuncArg","iterateDRREIntegrate","getNumEpsVars"}]];
+Join[AMASeriesRepCallGraph,Map["pathErrsDRPF"->#&,{"doFuncArg","iterateDRREIntegrate"}]];
 (*end code for pathErrsDRREIntegrate*)
 @}
 
@@ -2545,14 +2625,16 @@ firstArg]
 @d evalPathErrDRREIntegrate
 @{
 (*begin code for evalPathErrDRREIntegrate*)
-evalPathErrDRREIntegrate[drFunc_Function,initVec_?MatrixQ,@<distribSpec@>,@<eqnsFunc@>]:=
-pathErrsDRREIntegrate[drFunc,initVec,distribSpec,eqnsFunc,2]//First
+evalPathErrDRREIntegrate[drFunc_Function,drExpFunc_Function,
+initVec_?MatrixQ,numEps_Integer,@<eqnsFunc@>]:=
+pathErrsDRREIntegrate[drFunc,drExpFunc,initVec,numEps,eqnsFunc,2]//First
 
 
 
 evalPathErrDRREIntegrate[phi_?MatrixQ,
-drFunc_Function,initVec_?MatrixQ,@<distribSpec@>,@<eqnsFunc@>]:=
-phi . (pathErrsDRREIntegrate[drFunc,initVec,distribSpec,eqnsFunc,2])//First
+drFunc_Function,drExpFunc_Function,initVec_?MatrixQ,@<eqnsFunc@>]:=
+phi . (pathErrsDRREIntegrate[drFunc,drExpFunc,
+initVec,eqnsFunc,2])//First
 
 
 AMASeriesRepCallGraph=
@@ -2574,24 +2656,26 @@ Join[AMASeriesRepCallGraph,Map["evalPathErrorDRREIntegrate"->#&,{"pathErrsDRREIn
 @d evalBadPathErrDRREIntegrate
 @{
 (*begin code for evalBadPathErrDRREIntegrate*)
-evalBadPathErrDRREIntegrate[drFunc_Function,noEpsVec_?MatrixQ,@<distribSpec@>,@<eqnsFunc@>]:=
+evalBadPathErrDRREIntegrate[drFunc_Function,drExpFunc_Function,
+noEpsVec_?MatrixQ,numEps_Integer,@<eqnsFunc@>]:=
 With[{funcName=Unique["fName"]},
 funcName[tryEps:{_?NumberQ..}]:=
-	With[{theVal=evalPathErrDRREIntegrate[drFunc,Join[noEpsVec,Transpose[{tryEps}]],distribSpec,eqnsFunc]},
+	With[{theVal=evalPathErrDRREIntegrate[drFunc,drExpFunc,Join[noEpsVec,Transpose[{tryEps}]],numEps,eqnsFunc]},Print["fromgeneratedfunc:",theVal];
 		With[{theNorm=Norm[theVal,Infinity]},
 		(*Print["stillex:",{tryEps,theVal,Norm[theVal,Infinity],theNorm}];*)theNorm]];
-	With[{outerEVars=Table[Unique["eVs"],{getNumEpsVars[distribSpec]}]},
+	With[{outerEVars=Table[Unique["eVs"],{numEps}]},
 	With[{maxArgs=Map[Function[xx,{xx,0}],outerEVars],cons=Apply[And,  (Map[Function[xx,(-0.01<=xx<=0.01)], outerEVars])]},
 	FindMaximum[{funcName[outerEVars],cons},maxArgs]]]]
 
 
 evalBadPathErrDRREIntegrate[phi_?MatrixQ,
-drFunc_Function,noEpsVec_?MatrixQ,@<distribSpec@>,@<eqnsFunc@>]:=
+drFunc_Function,drExpFunc_Function,
+noEpsVec_?MatrixQ,numEps_Integer,@<eqnsFunc@>]:=
 With[{funcName=Unique["fName"]},
 funcName[tryEps:{_?NumberQ..}]:=
-With[{theVal=evalPathErrDRREIntegrate[drFunc,Join[noEpsVec,Transpose[{tryEps}]],distribSpec,eqnsFunc]},
+With[{theVal=evalPathErrDRREIntegrate[drFunc,drExpFunc,Join[noEpsVec,Transpose[{tryEps}]],numEps,eqnsFunc]},
 		(*Print["otherex:",theVal,Norm[theVal,Infinity]];*)Norm[theVal,Infinity]];
-	With[{outerEVars=Table[Unique["eVs"],{getNumEpsVars[distribSpec]}]},
+	With[{outerEVars=Table[Unique["eVs"],{numEps}]},
 	With[{maxArgs=Map[Function[xx,{xx,0}],outerEVars],cons=Apply[And,  (Map[Function[xx,(-0.01<=xx<=0.01)], outerEVars])]},
 	FindMaximum[{funcName[outerEVars],cons},maxArgs]]]]
 
@@ -2616,18 +2700,18 @@ Join[AMASeriesRepCallGraph,Map["evalBadPathErrorDRREIntegrate"->#&,{"evalPathErr
 @{
 (*begin code for worstPathForErrDRREIntegrate*)
 
-worstPathForErrDRREIntegrate[drFunc_Function,noEpsVec_?MatrixQ,@<distribSpec@>,@<eqnsFunc@>]:=
-With[{fMinRes=evalBadPathErrDRREIntegrate[drFunc,noEpsVec,distribSpec,eqnsFunc]},
-	With[{badEps=Transpose[{(Map[First,fMinRes[[2]]])/.fMinRes[[2]]}]},
-	With[{badPath=iterateDRREIntegrate[drFunc,Join[noEpsVec,badEps],distribSpec,2]},
+worstPathForErrDRREIntegrate[drFunc_Function,drExpFunc_Function,noEpsVec_?MatrixQ,numEps_Integer,@<eqnsFunc@>]:=
+With[{fMinRes=evalBadPathErrDRREIntegrate[drFunc,drExpFunc,noEpsVec,numEps,eqnsFunc]},
+	With[{badEps=Transpose[{(Map[First,fMinRes[[2]]])/.fMinRes[[2]]}]},Print["fminres",fMinRes];
+	With[{badPath=iterateDRREIntegrate[drFunc,drExpFunc,Join[noEpsVec,badEps],numEps,2]},
 		Join[badPath,badEps]]]]
 
 worstPathForErrDRREIntegrate[phi_?MatrixQ,
-drFunc_Function,noEpsVec_?MatrixQ,@<distribSpec@>,@<eqnsFunc@>]:=
+drFunc_Function,drExpFunc_Function,noEpsVec_?MatrixQ,numEps_Integer,@<eqnsFunc@>]:=
 With[{fMinRes=
-evalBadPathErrDRREIntegrate[phi,drFunc,noEpsVec,distribSpec,eqnsFunc]},
+evalBadPathErrDRREIntegrate[phi,drFunc,drExpFunc,noEpsVec,numEps,eqnsFunc]},
 	With[{badEps=Transpose[{(Map[First,fMinRes[[2]]])/.fMinRes[[2]]}]},
-	With[{badPath=iterateDRREIntegrate[drFunc,Join[noEpsVec,badEps],distribSpec,2]},
+	With[{badPath=iterateDRREIntegrate[drFunc,drExpFunc,Join[noEpsVec,badEps],numEps,2]},
 		Join[badPath,badEps]]]]
 
 

@@ -10,7 +10,7 @@ svmDoer =
 
 
 smolRng=#[[{2,3}]]&/@Drop[aGSpecBetter,2][[1]];
-{pt,tf,ply,iply}=smolyakInterpolationPrep[4*{1,1,1},smolRng,theDistBetter];
+{pt,tf,ply,iply}=smolyakInterpolationPrep[5*{1,1,1},smolRng,theDistBetter];
 sgSpec={{1,3},smolRng,pt,tf,ply,iply,1};
 
 newX=sgSpec[[3]]//N
@@ -20,7 +20,7 @@ Print["compiling java"];
 Run["(source ~/.bashrc;javac forImport/dwell.java)"]
 
 AbsoluteTiming[
-With[{hrz=2,len=2},With[{smol=nestGenericIterREInterp[{genFRFunc},linModBetter, {genX0Z0Funcs[linModBetter],hrz},eqnsCompiledBetter,sgSpec,theDistBetter,smolyakInterpolation,{},len],
+With[{hrz=1,len=1},With[{smol=nestGenericIterREInterp[{genFRFunc},linModBetter, {genX0Z0Funcs[linModBetter],hrz},eqnsCompiledBetter,sgSpec,theDistBetter,smolyakInterpolation,{},len],
 slin=nestGenericIterREInterp[{genFRFunc},linModBetter, {genX0Z0Funcs[linModBetter],hrz},eqnsCompiledBetter,sgSpec,theDistBetter,svmRegressionLinear,{1.0,.01},len]},{smol[[-1,1]] @@anXEpsFlatBetter, slin[[-1,1]] @@ anXEpsFlatBetter, simpRBCExactDRBetter @@ anXEpsFlatBetter}]]]
 (*
 

@@ -54,10 +54,16 @@ cx=Import["/Users/garyanderson/git/manchesterCS/61011/project/cx.mat"]
 cy=Flatten[Import["/Users/garyanderson/git/manchesterCS/61011/project/cy.mat"]]
 svmt[mmaUreadUproblemPoly[cx,cy, {100, .001, 10, .2, 1}]]
 (*
-tryX=pt;tryY=Flatten[First/@siData];
+tryX=pt//N;tryY=Flatten[First/@siData]//N;
 InstallJava[]
-svmt = JavaNew["libsvm.trainGuts"];
-svmt[mmaUreadUproblemPoly[Transpose[tryX],tryY, {100, .001, 10, .2, 1}]]
+svmtLinear = JavaNew["libsvm.trainGuts"];
+svmtLinear[mmaUreadUproblemLinear[tryX,tryY, {100, .001, 0, .2, 1}]];
+modLinear = 
+     libsvm`svm`svmUtrain[svmtLinear[prob],svmtLinear[param]];
+svindLinear = modLinear[svUindices];
+someLinear = (libsvm`svm`svmUpredict[modLinear, #1] &) /@ 
+   tryX[[svindLinear]];
+
 
 
 svmDoer = 
@@ -66,6 +72,15 @@ mod = svmDoer[svmUtrain[svmt[prob], svmt[param]]];
 svind = 
  mod[svUindices];
 some = svmDoer[svmUpredict[mod, #]] & /@ Transpose[allCX][[svind]];,
+
+
+svmtLinear = JavaNew["libsvm.trainGuts"];
+svmtLinear[mmaUreadUproblemLinear[newX,newY, {1, .01}]];
+modLinear = 
+     libsvm`svm`svmUtrain[svmtLinear[prob],svmtLinear[param]];
+svindLinear = modLinear[svUindices];
+someLinear = (libsvm`svm`svmUpredict[modLinear, #1] &) /@ 
+   tryX[[svindLinear]];
 
 
 *)

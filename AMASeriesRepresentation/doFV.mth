@@ -1,10 +1,12 @@
 Get["pathSetup.mth"]
 Needs["AMASeriesRepresentation`"]
 Needs["mathSmolyak`"]
+Needs["Format`"]
+Needs["MmaModelToC`"]
 Get["firmValue`"]
 X0Z0=genX0Z0Funcs[linModFV];
 
-anXEpsFV={{1},{2},{3}};
+anXEpsFV={{.5},{2},{0.1}};
 anXEpsFlatFV=Flatten[anXEpsFV];
 anXFV=Drop[anXEpsFV,-1]
 anXFlatFV=Flatten[anXFV];
@@ -20,10 +22,82 @@ theFP=genFPFunc[{genFRFunc},linModFV,{X0Z0,2},eqnsCompiledFV];
 theFP@@anXEpsFlatFV
 
 
+smolRng=#[[{2,3}]]&/@Drop[aGSpecFV,2][[1]];
+{pt,tf,ply,ig}=smolyakInterpolationPrep[{1,1},smolRng,theDistFV];
+sgSpec={{2},smolRng,pt,tf,ply,ply/.xx[2]->0,1};
+siData=smolyakGenInterpData[theFP,sgSpec];
 
+tryX=pt//N;tryY=First/@siData;
+InstallJava[]
+AddToClassPath["/msu/home/m1gsa00/NetBeansProjects/myLibsvm/build/classes"]
 
+newX={{0.5, 0.}, {0.5, -0.03}, {0.5, 0.03}, {0., 0.}, {1., 0.}}
+newY={0.2, 0.17, 0.23, 0., 0.4}
+
+svmDoer = 
+ LoadJavaClass["libsvm.svm"];
 
 (*
+boo=cnstrctExpKern[Transpose[newX],dotProdKernel,1,.01,theDistFV]
+
+writeExpKern["dwell",boo[[1]],boo[[2]],boo[[3]],boo[[5]],boo[[6]]]
+
+*)
+boo=cnstrctExpKern[Transpose[newX],dotProdKernel,1,.01,theDistFV]
+writeExpKern["dwell",boo[[1]],boo[[2]],boo[[3]],boo[[5]],boo[[6]]]
+Print["compiling java"];
+Run["(source ~/.bashrc;javac forImport/dwell.java)"]
+
+{svf,esvf}=svmRegressionLinear[tryY,sgSpec,{1,0.01}];
+{polysvf,polyesvf}=svmRegressionPoly[tryY,sgSpec,{1,0.01,1,.2,10}];
+{rbfsvf,rbfesvf}=svmRegressionRBF[tryY,sgSpec,{1,0.01,1}];
+{sigsvf,sigesvf}=svmRegressionSigmoid[tryY,sgSpec,{1,0.01,1,1}];
+
+{theSmolFPInterp,theSmolFPInterpExp}=makeSmolyakInterpFuncs[theFP,sgSpec]
+{gtheSmolFPInterp,gtheSmolFPInterpExp}=makeGenericInterpFuncs[theFP,sgSpec,smolyakInterpolation,{}]
+
+{slin,slinExp}=makeGenericInterpFuncs[theFP,sgSpec,svmRegressionLinear,{1.0,0.01}]
+{spoly,spolyExp}=makeGenericInterpFuncs[theFP,sgSpec,svmRegressionPoly,{1,0.01,1,.2,10}]
+{srbf,srbfExp}=makeGenericInterpFuncs[theFP,sgSpec,svmRegressionRBF,{1,0.01,1}]
+{ssig,ssigExp}=makeGenericInterpFuncs[theFP,sgSpec,svmRegressionSigmoid,{1,0.01,1,1}]
+
+
+
+dit=doSmolyakIterREInterp[{genFRFunc},linModFV, {genX0Z0Funcs[linModFV],2},eqnsCompiledFV,sgSpec,theDistFV];
+
+dit=doGenericIterREInterp[{genFRFunc},linModFV, {genX0Z0Funcs[linModFV],2},eqnsCompiledFV,sgSpec,theDistFV,smolyakInterpolation,{}];
+dit=doGenericIterREInterp[{genFRFunc},linModFV, {genX0Z0Funcs[linModFV],2},eqnsCompiledFV,sgSpec,theDistFV,svmRegressionLinear,{1.0,0.01}];
+dit=doGenericIterREInterp[{genFRFunc},linModFV, {genX0Z0Funcs[linModFV],2},eqnsCompiledFV,sgSpec,theDistFV,svmRegressionPoly,{1,0.01,1,.2,10}];
+dit=doGenericIterREInterp[{genFRFunc},linModFV, {genX0Z0Funcs[linModFV],2},eqnsCompiledFV,sgSpec,theDistFV,svmRegressionRBF,{1,0.01,1}];
+dit=doGenericIterREInterp[{genFRFunc},linModFV, {genX0Z0Funcs[linModFV],2},eqnsCompiledFV,sgSpec,theDistFV,svmRegressionSigmoid,{1,0.01,1,1}];
+
+
+{pt,tf,ply,ig}=smolyakInterpolationPrep[{4,4},smolRng,theDistFV];
+sgSpec={{2},smolRng,pt,tf,ply,ply/.xx[2]->0,1};
+
+
+odit=nestIterREInterp[{genFRFunc},linModFV, {genX0Z0Funcs[linModFV],2},eqnsCompiledFV,aGSpecFV,theDistFV,2];
+
+
+dit=nestGenericIterREInterp[{genFRFunc},linModFV, {genX0Z0Funcs[linModFV],2},eqnsCompiledFV,sgSpec,theDistFV,smolyakInterpolation,{},2];
+dit=nestGenericIterREInterp[{genFRFunc},linModFV, {genX0Z0Funcs[linModFV],2},eqnsCompiledFV,sgSpec,theDistFV,svmRegressionLinear,{1.0,0.01},2];
+dit=nestGenericIterREInterp[{genFRFunc},linModFV, {genX0Z0Funcs[linModFV],2},eqnsCompiledFV,sgSpec,theDistFV,svmRegressionPoly,{1,0.01,1,.2,10},2];
+dit=nestGenericIterREInterp[{genFRFunc},linModFV, {genX0Z0Funcs[linModFV],2},eqnsCompiledFV,sgSpec,theDistFV,svmRegressionRBF,{1,0.01,1},2];
+dit=nestGenericIterREInterp[{genFRFunc},linModFV, {genX0Z0Funcs[linModFV],2},eqnsCompiledFV,sgSpec,theDistFV,svmRegressionSigmoid,{1,0.01,1,1},2];
+
+
+wrapper[(x1_)?NumberQ,(x2_)?NumberQ] := svf[x1, x2]
+NExpectation[wrapper[anXEpsFlatFV[[1]],eps],eps \[Distributed] NormalDistribution[0, 0.01]]
+wrapper[(x1_)?NumberQ,(x2_)?NumberQ] := polysvf[x1, x2]
+NExpectation[wrapper[anXEpsFlatFV[[1]],eps],eps \[Distributed] NormalDistribution[0, 0.01]]
+
+(*
+
+libsvm`svm`mysvmUpredictUExpectedUvalues[AMASeriesRepresentation`Private`modLinear$1599, #]& @ {.2}
+
+betterFunc=Function[{x1,x2},libsvm`svm`mysvmUpredictUvalues[AMASeriesRepresentation`Private`modLinear$1599, #]& @ {x1,x2}]
+
+
 
 {tm,tintf}=Timing[theFPInterp=makeInterpFunc[theFP,aGSpecFV]]
 
@@ -61,7 +135,7 @@ sgSpec={{2},smolRng,pt,tf,ply,ply/.xx[2]->0,1};
 
 {tmSmol,ig}=Timing[moreIters=nestSmolyakIterREInterp[{genFRFunc},linModFV, {genX0Z0Funcs[linModFV],2},eqnsCompiledFV,sgSpec,theDistFV,3]];
 
-siData=smolyakGenInterpData[theFP,sgSpec];
+
 
 
 
@@ -86,5 +160,36 @@ Print["needs intply"]
 {tmSmol,ig}=Timing[theSmolFPInterp=makeSmolyakInterpFuncs[theFP,sgSpec]]
 
 
+
+*)
+(*
+
+Through[dit[[2]] @@ # &[anXEpsFlatBetter]]
+
+Through[dit[[-1]]@@#&@{x1,x2,e1}]//Chop
+shows components of 
+firmValue`Private`bmatSymbRE
+firmValue`Private`phimatSymbRE
+
+
+
+well=doGenericIterREInterp[{genFRFunc},linModFV, {genX0Z0Funcs[linModFV],2},eqnsCompiledFV,sgSpec,theDistFV,svmRegressionLinear,{100.0,0.0001}]
+
+theLilFunc=genLilXkZkFunc[linModFV, {well[[2]],2},anXEpsFV];
+
+theFR=genFRFunc[{2,1,2},theLilFunc,eqnsCompiledFV];
+theFR@@anXEpsFlatFV
+
+theFP=genFPFunc[{genFRFunc},linModFV,{X0Z0,2},eqnsCompiledFV];
+
+theFP@@anXEpsFlatFV
+
+*)
+
+
+(*
+With[{nn=3},With[{boo=multiStep[{X0Z0,2},2,{1,2,3,4},nn],coo=newMultiStep[{X0Z0,2},2,{1,2,3,4},nn]},
+{{coo,coo[[-1]] @@ anXEpsFlatFV},
+{boo,boo @@ anXEpsFlatFV}}]]
 
 *)

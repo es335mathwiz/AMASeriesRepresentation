@@ -88,13 +88,12 @@ generates the data:  application of function at the Smolyak points.
  
 smolyakGenInterpData[
 aVecFunc:(_Function|_CompiledFunction),@<smolGSpec@>]:=
+Module[{},
 With[{filledPts=Map[
 Function[xx,fillIn[{{},smolToIgnore,xx}]],N[smolPts]]},
-(*Print["smolyakGenInterpData:",filledPts//InputForm];*)
-With[{theVals=Map[
-Function[xx,(Apply[aVecFunc,xx])],filledPts]},
+With[{theVals=Map[Function[xx,(Apply[aVecFunc,xx])],filledPts]},
 With[{interpData=Map[Flatten,theVals]},
-interpData]]]
+interpData]]]]
 
 
 AMASeriesRepCallGraph=
@@ -121,6 +120,10 @@ The function returns both the level and the derivative approximating functions.
 
 @d smolyakInterpolation
 @{
+smolyakInterpolation[fVals:{_?NumberQ..},@<smolGSpec@>,{}]:=
+smolyakInterpolation[fVals,smolGSpec]
+
+
 smolyakInterpolation[fVals:{_?NumberQ..},@<smolGSpec@>]:=
 With[{wts=LinearSolve[smolMat,fVals],numVars=Length[smolRngs]},
 With[{origXs=Table[xx[ii],{ii,numVars}],
@@ -137,6 +140,335 @@ Join[AMASeriesRepCallGraph,
 Map["smolyakInterpolation"->#&,{"xformXValToCheb"}]];
 @}
 
+
+\subsection{svmRegressionLinear}
+\label{sec:svmRegressionlinear}
+
+The function returns both the level and the derivative approximating functions.
+
+@d svmRegressionLinearUsage
+@{svmRegressionLinear::usage=
+"place holder for svmRegressionLinear"
+@}
+
+\begin{verbatim}
+options:
+-s svm_type : set type of SVM (default 0)
+	0 -- C-SVC
+	1 -- nu-SVC
+	2 -- one-class SVM
+	3 -- epsilon-SVR
+	4 -- nu-SVR
+-t kernel_type : set type of kernel function (default 2)
+	0 -- linear: u'*v
+	1 -- polynomial: (gamma*u'*v + coef0)^degree
+	2 -- radial basis function: exp(-gamma*|u-v|^2)
+	3 -- sigmoid: tanh(gamma*u'*v + coef0)
+-d degree : set degree in kernel function (default 3)
+-g gamma : set gamma in kernel function (default 1/num_features)
+-r coef0 : set coef0 in kernel function (default 0)
+-c cost : set the parameter C of C-SVC, epsilon-SVR, and nu-SVR (default 1)
+-n nu : set the parameter nu of nu-SVC, one-class SVM, and nu-SVR (default 0.5)
+-p epsilon : set the epsilon in loss function of epsilon-SVR (default 0.1)
+-m cachesize : set cache memory size in MB (default 100)
+-e epsilon : set tolerance of termination criterion (default 0.001)
+-h shrinking: whether to use the shrinking heuristics, 0 or 1 (default 1)
+-b probability_estimates: whether to train a SVC or SVR model for probability estimates, 0 or 1 (default 0)
+-wi weight: set the parameter C of class i to weight*C, for C-SVC (default 1)
+
+The k in the -g option means the number of attributes in the input data.
+\end{verbatim}
+
+
+@d svmRegressionLinear
+@{
+svmRegressionLinear[fVals:{_?NumberQ..},@<smolGSpec@>,svmArgs:{_?NumberQ,_?NumberQ}]:=
+Module[{svmtLinear = JavaNew["libsvm.trainGuts"],modLinear,
+betterArgs=Table[Unique["arg"],{Length[smolRngs]}]},
+svmtLinear[mmaUreadUproblemLinear[smolPts//N,fVals//N, svmArgs]];
+modLinear = 
+     libsvm`svm`svmUtrain[svmtLinear[prob],svmtLinear[param]];
+Sow[huh=modLinear[svUindices],"svIndices"];
+linFunc=Function[xx,(libsvm`svm`mysvmUpredictUvalues[modLinear, xx] )];
+expLinFunc=Function[xx,(libsvm`svm`mysvmUpredictUExpectedUvalues[modLinear, xx] )];
+{linFunc/.xx$->betterArgs,expLinFunc/.xx$->Drop[betterArgs,-numEps]}]
+
+AMASeriesRepCallGraph=
+Join[AMASeriesRepCallGraph,
+Map["svmRegressionLinear"->#&,{"xformXValToCheb"}]];
+@}
+
+\subsection{svmRegressionPoly}
+\label{sec:smregressionpoly}
+
+The function returns both the level and the derivative approximating functions.
+
+@d svmRegressionPolyUsage
+@{svmRegressionPoly::usage=
+"place holder for svmRegressionPoly"
+@}
+
+
+@d svmRegressionPoly
+@{
+svmRegressionPoly[fVals:{_?NumberQ..},@<smolGSpec@>,svmArgs:{_?NumberQ,_?NumberQ,_?NumberQ,_?NumberQ,_?NumberQ}]:=
+Module[{svmtPoly = JavaNew["libsvm.trainGuts"],modPoly,
+betterArgs=Table[Unique["arg"],{Length[smolRngs]}]},
+svmtPoly[mmaUreadUproblemPoly[smolPts//N,fVals//N, svmArgs]];
+modPoly = 
+     libsvm`svm`svmUtrain[svmtPoly[prob],svmtPoly[param]];
+polyFunc=Function[xx,(libsvm`svm`mysvmUpredictUvalues[modPoly, xx] )];
+expPolyFunc=Function[xx,(libsvm`svm`mysvmUpredictUExpectedUvalues[modPoly, xx] )];
+{polyFunc/.xx$->betterArgs,expPolyFunc/.xx$->Drop[betterArgs,-numEps]}]
+
+AMASeriesRepCallGraph=
+Join[AMASeriesRepCallGraph,
+Map["svmRegressionPoly"->#&,{"xformXValToCheb"}]];
+@}
+
+\subsection{svmRegressionRBF}
+\label{sec:smregressionrbf}
+
+The function returns both the level and the derivative approximating functions.
+
+@d svmRegressionRBFUsage
+@{svmRegressionRBF::usage=
+"place holder for svmRegressionRBF"
+@}
+
+
+@d svmRegressionRBF
+@{
+svmRegressionRBF[fVals:{_?NumberQ..},@<smolGSpec@>,svmArgs:{_?NumberQ,_?NumberQ,_?NumberQ}]:=
+Module[{svmtRBF = JavaNew["libsvm.trainGuts"],modRBF,
+betterArgs=Table[Unique["arg"],{Length[smolRngs]}]},
+svmtRBF[mmaUreadUproblemRBF[smolPts//N,fVals//N, svmArgs]];
+modRBF = 
+     libsvm`svm`svmUtrain[svmtRBF[prob],svmtRBF[param]];
+rbfFunc=Function[xx,(libsvm`svm`mysvmUpredictUvalues[modRBF, xx] )];
+expRBFFunc=Function[xx,(libsvm`svm`mysvmUpredictUExpectedUvalues[modRBF, xx] )];
+{rbfFunc/.xx$->betterArgs,expRBFFunc/.xx$->Drop[betterArgs,-numEps]}]
+
+@}
+
+\subsection{svmRegressionSigmoid}
+\label{sec:smregressionsigmoid}
+
+The function returns both the level and the derivative approximating functions.
+
+@d svmRegressionSigmoidUsage
+@{svmRegressionSigmoid::usage=
+"place holder for svmRegressionSigmoid"
+@}
+
+
+@d svmRegressionSigmoid
+@{
+svmRegressionSigmoid[fVals:{_?NumberQ..},@<smolGSpec@>,svmArgs:{_?NumberQ,_?NumberQ,_?NumberQ,_?NumberQ}]:=
+Module[{svmtSigmoid = JavaNew["libsvm.trainGuts"],modSigmoid,
+betterArgs=Table[Unique["arg"],{Length[smolRngs]}]},
+svmtSigmoid[mmaUreadUproblemSigmoid[smolPts//N,fVals//N, svmArgs]];
+modSigmoid = 
+     libsvm`svm`svmUtrain[svmtSigmoid[prob],svmtSigmoid[param]];
+sigmoidFunc=Function[xx,(libsvm`svm`mysvmUpredictUvalues[modSigmoid, xx] )];
+expSigmoidFunc=Function[xx,(libsvm`svm`mysvmUpredictUExpectedUvalues[modSigmoid, xx] )];
+{sigmoidFunc/.xx$->betterArgs,expSigmoidFunc/.xx$->Drop[betterArgs,-numEps]}]
+
+@}
+
+@d expectation templates
+@{
+expKernTop=
+"package forImport;
+//``
+public class `` {
+public static double [] testExpKern(double[] xNow)   {
+   double [] theExpVals = new double[``];
+``
+``
+   return(theExpVals);
+} 
+public static double [] testKern(double[] xNow)   {
+   double [] theVals = new double[``];
+``
+``
+   return(theVals);
+} 
+}
+"
+
+expKernBottom=""
+
+
+
+@}
+
+@d writeExpKern
+@{
+writeExpKern[theFile_String,expEqns_List,
+expCode_String,expDefines_String,kernCode_String,kernDefines_String]:=
+Module[{javaFile="forImport/"<>theFile<>".java"},
+With[{theClassCode=TemplateApply[expKernTop,
+{DateString[],theFile,
+Length[expEqns],expDefines,expCode,
+Length[expEqns],kernDefines,kernCode}]},
+WriteString[javaFile,theClassCode];
+WriteString[javaFile,expKernBottom];
+       Close[javaFile]]]
+
+@<expectation templates@>
+
+@}
+
+@d theExpValsUsage
+@{
+theExpVals::usage="place holder"
+@}
+@d xNowUsage
+@{
+xNow::usage="place holder"
+@}
+
+
+@d writeExpKernUsage
+@{
+writeExpKern::usage="writeExpKern[theFile_String]"
+@}
+
+@d ExpKernCode
+@{
+cnstrctExpKern[xData_?MatrixQ,
+theKernel_Function,CC_?NumberQ,epsilon_?NumberQ,@<distribSpec@>]:=
+With[{numEps=Length[expctSpec]},
+With[{xvars=Transpose[{genXVars[Length[xData]-numEps]}],
+epsvars=Map[{First[#]}&,expctSpec],
+intVars=Map[#[[1]] \[Distributed]#[[2]]&,expctSpec]},
+With[{numExamples=Length[xData[[1]]],
+xSubs=genXSubs[xvars],epsSubs=genEpsSubs[xvars,epsvars]},
+With[{kernelPart=Flatten[Map[theKernel[Transpose[{#}],Join[xvars,epsvars]]&,
+Transpose[xData]]]},
+With[{expVals=myExpectation[kernelPart,intVars]},
+With[{expCode=StringReplace[
+myCAssign[theExpVals,expVals,AssignEnd->";\n",
+AssignOptimize->True,OptimizationSymbol -> okay],
+Join[xSubs,{"pow("->"Math.pow("}]],
+kernCode=StringReplace[
+myCAssign[theVals,kernelPart,AssignEnd->";\n",
+AssignOptimize->True,OptimizationSymbol -> okay],
+Join[xSubs,epsSubs,{"pow("->"Math.pow("}]]
+},
+{expVals,expCode,genDefines[expCode],kernelPart,kernCode,genDefines[kernCode]}]]]]]]/;
+And[Length[xData]>0,Length[xData[[1]]]>0]
+
+
+cnstrctF[qpSubs_List,xData_?MatrixQ,yData_?VectorQ,
+theKernel_Function,CC_?NumberQ,epsilon_?NumberQ]:=
+With[{xvars=Transpose[{genXVars[Length[xData]]}],
+numExamples=Length[xData[[1]]]},
+With[{pVars=genPlusVars[numExamples],mVars=genMinusVars[numExamples]},
+With[{kernelPart=
+Flatten[Map[
+theKernel[Transpose[{#}],xvars]&,Transpose[xData]]]},
+	 Function @@{Flatten[xvars],(-1)*((pVars-mVars)/.qpSubs) . kernelPart+
+approxB[qpSubs,xData,yData,theKernel,CC,epsilon]}]]]/;
+And[Length[xData]>0,Length[xData[[1]]]>0]
+
+
+
+approxB[qpSubs_List,xData_?MatrixQ,yData_?VectorQ,
+theKernel_Function,CC_?NumberQ,epsilon_?NumberQ]:=
+With[{minusBs=(Flatten[
+yData[[onMinusBoundaryTube[qpSubs,CC]]] +
+(Map[(wExprn[xData,theKernel,Transpose[{#}]]/.qpSubs)&,
+Transpose[xData[[All,onMinusBoundaryTube[qpSubs,CC]]]]])+
+epsilon]),
+plusBs=(Flatten[
+yData[[onPlusBoundaryTube[qpSubs,CC]]] +
+(Map[(wExprn[xData,theKernel,Transpose[{#}]]/.qpSubs)&,
+Transpose[xData[[All,onPlusBoundaryTube[qpSubs,CC]]]]])-
+epsilon])},
+	 With[{finite=DeleteCases[{Max[minusBs],Min[plusBs]},Infinity|-Infinity]},If[Length[finite]==0,0,(Plus @@finite)/Length[finite]]]]
+
+
+wExprn[xData_?MatrixQ]:=
+With[{numExamples=Length[xData[[1]]]},
+With[{pVars=genPlusVars[numExamples],mVars=genMinusVars[numExamples]},
+(pVars-mVars).Transpose[xData]]]/;
+And[Length[xData]>0,Length[xData[[1]]]>0]
+
+
+wExprn[xData_?MatrixQ,kernelFunc_Function,particularX_?MatrixQ]:=
+With[{numExamples=Length[xData[[1]]]},
+With[{pVars=genPlusVars[numExamples],mVars=genMinusVars[numExamples]},
+Flatten[
+	(pVars-mVars). (Map[kernelFunc[Transpose[{#1}],particularX]&,Transpose[xData]])	
+]]]/;
+And[Length[xData]>0,Length[xData[[1]]]>0]
+
+
+
+
+genXSubs[xVars_List]:=
+MapIndexed[ToString[#]->"xNow["<>ToString[#2[[1]]-1]<>"]"&,Flatten[xVars]]
+genEpsSubs[xVars_List,epsVars_List]:=
+MapIndexed[StringReplace[ToString[#],{"`"->"_"}]->"xNow["<>ToString[#2[[1]]-1+Length[xVars]]<>"]"&,Flatten[epsVars]]
+
+
+genXVars[numFeatures_Integer]:=
+Table[
+Symbol["x$"<>ToString[ii]],
+{ii,numFeatures}]
+
+genEpsVars[numFeatures_Integer]:=
+Table[
+Symbol["eps$"<>ToString[ii]],
+{ii,numFeatures}]
+
+
+dotProdKernel=Function[{xx,yy},Transpose[xx] . yy];
+
+
+
+makeSymbolicKernel[]:=
+With[{myX=Unique["xx"],myY=Unique["yy"]},
+	 Apply[Function,{{myX,myY},ffff[myX,myY]}]]
+
+makePolynomialKernel[aPow_Integer]:=
+With[{myX=Unique["xx"],myY=Unique["yy"]},
+Apply[Function,{{myX,myY},(1+Transpose[myX] . myY)^aPow}]]
+
+
+makeRBFKernel[aRadius_Integer]:=
+Function[{myX,myY},E^(-Outer[Norm[Plus[#1,#2]]&,Transpose[myX],-Transpose[myY],1]/(2*(aRadius^2)))]
+
+@}
+@d makeSymbolicKernelUsage
+@{
+makeSymbolicKernel::usage="place holder"
+@}
+@d dotProdKernelUsage
+@{
+dotProdKernel::usage="place holder"
+@}
+@d makePolynomialKernelUsage
+@{
+makePolynomialKernel::usage="place holder"
+@}
+@d makeRBFKernelUsage
+@{
+makeRBFKernel::usage="place holder"
+@}
+
+@d cnstrctFUsage
+@{
+cnstrctF::usage="cnstrctF[qpSubs_List,xData_?MatrixQ,yData_?VectorQ,theKernel_Function,CC_?NumberQ,epsilon_?NumberQ]"
+@}
+
+@d cnstrctExpKernUsage
+@{
+cnstrctExpKern::usage="cnstrctExpKern[xData_?MatrixQ,yData_?VectorQ,
+theKernel_Function,CC_?NumberQ,epsilon_?NumberQ,numEps_Integer]"
+@}
 
 \subsection{smolyakInterpolationPrep}
 \label{sec:smoly}
@@ -162,7 +494,6 @@ Module[{smolRes=sparseGridEvalPolysAtPts[approxLevels],
 numVars=Length[approxLevels],numEps=Length[distribSpec[[1]]]},
 With[{thePts=smolRes[[1]],smolPolys=smolRes[[2]],smolMat=smolRes[[3]]},
 With[{xPts=Map[Function[xx,xformToXVec[xx,smolRngs]],thePts]},
-(*Print["smolyPrep:",{xPts,thePts}];*)
 With[{numPolys=Length[smolPolys]},
 {xPts,smolMat,smolPolys,smolPolyExp[smolPolys,distribSpec]}]]]]/;
 And[Length[smolRngs]==Length[approxLevels]]\
@@ -191,7 +522,6 @@ Module[{smolRes=sparseGridEvalPolysAtPts[approxLevels],
 numVars=Length[approxLevels],numEps=Length[momSubs]},
 With[{thePts=smolRes[[1]],smolPolys=smolRes[[2]],smolMat=smolRes[[3]]},
 With[{xPts=Map[Function[xx,xformToXVec[xx,smolRngs]],thePts]},
-(*Print["smolyPrep:",{xPts,thePts}];*)
 With[{numPolys=Length[smolPolys]},
 {xPts,smolMat,smolPolys,compRawMoments[smolPolys,xx[3]]/.
 Flatten[momSubs]}]]]]/;
@@ -302,7 +632,7 @@ With[{longFuncArgs=fillInSymb[{{},smolToIgnore,funcArgs}]},
 With[{interpFuncList=
 Map[Function[funcIdx,
 With[{theInterps=smolyakInterpolation[interpData[[All,funcIdx]],smolGSpec]},
-With[{smolApp=theInterps},
+With[{smolApp=theInterps},Print["interpdata=",interpData];
 smolApp]]],Range[numFuncs]]},
 With[
 {applied=
@@ -323,10 +653,107 @@ ReplacePart[
 
 AMASeriesRepCallGraph=
 Join[AMASeriesRepCallGraph,Map["makeSmolyakInterpFuncs"->#&,{"smolyakInterpolation","smolyakGenInterpData","fillInSymb"}]];
-
-
-
 (*end code for makeSmolyakInterpFuncs*)
+@}
+
+\subsection{makeGenericInterpFuncs}
+\label{sec:makesmolinterpfunc}
+
+
+
+
+@d makeGenericInterpFuncsUsage
+@{
+parallelMakeGenericInterpFuncs::usage=
+"place holder for makeGenericInterpFuncs";
+makeGenericInterpFuncs::usage=
+"place holder for makeGenericInterpFuncs"
+@}
+
+@d makeGenericInterpFuncs
+@{
+(*begin code for makeGenericInterpFuncs*)
+
+
+makeGenericInterpFuncs[aVecFunc:(_Function|_CompiledFunction),@<smolGSpec@>,
+genericInterp:(smolyakInterpolation|svmRegressionLinear|svmRegressionPoly|svmRegressionRBF|svmRegressionSigmoid),svmArgs:{_?NumberQ...}]:=
+Module[{},
+With[{interpData=smolyakGenInterpData[aVecFunc,smolGSpec],
+numArgs=Length[smolPts[[1]]]},
+With[{numFuncs=Length[interpData[[1]]],
+funcArgs=Table[Unique["fArgs"],{numArgs}]},
+With[{longFuncArgs=fillInSymb[{{},smolToIgnore,funcArgs}]},
+With[{interpFuncList=
+Map[Function[funcIdx,
+With[{theInterps=genericInterp[interpData[[All,funcIdx]],smolGSpec,svmArgs]},
+(*Print["theInterps=",{interpData,theInterps,interpFuncList}//InputForm];*)
+With[{smolApp=theInterps},
+smolApp]]],Range[numFuncs]]},
+With[
+{applied=Transpose[{Map[notApply[#,funcArgs]/.makeSubs[#,funcArgs]&,
+Map[First,interpFuncList]]}],
+appliedExp=Transpose[{Map[notApply[#,funcArgs]/.makeSubs[#,Drop[funcArgs,-numEps]]&,
+Map[Last,interpFuncList]]}]},
+(*Print["applied=",{applied,appliedExp}//InputForm];*)
+With[{thePair=
+{
+ReplacePart[
+	Function[xxxxxxx, applied],
+		{1->longFuncArgs}]/.notApply->Apply,
+ReplacePart[
+	Function[xxxxxxx, appliedExp],
+		{1->Drop[longFuncArgs,-numEps]}]/.notApply->Apply
+}},
+thePair
+	]
+]]]]]]
+
+parallelMakeGenericInterpFuncs[aVecFunc:(_Function|_CompiledFunction),@<smolGSpec@>,
+genericInterp:(smolyakInterpolation|svmRegressionLinear|svmRegressionPoly|svmRegressionRBF|svmRegressionSigmoid),svmArgs:{_?NumberQ...}]:=
+Module[{},
+With[{interpData=smolyakGenInterpData[aVecFunc,smolGSpec],
+numArgs=Length[smolPts[[1]]]},
+With[{numFuncs=Length[interpData[[1]]],
+funcArgs=Table[Unique["fArgs"],{numArgs}]},
+With[{longFuncArgs=fillInSymb[{{},smolToIgnore,funcArgs}]},
+With[{interpFuncList=
+Map[Function[funcIdx,
+With[{theInterps=genericInterp[interpData[[All,funcIdx]],smolGSpec,svmArgs]},
+(*Print["theInterps=",{interpData,theInterps,interpFuncList}//InputForm];*)
+With[{smolApp=theInterps},
+smolApp]]],Range[numFuncs]]},
+With[
+{applied=Transpose[{Map[notApply[#,funcArgs]/.makeSubs[#,funcArgs]&,
+Map[First,interpFuncList]]}],
+appliedExp=Transpose[{Map[notApply[#,funcArgs]/.makeSubs[#,Drop[funcArgs,-numEps]]&,
+Map[Last,interpFuncList]]}]},
+(*Print["applied=",{applied,appliedExp}//InputForm];*)
+With[{thePair=
+{
+ReplacePart[
+	Function[xxxxxxx, applied],
+		{1->longFuncArgs}]/.notApply->Apply,
+ReplacePart[
+	Function[xxxxxxx, appliedExp],
+		{1->Drop[longFuncArgs,-numEps]}]/.notApply->Apply
+}},
+thePair
+	]
+]]]]]]
+
+makeSubs[thisFunc_Function,someArgs_List]:=
+MapThread[#1->#2&,{thisFunc[[1]],someArgs}]
+
+
+
+
+
+AMASeriesRepCallGraph=
+Join[AMASeriesRepCallGraph,Map["makeGenericInterpFuncs"->#&,{"smolyakInterpolation","smolyakGenInterpData","fillInSymb"}]];
+
+
+
+(*end code for makeGenericInterpFuncs*)
 @}
 
 
@@ -366,6 +793,56 @@ Map["doSmolyakIterREInterp"->#&,
 @}
 
 
+@d doGenericIterREInterpUsage
+@{
+parallelDoGenericIterREInterp::usage=
+"place holder for info";
+doGenericIterREInterp::usage=
+"place holder for info";
+@}
+
+
+@d doGenericIterREInterp
+@{
+(*begin code for doSmolyakIterREInterp*)
+doGenericIterREInterp[@<theSolver@>,
+	@<linMod@>,
+	@<XZFuncs@>,
+@<eqnsFunc@>,@<smolGSpec@>,@<distribSpec@>,
+genericInterp:(smolyakInterpolation|svmRegressionLinear|svmRegressionPoly|svmRegressionRBF|svmRegressionSigmoid),svmArgs:{_?NumberQ...}]:=
+With[{numX=Length[BB],numZ=Length[psiZ[[1]]]},
+tn=AbsoluteTime[];
+With[{theFuncs=
+makeGenericInterpFuncs[
+genFPFunc[theSolver,linMod,XZFuncs,eqnsFunc],smolGSpec,
+genericInterp,svmArgs]},
+theFuncs]]
+
+parallelDoGenericIterREInterp[@<theSolver@>,
+	@<linMod@>,
+	@<XZFuncs@>,
+@<eqnsFunc@>,@<smolGSpec@>,@<distribSpec@>,
+genericInterp:(smolyakInterpolation|svmRegressionLinear|svmRegressionPoly|svmRegressionRBF|svmRegressionSigmoid),svmArgs:{_?NumberQ...}]:=
+With[{numX=Length[BB],numZ=Length[psiZ[[1]]]},
+tn=AbsoluteTime[];
+With[{theFuncs=
+parallelMakeGenericInterpFuncs[
+genFPFunc[theSolver,linMod,XZFuncs,eqnsFunc],smolGSpec,
+genericInterp,svmArgs]},
+theFuncs]]
+
+AMASeriesRepCallGraph=
+Join[AMASeriesRepCallGraph,
+Map["doSmolyakIterREInterp"->#&,
+{"makeSmolyakInterpFuncs","genFPFunc","getNumX",
+"getNumEps","getNumZ","genXZREInterpFunc"}]];
+
+
+
+(*end code for doSmolyakIterREInterp*)
+@}
+
+
 \subsection{genSmolyakXZREInterpFunc}
 \label{sec:genxzreinterpfunc}
 
@@ -385,7 +862,6 @@ toIgnore:{_Integer...},ranges_?MatrixQ,
 smolPts_?MatrixQ,smolMat_?MatrixQ,
 smolPolys_?VectorQ,@<gSpec@>,@<distribSpec@>]:=
 With[{theFuncNow=genXZFuncRE[{numX,numEps,numZ},aLilXkZkFunc,distribSpec]},
-Print["genSmol:",InputForm[theFuncNow]];
 makeInterpFunc[theFuncNow,elimGSpecShocks[gSpec,numEps]]]
   
 
@@ -435,6 +911,49 @@ Join[AMASeriesRepCallGraph,Map["nestIterREInterp"->#&,{"doSmolyakIterREInterp"}]
 
 (*end code for nestSmolyakIterREInterp*)
 @}
+
+
+
+@d nestGenericIterREInterpUsage
+@{
+parallelNestGenericIterREInterp::usage=
+"place holder for info";
+nestGenericIterREInterp::usage=
+"place holder for info"
+@}
+
+
+@d nestGenericIterREInterp
+@{
+(*begin code for nestGenericIterREInterp*)
+
+
+nestGenericIterREInterp[@<theSolver@>,@<linMod@>,
+@<XZFuncs@>,@<eqnsFunc@>,@<smolGSpec@>,
+@<distribSpec@>,
+genericInterp:(smolyakInterpolation|svmRegressionLinear|svmRegressionPoly|svmRegressionRBF|svmRegressionSigmoid),svmArgs:{_?NumberQ...},
+numIters_Integer]:=
+NestList[Function[xx,doGenericIterREInterp[theSolver,linMod,
+{xx[[2]],numSteps},eqnsFunc,smolGSpec,distribSpec,genericInterp,svmArgs]],{99,XZFuncs[[1]]},numIters]
+
+
+parallelNestGenericIterREInterp[@<theSolver@>,@<linMod@>,
+@<XZFuncs@>,@<eqnsFunc@>,@<smolGSpec@>,
+@<distribSpec@>,
+genericInterp:(smolyakInterpolation|svmRegressionLinear|svmRegressionPoly|svmRegressionRBF|svmRegressionSigmoid),svmArgs:{_?NumberQ...},
+numIters_Integer]:=
+NestList[Function[xx,parallelDoGenericIterREInterp[theSolver,linMod,
+{xx[[2]],numSteps},eqnsFunc,smolGSpec,distribSpec,genericInterp,svmArgs]],{99,XZFuncs[[1]]},numIters]
+
+AMASeriesRepCallGraph=
+Join[AMASeriesRepCallGraph,Map["nestIterREInterp"->#&,{"doGenericIterREInterp"}]];
+
+
+
+(*end code for nestGenericIterREInterp*)
+@}
+
+
 
 
 \subsection{fillIn}
@@ -715,7 +1234,7 @@ Join[AMASeriesRepCallGraph,Map["parallelMakeInterpFunc"->#&,{"fillInSymb","genIn
 (*end code for makeInterpFunc*)
 @}
 \begin{verbatim}
-In[103]:= {tm,tintf}=Timing[theFPInterp=makeInterpFunc[theFP,aGSpecFV]]
+prinIn[103]:= {tm,tintf}=Timing[theFPInterp=makeInterpFunc[theFP,aGSpecFV]]
 
 Out[103]= {0.028, Function[{fArgs1992, ig1994, fArgs1993}, 
  
@@ -797,9 +1316,7 @@ doIterREInterp[@<theSolver@>,
 With[{numX=getNumX[linMod],numEps=getNumEps[linMod],numZ=getNumZ[linMod]},
 tn=AbsoluteTime[];
 With[{theFuncs=makeInterpFunc[genFPFunc[theSolver,linMod,XZFuncs,eqnsFunc],gSpec]},
-Print["makeInterpTime=",(tn2=AbsoluteTime[])-tn];
 With[{XZRE=genXZREInterpFunc[{numX,numEps,numZ},theFuncs,gSpec,distribSpec]},
-Print["genXZREInterpTime=",(AbsoluteTime[])-tn2];
 {theFuncs,XZRE}]]]
 
 
@@ -930,6 +1447,20 @@ Join[AMASeriesRepCallGraph,Map["genXZREInterpFunc"->#&,{"genXZFuncRE","makeInter
 (*end code for genXZREInterpFunc*)
 @}
 
+\subsection{truncErrorMat}
+@d truncErrorMatUsage
+@{
+
+@}
+
+@d truncErrorMat
+@{
+truncErrorMat=
+Compile[{{fmat,_Real,2},{phimat,_Real,2},{kk,_Integer}},
+With[{dim=Length[fmat]},
+If[kk==0,Inverse[IdentityMatrix[dim] - fmat].phimat,
+Inverse[IdentityMatrix[dim] - fmat] . MatrixPower[fmat,kk].phimat]]]
+@}
 
 \subsection{parallelGenXZREInterpFunc}
 \label{sec:genxzreinterpfunc}
@@ -971,8 +1502,11 @@ Join[AMASeriesRepCallGraph,Map["elimGSpecShock"->#&,{"getGridPtTrips"}]];
 @o AMASeriesRepresentation.m
 @{
 BeginPackage["AMASeriesRepresentation`",
- {"JLink`","ProtectedSymbols`","mathSmolyak`"}]
+ {"JLink`","ProtectedSymbols`","mathSmolyak`","MmaModelToC`"}]
 @<usage definitions@>
+
+
+
 Begin["`Private`"]
 @<package code@>
 End[]
@@ -980,6 +1514,10 @@ EndPackage[]
 
 
 @}
+
+
+
+
 \appendix
 
 \section{Usage Definitions}
@@ -991,6 +1529,20 @@ EndPackage[]
 @{
 (*Begin Usage Definitions*)
 PerfectForesight::usage="degenerate distribution implementing perfect foresight"
+@<truncErrorMatUsage@>
+@<makeGenericInterpFuncsUsage@>
+@<svmRegressionSigmoidUsage@>
+@<svmRegressionRBFUsage@>
+@<cnstrctFUsage@>
+@<xNowUsage@>
+@<theExpValsUsage@>
+@<makeRBFKernelUsage@>
+@<makePolynomialKernelUsage@>
+@<makeSymbolicKernelUsage@>
+@<dotProdKernelUsage@>
+@<cnstrctExpKernUsage@>
+@<svmRegressionLinearUsage@>
+@<svmRegressionPolyUsage@>
 @<getterSetterTestsUsage@>
 @<callGraphUsage@>
 @<smolyakInterpolationUsage@>
@@ -1068,6 +1620,9 @@ PerfectForesight::usage="degenerate distribution implementing perfect foresight"
 @<genPathUsage@>
 @<getNumIgnoredUsage@>
 @<getNumInterpVarsUsage@>
+@<writeExpKernUsage@>
+@<doGenericIterREInterpUsage@>
+@<nestGenericIterREInterpUsage@>
 @}
 
 \section{Package Code}
@@ -1075,7 +1630,17 @@ PerfectForesight::usage="degenerate distribution implementing perfect foresight"
 
 @d package code
 @{
+@<truncErrorMatUsage@>
+@<nestGenericIterREInterp@>
+@<doGenericIterREInterp@>
+@<ExpKernCode@>
+@<writeExpKern@>
+@<makeGenericInterpFuncs@>
 @<parallelSmolyakGenInterpData@>
+@<svmRegressionSigmoid@>
+@<svmRegressionRBF@>
+@<svmRegressionLinear@>
+@<svmRegressionPoly@>
 @<smolyakGenInterpData@>
 @<smolyakInterpolation@>
 @<smolyakInterpolationPrep@>
@@ -1169,7 +1734,7 @@ psiZPreComp
 @}
 
 @d XZFuncs
-@{XZFuncs:{(_Function|_InterpolatingFunction|_CompiledFunction),numSteps_Integer}@}
+@{XZFuncs:{(_Function|_InterpolatingFunction|_CompiledFunction|_Symbol),numSteps_Integer}@}
 
 @d theZs
 @{theZs:{_?MatrixQ..}@}
@@ -1347,11 +1912,11 @@ fSum::usage=
 @{
 fSum[@<linMod@>,
 	{},
-	xtGuess_?MatrixQ]:=
+	xtGuess:{{_?NumberQ..}..}]:=
 ConstantArray[0,{Length[psiZ],1}]
 
 fSum[@<linMod@>,
-	@<XZFuncs@>,xtGuess_?MatrixQ]:=
+	@<XZFuncs@>,xtGuess:{{_?NumberQ..}..}]:=
 With[{numXVars=getNumX[linMod],numZVars=getNumZ[linMod]},
 With[{xzRes=Apply[multiStepZ[XZFuncs,numXVars,numZVars,numSteps], Flatten[xtGuess]]},
 fSumC[phi,FF,psiZ,xzRes]]]
@@ -1474,7 +2039,7 @@ Join[AMASeriesRepCallGraph,Map["genX0Z0Funcs"->#&,{"getNumX","getNumZ","genSlots
 @{
 (*begin code for multiStep*)
 
-multiStep[@<XZFuncs@>,numX_Integer,valRange:{_Integer..},numTerms_Integer]:=
+oldmultiStep[@<XZFuncs@>,numX_Integer,valRange:{_Integer..},numTerms_Integer]:=
 With[{funcArgs=Flatten[genSlots[numX]]},
 With[{appGuts=(Apply[XZFuncs[[1]],Flatten[funcArgs]][[Range[numX]]])},
 With[{xtFunc01=Function[appGuts]},
@@ -1483,6 +2048,22 @@ NestList[Function[xx,Apply[xtFunc01,Flatten[xx]]],funcArgs,numTerms-1]},
 With[{theXZGuts=Map[(Function[xx,
 Apply[XZFuncs[[1]],Flatten[xx]][[valRange]]]),iterGuts]},
 With[{theFunc=Function[theXZGuts]},
+theFunc]]]]]]/;numSteps>0
+
+
+multiStep[@<XZFuncs@>,numX_Integer,valRange:{_Integer..},numTerms_Integer]:=
+Module[{xfName=Unique["msXFName"],xzfName=Unique["msXZFName"]},
+With[{slotArgs=Flatten[genSlots[numX]],
+funcArgs=Unique["msArgs"]},
+With[{appGuts=(notApply[XZFuncs[[1]],theArgs$])},
+xfName[theArgs:{_?NumberQ..}]:=
+Flatten[Apply[XZFuncs[[1]],theArgs$]][[Range[numX]]];
+xzfName[theArgs:{_?NumberQ..}]:=
+Apply[XZFuncs[[1]],theArgs$];
+With[{iterGuts=
+NestList[xfName,funcArgs,numTerms-1]/.funcArgs-> slotArgs},
+With[{theXZGuts=Map[xzfName,iterGuts]},
+With[{theFunc=Function[Map[Function[xx,xx[[valRange]]],theXZGuts]]},
 theFunc]]]]]]/;numSteps>0
 
 
@@ -1617,6 +2198,7 @@ Join[AMASeriesRepCallGraph,Map["checkMod"->#&,{"genLilXkZkFunc","genX0Z0Funcs","
  
 genFRFunc[{numX_Integer,numEps_Integer,numZ_Integer},
 xkFunc:(_Function|_CompiledFunction),@<eqnsFunc@>,opts:OptionsPattern[]]:=
+Module[{},
 With[{funcArgs=Flatten[genSlots[numX+numEps]],
 zArgs=Table[Unique["theFRZArgs"],{numZ}]},
 With[{zArgsInit=Map[Function[xx,{xx,0}],zArgs],funcName=Unique["fName"]},
@@ -1624,9 +2206,12 @@ funcName[theVars:{_?NumberQ..}]:=
 Apply[eqnsFunc,Flatten[Apply[xkFunc,theVars]]];Off[FindRoot::nlnum];
 With[{frRes=FindRoot[funcName[Join[funcArgs,zArgs]],zArgsInit],
 xzRes=Drop[Apply[xkFunc,Join[funcArgs,zArgs]],numX][[Range[numX]]]},
+If[Not[FreeQ[xzRes,$Failed]],Throw[$Failed,"xzRes"]];
 With[{otherGuts=cmpXZVals[xzRes,zArgs,frRes]},
+If[Not[Apply[And,Map[Or[MachineNumberQ[#],IntegerQ[#]]&,Cases[xzRes,_?NumberQ,Infinity]]]],
+Throw[{$Failed,{xzRes,funcName[Join[funcArgs,zArgs]],zArgsInit}//InputForm},"otherGuts not machine number"]];
 On[FindRoot::nlnum];
-Function[otherGuts]]]]]
+Function[otherGuts]]]]]]
 
 (* input   [function (xt,eps,zt)->(xtm1,xt,xtp1,eps), function (xtm1,xt,xtp1,eps)->me]*)
 (* output   [function  (xt,eps) ->(xt,zt)] *)
@@ -1826,18 +2411,18 @@ myNewNExpectation[fff_[fargs___],distStuff_]:=Module[{},Print["jhere",{(Apply[ff
 @d iterateDRREIntegrate
 @{
 (*begin code for iterateDRREIntegrate*)
-iterateDRREIntegrate[drFunc:(_Function|_CompiledFunction),initVec_?MatrixQ,
-	@<distribSpec@>,numPers_Integer]:=
-With[{numEps=getNumEpsVars[distribSpec],firVal=Apply[drFunc,Flatten[initVec]]},
-	With[{numX=Length[initVec]-numEps,iterFunc=makeREIterFunc[drFunc,distribSpec]},
+iterateDRREIntegrate[drFunc:(_Function|_CompiledFunction),
+drExpFunc:(_Function|_CompiledFunction),initVec_?MatrixQ,numEps_Integer,numPers_Integer]:=
+With[{firVal=Apply[drFunc,Flatten[initVec]]},
+	With[{numX=Length[initVec]-numEps},
 With[{iterated=
-NestList[Function[xx,((Transpose[{Flatten[Apply[iterFunc,Flatten[xx]]]}]))],firVal,numPers-1]},
+NestList[Function[xx,((Transpose[{Flatten[Apply[drExpFunc,Flatten[xx]]]}]))],firVal,numPers-1]},
 Join[initVec[[Range[numX]]],Apply[Join,
 (Map[Function[xx,Identity[xx[[Range[numX]]]]],iterated])]]]]]/;
 And[numPers>0]
 
 AMASeriesRepCallGraph=
-Join[AMASeriesRepCallGraph,Map["iterateDRREIntegrate"->#&,{"getNumEpsVars","makeREIterFunc"}]];
+Join[AMASeriesRepCallGraph,Map["iterateDRREIntegrate"->#&,{}]];
 
 
 (*end code for iterateDRREIntegrate*)
@@ -1917,7 +2502,8 @@ Transpose[{zVals}]]]],
 (*begin code for iterateDRPF*)
  
 iterateDRPF[drFunc_Function,initVec_?MatrixQ,numEps_Integer,numPers_Integer]:=
-With[{firVal=Apply[drFunc,Flatten[initVec]],numX=Length[initVec]-numEps,theZeros=Table[0,{numEps}]},
+With[{firVal=Apply[drFunc,Flatten[initVec]],
+numX=Length[initVec]-numEps,theZeros=Table[0,{numEps}]},Print["firVal=",firVal];
 With[{iterated=
 NestList[Function[xx,(Apply[drFunc,Flatten[Append[xx[[Range[numX]]],theZeros]]])],firVal,numPers-1]},
 Join[initVec[[Range[numX]]],Apply[Join,(Map[Function[xx,xx[[Range[numX]]]],iterated])]]]]/;
@@ -2005,20 +2591,24 @@ Join[AMASeriesRepCallGraph,Map["pathErrsDRPF"->#&,{"doFuncArg","iterateDRPF"}]];
 @d pathErrsDRREIntegrate
 @{
 (*begin code for pathErrsDRREIntegrate*)
-pathErrsDRREIntegrate[drFunc_Function,initVec_?MatrixQ,@<distribSpec@>,@<eqnsFunc@>,numPers_Integer]:=
-With[{numEps=getNumEpsVars[distribSpec]},
-With[{pathNow=iterateDRREIntegrate[drFunc,initVec,distribSpec,numPers],numX=Length[initVec]-numEps},(*Print["pathErrsDRREIntegrate:",pathNow];*)
+pathErrsDRREIntegrate[drFunc_Function,drExpFunc_Function,
+initVec_?MatrixQ,numEps_Integer,@<eqnsFunc@>,numPers_Integer]:=
+With[{pathNow=iterateDRREIntegrate[drFunc,drExpFunc,initVec,numEps,numPers],numX=Length[initVec]-numEps},
 With[{firstArg=doFuncArg[pathNow,Identity[Reverse[initVec[[-Range[numEps]]]]],numX,0],
-	restArgs=(Map[doFuncArg[pathNow,Table[{0},{numEps}],numX,genSlot[1]-2]&,Range[3,numPers]])},
+restArgs=(Map[Function[xx,
+doFuncArg[pathNow,Table[{0},{numEps}],numX,xx-2]],Range[3,numPers]])
+},
 With[{first=Transpose[{Apply[eqnsFunc,Flatten[firstArg]]}]},
-	With[{theRest=Map[Transpose[{(Apply[eqnsFunc,Flatten[genSlot[1]]])}]&,restArgs]},(*Print["pathErrs:",{pathNow,theRest,first}];*)
+	With[{theRest=Map[Function[xx,Transpose[{(Apply[eqnsFunc,Flatten[xx]])}]],restArgs]
+},
+(*Print["pathErrs:",{pathNow,theRest,first}];*)
 		Prepend[theRest,first]
-]]]]]/;
+]]]]/;
 And[numPers>1]
  
 
 AMASeriesRepCallGraph=
-Join[AMASeriesRepCallGraph,Map["pathErrsDRPF"->#&,{"doFuncArg","iterateDRREIntegrate","getNumEpsVars"}]];
+Join[AMASeriesRepCallGraph,Map["pathErrsDRPF"->#&,{"doFuncArg","iterateDRREIntegrate"}]];
 (*end code for pathErrsDRREIntegrate*)
 @}
 
@@ -2055,14 +2645,16 @@ firstArg]
 @d evalPathErrDRREIntegrate
 @{
 (*begin code for evalPathErrDRREIntegrate*)
-evalPathErrDRREIntegrate[drFunc_Function,initVec_?MatrixQ,@<distribSpec@>,@<eqnsFunc@>]:=
-pathErrsDRREIntegrate[drFunc,initVec,distribSpec,eqnsFunc,2]//First
+evalPathErrDRREIntegrate[drFunc_Function,drExpFunc_Function,
+initVec_?MatrixQ,numEps_Integer,@<eqnsFunc@>]:=
+pathErrsDRREIntegrate[drFunc,drExpFunc,initVec,numEps,eqnsFunc,2]//First
 
 
 
 evalPathErrDRREIntegrate[phi_?MatrixQ,
-drFunc_Function,initVec_?MatrixQ,@<distribSpec@>,@<eqnsFunc@>]:=
-phi . (pathErrsDRREIntegrate[drFunc,initVec,distribSpec,eqnsFunc,2])//First
+drFunc_Function,drExpFunc_Function,initVec_?MatrixQ,@<eqnsFunc@>]:=
+phi . (pathErrsDRREIntegrate[drFunc,drExpFunc,
+initVec,eqnsFunc,2])//First
 
 
 AMASeriesRepCallGraph=
@@ -2084,24 +2676,26 @@ Join[AMASeriesRepCallGraph,Map["evalPathErrorDRREIntegrate"->#&,{"pathErrsDRREIn
 @d evalBadPathErrDRREIntegrate
 @{
 (*begin code for evalBadPathErrDRREIntegrate*)
-evalBadPathErrDRREIntegrate[drFunc_Function,noEpsVec_?MatrixQ,@<distribSpec@>,@<eqnsFunc@>]:=
+evalBadPathErrDRREIntegrate[drFunc_Function,drExpFunc_Function,
+noEpsVec_?MatrixQ,numEps_Integer,@<eqnsFunc@>]:=
 With[{funcName=Unique["fName"]},
 funcName[tryEps:{_?NumberQ..}]:=
-	With[{theVal=evalPathErrDRREIntegrate[drFunc,Join[noEpsVec,Transpose[{tryEps}]],distribSpec,eqnsFunc]},
+	With[{theVal=evalPathErrDRREIntegrate[drFunc,drExpFunc,Join[noEpsVec,Transpose[{tryEps}]],numEps,eqnsFunc]},
 		With[{theNorm=Norm[theVal,Infinity]},
 		(*Print["stillex:",{tryEps,theVal,Norm[theVal,Infinity],theNorm}];*)theNorm]];
-	With[{outerEVars=Table[Unique["eVs"],{getNumEpsVars[distribSpec]}]},
+	With[{outerEVars=Table[Unique["eVs"],{numEps}]},
 	With[{maxArgs=Map[Function[xx,{xx,0}],outerEVars],cons=Apply[And,  (Map[Function[xx,(-0.01<=xx<=0.01)], outerEVars])]},
 	FindMaximum[{funcName[outerEVars],cons},maxArgs]]]]
 
 
 evalBadPathErrDRREIntegrate[phi_?MatrixQ,
-drFunc_Function,noEpsVec_?MatrixQ,@<distribSpec@>,@<eqnsFunc@>]:=
+drFunc_Function,drExpFunc_Function,
+noEpsVec_?MatrixQ,numEps_Integer,@<eqnsFunc@>]:=
 With[{funcName=Unique["fName"]},
 funcName[tryEps:{_?NumberQ..}]:=
-With[{theVal=evalPathErrDRREIntegrate[drFunc,Join[noEpsVec,Transpose[{tryEps}]],distribSpec,eqnsFunc]},
+With[{theVal=evalPathErrDRREIntegrate[drFunc,drExpFunc,Join[noEpsVec,Transpose[{tryEps}]],numEps,eqnsFunc]},
 		(*Print["otherex:",theVal,Norm[theVal,Infinity]];*)Norm[theVal,Infinity]];
-	With[{outerEVars=Table[Unique["eVs"],{getNumEpsVars[distribSpec]}]},
+	With[{outerEVars=Table[Unique["eVs"],{numEps}]},
 	With[{maxArgs=Map[Function[xx,{xx,0}],outerEVars],cons=Apply[And,  (Map[Function[xx,(-0.01<=xx<=0.01)], outerEVars])]},
 	FindMaximum[{funcName[outerEVars],cons},maxArgs]]]]
 
@@ -2126,18 +2720,18 @@ Join[AMASeriesRepCallGraph,Map["evalBadPathErrorDRREIntegrate"->#&,{"evalPathErr
 @{
 (*begin code for worstPathForErrDRREIntegrate*)
 
-worstPathForErrDRREIntegrate[drFunc_Function,noEpsVec_?MatrixQ,@<distribSpec@>,@<eqnsFunc@>]:=
-With[{fMinRes=evalBadPathErrDRREIntegrate[drFunc,noEpsVec,distribSpec,eqnsFunc]},
+worstPathForErrDRREIntegrate[drFunc_Function,drExpFunc_Function,noEpsVec_?MatrixQ,numEps_Integer,@<eqnsFunc@>]:=
+With[{fMinRes=evalBadPathErrDRREIntegrate[drFunc,drExpFunc,noEpsVec,numEps,eqnsFunc]},
 	With[{badEps=Transpose[{(Map[First,fMinRes[[2]]])/.fMinRes[[2]]}]},
-	With[{badPath=iterateDRREIntegrate[drFunc,Join[noEpsVec,badEps],distribSpec,2]},
+	With[{badPath=iterateDRREIntegrate[drFunc,drExpFunc,Join[noEpsVec,badEps],numEps,2]},
 		Join[badPath,badEps]]]]
 
 worstPathForErrDRREIntegrate[phi_?MatrixQ,
-drFunc_Function,noEpsVec_?MatrixQ,@<distribSpec@>,@<eqnsFunc@>]:=
+drFunc_Function,drExpFunc_Function,noEpsVec_?MatrixQ,numEps_Integer,@<eqnsFunc@>]:=
 With[{fMinRes=
-evalBadPathErrDRREIntegrate[phi,drFunc,noEpsVec,distribSpec,eqnsFunc]},
+evalBadPathErrDRREIntegrate[phi,drFunc,drExpFunc,noEpsVec,numEps,eqnsFunc]},
 	With[{badEps=Transpose[{(Map[First,fMinRes[[2]]])/.fMinRes[[2]]}]},
-	With[{badPath=iterateDRREIntegrate[drFunc,Join[noEpsVec,badEps],distribSpec,2]},
+	With[{badPath=iterateDRREIntegrate[drFunc,drExpFunc,Join[noEpsVec,badEps],numEps,2]},
 		Join[badPath,badEps]]]]
 
 
@@ -2461,6 +3055,9 @@ getterSetterTests={};
 @{
 getterSetterTests::usage="getterSetterTestsUsage"
 @}
+
+
+
 \subsection{Identifiers}
 \label{sec:identifiers}
 

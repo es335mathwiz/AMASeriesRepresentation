@@ -1,0 +1,82 @@
+Get["pathSetup.mth"]
+Needs["AMASeriesRepresentation`"]
+Needs["mathSmolyak`"]
+Get["betterRBC`"]
+
+
+InstallJava[]
+AddToClassPath["/msu/home/m1gsa00/NetBeansProjects/myLibsvm/build/classes"]
+svmDoer = 
+ LoadJavaClass["libsvm.svm"];
+Print["updating smolyak grid and java code"]
+smolRng=#[[{2,3}]]&/@Drop[aGSpecBetter,2][[1]];
+{pt,tf,ply,iply}=smolyakInterpolationPrep[aLevs=4*{1,1,1},
+smolRng,theDistBetter];
+sgSpec={{1,3},smolRng,pt,tf,ply,iply,1};
+newX=sgSpec[[3]]//N
+boo=cnstrctExpKern[Transpose[newX],dotProdKernel,1,.01,theDistBetter]
+writeExpKern["dwell",boo[[1]],boo[[2]],boo[[3]],boo[[5]],boo[[6]]];
+Print["compiling java"];
+Run["(source ~/.bashrc;javac forImport/dwell.java)"]
+smolX=Drop[#,-1]&/@(smolXEps=Map[Function[xx,fillIn[{{},{1,3},xx}]],pt//N]);
+slinRes=Reap[AbsoluteTiming[slin=nestGenericIterREInterp[{genFRFunc},linModBetter, {genX0Z0Funcs[linModBetter],2},eqnsCompiledBetter,sgSpec,theDistBetter,svmRegressionLinear,{10.0,.0001},2]]];
+
+
+allModelErrs05=evalPathErrDRREIntegrate[slin[[-1,1]],slin[[-1,2]],
+Transpose[{#}],1,eqnsCompiledBetter]&/@ smolXEps;
+
+
+fMinFunc[aVecFunc:(_Function|_CompiledFunction),{
+x1lag_?NumberQ,x2lag_?NumberQ,x3lag_?NumberQ,x4lag_?NumberQ,eps_?NumberQ}]:=
+FindMaximum[
+{normFunc[x1lag,x2lag,x3lag,x4lag,x1now,x2now,x3now,x4now,x1lead,x2lead,x3lead,x4lead,eps],
+Norm[wrapper[x1lag,x2lag,x3lag,x4lag,x1now,x2now,x3now,x4now,x1lead,x2lead,x3lead,x4lead,eps]]==0&&
+.1<x1now<2&&
+.1<x1lead<2&&
+.1<x2now<2&&
+.1<x2lead<2&&
+.1<x3now<2&&
+.1<x3lead<2&&
+.1<x4now<2&&
+.1<x4lead<2
+},{{x1now,1},{x2now,.18},{x3now,.35},{x4now,2.77},{x1lead,1},{x2lead,.18},{x3lead,.35},{x4lead,2.77}},Method -> InteriorPoint]
+
+wrapper[x1lag_?NumberQ,x2lag_?NumberQ,x3lag_?NumberQ,x4lag_?NumberQ,
+x1now_?NumberQ,x2now_?NumberQ,x3now_?NumberQ,x4now_?NumberQ,
+x1lead_?NumberQ,x2lead_?NumberQ,x3lead_?NumberQ,x4lead_?NumberQ,eps_?NumberQ]:=
+eqnsCompiledBetter[x1lag,x2lag,x3lag,x4lag,x1now,x2now,x3now,x4now,x1lead,x2lead,x3lead,x4lead,eps]
+
+
+normFunc[x1lag_?NumberQ,x2lag_?NumberQ,x3lag_?NumberQ,x4lag_?NumberQ,
+x1now_?NumberQ,x2now_?NumberQ,x3now_?NumberQ,x4now_?NumberQ,
+x1lead_?NumberQ,x2lead_?NumberQ,x3lead_?NumberQ,x4lead_?NumberQ,eps_?NumberQ]:=
+With[{theRes=Norm[N[betterRBC`Private`hmatSymbRE] . 
+Transpose[{{x1lag,x2lag,x3lag,x4lag,x1now,x2now,x3now,x4now,x1lead,x2lead,x3lead,x4lead}}],Infinity]},theRes]
+
+
+
+
+
+xsForWorstZs=(fMinFunc[eqnsCompiledBetter,#]) & /@ smolXEps;
+
+
+
+xImpact05=Inverse[IdentityMatrix[4]-betterRBC`Private`fmatSymbRE//N] . # &/@allModelErrs05;
+
+xErrs= ((simpRBCExactDRBetter @@ #)-(slin[[-1,1]] @@ #)[[Range[4]]])& /@ smolXEps;
+
+
+(*
+
+{1., 0.187032, 0.359845, 2.77897}
+In[2]:= Mean[allErrs05]
+
+Out[2]= 0.184617
+
+In[3]:= StandardDeviation[allErrs05]
+
+Out[3]= 0.090576
+
+In[4]:= 
+
+*)

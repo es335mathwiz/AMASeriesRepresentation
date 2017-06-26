@@ -1447,6 +1447,20 @@ Join[AMASeriesRepCallGraph,Map["genXZREInterpFunc"->#&,{"genXZFuncRE","makeInter
 (*end code for genXZREInterpFunc*)
 @}
 
+\subsection{truncErrorMat}
+@d truncErrorMatUsage
+@{
+
+@}
+
+@d truncErrorMat
+@{
+truncErrorMat=
+Compile[{{fmat,_Real,2},{phimat,_Real,2},{kk,_Integer}},
+With[{dim=Length[fmat]},
+If[kk==0,Inverse[IdentityMatrix[dim] - fmat].phimat,
+Inverse[IdentityMatrix[dim] - fmat] . MatrixPower[fmat,kk].phimat]]]
+@}
 
 \subsection{parallelGenXZREInterpFunc}
 \label{sec:genxzreinterpfunc}
@@ -1500,6 +1514,10 @@ EndPackage[]
 
 
 @}
+
+
+
+
 \appendix
 
 \section{Usage Definitions}
@@ -1511,6 +1529,7 @@ EndPackage[]
 @{
 (*Begin Usage Definitions*)
 PerfectForesight::usage="degenerate distribution implementing perfect foresight"
+@<truncErrorMatUsage@>
 @<makeGenericInterpFuncsUsage@>
 @<svmRegressionSigmoidUsage@>
 @<svmRegressionRBFUsage@>
@@ -1611,6 +1630,7 @@ PerfectForesight::usage="degenerate distribution implementing perfect foresight"
 
 @d package code
 @{
+@<truncErrorMatUsage@>
 @<nestGenericIterREInterp@>
 @<doGenericIterREInterp@>
 @<ExpKernCode@>
@@ -2573,11 +2593,11 @@ Join[AMASeriesRepCallGraph,Map["pathErrsDRPF"->#&,{"doFuncArg","iterateDRPF"}]];
 (*begin code for pathErrsDRREIntegrate*)
 pathErrsDRREIntegrate[drFunc_Function,drExpFunc_Function,
 initVec_?MatrixQ,numEps_Integer,@<eqnsFunc@>,numPers_Integer]:=
-With[{pathNow=iterateDRREIntegrate[drFunc,drExpFunc,initVec,numEps,numPers],numX=Length[initVec]-numEps},Print["pathErrsDRREIntegrate:",pathNow];
+With[{pathNow=iterateDRREIntegrate[drFunc,drExpFunc,initVec,numEps,numPers],numX=Length[initVec]-numEps},
 With[{firstArg=doFuncArg[pathNow,Identity[Reverse[initVec[[-Range[numEps]]]]],numX,0],
 restArgs=(Map[Function[xx,
 doFuncArg[pathNow,Table[{0},{numEps}],numX,xx-2]],Range[3,numPers]])
-},Print["args",{firstArg,restArgs}];
+},
 With[{first=Transpose[{Apply[eqnsFunc,Flatten[firstArg]]}]},
 	With[{theRest=Map[Function[xx,Transpose[{(Apply[eqnsFunc,Flatten[xx]])}]],restArgs]
 },
@@ -2660,7 +2680,7 @@ evalBadPathErrDRREIntegrate[drFunc_Function,drExpFunc_Function,
 noEpsVec_?MatrixQ,numEps_Integer,@<eqnsFunc@>]:=
 With[{funcName=Unique["fName"]},
 funcName[tryEps:{_?NumberQ..}]:=
-	With[{theVal=evalPathErrDRREIntegrate[drFunc,drExpFunc,Join[noEpsVec,Transpose[{tryEps}]],numEps,eqnsFunc]},Print["fromgeneratedfunc:",theVal];
+	With[{theVal=evalPathErrDRREIntegrate[drFunc,drExpFunc,Join[noEpsVec,Transpose[{tryEps}]],numEps,eqnsFunc]},
 		With[{theNorm=Norm[theVal,Infinity]},
 		(*Print["stillex:",{tryEps,theVal,Norm[theVal,Infinity],theNorm}];*)theNorm]];
 	With[{outerEVars=Table[Unique["eVs"],{numEps}]},
@@ -2702,7 +2722,7 @@ Join[AMASeriesRepCallGraph,Map["evalBadPathErrorDRREIntegrate"->#&,{"evalPathErr
 
 worstPathForErrDRREIntegrate[drFunc_Function,drExpFunc_Function,noEpsVec_?MatrixQ,numEps_Integer,@<eqnsFunc@>]:=
 With[{fMinRes=evalBadPathErrDRREIntegrate[drFunc,drExpFunc,noEpsVec,numEps,eqnsFunc]},
-	With[{badEps=Transpose[{(Map[First,fMinRes[[2]]])/.fMinRes[[2]]}]},Print["fminres",fMinRes];
+	With[{badEps=Transpose[{(Map[First,fMinRes[[2]]])/.fMinRes[[2]]}]},
 	With[{badPath=iterateDRREIntegrate[drFunc,drExpFunc,Join[noEpsVec,badEps],numEps,2]},
 		Join[badPath,badEps]]]]
 

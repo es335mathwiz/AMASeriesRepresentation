@@ -50,8 +50,9 @@ sgSpec={{2},smolRng,pt,tf,ply,ply/.xx[2]->0,1};
 
 siData=smolyakGenInterpData[theFP,sgSpec];
 
-
-
+cx=Import["/Users/garyanderson/git/manchesterCS/61011/project/cx.mat"]
+cy=Flatten[Import["/Users/garyanderson/git/manchesterCS/61011/project/cy.mat"]]
+svmt[mmaUreadUproblemPoly[cx,cy, {100, .001, 10, .2, 1}]]
 (*
 tryX=pt;tryY=Flatten[First/@siData];
 InstallJava[]

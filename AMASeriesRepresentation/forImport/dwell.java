@@ -1,5 +1,5 @@
 package forImport;
-//Mon 26 Jun 2017 14:55:18
+//Sat 1 Jul 2017 18:20:00
 public class dwell {
 public static double [] testExpKern(double[] xNow)   {
    double [] theExpVals = new double[177];
@@ -515,4 +515,21 @@ theVals[175]=okay1+okay3+0.18107490259066727*xNow[0];
 theVals[176]=okay1+okay3+0.5869551827055035*xNow[0];
    return(theVals);
 } 
+public static double [][] xVals(){
+double[][]xRes=new doubel[][]=
+;
+return(xRes);
+}
+public static double [] yVals(){
+double[] yRes=new doubel[]=
+;
+return(yRes);
+}
+public static double [][] allKernVals(){
+double[][]kernRes=new double[][]=
+;
+return(kernRes)=
+;
+}
+
 }

@@ -29,7 +29,7 @@ smolRes=AbsoluteTiming[nestGenericIterREInterp[{genFRFunc},linModBetter, {genX0Z
 
 slinRes=Reap[AbsoluteTiming[nestGenericIterREInterp[{genFRFunc},linModBetter, {genX0Z0Funcs[linModBetter],2},eqnsCompiledBetter,sgSpec,theDistBetter,svmRegressionLinear,{10.0,.0001},2]]]
 *)
-
+(*
 Module[{},
 theRes=Table[Catch[
 With[{(*smolRes=AbsoluteTiming[nestGenericIterREInterp[{genFRFunc},linModBetter, {genX0Z0Funcs[linModBetter],hrz},eqnsCompiledBetter,sgSpec,theDistBetter,smolyakInterpolation,{},len]],*)
@@ -41,4 +41,4 @@ Save["try"<>ToString[aLevs]<>".mth",theRes];
 Save["trySmol"<>ToString[aLevs]<>".mth",smolRes];
 Save["trySlin"<>ToString[aLevs]<>".mth",slinRes]
 ]
-
+*)

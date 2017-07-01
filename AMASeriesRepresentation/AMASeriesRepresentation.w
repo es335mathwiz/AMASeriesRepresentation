@@ -294,6 +294,18 @@ public static double [] testKern(double[] xNow)   {
 ``
    return(theVals);
 } 
+public static double [][] xVals(){
+double[][]xRes=new doubel[``][``]=
+``;
+return(xRes);
+}
+public static double [][] allKernVals(){
+double[][]kernRes=new double[``][``]=
+``;
+return(kernRes)=
+``;
+}
+
 }
 "
 
@@ -424,8 +436,13 @@ Table[
 Symbol["eps$"<>ToString[ii]],
 {ii,numFeatures}]
 
+cnstrctXYPRECOMPUTEKern[xData_?MatrixQ,theKernel_Function]:=
+With[{kernRes=Outer[theKernel,xData,xData,1]},
+{xData,kernRes}]
 
-dotProdKernel=Function[{xx,yy},Transpose[xx] . yy];
+
+(*dotProdKernel=Function[{xx,yy},Transpose[xx] . yy];*)
+dotProdKernel=Function[{xx,yy},xx . yy];
 
 
 
@@ -433,13 +450,21 @@ makeSymbolicKernel[]:=
 With[{myX=Unique["xx"],myY=Unique["yy"]},
 	 Apply[Function,{{myX,myY},ffff[myX,myY]}]]
 
+(*
 makePolynomialKernel[aPow_Integer]:=
 With[{myX=Unique["xx"],myY=Unique["yy"]},
 Apply[Function,{{myX,myY},(1+Transpose[myX] . myY)^aPow}]]
+*)
+makePolynomialKernel[aPow_Integer]:=
+With[{myX=Unique["xx"],myY=Unique["yy"]},
+Apply[Function,{{myX,myY},(1+myX . myY)^aPow}]]
 
-
+(*
 makeRBFKernel[aRadius_Integer]:=
 Function[{myX,myY},E^(-Outer[Norm[Plus[#1,#2]]&,Transpose[myX],-Transpose[myY],1]/(2*(aRadius^2)))]
+*)
+makeRBFKernel[aRadius_Integer]:=
+Function[{myX,myY},E^(-Outer[Norm[Plus[#1,#2]]&,myX,-myY,1]/(2*(aRadius^2)))]
 
 @}
 @d makeSymbolicKernelUsage
@@ -1630,7 +1655,7 @@ PerfectForesight::usage="degenerate distribution implementing perfect foresight"
 
 @d package code
 @{
-@<truncErrorMatUsage@>
+@<truncErrorMat@>
 @<nestGenericIterREInterp@>
 @<doGenericIterREInterp@>
 @<ExpKernCode@>

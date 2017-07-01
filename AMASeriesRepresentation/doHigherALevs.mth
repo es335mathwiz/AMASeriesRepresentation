@@ -3,7 +3,12 @@ Needs["AMASeriesRepresentation`"]
 Needs["mathSmolyak`"]
 Get["betterRBC`"]
 InstallJava[]
-AddToClassPath["/msu/home/m1gsa00/NetBeansProjects/myLibsvm/build/classes"]
+Switch[$System,
+ "Mac OS X x86 (64-bit)", 
+AddToClassPath["/Users/garyanderson/NetBeansProjects/libSvmMac/build/classes"],
+ "Linux x86 (64-bit)", 
+AddToClassPath["/Users/garyanderson/NetBeansProjects/libSvmMac/build/classes"]
+]
 svmDoer = 
  LoadJavaClass["libsvm.svm"];
 Print["updating smolyak grid and java code"]
@@ -29,16 +34,22 @@ smolRes=AbsoluteTiming[nestGenericIterREInterp[{genFRFunc},linModBetter, {genX0Z
 
 slinRes=Reap[AbsoluteTiming[nestGenericIterREInterp[{genFRFunc},linModBetter, {genX0Z0Funcs[linModBetter],2},eqnsCompiledBetter,sgSpec,theDistBetter,svmRegressionLinear,{10.0,.0001},2]]]
 *)
+<<<<<<< HEAD
+=======
+
+>>>>>>> e7f80c6b8f9ba5014eaf0f892a3db8b805ac1c81
 (*
 Module[{},
 theRes=Table[Catch[
 With[{(*smolRes=AbsoluteTiming[nestGenericIterREInterp[{genFRFunc},linModBetter, {genX0Z0Funcs[linModBetter],hrz},eqnsCompiledBetter,sgSpec,theDistBetter,smolyakInterpolation,{},len]],*)
-slinRes=Reap[AbsoluteTiming[nestGenericIterREInterp[{genFRFunc},linModBetter, {genX0Z0Funcs[linModBetter],hrz},eqnsCompiledBetter,sgSpec,theDistBetter,svmRegressionLinear,{10.0,.0001},len]]]},
+slinRes=Reap[AbsoluteTiming[nestGenericIterREInterp[{genFRFunc},linModBetter, {genX0Z0Funcs[linModBetter],hrz},eqnsCompiledBetter,sgSpec,theDistBetter,svmRegressionLinear,{10.0,.0001},len]]]},52
 {(*{smolRes[[1]],smolRes[[2,-1,1]] @@anXEpsFlatBetter},*)
 {slinRes[[1,1]],slinRes[[-1,-1]],slinRes[[1,2,-1,1]] @@ anXEpsFlatBetter}, 
 simpRBCExactDRBetter @@ anXEpsFlatBetter}],"otherGuts not machine number"],{hrz,5},{len,5}];
 Save["try"<>ToString[aLevs]<>".mth",theRes];
-Save["trySmol"<>ToString[aLevs]<>".mth",smolRes];
-Save["trySlin"<>ToString[aLevs]<>".mth",slinRes]
 ]
+<<<<<<< HEAD
 *)
+=======
+*)
+>>>>>>> e7f80c6b8f9ba5014eaf0f892a3db8b805ac1c81

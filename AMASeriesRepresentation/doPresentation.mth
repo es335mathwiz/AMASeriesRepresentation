@@ -3,7 +3,12 @@ Needs["AMASeriesRepresentation`"]
 Needs["mathSmolyak`"]
 Get["betterRBC`"]
 InstallJava[]
+Switch[$System,
+ "Mac OS X x86 (64-bit)", 
+AddToClassPath["/Users/garyanderson/NetBeansProjects/libSvmMac/build/classes"],
+ "Linux x86 (64-bit)", 
 AddToClassPath["/msu/home/m1gsa00/NetBeansProjects/myLibsvm/build/classes"]
+]
 svmDoer = 
  LoadJavaClass["libsvm.svm"];
 Print["updating smolyak grid and java code"]

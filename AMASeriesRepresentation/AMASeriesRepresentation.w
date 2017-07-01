@@ -217,6 +217,7 @@ betterArgs=Table[Unique["arg"],{Length[smolRngs]}]},
 svmtPoly[mmaUreadUproblemPoly[smolPts//N,fVals//N, svmArgs]];
 modPoly = 
      libsvm`svm`svmUtrain[svmtPoly[prob],svmtPoly[param]];
+Sow[huh=modPoly[svUindices],"svIndices"];
 polyFunc=Function[xx,(libsvm`svm`mysvmUpredictUvalues[modPoly, xx] )];
 expPolyFunc=Function[xx,(libsvm`svm`mysvmUpredictUExpectedUvalues[modPoly, xx] )];
 {polyFunc/.xx$->betterArgs,expPolyFunc/.xx$->Drop[betterArgs,-numEps]}]
@@ -245,6 +246,7 @@ betterArgs=Table[Unique["arg"],{Length[smolRngs]}]},
 svmtRBF[mmaUreadUproblemRBF[smolPts//N,fVals//N, svmArgs]];
 modRBF = 
      libsvm`svm`svmUtrain[svmtRBF[prob],svmtRBF[param]];
+Sow[huh=modRBF[svUindices],"svIndices"];
 rbfFunc=Function[xx,(libsvm`svm`mysvmUpredictUvalues[modRBF, xx] )];
 expRBFFunc=Function[xx,(libsvm`svm`mysvmUpredictUExpectedUvalues[modRBF, xx] )];
 {rbfFunc/.xx$->betterArgs,expRBFFunc/.xx$->Drop[betterArgs,-numEps]}]
@@ -270,6 +272,7 @@ betterArgs=Table[Unique["arg"],{Length[smolRngs]}]},
 svmtSigmoid[mmaUreadUproblemSigmoid[smolPts//N,fVals//N, svmArgs]];
 modSigmoid = 
      libsvm`svm`svmUtrain[svmtSigmoid[prob],svmtSigmoid[param]];
+Sow[huh=modSigmoid[svUindices],"svIndices"];
 sigmoidFunc=Function[xx,(libsvm`svm`mysvmUpredictUvalues[modSigmoid, xx] )];
 expSigmoidFunc=Function[xx,(libsvm`svm`mysvmUpredictUExpectedUvalues[modSigmoid, xx] )];
 {sigmoidFunc/.xx$->betterArgs,expSigmoidFunc/.xx$->Drop[betterArgs,-numEps]}]
@@ -2228,14 +2231,14 @@ With[{funcArgs=Flatten[genSlots[numX+numEps]],
 zArgs=Table[Unique["theFRZArgs"],{numZ}]},
 With[{zArgsInit=Map[Function[xx,{xx,0}],zArgs],funcName=Unique["fName"]},
 funcName[theVars:{_?NumberQ..}]:=
-Apply[eqnsFunc,Flatten[Apply[xkFunc,theVars]]];Off[FindRoot::nlnum];
+Apply[eqnsFunc,Flatten[Apply[xkFunc,theVars]]];(*Off[FindRoot::nlnum];*)
 With[{frRes=FindRoot[funcName[Join[funcArgs,zArgs]],zArgsInit],
 xzRes=Drop[Apply[xkFunc,Join[funcArgs,zArgs]],numX][[Range[numX]]]},
 If[Not[FreeQ[xzRes,$Failed]],Throw[$Failed,"xzRes"]];
 With[{otherGuts=cmpXZVals[xzRes,zArgs,frRes]},
 If[Not[Apply[And,Map[Or[MachineNumberQ[#],IntegerQ[#]]&,Cases[xzRes,_?NumberQ,Infinity]]]],
 Throw[{$Failed,{xzRes,funcName[Join[funcArgs,zArgs]],zArgsInit}//InputForm},"otherGuts not machine number"]];
-On[FindRoot::nlnum];
+(*On[FindRoot::nlnum];*)
 Function[otherGuts]]]]]]
 
 (* input   [function (xt,eps,zt)->(xtm1,xt,xtp1,eps), function (xtm1,xt,xtp1,eps)->me]*)

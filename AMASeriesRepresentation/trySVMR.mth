@@ -1,11 +1,13 @@
+Print["reconcile which libsvmr"]
+
 Switch[$OperatingSystem,
-  "MacOSX", $svmrDir = "~/git/svmrStuff/SVMR"; $manchesterDir = 
+  "MacOSX", $svmrDir = "~/git/svmStuff/SVMR"; $manchesterDir = 
    "/Users/garyanderson/git/manchesterCS/"; $netBeansDir = 
    "/Users/garyanderson/NetBeansProjects/libSvmMac/",
-  "Windows", $svmrDir = "g:/git/svmrStuff/SVMR"; $manchesterDir = 
+  "Windows", $svmrDir = "g:/git/svmStuff/SVMR"; $manchesterDir = 
    "g:/git/manchesterCS/";
   $netBeansDir = "g:/NetBeansProjects/myLibsvm/",
-  "Unix", $svmrDir = "~/git/svmrStuff/SVMR"; $manchesterDir = 
+  "Unix", $svmrDir = "~/git/svmStuff/SVMR"; $manchesterDir = 
    "/msu/home/m1gsa00/git/manchestemrCS/";
   $netBeansDir = "/msu/home/m1gsa00/NetBeansProjects/myLibsvm/"];
 Get["pathSetup.mth"]

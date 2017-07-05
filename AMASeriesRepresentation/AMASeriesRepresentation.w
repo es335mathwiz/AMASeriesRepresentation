@@ -298,15 +298,14 @@ public static double [] testKern(double[] xNow)   {
    return(theVals);
 } 
 public static double [][] xVals(){
-double[][]xRes=new doubel[``][``]=
+double[][]xRes=
 ``;
 return(xRes);
 }
 public static double [][] allKernVals(){
-double[][]kernRes=new double[``][``]=
+double[][]kernRes=
 ``;
-return(kernRes)=
-``;
+return(kernRes);
 }
 
 }
@@ -321,12 +320,16 @@ expKernBottom=""
 @d writeExpKern
 @{
 writeExpKern[theFile_String,expEqns_List,
-expCode_String,expDefines_String,kernCode_String,kernDefines_String]:=
-Module[{javaFile="forImport/"<>theFile<>".java"},
+expCode_String,expDefines_String,kernCode_String,kernDefines_String,
+theX_?MatrixQ,theKern_?MatrixQ]:=
+Module[{javaFile="forImport/"<>theFile<>".java",
+xRows=Length[theX],xCols=Length[theX[[1]]],kernDim=Length[theKern]},
 With[{theClassCode=TemplateApply[expKernTop,
 {DateString[],theFile,
 Length[expEqns],expDefines,expCode,
-Length[expEqns],kernDefines,kernCode}]},
+Length[expEqns],kernDefines,kernCode,
+theX,
+theKern}]},
 WriteString[javaFile,theClassCode];
 WriteString[javaFile,expKernBottom];
        Close[javaFile]]]
@@ -360,7 +363,7 @@ epsvars=Map[{First[#]}&,expctSpec],
 intVars=Map[#[[1]] \[Distributed]#[[2]]&,expctSpec]},
 With[{numExamples=Length[xData[[1]]],
 xSubs=genXSubs[xvars],epsSubs=genEpsSubs[xvars,epsvars]},
-With[{kernelPart=Flatten[Map[theKernel[Transpose[{#}],Join[xvars,epsvars]]&,
+With[{kernelPart=Flatten[Map[theKernel[#,Flatten[Join[xvars,epsvars]]]&,
 Transpose[xData]]]},
 With[{expVals=myExpectation[kernelPart,intVars]},
 With[{expCode=StringReplace[
@@ -441,7 +444,7 @@ Symbol["eps$"<>ToString[ii]],
 
 cnstrctXYPRECOMPUTEKern[xData_?MatrixQ,theKernel_Function]:=
 With[{kernRes=Outer[theKernel,xData,xData,1]},
-{xData,kernRes}]
+kernRes]
 
 
 (*dotProdKernel=Function[{xx,yy},Transpose[xx] . yy];*)
@@ -494,8 +497,10 @@ cnstrctF::usage="cnstrctF[qpSubs_List,xData_?MatrixQ,yData_?VectorQ,theKernel_Fu
 
 @d cnstrctExpKernUsage
 @{
-cnstrctExpKern::usage="cnstrctExpKern[xData_?MatrixQ,yData_?VectorQ,
-theKernel_Function,CC_?NumberQ,epsilon_?NumberQ,numEps_Integer]"
+cnstrctExpKern::usage="cnstrctExpKern[xData_?MatrixQ,yData_?VectorQ,theKernel_Function,CC_?NumberQ,epsilon_?NumberQ,numEps_Integer]"
+
+cnstrctXYPRECOMPUTEKern::usage="cnstrctXYPRECOMPUTEKern[xData_?MatrixQ,theKernel_Function]"
+
 @}
 
 \subsection{smolyakInterpolationPrep}

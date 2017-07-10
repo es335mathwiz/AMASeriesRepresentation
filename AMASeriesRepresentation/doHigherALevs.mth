@@ -21,7 +21,7 @@ sgSpec={{1,3},smolRng,pt,tf,ply,iply,1};
 newX=sgSpec[[3]]//N
 boo=cnstrctExpKern[Transpose[newX],dotProdKernel,1,.01,theDistBetter]
 woo=cnstrctXYPRECOMPUTEKern[newX,dotProdKernel];
-writeExpKern["dwell",boo[[1]],boo[[2]],boo[[3]],boo[[5]],boo[[6]],newX,woo];
+writeExpKern["dwell",boo[[1]],boo[[2]],boo[[3]],boo[[5]],boo[[6]],newX];
 
 Print["compiling java"];
 Run["(source ~/.bashrc;javac forImport/dwell.java)"]

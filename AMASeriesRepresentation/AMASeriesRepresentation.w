@@ -302,13 +302,9 @@ double[][]xRes=
 ``;
 return(xRes);
 }
-public static double [][] allKernVals(){
-double[][]kernRes=
-``;
-return(kernRes);
 }
 
-}
+
 "
 
 expKernBottom=""
@@ -321,7 +317,7 @@ expKernBottom=""
 @{
 writeExpKern[theFile_String,expEqns_List,
 expCode_String,expDefines_String,kernCode_String,kernDefines_String,
-theX_?MatrixQ,theKern_?MatrixQ]:=
+theX_?MatrixQ]:=
 Module[{javaFile="forImport/"<>theFile<>".java",
 xRows=Length[theX],xCols=Length[theX[[1]]],kernDim=Length[theKern]},
 With[{theClassCode=TemplateApply[expKernTop,
@@ -335,6 +331,18 @@ WriteString[javaFile,expKernBottom];
        Close[javaFile]]]
 
 @<expectation templates@>
+
+
+writePRECOMPUTEMatFile[theFile_String,theKern_?MatrixQ]:=
+Module[{mlDouble,kernRows=Length[theKern]},
+mlDouble=JavaNew["com.jmatio.types.MLDouble","kern_arr",
+Flatten[Transpose[theKern]],kernRows];
+aList=JavaNew["java.util.ArrayList"];
+aList[add[mlDouble]];
+matWriter=JavaNew["com.jmatio.io.MatFileWriter",theFile,aList]]
+
+
+
 
 @}
 
@@ -351,6 +359,8 @@ xNow::usage="place holder"
 @d writeExpKernUsage
 @{
 writeExpKern::usage="writeExpKern[theFile_String]"
+writePRECOMPUTEMatFile::usage="writePRECOMPUTEMatFile[theFile_String,theKern_?MatrixQ]"
+
 @}
 
 @d ExpKernCode

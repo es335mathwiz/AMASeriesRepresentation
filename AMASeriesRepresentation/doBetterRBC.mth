@@ -5,6 +5,13 @@ Get["betterRBC`"]
 InstallJava[]
 AddToClassPath["/msu/home/m1gsa00/NetBeansProjects/myLibsvm/build/classes"]
 
+tEqns=((betterRBC`Private`rbcEqns/.betterRBC`Private`theta[xx__]->E^(logTheta[xx]))/.betterRBC`Private`simpParamSubs)//FullSimplify
+(*eqns 1 has lead*)
+nlZf=tEqns[[{2,3,4}]]
+tEqns01=Join[tEqns[[{1}]],tEqns[[{2,3,4}]]/.t->t+1]
+
+
+(*
 svmDoer = 
  LoadJavaClass["libsvm.svm"];
 
@@ -21,7 +28,10 @@ Run["(source ~/.bashrc;javac forImport/dwell.java)"]
 
 AbsoluteTiming[
 With[{hrz=1,len=1},With[{smol=nestGenericIterREInterp[{genFRFunc},linModBetter, {genX0Z0Funcs[linModBetter],hrz},eqnsCompiledBetter,sgSpec,theDistBetter,smolyakInterpolation,{},len],
-slin=nestGenericIterREInterp[{genFRFunc},linModBetter, {genX0Z0Funcs[linModBetter],hrz},eqnsCompiledBetter,sgSpec,theDistBetter,svmRegressionLinear,{1.0,.01},len]},{smol[[-1,1]] @@anXEpsFlatBetter, slin[[-1,1]] @@ anXEpsFlatBetter, simpRBCExactDRBetter @@ anXEpsFlatBetter}]]]
+slin=nestGenericIterREInterp[{genFRFunc},linModBetter, {genX0Z0Funcs[linModBetter],hrz},eqnsCompiledBetter,sgSpec,theDistBetter,svmRegressionLinear,{1.0,.01},len]},{smol[[-1,1]] @@anXEpsFlatBetter, slin[[-1,1]] @@ anXEpsFlatBetter, simpRBCE
+xactDRBetter @@ anXEpsFlatBetter}]]]
+
+*)
 (*
 
 

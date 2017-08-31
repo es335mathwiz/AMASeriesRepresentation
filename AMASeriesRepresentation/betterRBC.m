@@ -48,8 +48,12 @@ nlPart[t] - (nlPartRHS=(1)* (theta[t]*CRRAUDrv[cc[t],1])),
 theta[t]-E^(rho*Log[theta[t-1]] + eps[theta][t])
 }
 
+discMapEqns00=(Append[rbcEqns[[{1,2,3}]],
+(rbcEqns[[4]]/.{xx_-yy_->Log[xx]-Log[yy]})]/.{Log[betterRBC`Private`theta[zz__]]->lnTheta[zz],theta[xx__]->E^lnTheta[xx]})//PowerExpand
 
-
+zfEqns=discMapEqns[[{2,3,4}]]//PowerExpand
+discMapEqns01=Append[zfEqns/.t->t+1,discMapEqns00[[1]]]//PowerExpand
+soln=Solve[Thread[discMapEqns01==0],{cc[t+1],kk[t+1],nlPart[t+1],lnTheta[t+1]}]
 
 (*parameters page 21 using state 1*)
 paramSubs={

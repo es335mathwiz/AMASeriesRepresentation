@@ -1,0 +1,69 @@
+(*koopman operator*)
+
+(* a spectral operator-theoretic framework for global stability 
+global stability analysis using the eigenfunctions of the koopman operator
+mauroy and mezic
+*)
+
+koopUt[ff_Function,varPhiFunc_]:=Composition[ff,Function[ttt,Through[varPhiFunc[ttt]]]]
+
+eqn9[FFVec_,phiLam_]:=FFVec .( D[phiLam,#]&/@{x1,x2}) - lambda *phiLam
+
+
+
+myVecSeriesAtS[FF_,ss_Integer]:=
+With[{theVec=FF[{x1,x2}]},
+myScalarSeriesAtS[#,ss]&/@theVec]
+
+myScalarSeriesAtS[FF_,ss_Integer]:=
+With[{theSeries=Series[FF,{x1,0,ss},{x2,0,ss}]//Normal},
+With[{cRules=Select[CoefficientRules[theSeries,{x1,x2}],Total[#[[1]]]==ss&]},
+FromCoefficientRules[cRules,{x1,x2}]]]
+
+
+
+
+
+(*example 1
+dx1/dt = -x1 -x1^2*x2-x2^3
+dx2/dt = -x2 -x1*x2^2-x1^3
+*)
+
+FFSpecOp01[{x1_,x2_}]:={-x1 -x1^2*x2-x2^3,-x2 +x1*x2^2+x1^3}
+$upLimT=100
+ex1VarPhi[xx:{x1Init_?NumberQ,x2Init_?NumberQ}]:=
+With[{solnNow=
+Flatten[NDSolve[{x1'[tt] == -x1[tt] -x1[tt]^2*x2[tt]-x2[tt]^3,
+x2'[tt]== -x2[tt] +x1[tt]*x2[tt]^2+x1[tt]^3,x1[0]==x1Init,x2[0]==x2Init},
+{x1,x2},{tt,0,$upLimT}]]},
+{x1,x2}/.solnNow]
+JJStar01=(D[FFSpecOp01[{x1,x2}],#]&/@{x1,x2})/.{x1->0,x2->0}
+{evls01,evcs01}=Eigensystem[Transpose[JJStar01]]
+
+
+
+
+
+
+
+eqn9[myVecSeriesAtS[FFSpecOp01,1],myScalarSeriesAtS[phi,1]]
+
+(*
+ff[x1_,x2_]:=FF[{x1,x2}]
+
+tryF01=With[{nn=1},
+Module[{ff=Function @@ {{x1,x2},FF[{x1,x2}]}},
+Series[ff[x1,x2],{x1,x10,nn},{x2,x20,nn}]//Normal]]
+tryPhi01=With[{nn=1},
+Module[{},
+Series[phi[x1,x2],{x1,x10,nn},{x2,x20,nn}]//Normal]]
+
+
+
+
+With[{nn=1},
+
+Module[{},
+ff[x1,x2]=FF[{x1,x2}];
+Series[ff[x1,x2],{x1,x10,nn},{x2,x20,nn}]//Normal]]
+*)

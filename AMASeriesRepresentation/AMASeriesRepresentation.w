@@ -140,7 +140,6 @@ Thread[shortXs->MapThread[xformXValToCheb,{shortXs,shortSmolRngs}]]]}),
 anotherPost=({shortXs,Simplify[
 (wts.(smolIntPolys(*/.Thread[shortOrigXs->shortXs]*)))]})
 },
-Print["smolyakInterpolation:",{wts,smolPolys,smolIntPolys,preInt,postInt}//InputForm];
 {Apply[Function,preInt],
 Apply[Function,postInt]}]]]]
 
@@ -162,7 +161,6 @@ Thread[shortXs->MapThread[xformXValToCheb,{shortXs,shortSmolRngs}]]]}),
 anotherPostInt=({shortXs,Simplify[
 (wts.(newIntPolys/.Thread[shortOrigXs->shortXs]))]})
 },
-Print["smolyakInterpolation:",{wts,smolPolys,smolIntPolys,newIntPolys,preInt,postInt}//InputForm];
 {Apply[Function,preInt],
 Apply[Function,postInt],
 Apply[Function,anotherPostInt]}]]]]
@@ -591,13 +589,12 @@ With[{numEps=Length[distribSpec[[1]]],
 polyVars=Sort[Cases[aSmolPoly,xx[_Integer]]]},
 With[{theChebValSubs=Thread[polyVars->
 MapThread[xformXValToCheb,{polyVars,smolRngs}]]
-},Print["smolPolyExp:",{aSmolPoly,theChebValSubs}];
+},
 With[{numX=Length[polyVars]-numEps},
 With[{intVarRes=genIntVars[numX,distribSpec]},
 With[{polyEps=Drop[polyVars,numX],intEps=Drop[intVarRes[[2]],numX]},
 With[{epsSubs=MapThread[#1->#2&,{polyEps,intEps}]},
 With[{funcGuts=((aSmolPoly/.theChebValSubs)/.epsSubs)},
-Print["funcGuts:",funcGuts];
 myExpectation[funcGuts,intVarRes[[3]]]]]]]]]]
 
 

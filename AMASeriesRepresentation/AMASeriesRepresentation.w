@@ -138,10 +138,10 @@ postInt=({shortXs,Simplify[
 (wts.(smolIntPolys/.Thread[shortOrigXs->shortXs]))/.
 Thread[shortXs->MapThread[xformXValToCheb,{shortXs,shortSmolRngs}]]]}),
 anotherPost=({shortXs,Simplify[
-(wts.(smolIntPolys(*/.Thread[shortOrigXs->shortXs]*)))]})
+(wts.(smolIntPolys/.Thread[shortOrigXs->shortXs]))]})
 },
 {Apply[Function,preInt],
-Apply[Function,postInt]}]]]]
+Apply[Function,anotherPost]}]]]]
 
 
 
@@ -156,8 +156,7 @@ With[{preInt=({theXs,Simplify[
 (wts.(smolPolys/.Thread[origXs->theXs]))/.
 Thread[theXs->MapThread[xformXValToCheb,{theXs,smolRngs}]]]}),
 postInt=({shortXs,Simplify[
-(wts.(smolIntPolys/.Thread[shortOrigXs->shortXs]))/.
-Thread[shortXs->MapThread[xformXValToCheb,{shortXs,shortSmolRngs}]]]}),
+(wts.(smolIntPolys/.Thread[shortOrigXs->shortXs]))]}),
 anotherPostInt=({shortXs,Simplify[
 (wts.(newIntPolys/.Thread[shortOrigXs->shortXs]))]})
 },

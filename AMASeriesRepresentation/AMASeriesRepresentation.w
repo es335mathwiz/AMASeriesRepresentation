@@ -128,12 +128,44 @@ smolyakInterpolation[fVals:{_?NumberQ..},@<smolGSpec@>]:=
 With[{wts=LinearSolve[smolMat,fVals],numVars=Length[smolRngs]},
 With[{origXs=Table[xx[ii],{ii,numVars}],
 theXs=Table[Unique["xx"],{ii,numVars}]},
-{Apply[Function,({theXs,Simplify[
+With[{shortOrigXs=Drop[origXs,-numEps],
+shortXs=Drop[theXs,-numEps],
+shortSmolRngs=Drop[smolRngs,-numEps]},
+With[{preInt=({theXs,Simplify[
 (wts.(smolPolys/.Thread[origXs->theXs]))/.
-Thread[theXs->MapThread[xformXValToCheb,{theXs,smolRngs}]]]})],
-Apply[Function,({Drop[theXs,-numEps],Simplify[
-(wts.(smolIntPolys/.Thread[Drop[origXs,-numEps]->Drop[theXs,-numEps]]))/.
-Thread[theXs->MapThread[xformXValToCheb,{theXs,smolRngs}]]]})]}]]
+Thread[theXs->MapThread[xformXValToCheb,{theXs,smolRngs}]]]}),
+postInt=({shortXs,Simplify[
+(wts.(smolIntPolys/.Thread[shortOrigXs->shortXs]))/.
+Thread[shortXs->MapThread[xformXValToCheb,{shortXs,shortSmolRngs}]]]}),
+anotherPost=({shortXs,Simplify[
+(wts.(smolIntPolys(*/.Thread[shortOrigXs->shortXs]*)))]})
+},
+Print["smolyakInterpolation:",{wts,smolPolys,smolIntPolys,preInt,postInt}//InputForm];
+{Apply[Function,preInt],
+Apply[Function,postInt]}]]]]
+
+
+
+smolyakInterpolation[fVals:{_?NumberQ..},@<smolGSpec@>,newIntPolys_]:=
+With[{wts=LinearSolve[smolMat,fVals],numVars=Length[smolRngs]},
+With[{origXs=Table[xx[ii],{ii,numVars}],
+theXs=Table[Unique["xx"],{ii,numVars}]},
+With[{shortOrigXs=Drop[origXs,-numEps],
+shortXs=Drop[theXs,-numEps],
+shortSmolRngs=Drop[smolRngs,-numEps]},
+With[{preInt=({theXs,Simplify[
+(wts.(smolPolys/.Thread[origXs->theXs]))/.
+Thread[theXs->MapThread[xformXValToCheb,{theXs,smolRngs}]]]}),
+postInt=({shortXs,Simplify[
+(wts.(smolIntPolys/.Thread[shortOrigXs->shortXs]))/.
+Thread[shortXs->MapThread[xformXValToCheb,{shortXs,shortSmolRngs}]]]}),
+anotherPostInt=({shortXs,Simplify[
+(wts.(newIntPolys/.Thread[shortOrigXs->shortXs]))]})
+},
+Print["smolyakInterpolation:",{wts,smolPolys,smolIntPolys,newIntPolys,preInt,postInt}//InputForm];
+{Apply[Function,preInt],
+Apply[Function,postInt],
+Apply[Function,anotherPostInt]}]]]]
 
 AMASeriesRepCallGraph=
 Join[AMASeriesRepCallGraph,
@@ -182,15 +214,15 @@ The k in the -g option means the number of attributes in the input data.
 
 @d svmRegressionLinear
 @{
-svmRegressionLinear[fVals:{_?NumberQ..},@<smolGSpec@>,svmArgs:{_?NumberQ,_?NumberQ}]:=
+svmRegressionLinear[fVals:{_?NumberQ..},@<smolGSpec@>,svmArgs:{_?NumberQ,_?NumberQ},className_String]:=
 Module[{svmtLinear = JavaNew["libsvm.trainGuts"],modLinear,
 betterArgs=Table[Unique["arg"],{Length[smolRngs]}]},
 svmtLinear[mmaUreadUproblemLinear[smolPts//N,fVals//N, svmArgs]];
 modLinear = 
      libsvm`svm`svmUtrain[svmtLinear[prob],svmtLinear[param]];
 Sow[huh=modLinear[svUindices],"svIndices"];
-linFunc=Function[xx,(libsvm`svm`mysvmUpredictUvalues[modLinear, xx] )];
-expLinFunc=Function[xx,(libsvm`svm`mysvmUpredictUExpectedUvalues[modLinear, xx] )];
+linFunc=Function[xx,(libsvm`svm`mysvmUpredictUvalues[modLinear, xx,className] )];
+expLinFunc=Function[xx,(libsvm`svm`mysvmUpredictUExpectedUvalues[modLinear, xx,className] )];
 {linFunc/.xx$->betterArgs,expLinFunc/.xx$->Drop[betterArgs,-numEps]}]
 
 AMASeriesRepCallGraph=
@@ -211,15 +243,15 @@ The function returns both the level and the derivative approximating functions.
 
 @d svmRegressionPoly
 @{
-svmRegressionPoly[fVals:{_?NumberQ..},@<smolGSpec@>,svmArgs:{_?NumberQ,_?NumberQ,_?NumberQ,_?NumberQ,_?NumberQ}]:=
+svmRegressionPoly[fVals:{_?NumberQ..},@<smolGSpec@>,svmArgs:{_?NumberQ,_?NumberQ,_?NumberQ,_?NumberQ,_?NumberQ},className_String]:=
 Module[{svmtPoly = JavaNew["libsvm.trainGuts"],modPoly,
 betterArgs=Table[Unique["arg"],{Length[smolRngs]}]},
 svmtPoly[mmaUreadUproblemPoly[smolPts//N,fVals//N, svmArgs]];
 modPoly = 
      libsvm`svm`svmUtrain[svmtPoly[prob],svmtPoly[param]];
 Sow[huh=modPoly[svUindices],"svIndices"];
-polyFunc=Function[xx,(libsvm`svm`mysvmUpredictUvalues[modPoly, xx] )];
-expPolyFunc=Function[xx,(libsvm`svm`mysvmUpredictUExpectedUvalues[modPoly, xx] )];
+polyFunc=Function[xx,(libsvm`svm`mysvmUpredictUvalues[modPoly, xx,className] )];
+expPolyFunc=Function[xx,(libsvm`svm`mysvmUpredictUExpectedUvalues[modPoly, xx,className] )];
 {polyFunc/.xx$->betterArgs,expPolyFunc/.xx$->Drop[betterArgs,-numEps]}]
 
 AMASeriesRepCallGraph=
@@ -240,15 +272,15 @@ The function returns both the level and the derivative approximating functions.
 
 @d svmRegressionRBF
 @{
-svmRegressionRBF[fVals:{_?NumberQ..},@<smolGSpec@>,svmArgs:{_?NumberQ,_?NumberQ,_?NumberQ}]:=
+svmRegressionRBF[fVals:{_?NumberQ..},@<smolGSpec@>,svmArgs:{_?NumberQ,_?NumberQ,_?NumberQ},className_String]:=
 Module[{svmtRBF = JavaNew["libsvm.trainGuts"],modRBF,
 betterArgs=Table[Unique["arg"],{Length[smolRngs]}]},
 svmtRBF[mmaUreadUproblemRBF[smolPts//N,fVals//N, svmArgs]];
 modRBF = 
      libsvm`svm`svmUtrain[svmtRBF[prob],svmtRBF[param]];
 Sow[huh=modRBF[svUindices],"svIndices"];
-rbfFunc=Function[xx,(libsvm`svm`mysvmUpredictUvalues[modRBF, xx] )];
-expRBFFunc=Function[xx,(libsvm`svm`mysvmUpredictUExpectedUvalues[modRBF, xx] )];
+rbfFunc=Function[xx,(libsvm`svm`mysvmUpredictUvalues[modRBF, xx,className] )];
+expRBFFunc=Function[xx,(libsvm`svm`mysvmUpredictUExpectedUvalues[modRBF, xx,className] )];
 {rbfFunc/.xx$->betterArgs,expRBFFunc/.xx$->Drop[betterArgs,-numEps]}]
 
 @}
@@ -266,15 +298,15 @@ The function returns both the level and the derivative approximating functions.
 
 @d svmRegressionSigmoid
 @{
-svmRegressionSigmoid[fVals:{_?NumberQ..},@<smolGSpec@>,svmArgs:{_?NumberQ,_?NumberQ,_?NumberQ,_?NumberQ}]:=
+svmRegressionSigmoid[fVals:{_?NumberQ..},@<smolGSpec@>,svmArgs:{_?NumberQ,_?NumberQ,_?NumberQ,_?NumberQ},className_String]:=
 Module[{svmtSigmoid = JavaNew["libsvm.trainGuts"],modSigmoid,
 betterArgs=Table[Unique["arg"],{Length[smolRngs]}]},
 svmtSigmoid[mmaUreadUproblemSigmoid[smolPts//N,fVals//N, svmArgs]];
 modSigmoid = 
      libsvm`svm`svmUtrain[svmtSigmoid[prob],svmtSigmoid[param]];
 Sow[huh=modSigmoid[svUindices],"svIndices"];
-sigmoidFunc=Function[xx,(libsvm`svm`mysvmUpredictUvalues[modSigmoid, xx] )];
-expSigmoidFunc=Function[xx,(libsvm`svm`mysvmUpredictUExpectedUvalues[modSigmoid, xx] )];
+sigmoidFunc=Function[xx,(libsvm`svm`mysvmUpredictUvalues[modSigmoid, xx,className] )];
+expSigmoidFunc=Function[xx,(libsvm`svm`mysvmUpredictUExpectedUvalues[modSigmoid, xx,className] )];
 {sigmoidFunc/.xx$->betterArgs,expSigmoidFunc/.xx$->Drop[betterArgs,-numEps]}]
 
 @}
@@ -284,20 +316,21 @@ expSigmoidFunc=Function[xx,(libsvm`svm`mysvmUpredictUExpectedUvalues[modSigmoid,
 expKernTop=
 "package forImport;
 //``
-public class `` {
-public static double [] testExpKern(double[] xNow)   {
+import libsvm.PRECOMPUTED;
+public class `` extends PRECOMPUTED {
+public double [] testExpKern(double[] xNow)   {
    double [] theExpVals = new double[``];
 ``
 ``
    return(theExpVals);
 } 
-public static double [] testKern(double[] xNow)   {
+public double [] testKern(double[] xNow)   {
    double [] theVals = new double[``];
 ``
 ``
    return(theVals);
 } 
-public static double [][] xVals(){
+public double [][] xVals(){
 double[][]xRes=
 ``;
 return(xRes);
@@ -325,7 +358,7 @@ With[{theClassCode=TemplateApply[expKernTop,
 Length[expEqns],expDefines,expCode,
 Length[expEqns],kernDefines,kernCode,
 theX,
-theKern}]},
+theKern}]},Print[{javaFile,theClassCode,expKernBottom}];
 WriteString[javaFile,theClassCode];
 WriteString[javaFile,expKernBottom];
        Close[javaFile]]]
@@ -538,8 +571,9 @@ numVars=Length[approxLevels],numEps=Length[distribSpec[[1]]]},
 With[{thePts=smolRes[[1]],smolPolys=smolRes[[2]],smolMat=smolRes[[3]]},
 With[{xPts=Map[Function[xx,xformToXVec[xx,smolRngs]],thePts]},
 With[{numPolys=Length[smolPolys]},
-{xPts,smolMat,smolPolys,smolPolyExp[smolPolys,distribSpec]}]]]]/;
-And[Length[smolRngs]==Length[approxLevels]]\
+{xPts,smolMat,smolPolys,smolPolyExp[smolPolys,distribSpec],
+smolPolyExp[smolPolys,smolRngs,distribSpec]}]]]]/;
+And[Length[smolRngs]==Length[approxLevels]]
 
 smolPolyExp[aSmolPoly_,@<distribSpec@>]:=
 With[{numEps=Length[distribSpec[[1]]],
@@ -551,6 +585,20 @@ With[{epsSubs=MapThread[#1->#2&,{polyEps,intEps}]},
 With[{funcGuts=(aSmolPoly/.epsSubs)},
 myExpectation[funcGuts,intVarRes[[3]]]]]]]]]
 
+
+smolPolyExp[aSmolPoly_,smolRngs_?MatrixQ,@<distribSpec@>]:=
+With[{numEps=Length[distribSpec[[1]]],
+polyVars=Sort[Cases[aSmolPoly,xx[_Integer]]]},
+With[{theChebValSubs=Thread[polyVars->
+MapThread[xformXValToCheb,{polyVars,smolRngs}]]
+},Print["smolPolyExp:",{aSmolPoly,theChebValSubs}];
+With[{numX=Length[polyVars]-numEps},
+With[{intVarRes=genIntVars[numX,distribSpec]},
+With[{polyEps=Drop[polyVars,numX],intEps=Drop[intVarRes[[2]],numX]},
+With[{epsSubs=MapThread[#1->#2&,{polyEps,intEps}]},
+With[{funcGuts=((aSmolPoly/.theChebValSubs)/.epsSubs)},
+Print["funcGuts:",funcGuts];
+myExpectation[funcGuts,intVarRes[[3]]]]]]]]]]
 
 
 AMASeriesRepCallGraph=
@@ -675,7 +723,7 @@ With[{longFuncArgs=fillInSymb[{{},smolToIgnore,funcArgs}]},
 With[{interpFuncList=
 Map[Function[funcIdx,
 With[{theInterps=smolyakInterpolation[interpData[[All,funcIdx]],smolGSpec]},
-With[{smolApp=theInterps},Print["interpdata=",interpData];
+With[{smolApp=theInterps},
 smolApp]]],Range[numFuncs]]},
 With[
 {applied=
@@ -729,7 +777,6 @@ With[{longFuncArgs=fillInSymb[{{},smolToIgnore,funcArgs}]},
 With[{interpFuncList=
 Map[Function[funcIdx,
 With[{theInterps=genericInterp[interpData[[All,funcIdx]],smolGSpec,svmArgs]},
-(*Print["theInterps=",{interpData,theInterps,interpFuncList}//InputForm];*)
 With[{smolApp=theInterps},
 smolApp]]],Range[numFuncs]]},
 With[
@@ -737,7 +784,6 @@ With[
 Map[First,interpFuncList]]}],
 appliedExp=Transpose[{Map[notApply[#,funcArgs]/.makeSubs[#,Drop[funcArgs,-numEps]]&,
 Map[Last,interpFuncList]]}]},
-(*Print["applied=",{applied,appliedExp}//InputForm];*)
 With[{thePair=
 {
 ReplacePart[
@@ -755,14 +801,13 @@ parallelMakeGenericInterpFuncs[aVecFunc:(_Function|_CompiledFunction),@<smolGSpe
 genericInterp:(smolyakInterpolation|svmRegressionLinear|svmRegressionPoly|svmRegressionRBF|svmRegressionSigmoid),svmArgs:{_?NumberQ...}]:=
 Module[{},
 With[{interpData=smolyakGenInterpData[aVecFunc,smolGSpec],
-numArgs=Length[smolPts[[1]]]},
+numArgs=Length[smolPts[[1]]]},(*Print["generic:interpData",{aVecFunc,interpData}//InputForm];*)
 With[{numFuncs=Length[interpData[[1]]],
 funcArgs=Table[Unique["fArgs"],{numArgs}]},
 With[{longFuncArgs=fillInSymb[{{},smolToIgnore,funcArgs}]},
 With[{interpFuncList=
 Map[Function[funcIdx,
 With[{theInterps=genericInterp[interpData[[All,funcIdx]],smolGSpec,svmArgs]},
-(*Print["theInterps=",{interpData,theInterps,interpFuncList}//InputForm];*)
 With[{smolApp=theInterps},
 smolApp]]],Range[numFuncs]]},
 With[
@@ -770,7 +815,6 @@ With[
 Map[First,interpFuncList]]}],
 appliedExp=Transpose[{Map[notApply[#,funcArgs]/.makeSubs[#,Drop[funcArgs,-numEps]]&,
 Map[Last,interpFuncList]]}]},
-(*Print["applied=",{applied,appliedExp}//InputForm];*)
 With[{thePair=
 {
 ReplacePart[
@@ -1315,7 +1359,7 @@ Out[107]= {{0.09}, {0.0514286}, {6.84799 10   }, {0.01}}
 (*begin code for parallelMakeInterpFunc*)
 
 parallelMakeInterpFunc[aVecFunc:(_Function|_CompiledFunction),@<gSpec@>]:=
-With[{interpData=parallelGenInterpData[aVecFunc,gSpec],numArgs=getNumVars[gSpec]},
+With[{interpData=parallelGenInterpData[aVecFunc,gSpec],numArgs=getNumVars[gSpec]},(*Print["notgeneric:interpData",{aVecFunc,interpData}//InputForm];*)
 With[{numFuncs=Length[interpData[[1,2]]],
 funcArgs=Table[Unique["fArgs"],{numArgs}]},
 With[{longFuncArgs=fillInSymb[{{},toIgnore,funcArgs}]},
@@ -2246,7 +2290,7 @@ With[{funcArgs=Flatten[genSlots[numX+numEps]],
 zArgs=Table[Unique["theFRZArgs"],{numZ}]},
 With[{zArgsInit=Map[Function[xx,{xx,0}],zArgs],funcName=Unique["fName"]},
 funcName[theVars:{_?NumberQ..}]:=
-Apply[eqnsFunc,Flatten[Apply[xkFunc,theVars]]];(*Off[FindRoot::nlnum];*)
+Apply[eqnsFunc,Flatten[Apply[xkFunc,theVars]]];Off[FindRoot::nlnum];
 With[{frRes=FindRoot[funcName[Join[funcArgs,zArgs]],zArgsInit],
 xzRes=Drop[Apply[xkFunc,Join[funcArgs,zArgs]],numX][[Range[numX]]]},
 If[Not[FreeQ[xzRes,$Failed]],Throw[$Failed,"xzRes"]];
@@ -3111,6 +3155,6 @@ getterSetterTests::usage="getterSetterTestsUsage"
 @m
 
 \bibliographystyle{plainnat}
-\bibliography{files.bib}
+\bibliography{files}
 
 \end{document}

@@ -38,20 +38,27 @@ svmDoer =
  LoadJavaClass["libsvm.svm"];
 
 (*
+
 boo=cnstrctExpKern[Transpose[newX],dotProdKernel,1,.01,theDistFV]
 
 writeExpKern["dwell",boo[[1]],boo[[2]],boo[[3]],boo[[5]],boo[[6]]]
 
 *)
-boo=cnstrctExpKern[Transpose[newX],dotProdKernel,1,.01,theDistFV]
-writeExpKern["dwell",boo[[1]],boo[[2]],boo[[3]],boo[[5]],boo[[6]]]
-Print["compiling java"];
-Run["(source ~/.bashrc;javac forImport/dwell.java)"]
 
-{svf,esvf}=svmRegressionLinear[tryY,sgSpec,{1,0.01}];
-{polysvf,polyesvf}=svmRegressionPoly[tryY,sgSpec,{1,0.01,1,.2,10}];
-{rbfsvf,rbfesvf}=svmRegressionRBF[tryY,sgSpec,{1,0.01,1}];
-{sigsvf,sigesvf}=svmRegressionSigmoid[tryY,sgSpec,{1,0.01,1,1}];
+boo=cnstrctExpKern[Transpose[newX],dotProdKernel,1,.01,theDistFV]
+writeExpKern["dwell",boo[[1]],boo[[2]],boo[[3]],boo[[5]],boo[[6]],newX]
+Print["compiling java"];
+(*import libsvm.PRECOMPUTED;
+public class dwell extends PRECOMPUTED
+*)
+
+
+Run["(source ~/.bashrc;javac -cp /msu/home/m1gsa00/NetBeansProjects/myLibsvm/build/classes/ forImport/dwell.java)"]
+LoadJavaClass["forImport.dwell"]
+{svf,esvf}=svmRegressionLinear[tryY,sgSpec,{1,0.01},"forImport.dwell"];
+{polysvf,polyesvf}=svmRegressionPoly[tryY,sgSpec,{1,0.01,1,.2,10},"forImport.dwell"];
+{rbfsvf,rbfesvf}=svmRegressionRBF[tryY,sgSpec,{1,0.01,1},"forImport.dwell"];
+{sigsvf,sigesvf}=svmRegressionSigmoid[tryY,sgSpec,{1,0.01,1,1},"forImport.dwell"];
 
 {theSmolFPInterp,theSmolFPInterpExp}=makeSmolyakInterpFuncs[theFP,sgSpec]
 {gtheSmolFPInterp,gtheSmolFPInterpExp}=makeGenericInterpFuncs[theFP,sgSpec,smolyakInterpolation,{}]

@@ -7,12 +7,16 @@ mauroy and mezic
 
 koopUt[ff_Function,varPhiFunc_]:=Composition[ff,Function[ttt,Through[varPhiFunc[ttt]]]]
 
-eqn9[FFVec_,phiLam_]:=FFVec .( D[phiLam,#]&/@{x1,x2}) - lambda *phiLam
+eqn9[FFVec_,phiLam_]:=
+With[{first=FFVec .( D[phiLam,#]&/@{x1,x2}),second= lambda *phiLam},
+{first,second,first-second}]
 
-
+lilEqn9[FFVec_,phiLam_]:=
+With[{first=FFVec .( D[phiLam,#]&/@{x1}),second= lambda *phiLam},
+{first,second,first-second}]
 
 myVecSeriesAtS[FF_,ss_Integer]:=
-With[{theVec=FF[{x1,x2}]},
+With[{theVec=FF(*[{x1,x2}]*)},
 myScalarSeriesAtS[#,ss]&/@theVec]
 
 myScalarSeriesAtS[FF_,ss_Integer]:=
@@ -21,8 +25,41 @@ With[{cRules=Select[CoefficientRules[theSeries,{x1,x2}],Total[#[[1]]]==ss&]},
 FromCoefficientRules[cRules,{x1,x2}]]]
 
 
+myLilVecSeriesAtS[FF_,ss_Integer]:=
+With[{theVec=FF(*[{x1,x2}]*)},
+myScalarSeriesAtS[#,ss]&/@theVec]
+
+myLilScalarSeriesAtS[FF_,ss_Integer]:=
+With[{theSeries=Series[FF,{x1,0,ss}]//Normal},
+With[{cRules=Select[CoefficientRules[theSeries,{x1}],Total[#[[1]]]==ss&]},
+FromCoefficientRules[cRules,{x1}]]]
+
+cmpMk[kk_Integer,ss_Integer]:=
+Table[If[jj==ii-kk,1,0],{ii,1,1+ss},{jj,1,1+ss}]
+
+cmpDl[ll_Integer,ss_Integer]:=
+With[{theD=Table[If[ii==jj-1,1,0],{ii,1,1+ss},{jj,1,1+ss}],
+theI=IdentityMatrix[1+ss]},
+KroneckerProduct @@ (Join[Table[theI,{ll-1}],{theD},Table[theI,{2-ll}]])]
 
 
+
+
+cmpLilDl[ss_Integer]:=
+With[{theD=Table[If[ii==jj-1,1,0],{ii,1,1+ss},{jj,1,1+ss}],
+theI=IdentityMatrix[1+ss]},
+theD]
+
+
+cmpLilMBar[ffNow_,ss_Integer]:=
+Sum[
+Derivative[k1][ffNow][0]*cmpMk[k1,ss],
+{k1,0,ss}]
+
+cmpMBar[ffNow_,ss_Integer]:=
+Sum[If[k1==k2==0,0,
+Derivative[k1,k2][ffNow][0,0]*KroneckerProduct[cmpMk[k1,ss],cmpMk[k2,ss]]],
+{k1,0,ss},{k2,0,ss}]
 
 (*example 1
 dx1/dt = -x1 -x1^2*x2-x2^3
@@ -41,29 +78,136 @@ JJStar01=(D[FFSpecOp01[{x1,x2}],#]&/@{x1,x2})/.{x1->0,x2->0}
 {evls01,evcs01}=Eigensystem[Transpose[JJStar01]]
 
 
+eqn9[myVecSeriesAtS[FFSpecOp01,1]+myVecSeriesAtS[FFSpecOp01,2],myScalarSeriesAtS[phi[x1,x2],1]+myScalarSeriesAtS[phi[x1,x2],2]]
 
 
-
-
-
-eqn9[myVecSeriesAtS[FFSpecOp01,1],myScalarSeriesAtS[phi,1]]
-
-(*
-ff[x1_,x2_]:=FF[{x1,x2}]
-
-tryF01=With[{nn=1},
-Module[{ff=Function @@ {{x1,x2},FF[{x1,x2}]}},
-Series[ff[x1,x2],{x1,x10,nn},{x2,x20,nn}]//Normal]]
-tryPhi01=With[{nn=1},
-Module[{},
-Series[phi[x1,x2],{x1,x10,nn},{x2,x20,nn}]//Normal]]
-
-
-
-
-With[{nn=1},
-
-Module[{},
-ff[x1,x2]=FF[{x1,x2}];
-Series[ff[x1,x2],{x1,x10,nn},{x2,x20,nn}]//Normal]]
+(*example 2
+dx1/dt = -x2
+dx2/dt = x1 -x2 + x1^2*x2
 *)
+
+
+FFSpecOp02[{x1_,x2_}]:={-x2,x1 -x2+x1^2*x2}
+$upLimT=100
+ex2VarPhi[xx:{x1Init_?NumberQ,x2Init_?NumberQ}]:=
+With[{solnNow=
+Flatten[NDSolve[{x1'[tt] == -x2[tt],
+x2'[tt]== x1[tt] -x2[tt] + x1[tt]^2*x2[tt],x1[0]==x1Init,x2[0]==x2Init},
+{x1,x2},{tt,0,$upLimT}]]},
+{x1,x2}/.solnNow]
+
+JJStar02=(D[FFSpecOp02[{x1,x2}],#]&/@{x1,x2})/.{x1->0,x2->0}
+{evls02,evcs02}=Eigensystem[Transpose[JJStar02]]
+
+
+try=eqn9[myVecSeriesAtS[FFSpecOp02,1],myScalarSeriesAtS[phi[x1,x2],1]]
+
+try/.{lambda->evls02[[1]],Derivative[0, 1][phi][0, 0]->evcs02[[1]],
+Derivative[1, 0][phi][0, 0]->evcs02[[1]]}
+
+
+boo01=eqn9[myVecSeriesAtS[{ff1[x1,x2],ff2[x1,x2]},0]+
+myVecSeriesAtS[{ff1[x1,x2],ff2[x1,x2]},1],
+myScalarSeriesAtS[phi[x1,x2],0]+myScalarSeriesAtS[phi[x1,x2],1]]
+ba01=Normal[CoefficientArrays[#,{x1,x2}]]&/@boo01
+ha01=Normal[CoefficientArrays[boo01[[-1]],{x1,x2}]]
+res01=Normal[CoefficientArrays[ha01[[-1]],{Derivative[1, 0][phi][0, 0],Derivative[0, 1][phi][0, 0]}]][[2]]
+
+
+
+
+boo02=eqn9[myVecSeriesAtS[{ff1[x1,x2],ff2[x1,x2]},0]+myVecSeriesAtS[{ff1[x1,x2],ff2[x1,x2]},1]+myVecSeriesAtS[{ff1[x1,x2],ff2[x1,x2]},2],myScalarSeriesAtS[phi[x1,x2],0]+myScalarSeriesAtS[phi[x1,x2],1]+myScalarSeriesAtS[phi[x1,x2],2]]
+ha02=Normal[CoefficientArrays[boo02[[-1]],{x1,x2}]]
+res02=DeleteCases[Flatten[Normal[CoefficientArrays[ha02[[3]],
+{Derivative[1, 0][phi][0, 0],
+Derivative[0, 1][phi][0, 0],
+Derivative[2, 0][phi][0, 0],
+Derivative[1, 1][phi][0, 0],
+Derivative[0, 2][phi][0, 0]}]][[2]],1],{0..}]
+
+
+
+
+
+boo03=eqn9[
+myVecSeriesAtS[{ff1[x1,x2],ff2[x1,x2]},0]+
+myVecSeriesAtS[{ff1[x1,x2],ff2[x1,x2]},1]+
+myVecSeriesAtS[{ff1[x1,x2],ff2[x1,x2]},2]+
+myVecSeriesAtS[{ff1[x1,x2],ff2[x1,x2]},3],
+myScalarSeriesAtS[phi[x1,x2],0]+
+myScalarSeriesAtS[phi[x1,x2],1]+
+myScalarSeriesAtS[phi[x1,x2],2]+
+myScalarSeriesAtS[phi[x1,x2],3]]
+ha03=Normal[CoefficientArrays[boo03[[-1]],{x1,x2}]]
+res03=DeleteCases[Flatten[Normal[CoefficientArrays[ha03[[4]],
+{Derivative[1, 0][phi][0, 0],
+Derivative[0, 1][phi][0, 0],
+Derivative[2, 0][phi][0, 0],
+Derivative[1, 1][phi][0, 0],
+Derivative[0, 2][phi][0, 0],
+Derivative[3, 0][phi][0, 0],
+Derivative[2, 1][phi][0, 0],
+Derivative[1, 2][phi][0, 0],
+Derivative[0, 3][phi][0, 0]
+}]][[2]],2],{0..}]
+
+
+
+
+boo04=eqn9[
+myVecSeriesAtS[{ff1[x1,x2],ff2[x1,x2]},0]+
+myVecSeriesAtS[{ff1[x1,x2],ff2[x1,x2]},1]+
+myVecSeriesAtS[{ff1[x1,x2],ff2[x1,x2]},2]+
+myVecSeriesAtS[{ff1[x1,x2],ff2[x1,x2]},3]+
+myVecSeriesAtS[{ff1[x1,x2],ff2[x1,x2]},4],
+myScalarSeriesAtS[phi[x1,x2],0]+
+myScalarSeriesAtS[phi[x1,x2],1]+
+myScalarSeriesAtS[phi[x1,x2],2]+
+myScalarSeriesAtS[phi[x1,x2],3]+
+myScalarSeriesAtS[phi[x1,x2],4]]
+ha04=Normal[CoefficientArrays[boo04[[-1]],{x1,x2}]]
+res04=DeleteCases[Flatten[Normal[CoefficientArrays[ha04[[5]],
+{Derivative[1, 0][phi][0, 0],
+Derivative[0, 1][phi][0, 0],
+Derivative[2, 0][phi][0, 0],
+Derivative[1, 1][phi][0, 0],
+Derivative[0, 2][phi][0, 0],
+Derivative[3, 0][phi][0, 0],
+Derivative[2, 1][phi][0, 0],
+Derivative[1, 2][phi][0, 0],
+Derivative[0, 3][phi][0, 0],
+Derivative[4, 0][phi][0, 0],
+Derivative[3, 1][phi][0, 0],
+Derivative[2, 2][phi][0, 0],
+Derivative[1, 3][phi][0, 0],
+Derivative[0, 4][phi][0, 0]
+}]][[2]],3],{0..}]
+
+
+
+
+
+
+lilboo01=lilEqn9[myLilVecSeriesAtS[{ff1[x1]},0]+
+myLilVecSeriesAtS[{ff1[x1]},1],
+myLilScalarSeriesAtS[phi[x1],0]+myLilScalarSeriesAtS[phi[x1],1]]
+lilha01=Normal[CoefficientArrays[lilboo01[[-1]],{x1,x2}]]
+lilres01=Normal[CoefficientArrays[lilha01[[-1]],{Derivative[1][phi][0, 0]}]]
+
+
+
+
+lilboo02=eqn9[
+myLilVecSeriesAtS[{ff1[x1]},0]+
+myLilVecSeriesAtS[{ff1[x1]},1]+
+myLilVecSeriesAtS[{ff1[x1]},2],
+myLilScalarSeriesAtS[phi[x1],0]+
+myLilScalarSeriesAtS[phi[x1],1]+
+myLilScalarSeriesAtS[phi[x1],2]]
+lilha02=Normal[CoefficientArrays[lilboo02[[-1]],{x1}]]
+lilres02=Normal[CoefficientArrays[lilha02[[3]],
+{Derivative[1][phi][0],
+Derivative[2][phi][0]
+}]]
+
+

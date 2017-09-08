@@ -15,7 +15,6 @@ aZFlatBetter::usage="for test input";
 anXEpsZsFlatBetter::usage="for test input";
 
 probDimsBetter::usage="for test input";
-
 simpRBCExactDRBetter::usage="simpRBCExactDR"
 betterRBCExactCondExp::usage="betterRBCExactCondExp"
 theDistBetter::usage="theDist={{{ee,NormalDistribution[0,sigVal]}}};"
@@ -51,7 +50,7 @@ theta[t]-E^(rho*Log[theta[t-1]] + eps[theta][t])
 discMapEqns00=(Append[rbcEqns[[{1,2,3}]],
 (rbcEqns[[4]]/.{xx_-yy_->Log[xx]-Log[yy]})]/.{Log[betterRBC`Private`theta[zz__]]->lnTheta[zz],theta[xx__]->E^lnTheta[xx]})//PowerExpand
 
-zfEqns=discMapEqns[[{2,3,4}]]//PowerExpand
+zfEqns=discMapEqns00[[{2,3,4}]]//PowerExpand
 discMapEqns01=Append[zfEqns/.t->t+1,discMapEqns00[[1]]]//PowerExpand
 soln=Solve[Thread[discMapEqns01==0],{cc[t+1],kk[t+1],nlPart[t+1],lnTheta[t+1]}]
 
@@ -76,6 +75,7 @@ cc[t]->cct,kk[t]->kkt,nlPart[t]->nlt,theta[t]->tht,
 cc[t+1]->cctp1,kk[t+1]->kktp1,nlPart[t+1]->nltp1,theta[t+1]->thtp1,
 eps[theta][t]->epsVal
 }//.paramSubs)//N
+
 
 eqnsCompiledBetter=Compile @@ {
 {
@@ -132,7 +132,7 @@ thePFDistBetter={{{ee,PerfectForesight}}};
 
 
 
-betterRBCExactCondExp = AMASeriesRepresentation`Private`makeREIterFunc[simpRBCExactDRBetter,theDistBetter]
+betterRBCExactCondExp = (*AMASeriesRepresentation`Private`*)makeREIterFunc[simpRBCExactDRBetter,theDistBetter]
 
 
 

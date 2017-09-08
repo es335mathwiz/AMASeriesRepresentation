@@ -1,0 +1,39 @@
+
+Get["pathSetup.mth"]
+Get["AMASeriesRepresentation`"]
+Get["betterRBC.m"]
+
+
+
+
+
+chkConv[gVal_Integer,iters_Integer,aVal_?MatrixQ]:=
+		With[{gs666={{1, 3}, 1, {{gVal, 0.018732441104784652, 0.7492976441913861}, {10, 9/10, 11/10},   {10, -0.03, 0.09}}}},
+	  With[{
+aBunch=parallelNestIterREInterp[{genFRFunc},linModBetter, {genX0Z0Funcs[linModBetter],2},eqnsCompiledBetter,gs666,theDistBetter,iters]},
+		   {(#[[1]] @@ 	 Flatten[aVal]),(#[[2]] @@ 	 Flatten[aVal])}& /@ Drop[aBunch,1]]]
+
+(*
+chkConv[20,10,anXEpsBetter]
+
+
+
+
+chkConv[25,10,anXEpsBetter]
+
+
+
+chkConv[30,10,anXEpsBetter]
+
+
+
+
+chkConv[35,5,anXEpsBetter]
+
+
+
+chkConv[40,5,anXEpsBetter]
+
+
+*)
+chkConv[50,5,anXEpsBetter]

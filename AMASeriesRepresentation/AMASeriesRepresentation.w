@@ -144,26 +144,6 @@ anotherPost=({shortXs,Simplify[
 Apply[Function,anotherPost]}]]]]
 
 
-
-smolyakInterpolation[fVals:{_?NumberQ..},@<smolGSpec@>,newIntPolys_]:=
-With[{wts=LinearSolve[smolMat,fVals],numVars=Length[smolRngs]},
-With[{origXs=Table[xx[ii],{ii,numVars}],
-theXs=Table[Unique["xx"],{ii,numVars}]},
-With[{shortOrigXs=Drop[origXs,-numEps],
-shortXs=Drop[theXs,-numEps],
-shortSmolRngs=Drop[smolRngs,-numEps]},
-With[{preInt=({theXs,Simplify[
-(wts.(smolPolys/.Thread[origXs->theXs]))/.
-Thread[theXs->MapThread[xformXValToCheb,{theXs,smolRngs}]]]}),
-postInt=({shortXs,Simplify[
-(wts.(smolIntPolys/.Thread[shortOrigXs->shortXs]))]}),
-anotherPostInt=({shortXs,Simplify[
-(wts.(newIntPolys/.Thread[shortOrigXs->shortXs]))]})
-},
-{Apply[Function,preInt],
-Apply[Function,postInt],
-Apply[Function,anotherPostInt]}]]]]
-
 AMASeriesRepCallGraph=
 Join[AMASeriesRepCallGraph,
 Map["smolyakInterpolation"->#&,{"xformXValToCheb"}]];

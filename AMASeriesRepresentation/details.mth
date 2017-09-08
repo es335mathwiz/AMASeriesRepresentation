@@ -1,0 +1,14 @@
+Get["pathSetup.mth"]
+Get["AMASeriesRepresentation`"]
+Get["betterRBC.m"]
+
+
+
+X0Z0=genX0Z0Funcs[linModBetter];
+theLilFunc=genLilXkZkFunc[linModBetter, {X0Z0,2},anXEpsBetter];
+(*findroot function*)
+theFR=genFRFunc[{4,1,4},theLilFunc,eqnsCompiledBetter];
+theFR@@anXEpsFlatBetter
+(*fixed point function*)
+theFP=genFPFunc[{genFRFunc},linModBetter,{X0Z0,2},eqnsCompiledBetter];
+theFP@@anXEpsFlatBetter

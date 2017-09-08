@@ -13,7 +13,7 @@ chkConv[gVal_Integer,iters_Integer,aVal_?MatrixQ]:=
 aBunch=parallelNestIterREInterp[{genFRFunc},linModBetter, {genX0Z0Funcs[linModBetter],2},eqnsCompiledBetter,gs666,theDistBetter,iters]},
 		   {(#[[1]] @@ 	 Flatten[aVal]),(#[[2]] @@ 	 Flatten[aVal])}& /@ Drop[aBunch,1]]]
 
-(*
+
 chkConv[20,10,anXEpsBetter]
 
 
@@ -21,9 +21,10 @@ chkConv[20,10,anXEpsBetter]
 
 chkConv[25,10,anXEpsBetter]
 
-
+(*
 
 chkConv[30,10,anXEpsBetter]
+
 
 
 
@@ -34,6 +35,7 @@ chkConv[35,5,anXEpsBetter]
 
 chkConv[40,5,anXEpsBetter]
 
+chkConv[50,5,anXEpsBetter]
 
 *)
-chkConv[50,5,anXEpsBetter]
+

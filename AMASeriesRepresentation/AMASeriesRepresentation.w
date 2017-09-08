@@ -26,6 +26,7 @@ This code implements anisotropic smolyak as described in \cite{Judd2014}.
 
 This data provides a sapecification for the smolyak points.
 
+
 @d smolyakInterpolationUsage
 @{smolyakInterpolation::usage=
 "place holder for makeSmolyakInterpFuncs"
@@ -139,7 +140,7 @@ postInt=({shortXs,Simplify[
 Thread[shortXs->MapThread[xformXValToCheb,{shortXs,shortSmolRngs}]]]}),
 anotherPost=({shortXs,Simplify[
 (wts.(smolIntPolys/.Thread[shortOrigXs->shortXs]))]})
-},
+},Print["smolyakInterpolation:",InputForm[{preInt,anotherPost}]];
 {Apply[Function,preInt],
 Apply[Function,anotherPost]}]]]]
 
@@ -548,20 +549,8 @@ numVars=Length[approxLevels],numEps=Length[distribSpec[[1]]]},
 With[{thePts=smolRes[[1]],smolPolys=smolRes[[2]],smolMat=smolRes[[3]]},
 With[{xPts=Map[Function[xx,xformToXVec[xx,smolRngs]],thePts]},
 With[{numPolys=Length[smolPolys]},
-{xPts,smolMat,smolPolys,smolPolyExp[smolPolys,distribSpec],
-smolPolyExp[smolPolys,smolRngs,distribSpec]}]]]]/;
+{xPts,smolMat,smolPolys,smolPolyExp[smolPolys,smolRngs,distribSpec]}]]]]/;
 And[Length[smolRngs]==Length[approxLevels]]
-
-smolPolyExp[aSmolPoly_,@<distribSpec@>]:=
-With[{numEps=Length[distribSpec[[1]]],
-polyVars=Sort[Cases[aSmolPoly,xx[_Integer]]]},
-With[{numX=Length[polyVars]-numEps},
-With[{intVarRes=genIntVars[numX,distribSpec]},
-With[{polyEps=Drop[polyVars,numX],intEps=Drop[intVarRes[[2]],numX]},
-With[{epsSubs=MapThread[#1->#2&,{polyEps,intEps}]},
-With[{funcGuts=(aSmolPoly/.epsSubs)},
-myExpectation[funcGuts,intVarRes[[3]]]]]]]]]
-
 
 smolPolyExp[aSmolPoly_,smolRngs_?MatrixQ,@<distribSpec@>]:=
 With[{numEps=Length[distribSpec[[1]]],
@@ -582,7 +571,6 @@ Join[AMASeriesRepCallGraph,
 Map["smolyakInterpolationPrep"->#&,
 {"sparseGridEvalPolysAtPts","xformToXVec"}]];
 
-
 newSmolyakInterpolationPrep[approxLevels_?listOfIntegersQ,smolRngs_?MatrixQ,
 momSubs:{{(_->_)..}...}]:=
 Module[{smolRes=sparseGridEvalPolysAtPts[approxLevels],
@@ -602,6 +590,7 @@ Map["newSmolyakInterpolationPrep"->#&,
 
 compRawMoments[expr_,errVar:anX_Symbol[ii_Integer]]:=
 expr/.{errVar^nn_Integer->mom[ii,nn],errVar->mom[ii,1]}
+
 
 
 xformXValToCheb[xVal_,
@@ -651,15 +640,25 @@ Map["xformToXVec"->#&,
 @{
 (*begin code for parallelSmolyakGenInterpData*)
 
+parallelSetup[]:=
+Module[{},
+Get["pathSetup.mth"];
+ParallelNeeds["AMASeriesRepresentation`"];
+Get["AMASeriesRepresentation`"];
+Get["betterRBC.m"]]
+
+
+
  
 parallelSmolyakGenInterpData[aVecFunc:(_Function|_CompiledFunction),
 @<gSpec@>,@<smolGSpec@>]:=
+Module[{},parallelSetup[];
 With[{filledPts=ParallelMap[
 Function[xx,fillIn[{{},smolToIgnore,xx}]],smolyakPts]},
 With[{theVals=ParallelMap[
 Function[xx,(Apply[aVecFunc,xx])],filledPts]},
 With[{interpData=Transpose[{smolyakPts,theVals}]},
-interpData]]]
+interpData]]]]
 
 
 
@@ -768,7 +767,7 @@ ReplacePart[
 ReplacePart[
 	Function[xxxxxxx, appliedExp],
 		{1->Drop[longFuncArgs,-numEps]}]/.notApply->Apply
-}},
+}},Print["makeGenericInterpFuncs:",InputForm[{applied,appliedExp}]];
 thePair
 	]
 ]]]]]]
@@ -776,20 +775,22 @@ thePair
 parallelMakeGenericInterpFuncs[aVecFunc:(_Function|_CompiledFunction),@<smolGSpec@>,
 genericInterp:(smolyakInterpolation|svmRegressionLinear|svmRegressionPoly|svmRegressionRBF|svmRegressionSigmoid),svmArgs:{_?NumberQ...}]:=
 Module[{},
+parallelSetup[];
 With[{interpData=smolyakGenInterpData[aVecFunc,smolGSpec],
 numArgs=Length[smolPts[[1]]]},(*Print["generic:interpData",{aVecFunc,interpData}//InputForm];*)
 With[{numFuncs=Length[interpData[[1]]],
-funcArgs=Table[Unique["fArgs"],{numArgs}]},
-With[{longFuncArgs=fillInSymb[{{},smolToIgnore,funcArgs}]},
+funcArgs=Table[Unique["fArgs"],{numArgs}],theXs=Table[xx[ii],{ii,numArgs}]},
+With[{longFuncArgs=fillInSymb[{{},smolToIgnore,funcArgs}],
+funcSubs=Thread[theXs->funcArgs]},
 With[{interpFuncList=
-Map[Function[funcIdx,
+ParallelMap[Function[funcIdx,
 With[{theInterps=genericInterp[interpData[[All,funcIdx]],smolGSpec,svmArgs]},
 With[{smolApp=theInterps},
 smolApp]]],Range[numFuncs]]},
 With[
-{applied=Transpose[{Map[notApply[#,funcArgs]/.makeSubs[#,funcArgs]&,
+{applied=Transpose[{ParallelMap[notApply[#,funcArgs]/.funcSubs&,
 Map[First,interpFuncList]]}],
-appliedExp=Transpose[{Map[notApply[#,funcArgs]/.makeSubs[#,Drop[funcArgs,-numEps]]&,
+appliedExp=Transpose[{ParallelMap[notApply[#,funcArgs]/.funcSubs&,
 Map[Last,interpFuncList]]}]},
 With[{thePair=
 {
@@ -799,7 +800,7 @@ ReplacePart[
 ReplacePart[
 	Function[xxxxxxx, appliedExp],
 		{1->Drop[longFuncArgs,-numEps]}]/.notApply->Apply
-}},
+}},Print["parallelMakeGenericInterpFuncs:",InputForm[{funcArgs,applied,appliedExp,interpFuncList}]];
 thePair
 	]
 ]]]]]]
@@ -888,6 +889,7 @@ parallelDoGenericIterREInterp[@<theSolver@>,
 genericInterp:(smolyakInterpolation|svmRegressionLinear|svmRegressionPoly|svmRegressionRBF|svmRegressionSigmoid),svmArgs:{_?NumberQ...}]:=
 With[{numX=Length[BB],numZ=Length[psiZ[[1]]]},
 tn=AbsoluteTime[];
+parallelSetup[];
 With[{theFuncs=
 parallelMakeGenericInterpFuncs[
 genFPFunc[theSolver,linMod,XZFuncs,eqnsFunc],smolGSpec,
@@ -1005,8 +1007,10 @@ parallelNestGenericIterREInterp[@<theSolver@>,@<linMod@>,
 @<distribSpec@>,
 genericInterp:(smolyakInterpolation|svmRegressionLinear|svmRegressionPoly|svmRegressionRBF|svmRegressionSigmoid),svmArgs:{_?NumberQ...},
 numIters_Integer]:=
+Module[{},
+parallelSetup[];
 NestList[Function[xx,parallelDoGenericIterREInterp[theSolver,linMod,
-{xx[[2]],numSteps},eqnsFunc,smolGSpec,distribSpec,genericInterp,svmArgs]],{99,XZFuncs[[1]]},numIters]
+{xx[[2]],numSteps},eqnsFunc,smolGSpec,distribSpec,genericInterp,svmArgs]],{99,XZFuncs[[1]]},numIters]]
 
 AMASeriesRepCallGraph=
 Join[AMASeriesRepCallGraph,Map["nestIterREInterp"->#&,{"doGenericIterREInterp"}]];
@@ -1176,6 +1180,7 @@ Out[102]//InputForm=
  
 parallelGenInterpData[aVecFunc:(_Function|_CompiledFunction),@<gSpec@>]:=
 With[{thePts=gridPts[gSpec]},
+parallelSetup[];
 With[{filledPts=ParallelMap[
 Function[xx,fillIn[{{},toIgnore,xx}]],thePts]},
 With[{theVals=ParallelMap[
@@ -1335,6 +1340,8 @@ Out[107]= {{0.09}, {0.0514286}, {6.84799 10   }, {0.01}}
 (*begin code for parallelMakeInterpFunc*)
 
 parallelMakeInterpFunc[aVecFunc:(_Function|_CompiledFunction),@<gSpec@>]:=
+Module[{},
+parallelSetup[];
 With[{interpData=parallelGenInterpData[aVecFunc,gSpec],numArgs=getNumVars[gSpec]},(*Print["notgeneric:interpData",{aVecFunc,interpData}//InputForm];*)
 With[{numFuncs=Length[interpData[[1,2]]],
 funcArgs=Table[Unique["fArgs"],{numArgs}]},
@@ -1348,7 +1355,7 @@ Map[Function[xx,{xx[[1]], xx[[2, funcIdx, 1]]}] ,
 	Function[xxxxxxx, applied],
 		{1->longFuncArgs}]
 	]
-]]]]
+]]]]]
 
 
 AMASeriesRepCallGraph=
@@ -1410,6 +1417,7 @@ parallelDoIterREInterp[@<theSolver@>,
 @<eqnsFunc@>,@<gSpec@>,@<distribSpec@>]:=
 With[{numX=getNumX[linMod],numEps=getNumEps[linMod],numZ=getNumZ[linMod]},
 tn=AbsoluteTime[];
+parallelSetup[];
 DistributeDefinitions[XZFuncs[[1]]];
 DistributeDefinitions[eqnsFunc];
 DistributeDefinitions[linMod];
@@ -1475,8 +1483,9 @@ parallelNestIterREInterp[@<theSolver@>,@<linMod@>,
 @<XZFuncs@>,@<eqnsFunc@>,
 @<gSpec@>,
 @<distribSpec@>,numIters_Integer]:=
+Module[{},parallelSetup[];
 NestList[Function[xx,parallelDoIterREInterp[theSolver,linMod,
-{xx[[2]],numSteps},eqnsFunc,gSpec,distribSpec]],{ig,XZFuncs[[1]]},numIters]
+{xx[[2]],numSteps},eqnsFunc,gSpec,distribSpec]],{ig,XZFuncs[[1]]},numIters]]
 
 AMASeriesRepCallGraph=
 Join[AMASeriesRepCallGraph,Map["parallelNestIterREInterp"->#&,{"parallelDoIterREInterp"}]];
@@ -1541,6 +1550,7 @@ Inverse[IdentityMatrix[dim] - fmat] . MatrixPower[fmat,kk].phimat]]]
 parallelGenXZREInterpFunc[probDims:{numX_Integer,numEps_Integer,numZ_Integer},
 aLilXkZkFunc_Function,@<gSpec@>,@<distribSpec@>]:=
 With[{theFuncNow=genXZFuncRE[{numX,numEps,numZ},aLilXkZkFunc,distribSpec]},
+parallelSetup[];
 parallelMakeInterpFunc[theFuncNow,elimGSpecShocks[gSpec,numEps]]]
   
 AMASeriesRepCallGraph=
@@ -2443,10 +2453,13 @@ myNExpectation[funcName_Symbol[farg_List,idx_Integer],nArgs_List]:=Chop[NExpecta
 
 
 myExpectation[farg_List,nArgs_List]:=
-Chop[Expectation[farg,nArgs]]
+stringArgsToInt[
+Chop[Expectation[intArgsToString[farg],intArgsToString[nArgs]]]]
 
 
+intArgsToString[exp_]:=exp/.xx[val_Integer]:>xx[ToString[val]]
 
+stringArgsToInt[exp_]:=exp/.xx[val_String]:>xx[ToExpression[val]]
 
 
 

@@ -45,7 +45,7 @@ parallelRes666=Timing[parallelNestIterREInterp[{genFRFunc},linModBetter, {genX0Z
 chkConv[gVal_Integer,iters_Integer,aVal_?MatrixQ]:=
 		With[{gs666={{1, 3}, 1, {{gVal, 0.018732441104784652, 0.7492976441913861}, {gVal, 9/10, 11/10},   {gVal, -0.03, 0.09}}}},
 	  With[{
-aBunch=parallelNestIterREInterp[{genFRFunc},linModBetter, {genX0Z0Funcs[linModBetter],2},eqnsCompiledBetter,gs666,theDistBetter,iters]},
+aBunch=parallelNestIterREInterp[{genFRFunc},linModBetter, {genX0Z0Funcs[linModBetter],8},eqnsCompiledBetter,gs666,theDistBetter,iters]},
 		   {(#[[1]] @@ 	 Flatten[aVal]),(#[[2]] @@ 	 Flatten[aVal])}& /@ Drop[aBunch,1]]]
 
 
@@ -61,7 +61,15 @@ Module[{theRes666,parallelRes666,
 gs666={{1, 3}, 1, {{gVal, 0.018732441104784652, 0.7492976441913861}, {gVal, 9/10, 11/10},   {gVal, -0.03, 0.09}}}},
 theRes666=Timing[
 nestGenericIterREInterp[{genFRFunc},linModBetter, {genX0Z0Funcs[linModBetter],2},eqnsCompiledBetter,gs666,theDistBetter,iters]];
-parallelRes666=Timing[parallelNestIterREInterp[{genFRFunc},linModBetter, {genX0Z0Funcs[linModBetter],2},eqnsCompiledBetter,gs666,theDistBetter,iters]];
+parallelRes666=Timing[parallelNestIterREInterp[{genFRFunc},linModBetter, {genX0Z0Funcs[linModBetter],8},eqnsCompiledBetter,gs666,theDistBetter,iters]];
+{theRes666,parallelRes666}]
+
+doBlendComp[gVal_Integer,iters_Integer]:=
+Module[{theRes666,parallelRes666,
+gs666={{1, 3}, 1, {{gVal, 0.018732441104784652, 0.7492976441913861}, {gVal, 9/10, 11/10},   {gVal, -0.03, 0.09}}}},
+theRes666=Timing[
+nestGenericIterREInterp[{genFRFunc},linModBetter, {good,2},eqnsCompiledBetter,gs666,theDistBetter,iters]];
+parallelRes666=Timing[parallelNestIterREInterp[{genFRFunc},linModBetter, {good,2},eqnsCompiledBetter,gs666,theDistBetter,iters]];
 {theRes666,parallelRes666}]
 
 

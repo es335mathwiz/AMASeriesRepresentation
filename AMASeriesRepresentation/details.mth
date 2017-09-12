@@ -1,9 +1,31 @@
 Get["pathSetup.mth"]
 Get["AMASeriesRepresentation`"]
 Get["betterRBC.m"]
+Export["hminus.pdf",TableForm[hMinus=getH[linModBetter][[All,{1,2,3,4}]]]]
+Export["hzero.pdf",TableForm[hZero=getH[linModBetter][[All,4+{1,2,3,4}]]]]
+Export["hplus.pdf",TableForm[hPlus=getH[linModBetter][[All,8+{1,2,3,4}]]]]
+Export["bmat.pdf",TableForm[getB[linModBetter]]]
+Export["phimat.pdf",TableForm[phiMat=getPhi[linModBetter]]]
+Export["psicmat.pdf",TableForm[getPsiC[linModBetter]]]
+Export["psizmat.pdf",TableForm[getPsiZ[linModBetter]]]
+Export["psiepsmat.pdf",TableForm[getPsiEps[linModBetter]]]
+Export["fmat.pdf",TableForm[fMat=getF[linModBetter]]]
 
 
+Export["paramVals.pdf",TableForm[Last/@betterRBC`Private`paramSubs]//N]
+Export["paramNames.pdf",TableForm[{alpha,beta,delta,rho,sigma}]//N]
 
+Export["ssSolnVals.pdf",TableForm[Last/@betterRBC`Private`ssSolnSubsRE]//N]
+Export["ssSolnNames.pdf",TableForm[{theta,kk,cc,nlPart}]//N]
+
+<<JavaGraphics`
+
+kl=betterRBC`Private`kLow = 1/10*betterRBC`Private`kVal//N;
+kh=betterRBC`Private`kHigh = 4*betterRBC`Private`kVal//N;
+sl=betterRBC`Private`sigLow = -3*betterRBC`Private`sigVal;
+sh=betterRBC`Private`sigHigh = 3*betterRBC`Private`sigVal;
+tl=betterRBC`Private`thLow = 9/10;
+th=betterRBC`Private`thHigh = 11/10;
 X0Z0=genX0Z0Funcs[linModBetter];
 theLilFunc=genLilXkZkFunc[linModBetter, {X0Z0,2},anXEpsBetter];
 (*findroot function*)
@@ -12,3 +34,104 @@ theFR@@anXEpsFlatBetter
 (*fixed point function*)
 theFP=genFPFunc[{genFRFunc},linModBetter,{X0Z0,2},eqnsCompiledBetter];
 theFP@@anXEpsFlatBetter
+(*
+
+theOldRes=doIterREInterp[{genFRFunc},linModBetter,{X0Z0,2},eqnsCompiledBetter,aGSpecBetter,theDistBetter];
+
+
+smolRng=#[[{2,3}]]&/@Drop[aGSpecBetter,2][[1]]
+{pt,tf,ply,iply}=smolyakInterpolationPrep[3*{1,1,1},smolRng,theDistBetter];
+toIg=aGSpecBetter[[1]];
+sgSpec={toIg,smolRng,pt,tf,ply,iply,1,3*{1,1,1}};
+
+
+theNewRes=nestIterREInterp[{genFRFunc},linModBetter,{X0Z0,2},eqnsCompiledBetter,sgSpec,theDistBetter,2];
+
+theNewNewRes=doGenericIterREInterp[{genFRFunc},linModBetter,{X0Z0,2},eqnsCompiledBetter,sgSpec,theDistBetter,smolyakInterpolation,{}];
+
+
+
+
+
+pid=Timing[parallelGenInterpData[theFP,aGSpecBetter]];
+thePoints=First/@ pid[[2]]
+
+Export["grid443Graph.pdf",Graphics3D[Point[thePoints]]]
+iters=6
+theRes666=Timing[nestIterREInterp[{genFRFunc},linModBetter, {genX0Z0Funcs[linModBetter],2},eqnsCompiledBetter,aGSpecBetter,theDistBetter,iters]];
+parallelRes666=Timing[parallelNestIterREInterp[{genFRFunc},linModBetter, {genX0Z0Funcs[linModBetter],2},eqnsCompiledBetter,aGSpecBetter,theDistBetter,iters]];
+
+(*
+nn=2
+pathErrsDRREIntegrate[theRes666[[2,nn,1]],theRes666[[2,nn,2]],anXEpsBetter,1,eqnsCompiledBetter,2]
+
+evalPathErrDRREIntegrate[theRes666[[2,nn,1]],theRes666[[2,nn,2]],anXEpsBetter,1,eqnsCompiledBetter]
+evalPathErrDRREIntegrate[getPhi[linModBetter],theRes666[[2,nn,1]],theRes666[[2,nn,2]],anXEpsBetter,1,eqnsCompiledBetter]
+
+evalBadPathErrDRREIntegrate[theRes666[[2,nn,1]],theRes666[[2,nn,2]],anXBetter,1,eqnsCompiledBetter]
+evalBadPathErrDRREIntegrate[getPhi[linModBetter],theRes666[[2,nn,1]],theRes666[[2,nn,2]],anXBetter,1,eqnsCompiledBetter]
+
+worstPathForErrDRREIntegrate[theRes666[[2,nn,1]],theRes666[[2,nn,2]],anXBetter,1,eqnsCompiledBetter]
+worstPathForErrDRREIntegrate[getPhi[linModBetter],theRes666[[2,nn,1]],theRes666[[2,nn,2]],anXBetter,1,eqnsCompiledBetter]
+*)
+
+
+
+
+
+forPlot[kk_?NumberQ,th_?NumberQ,nn_Integer]:=
+evalBadPathErrDRREIntegrate[getPhi[linModBetter],theRes666[[2,nn,1]],theRes666[[2,nn,2]],{{0.2},{kk},{1.0},{th}},1,eqnsCompiledBetter][[1]]
+
+forPlotDiff[kk_?NumberQ,th_?NumberQ,eps_?NumberQ,nn_Integer]:=
+Module[{exact=simpRBCExactDRBetter[ig,kk,ig,th,eps],approx=(theRes666[[2,nn,1]][ig,kk,ig,th,eps][[Range[4]]])},
+Print[Transpose[{exact,approx}]];
+approx-exact]
+
+somePlots[nn_Integer]:=
+Export["worstErrs443"<>ToString[nn]<>".pdf",boo=Plot3D[forPlot[kk,th,nn],{kk,kl,kh},{th,tl,th},PlotRange->All]]
+somePlotDiffs[nn_Integer]:=
+Export["worstErrs443"<>ToString[nn]<>".pdf",boo=Plot3D[Norm[forPlotDiff[kk,th,0.0,nn],{kk,kl,kh},{th,tl,th},PlotRange->All]]
+
+
+(*
+parallelSetup[]
+DistributeDefinitions[kl,kh,tl,th,theRes666,parallelRes666,somePlots,somePlotDiffs,forPlot,forPlotDiff]
+Map[somePlots, Range[2,7]]
+Export["worstErrs443"<>ToString[nn]<>".pdf",boo=Plot3D[forPlot[kk,th,nn],{kk,kl,kh},{th,tl,th},PlotRange->All]]
+Map[somePlotDiffs, Range[2,7]]
+Export["diffs443"<>ToString[nn]<>".pdf",boo=Plot3D[forPlot[kk,th,nn],{kk,kl,kh},{th,tl,th},PlotRange->All]]
+
+*)
+tErrMat=truncErrorMat[fMat,phiMat,0]
+tErrMatMax=Norm[tErrMat,Infinity]
+
+approx=4*{1,1,1}
+smolRng=#[[{2,3}]]&/@Drop[aGSpecBetter,2][[1]]
+{pt,tf,ply,iply}=smolyakInterpolationPrep[approx,smolRng,theDistBetter];
+toIg=aGSpecBetter[[1]];
+sgSpec={toIg,smolRng,pt,tf,ply,iply,1,approx};
+
+Timing[theRes=parallelNestGenericIterREInterp[{genFRFunc},linModBetter,{X0Z0,2},eqnsCompiledBetter,sgSpec,theDistBetter,smolyakInterpolation,{},3]];
+
+doExp[kk_?NumberQ,th_?NumberQ,idx_Integer]:=
+With[{nexp=NExpectation[forInt[kk,th,theEps,idx],theEps \[Distributed] 
+NormalDistribution[0,1/100]],preCmp=theRes[[-1,2]][99,kk,99,th]},
+{nexp,preCmp[[idx,1]],nexp-preCmp[[idx,1]]}]
+
+forInt[kk_?NumberQ,th_?NumberQ,theEps_?NumberQ,idx_Integer]:=
+With[{cmp=theRes[[-1,1]][99,kk,99,th,theEps]},cmp[[idx,1]]]
+
+Plot3D[doExp[kk,anXEpsFlatBetter[[4]],2][[3]],{kk,0.01,0.8},{th,0.6,1.1}]
+
+
+psid=Timing[smolyakGenInterpData[theFP,sgSpec]];
+theSmolPoints=sgSpec[[3]]
+Export["smol3Graph.pdf",Graphics3D[Point[theSmolPoints]]]
+
+
+
+notSmol=makeInterpFunc[theFP,sgSpec];
+isSmol=makeSmolyakInterpFuncs[theFP,sgSpec];
+
+Function[xx,{theFP @@ fillIn[{{},{1,3},xx}], notSmol @@ fillIn[{{},{1,3},xx}],Through[isSmol @@#&[ fillIn[{{},{1,3},xx}]]][[1]]}] /@ sgSpec[[3]]
+*)

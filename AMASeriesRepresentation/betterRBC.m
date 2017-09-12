@@ -52,11 +52,12 @@ discMapEqns00=(Append[rbcEqns[[{1,2,3}]],
 
 zfEqns=discMapEqns00[[{2,3,4}]]//PowerExpand
 discMapEqns01=Append[zfEqns/.t->t+1,discMapEqns00[[1]]]//PowerExpand
-soln=Solve[Thread[discMapEqns01==0],{cc[t+1],kk[t+1],nlPart[t+1],lnTheta[t+1]}]
+(*soln=Solve[Thread[discMapEqns01==0],{cc[t+1],kk[t+1],nlPart[t+1],lnTheta[t+1]}]*)
 
 (*parameters page 21 using state 1*)
 paramSubs={
 alpha->36/100,
+beta->1,
 delta->95/100,
 rho->95/100,
 sigma->1/100
@@ -103,6 +104,7 @@ nxtK[lastK_,thNowVal_]:=((alpha*delta))*thNowVal*lastK^(alpha)/.simpParamSubs;
 yNow[kLag_,thNowVal_]:=thNowVal*kLag^(alpha)/.simpParamSubs;
 anExpRE=Expectation[E^ep,ep\[Distributed] NormalDistribution[0,sigma]/.simpParamSubs];
 anExpPF=1;
+Off[Solve::ifun]
 thSubsRE=Flatten[Solve[theta==anExpRE*thNow[theta,0],theta][[2]]];
 kSSSubRE=Flatten[Solve[nxtK[kk,theta/.thSubsRE]==kk,kk][[-1]]];
 cSSSubRE=cc->(yNow[kk/.kSSSubRE,theta/.thSubsRE]-kk/.kSSSubRE);
@@ -111,6 +113,7 @@ ssSolnSubsRE=Flatten[{thSubsRE,kSSSubRE,cSSSubRE,nlPartSSSubRE}];
 Print["RE done now PF"];
 thSubsPF=Flatten[Solve[theta==theta^rho,theta]][[1]];
 kSSSubPF=Flatten[Solve[nxtK[kk,theta/.thSubsPF]==kk,kk]][[-1]];
+On[Solve::ifun]
 cSSSubPF=cc->(yNow[kk/.kSSSubPF,theta/.thSubsPF]-kk/.kSSSubPF);
 nlPartSSSubPF=(nlPart->(nlPartRHS/.xxxx_[t]->xxxx))//.{kSSSubPF,cSSSubPF,thSubsPF};
 ssSolnSubsPF=Flatten[{thSubsPF,kSSSubPF,cSSSubPF,nlPartSSSubPF}];

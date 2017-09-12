@@ -1,4 +1,4 @@
-\documentclass[12pt]{article}
+>\documentclass[12pt]{article}
 \usepackage[margin=1.0in]{geometry}
 \usepackage[english]{babel}
 \usepackage{hyperref}
@@ -2049,7 +2049,8 @@ Join[AMASeriesRepCallGraph,Map["genLilXkZkFunc"->#&,{"fSum"}]];
 @}
 
 @d XZ Functions Given
-@{With[{fCon=fSum[linMod,XZFuncs,xtGuess]},
+@{
+With[{fCon=fSum[linMod,XZFuncs,xtGuess]},Print["genlilxkzkfunc:",xtGuess//InputForm];
 With[{theRes=genLilXkZkFunc[linMod,fCon]},
 theRes]]
 
@@ -2454,14 +2455,14 @@ fixedPointLimit=30;
 genFPFunc[@<theSolver@>,@<linMod@>,@<XZFuncs@>,@<eqnsFunc@>]:=
 With[{numX=getNumX[linMod],numEps=getNumEps[linMod],numZ=getNumZ[linMod]},
 With[{funcArgs=Table[Unique["theFPFuncArgs"],{numX+numEps}]},
-Print["genFPFunc:",(Apply[XZFuncs[[1]],funcArgs])//InputForm];
+(*Print["genFPFunc:",(Apply[XZFuncs[[1]],funcArgs])//InputForm];*)
 ReplacePart[
 Function[xxxx,Sow[
 myFixedPoint[Function[xx,With[{
 xzFuncNow=theSolver[[1]][
 {numX,numEps,numZ},
 genLilXkZkFunc[linMod,XZFuncs,xx[[Range[numX]]]],
-eqnsFunc,{opts}]},Print["genFPFunc: in function",Apply[xzFuncNow,funcArgs]//InputForm];
+eqnsFunc,{opts}]},(*Print["genFPFunc: in function",Apply[xzFuncNow,funcArgs]//InputForm];*)
  Apply[xzFuncNow,funcArgs]]],(Apply[XZFuncs[[1]],funcArgs])[[Range[numX]]],
 fixedPointLimit]]],
 1->funcArgs]]]

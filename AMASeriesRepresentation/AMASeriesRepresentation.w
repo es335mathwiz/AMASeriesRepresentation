@@ -102,10 +102,10 @@ interpData]]]]
  
 parallelSmolyakGenInterpData[
 aVecFunc:(_Function|_CompiledFunction),@<smolGSpec@>]:=
-Module[{},
+Module[{},Print["parallelSmolyakGenInterpData:"];
 With[{filledPts=ParallelMap[
 Function[xx,fillIn[{{},smolToIgnore,xx}]],N[smolPts]]},
-With[{theVals=Map[Function[xx,(Apply[aVecFunc,xx])],filledPts]},
+With[{theVals=ParallelMap[Function[xx,(Apply[aVecFunc,xx])],filledPts]},
 With[{interpData=Map[Flatten,theVals]},
 interpData]]]]
 
@@ -792,9 +792,9 @@ thePair
 
 parallelMakeGenericInterpFuncs[aVecFunc:(_Function|_CompiledFunction),@<smolGSpec@>,
 genericInterp:(smolyakInterpolation|svmRegressionLinear|svmRegressionPoly|svmRegressionRBF|svmRegressionSigmoid),svmArgs:{_?NumberQ...}]:=
-Module[{},
+Module[{},Print["parallelMakeGenericInterpFuncs:"];
 parallelSetup[];
-With[{interpData=smolyakGenInterpData[aVecFunc,smolGSpec],
+With[{interpData=parallelSmolyakGenInterpData[aVecFunc,smolGSpec],
 numArgs=Length[smolPts[[1]]]},(*Print["generic:interpData",{aVecFunc,interpData}//InputForm];*)
 With[{numFuncs=Length[interpData[[1]]],
 funcArgs=Table[Unique["fArgs"],{numArgs}],theXs=Table[xx[ii],{ii,numArgs}]},
@@ -903,9 +903,9 @@ theFuncs]]
 parallelDoGenericIterREInterp[@<theSolver@>,
 	@<linMod@>,
 	@<XZFuncs@>,
-@<eqnsFunc@>,@<smolGSpec@>,@<distribSpec@>,
+@<eqnsFunc@>,@<smolGSpec@>,
 genericInterp:(smolyakInterpolation|svmRegressionLinear|svmRegressionPoly|svmRegressionRBF|svmRegressionSigmoid),svmArgs:{_?NumberQ...}]:=
-With[{numX=Length[BB],numZ=Length[psiZ[[1]]]},
+With[{numX=Length[BB],numZ=Length[psiZ[[1]]]},Print["parallelDoGenericIterREInterp:"];
 tn=AbsoluteTime[];
 parallelSetup[];
 With[{theFuncs=
@@ -1030,13 +1030,12 @@ NestList[Function[xx,doGenericIterREInterp[theSolver,linMod,
 
 parallelNestGenericIterREInterp[@<theSolver@>,@<linMod@>,
 @<XZFuncs@>,@<eqnsFunc@>,@<smolGSpec@>,
-@<distribSpec@>,
 genericInterp:(smolyakInterpolation|svmRegressionLinear|svmRegressionPoly|svmRegressionRBF|svmRegressionSigmoid),svmArgs:{_?NumberQ...},
 numIters_Integer]:=
 Module[{},
 parallelSetup[];
 NestList[Function[xx,parallelDoGenericIterREInterp[theSolver,linMod,
-{xx[[2]],numSteps},eqnsFunc,smolGSpec,distribSpec,genericInterp,svmArgs]],{99,XZFuncs[[1]]},numIters]]
+{xx[[2]],numSteps},eqnsFunc,smolGSpec,genericInterp,svmArgs]],{99,XZFuncs[[1]]},numIters]]
 
 AMASeriesRepCallGraph=
 Join[AMASeriesRepCallGraph,Map["nestIterREInterp"->#&,{"doGenericIterREInterp"}]];
@@ -2050,9 +2049,10 @@ Join[AMASeriesRepCallGraph,Map["genLilXkZkFunc"->#&,{"fSum"}]];
 
 @d XZ Functions Given
 @{
-With[{fCon=fSum[linMod,XZFuncs,xtGuess]},Print["genlilxkzkfunc:",xtGuess//InputForm];
+With[{},Print["genlilxkzkfunc:",xtGuess//InputForm];
+With[{fCon=fSum[linMod,XZFuncs,xtGuess]},
 With[{theRes=genLilXkZkFunc[linMod,fCon]},
-theRes]]
+theRes]]]
 
 
 
@@ -2415,12 +2415,12 @@ zArgs=Table[Unique["theFRZArgs"],{numZ}]},
 With[{zArgsInit=Map[Function[xx,{xx,0}],zArgs],funcName=Unique["fName"]},
 funcName[theVars:{_?NumberQ..}]:=
 Apply[eqnsFunc,Flatten[Apply[xkFunc,theVars]]];Off[FindRoot::nlnum];
-With[{frRes=FindRoot[funcName[Join[funcArgs,zArgs]],zArgsInit,EvaluationMonitor:>Print["genFRFunc: in FindrRoot",{Join[funcArgs,zArgs],zArgsInit}]],
+With[{frRes=FindRoot[funcName[Join[funcArgs,zArgs]],zArgsInit,EvaluationMonitor:>Print["genFRFunc: in FindRoot id=",$KernelID,{funcName[Join[funcArgs,zArgs]],Join[funcArgs,zArgs],zArgsInit}]],
 xzRes=Drop[Apply[xkFunc,Join[funcArgs,zArgs]],numX][[Range[numX]]]},
-If[Not[FreeQ[xzRes,$Failed]],Throw[$Failed,"xzRes"]];
+(*If[Not[FreeQ[xzRes,$Failed]],Throw[$Failed,"xzRes"]];*)
 With[{otherGuts=cmpXZVals[xzRes,zArgs,frRes]},
-If[Not[Apply[And,Map[Or[MachineNumberQ[#],IntegerQ[#]]&,Cases[xzRes,_?NumberQ,Infinity]]]],
-Throw[{$Failed,{xzRes,funcName[Join[funcArgs,zArgs]],zArgsInit}//InputForm},"otherGuts not machine number"]];
+(*If[Not[Apply[And,Map[Or[MachineNumberQ[#],IntegerQ[#]]&,Cases[xzRes,_?NumberQ,Infinity]]]],
+Throw[{$Failed,{xzRes,funcName[Join[funcArgs,zArgs]],zArgsInit}//InputForm},"otherGuts not machine number"]];*)
 (*On[FindRoot::nlnum];*)
 Function[otherGuts]]]]]]
 
@@ -2462,7 +2462,7 @@ myFixedPoint[Function[xx,With[{
 xzFuncNow=theSolver[[1]][
 {numX,numEps,numZ},
 genLilXkZkFunc[linMod,XZFuncs,xx[[Range[numX]]]],
-eqnsFunc,{opts}]},(*Print["genFPFunc: in function",Apply[xzFuncNow,funcArgs]//InputForm];*)
+eqnsFunc,{opts}]},Print["genFPFunc: in function xx",xx//InputForm];
  Apply[xzFuncNow,funcArgs]]],(Apply[XZFuncs[[1]],funcArgs])[[Range[numX]]],
 fixedPointLimit]]],
 1->funcArgs]]]

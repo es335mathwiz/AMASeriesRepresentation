@@ -50,7 +50,63 @@ theNewRes=nestIterREInterp[{genFRFunc},linModBetter,{X0Z0,2},eqnsCompiledBetter,
 theNewNewRes=doGenericIterREInterp[{genFRFunc},linModBetter,{X0Z0,2},eqnsCompiledBetter,sgSpec,theDistBetter,smolyakInterpolation,{}];
 
 
+(*
+runs without errors
+approx=4*{1,1,1}
+smolRng=#[[{2,3}]]&/@Drop[aGSpecBetter,2][[1]]
+{pt,tf,ply,iply}=smolyakInterpolationPrep[approx,smolRng,theDistBetter];
+toIg=aGSpecBetter[[1]];
+sgSpec={toIg,smolRng,pt,tf,ply,iply,1,approx};
 
+Reap[Timing[theRes=parallelNestGenericIterREInterp[{genFRFunc},linModBetter,{X0Z0,2},eqnsCompiledBetter,sgSpec,theDistBetter,smolyakInterpolation,{},2]]]
+
+
+throw not machine size number on second iteration
+approx=5*{1,1,1}
+smolRng=#[[{2,3}]]&/@Drop[aGSpecBetter,2][[1]]
+{pt,tf,ply,iply}=smolyakInterpolationPrep[approx,smolRng,theDistBetter];
+toIg=aGSpecBetter[[1]];
+sgSpec={toIg,smolRng,pt,tf,ply,iply,1,approx};
+(*
+Reap[Timing[theRes=parallelNestGenericIterREInterp[{genFRFunc},linModBetter,{X0Z0,2},eqnsCompiledBetter,sgSpec,smolyakInterpolation,{},2]]]
+*)
+
+
+
+(*
+Reap[Timing[theRes01=parallelNestGenericIterREInterp[{genFRFunc},linModBetter,{X0Z0,2},eqnsCompiledBetter,sgSpec,smolyakInterpolation,{},1]]]
+Save["theRes01.mth",theRes01]
+*)
+Get["theRes01.mth"];
+approx=5*{1,1,1}
+smolRng=#[[{2,3}]]&/@Drop[aGSpecBetter,2][[1]]
+{pt,tf,ply,iply}=smolyakInterpolationPrep[approx,smolRng,theDistBetter];
+toIg=aGSpecBetter[[1]];
+sgSpec={toIg,smolRng,pt,tf,ply,iply,1,approx};
+numX=Length[getB[linModBetter]];
+numZ=Length[getPsiZ[linModBetter][[1]]];
+aVecFunc=genFPFunc[{genFRFunc},linModBetter,{theRes01[[-1,2]],2},
+eqnsCompiledBetter];
+AMASeriesRepresentation`Private`parallelSetup[];
+filledPts=ParallelMap[
+Function[xx,Print["parallelSmolyakGenInterpData: parallel maps smolPts",xx];
+fillIn[{{},{1,3},xx}]],N[sgSpec[[3]]]];
+
+(*fails for 7th value*)
+DistributeDefinitions[aVecFunc]
+theVals=ParallelMap[Function[xx,(Apply[aVecFunc,xx])],filledPts];
+interpData=Map[Flatten,theVals];
+(*
+interpData=parallelSmolyakGenInterpData[aVecFunc,sgSpec];
+parallelMakeGenericInterpFuncs[aVecFunc
+,sgSpec,smolyakInterpolation,{}]
+
+*)
+(*
+theNext=parallelDoGenericIterREInterp[{genFRFunc},linModBetter,{theRes01[[-1,2]],2},eqnsCompiledBetter,sgSpec,smolyakInterpolation,{}]
+*)
+
+*)
 
 
 pid=Timing[parallelGenInterpData[theFP,aGSpecBetter]];

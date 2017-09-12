@@ -52,18 +52,46 @@ theNewNewRes=doGenericIterREInterp[{genFRFunc},linModBetter,{X0Z0,2},eqnsCompile
 
 (*
 runs without errors
-approx=4*{1,1,1}
-smolRng=#[[{2,3}]]&/@Drop[aGSpecBetter,2][[1]]
+approx=3*{1,1,1};
+smolRng=#[[{2,3}]]&/@Drop[aGSpecBetter,2][[1]];
 {pt,tf,ply,iply}=smolyakInterpolationPrep[approx,smolRng,theDistBetter];
 toIg=aGSpecBetter[[1]];
 sgSpec={toIg,smolRng,pt,tf,ply,iply,1,approx};
 
-Reap[Timing[theRes=parallelNestGenericIterREInterp[{genFRFunc},linModBetter,{X0Z0,2},eqnsCompiledBetter,sgSpec,theDistBetter,smolyakInterpolation,{},2]]]
+Timing[theRes03=parallelNestGenericIterREInterp[{genFRFunc},linModBetter,{X0Z0,2},eqnsCompiledBetter,sgSpec,smolyakInterpolation,{},2]]
+
+
+approx={4,3,1};
+smolRng=#[[{2,3}]]&/@Drop[aGSpecBetter,2][[1]];
+{pt,tf,ply,iply}=smolyakInterpolationPrep[approx,smolRng,theDistBetter];
+toIg=aGSpecBetter[[1]];
+sgSpec={toIg,smolRng,pt,tf,ply,iply,1,approx};
+
+Timing[theRes431=parallelNestGenericIterREInterp[{genFRFunc},linModBetter,{X0Z0,2},eqnsCompiledBetter,sgSpec,smolyakInterpolation,{},2]]
+
+
+approx=5*{1,1,1};
+smolRng=#[[{2,3}]]&/@Drop[aGSpecBetter,2][[1]];
+{pt,tf,ply,iply}=smolyakInterpolationPrep[approx,smolRng,theDistBetter];
+toIg=aGSpecBetter[[1]];
+sgSpec={toIg,smolRng,pt,tf,ply,iply,1,approx};
+
+Timing[theRes05=parallelNestGenericIterREInterp[{genFRFunc},linModBetter,{X0Z0,2},eqnsCompiledBetter,sgSpec,smolyakInterpolation,{},2]]
+
+
+approx=6*{1,1,1};
+smolRng=#[[{2,3}]]&/@Drop[aGSpecBetter,2][[1]];
+{pt,tf,ply,iply}=smolyakInterpolationPrep[approx,smolRng,theDistBetter];
+toIg=aGSpecBetter[[1]];
+sgSpec={toIg,smolRng,pt,tf,ply,iply,1,approx};
+
+Timing[theRes06=parallelNestGenericIterREInterp[{genFRFunc},linModBetter,{X0Z0,2},eqnsCompiledBetter,sgSpec,smolyakInterpolation,{},2]]
+
 
 
 throw not machine size number on second iteration
-approx=5*{1,1,1}
-smolRng=#[[{2,3}]]&/@Drop[aGSpecBetter,2][[1]]
+approx=5*{1,1,1};
+smolRng=#[[{2,3}]]&/@Drop[aGSpecBetter,2][[1]];
 {pt,tf,ply,iply}=smolyakInterpolationPrep[approx,smolRng,theDistBetter];
 toIg=aGSpecBetter[[1]];
 sgSpec={toIg,smolRng,pt,tf,ply,iply,1,approx};
@@ -78,8 +106,8 @@ Reap[Timing[theRes01=parallelNestGenericIterREInterp[{genFRFunc},linModBetter,{X
 Save["theRes01.mth",theRes01]
 *)
 Get["theRes01.mth"];
-approx=5*{1,1,1}
-smolRng=#[[{2,3}]]&/@Drop[aGSpecBetter,2][[1]]
+approx=4*{1,1,1};
+smolRng=#[[{2,3}]]&/@Drop[aGSpecBetter,2][[1]];
 {pt,tf,ply,iply}=smolyakInterpolationPrep[approx,smolRng,theDistBetter];
 toIg=aGSpecBetter[[1]];
 sgSpec={toIg,smolRng,pt,tf,ply,iply,1,approx};
@@ -98,8 +126,7 @@ theVals=ParallelMap[Function[xx,(Apply[aVecFunc,xx])],filledPts];
 interpData=Map[Flatten,theVals];
 (*
 interpData=parallelSmolyakGenInterpData[aVecFunc,sgSpec];
-parallelMakeGenericInterpFuncs[aVecFunc
-,sgSpec,smolyakInterpolation,{}]
+parallelMakeGenericInterpFuncs[aVecFunc,sgSpec,smolyakInterpolation,{}]
 
 *)
 (*

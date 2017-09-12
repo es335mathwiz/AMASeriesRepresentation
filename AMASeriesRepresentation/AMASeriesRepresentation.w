@@ -103,10 +103,11 @@ interpData]]]]
 parallelSmolyakGenInterpData[
 aVecFunc:(_Function|_CompiledFunction),@<smolGSpec@>]:=
 Module[{},Print["parallelSmolyakGenInterpData:"];
+(*DistributeDefinitions[aVecFunc];*)
 With[{filledPts=ParallelMap[
-Function[xx,fillIn[{{},smolToIgnore,xx}]],N[smolPts]]},
+Function[xx,fillIn[{{},smolToIgnore,xx}]],N[smolPts]]},Print["fillin:",Dimensions[filledPts]];
 With[{theVals=ParallelMap[Function[xx,(Apply[aVecFunc,xx])],filledPts]},
-With[{interpData=Map[Flatten,theVals]},
+With[{interpData=Map[Flatten,theVals]},Print["interpdatadim",Dimensions[interpData]];
 interpData]]]]
 
 
@@ -559,7 +560,7 @@ numVars=Length[approxLevels],numEps=Length[distribSpec[[1]]]},
 With[{thePts=smolRes[[1]],smolPolys=smolRes[[2]],smolMat=smolRes[[3]]},
 With[{xPts=Map[Function[xx,xformToXVec[xx,smolRngs]],thePts]},
 With[{numPolys=Length[smolPolys]},
-{N[xPts],N[smolMat],smolPolys,smolPolyExp[smolPolys,smolRngs,distribSpec]}]]]]/;And[Length[smolRngs]==Length[approxLevels]]
+{N[xPts],N[smolMat],ExpandAll[smolPolys],ExpandAll[smolPolyExp[smolPolys,smolRngs,distribSpec]]}]]]]/;And[Length[smolRngs]==Length[approxLevels]]
 
 smolyakInterpolationPrep[approxLevels_?listOfIntegersQ,smolRngs_?MatrixQ]:=
 Module[{smolRes=sparseGridEvalPolysAtPts[approxLevels],
@@ -567,7 +568,7 @@ numVars=Length[approxLevels]},
 With[{thePts=smolRes[[1]],smolPolys=smolRes[[2]],smolMat=smolRes[[3]]},
 With[{xPts=Map[Function[xx,xformToXVec[xx,smolRngs]],thePts]},
 With[{numPolys=Length[smolPolys]},
-{N[xPts],N[smolMat],smolPolys}]]]]/;And[Length[smolRngs]==Length[approxLevels]]
+{N[xPts],N[smolMat],ExpandAll[smolPolys]}]]]]/;And[Length[smolRngs]==Length[approxLevels]]
 
 smolPolyExp[aSmolPoly_,smolRngs_?MatrixQ,@<distribSpec@>]:=
 With[{numEps=Length[distribSpec[[1]]],
@@ -2049,7 +2050,7 @@ Join[AMASeriesRepCallGraph,Map["genLilXkZkFunc"->#&,{"fSum"}]];
 
 @d XZ Functions Given
 @{
-With[{},Print["genlilxkzkfunc:",xtGuess//InputForm];
+With[{},
 With[{fCon=fSum[linMod,XZFuncs,xtGuess]},
 With[{theRes=genLilXkZkFunc[linMod,fCon]},
 theRes]]]
@@ -2415,7 +2416,7 @@ zArgs=Table[Unique["theFRZArgs"],{numZ}]},
 With[{zArgsInit=Map[Function[xx,{xx,0}],zArgs],funcName=Unique["fName"]},
 funcName[theVars:{_?NumberQ..}]:=
 Apply[eqnsFunc,Flatten[Apply[xkFunc,theVars]]];Off[FindRoot::nlnum];
-With[{frRes=FindRoot[funcName[Join[funcArgs,zArgs]],zArgsInit,EvaluationMonitor:>Print["genFRFunc: in FindRoot id=",$KernelID,{funcName[Join[funcArgs,zArgs]],Join[funcArgs,zArgs],zArgsInit}]],
+With[{frRes=FindRoot[funcName[Join[funcArgs,zArgs]],zArgsInit],
 xzRes=Drop[Apply[xkFunc,Join[funcArgs,zArgs]],numX][[Range[numX]]]},
 (*If[Not[FreeQ[xzRes,$Failed]],Throw[$Failed,"xzRes"]];*)
 With[{otherGuts=cmpXZVals[xzRes,zArgs,frRes]},
@@ -2462,7 +2463,7 @@ myFixedPoint[Function[xx,With[{
 xzFuncNow=theSolver[[1]][
 {numX,numEps,numZ},
 genLilXkZkFunc[linMod,XZFuncs,xx[[Range[numX]]]],
-eqnsFunc,{opts}]},Print["genFPFunc: in function xx",xx//InputForm];
+eqnsFunc,{opts}]},
  Apply[xzFuncNow,funcArgs]]],(Apply[XZFuncs[[1]],funcArgs])[[Range[numX]]],
 fixedPointLimit]]],
 1->funcArgs]]]

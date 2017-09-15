@@ -1,3 +1,5 @@
+PrependTo[$Path,"../../svmrstuff/SVMR/"];
+PrependTo[$Path,"../../EMSovereignCreditSpreads/code/emscsPaper/"];
 PrependTo[$Path,"../../mathSmolyak/mathSmolyak"];
 PrependTo[$Path,"../../mathAMA/NumericAMA"];
 PrependTo[$Path,"../../mathAMA/SymbolicAMA"];

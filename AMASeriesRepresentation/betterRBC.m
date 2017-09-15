@@ -98,7 +98,7 @@ Needs["CompiledFunctionTools`"]
 
 
 (*If[Length[ssSolnSubsRE]===0,*)
-Print["computing steady state subs"];
+(*Print["computing steady state subs"];*)
 thNow[lastTh_,eps_]:=(E^eps)*lastTh^rho/.simpParamSubs;
 nxtK[lastK_,thNowVal_]:=((alpha*delta))*thNowVal*lastK^(alpha)/.simpParamSubs;
 yNow[kLag_,thNowVal_]:=thNowVal*kLag^(alpha)/.simpParamSubs;
@@ -110,7 +110,7 @@ kSSSubRE=Flatten[Solve[nxtK[kk,theta/.thSubsRE]==kk,kk][[-1]]];
 cSSSubRE=cc->(yNow[kk/.kSSSubRE,theta/.thSubsRE]-kk/.kSSSubRE);
 nlPartSSSubRE=(nlPart->(nlPartRHS/.xxxx_[t]->xxxx))//.Join[thSubsRE,Append[kSSSubRE,cSSSubRE]];
 ssSolnSubsRE=Flatten[{thSubsRE,kSSSubRE,cSSSubRE,nlPartSSSubRE}];
-Print["RE done now PF"];
+(*Print["RE done now PF"];*)
 thSubsPF=Flatten[Solve[theta==theta^rho,theta]][[1]];
 kSSSubPF=Flatten[Solve[nxtK[kk,theta/.thSubsPF]==kk,kk]][[-1]];
 On[Solve::ifun]
@@ -144,7 +144,7 @@ betterRBCExactCondExp = (*AMASeriesRepresentation`Private`*)makeREIterFunc[simpR
 
 psiz=IdentityMatrix[4]
 
-Print["RE solutions"]
+(*Print["RE solutions"]*)
 hmatSymbSlowRawRE00=(((equationsToMatrix[
 rbcEqns]//FullSimplify)));
 hmatSymbSlowRawRE01=(((equationsToMatrix[
@@ -165,7 +165,7 @@ amatSymbRE=symbolicTransitionMatrix[hfSymbRE];
 {evlsSymbRE,evcsSymbRE}=Eigensystem[Transpose[amatSymbRE]];
 qmatSymbRE=Join[zfSymbRE,evcsSymbRE[[{1}]]];
 
-Print["computing and simplifying the symbolic b phi f etc"]
+(*Print["computing and simplifying the symbolic b phi f etc"]*)
 {bmatSymbRE,phimatSymbRE,fmatSymbRE}=symbolicComputeBPhiF[hmatSymbRE,qmatSymbRE]//Simplify;
 
 linModBetter={hmatSymbRE//N,bmatSymbRE // N, phimatSymbRE // N, 

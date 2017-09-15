@@ -1,4 +1,4 @@
->\documentclass[12pt]{article}
+\documentclass[12pt]{article}
 \usepackage[margin=1.0in]{geometry}
 \usepackage[english]{babel}
 \usepackage{hyperref}
@@ -102,12 +102,12 @@ interpData]]]]
  
 parallelSmolyakGenInterpData[
 aVecFunc:(_Function|_CompiledFunction),@<smolGSpec@>]:=
-Module[{},Print["parallelSmolyakGenInterpData:"];
+Module[{},(*Print["parallelSmolyakGenInterpData:"];*)
 (*DistributeDefinitions[aVecFunc];*)
 With[{filledPts=ParallelMap[
-Function[xx,fillIn[{{},smolToIgnore,xx}]],N[smolPts]]},Print["fillin:",Dimensions[filledPts]];
+Check[Function[xx,fillIn[{{},smolToIgnore,xx}]],Print["aborting"];AbortKernels[];Throw["parallelSmolyakGenInterpData"]],N[smolPts]]},
 With[{theVals=ParallelMap[Function[xx,(Apply[aVecFunc,xx])],filledPts]},
-With[{interpData=Map[Flatten,theVals]},Print["interpdatadim",Dimensions[interpData]];
+With[{interpData=Map[Flatten,theVals]},
 interpData]]]]
 
 
@@ -151,7 +151,7 @@ With[{preInt=({theXs,ExpandAll[
 Thread[theXs->MapThread[xformXValToCheb,{theXs,smolRngs}]]]}),
 anotherPost=({shortXs,ExpandAll[
 (wts.(smolIntPolys/.Thread[shortOrigXs->shortXs]))]})
-},Print["smolyakInterpolation:",{preInt,anotherPost}//InputForm];
+},(*Print["smolyakInterpolation:",{preInt,anotherPost}//InputForm];*)
 {Apply[Function,preInt],
 Apply[Function,anotherPost]}]]]]
 
@@ -205,13 +205,13 @@ The k in the -g option means the number of attributes in the input data.
 @{
 svmRegressionLinear[fVals:{_?NumberQ..},@<smolGSpec@>,svmArgs:{_?NumberQ,_?NumberQ},className_String]:=
 Module[{svmtLinear = JavaNew["libsvm.trainGuts"],modLinear,
-betterArgs=Table[Unique["arg"],{Length[smolRngs]}]},
+betterArgs=Table[Unique["arg"],{Length[smolRngs]}]},Print["svmRegressionLinea:",fVals];
 svmtLinear[mmaUreadUproblemLinear[smolPts//N,fVals//N, svmArgs]];
 modLinear = 
      libsvm`svm`svmUtrain[svmtLinear[prob],svmtLinear[param]];
-Sow[huh=modLinear[svUindices],"svIndices"];
+Sow[huh=modLinear[svUindices],"svIndices"];Print["modLinear",modLinear]
 linFunc=Function[xx,(libsvm`svm`mysvmUpredictUvalues[modLinear, xx,className] )];
-expLinFunc=Function[xx,(libsvm`svm`mysvmUpredictUExpectedUvalues[modLinear, xx,className] )];
+expLinFunc=Function[xx,(libsvm`svm`mysvmUpredictUExpectedUvalues[modLinear, xx,className] )];Print["modLinear",{linFunc,expLinFunc}//InputForm]
 {linFunc/.xx$->betterArgs,expLinFunc/.xx$->Drop[betterArgs,-numEps]}]
 
 AMASeriesRepCallGraph=
@@ -662,6 +662,7 @@ parallelSetup[]:=
 Module[{},
 Get["pathSetup.mth"];
 ParallelNeeds["AMASeriesRepresentation`"];
+SetSharedFunction[myAbortKernels];
 Get["AMASeriesRepresentation`"];
 Get["betterRBC.m"]]
 
@@ -793,7 +794,7 @@ thePair
 
 parallelMakeGenericInterpFuncs[aVecFunc:(_Function|_CompiledFunction),@<smolGSpec@>,
 genericInterp:(smolyakInterpolation|svmRegressionLinear|svmRegressionPoly|svmRegressionRBF|svmRegressionSigmoid),svmArgs:{_?NumberQ...}]:=
-Module[{},Print["parallelMakeGenericInterpFuncs:"];
+Module[{},(*Print["parallelMakeGenericInterpFuncs:",genericInterp];*)
 parallelSetup[];
 With[{interpData=parallelSmolyakGenInterpData[aVecFunc,smolGSpec],
 numArgs=Length[smolPts[[1]]]},(*Print["generic:interpData",{aVecFunc,interpData}//InputForm];*)
@@ -805,7 +806,7 @@ With[{interpFuncList=
 ParallelMap[Function[funcIdx,
 With[{theInterps=genericInterp[interpData[[All,funcIdx]],smolGSpec,svmArgs]},
 With[{smolApp=theInterps},
-smolApp]]],Range[numFuncs]]},
+smolApp]]],Range[numFuncs]]},(*Print["interpFuncList=",interpFuncList//InputForm];*)
 With[
 {applied=Transpose[{ParallelMap[notApply[#,funcArgs]/.funcSubs&,
 Map[First,interpFuncList]]}],
@@ -906,7 +907,7 @@ parallelDoGenericIterREInterp[@<theSolver@>,
 	@<XZFuncs@>,
 @<eqnsFunc@>,@<smolGSpec@>,
 genericInterp:(smolyakInterpolation|svmRegressionLinear|svmRegressionPoly|svmRegressionRBF|svmRegressionSigmoid),svmArgs:{_?NumberQ...}]:=
-With[{numX=Length[BB],numZ=Length[psiZ[[1]]]},Print["parallelDoGenericIterREInterp:"];
+With[{numX=Length[BB],numZ=Length[psiZ[[1]]]},(*Print["parallelDoGenericIterREInterp:",genericInterp];*)
 tn=AbsoluteTime[];
 parallelSetup[];
 With[{theFuncs=
@@ -1760,6 +1761,7 @@ PerfectForesight::usage="degenerate distribution implementing perfect foresight"
 @<genLilXkZkFuncUsage@>
 @<gettersSettersUsage@>
 @<worstPathForErrDRREIntegrateUsage@>
+@<evalBadEulerErrDRREIntegrateUsage@>
 @<evalBadPathErrDRREIntegrateUsage@>
 @<evalPathErrDRREIntegrateUsage@>
 @<doFuncArgUsage@>
@@ -2024,7 +2026,7 @@ Join[AMASeriesRepCallGraph,Map["genLilXkZkFunc"->#&,{"genLilXkZkFunc"}]];
 @}
 
 @d Z Matrices Given
-@{With[{fCon=fSumC[phi,FF,psiZ,theZs]},
+@{With[{fCon=Check[fSumC[phi,FF,psiZ,theZs],Print["trying to throw low"];Throw["low"]]},
 With[{theRes=genLilXkZkFunc[linMod,fCon]},
 theRes]]
 
@@ -2119,7 +2121,7 @@ MapThread[Function[{xx,yy},Dot[xx,phi.psiZ.yy]],{fPows , zPath}]]]]]
 fSum::usage=
 "place holder fSum"
 @}
-
+myAbortKernels[]:=AbortKernels[];
 @d fSum
 @{
 fSum[@<linMod@>,
@@ -2130,8 +2132,13 @@ ConstantArray[0,{Length[psiZ],1}]
 fSum[@<linMod@>,
 	@<XZFuncs@>,xtGuess:{{_?NumberQ..}..}]:=
 With[{numXVars=getNumX[linMod],numZVars=getNumZ[linMod]},
-With[{xzRes=Apply[multiStepZ[XZFuncs,numXVars,numZVars,numSteps], Flatten[xtGuess]]},
-fSumC[phi,FF,psiZ,xzRes]]]
+With[{xzRes=Apply[multiStepZ[XZFuncs,numXVars,numZVars,numSteps], 
+Flatten[xtGuess]]},
+Check[fSumC[phi,FF,psiZ,xzRes],Print["trying to throw high"];Throw[""]]
+]]
+
+okNums[theVals_?VectorQ]:=
+Apply[And,Map[Or[MachineNumberQ[#],IntegerQ[#]]&,theVals]]
 
 AMASeriesRepCallGraph=
 Join[AMASeriesRepCallGraph,Map["fSum"->#&,{"numXVars","numZVars","multiStepZ","fSumC"}]];
@@ -2883,6 +2890,14 @@ Join[AMASeriesRepCallGraph,Map["evalPathErrorDRREIntegrate"->#&,{"pathErrsDRREIn
 \subsection{evalBadPathErrDRREIntegrate}
 \label{sec:evalb}
 
+@d evalBadEulerErrDRREIntegrateUsage
+@{evalBadEulerErrDRREIntegrate::usage=
+"place holder for evalBadEulerErrDRREIntegrate"
+@}
+
+
+
+
 
 @d evalBadPathErrDRREIntegrateUsage
 @{evalBadPathErrDRREIntegrate::usage=
@@ -2903,13 +2918,24 @@ funcName[tryEps:{_?NumberQ..}]:=
 	With[{maxArgs=Map[Function[xx,{xx,0}],outerEVars],cons=Apply[And,  (Map[Function[xx,(-0.01<=xx<=0.01)], outerEVars])]},
 	FindMaximum[{funcName[outerEVars],cons},maxArgs]]]]
 
+evalBadEulerErrDRREIntegrate[drFunc_Function,drExpFunc_Function,
+noEpsVec_?MatrixQ,numEps_Integer,@<eqnsFunc@>]:=
+With[{funcName=Unique["fName"]},
+funcName[tryEps:{_?NumberQ..}]:=
+	With[{theVal=evalPathErrDRREIntegrate[drFunc,drExpFunc,Join[noEpsVec,Transpose[{tryEps}]],numEps,eqnsFunc]},
+		With[{theNorm=theVal[[1,1]]},
+		(*Print["stillex:",{tryEps,theVal,Norm[theVal,Infinity],theNorm}];*)theNorm]];
+	With[{outerEVars=Table[Unique["eVs"],{numEps}]},
+	With[{maxArgs=Map[Function[xx,{xx,0}],outerEVars],cons=Apply[And,  (Map[Function[xx,(-0.01<=xx<=0.01)], outerEVars])]},
+	FindMaximum[{funcName[outerEVars],cons},maxArgs]]]]
+
 
 evalBadPathErrDRREIntegrate[phi_?MatrixQ,
 drFunc_Function,drExpFunc_Function,
 noEpsVec_?MatrixQ,numEps_Integer,@<eqnsFunc@>]:=
 With[{funcName=Unique["fName"]},
 funcName[tryEps:{_?NumberQ..}]:=
-With[{theVal=evalPathErrDRREIntegrate[drFunc,drExpFunc,Join[noEpsVec,Transpose[{tryEps}]],numEps,eqnsFunc]},
+With[{theVal=phi .evalPathErrDRREIntegrate[drFunc,drExpFunc,Join[noEpsVec,Transpose[{tryEps}]],numEps,eqnsFunc]},
 		(*Print["otherex:",theVal,Norm[theVal,Infinity]];*)Norm[theVal,Infinity]];
 	With[{outerEVars=Table[Unique["eVs"],{numEps}]},
 	With[{maxArgs=Map[Function[xx,{xx,0}],outerEVars],cons=Apply[And,  (Map[Function[xx,(-0.01<=xx<=0.01)], outerEVars])]},

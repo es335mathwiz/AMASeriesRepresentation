@@ -1,0 +1,864 @@
+\documentclass[12pt]{article}
+
+\newcommand{\ADRCE}{{\bf ADRCE}}
+\newcommand{\ADR}{{\bf ADR}}
+\newcommand{\adrce}{\bf G}
+\newcommand{\adr}{{\mathbb G}}
+\newcommand{\sForSum}{{\nu}}
+\newcommand{\xWargK}{   \hat{\mathcal{X}}_{t}(x_{-1},\epsilon,k)}
+\newcommand{\xWarg}{   \mathcal{X}_{t}(x_{-1},\epsilon)}
+\newcommand\infNorm[1]{\left\lVert#1\right\rVert_\infty}
+\newcommand{\expct}[1]{{\mathcal{E}\left [ #1 \right ]}}
+\newcommand{\eqnFunc}{\mathbb{M}}
+\newcommand{\linMod}{{\mathcal{L}}}
+
+
+\usepackage[margin=1.0in]{geometry}
+\usepackage{amsmath}
+%\usepackage{mathtools}
+\usepackage{amsfonts}
+\usepackage{hyperref}
+\usepackage{graphicx}
+\title{AMA Series RBC Example}
+\author{Gary S. Anderson}
+
+\begin{document}
+\maketitle
+
+Consider an RBC example \cite{Maliar2005}
+ \begin{gather*}
+   \max\left \{  u(c_t^t) + E_t \sum_{\tau=t}^\infty \beta \delta^{\tau+1-t}u(c_{\tau+1}^t)\right \}\\
+c_\tau^t + k_\tau^{t+1}=(1-d)k_\tau^{t-1} + \theta_\tau f(k_\tau^{t-1})\\
+f(k_\tau^{t-1})= k_\tau^\alpha
+\end{gather*}
+with first order conditions
+\begin{gather}
+\frac{1}{c_t}=\alpha \delta k_{t}^{\alpha-1} E_t \left (\mathcal{N}_{t+1}\right ) \nonumber\\
+c_t + k_t=\theta_{t-1}k_{t-1}^\alpha \label{rbcSys}\\
+\mathcal{N}_t=\frac{\theta_t}{c_t}\nonumber\\
+ \theta_t =\theta_{t-1}^\rho e^{\epsilon_t}\nonumber
+ \end{gather}
+
+
+Using $\begin{bmatrix}
+\alpha\\\beta\\\delta\\\rho\\\sigma
+ \end{bmatrix}=
+\begin{bmatrix}
+\vcenter{\hbox{\includegraphics{paramVals.pdf}}}
+ \end{bmatrix}$,  the steady state is $\begin{bmatrix}
+c^\ast\\k^\ast\\\mathcal{N}^\ast\\\theta^\ast
+ \end{bmatrix}=
+\begin{bmatrix}
+\vcenter{\hbox{\includegraphics{ssSolnVals.pdf}}}
+ \end{bmatrix}$.
+
+
+
+We linearize the model around the steady state to obtain a linear reference 
+model.
+\begin{gather*}
+H_-=  \begin{bmatrix}
+\vcenter{\hbox{\includegraphics{hminus.pdf}}}
+ \end{bmatrix}\\
+H_0=  \begin{bmatrix}
+\vcenter{\hbox{\includegraphics{hzero.pdf}}}
+ \end{bmatrix}\\
+H_+=  \begin{bmatrix}
+\vcenter{\hbox{\includegraphics{hplus.pdf}}}
+ \end{bmatrix}\\
+B=  \begin{bmatrix}
+\vcenter{\hbox{\includegraphics{bmat.pdf}}}
+ \end{bmatrix}\\
+\phi= \begin{bmatrix}
+\vcenter{\hbox{\includegraphics{phimat.pdf}}}
+ \end{bmatrix}\\
+\psi_c=\begin{bmatrix}
+\vcenter{\hbox{\includegraphics{psicmat.pdf}}}
+ \end{bmatrix}
+\psi_\epsilon=\begin{bmatrix}
+\vcenter{\hbox{\includegraphics{psiepsmat.pdf}}}
+ \end{bmatrix}\\
+F=\begin{bmatrix}
+\vcenter{\hbox{\includegraphics{fmat.pdf}}}
+ \end{bmatrix}\\
+\end{gather*}
+
+
+The first order conditions, \ref{rbcSys} provide function that our decision rules must set to zero
+\begin{gather*}
+f(x_{t-1},x_t,E(x_{t+1}),\epsilon_t)=  \begin{bmatrix}
+\frac{1}{c_t} - \frac{0.342 E_t(\mathcal{N}_{t+1})}{k_t^{0.64}}\\
+c_t + k_t - k_{t-1}^{0.36}\theta_t\\
+\mathcal{N}_t - \frac{theta_t}{c_t}\\
+ \theta_t -\theta_{t-1}^{0.64} e^{\epsilon_t}
+  \end{bmatrix}
+\end{gather*}
+
+
+We augment the usual decision rules with expressions characterizing the evolution of variables $z_t(x_{t-1},\epsilon_t)$ that 
+characterizes the discrepancies in equation \ref{rbcSys} 
+for the values of $x_t$ on the decision rule trajectory.
+
+Our initial guess for the augmented decision rule (\ADR), $\adr$ will be
+\begin{gather*}
+  \begin{bmatrix}
+    x_t\\z_t
+  \end{bmatrix}=
+  \adr^0(x_{t-1},\epsilon_t)=
+  \begin{bmatrix}
+B x_{t-1}+\phi \psi_\epsilon \epsilon_t+(I-F)^{-1} \phi \psi_c\\
+0
+  \end{bmatrix}
+\end{gather*}
+and the corresponding augmented decision rule conditional expectation (\ADRCE), $\adrce$ 
+\begin{gather*}
+  \adrce^0(x_{t-1})=  \begin{bmatrix}
+B x_{t-1}+\phi \psi_\epsilon \epsilon_t\\
+0
+  \end{bmatrix}
+\end{gather*}
+We will exploit the relations
+{\small
+	 \begin{gather}
+	 \mathcal{X}_{t}(x_{t-1},\epsilon) =B x_{t-1}+ \phi \psi_\epsilon\epsilon + (I - F)^{-1} \phi \psi_c + \sum_{\sForSum=0}^\infty F^s \phi z_{t+\sForSum}(x_{t-1},\epsilon) \label{theSeries}
+\intertext{and}
+	 \mathcal{X}_{t+k+1}(x_{t-1},\epsilon) =B \mathcal{X}_{t+k} + \sum_{\sForSum =0}^\infty F^\sForSum \phi z_{t+k+\sForSum}(x_{t-1},\epsilon) + (I - F)^{-1} \phi \psi_c \,\,\,\forall t,k \ge  0. \label{theSeriesIter}
+	 \end{gather}
+}
+
+
+Use \ref{theSeries} and \ref{theSeriesIter} to construct a function
+$\Gamma$ that provides values to plug into \ref{rbcSys}
+\begin{gather*}
+  \begin{bmatrix}
+    x_{t-1}\\\hat{x_t}\\\hat{E_t(x_{t+1})}\\ \epsilon_t
+  \end{bmatrix}=\Gamma(x_{t-1},x_t^g,\epsilon_t,z_t)
+\end{gather*}
+
+Given a guess for $x_t$, $x_t^g$, a proposed \ADRCE, $\adrce^n$ and a  
+horizon truncation value $k$, compute $\{z_{t+1}^g,\ldots,z_{t+k}^g\}$ from
+\begin{gather*}
+  \begin{bmatrix}
+x_{t+k+1}^g\\
+z_{t+k+1}^g   
+  \end{bmatrix}= \adrce( x_{t+k}^g)
+\intertext{let}
+\mathcal{F}(x_t^g)=\sum_{\sForSum =0}^k F^\sForSum \phi z_t^g
+\intertext{compute}
+\hat{x_t}(x_{t-1},x_t^g,\epsilon_t,z_t)=(I-F)^{-1} \phi \psi_c+F \mathcal{F}(x_t^g) + B x_{t-1}+\phi \psi_\epsilon \epsilon_t+
+\phi \psi_z \hat{z_t}(x_{t-1},x_t^g,\epsilon_t,z_t)\\
+\hat{x_{t+1}}(x_{t-1},x_t^g,\epsilon_t,z_t)=(I-F)^{-1} \phi \psi_c+ \mathcal{F}(x_t^g) +B \hat{x_{t}}\\
+\end{gather*}
+
+For given values of $x_t^g, x_{t-1}, \epsilon_t $ use \ref{rbcSys} to determine $\hat{z_t}$.  Repeat resetting  $x_t^g=\hat{x_t}$ until convergence.'
+One can construct an interpolating polynomial for the decision rules by repeating this process pointwise.  Each of the points could be done in parallel.
+
+\begin{figure}
+  \centering
+\includegraphics{grid443Graph.pdf}  
+  \caption{4,4,3 Grid}
+  \label{fig:443}
+\end{figure}
+
+\begin{figure}
+  \centering
+\includegraphics{smol3Graph.pdf}  
+  \caption{3,3,3 Smolyak}
+  \label{fig:443}
+\end{figure}
+
+The uniform grid has 80 points.
+Using  \ADRCE\ truncation of 2, and 6 iterations of the \ADRCE\ took
+37.56 on one core and 8.744 seconds on 16 cores.
+We can employ interpolation to approximate the updated \ADR and \ADRCE.  
+Using first order interpolation produces 
+
+By approximatingl the maximum error we observe for the model equations,
+We can use the truncation error matrix to get an upper bound
+
+  \begin{itemize}
+  \item Given an exact solution $x^\star_t=g^\star(x_{t-1},\epsilon_t)$ define
+  \begin{gather}
+G^\star(x)\equiv\expct{g^\star(x,\epsilon)} \intertext{then with}
+E_tx^\star_{t+1}=G^\star(g^\star(x_{t-1},\epsilon_t))\\
+    \label{eq:2}
+\eqnFunc(x^\star_{t-1},x^\star_t,E_tx^\star_{t+1},\epsilon_t)=0  \,\, \forall  (x_{t-1},\epsilon_t)\\ \intertext{Using $G^\star$ and $\linMod$ construct the family of trajectories and corresponding $z^\star_t(x_{t-1},\epsilon)$ }
+   x^\star_t(x_{t-1},\epsilon_t) \in{R^L}\,\,\infNorm{x^\star_t(x_{t-1},\epsilon_t)}  \le \bar{\mathcal{X}}\,\,\forall t\ > 0
+  \end{gather}
+   \begin{align}
+   z^\star_{t}(x_{t-1},\epsilon_t) \equiv& H_{-1}  x^\star_{t-1}(x_{t-1},\epsilon_t) + \nonumber\\
+ & H_0  x^\star_{t}(x_{t-1},\epsilon_t) +  \label{defZ} \\
+ & H_1  x^\star_{t+1}(x_{t-1},\epsilon_t). \nonumber
+   \end{align}
+
+  \end{itemize}
+
+
+
+
+Truncation Error\footnote{Since
+$\sum_{s=k+1}^{\infty} F^s \phi \psi_z = (I -F)^{-1} F^{k+1}\phi \psi_z$}
+
+ 	 \begin{gather}
+ 	 \xWargK \equiv B x_{t-1}+ \phi \psi_\epsilon\epsilon + \sum_{s=0}^k F^s \phi z_{t}(x_{t-1},\epsilon) + (I - F)^{-1} \phi \psi_c \label{theTruncSeries}\\
+      \label{eq:1}
+\infNorm{\xWarg-\xWargK} \le \infNorm{(I -F)^{-1} F^{k+1}\phi \psi_z} \bar{\mathcal{Z}}
+    \end{gather}
+
+
+\begin{gather*}
+\begin{bmatrix}
+\epsilon_c\\\epsilon_k\\\epsilon_\mathcal{N}\\\epsilon_\theta
+ \end{bmatrix}= \begin{bmatrix}
+\vcenter{\hbox{\includegraphics{tErrMat.pdf}}}
+ \end{bmatrix}\bar{\mathcal{Z}}= (I-F)^{-1} \phi  \bar{\mathcal{Z}}
+\end{gather*}
+
+Consequently, the error computing $\theta$ depend only on the $\theta$  equation.  
+
+\begin{gather*}
+\bar{\mathcal{Z}}_{1,1,1,1}=\begin{bmatrix}
+z_1\\
+z_2\\
+z_3\\
+z_4
+ \end{bmatrix}= \begin{bmatrix}
+\vcenter{\hbox{\includegraphics{errs1$1$1$1.pdf}}}
+ \end{bmatrix},\,\, \begin{bmatrix}
+\hat{\epsilon}_c\\\hat{\epsilon}_k\\\hat{\epsilon}_\mathcal{N}\\\hat{\epsilon}_\theta
+ \end{bmatrix}=\begin{bmatrix}
+\vcenter{\hbox{\includegraphics{predErrs1$1$1$1.pdf}}}
+ \end{bmatrix}
+\end{gather*}
+
+
+\begin{gather*}
+\bar{\mathcal{Z}}_{1,1,1,2}=\begin{bmatrix}
+z_1\\
+z_2\\
+z_3\\
+z_4
+ \end{bmatrix}= \begin{bmatrix}
+\vcenter{\hbox{\includegraphics{errs1$1$1$2.pdf}}}
+ \end{bmatrix},\,\, \begin{bmatrix}
+\hat{\epsilon}_c\\\hat{\epsilon}_k\\\hat{\epsilon}_\mathcal{N}\\\hat{\epsilon}_\theta
+ \end{bmatrix}=\begin{bmatrix}
+\vcenter{\hbox{\includegraphics{predErrs1$1$1$2.pdf}}}
+ \end{bmatrix}
+\end{gather*}
+
+
+\begin{gather*}
+\bar{\mathcal{Z}}_{1,1,1,3}=\begin{bmatrix}
+z_1\\
+z_2\\
+z_3\\
+z_4
+ \end{bmatrix}= \begin{bmatrix}
+\vcenter{\hbox{\includegraphics{errs1$1$1$3.pdf}}}
+ \end{bmatrix},\,\, \begin{bmatrix}
+\hat{\epsilon}_c\\\hat{\epsilon}_k\\\hat{\epsilon}_\mathcal{N}\\\hat{\epsilon}_\theta
+ \end{bmatrix}=\begin{bmatrix}
+\vcenter{\hbox{\includegraphics{predErrs1$1$1$3.pdf}}}
+ \end{bmatrix}
+\end{gather*}
+
+
+\begin{gather*}
+\bar{\mathcal{Z}}_{1,1,1,4}=\begin{bmatrix}
+z_1\\
+z_2\\
+z_3\\
+z_4
+ \end{bmatrix}= \begin{bmatrix}
+\vcenter{\hbox{\includegraphics{errs1$1$1$4.pdf}}}
+ \end{bmatrix},\,\, \begin{bmatrix}
+\hat{\epsilon}_c\\\hat{\epsilon}_k\\\hat{\epsilon}_\mathcal{N}\\\hat{\epsilon}_\theta
+ \end{bmatrix}=\begin{bmatrix}
+\vcenter{\hbox{\includegraphics{predErrs1$1$1$4.pdf}}}
+ \end{bmatrix}
+\end{gather*}
+
+\begin{gather*}
+\bar{\mathcal{Z}}_{1,1,1,5}=\begin{bmatrix}
+z_1\\
+z_2\\
+z_3\\
+z_4
+ \end{bmatrix}= \begin{bmatrix}
+\vcenter{\hbox{\includegraphics{errs1$1$1$5.pdf}}}
+ \end{bmatrix},\,\, \begin{bmatrix}
+\hat{\epsilon}_c\\\hat{\epsilon}_k\\\hat{\epsilon}_\mathcal{N}\\\hat{\epsilon}_\theta
+ \end{bmatrix}=\begin{bmatrix}
+\vcenter{\hbox{\includegraphics{predErrs1$1$1$5.pdf}}}
+ \end{bmatrix}
+\end{gather*}
+
+
+\begin{gather*}
+\bar{\mathcal{Z}}_{1,1,1,6}=\begin{bmatrix}
+z_1\\
+z_2\\
+z_3\\
+z_4
+ \end{bmatrix}= \begin{bmatrix}
+\vcenter{\hbox{\includegraphics{errs1$1$1$6.pdf}}}
+ \end{bmatrix},\,\, \begin{bmatrix}
+\hat{\epsilon}_c\\\hat{\epsilon}_k\\\hat{\epsilon}_\mathcal{N}\\\hat{\epsilon}_\theta
+ \end{bmatrix}=\begin{bmatrix}
+\vcenter{\hbox{\includegraphics{predErrs1$1$1$6.pdf}}}
+ \end{bmatrix}
+\end{gather*}
+
+
+\begin{gather*}
+\bar{\mathcal{Z}}_{1,1,1,7}=\begin{bmatrix}
+z_1\\
+z_2\\
+z_3\\
+z_4
+ \end{bmatrix}= \begin{bmatrix}
+\vcenter{\hbox{\includegraphics{errs1$1$1$7.pdf}}}
+ \end{bmatrix},\,\, \begin{bmatrix}
+\hat{\epsilon}_c\\\hat{\epsilon}_k\\\hat{\epsilon}_\mathcal{N}\\\hat{\epsilon}_\theta
+ \end{bmatrix}=\begin{bmatrix}
+\vcenter{\hbox{\includegraphics{predErrs1$1$1$7.pdf}}}
+ \end{bmatrix}
+\end{gather*}
+
+
+\begin{gather*}
+\bar{\mathcal{Z}}_{1,1,1,8}=\begin{bmatrix}
+z_1\\
+z_2\\
+z_3\\
+z_4
+ \end{bmatrix}= \begin{bmatrix}
+\vcenter{\hbox{\includegraphics{errs1$1$1$8.pdf}}}
+ \end{bmatrix},\,\, \begin{bmatrix}
+\hat{\epsilon}_c\\\hat{\epsilon}_k\\\hat{\epsilon}_\mathcal{N}\\\hat{\epsilon}_\theta
+ \end{bmatrix}=\begin{bmatrix}
+\vcenter{\hbox{\includegraphics{predErrs1$1$1$8.pdf}}}
+ \end{bmatrix}
+\end{gather*}
+
+
+
+\begin{gather*}
+\bar{\mathcal{Z}}_{1,1,1,9}=\begin{bmatrix}
+z_1\\
+z_2\\
+z_3\\
+z_4
+ \end{bmatrix}= \begin{bmatrix}
+\vcenter{\hbox{\includegraphics{errs1$1$1$9.pdf}}}
+ \end{bmatrix},\,\, \begin{bmatrix}
+\hat{\epsilon}_c\\\hat{\epsilon}_k\\\hat{\epsilon}_\mathcal{N}\\\hat{\epsilon}_\theta
+ \end{bmatrix}=\begin{bmatrix}
+\vcenter{\hbox{\includegraphics{predErrs1$1$1$9.pdf}}}
+ \end{bmatrix}
+\end{gather*}
+
+\begin{gather*}
+\bar{\mathcal{Z}}_{1,1,1,10}=\begin{bmatrix}
+z_1\\
+z_2\\
+z_3\\
+z_4
+ \end{bmatrix}= \begin{bmatrix}
+\vcenter{\hbox{\includegraphics{errs1$1$1$10.pdf}}}
+ \end{bmatrix},\,\, \begin{bmatrix}
+\hat{\epsilon}_c\\\hat{\epsilon}_k\\\hat{\epsilon}_\mathcal{N}\\\hat{\epsilon}_\theta
+ \end{bmatrix}=\begin{bmatrix}
+\vcenter{\hbox{\includegraphics{predErrs1$1$1$10.pdf}}}
+ \end{bmatrix}
+\end{gather*}
+
+
+\begin{gather*}
+\bar{\mathcal{Z}}_{2,2,2,1}=\begin{bmatrix}
+z_1\\
+z_2\\
+z_3\\
+z_4
+ \end{bmatrix}= \begin{bmatrix}
+\vcenter{\hbox{\includegraphics{errs2$2$2$1.pdf}}}
+ \end{bmatrix},\,\, \begin{bmatrix}
+\hat{\epsilon}_c\\\hat{\epsilon}_k\\\hat{\epsilon}_\mathcal{N}\\\hat{\epsilon}_\theta
+ \end{bmatrix}=\begin{bmatrix}
+\vcenter{\hbox{\includegraphics{predErrs2$2$2$1.pdf}}}
+ \end{bmatrix}
+\end{gather*}
+
+
+\begin{gather*}
+\bar{\mathcal{Z}}_{2,2,2,2}=\begin{bmatrix}
+z_1\\
+z_2\\
+z_3\\
+z_4
+ \end{bmatrix}= \begin{bmatrix}
+\vcenter{\hbox{\includegraphics{errs2$2$2$2.pdf}}}
+ \end{bmatrix},\,\, \begin{bmatrix}
+\hat{\epsilon}_c\\\hat{\epsilon}_k\\\hat{\epsilon}_\mathcal{N}\\\hat{\epsilon}_\theta
+ \end{bmatrix}=\begin{bmatrix}
+\vcenter{\hbox{\includegraphics{predErrs2$2$2$2.pdf}}}
+ \end{bmatrix}
+\end{gather*}
+
+
+\begin{gather*}
+\bar{\mathcal{Z}}_{2,2,2,3}=\begin{bmatrix}
+z_1\\
+z_2\\
+z_3\\
+z_4
+ \end{bmatrix}= \begin{bmatrix}
+\vcenter{\hbox{\includegraphics{errs2$2$2$3.pdf}}}
+ \end{bmatrix},\,\, \begin{bmatrix}
+\hat{\epsilon}_c\\\hat{\epsilon}_k\\\hat{\epsilon}_\mathcal{N}\\\hat{\epsilon}_\theta
+ \end{bmatrix}=\begin{bmatrix}
+\vcenter{\hbox{\includegraphics{predErrs2$2$2$3.pdf}}}
+ \end{bmatrix}
+\end{gather*}
+
+
+\begin{gather*}
+\bar{\mathcal{Z}}_{2,2,2,4}=\begin{bmatrix}
+z_1\\
+z_2\\
+z_3\\
+z_4
+ \end{bmatrix}= \begin{bmatrix}
+\vcenter{\hbox{\includegraphics{errs2$2$2$4.pdf}}}
+ \end{bmatrix},\,\, \begin{bmatrix}
+\hat{\epsilon}_c\\\hat{\epsilon}_k\\\hat{\epsilon}_\mathcal{N}\\\hat{\epsilon}_\theta
+ \end{bmatrix}=\begin{bmatrix}
+\vcenter{\hbox{\includegraphics{predErrs2$2$2$4.pdf}}}
+ \end{bmatrix}
+\end{gather*}
+
+\begin{gather*}
+\bar{\mathcal{Z}}_{2,2,2,5}=\begin{bmatrix}
+z_1\\
+z_2\\
+z_3\\
+z_4
+ \end{bmatrix}= \begin{bmatrix}
+\vcenter{\hbox{\includegraphics{errs2$2$2$5.pdf}}}
+ \end{bmatrix},\,\, \begin{bmatrix}
+\hat{\epsilon}_c\\\hat{\epsilon}_k\\\hat{\epsilon}_\mathcal{N}\\\hat{\epsilon}_\theta
+ \end{bmatrix}=\begin{bmatrix}
+\vcenter{\hbox{\includegraphics{predErrs2$2$2$5.pdf}}}
+ \end{bmatrix}
+\end{gather*}
+
+
+\begin{gather*}
+\bar{\mathcal{Z}}_{2,2,2,6}=\begin{bmatrix}
+z_1\\
+z_2\\
+z_3\\
+z_4
+ \end{bmatrix}= \begin{bmatrix}
+\vcenter{\hbox{\includegraphics{errs2$2$2$6.pdf}}}
+ \end{bmatrix},\,\, \begin{bmatrix}
+\hat{\epsilon}_c\\\hat{\epsilon}_k\\\hat{\epsilon}_\mathcal{N}\\\hat{\epsilon}_\theta
+ \end{bmatrix}=\begin{bmatrix}
+\vcenter{\hbox{\includegraphics{predErrs2$2$2$6.pdf}}}
+ \end{bmatrix}
+\end{gather*}
+
+
+\begin{gather*}
+\bar{\mathcal{Z}}_{2,2,2,7}=\begin{bmatrix}
+z_1\\
+z_2\\
+z_3\\
+z_4
+ \end{bmatrix}= \begin{bmatrix}
+\vcenter{\hbox{\includegraphics{errs2$2$2$7.pdf}}}
+ \end{bmatrix},\,\, \begin{bmatrix}
+\hat{\epsilon}_c\\\hat{\epsilon}_k\\\hat{\epsilon}_\mathcal{N}\\\hat{\epsilon}_\theta
+ \end{bmatrix}=\begin{bmatrix}
+\vcenter{\hbox{\includegraphics{predErrs2$2$2$7.pdf}}}
+ \end{bmatrix}
+\end{gather*}
+
+
+\begin{gather*}
+\bar{\mathcal{Z}}_{2,2,2,8}=\begin{bmatrix}
+z_1\\
+z_2\\
+z_3\\
+z_4
+ \end{bmatrix}= \begin{bmatrix}
+\vcenter{\hbox{\includegraphics{errs2$2$2$8.pdf}}}
+ \end{bmatrix},\,\, \begin{bmatrix}
+\hat{\epsilon}_c\\\hat{\epsilon}_k\\\hat{\epsilon}_\mathcal{N}\\\hat{\epsilon}_\theta
+ \end{bmatrix}=\begin{bmatrix}
+\vcenter{\hbox{\includegraphics{predErrs2$2$2$8.pdf}}}
+ \end{bmatrix}
+\end{gather*}
+
+
+
+\begin{gather*}
+\bar{\mathcal{Z}}_{2,2,2,9}=\begin{bmatrix}
+z_1\\
+z_2\\
+z_3\\
+z_4
+ \end{bmatrix}= \begin{bmatrix}
+\vcenter{\hbox{\includegraphics{errs2$2$2$9.pdf}}}
+ \end{bmatrix},\,\, \begin{bmatrix}
+\hat{\epsilon}_c\\\hat{\epsilon}_k\\\hat{\epsilon}_\mathcal{N}\\\hat{\epsilon}_\theta
+ \end{bmatrix}=\begin{bmatrix}
+\vcenter{\hbox{\includegraphics{predErrs2$2$2$9.pdf}}}
+ \end{bmatrix}
+\end{gather*}
+
+\begin{gather*}
+\bar{\mathcal{Z}}_{2,2,2,10}=\begin{bmatrix}
+z_1\\
+z_2\\
+z_3\\
+z_4
+ \end{bmatrix}= \begin{bmatrix}
+\vcenter{\hbox{\includegraphics{errs2$2$2$10.pdf}}}
+ \end{bmatrix},\,\, \begin{bmatrix}
+\hat{\epsilon}_c\\\hat{\epsilon}_k\\\hat{\epsilon}_\mathcal{N}\\\hat{\epsilon}_\theta
+ \end{bmatrix}=\begin{bmatrix}
+\vcenter{\hbox{\includegraphics{predErrs2$2$2$10.pdf}}}
+ \end{bmatrix}
+\end{gather*}
+
+\begin{gather*}
+\bar{\mathcal{Z}}_{3,3,3,1}=\begin{bmatrix}
+z_1\\
+z_2\\
+z_3\\
+z_4
+ \end{bmatrix}= \begin{bmatrix}
+\vcenter{\hbox{\includegraphics{errs3$3$3$1.pdf}}}
+ \end{bmatrix},\,\, \begin{bmatrix}
+\hat{\epsilon}_c\\\hat{\epsilon}_k\\\hat{\epsilon}_\mathcal{N}\\\hat{\epsilon}_\theta
+ \end{bmatrix}=\begin{bmatrix}
+\vcenter{\hbox{\includegraphics{predErrs3$3$3$1.pdf}}}
+ \end{bmatrix}
+\end{gather*}
+
+
+\begin{gather*}
+\bar{\mathcal{Z}}_{3,3,3,2}=\begin{bmatrix}
+z_1\\
+z_2\\
+z_3\\
+z_4
+ \end{bmatrix}= \begin{bmatrix}
+\vcenter{\hbox{\includegraphics{errs3$3$3$2.pdf}}}
+ \end{bmatrix},\,\, \begin{bmatrix}
+\hat{\epsilon}_c\\\hat{\epsilon}_k\\\hat{\epsilon}_\mathcal{N}\\\hat{\epsilon}_\theta
+ \end{bmatrix}=\begin{bmatrix}
+\vcenter{\hbox{\includegraphics{predErrs3$3$3$2.pdf}}}
+ \end{bmatrix}
+\end{gather*}
+
+
+\begin{gather*}
+\bar{\mathcal{Z}}_{3,3,3,3}=\begin{bmatrix}
+z_1\\
+z_2\\
+z_3\\
+z_4
+ \end{bmatrix}= \begin{bmatrix}
+\vcenter{\hbox{\includegraphics{errs3$3$3$3.pdf}}}
+ \end{bmatrix},\,\, \begin{bmatrix}
+\hat{\epsilon}_c\\\hat{\epsilon}_k\\\hat{\epsilon}_\mathcal{N}\\\hat{\epsilon}_\theta
+ \end{bmatrix}=\begin{bmatrix}
+\vcenter{\hbox{\includegraphics{predErrs3$3$3$3.pdf}}}
+ \end{bmatrix}
+\end{gather*}
+
+
+\begin{gather*}
+\bar{\mathcal{Z}}_{3,3,3,4}=\begin{bmatrix}
+z_1\\
+z_2\\
+z_3\\
+z_4
+ \end{bmatrix}= \begin{bmatrix}
+\vcenter{\hbox{\includegraphics{errs3$3$3$4.pdf}}}
+ \end{bmatrix},\,\, \begin{bmatrix}
+\hat{\epsilon}_c\\\hat{\epsilon}_k\\\hat{\epsilon}_\mathcal{N}\\\hat{\epsilon}_\theta
+ \end{bmatrix}=\begin{bmatrix}
+\vcenter{\hbox{\includegraphics{predErrs3$3$3$4.pdf}}}
+ \end{bmatrix}
+\end{gather*}
+
+\begin{gather*}
+\bar{\mathcal{Z}}_{3,3,3,5}=\begin{bmatrix}
+z_1\\
+z_2\\
+z_3\\
+z_4
+ \end{bmatrix}= \begin{bmatrix}
+\vcenter{\hbox{\includegraphics{errs3$3$3$5.pdf}}}
+ \end{bmatrix},\,\, \begin{bmatrix}
+\hat{\epsilon}_c\\\hat{\epsilon}_k\\\hat{\epsilon}_\mathcal{N}\\\hat{\epsilon}_\theta
+ \end{bmatrix}=\begin{bmatrix}
+\vcenter{\hbox{\includegraphics{predErrs3$3$3$5.pdf}}}
+ \end{bmatrix}
+\end{gather*}
+
+
+\begin{gather*}
+\bar{\mathcal{Z}}_{3,3,3,6}=\begin{bmatrix}
+z_1\\
+z_2\\
+z_3\\
+z_4
+ \end{bmatrix}= \begin{bmatrix}
+\vcenter{\hbox{\includegraphics{errs3$3$3$6.pdf}}}
+ \end{bmatrix},\,\, \begin{bmatrix}
+\hat{\epsilon}_c\\\hat{\epsilon}_k\\\hat{\epsilon}_\mathcal{N}\\\hat{\epsilon}_\theta
+ \end{bmatrix}=\begin{bmatrix}
+\vcenter{\hbox{\includegraphics{predErrs3$3$3$6.pdf}}}
+ \end{bmatrix}
+\end{gather*}
+
+
+\begin{gather*}
+\bar{\mathcal{Z}}_{3,3,3,7}=\begin{bmatrix}
+z_1\\
+z_2\\
+z_3\\
+z_4
+ \end{bmatrix}= \begin{bmatrix}
+\vcenter{\hbox{\includegraphics{errs3$3$3$7.pdf}}}
+ \end{bmatrix},\,\, \begin{bmatrix}
+\hat{\epsilon}_c\\\hat{\epsilon}_k\\\hat{\epsilon}_\mathcal{N}\\\hat{\epsilon}_\theta
+ \end{bmatrix}=\begin{bmatrix}
+\vcenter{\hbox{\includegraphics{predErrs3$3$3$7.pdf}}}
+ \end{bmatrix}
+\end{gather*}
+
+
+\begin{gather*}
+\bar{\mathcal{Z}}_{3,3,3,8}=\begin{bmatrix}
+z_1\\
+z_2\\
+z_3\\
+z_4
+ \end{bmatrix}= \begin{bmatrix}
+\vcenter{\hbox{\includegraphics{errs3$3$3$8.pdf}}}
+ \end{bmatrix},\,\, \begin{bmatrix}
+\hat{\epsilon}_c\\\hat{\epsilon}_k\\\hat{\epsilon}_\mathcal{N}\\\hat{\epsilon}_\theta
+ \end{bmatrix}=\begin{bmatrix}
+\vcenter{\hbox{\includegraphics{predErrs3$3$3$8.pdf}}}
+ \end{bmatrix}
+\end{gather*}
+
+
+
+\begin{gather*}
+\bar{\mathcal{Z}}_{3,3,3,9}=\begin{bmatrix}
+z_1\\
+z_2\\
+z_3\\
+z_4
+ \end{bmatrix}= \begin{bmatrix}
+\vcenter{\hbox{\includegraphics{errs3$3$3$9.pdf}}}
+ \end{bmatrix},\,\, \begin{bmatrix}
+\hat{\epsilon}_c\\\hat{\epsilon}_k\\\hat{\epsilon}_\mathcal{N}\\\hat{\epsilon}_\theta
+ \end{bmatrix}=\begin{bmatrix}
+\vcenter{\hbox{\includegraphics{predErrs3$3$3$9.pdf}}}
+ \end{bmatrix}
+\end{gather*}
+
+\begin{gather*}
+\bar{\mathcal{Z}}_{3,3,3,10}=\begin{bmatrix}
+z_1\\
+z_2\\
+z_3\\
+z_4
+ \end{bmatrix}= \begin{bmatrix}
+\vcenter{\hbox{\includegraphics{errs3$3$3$10.pdf}}}
+ \end{bmatrix},\,\, \begin{bmatrix}
+\hat{\epsilon}_c\\\hat{\epsilon}_k\\\hat{\epsilon}_\mathcal{N}\\\hat{\epsilon}_\theta
+ \end{bmatrix}=\begin{bmatrix}
+\vcenter{\hbox{\includegraphics{predErrs3$3$3$10.pdf}}}
+ \end{bmatrix}
+\end{gather*}
+
+
+
+\begin{gather*}
+\bar{\mathcal{Z}}_{4,4,4,1}=\begin{bmatrix}
+z_1\\
+z_2\\
+z_3\\
+z_4
+ \end{bmatrix}= \begin{bmatrix}
+\vcenter{\hbox{\includegraphics{errs4$4$4$1.pdf}}}
+ \end{bmatrix},\,\, \begin{bmatrix}
+\hat{\epsilon}_c\\\hat{\epsilon}_k\\\hat{\epsilon}_\mathcal{N}\\\hat{\epsilon}_\theta
+ \end{bmatrix}=\begin{bmatrix}
+\vcenter{\hbox{\includegraphics{predErrs4$4$4$1.pdf}}}
+ \end{bmatrix}
+\end{gather*}
+
+
+\begin{gather*}
+\bar{\mathcal{Z}}_{4,4,4,2}=\begin{bmatrix}
+z_1\\
+z_2\\
+z_3\\
+z_4
+ \end{bmatrix}= \begin{bmatrix}
+\vcenter{\hbox{\includegraphics{errs4$4$4$2.pdf}}}
+ \end{bmatrix},\,\, \begin{bmatrix}
+\hat{\epsilon}_c\\\hat{\epsilon}_k\\\hat{\epsilon}_\mathcal{N}\\\hat{\epsilon}_\theta
+ \end{bmatrix}=\begin{bmatrix}
+\vcenter{\hbox{\includegraphics{predErrs4$4$4$2.pdf}}}
+ \end{bmatrix}
+\end{gather*}
+
+
+\begin{gather*}
+\bar{\mathcal{Z}}_{4,4,4,3}=\begin{bmatrix}
+z_1\\
+z_2\\
+z_3\\
+z_4
+ \end{bmatrix}= \begin{bmatrix}
+\vcenter{\hbox{\includegraphics{errs4$4$4$3.pdf}}}
+ \end{bmatrix},\,\, \begin{bmatrix}
+\hat{\epsilon}_c\\\hat{\epsilon}_k\\\hat{\epsilon}_\mathcal{N}\\\hat{\epsilon}_\theta
+ \end{bmatrix}=\begin{bmatrix}
+\vcenter{\hbox{\includegraphics{predErrs4$4$4$3.pdf}}}
+ \end{bmatrix}
+\end{gather*}
+
+
+\begin{gather*}
+\bar{\mathcal{Z}}_{4,4,4,4}=\begin{bmatrix}
+z_1\\
+z_2\\
+z_3\\
+z_4
+ \end{bmatrix}= \begin{bmatrix}
+\vcenter{\hbox{\includegraphics{errs4$4$4$4.pdf}}}
+ \end{bmatrix},\,\, \begin{bmatrix}
+\hat{\epsilon}_c\\\hat{\epsilon}_k\\\hat{\epsilon}_\mathcal{N}\\\hat{\epsilon}_\theta
+ \end{bmatrix}=\begin{bmatrix}
+\vcenter{\hbox{\includegraphics{predErrs4$4$4$4.pdf}}}
+ \end{bmatrix}
+\end{gather*}
+
+\begin{gather*}
+\bar{\mathcal{Z}}_{4,4,4,5}=\begin{bmatrix}
+z_1\\
+z_2\\
+z_3\\
+z_4
+ \end{bmatrix}= \begin{bmatrix}
+\vcenter{\hbox{\includegraphics{errs4$4$4$5.pdf}}}
+ \end{bmatrix},\,\, \begin{bmatrix}
+\hat{\epsilon}_c\\\hat{\epsilon}_k\\\hat{\epsilon}_\mathcal{N}\\\hat{\epsilon}_\theta
+ \end{bmatrix}=\begin{bmatrix}
+\vcenter{\hbox{\includegraphics{predErrs4$4$4$5.pdf}}}
+ \end{bmatrix}
+\end{gather*}
+
+
+\begin{gather*}
+\bar{\mathcal{Z}}_{4,4,4,6}=\begin{bmatrix}
+z_1\\
+z_2\\
+z_3\\
+z_4
+ \end{bmatrix}= \begin{bmatrix}
+\vcenter{\hbox{\includegraphics{errs4$4$4$6.pdf}}}
+ \end{bmatrix},\,\, \begin{bmatrix}
+\hat{\epsilon}_c\\\hat{\epsilon}_k\\\hat{\epsilon}_\mathcal{N}\\\hat{\epsilon}_\theta
+ \end{bmatrix}=\begin{bmatrix}
+\vcenter{\hbox{\includegraphics{predErrs4$4$4$6.pdf}}}
+ \end{bmatrix}
+\end{gather*}
+
+
+\begin{gather*}
+\bar{\mathcal{Z}}_{4,4,4,7}=\begin{bmatrix}
+z_1\\
+z_2\\
+z_3\\
+z_4
+ \end{bmatrix}= \begin{bmatrix}
+\vcenter{\hbox{\includegraphics{errs4$4$4$7.pdf}}}
+ \end{bmatrix},\,\, \begin{bmatrix}
+\hat{\epsilon}_c\\\hat{\epsilon}_k\\\hat{\epsilon}_\mathcal{N}\\\hat{\epsilon}_\theta
+ \end{bmatrix}=\begin{bmatrix}
+\vcenter{\hbox{\includegraphics{predErrs4$4$4$7.pdf}}}
+ \end{bmatrix}
+\end{gather*}
+
+
+\begin{gather*}
+\bar{\mathcal{Z}}_{4,4,4,8}=\begin{bmatrix}
+z_1\\
+z_2\\
+z_3\\
+z_4
+ \end{bmatrix}= \begin{bmatrix}
+\vcenter{\hbox{\includegraphics{errs4$4$4$8.pdf}}}
+ \end{bmatrix},\,\, \begin{bmatrix}
+\hat{\epsilon}_c\\\hat{\epsilon}_k\\\hat{\epsilon}_\mathcal{N}\\\hat{\epsilon}_\theta
+ \end{bmatrix}=\begin{bmatrix}
+\vcenter{\hbox{\includegraphics{predErrs4$4$4$8.pdf}}}
+ \end{bmatrix}
+\end{gather*}
+
+
+
+\begin{gather*}
+\bar{\mathcal{Z}}_{4,4,4,9}=\begin{bmatrix}
+z_1\\
+z_2\\
+z_3\\
+z_4
+ \end{bmatrix}= \begin{bmatrix}
+\vcenter{\hbox{\includegraphics{errs4$4$4$9.pdf}}}
+ \end{bmatrix},\,\, \begin{bmatrix}
+\hat{\epsilon}_c\\\hat{\epsilon}_k\\\hat{\epsilon}_\mathcal{N}\\\hat{\epsilon}_\theta
+ \end{bmatrix}=\begin{bmatrix}
+\vcenter{\hbox{\includegraphics{predErrs4$4$4$9.pdf}}}
+ \end{bmatrix}
+\end{gather*}
+
+\begin{gather*}
+\bar{\mathcal{Z}}_{4,4,4,10}=\begin{bmatrix}
+z_1\\
+z_2\\
+z_3\\
+z_4
+ \end{bmatrix}= \begin{bmatrix}
+\vcenter{\hbox{\includegraphics{errs4$4$4$10.pdf}}}
+ \end{bmatrix},\,\, \begin{bmatrix}
+\hat{\epsilon}_c\\\hat{\epsilon}_k\\\hat{\epsilon}_\mathcal{N}\\\hat{\epsilon}_\theta
+ \end{bmatrix}=\begin{bmatrix}
+\vcenter{\hbox{\includegraphics{predErrs4$4$4$10.pdf}}}
+ \end{bmatrix}
+\end{gather*}
+
+
+Can improve accuracy by truncating fewer terms or by reducing the observed 
+error of approximation.  Can apply the formula for any decision rule regardless of source.
+
+The infinity norm of the truncation error matrix is $9.74$.  After one iteration, the largest eurler equation error is 1.5 for small values of $k_{t-1}$ is about 1.5.  That gives a bound of $9.74*1.5$ for the error in $x_t$.  The actual error compared to the available exact solution is  $1.66$
+
+The smolyak grid has 69 points.
+  \bibliographystyle{plainnat}
+\bibliography{../../paperProduction/bibFiles/anderson,../../paperProduction/bibFiles/files}
+
+\end{document}

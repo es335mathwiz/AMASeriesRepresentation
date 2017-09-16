@@ -164,8 +164,9 @@ One can construct an interpolating polynomial for the decision rules by repeatin
   \centering
 \includegraphics{smol3Graph.pdf}  
   \caption{3,3,3 Smolyak}
-  \label{fig:443}
+  \label{fig:333}
 \end{figure}
+
 
 The uniform grid has 80 points.
 Using  \ADRCE\ truncation of 2, and 6 iterations of the \ADRCE\ took
@@ -173,8 +174,125 @@ Using  \ADRCE\ truncation of 2, and 6 iterations of the \ADRCE\ took
 We can employ interpolation to approximate the updated \ADR and \ADRCE.  
 Using first order interpolation produces 
 
-By approximatingl the maximum error we observe for the model equations,
+By approximating the maximum error we observe for the model equations,
 We can use the truncation error matrix to get an upper bound
+
+
+\begin{figure}
+  \centering
+\includegraphics{cErr1$1$1$5.pdf}  
+  \caption{1,1,1,5 $c_\epsilon$}
+\end{figure}
+
+
+\begin{figure}
+  \centering
+\includegraphics{kErr1$1$1$5.pdf}  
+  \caption{1,1,1,5 $k_\epsilon$}
+\end{figure}
+
+
+\begin{figure}
+  \centering
+\includegraphics{nErr1$1$1$5.pdf}  
+  \caption{1,1,1,5 $\mathcal{N}_\epsilon$}
+\end{figure}
+
+
+\begin{figure}
+  \centering
+\includegraphics{tErr1$1$1$5.pdf}  
+  \caption{1,1,1,5 $\theta_\epsilon$}
+\end{figure}
+
+
+
+\begin{figure}
+  \centering
+\includegraphics{cErr2$2$2$5.pdf}  
+  \caption{2,2,2,5 $c_\epsilon$}
+\end{figure}
+
+
+\begin{figure}
+  \centering
+\includegraphics{kErr2$2$2$5.pdf}  
+  \caption{2,2,2,5 $k_\epsilon$}
+\end{figure}
+
+
+\begin{figure}
+  \centering
+\includegraphics{nErr2$2$2$5.pdf}  
+  \caption{2,2,2,5 $\mathcal{N}_\epsilon$}
+\end{figure}
+
+
+\begin{figure}
+  \centering
+\includegraphics{tErr2$2$2$5.pdf}  
+  \caption{2,2,2,5 $\theta_\epsilon$}
+\end{figure}
+
+
+\begin{figure}
+  \centering
+\includegraphics{cErr3$3$3$5.pdf}  
+  \caption{3,3,3,5 $c_\epsilon$}
+\end{figure}
+
+
+\begin{figure}
+  \centering
+\includegraphics{kErr3$3$3$5.pdf}  
+  \caption{3,3,3,5 $k_\epsilon$}
+\end{figure}
+
+
+\begin{figure}
+  \centering
+\includegraphics{nErr3$3$3$5.pdf}  
+  \caption{3,3,3,5 $\mathcal{N}_\epsilon$}
+\end{figure}
+
+
+\begin{figure}
+  \centering
+\includegraphics{tErr3$3$3$5.pdf}  
+  \caption{3,3,3,5 $\theta_\epsilon$}
+\end{figure}
+
+
+
+
+\begin{figure}
+  \centering
+\includegraphics{cErr4$4$4$5.pdf}  
+  \caption{4,4,4,5 $c_\epsilon$}
+\end{figure}
+
+
+\begin{figure}
+  \centering
+\includegraphics{kErr4$4$4$5.pdf}  
+  \caption{4,4,4,5 $k_\epsilon$}
+\end{figure}
+
+
+\begin{figure}
+  \centering
+\includegraphics{nErr4$4$4$5.pdf}  
+  \caption{4,4,4,5 $\mathcal{N}_\epsilon$}
+\end{figure}
+
+
+\begin{figure}
+  \centering
+\includegraphics{tErr4$4$4$5.pdf}  
+  \caption{4,4,4,5 $\theta_\epsilon$}
+\end{figure}
+
+
 
   \begin{itemize}
   \item Given an exact solution $x^\star_t=g^\star(x_{t-1},\epsilon_t)$ define

@@ -22,13 +22,20 @@ tErrMatMax=Norm[tErrMat,Infinity]
 Export["tErrMat.pdf",TableForm[tErrMat//N]]
 
 <<JavaGraphics`
-
+(*
 kl=betterRBC`Private`kLow = 1/10*betterRBC`Private`kVal//N;
-kh=betterRBC`Private`kHigh = 4*betterRBC`Private`kVal//N;
+kh=betterRBC`Private`kHigh = 3*betterRBC`Private`kVal//N;
 sl=betterRBC`Private`sigLow = -3*betterRBC`Private`sigVal;
 sh=betterRBC`Private`sigHigh = 3*betterRBC`Private`sigVal;
 tl=betterRBC`Private`thLow = 9/10//N;
 th=betterRBC`Private`thHigh = 11/10//N;
+*)
+kl=betterRBC`Private`kLow 
+kh=betterRBC`Private`kHigh
+sl=betterRBC`Private`sigLow
+sh=betterRBC`Private`sigHigh
+tl=betterRBC`Private`thLow
+th=betterRBC`Private`thHigh
 X0Z0=genX0Z0Funcs[linModBetter];
 theLilFunc=genLilXkZkFunc[linModBetter, {X0Z0,2},anXEpsBetter];
 (*findroot function*)
@@ -57,30 +64,40 @@ aDR03[kk_?NumberQ,tt_?NumberQ,ee_?NumberQ]:=actualErrs[forDR,{kk,tt,ee}][[3]];
 DistributeDefinitions[aDR03];
 aDR04[kk_?NumberQ,tt_?NumberQ,ee_?NumberQ]:=actualErrs[forDR,{kk,tt,ee}][[4]];
 DistributeDefinitions[aDR04];
-msntoval=MSNTO[aDR01,{{ { {{.1,.8},{.9,1.1},{-.03,.03}},{} },{{0},Infinity}}},
+Export["cErr"<>idStr<>".pdf",Plot3D[aDR01[kk,tt,0],{kk,kl,kh},{tt,tl,th}]];
+Export["kErr"<>idStr<>".pdf",Plot3D[aDR02[kk,tt,0],{kk,kl,kh},{tt,tl,th}]];
+Export["nErr"<>idStr<>".pdf",Plot3D[aDR03[kk,tt,0],{kk,kl,kh},{tt,tl,th}]];
+Export["tErr"<>idStr<>".pdf",Plot3D[aDR04[kk,tt,0],{kk,kl,kh},{tt,tl,th}]];
+msntoval=MSNTO[aDR01,{{ { {{kl,kh},{tl,th},{sl,sh}},{} },{{0},Infinity}}},
 100,Nied,.1,1.2,.5];
 acterr01=pickBestMSNTO[msntoval];acterrLoc01=MSNTOMinimizer[msntoval];
-{tm,theRes,{acterr01,acterrLoc01}}]
+msntoval=MSNTO[aDR02,{{ { {{kl,kh},{tl,th},{sl,sh}},{} },{{0},Infinity}}},
+100,Nied,.1,1.2,.5];
+acterr02=pickBestMSNTO[msntoval];acterrLoc02=MSNTOMinimizer[msntoval];
+msntoval=MSNTO[aDR03,{{ { {{kl,kh},{tl,th},{sl,sh}},{} },{{0},Infinity}}},
+100,Nied,.1,1.2,.5];
+acterr03=pickBestMSNTO[msntoval];acterrLoc03=MSNTOMinimizer[msntoval];
+msntoval=MSNTO[aDR04,{{ { {{kl,kh},{tl,th},{sl,sh}},{} },{{0},Infinity}}},
+100,Nied,.1,1.2,.5];
+acterr04=pickBestMSNTO[msntoval];acterrLoc04=MSNTOMinimizer[msntoval];
+{tm,theRes,{acterr01,acterrLoc01},{acterr02,acterrLoc02},{acterr03,acterrLoc03},{acterr04,acterrLoc04}}]
 
+makeArgs[{adr_,adrce_},{kk_?NumberQ,tt_?NumberQ,ee_?NumberQ}]:=
+With[{xt=Flatten[adr[ig,kk,ig,tt,ee]][[Range[4]]]},
+With[{xtp1=Flatten[adrce@@xt][[Range[4]]]},
+Append[Join[{999,kk,999,tt},xt,xtp1],ee]]]
 
 ParallelNeeds["betterRBC`"]
 actualErrs[approxDR_Function,xeps:{kk_?NumberQ,tt_?NumberQ,ee_?NumberQ}]:=
 With[{approxVals=(approxDR @@ {ig,kk,ig,tt,ee})[[Range[4]]],
 actualVals=simpRBCExactDRBetter@@ {ig,kk,ig,tt,ee}},
-(-1)*Abs[Flatten[approxVals-actualVals]]]
+(-1)*Abs[Flatten[(approxVals-actualVals)/actualVals]]]
 
 (*MSNTO[Sin,{{ { {{-3,3}},{} },{{0},Infinity}}},100,Nied,.1,1.2,.5]*)
 
 (*
-{tt,tr,{er01,erl01}}=
+{tt,tr,{er01,erl01},{er02,erl02},{er03,erl03},{er04,erl04}}=
 doApproxRun[1*{1,1,1},1];
-*)
-(*
-MSNTO[tryFunc01,{{ { {{kl,kh}},{} },{{0},Infinity}}},2000,Nied,.1,1.2,.5]
-
-
-tryFunc01[kk_?NumberQ]:=actualErrs[tr[[-1,1]],{kk,1,0}][[1]]
-
 *)
 doApproxSVMLinearRun[approx:{kA_Integer,tA_Integer,eA_Integer},iters_Integer]:=
 Module[{pt,tf,ply,iply,toIg,sgSpec,tm,theRes},

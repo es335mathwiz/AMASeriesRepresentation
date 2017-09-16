@@ -27,8 +27,8 @@ kl=betterRBC`Private`kLow = 1/10*betterRBC`Private`kVal//N;
 kh=betterRBC`Private`kHigh = 4*betterRBC`Private`kVal//N;
 sl=betterRBC`Private`sigLow = -3*betterRBC`Private`sigVal;
 sh=betterRBC`Private`sigHigh = 3*betterRBC`Private`sigVal;
-tl=betterRBC`Private`thLow = 9/10;
-th=betterRBC`Private`thHigh = 11/10;
+tl=betterRBC`Private`thLow = 9/10//N;
+th=betterRBC`Private`thHigh = 11/10//N;
 X0Z0=genX0Z0Funcs[linModBetter];
 theLilFunc=genLilXkZkFunc[linModBetter, {X0Z0,2},anXEpsBetter];
 (*findroot function*)
@@ -40,23 +40,48 @@ theFP@@anXEpsFlatBetter
 
 
 doApproxRun[approx:{kA_Integer,tA_Integer,eA_Integer},iters_Integer]:=
-Module[{pt,tf,ply,iply,toIg,sgSpec,tm,theRes,err,sub,err01,err02,err03,err04,sb01,sub02,sub03,sub04,euerr,eusub,
+Module[{pt,tf,ply,iply,toIg,sgSpec,tm,theRes,err,sub,err01,err02,err03,err04,sb01,sub02,sub03,sub04,euerr,eusub,acterr01,acterr02,acterr03,acterr04,
+acterrLoc01,acterrLoc02,acterrLoc03,acterrLoc04,msntoval,
 idStr=(StringJoin@@((ToString[#]<>"$")&/@approx))<>ToString[iters]},
 smolRng=#[[{2,3}]]&/@Drop[aGSpecBetter,2][[1]];
 {pt,tf,ply,iply}=smolyakInterpolationPrep[approx,smolRng,theDistBetter];
 toIg=aGSpecBetter[[1]];
 sgSpec={toIg,smolRng,pt,tf,ply,iply,1,approx};
 {tm,theRes}=Timing[parallelNestGenericIterREInterp[{genFRFunc},linModBetter,{X0Z0,2},eqnsCompiledBetter,sgSpec,smolyakInterpolation,{},iters]];
-{err,sub}=evalBadPathErrDRREIntegrate[theRes[[-1,1]],theRes[[-1,2]],anXBetter,1,eqnsCompiledBetter];
-{err01,sub01}=evalBadPathErrDRREIntegrate[{{1,0,0,0}},theRes[[-1,1]],theRes[[-1,2]],anXBetter,1,eqnsCompiledBetter];
-{err02,sub02}=evalBadPathErrDRREIntegrate[{{0,1,0,0}},theRes[[-1,1]],theRes[[-1,2]],anXBetter,1,eqnsCompiledBetter];
-{err03,sub03}=evalBadPathErrDRREIntegrate[{{0,0,1,0}},theRes[[-1,1]],theRes[[-1,2]],anXBetter,1,eqnsCompiledBetter];
-{err04,sub04}=evalBadPathErrDRREIntegrate[{{0,0,0,1}},theRes[[-1,1]],theRes[[-1,2]],anXBetter,1,eqnsCompiledBetter];
-{euerr,eusub}=evalBadEulerErrDRREIntegrate[theRes[[-1,1]],theRes[[-1,2]],anXBetter,1,eqnsCompiledBetter];
-Export["errs"<>idStr<>".pdf",Transpose[{{err01,err02,err03,err04}}]//TableForm];Export["predErrs"<>idStr<>".pdf",tErrMat.Transpose[{{err01,err02,err03,err04}}]//TableForm];
-{tm,theRes,{err,sub},{err01,sub01},{err02,sub02},{err03,sub03},{err04,sub04},{euerr,eusub}}]
+forDR=theRes[[-1,1]];DistributeDefinitions[forDR];
+aDR01[kk_?NumberQ,tt_?NumberQ,ee_?NumberQ]:=actualErrs[forDR,{kk,tt,ee}][[1]];
+DistributeDefinitions[aDR01];
+aDR02[kk_?NumberQ,tt_?NumberQ,ee_?NumberQ]:=actualErrs[forDR,{kk,tt,ee}][[2]];
+DistributeDefinitions[aDR02];
+aDR03[kk_?NumberQ,tt_?NumberQ,ee_?NumberQ]:=actualErrs[forDR,{kk,tt,ee}][[3]];
+DistributeDefinitions[aDR03];
+aDR04[kk_?NumberQ,tt_?NumberQ,ee_?NumberQ]:=actualErrs[forDR,{kk,tt,ee}][[4]];
+DistributeDefinitions[aDR04];
+msntoval=MSNTO[aDR01,{{ { {{.1,.8},{.9,1.1},{-.03,.03}},{} },{{0},Infinity}}},
+100,Nied,.1,1.2,.5];
+acterr01=pickBestMSNTO[msntoval];acterrLoc01=MSNTOMinimizer[msntoval];
+{tm,theRes,{acterr01,acterrLoc01}}]
 
 
+ParallelNeeds["betterRBC`"]
+actualErrs[approxDR_Function,xeps:{kk_?NumberQ,tt_?NumberQ,ee_?NumberQ}]:=
+With[{approxVals=(approxDR @@ {ig,kk,ig,tt,ee})[[Range[4]]],
+actualVals=simpRBCExactDRBetter@@ {ig,kk,ig,tt,ee}},
+(-1)*Abs[Flatten[approxVals-actualVals]]]
+
+(*MSNTO[Sin,{{ { {{-3,3}},{} },{{0},Infinity}}},100,Nied,.1,1.2,.5]*)
+
+(*
+{tt,tr,{er01,erl01}}=
+doApproxRun[1*{1,1,1},1];
+*)
+(*
+MSNTO[tryFunc01,{{ { {{kl,kh}},{} },{{0},Infinity}}},2000,Nied,.1,1.2,.5]
+
+
+tryFunc01[kk_?NumberQ]:=actualErrs[tr[[-1,1]],{kk,1,0}][[1]]
+
+*)
 doApproxSVMLinearRun[approx:{kA_Integer,tA_Integer,eA_Integer},iters_Integer]:=
 Module[{pt,tf,ply,iply,toIg,sgSpec,tm,theRes},
 smolRng=#[[{2,3}]]&/@Drop[aGSpecBetter,2][[1]];

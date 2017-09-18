@@ -662,9 +662,9 @@ parallelSetup[]:=
 Module[{},
 Get["pathSetup.mth"];
 ParallelNeeds["AMASeriesRepresentation`"];
+ParallelNeeds["betterRBC`"];
 SetSharedFunction[myAbortKernels];
-Get["AMASeriesRepresentation`"];
-Get["betterRBC.m"]]
+Get["AMASeriesRepresentation`"]]
 
 
 
@@ -797,7 +797,7 @@ genericInterp:(smolyakInterpolation|svmRegressionLinear|svmRegressionPoly|svmReg
 Module[{},(*Print["parallelMakeGenericInterpFuncs:",genericInterp];*)
 parallelSetup[];
 With[{interpData=parallelSmolyakGenInterpData[aVecFunc,smolGSpec],
-numArgs=Length[smolPts[[1]]]},(*Print["generic:interpData",{aVecFunc,interpData}//InputForm];*)
+numArgs=Length[smolPts[[1]]]},(*Print["generic:interpData",interpData//InputForm];*)
 With[{numFuncs=Length[interpData[[1]]],
 funcArgs=Table[Unique["fArgs"],{numArgs}],theXs=Table[xx[ii],{ii,numArgs}]},
 With[{longFuncArgs=fillInSymb[{{},smolToIgnore,funcArgs}],
@@ -892,7 +892,7 @@ doGenericIterREInterp::usage=
 doGenericIterREInterp[@<theSolver@>,
 	@<linMod@>,
 	@<XZFuncs@>,
-@<eqnsFunc@>,@<smolGSpec@>,@<distribSpec@>,
+@<eqnsFunc@>,@<smolGSpec@>,
 genericInterp:(smolyakInterpolation|svmRegressionLinear|svmRegressionPoly|svmRegressionRBF|svmRegressionSigmoid),svmArgs:{_?NumberQ...}]:=
 With[{numX=Length[BB],numZ=Length[psiZ[[1]]]},
 tn=AbsoluteTime[];
@@ -1023,11 +1023,10 @@ nestGenericIterREInterp::usage=
 
 nestGenericIterREInterp[@<theSolver@>,@<linMod@>,
 @<XZFuncs@>,@<eqnsFunc@>,@<smolGSpec@>,
-@<distribSpec@>,
 genericInterp:(smolyakInterpolation|svmRegressionLinear|svmRegressionPoly|svmRegressionRBF|svmRegressionSigmoid),svmArgs:{_?NumberQ...},
 numIters_Integer]:=
 NestList[Function[xx,doGenericIterREInterp[theSolver,linMod,
-{xx[[2]],numSteps},eqnsFunc,smolGSpec,distribSpec,genericInterp,svmArgs]],{99,XZFuncs[[1]]},numIters]
+{xx[[2]],numSteps},eqnsFunc,smolGSpec,genericInterp,svmArgs]],{99,XZFuncs[[1]]},numIters]
 
 
 parallelNestGenericIterREInterp[@<theSolver@>,@<linMod@>,
@@ -1785,6 +1784,7 @@ PerfectForesight::usage="degenerate distribution implementing perfect foresight"
 @<genX0Z0FuncsUsage@>
 @<checkModUsage@>
 @<genFRFuncUsage@>
+@<genFRExtFuncUsage@>
 @<genFPFuncUsage@>
 @<myFixedPointUsage@>
 @<getHUsage@>
@@ -1904,6 +1904,7 @@ PerfectForesight::usage="degenerate distribution implementing perfect foresight"
 @<checkLinMod@>
 @<checkMod@>
 @<genFRFunc@>
+@<genFRExtFunc@>
 @<genFPFunc@>
 @<myFixedPoint@>
 @<makeSmolyakInterpFuncs@>
@@ -2444,6 +2445,64 @@ Join[AMASeriesRepCallGraph,Map["genFRFunc"->#&,{"genSlots","cmpXZVals"}]];
 
 
 (*end code for genFRFunc*)
+@}
+\subsection{genFRExtFunc}
+\label{sec:genfrfunc}
+
+
+@d genFRExtFuncUsage
+@{genFRExtFunc::usage=
+"place holder for genFRExtFunc"
+@}
+
+@d genFRExtFunc
+@{
+
+(*begin code for genFRExtFunc*)
+ 
+genFRExtFunc[{numX_Integer,numEps_Integer,numZ_Integer},@<linMod@>,@<XZFuncs@>,
+@<eqnsFunc@>,opts:OptionsPattern[]]:=
+Module[{},
+With[{funcArgs=Flatten[genSlots[numX+numEps]],
+zArgs=Table[Unique["theFRZArgs"],{numZ}],
+xArgs=Table[Unique["theFRXArgs"],{numX}],
+eArgs=Table[Unique["theFREArgs"],{numEps}]
+},
+With[{theXInit=Flatten[Apply[XZFuncs[[1]],funcArgs]],
+xkFunc=genLilXkZkFunc[linMod,XZFuncs,Transpose[{xArgs}]],
+zArgsInit=Map[Function[xx,{xx,0}],zArgs],
+funcName=Unique["fName"],
+secondFuncName=Unique["fName"]
+},
+With[{xArgsInit=MapThread[Function[{xx,yy},{xx,yy}],{xArgs,theXInit[[Range[numX]]]}]},
+funcName[theVars:{_?NumberQ..}]:=
+With[{appl=Flatten[Apply[xkFunc,theVars]]},Print["appl=",{xArgs,appl}];
+secondFuncName[xArgs,appl]
+];
+deferEval[
+Off[FindRoot::srect];
+Off[FindRoot::nlnum];
+With[{frRes=FindRoot[funcName[Join[funcArgs,xArgs,zArgs]],Join[xArgsInit,zArgsInit]],
+xzRes=notPart[notDrop[Apply[xkFunc,Join[funcArgs,zArgs]],numX],Range[numX]]},
+(*If[Not[FreeQ[xzRes,$Failed]],Throw[$Failed,"xzRes"]];*)
+With[{otherGuts=cmpXZVals[xzRes,zArgs,frRes]},
+(*If[Not[Apply[And,Map[Or[MachineNumberQ[#],IntegerQ[#]]&,Cases[xzRes,_?NumberQ,Infinity]]]],
+Throw[{$Failed,{xzRes,funcName[Join[funcArgs,zArgs]],zArgsInit}//InputForm},"otherGuts not machine number"]];*)
+On[FindRoot::nlnum];On[FindRoot::srect];
+Function[otherGuts]]]]]]]
+
+(* input   [function (xt,eps,zt)->(xtm1,xt,xtp1,eps), function (xtm1,xt,xtp1,eps)->me]*)
+(* output   [function  (xt,eps) ->(xt,zt)] *)
+ 
+cmpXZVals[xzVals_?MatrixQ,theZArgs:{_Symbol..},theResult:{(_->_)..}]:=
+Transpose[{Flatten[Join[xzVals,theZArgs]/.theResult]}]
+
+AMASeriesRepCallGraph=
+Join[AMASeriesRepCallGraph,Map["genFRExtFunc"->#&,{"genSlots","cmpXZVals"}]];
+
+
+
+(*end code for genFRExtFunc*)
 @}
 
 \subsection{genFPFunc}

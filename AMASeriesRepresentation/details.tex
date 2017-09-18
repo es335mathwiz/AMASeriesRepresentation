@@ -12,7 +12,7 @@
 \newcommand{\eqnFunc}{\mathbb{M}}
 \newcommand{\linMod}{{\mathcal{L}}}
 
-
+\usepackage{longtable}
 \usepackage[margin=1.0in]{geometry}
 \usepackage{amsmath}
 %\usepackage{mathtools}
@@ -153,19 +153,301 @@ z_{t+k+1}^g
 For given values of $x_t^g, x_{t-1}, \epsilon_t $ use \ref{rbcSys} to determine $\hat{z_t}$.  Repeat resetting  $x_t^g=\hat{x_t}$ until convergence.'
 One can construct an interpolating polynomial for the decision rules by repeating this process pointwise.  Each of the points could be done in parallel.
 
-\begin{figure}
-  \centering
-\includegraphics{grid443Graph.pdf}  
-  \caption{4,4,3 Grid}
-  \label{fig:443}
-\end{figure}
 
-\begin{figure}
-  \centering
-\includegraphics{smol3Graph.pdf}  
-  \caption{3,3,3 Smolyak}
-  \label{fig:333}
-\end{figure}
+
+\begin{longtable}{|c|r|r|r|r|r|}
+\hline
+\multicolumn{1}{|c|}{$(\mu_1,\mu_2,\mu_3)$}&
+\multicolumn{1}{|c|}{$k$}&
+\multicolumn{1}{|c|}{$-\log_{10}(\epsilon_c)$}&
+\multicolumn{1}{|c|}{$\frac{\epsilon_c}{\hat{\epsilon_c}}$}&
+\multicolumn{1}{|c|}{$-\log_{10}(\epsilon_c)$}&
+\multicolumn{1}{|c|}{$\frac{\epsilon_k}{\hat{\epsilon_k}}$}
+\\
+\hline
+\input{errTable1X1X1X1}
+\hline
+\input{errTable1X1X1X2}
+\hline
+\input{errTable1X1X1X3}
+\hline
+\input{errTable1X1X1X4}
+\hline
+\input{errTable1X1X1X5}
+\hline
+\input{errTable1X1X1X6}
+\hline
+\input{errTable1X1X1X7}
+\hline
+\input{errTable1X1X1X8}
+\hline
+\input{errTable1X1X1X9}
+\hline
+\input{errTable1X1X1X10}
+\hline
+\input{errTable1X1X2X1}
+\hline
+\input{errTable1X1X2X2}
+\hline
+\input{errTable1X1X2X3}
+\hline
+\input{errTable1X1X2X4}
+\hline
+\input{errTable1X1X2X5}
+\hline
+\input{errTable1X1X2X6}
+\hline
+\input{errTable1X1X2X7}
+\hline
+\input{errTable1X1X2X8}
+\hline
+\input{errTable1X1X2X9}
+\hline
+\input{errTable1X1X2X10}
+\hline
+\input{errTable1X2X1X1}
+\hline
+\input{errTable1X2X1X2}
+\hline
+\input{errTable1X2X1X3}
+\hline
+\input{errTable1X2X1X4}
+\hline
+\input{errTable1X2X1X5}
+\hline
+\input{errTable1X2X1X6}
+\hline
+\input{errTable1X2X1X7}
+\hline
+\input{errTable1X2X1X8}
+\hline
+\input{errTable1X2X1X9}
+\hline
+\input{errTable1X2X1X10}
+\hline
+\input{errTable1X2X2X1}
+\hline
+\input{errTable1X2X2X2}
+\hline
+\input{errTable1X2X2X3}
+\hline
+\input{errTable1X2X2X4}
+\hline
+\input{errTable1X2X2X5}
+\hline
+\input{errTable1X2X2X6}
+\hline
+\input{errTable1X2X2X7}
+\hline
+\input{errTable1X2X2X8}
+\hline
+\input{errTable1X2X2X9}
+\hline
+\input{errTable1X2X2X10}
+\hline
+\input{errTable1X3X1X1}
+\hline
+\input{errTable1X3X1X2}
+\hline
+\input{errTable1X3X1X3}
+\hline
+\input{errTable1X3X1X4}
+\hline
+\input{errTable1X3X1X5}
+\hline
+\input{errTable1X3X1X6}
+\hline
+\input{errTable1X3X1X7}
+\hline
+\input{errTable1X3X1X8}
+\hline
+\input{errTable1X3X1X9}
+\hline
+\input{errTable1X3X1X10}
+\hline
+\input{errTable1X3X2X1}
+\hline
+\input{errTable1X3X2X2}
+\hline
+\input{errTable1X3X2X3}
+\hline
+\input{errTable1X3X2X4}
+\hline
+\input{errTable1X3X2X5}
+\hline
+\input{errTable1X3X2X6}
+\hline
+\input{errTable1X3X2X7}
+\hline
+\input{errTable1X3X2X8}
+\hline
+\input{errTable1X3X2X9}
+\hline
+\input{errTable1X3X2X10}
+\hline
+\input{errTable1X4X1X1}
+\hline
+\input{errTable1X4X1X2}
+\hline
+\input{errTable1X4X1X3}
+\hline
+\input{errTable1X4X1X4}
+\hline
+\input{errTable1X4X1X5}
+\hline
+\input{errTable1X4X1X6}
+\hline
+\input{errTable1X4X1X7}
+\hline
+\input{errTable1X4X1X8}
+\hline
+\input{errTable1X4X1X9}
+\hline
+\input{errTable1X4X1X10}
+\hline
+\input{errTable1X4X2X1}
+\hline
+\input{errTable1X4X2X2}
+\hline
+\input{errTable1X4X2X3}
+\hline
+\input{errTable1X4X2X4}
+\hline
+\input{errTable1X4X2X5}
+\hline
+\input{errTable1X4X2X6}
+\hline
+\input{errTable1X4X2X7}
+\hline
+\input{errTable1X4X2X8}
+\hline
+\input{errTable1X4X2X9}
+\hline
+\input{errTable1X4X2X10}
+\hline
+\input{errTable2X1X1X1}
+\hline
+\input{errTable2X1X1X2}
+\hline
+\input{errTable2X1X1X3}
+\hline
+\input{errTable2X1X1X4}
+\hline
+\input{errTable2X1X1X5}
+\hline
+\input{errTable2X1X1X6}
+\hline
+\input{errTable2X1X1X7}
+\hline
+\input{errTable2X1X1X8}
+\hline
+\input{errTable2X1X1X9}
+\hline
+\input{errTable2X1X1X10}
+\hline
+\input{errTable2X1X2X1}
+\hline
+\input{errTable2X1X2X2}
+\hline
+\input{errTable2X1X2X3}
+\hline
+\input{errTable2X1X2X4}
+\hline
+\input{errTable2X1X2X5}
+\hline
+\input{errTable2X1X2X6}
+\hline
+\input{errTable2X1X2X7}
+\hline
+\input{errTable2X1X2X8}
+\hline
+\input{errTable2X1X2X9}
+\hline
+\input{errTable2X1X2X10}
+\hline
+\input{errTable2X2X1X1}
+\hline
+\input{errTable2X2X1X2}
+\hline
+\input{errTable2X2X1X3}
+\hline
+\input{errTable2X2X1X4}
+\hline
+\input{errTable2X2X1X5}
+\hline
+\input{errTable2X2X1X6}
+\hline
+\input{errTable2X2X1X7}
+\hline
+\input{errTable2X2X1X8}
+\hline
+\input{errTable2X2X1X9}
+\hline
+\input{errTable2X2X1X10}
+\hline
+\input{errTable2X2X2X1}
+\hline
+\input{errTable2X2X2X2}
+\hline
+\input{errTable4X4X1X1}
+\hline
+\input{errTable4X4X1X2}
+\hline
+\input{errTable4X4X1X3}
+\hline
+\input{errTable4X4X1X4}
+\hline
+\input{errTable4X4X1X5}
+\hline
+\input{errTable4X4X1X6}
+\hline
+\input{errTable4X4X1X7}
+\hline
+\input{errTable4X4X1X8}
+\hline
+\input{errTable4X4X1X9}
+\hline
+\input{errTable4X4X1X10}
+\hline
+\input{errTable4X4X2X1}
+\hline
+\input{errTable4X4X2X2}
+\hline
+\input{errTable4X4X2X3}
+\hline
+\input{errTable4X4X2X4}
+\hline
+\input{errTable4X4X2X5}
+\hline
+\input{errTable4X4X2X6}
+\hline
+\input{errTable4X4X2X7}
+\hline
+\input{errTable4X4X2X8}
+\hline
+\input{errTable4X4X2X9}
+\hline
+\input{errTable4X4X2X10}
+\hline
+%\input{errTable5X2X1X1}
+%\hline
+\end{longtable}
+
+
+
+% \begin{figure}
+%   \centering
+% \includegraphics{grid443Graph.pdf}  
+%   \caption{4,4,3 Grid}
+%   \label{fig:443}
+% \end{figure}
+
+% \begin{figure}
+%   \centering
+% \includegraphics{smol3Graph.pdf}  
+%   \caption{3,3,3 Smolyak}
+%   \label{fig:333}
+% \end{figure}
 
 
 The uniform grid has 80 points.
@@ -178,119 +460,154 @@ By approximating the maximum error we observe for the model equations,
 We can use the truncation error matrix to get an upper bound
 
 
-\begin{figure}
-  \centering
-\includegraphics{cErr1$1$1$5.pdf}  
-  \caption{1,1,1,5 $c_\epsilon$}
-\end{figure}
-
-
-\begin{figure}
-  \centering
-\includegraphics{kErr1$1$1$5.pdf}  
-  \caption{1,1,1,5 $k_\epsilon$}
-\end{figure}
-
-
-\begin{figure}
-  \centering
-\includegraphics{nErr1$1$1$5.pdf}  
-  \caption{1,1,1,5 $\mathcal{N}_\epsilon$}
-\end{figure}
-
-
-\begin{figure}
-  \centering
-\includegraphics{tErr1$1$1$5.pdf}  
-  \caption{1,1,1,5 $\theta_\epsilon$}
-\end{figure}
+% \begin{figure}
+%   \centering
+% \includegraphics{cErr1$1$1$5.pdf}  
+%   \caption{1,1,1,5 $c_\epsilon$}
+% \end{figure}
 
 
 
-\begin{figure}
-  \centering
-\includegraphics{cErr2$2$2$5.pdf}  
-  \caption{2,2,2,5 $c_\epsilon$}
-\end{figure}
-
-
-\begin{figure}
-  \centering
-\includegraphics{kErr2$2$2$5.pdf}  
-  \caption{2,2,2,5 $k_\epsilon$}
-\end{figure}
-
-
-\begin{figure}
-  \centering
-\includegraphics{nErr2$2$2$5.pdf}  
-  \caption{2,2,2,5 $\mathcal{N}_\epsilon$}
-\end{figure}
-
-
-\begin{figure}
-  \centering
-\includegraphics{tErr2$2$2$5.pdf}  
-  \caption{2,2,2,5 $\theta_\epsilon$}
-\end{figure}
-
-
-\begin{figure}
-  \centering
-\includegraphics{cErr3$3$3$5.pdf}  
-  \caption{3,3,3,5 $c_\epsilon$}
-\end{figure}
-
-
-\begin{figure}
-  \centering
-\includegraphics{kErr3$3$3$5.pdf}  
-  \caption{3,3,3,5 $k_\epsilon$}
-\end{figure}
-
-
-\begin{figure}
-  \centering
-\includegraphics{nErr3$3$3$5.pdf}  
-  \caption{3,3,3,5 $\mathcal{N}_\epsilon$}
-\end{figure}
-
-
-\begin{figure}
-  \centering
-\includegraphics{tErr3$3$3$5.pdf}  
-  \caption{3,3,3,5 $\theta_\epsilon$}
-\end{figure}
+%  \begin{figure}
+%    \centering
+%  \includegraphics{cErrApprox1$1$1$5.pdf} 
+%    \caption{1,1,1,5 $\hat{c_\epsilon}$}
+%  \end{figure}
 
 
 
 
-\begin{figure}
-  \centering
-\includegraphics{cErr4$4$4$5.pdf}  
-  \caption{4,4,4,5 $c_\epsilon$}
-\end{figure}
+% \begin{figure}
+%   \centering
+% \includegraphics{kErr1$1$1$5.pdf}  
+%   \caption{1,1,1,5 $k_\epsilon$}
+% \end{figure}
 
 
-\begin{figure}
-  \centering
-\includegraphics{kErr4$4$4$5.pdf}  
-  \caption{4,4,4,5 $k_\epsilon$}
-\end{figure}
+%  \begin{figure}
+%    \centering
+%  \includegraphics{kErrApprox1$1$1$5.pdf} 
+%    \caption{1,1,1,5 $\hat{k_\epsilon}$}
+%  \end{figure}
 
 
-\begin{figure}
-  \centering
-\includegraphics{nErr4$4$4$5.pdf}  
-  \caption{4,4,4,5 $\mathcal{N}_\epsilon$}
-\end{figure}
+
+% \begin{figure}
+%   \centering
+% \includegraphics{nErr1$1$1$5.pdf}  
+%   \caption{1,1,1,5 $\mathcal{N}_\epsilon$}
+% \end{figure}
 
 
-\begin{figure}
-  \centering
-\includegraphics{tErr4$4$4$5.pdf}  
-  \caption{4,4,4,5 $\theta_\epsilon$}
-\end{figure}
+
+%  \begin{figure}
+%    \centering
+%  \includegraphics{nErrApprox1$1$1$5.pdf} 
+%    \caption{1,1,1,5 $\hat{\mathcal{N}_\epsilon}$}
+%  \end{figure}
+
+
+% \begin{figure}
+%   \centering
+% \includegraphics{tErr1$1$1$5.pdf}  
+%   \caption{1,1,1,5 $\theta_\epsilon$}
+% \end{figure}
+% \clearpage
+
+
+%  \begin{figure}
+%    \centering
+%  \includegraphics{tErrApprox1$1$1$5.pdf} 
+%    \caption{1,1,1,5 $\hat{\theta_\epsilon}$}
+%  \end{figure}
+
+
+% \begin{figure}
+%   \centering
+% \includegraphics{cErr2$2$2$5.pdf}  
+%   \caption{2,2,2,5 $c_\epsilon$}
+% \end{figure}
+
+
+% \begin{figure}
+%   \centering
+% \includegraphics{kErr2$2$2$5.pdf}  
+%   \caption{2,2,2,5 $k_\epsilon$}
+% \end{figure}
+
+
+% \begin{figure}
+%   \centering
+% \includegraphics{nErr2$2$2$5.pdf}  
+%   \caption{2,2,2,5 $\mathcal{N}_\epsilon$}
+% \end{figure}
+
+
+% \begin{figure}
+%   \centering
+% \includegraphics{tErr2$2$2$5.pdf}  
+%   \caption{2,2,2,5 $\theta_\epsilon$}
+% \end{figure}
+
+% \clearpage
+
+% \begin{figure}
+%   \centering
+% \includegraphics{cErr3$3$3$5.pdf}  
+%   \caption{3,3,3,5 $c_\epsilon$}
+% \end{figure}
+
+
+% \begin{figure}
+%   \centering
+% \includegraphics{kErr3$3$3$5.pdf}  
+%   \caption{3,3,3,5 $k_\epsilon$}
+% \end{figure}
+
+
+% \begin{figure}
+%   \centering
+% \includegraphics{nErr3$3$3$5.pdf}  
+%   \caption{3,3,3,5 $\mathcal{N}_\epsilon$}
+% \end{figure}
+
+
+% \begin{figure}
+%   \centering
+% \includegraphics{tErr3$3$3$5.pdf}  
+%   \caption{3,3,3,5 $\theta_\epsilon$}
+% \end{figure}
+
+% \clearpage
+
+
+
+% \begin{figure}
+%   \centering
+% \includegraphics{cErr4$4$4$5.pdf}  
+%   \caption{4,4,4,5 $c_\epsilon$}
+% \end{figure}
+
+
+% \begin{figure}
+%   \centering
+% \includegraphics{kErr4$4$4$5.pdf}  
+%   \caption{4,4,4,5 $k_\epsilon$}
+% \end{figure}
+
+
+% \begin{figure}
+%   \centering
+% \includegraphics{nErr4$4$4$5.pdf}  
+%   \caption{4,4,4,5 $\mathcal{N}_\epsilon$}
+% \end{figure}
+
+% \begin{figure}
+%   \centering
+% \includegraphics{tErr4$4$4$5.pdf}  
+%   \caption{4,4,4,5 $\theta_\epsilon$}
+% \end{figure}
+
 
 
 

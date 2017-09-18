@@ -101,7 +101,7 @@ eqnsEulerCompiledBetter=Compile @@ {
 {cctp1,_Real},{kktp1,_Real},{nltp1,_Real},{thetatp1,_Real},
 {epsVal,_Real}
 },
-{cct^(-1) - (0.342*nltp1)/kkt^(16/25), 
+{((kkt^(16/25)) - (0.342*nltp1)*cct)/cct,
 cct + kkt - 1.*kktm1^(9/25)*thetat, 
 nlt - thetat/cct,
 thetat - 1.*2.718281828459045^epsVal*thetatm1^(19/20)},"RuntimeOptions"->{"RuntimeErrorHandler"->Function[$Failed],"CatchMachineOverflow"->True,"CatchMachineUnderflow"->True}}
@@ -225,3 +225,4 @@ aGSpecBetter={{1,3},2,{{6,kLow,kHigh},{10,thLow,thHigh},{6,sigLow,3*sigHigh}}};
 End[] (* End Private Context *)
 
 EndPackage[]
+Print["done reading betterRBC.m"]

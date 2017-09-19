@@ -63,9 +63,10 @@ theFR@@anXEpsFlatBetter
 theFP=genFPFunc[{genFRFunc},linModBetter,{X0Z0,2},eqnsCompiledBetter];
 theFP@@anXEpsFlatBetter
 
+(*
 theFRExt=genFRExtFunc[{4,1,4},linModBetter,{X0Z0,2},eqnsCompiledBetter];
-theFR@@anXEpsFlatBetter
-
+theFRExt@@anXEpsFlatBetter
+*)
 
 
 errRow=

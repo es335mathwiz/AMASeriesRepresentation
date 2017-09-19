@@ -2466,30 +2466,48 @@ Module[{},
 With[{funcArgs=Flatten[genSlots[numX+numEps]],
 zArgs=Table[Unique["theFRZArgs"],{numZ}],
 xArgs=Table[Unique["theFRXArgs"],{numX}],
+xLagArgs=Table[Unique["theFRXLagArgs"],{numX}],
 eArgs=Table[Unique["theFREArgs"],{numEps}]
 },
-With[{theXInit=Flatten[Apply[XZFuncs[[1]],funcArgs]],
+With[{theXInit=Flatten[Apply[XZFuncs[[1]],Join[xLagArgs,eArgs]]],
 xkFunc=genLilXkZkFunc[linMod,XZFuncs,Transpose[{xArgs}]],
 zArgsInit=Map[Function[xx,{xx,0}],zArgs],
-funcName=Unique["fName"],
-secondFuncName=Unique["fName"]
+funcOfXtm1Eps=Unique["fNameXtm1Eps"],
+funcOfXtZt=Unique["fNameXtZt"]
 },
-With[{xArgsInit=MapThread[Function[{xx,yy},{xx,yy}],{xArgs,theXInit[[Range[numX]]]}]},
-funcName[theVars:{_?NumberQ..}]:=
-With[{appl=Flatten[Apply[xkFunc,theVars]]},Print["appl=",{xArgs,appl}];
-secondFuncName[xArgs,appl]
-];
-deferEval[
+With[{xArgsInit=MapThread[Function[{xx,yy},{xx,yy}],
+{xArgs,theXInit[[Range[numX]]]}],
+xtm1epsArgPatterns=Join[makePatternArgs[xLagArgs],
+makePatternArgs[eArgs]],
+xtztArgPatterns=Join[makePatternArgs[xLagArgs],
+makePatternArgs[eArgs],
+makePatternArgs[xArgs],makePatternArgs[zArgs]]},
+SetDelayed[funcOfXtZt[xtztArgPatterns],
+With[{xkFunc=genLilXkZkFunc[linMod,XZFuncs,Transpose[{xArgs}]]},
+With[{xkAppl=Apply[xkFunc,Join[xLagArgs,eArgs,zArgs]]},
+With[{eqnAppl=Apply[eqnsFunc,Flatten[xkAppl]],
+xDisc=xArgs-xkAppl[[numX+Range[numX]]]},
+Flatten[Join[eqnAppl,xDisc]]]]]];
+SetDelayed[funcOfXtm1Eps[xtm1epsArgPatterns],
+With[{frRes=FindRoot[funcOfXtZt[Join[xLagArgs,eArgs,xArgs,zArgs]],
+Join[xArgsInit,zArgsInit]]},fRes]];
 Off[FindRoot::srect];
 Off[FindRoot::nlnum];
-With[{frRes=FindRoot[funcName[Join[funcArgs,xArgs,zArgs]],Join[xArgsInit,zArgsInit]],
-xzRes=notPart[notDrop[Apply[xkFunc,Join[funcArgs,zArgs]],numX],Range[numX]]},
-(*If[Not[FreeQ[xzRes,$Failed]],Throw[$Failed,"xzRes"]];*)
-With[{otherGuts=cmpXZVals[xzRes,zArgs,frRes]},
-(*If[Not[Apply[And,Map[Or[MachineNumberQ[#],IntegerQ[#]]&,Cases[xzRes,_?NumberQ,Infinity]]]],
-Throw[{$Failed,{xzRes,funcName[Join[funcArgs,zArgs]],zArgsInit}//InputForm},"otherGuts not machine number"]];*)
-On[FindRoot::nlnum];On[FindRoot::srect];
-Function[otherGuts]]]]]]]
+{funcOfXtZt,funcOfXtm1Eps}
+]]]]
+
+makePatternArgs[theNames_List]:=
+Map[PatternTest[Pattern[#, Blank[]], NumberQ]&,theNames]
+
+
+
+delayEvalEqnsFunc[numX_Integer,eqnsFunc_,xArgs_List,theApp_?MatrixQ]:=
+Join[Apply[eqnsFunc,Flatten[theApp]],Flatten[xArgs-(Part[theApp,Range[numX]])]];
+
+
+delayEvalXkRes[xkFunc:(_Function|_CompiledFunction),funcArgs:{_?NumberQ..},
+zArgs:{_?NumberQ..},numX_Integer]:=
+Part[Drop[Apply[xkFunc,Join[funcArgs,zArgs]],numX],Range[numX]]
 
 (* input   [function (xt,eps,zt)->(xtm1,xt,xtp1,eps), function (xtm1,xt,xtp1,eps)->me]*)
 (* output   [function  (xt,eps) ->(xt,zt)] *)

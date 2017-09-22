@@ -55,7 +55,16 @@ sl=betterRBC`Private`sigLow
 sh=betterRBC`Private`sigHigh
 
 X0Z0=genX0Z0Funcs[linModBetter];
+
 theLilFunc=genLilXkZkFunc[linModBetter, {X0Z0,2},anXEpsBetter];
+(*
+smolRng=#[[{2,3}]]&/@Drop[aGSpecBetter,2][[1]];
+{pt,tf,ply,iply}=smolyakInterpolationPrep[1*{1,1,1},smolRng,theDistBetter];
+toIg=aGSpecBetter[[1]];
+sgSpec={toIg,smolRng,pt,tf,ply,iply,1,1*{1,1,1}};
+parallelNestGenericIterREInterp[genFRExtFunc,linModBetter,
+{X0Z0,2},eqnsCompiledBetter,sgSpec,smolyakInterpolation,{},2];
+
 (*findroot function*)
 theFR=genFRFunc[{4,1,4},theLilFunc,eqnsCompiledBetter];
 theFR@@anXEpsFlatBetter
@@ -67,7 +76,7 @@ theFP@@anXEpsFlatBetter
 theFRExt=genFRExtFunc[{4,1,4},linModBetter,{X0Z0,2},eqnsCompiledBetter];
 theFRExt@@anXEpsFlatBetter
 *)
-
+*)
 
 errRow=
 "(``,``,``)&``&``&``&``&``\\\\"
@@ -83,10 +92,10 @@ cErr/pcErr,
 kErr/pkErr}
 ]]]]
 
-doApproxRun[approx:{kA_Integer,tA_Integer,eA_Integer},iters_Integer]:=
-doApproxRun[approx,{X0Z0,2},iters]
+doApproxSVMLinearRun[approx:{kA_Integer,tA_Integer,eA_Integer},iters_Integer]:=
+doApproxSVMLinearRun[approx,{X0Z0,2},iters]
 
-doApproxRun[approx:{kA_Integer,tA_Integer,eA_Integer},
+doApproxSVMLinearRun[approx:{kA_Integer,tA_Integer,eA_Integer},
 xozoStart:{_Function,_Integer},iters_Integer]:=
 Module[{pt,tf,ply,iply,toIg,sgSpec,tm,theRes,err,sub,err01,err02,err03,err04,sb01,sub02,sub03,sub04,euerr,eusub,acterr01,acterr02,acterr03,acterr04,
 acterrLoc01,acterrLoc02,acterrLoc03,acterrLoc04,msntoval,
@@ -99,10 +108,11 @@ smolRng=#[[{2,3}]]&/@Drop[aGSpecBetter,2][[1]];
 {pt,tf,ply,iply}=smolyakInterpolationPrep[approx,smolRng,theDistBetter];
 toIg=aGSpecBetter[[1]];
 sgSpec={toIg,smolRng,pt,tf,ply,iply,1,approx};
-{tm,theRes}=Timing[parallelNestGenericIterREInterp[{genFRFunc},linModBetter,
-xozoStart,eqnsCompiledBetter,sgSpec,smolyakInterpolation,{},iters]];
+{tm,theRes}=Timing[parallelNestGenericIterREInterp[genFRExtFunc,linModBetter,
+xozoStart,eqnsCompiledBetter,sgSpec,svmRegressionLinear,{100,0.01},iters]];
+(*
 forDR=theRes[[-1,1]];DistributeDefinitions[forDR];
-forDRCE=theRes[[-2,2]];DistributeDefinitions[forDRCE];
+forDRCE=theRes[[-1,2]];DistributeDefinitions[forDRCE];
 aDR01[kk_?NumberQ,tt_?NumberQ,ee_?NumberQ]:=actualErrs[forDR,{kk,tt,ee}][[1]];
 DistributeDefinitions[aDR01];
 aDR02[kk_?NumberQ,tt_?NumberQ,ee_?NumberQ]:=actualErrs[forDR,{kk,tt,ee}][[2]];
@@ -152,6 +162,7 @@ prederr04=pickBestMSNTO[msntoval];prederrLoc04=MSNTOMinimizer[msntoval];
 msntoval=MSNTO[aDR04,{{ { {{kl,kh},{tl,th},{sl,sh}},{} },{{0},Infinity}}},
 msntoIters,Nied,.1,1.2,.5];
 acterr04=pickBestMSNTO[msntoval];acterrLoc04=MSNTOMinimizer[msntoval];
+*)
 {tm,theRes,
 {acterr01,acterrLoc01},{prederr01,prederrLoc01},
 {acterr02,acterrLoc02},{prederr02,prederrLoc02},
@@ -213,30 +224,19 @@ fpf @@ anXEpsFlatBetterCnstrn
 
 (*
 
-{tt,tr,{er01,erl01},{er02,erl02},{er03,erl03},{er04,erl04}}=
+{tt,tr,{er01,erl01},{per01,perl01},{er02,erl02},{per02,perl02},{er03,erl03},{per03,perl03},{er04,erl04},{per04,perl04}}=
 doApproxRun[1*{1,1,1},1];
 
 eqnsCompiledBetter @@ makeArgs[{tr[[-1,1]],tr[[1,2]]},#]&/@pt[[{1}]]
 eqnsEulerCompiledBetter @@ makeArgs[{tr[[-1,1]],tr[[1,2]]},#]&/@pt[[{1}]]
 *)
-doApproxSVMLinearRun[approx:{kA_Integer,tA_Integer,eA_Integer},iters_Integer]:=
-Module[{pt,tf,ply,iply,toIg,sgSpec,tm,theRes},
-smolRng=#[[{2,3}]]&/@Drop[aGSpecBetter,2][[1]];
-{pt,tf,ply,iply}=smolyakInterpolationPrep[approx,smolRng,theDistBetter];
-toIg=aGSpecBetter[[1]];
-sgSpec={toIg,smolRng,pt,tf,ply,iply,1,approx};
-{tm,theRes}=Timing[parallelNestGenericIterREInterp[{genFRFunc},linModBetter,{X0Z0,2},eqnsCompiledBetter,sgSpec,svmRegressionLinear,{1,.01},2]];
-{err,sub}=evalBadPathErrDRREIntegrate[theRes[[-1,1]],theRes[[-1,2]],anXBetter,1,eqnsCompiledBetter];
-{euerr,eusub}=evalBadEulerErrDRREIntegrate[theRes[[-1,1]],theRes[[-1,2]],anXBetter,1,eqnsCompiledBetter];
-{tm,theRes,{err,sub},{euerr,eusub}}]
 
 
 
 (*
 
-{tt,rr,{err,sub}}=doApproxRun[{1,1,1},4];
-MSNTO[Sin,{{ { {{-3,3}},{{}} },{{0},Infinity}}},50,Nied,.1,1.2,.5]
-worstPathForErrDRREIntegrate[theRes666[[2,nn,1]],theRes666[[2,nn,2]],anXBetter,1,eqnsCompiledBetter]
+{tt,tr,{er01,erl01},{per01,perl01},{er02,erl02},{per02,perl02},{er03,erl03},{per03,perl03},{er04,erl04},{per04,perl04}}=doApproxRun[5*{1,1,1},1];
+
 
 
 

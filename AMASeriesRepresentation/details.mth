@@ -4,6 +4,8 @@ Print["preemscstomma"]
 Get["emscsToMma`"]
 Print["postemscstomma"]
 Get["betterRBC.m"]
+Get["betterMaxRBC.m"]
+Get["betterCnstrnRBC`"]
 phiMat=getPhi[linModBetter]
 fMat=getF[linModBetter]
 tErrMat=truncErrorMat[fMat,phiMat,0]
@@ -30,6 +32,10 @@ Print["done or skipped  exports"]
 
 (*<<JavaGraphics`*)
 
+
+X0Z0=genX0Z0Funcs[linModBetter];
+theFRExt=genMaxExtFunc[{4,1,4},linModBetter,{X0Z0,2},eqnsCompiledBetter];
+theFRExt@@anXEpsFlatBetter
 
 simulateExact[numPers_Integer]:=
 With[{draws=RandomVariate[theDistBetter[[1,1,2]],numPers],
@@ -73,6 +79,7 @@ theFP=genFPFunc[{genFRFunc},linModBetter,{X0Z0,2},eqnsCompiledBetter];
 theFP@@anXEpsFlatBetter
 
 (*
+X0Z0=genX0Z0Funcs[linModBetter];
 theFRExt=genFRExtFunc[{4,1,4},linModBetter,{X0Z0,2},eqnsCompiledBetter];
 theFRExt@@anXEpsFlatBetter
 *)
@@ -170,14 +177,115 @@ acterr04=pickBestMSNTO[msntoval];acterrLoc04=MSNTOMinimizer[msntoval];
 {acterr04,acterrLoc04},{prederr04,prederrLoc04}}]
 
 
+doApproxRun[approx:{kA_Integer,tA_Integer,eA_Integer},iters_Integer]:=
+doApproxRun[approx,{X0Z0,2},iters]
+
+doApproxRun[approx:{kA_Integer,tA_Integer,eA_Integer},
+xozoStart:{_Function,_Integer},iters_Integer]:=
+Module[{pt,tf,ply,iply,toIg,sgSpec,tm,theRes,err,sub,err01,err02,err03,err04,sb01,sub02,sub03,sub04,euerr,eusub,acterr01,acterr02,acterr03,acterr04,
+acterrLoc01,acterrLoc02,acterrLoc03,acterrLoc04,msntoval,
+prederr01,prederrLoc01,
+prederr02,prederrLoc02,
+prederr03,prederrLoc03,
+prederr04,prederrLoc04,
+idStr=(StringJoin@@((ToString[#]<>"$")&/@approx))<>ToString[iters]},
+smolRng=#[[{2,3}]]&/@Drop[aGSpecBetter,2][[1]];
+{pt,tf,ply,iply}=smolyakInterpolationPrep[approx,smolRng,theDistBetter];
+toIg=aGSpecBetter[[1]];
+sgSpec={toIg,smolRng,pt,tf,ply,iply,1,approx};
+{tm,theRes}=Timing[parallelNestGenericIterREInterp[genFRExtFunc,linModBetter,
+xozoStart,eqnsCompiledBetter,sgSpec,smolyakInterpolation,{},iters]];
+forDR=theRes[[-1,1]];DistributeDefinitions[forDR];
+forDRCE=theRes[[-1,2]];DistributeDefinitions[forDRCE];
+aDR01[kk_?NumberQ,tt_?NumberQ,ee_?NumberQ]:=actualErrs[forDR,{kk,tt,ee}][[1]];
+DistributeDefinitions[aDR01];
+aDR02[kk_?NumberQ,tt_?NumberQ,ee_?NumberQ]:=actualErrs[forDR,{kk,tt,ee}][[2]];
+DistributeDefinitions[aDR02];
+aDR03[kk_?NumberQ,tt_?NumberQ,ee_?NumberQ]:=actualErrs[forDR,{kk,tt,ee}][[3]];
+DistributeDefinitions[aDR03];
+aDR04[kk_?NumberQ,tt_?NumberQ,ee_?NumberQ]:=actualErrs[forDR,{kk,tt,ee}][[4]];
+DistributeDefinitions[aDR04];
+approxDRErr01[kk_?NumberQ,tt_?NumberQ,ee_?NumberQ]:=approxErrs[forDR,forDRCE,{kk,tt,ee}][[1]];
+DistributeDefinitions[approxDRErr01];
+approxDRErr02[kk_?NumberQ,tt_?NumberQ,ee_?NumberQ]:=approxErrs[forDR,forDRCE,{kk,tt,ee}][[2]];
+DistributeDefinitions[approxDRErr02];
+approxDRErr03[kk_?NumberQ,tt_?NumberQ,ee_?NumberQ]:=approxErrs[forDR,forDRCE,{kk,tt,ee}][[3]];
+DistributeDefinitions[approxDRErr03];
+approxDRErr04[kk_?NumberQ,tt_?NumberQ,ee_?NumberQ]:=approxErrs[forDR,forDRCE,{kk,tt,ee}][[4]];
+DistributeDefinitions[approxDRErr04];
+(*Export["cErr"<>idStr<>".pdf",Plot3D[aDR01[kk,tt,0],{kk,kl,kh},{tt,tl,th}]];
+Export["kErr"<>idStr<>".pdf",Plot3D[aDR02[kk,tt,0],{kk,kl,kh},{tt,tl,th}]];
+Export["nErr"<>idStr<>".pdf",Plot3D[aDR03[kk,tt,0],{kk,kl,kh},{tt,tl,th}]];
+Export["tErr"<>idStr<>".pdf",Plot3D[aDR04[kk,tt,0],{kk,kl,kh},{tt,tl,th}]];
+Export["cErrApprox"<>idStr<>".pdf",Plot3D[approxDRErr01[kk,tt,0],{kk,kl,kh},{tt,tl,th}]];
+Export["kErrApprox"<>idStr<>".pdf",Plot3D[approxDRErr02[kk,tt,0],{kk,kl,kh},{tt,tl,th}]];
+Export["nErrApprox"<>idStr<>".pdf",Plot3D[approxDRErr03[kk,tt,0],{kk,kl,kh},{tt,tl,th}]];
+Export["tErrApprox"<>idStr<>".pdf",Plot3D[approxDRErr04[kk,tt,0],{kk,kl,kh},{tt,tl,th}]];*)
+msntoIters=1000;
+msntoval=MSNTO[approxDRErr01,
+{{ { {{kl,kh},{tl,th},{sl,sh}},{} },{{0},Infinity}}},msntoIters,Nied,.1,1.2,.5];
+prederr01=pickBestMSNTO[msntoval];prederrLoc01=MSNTOMinimizer[msntoval];
+msntoval=MSNTO[aDR01,{{ { {{kl,kh},{tl,th},{sl,sh}},{} },{{0},Infinity}}},
+msntoIters,Nied,.1,1.2,.5];
+acterr01=pickBestMSNTO[msntoval];acterrLoc01=MSNTOMinimizer[msntoval];
+msntoval=MSNTO[approxDRErr02,
+{{ { {{kl,kh},{tl,th},{sl,sh}},{} },{{0},Infinity}}},msntoIters,Nied,.1,1.2,.5];
+prederr02=pickBestMSNTO[msntoval];prederrLoc02=MSNTOMinimizer[msntoval];
+msntoval=MSNTO[aDR02,{{ { {{kl,kh},{tl,th},{sl,sh}},{} },{{0},Infinity}}},
+msntoIters,Nied,.1,1.2,.5];
+acterr02=pickBestMSNTO[msntoval];acterrLoc02=MSNTOMinimizer[msntoval];
+msntoval=MSNTO[approxDRErr03,
+{{ { {{kl,kh},{tl,th},{sl,sh}},{} },{{0},Infinity}}},msntoIters,Nied,.1,1.2,.5];
+prederr03=pickBestMSNTO[msntoval];prederrLoc03=MSNTOMinimizer[msntoval];
+msntoval=MSNTO[aDR03,{{ { {{kl,kh},{tl,th},{sl,sh}},{} },{{0},Infinity}}},
+msntoIters,Nied,.1,1.2,.5];
+acterr03=pickBestMSNTO[msntoval];acterrLoc03=MSNTOMinimizer[msntoval];
+msntoval=MSNTO[approxDRErr04,
+{{ { {{kl,kh},{tl,th},{sl,sh}},{} },{{0},Infinity}}},msntoIters,Nied,.1,1.2,.5];
+prederr04=pickBestMSNTO[msntoval];prederrLoc04=MSNTOMinimizer[msntoval];
+msntoval=MSNTO[aDR04,{{ { {{kl,kh},{tl,th},{sl,sh}},{} },{{0},Infinity}}},
+msntoIters,Nied,.1,1.2,.5];
+acterr04=pickBestMSNTO[msntoval];acterrLoc04=MSNTOMinimizer[msntoval];
+{tm,theRes,
+{acterr01,acterrLoc01},{prederr01,prederrLoc01},
+{acterr02,acterrLoc02},{prederr02,prederrLoc02},
+{acterr03,acterrLoc03},{prederr03,prederrLoc03},
+{acterr04,acterrLoc04},{prederr04,prederrLoc04}}]
+
+
 makeArgs[{adr_,adrce_},{kk_?NumberQ,tt_?NumberQ,ee_?NumberQ}]:=
 With[{xt=Flatten[adr[ig,kk,ig,tt,ee]][[Range[4]]]},
 With[{xtp1=Flatten[adrce@@xt][[Range[4]]]},
 Append[Join[{999,kk,999,tt},xt,xtp1],ee]]]
 
 (*
+anX0Z0 = genX0Z0Funcs[linModBetterMax];
+maxf = genMaxExtFunc[{6,1,6},linModBetterMax, {anX0Z0, 2}, 
+   objBetterMax,rbcBetterCons];
+maxf @@ anXEpsFlatBetterMax
 
 
+
+
+http://vision.psych.umn.edu/users/schrater//schrater_lab/courses/PattRecog03/Lec17PattRec03.pdf
+eqns[xx_,zz_]:=
+{
+mm[xx,zz]<=0,
+xx - ll[xx,zz]
+}
+
+
+mm[xx_,zz_]:=xx+zz;
+ll[xx_,zz_]:=xx-3*zz;
+
+kFunc[x1_,x2_]:=(x1-4)^2+(x2-4)^2
+
+g1[x1_,x2_]:=x1+x2-4
+g2[x1_,x2_]:=x1+3*x2-9
+
+
+lagrangian[x1_,x2_,v1_,v2_]:=
+kFunc[x1,x2]+v1*g1[x1,x2]+v2*g2[x1,x2]
 
 smolRng=#[[{2,3}]]&/@Drop[aGSpecBetter,2][[1]];
 {pt,tf,ply,iply}=smolyakInterpolationPrep[1*{1,1,1},smolRng,theDistBetter];
@@ -210,13 +318,10 @@ lilxkzk =
   genLilXkZkFunc[linModBetterCnstrn, {anX0Z0, 3}, 
    anX0Z0 @@ anXEpsFlatBetterCnstrn];
 anX0Z0 = genX0Z0Funcs[linModBetterCnstrn];
-thisOne = 
-  genXZFuncREInterp[{6, 1, 6}, nxtxz, aGSpecBetterCnstrn, 
-   theDistBetterCnstrn];
 
-fpf = genFPFunc[linModBetterCnstrn, {thisOne, 2}, 
-   rbcEqnsFunctionalNextBetterCnstrn];
-fpf @@ anXEpsFlatBetterCnstrn
+nsf = genNSExtFunc[{6,1,6},linModBetterCnstrn, {anX0Z0, 2}, 
+   rbcEqnsBetterCnstrn];
+nsf @@ anXEpsFlatBetterCnstrn
 
 *)
 

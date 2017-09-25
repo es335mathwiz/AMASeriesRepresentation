@@ -1,28 +1,31 @@
 (* Wolfram Language Package *)
 
-BeginPackage["betterCnstrnRBC`", { "AMASeriesRepresentation`", "ProtectedSymbols`", "AMAModel`", "SymbolicAMA`", "NumericAMA`"}]
+BeginPackage["betterMaxRBC`", { "AMASeriesRepresentation`", "ProtectedSymbols`", "AMAModel`", "SymbolicAMA`", "NumericAMA`"}]
 (* Exported symbols added here with SymbolName::usage *)  
-anXBetterCnstrn::usage="for test input";
-anEpsBetterCnstrn::usage="for test input";
-anXEpsBetterCnstrn::usage="for test input";
-aZBetterCnstrn::usage="for test input";
-anXEpsZsBetterCnstrn::usage="for test input";
+anXBetterMax::usage="for test input";
+anEpsBetterMax::usage="for test input";
+anXEpsBetterMax::usage="for test input";
+aZBetterMax::usage="for test input";
+anXEpsZsBetterMax::usage="for test input";
 
-anXFlatBetterCnstrn::usage="for test input";
-anEpsFlatBetterCnstrn::usage="for test input";
-anXEpsFlatBetterCnstrn::usage="for test input";
-aZFlatBetterCnstrn::usage="for test input";
-anXEpsZsFlatBetterCnstrn::usage="for test input";
+anXFlatBetterMax::usage="for test input";
+anEpsFlatBetterMax::usage="for test input";
+anXEpsFlatBetterMax::usage="for test input";
+aZFlatBetterMax::usage="for test input";
+anXEpsZsFlatBetterMax::usage="for test input";
 
-probDimsBetterCnstrn::usage="for test input";
+probDimsBetterMax::usage="for test input";
 
-(*simpRBCExactDRBetterCnstrn::usage="simpRBCExactDR"*)
+(*simpRBCExactDRBetterMax::usage="simpRBCExactDR"*)
 
-theDistBetterCnstrn::usage="theDist={{{ee,NormalDistribution[0,sigVal]}}};"
-thePFDistBetterCnstrn::usage="theDist={{{ee,PerfectForesight]}}};"
-linModBetterCnstrn::usage="linear model matrices for approx"
-aGSpecBetterCnstrn::usage="aGSpec={{1},1,{{4,kLow,kHigh},{3,thLow,thHigh},{3,sigLow,3*sigHigh}}}";
-rbcEqnsBetterCnstrn::usage="model equations function"
+theDistBetterMax::usage="theDist={{{ee,NormalDistribution[0,sigVal]}}};"
+thePFDistBetterMax::usage="theDist={{{ee,PerfectForesight]}}};"
+linModBetterMax::usage="linear model matrices for approx"
+aGSpecBetterMax::usage="aGSpec={{1},1,{{4,kLow,kHigh},{3,thLow,thHigh},{3,sigLow,3*sigHigh}}}";
+rbcEqnsBetterMax::usage="model equations function"
+rbcBetterCons::usage="rbcBetterCons[cctm1_,IItm1_,kktm1_, nltm1_, thetatm1_, VVtm1_, cct_, IIt_, kkt_, nlt_, thetat_, VVt_, cctp1_, IItp1_, kktp1_, nltp1_, thetatp1_, VVtp1_, epsVal_]"
+objBetterMax::usage="objBetterMax[cctm1_,IItm1_,kktm1_, nltm1_, thetatm1_, VVtm1_, cct_, IIt_, kkt_, nlt_, thetat_, VVt_, cctp1_, IItp1_, kktp1_, nltp1_, thetatp1_, VVtp1_, epsVal_]"
+
 Begin["`Private`"] (* Begin Private Context *) 
 
 
@@ -33,7 +36,7 @@ Begin["`Private`"] (* Begin Private Context *)
 
 
 CRRAUDrv[cc_,eta_]:=If[eta==1,D[Log[cc],cc],D[(1/(1-eta))*(cc^(1-eta)-1),cc]]
-
+CRRAU[cc_,eta_]:=If[eta==1,Log[cc],(1/(1-eta))*(cc^(1-eta)-1)]
 
 
 (*pg 165 of  maliar maliar solving neoclassical growth model  
@@ -101,7 +104,7 @@ Flatten[{thSubsPF,kSSSubPF,cSSSubPF,nlPartSSSubPF,ISSSubPF,VVSSSubPF}];
 
 Print["okay to check"]
 
-(*simpRBCExactDRBetterCnstrn = 
+(*simpRBCExactDRBetterMax = 
  Function[{cc, kk, nl, th, eps}, 
 With[{tht=(th^rho)*E^eps//.simpParamSubs//N},
 With[{kkt=(tht*alpha*delta*kk^alpha)//.simpParamSubs//N},
@@ -110,12 +113,12 @@ Transpose[{{cct,kkt,tht/cct,tht}}]]]]]
 
 *)
 
-theDistBetterCnstrn={{{ee,NormalDistribution[0,sigma]}}}//.paramSubs;
-thePFDistBetterCnstrn={{{ee,PerfectForesight}}};
+theDistBetterMax={{{ee,NormalDistribution[0,sigma]}}}//.paramSubs;
+thePFDistBetterMax={{{ee,PerfectForesight}}};
 
 
 
-(*betterCnstrnRBCExactCondExp = makeREIterFunc[betterCnstrnRBCExactDR,theDist]
+(*betterMaxRBCExactCondExp = makeREIterFunc[betterMaxRBCExactDR,theDist]
 *)
 
 psiz=IdentityMatrix[6]
@@ -140,26 +143,26 @@ qmatSymbRE=Join[zfSymbRE,evcsSymbRE[[{1,2}]]];
 Print["computing and simplifying the symbolic b phi f etc"]
 {bmatSymbRE,phimatSymbRE,fmatSymbRE}=symbolicComputeBPhiF[hmatSymbRE,qmatSymbRE]//Simplify;
 
-linModBetterCnstrn={hmatSymbRE//N,bmatSymbRE // N, phimatSymbRE // N, 
+linModBetterMax={hmatSymbRE//N,bmatSymbRE // N, phimatSymbRE // N, 
     fmatSymbRE // N, psiepsSymbRE // N, 
     psicSymbRE // N, psiz // N,{{0}}};
 
 
 
     
-anXBetterCnstrn=Transpose[{{99,99,.18,99,1.01,99}}];
-anEpsBetterCnstrn={{0.01}};
-anXEpsBetterCnstrn=Join[anXBetterCnstrn,anEpsBetterCnstrn]
-aZBetterCnstrn=Transpose[{{.1,.2,.3,.4,.2,.1}}]
-anXEpsZsBetterCnstrn=Join[anXEpsBetterCnstrn,aZBetterCnstrn];
+anXBetterMax=Transpose[{{99,99,.18,99,1.01,99}}];
+anEpsBetterMax={{0.01}};
+anXEpsBetterMax=Join[anXBetterMax,anEpsBetterMax]
+aZBetterMax=Transpose[{{.1,.2,.3,.4,.2,.1}}]
+anXEpsZsBetterMax=Join[anXEpsBetterMax,aZBetterMax];
 
-anXFlatBetterCnstrn=anXBetterCnstrn//Flatten;
-anEpsFlatBetterCnstrn=anEpsBetterCnstrn//Flatten;
-anXEpsFlatBetterCnstrn=anXEpsBetterCnstrn//Flatten;
-aZFlatBetterCnstrn=aZBetterCnstrn//Flatten;
-anXEpsZsFlatBetterCnstrn=anXEpsZsBetterCnstrn//Flatten;
+anXFlatBetterMax=anXBetterMax//Flatten;
+anEpsFlatBetterMax=anEpsBetterMax//Flatten;
+anXEpsFlatBetterMax=anXEpsBetterMax//Flatten;
+aZFlatBetterMax=aZBetterMax//Flatten;
+anXEpsZsFlatBetterMax=anXEpsZsBetterMax//Flatten;
 
-probDimsBetterCnstrn={6,1,6};
+probDimsBetterMax={6,1,6};
 
 
 thVal=(theta//.ssSolnSubsRE//.(simpParamSubs//N))//N;
@@ -173,20 +176,20 @@ sigHigh = 3*sigVal;
 thLow = 9/10;
 thHigh = 11/10;
 
-aGSpecBetterCnstrn={{1,2,4,6},1,{{4,kLow,kHigh},{3,thLow,thHigh},{3,sigLow,3*sigHigh}}};
+aGSpecBetterMax={{1,2,4,6},1,{{4,kLow,kHigh},{3,thLow,thHigh},{3,sigLow,3*sigHigh}}};
 
 
 
+objBetterMax[cctm1_,IItm1_,kktm1_, nltm1_, thetatm1_, VVtm1_, cct_, IIt_, kkt_, nlt_, thetat_, VVt_, cctp1_, IItp1_, kktp1_, nltp1_, thetatp1_, VVtp1_, epsVal_]:=Log[cct]+ 0.95*VVtp1
 
 
-
-rbcEqnsBetterCnstrn[cctm1_,IItm1_,kktm1_, nltm1_, thetatm1_, VVtm1_, cct_, IIt_, kkt_, nlt_, thetat_, VVt_, cctp1_, IItp1_, kktp1_, nltp1_, thetatp1_, VVtp1_, epsVal_]:=
-Module[{},{cct^(-1) - (0.342*nltp1)/kkt^(16/25) , 
- cct + kkt  - 1.*kktm1^(9/25)*thetat, 
- nlt - thetat/cct,
- thetat - 1.*2.718281828459045^epsVal*thetatm1^(19/20), 
- IIt - (1.*kkt - 0.9*kktm1), 
- VVt - (Log[cct]+0.95*VVtp1)}]
+rbcBetterCons[cctm1_,IItm1_,kktm1_, nltm1_, thetatm1_, VVtm1_, cct_, IIt_, kkt_, nlt_, thetat_, VVt_, cctp1_, IItp1_, kktp1_, nltp1_, thetatp1_, VVtp1_, epsVal_]:=
+Module[{},{
+ cct + kkt  - 1.*kktm1^(9/25)*thetat==0, 
+ nlt - thetat/cct==0,
+ thetat - 1.*2.718281828459045^epsVal*thetatm1^(19/20)==0, 
+ IIt - (1.*kkt - 0.9*kktm1)==0, 
+ VVt - (Log[cct]+0.95*VVtp1)==0}]
 
 Needs["CompiledFunctionTools`"]
 

@@ -22,7 +22,7 @@ thePFDistBetter::usage="theDist={{{ee,PerfectForesight]}}};"
 linModBetter::usage="linear model matrices for approx"
 aGSpecBetter::usage="aGSpec={{1},1,{{4,kLow,kHigh},{3,thLow,thHigh},{3,sigLow,3*sigHigh}}}";
 eqnsCompiledBetter::usage="model equations function"
-
+rbcEqnsBetter::usage="model equations"
 eqnsEulerCompiledBetter::usage="eqnsEulerCompiledBetter"
 
 
@@ -82,7 +82,7 @@ eps[theta][t]->epsVal
 }//.paramSubs)//N
 
 
-eqnsCompiledBetter=Compile @@ {
+rbcEqnsBetter=eqnsCompiledBetter=Compile @@ {
 {
 {cctm1,_Real},{kktm1,_Real},{nltm1,_Real},{thetatm1,_Real},
 {cct,_Real},{kkt,_Real},{nlt,_Real},{thetat,_Real},
@@ -191,7 +191,7 @@ linModBetter={hmatSymbRE//N,bmatSymbRE // N, phimatSymbRE // N,
 
 
     
-anXBetter=Transpose[{{.2,.18,1.0,1.1}}];
+anXBetter=Transpose[{{.2,.18,1.0,1.01}}];
 anEpsBetter={{0.01}};
 anXEpsBetter=Join[anXBetter,anEpsBetter]
 aZBetter=Transpose[{{.1,.2,.3,.4}}]

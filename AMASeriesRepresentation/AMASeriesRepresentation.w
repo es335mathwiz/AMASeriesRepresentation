@@ -154,7 +154,7 @@ postInt=({shortXs,ExpandAll[
 },
 With[{preIntTaylor={preInt[[1]],multivariateTaylor[preInt[[2]],preInt[[1]],$taylorOrd]},
 postIntTaylor={postInt[[1]],multivariateTaylor[postInt[[2]],postInt[[1]],$taylorOrd]}},
-Print["smolyakInterpolation:",{preInt-preIntTaylor,postInt-postIntTaylor}//InputForm];
+(*Print["smolyakInterpolation:",{preInt-preIntTaylor,postInt-postIntTaylor}//InputForm];*)
 {Apply[Function,preIntTaylor],
 Apply[Function,postIntTaylor]}]]]]]
 
@@ -1793,6 +1793,8 @@ PerfectForesight::usage="degenerate distribution implementing perfect foresight"
 @<pathErrsDRPFUsage@>
 @<pathErrsDRREIntegrateUsage@>
 @<iterateDRPFUsage@>
+@<genMaxExtFuncUsage@>
+@<genNSExtFuncUsage@>
 @<genNSFuncUsage@>
 @<makeREIterFuncUsage@>
 @<myNExpectationUsage@>
@@ -1811,6 +1813,8 @@ PerfectForesight::usage="degenerate distribution implementing perfect foresight"
 @<checkModUsage@>
 @<genFRFuncUsage@>
 @<genFRExtFuncUsage@>
+@<genMaxExtFuncUsage@>
+@<genNSExtFuncUsage@>
 @<genFPFuncUsage@>
 @<myFixedPointUsage@>
 @<getHUsage@>
@@ -1931,6 +1935,8 @@ PerfectForesight::usage="degenerate distribution implementing perfect foresight"
 @<checkMod@>
 @<genFRFunc@>
 @<genFRExtFunc@>
+@<genMaxExtFunc@>
+@<genNSExtFunc@>
 @<genFPFunc@>
 @<myFixedPoint@>
 @<makeSmolyakInterpFuncs@>
@@ -1993,7 +1999,11 @@ psiZPreComp
 @{distribSpec:{expctSpec:{{_Symbol,_}..}}@}
 
 @d eqnsFunc
-@{eqnsFunc:(_Function|_CompiledFunction)@}
+@{eqnsFunc:(_Function|_CompiledFunction|_Symbol)@}
+@d objFunc
+@{objFunc:(_Function|_CompiledFunction|_Symbol)@}
+@d consFunc
+@{consFunc:(_Function|_CompiledFunction|_Symbol)@}
 
 @d theSolver
 @{theSolver:(({genFRFunc,opts:OptionsPattern[]}|{genNSFunc,opts:OptionsPattern[]}|{specialSolver,opts:OptionsPattern[]}))@}
@@ -2515,11 +2525,11 @@ With[{xkFunc=genLilXkZkFunc[linMod,XZFuncs,Transpose[{xArgs}]]},
 With[{xkAppl=Apply[xkFunc,Join[xLagArgs,eArgs,zArgs]]},
 With[{eqnAppl=Apply[eqnsFunc,Flatten[xkAppl]],
 xDisc=xArgs-xkAppl[[numX+Range[numX]]]},
-Flatten[Join[eqnAppl,xDisc]]]]]]];
+Flatten[Join[xDisc,eqnAppl]]]]]]];
 SetDelayed[funcOfXtm1Eps[Apply[Sequence,xtm1epsArgPatterns]],
 With[{frRes=FindRoot[
 funcOfXtZt[Apply[Sequence,Join[xLagArgs,eArgs,xArgs,zArgs]]],
-Join[xArgsInit,zArgsInit],EvaluationMonitor:>Print["xz",{xArgs,zArgs,xLagArgs,eArgs,funcOfXtm1Eps,funcOfXtZt}//InputForm]]},Transpose[{Join[xArgs,zArgs]/.frRes}]]];Print["funcOfs",{funcOfXtm1Eps,funcOfXtZt}];
+Join[xArgsInit,zArgsInit](*,EvaluationMonitor:>Print["xz",{xArgs,zArgs,xLagArgs,eArgs,funcOfXtm1Eps,funcOfXtZt,funcOfXtZt[Apply[Sequence,Join[xLagArgs,eArgs,xArgs,zArgs]]]}//InputForm]*)]},Transpose[{Join[xArgs,zArgs]/.frRes}]]];Print["funcOfs",{funcOfXtm1Eps,funcOfXtZt}];
 Off[FindRoot::srect];
 Off[FindRoot::nlnum];
 funcOfXtm1Eps
@@ -2529,6 +2539,9 @@ funcOfXtm1Eps
 
 makePatternArgs[theNames_List]:=
 Map[PatternTest[Pattern[#, Blank[]], NumberQ]&,theNames]
+
+makeBlankPatternArgs[theNames_List]:=
+Map[Pattern[#, Blank[]]&,theNames]
 
 multivariateTaylor[thePoly_,theVars:{_Symbol..},theOrd_Integer]:=
 With[{newVar=Unique["ee"]},
@@ -2820,6 +2833,212 @@ Transpose[{zVals}]]]],
 
 
 (*end code for genNSFunc*)
+@}
+
+
+\subsection{genNSExtFunc}
+\label{sec:gennsfunc}
+
+
+
+@d genNSExtFuncUsage
+@{genNSExtFunc::usage=
+"place holder for genNSExtFunc"
+@}
+
+@d genNSExtFunc
+@{
+ 
+genNSExtFunc[{numX_Integer,numEps_Integer,numZ_Integer},@<linMod@>,@<XZFuncs@>,
+@<eqnsFunc@>,opts:OptionsPattern[]]:=
+Module[{},
+With[{funcArgs=Flatten[genSlots[numX+numEps]],
+zArgs=Table[Unique["theFRZArgs"],{numZ}],
+xArgs=Table[Unique["theFRXArgs"],{numX}],
+xLagArgs=Table[Unique["theFRXLagArgs"],{numX}],
+eArgs=Table[Unique["theFREArgs"],{numEps}]
+},
+With[{theXInit=Flatten[Apply[XZFuncs[[1]],Join[xLagArgs,eArgs]]],
+xkFunc=genLilXkZkFunc[linMod,XZFuncs,Transpose[{xArgs}]],
+zArgsInit=Map[Function[xx,{xx,0}],zArgs],
+funcOfXtm1Eps=Unique["fNameXtm1Eps"],
+funcOfXtZt=Unique["fNameXtZt"],
+cmpXDisc=Unique["fNameCmpXDisc"],
+cmpEqnsAppl=Unique["fNameCmpEqnsAppl"],
+cmpXKAppl=Unique["fNameCmpXKAppl"]
+},
+With[{
+xArgsInit=MapThread[Function[{xx,yy},{xx,yy}],
+{xArgs,theXInit[[Range[numX]]]}],
+xtArgPatterns=makePatternArgs[xArgs],
+xtm1epsArgPatterns=Join[makePatternArgs[xLagArgs],
+makePatternArgs[eArgs]],
+xtztArgPatterns=Join[makePatternArgs[xLagArgs],
+makePatternArgs[eArgs],
+makeBlankPatternArgs[xArgs],makeBlankPatternArgs[zArgs]],
+xkFuncArgs=Join[
+makeBlankPatternArgs[xLagArgs],
+makeBlankPatternArgs[eArgs],
+makePatternArgs[xArgs],
+makeBlankPatternArgs[zArgs]]},
+(**)
+SetDelayed[
+cmpXKAppl[
+Apply[Sequence,xkFuncArgs]],
+(**)
+With[{xkFunc=genLilXkZkFunc[linMod,XZFuncs,Transpose[{xArgs}]]},
+xkAppl=Apply[xkFunc,Join[xLagArgs,eArgs,zArgs]]
+]];
+(**)
+SetDelayed[
+cmpEqnsAppl[
+Apply[Sequence,xkFuncArgs]],
+(**)
+With[{xkAppl=Apply[cmpXKAppl,Join[xLagArgs,eArgs,xArgs,zArgs]]},
+Apply[eqnsFunc,Flatten[xkAppl]]]];
+(**)
+SetDelayed[
+cmpXDisc[
+Apply[Sequence,xkFuncArgs]],
+(**)
+With[{xkAppl=Apply[cmpXKAppl,Join[xLagArgs,eArgs,xArgs,zArgs]]},
+MapThread[Equal,{xArgs,Flatten[xkAppl[[numX+Range[numX]]]]}]]];
+(**)
+SetDelayed[
+funcOfXtZt[
+Apply[Sequence,xkFuncArgs]],
+(**)
+Module[{},
+With[{eqnAppl=Apply[cmpEqnsAppl,Join[xLagArgs,eArgs,xArgs,zArgs]],
+xDisc=Apply[cmpXDisc,Join[xLagArgs,eArgs,xArgs,zArgs]]},
+Flatten[delayJoin[eqnAppl]]]]];
+(**)
+SetDelayed[
+funcOfXtm1Eps[
+Apply[Sequence,xkFuncArgs]],
+(**)
+With[{frRes=NSolve[
+funcOfXtZt[Apply[Sequence,Join[xLagArgs,eArgs,xArgs,zArgs]]],
+Join[zArgs],Reals]},Transpose[{zArgs}]/.
+frRes]];
+(**)
+Off[FindRoot::srect];
+Off[FindRoot::nlnum];
+funcOfXtm1Eps
+]]]]
+
+delayJoin[theArgs:_List..]:=Join[theArgs]
+
+(*end code for genNSExtFunc*)
+@}
+
+
+
+
+\subsection{genMaxExtFunc}
+\label{sec:gennsfunc}
+
+
+
+@d genMaxExtFuncUsage
+@{genMaxExtFunc::usage=
+"place holder for genMaxExtFunc"
+@}
+
+@d genMaxExtFunc
+@{
+ 
+genMaxExtFunc[{numX_Integer,numEps_Integer,numZ_Integer},
+@<linMod@>,@<XZFuncs@>,@<objFunc@>,@<consFunc@>,opts:OptionsPattern[]]:=
+Module[{},
+With[{funcArgs=Flatten[genSlots[numX+numEps]],
+zArgs=Table[Unique["theFRZArgs"],{numZ}],
+xArgs=Table[Unique["theFRXArgs"],{numX}],
+xLagArgs=Table[Unique["theFRXLagArgs"],{numX}],
+eArgs=Table[Unique["theFREArgs"],{numEps}]
+},
+With[{theXInit=Flatten[Apply[XZFuncs[[1]],Join[xLagArgs,eArgs]]],
+xkFunc=genLilXkZkFunc[linMod,XZFuncs,Transpose[{xArgs}]],
+zArgsInit=Map[Function[xx,{xx,0}],zArgs],
+funcOfXtm1Eps=Unique["fNameXtm1Eps"],
+funcOfXtZt=Unique["fNameXtZt"],
+cmpXDisc=Unique["fNameCmpXDisc"],
+cmpEqnsAppl=Unique["fNameCmpEqnsAppl"],
+cmpXKAppl=Unique["fNameCmpXKAppl"],
+consEqnsAppl=Unique["fNameConsAppl"],
+objEqnsAppl=Unique["fNameObjAppl"]
+},
+With[{
+xArgsInit=MapThread[Function[{xx,yy},{xx,yy}],
+{xArgs,theXInit[[Range[numX]]]}],
+xtArgPatterns=makePatternArgs[xArgs],
+xtm1epsArgPatterns=Join[makePatternArgs[xLagArgs],
+makePatternArgs[eArgs]],
+xtztArgPatterns=Join[makePatternArgs[xLagArgs],
+makePatternArgs[eArgs],
+makeBlankPatternArgs[xArgs],makeBlankPatternArgs[zArgs]],
+xkFuncArgs=Join[
+makeBlankPatternArgs[xLagArgs],
+makeBlankPatternArgs[eArgs],
+makePatternArgs[xArgs],
+makeBlankPatternArgs[zArgs]],
+initXEpsFuncArgs=Join[
+makeBlankPatternArgs[xLagArgs],
+makeBlankPatternArgs[eArgs]]},
+(**)
+SetDelayed[
+cmpXKAppl[
+Apply[Sequence,xkFuncArgs]],
+(**)
+With[{xkFunc=genLilXkZkFunc[linMod,XZFuncs,Transpose[{xArgs}]]},
+xkAppl=Apply[xkFunc,Join[xLagArgs,eArgs,zArgs]]
+]];
+(**)
+SetDelayed[
+objEqnsAppl[
+Apply[Sequence,xkFuncArgs]],
+(**)
+With[{xkAppl=Apply[cmpXKAppl,Join[xLagArgs,eArgs,xArgs,zArgs]]},
+Apply[objFunc,Flatten[xkAppl]]]];
+(**)SetDelayed[
+consEqnsAppl[
+Apply[Sequence,xkFuncArgs]],
+(**)
+With[{xkAppl=Apply[cmpXKAppl,Join[xLagArgs,eArgs,xArgs,zArgs]]},
+Apply[consFunc,Flatten[xkAppl]]]];
+(**)
+SetDelayed[
+cmpXDisc[
+Apply[Sequence,xkFuncArgs]],
+(**)
+With[{xkAppl=Apply[cmpXKAppl,Join[xLagArgs,eArgs,xArgs,zArgs]]},
+MapThread[Equal,{xArgs,Flatten[xkAppl[[numX+Range[numX]]]]}]]];
+(**)
+SetDelayed[
+funcOfXtZt[
+Apply[Sequence,xkFuncArgs]],
+(**)
+Module[{},
+With[{objAppl=Apply[objEqnsAppl,Join[xLagArgs,eArgs,xArgs,zArgs]],
+consAppl=Apply[consEqnsAppl,Join[xLagArgs,eArgs,xArgs,zArgs]],
+xDisc=Apply[cmpXDisc,Join[xLagArgs,eArgs,xArgs,zArgs]]},
+Flatten[delayJoin[{objAppl},consAppl,xDisc]]]]];
+(**)
+SetDelayed[
+funcOfXtm1Eps[
+Apply[Sequence,initXEpsFuncArgs]],
+(**)
+With[{fmRes=FindMaximum[
+funcOfXtZt[Apply[Sequence,delayJoin[xLagArgs,eArgs,xArgs,zArgs]]],
+Join[xArgs,zArgs]]},Transpose[{xArgs,zArgs}]/.
+fmRes]];
+(**)
+funcOfXtm1Eps
+]]]]
+
+delayJoin[theArgs:_List..]:=Join[theArgs]
+
+(*end code for genMaxExtFunc*)
 @}
 
 

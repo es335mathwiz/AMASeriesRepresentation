@@ -666,7 +666,7 @@ One can construct an interpolating polynomial for the decision rules by repeatin
 \input{errTable3X4X2X8}
 \hline
 \input{errTable3X4X2X9}
-\hline1
+\hline
 \input{errTable3X4X2X10}
 \hline
 \input{errTable4X1X1X1}
@@ -1685,6 +1685,29 @@ z_4
 \vcenter{\hbox{\includegraphics{predErrs4$4$4$10.pdf}}}
  \end{bmatrix}
 \end{gather*}
+
+\section{Continuation Value Solution}
+
+ \begin{gather*}
+ V(k_t,\epsilon_t) \equiv  \max\left \{  u(c_t) + \delta E_t V(k_{t+1},\epsilon_{t+1})\right \}\\
+c_t + k_t=\theta_{t-1}k_{t-1}^\alpha \\
+\mathcal{N}_t=\frac{\theta_t}{c_t}\nonumber\\
+ \theta_t =\theta_{t-1}^\rho e^{\epsilon_t}\nonumber
+\end{gather*}
+
+It will be useful to construct a Lagrangian for the problem.
+\begin{gather*}
+  \mathcal{L}(x_t,\epsilon_t,\lambda_t)=u(c_t)+\delta E_t V(k_{t+1},\epsilon_{t+1}) + \lambda_t^T  \begin{bmatrix}
+\frac{1}{c_t} - \frac{0.342 E_t(\mathcal{N}_{t+1})}{k_t^{0.64}}\\
+c_t + k_t - k_{t-1}^{0.36}\theta_t\\
+\mathcal{N}_t - \frac{theta_t}{c_t}\\
+ \theta_t -\theta_{t-1}^{0.64} e^{\epsilon_t}
+  \end{bmatrix}
+\end{gather*}
+
+Computing the first order conditions will require differentiating equations
+\ref{theSeries} and \ref{theSeriesIter} with respect to $x_t$.
+
 
 Vary parameters.  Show how this error measure more comprehensive and robust
 since it uses properties of entire system to assess impact on levels.

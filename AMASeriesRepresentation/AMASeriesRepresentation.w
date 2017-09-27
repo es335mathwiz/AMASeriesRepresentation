@@ -551,19 +551,24 @@ Takes model specification and prepares inputs for smolyakInterpolation function.
 \end{description}
 
 @d smolyakInterpolationPrepUsage
-@{smolyakInterpolationPrep::usage="place holder"@}
+@{smolyakInterpolationPrep::usage="place holder"
+smolPolyDrvs::usage="derivatives of smolyak polynomials"
+@}
 
 @d smolyakInterpolationPrep
 @{
-
+Options[smolyakInterpolationPrep]={"Derivatives"->True}
 smolyakInterpolationPrep[approxLevels_?listOfIntegersQ,smolRngs_?MatrixQ,
-@<distribSpec@>]:=
+@<distribSpec@>,opts:OptionsPattern[]]:=
 Module[{smolRes=sparseGridEvalPolysAtPts[approxLevels],
 numVars=Length[approxLevels],numEps=Length[distribSpec[[1]]]},
 With[{thePts=smolRes[[1]],smolPolys=smolRes[[2]],smolMat=smolRes[[3]]},
 With[{xPts=Map[Function[xx,xformToXVec[xx,smolRngs]],thePts]},
 With[{numPolys=Length[smolPolys]},
-{N[xPts],N[smolMat],ExpandAll[smolPolys],ExpandAll[smolPolyExp[smolPolys,smolRngs,distribSpec]]}]]]]/;And[Length[smolRngs]==Length[approxLevels]]
+With[{intPolys=ExpandAll[smolPolyExp[smolPolys,smolRngs,distribSpec]]},
+With[{dintPolys=
+If[OptionValue["Derivatives"]===True,smolPolyDrvs[intPolys,smolRngs,numEps],{}]},
+{N[xPts],N[smolMat],ExpandAll[smolPolys],intPolys,dintPolys}]]]]]]/;And[Length[smolRngs]==Length[approxLevels]]
 
 smolyakInterpolationPrep[approxLevels_?listOfIntegersQ,smolRngs_?MatrixQ]:=
 Module[{smolRes=sparseGridEvalPolysAtPts[approxLevels],
@@ -572,6 +577,16 @@ With[{thePts=smolRes[[1]],smolPolys=smolRes[[2]],smolMat=smolRes[[3]]},
 With[{xPts=Map[Function[xx,xformToXVec[xx,smolRngs]],thePts]},
 With[{numPolys=Length[smolPolys]},
 {N[xPts],N[smolMat],ExpandAll[smolPolys]}]]]]/;And[Length[smolRngs]==Length[approxLevels]]
+
+
+smolPolyDrvs[theSmolPoly_List,smolRngs_?MatrixQ,numEps_Integer]:=
+With[{vars=Table[xx[ii],{ii,Length[smolRngs]-numEps}]},
+Map[Function[ee,Map[D[ee,#]&,vars]],theSmolPoly]]
+
+
+
+
+
 
 smolPolyExp[aSmolPoly_,smolRngs_?MatrixQ,@<distribSpec@>]:=
 With[{numEps=Length[distribSpec[[1]]],
@@ -1810,6 +1825,7 @@ PerfectForesight::usage="degenerate distribution implementing perfect foresight"
 @<genSmolyakXZREInterpFuncUsage@>
 @<genXZREInterpFuncUsage@>
 @<genX0Z0FuncsUsage@>
+@<genX0Z0DrvFuncsUsage@>
 @<checkModUsage@>
 @<genFRFuncUsage@>
 @<genFRExtFuncUsage@>
@@ -1924,6 +1940,7 @@ PerfectForesight::usage="degenerate distribution implementing perfect foresight"
 @<genSlots@>
 @<genXtOfXtm1@>
 @<genXtp1OfXt@>
+@<genX0Z0DrvFuncs@>
 @<genX0Z0Funcs@>
 @<multiStep@>
 @}
@@ -2009,8 +2026,13 @@ psiZPreComp
 @{theSolver:(({genFRFunc,opts:OptionsPattern[]}|{genNSFunc,opts:OptionsPattern[]}|{specialSolver,opts:OptionsPattern[]}))@}
 
 
+
 \subsection{genLilXkZkFunc}
 \label{sec:genlilxkzkfunc}
+
+
+
+
 
 
 @d genLilXkZkFuncUsage
@@ -2281,6 +2303,29 @@ Join[AMASeriesRepCallGraph,Map["genX0Z0Funcs"->#&,{"getNumX","getNumZ","genSlots
 
 (*end code for genX0Z0Funcs*)
 @}
+\subsection{genX0Z0DrvFuncs}
+\label{sec:genx0z0funcs}
+
+
+@d genX0Z0DrvFuncsUsage
+@{genX0Z0DrvFuncs::usage=
+"place holder for genX0Z0DrvFuncs"
+@}
+
+@d genX0Z0DrvFuncs
+@{
+(*begin code for genX0Z0DrvFuncs*)
+genX0Z0DrvFuncs[@<linMod@>]:=
+With[{numXVars=getNumX[linMod],numZVars=getNumZ[linMod]},
+With[{xtm1Vars=Table[Unique["xx"],{numXVars}]},
+Apply[Function, {xtm1Vars,ArrayFlatten[{{BB},{ConstantArray[0,{numZVars,numXVars}]}}]}]]]
+
+
+AMASeriesRepCallGraph=
+Join[AMASeriesRepCallGraph,Map["genX0Z0DrvFuncs"->#&,{"getNumX","getNumZ","genSlots"}]];
+
+(*end code for genX0Z0DrvFuncs*)
+@}
 
 
 \subsection{multiStep Functions}
@@ -2367,6 +2412,29 @@ Join[AMASeriesRepCallGraph,Map["multiStepX"->#&,{"multiStep"}]];
 @}
 
 
+\subsection{iterateDrvs}
+\label{sec:checklinmod}
+
+
+@d iterDrvsUsage
+@{iterDrvs::usage=
+"place holder for iterdrvs"
+@}
+
+@d iterDrvs
+@{
+(*begin code for iterDrvs*)
+
+
+iterDrvs[gFunc_,gFuncDrvs_]:=
+
+
+
+(*end code for iterDrvs*)
+@}
+
+
+
 \subsection{checkLinMod}
 \label{sec:checklinmod}
 
@@ -2399,7 +2467,6 @@ Join[AMASeriesRepCallGraph,Map["chkLinMod"->#&,{"genLilXkZkFunc","genX0Z0Funcs"}
 
 (*end code for checkLinMod*)
 @}
-
 \subsection{checkMod}
 \label{sec:checkmod}
 
@@ -2519,17 +2586,26 @@ makePatternArgs[eArgs]],
 xtztArgPatterns=Join[makePatternArgs[xLagArgs],
 makePatternArgs[eArgs],
 makePatternArgs[xArgs],makePatternArgs[zArgs]]},
-SetDelayed[funcOfXtZt[Apply[Sequence,xtztArgPatterns]],
+(**)
+SetDelayed[
+funcOfXtZt[
+(**)
+Apply[Sequence,xtztArgPatterns]],
 Module[{},
 With[{xkFunc=genLilXkZkFunc[linMod,XZFuncs,Transpose[{xArgs}]]},
 With[{xkAppl=Apply[xkFunc,Join[xLagArgs,eArgs,zArgs]]},
 With[{eqnAppl=Apply[eqnsFunc,Flatten[xkAppl]],
 xDisc=xArgs-xkAppl[[numX+Range[numX]]]},
 Flatten[Join[xDisc,eqnAppl]]]]]]];
-SetDelayed[funcOfXtm1Eps[Apply[Sequence,xtm1epsArgPatterns]],
+(**)
+SetDelayed[
+funcOfXtm1Eps
+[Apply[Sequence,xtm1epsArgPatterns]],
+(**)
 With[{frRes=FindRoot[
 funcOfXtZt[Apply[Sequence,Join[xLagArgs,eArgs,xArgs,zArgs]]],
-Join[xArgsInit,zArgsInit](*,EvaluationMonitor:>Print["xz",{xArgs,zArgs,xLagArgs,eArgs,funcOfXtm1Eps,funcOfXtZt,funcOfXtZt[Apply[Sequence,Join[xLagArgs,eArgs,xArgs,zArgs]]]}//InputForm]*)]},Transpose[{Join[xArgs,zArgs]/.frRes}]]];Print["funcOfs",{funcOfXtm1Eps,funcOfXtZt}];
+Join[xArgsInit,zArgsInit](*,EvaluationMonitor:>Print["xz",{xArgs,zArgs,xLagArgs,eArgs,funcOfXtm1Eps,funcOfXtZt,funcOfXtZt[Apply[Sequence,Join[xLagArgs,eArgs,xArgs,zArgs]]]}//InputForm]*)]},Transpose[{Join[xArgs,zArgs]/.frRes}]]];
+(**)
 Off[FindRoot::srect];
 Off[FindRoot::nlnum];
 funcOfXtm1Eps
@@ -2948,25 +3024,30 @@ delayJoin[theArgs:_List..]:=Join[theArgs]
 @d genMaxExtFunc
 @{
  
-genMaxExtFunc[{numX_Integer,numEps_Integer,numZ_Integer},
+genMaxExtFunc[{numX_Integer,numEps_Integer,numZ_Integer,
+numEqCons_Integer,numInEqCons_Integer},
 @<linMod@>,@<XZFuncs@>,@<objFunc@>,@<consFunc@>,opts:OptionsPattern[]]:=
 Module[{},
 With[{funcArgs=Flatten[genSlots[numX+numEps]],
+eqLamArgs=Table[Unique["theeqLamArgs"],{numEqCons}],
+inEqLamArgs=Table[Unique["theineqLamArgs"],{numInEqCons}],
 zArgs=Table[Unique["theFRZArgs"],{numZ}],
 xArgs=Table[Unique["theFRXArgs"],{numX}],
+xDiffArgs=Table[Unique["theFRXDiffArgs"],{numX}],
 xLagArgs=Table[Unique["theFRXLagArgs"],{numX}],
 eArgs=Table[Unique["theFREArgs"],{numEps}]
 },
 With[{theXInit=Flatten[Apply[XZFuncs[[1]],Join[xLagArgs,eArgs]]],
 xkFunc=genLilXkZkFunc[linMod,XZFuncs,Transpose[{xArgs}]],
 zArgsInit=Map[Function[xx,{xx,0}],zArgs],
-funcOfXtm1Eps=Unique["fNameXtm1Eps"],
-funcOfXtZt=Unique["fNameXtZt"],
-cmpXDisc=Unique["fNameCmpXDisc"],
-cmpEqnsAppl=Unique["fNameCmpEqnsAppl"],
-cmpXKAppl=Unique["fNameCmpXKAppl"],
-consEqnsAppl=Unique["fNameConsAppl"],
-objEqnsAppl=Unique["fNameObjAppl"]
+funcOfXtm1Eps=Unique["fNameMaxXtm1Eps"],
+funcOfCon=Unique["fNameMaxCon"],
+funcOfXtZt=Unique["fNameMaxXtZt"],
+cmpXDisc=Unique["fNameCmpMaxXDisc"],
+cmpEqnsAppl=Unique["fNameMaxCmpEqnsAppl"],
+cmpXKAppl=Unique["fNameMaxCmpXKAppl"],
+consEqnsAppl=Unique["fNameMaxConsAppl"],
+objEqnsAppl=Unique["fNameMaxObjAppl"]
 },
 With[{
 xArgsInit=MapThread[Function[{xx,yy},{xx,yy}],
@@ -2982,13 +3063,18 @@ makeBlankPatternArgs[xLagArgs],
 makeBlankPatternArgs[eArgs],
 makePatternArgs[xArgs],
 makeBlankPatternArgs[zArgs]],
+xkFuncDiffArgs=Join[
+makeBlankPatternArgs[xLagArgs],
+makeBlankPatternArgs[eArgs],
+makeBlankPatternArgs[xArgs],
+makeBlankPatternArgs[zArgs]],
 initXEpsFuncArgs=Join[
 makeBlankPatternArgs[xLagArgs],
 makeBlankPatternArgs[eArgs]]},
 (**)
 SetDelayed[
 cmpXKAppl[
-Apply[Sequence,xkFuncArgs]],
+Apply[Sequence,xkFuncDiffArgs]],
 (**)
 With[{xkFunc=genLilXkZkFunc[linMod,XZFuncs,Transpose[{xArgs}]]},
 xkAppl=Apply[xkFunc,Join[xLagArgs,eArgs,zArgs]]
@@ -3005,15 +3091,24 @@ consEqnsAppl[
 Apply[Sequence,xkFuncArgs]],
 (**)
 With[{xkAppl=Apply[cmpXKAppl,Join[xLagArgs,eArgs,xArgs,zArgs]]},
-Apply[consFunc,Flatten[xkAppl]]]];
+Apply[Plus,eqLamArgs*Apply[consFunc,Flatten[xkAppl]]]]];
 (**)
 SetDelayed[
 cmpXDisc[
-Apply[Sequence,xkFuncArgs]],
+Apply[Sequence,xkFuncDiffArgs]],
 (**)
 With[{xkAppl=Apply[cmpXKAppl,Join[xLagArgs,eArgs,xArgs,zArgs]]},
-MapThread[Equal,{xArgs,Flatten[xkAppl[[numX+Range[numX]]]]}]]];
+xArgs-Flatten[xkAppl[[numX+Range[numX]]]]]];
 (**)
+SetDelayed[
+funcOfCon[
+Apply[Sequence,xkFuncArgs]],
+(**)
+Module[{},
+With[{objAppl=Apply[objEqnsAppl,Join[xLagArgs,eArgs,xArgs,zArgs]],
+consAppl=Apply[consEqnsAppl,Join[xLagArgs,eArgs,xArgs,zArgs]],
+xDisc=Apply[cmpXDisc,Join[xLagArgs,eArgs,xDiffArgs,zArgs]]},
+{consAppl,xDisc}]]];
 SetDelayed[
 funcOfXtZt[
 Apply[Sequence,xkFuncArgs]],
@@ -3022,16 +3117,22 @@ Module[{},
 With[{objAppl=Apply[objEqnsAppl,Join[xLagArgs,eArgs,xArgs,zArgs]],
 consAppl=Apply[consEqnsAppl,Join[xLagArgs,eArgs,xArgs,zArgs]],
 xDisc=Apply[cmpXDisc,Join[xLagArgs,eArgs,xArgs,zArgs]]},
-Flatten[delayJoin[{objAppl},consAppl,xDisc]]]]];
+With[{lagr=objAppl-consAppl},
+With[{theSys=Thread[(Map[D[lagr,#]&,Join[xArgs,zArgs,eqLamArgs]])==0]},
+theSys
+]]]]];
 (**)
 SetDelayed[
 funcOfXtm1Eps[
 Apply[Sequence,initXEpsFuncArgs]],
 (**)
-With[{fmRes=FindMaximum[
-funcOfXtZt[Apply[Sequence,delayJoin[xLagArgs,eArgs,xArgs,zArgs]]],
-Join[xArgs,zArgs]]},Transpose[{xArgs,zArgs}]/.
-fmRes]];
+With[{objAppl=Apply[objEqnsAppl,Join[xLagArgs,eArgs,xArgs,zArgs]],
+consAppl=Apply[consEqnsAppl,Join[xLagArgs,eArgs,xArgs,zArgs]],
+xDisc=Apply[cmpXDisc,Join[xLagArgs,eArgs,xArgs,zArgs]]},
+With[{fmRes=FindRoot[funcOfXtZt[Apply[Sequence,
+Join[xLagArgs,eArgs,xArgs,zArgs]]],
+Join[xArgs,zArgs,eqLamArgs]]},
+Transpose[{xArgs,zArgs}]/.fmRes]]];
 (**)
 funcOfXtm1Eps
 ]]]]

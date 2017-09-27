@@ -2,6 +2,7 @@
 
 BeginPackage["betterMaxRBC`", { "AMASeriesRepresentation`", "ProtectedSymbols`", "AMAModel`", "SymbolicAMA`", "NumericAMA`"}]
 (* Exported symbols added here with SymbolName::usage *)  
+newWay::usage="function for minimization"
 anXBetterMax::usage="for test input";
 anEpsBetterMax::usage="for test input";
 anXEpsBetterMax::usage="for test input";
@@ -180,16 +181,33 @@ aGSpecBetterMax={{1,2,4,6},1,{{4,kLow,kHigh},{3,thLow,thHigh},{3,sigLow,3*sigHig
 
 
 
+newWay[cctm1_,IItm1_,kktm1_, nltm1_, thetatm1_,  VVtm1_,eps_(*,
+ cct_, IIt_, kkt_, nlt_, thetat_, VVt_,
+z1_,z2_,z3_,z4_,z5_,z6_*)]:=
+FindMaximum[Log[cct]+ 0.95*VVtp1 +
+lam1*(cct + kkt - 1.*kktm1^(9/25)*thetat - 0) +
+lam2*( nlt - thetat/cct 0 0) +
+lam3*( thetat - 1.*2.718281828459045^epsVal*thetatm1^(19/20) - 0)+
+lam4*( IIt - 1.*kkt + 0.9*kktm1 - 0)+ 
+lam5*( VVt - 0.95*VVtp1 - Log[cct] - 0),
+{cct,IIt,kkt,nlt,thetat,VVt,lam1,lam2,lam3,lam4,lam5}(*
+z1,z2,z3,z4,z5,z6*)]
+
+(*
+{{cct,.5},{IIt,.1},{ kkt,.1}, {nlt,1},{thetat,1},{VVt,.1},
+{z1,0},{z2,0},{z3,0},{z4,0},{z5,0},{z6,0}}
+*)
+
 objBetterMax[cctm1_,IItm1_,kktm1_, nltm1_, thetatm1_, VVtm1_, cct_, IIt_, kkt_, nlt_, thetat_, VVt_, cctp1_, IItp1_, kktp1_, nltp1_, thetatp1_, VVtp1_, epsVal_]:=Log[cct]+ 0.95*VVtp1
 
 
 rbcBetterCons[cctm1_,IItm1_,kktm1_, nltm1_, thetatm1_, VVtm1_, cct_, IIt_, kkt_, nlt_, thetat_, VVt_, cctp1_, IItp1_, kktp1_, nltp1_, thetatp1_, VVtp1_, epsVal_]:=
 Module[{},{
- cct + kkt  - 1.*kktm1^(9/25)*thetat==0, 
- nlt - thetat/cct==0,
- thetat - 1.*2.718281828459045^epsVal*thetatm1^(19/20)==0, 
- IIt - (1.*kkt - 0.9*kktm1)==0, 
- VVt - (Log[cct]+0.95*VVtp1)==0}]
+ cct + kkt  - 1.*kktm1^(9/25)*thetat, 
+ nlt - thetat/cct,
+ thetat - 1.*2.718281828459045^epsVal*thetatm1^(19/20), 
+ IIt - (1.*kkt - 0.9*kktm1), 
+ VVt - (Log[cct]+0.95*VVtp1)}]
 
 Needs["CompiledFunctionTools`"]
 

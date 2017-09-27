@@ -6,6 +6,8 @@ Print["postemscstomma"]
 Get["betterRBC.m"]
 Get["betterMaxRBC.m"]
 Get["betterCnstrnRBC`"]
+(*Get["ImpulseResponseErgodic`"]*)
+Get["Perturbation`"]
 phiMat=getPhi[linModBetter]
 fMat=getF[linModBetter]
 tErrMat=truncErrorMat[fMat,phiMat,0]
@@ -65,7 +67,7 @@ X0Z0=genX0Z0Funcs[linModBetter];
 theLilFunc=genLilXkZkFunc[linModBetter, {X0Z0,2},anXEpsBetter];
 (*
 smolRng=#[[{2,3}]]&/@Drop[aGSpecBetter,2][[1]];
-{pt,tf,ply,iply}=smolyakInterpolationPrep[1*{1,1,1},smolRng,theDistBetter];
+{pt,tf,ply,iply,dply}=smolyakInterpolationPrep[1*{1,1,1},smolRng,theDistBetter];
 toIg=aGSpecBetter[[1]];
 sgSpec={toIg,smolRng,pt,tf,ply,iply,1,1*{1,1,1}};
 parallelNestGenericIterREInterp[genFRExtFunc,linModBetter,
@@ -112,7 +114,7 @@ prederr03,prederrLoc03,
 prederr04,prederrLoc04,
 idStr=(StringJoin@@((ToString[#]<>"$")&/@approx))<>ToString[iters]},
 smolRng=#[[{2,3}]]&/@Drop[aGSpecBetter,2][[1]];
-{pt,tf,ply,iply}=smolyakInterpolationPrep[approx,smolRng,theDistBetter];
+{pt,tf,ply,iply,dply}=smolyakInterpolationPrep[approx,smolRng,theDistBetter];
 toIg=aGSpecBetter[[1]];
 sgSpec={toIg,smolRng,pt,tf,ply,iply,1,approx};
 {tm,theRes}=Timing[parallelNestGenericIterREInterp[genFRExtFunc,linModBetter,
@@ -190,7 +192,7 @@ prederr03,prederrLoc03,
 prederr04,prederrLoc04,
 idStr=(StringJoin@@((ToString[#]<>"$")&/@approx))<>ToString[iters]},
 smolRng=#[[{2,3}]]&/@Drop[aGSpecBetter,2][[1]];
-{pt,tf,ply,iply}=smolyakInterpolationPrep[approx,smolRng,theDistBetter];
+{pt,tf,ply,iply,dply}=smolyakInterpolationPrep[approx,smolRng,theDistBetter];
 toIg=aGSpecBetter[[1]];
 sgSpec={toIg,smolRng,pt,tf,ply,iply,1,approx};
 {tm,theRes}=Timing[parallelNestGenericIterREInterp[genFRExtFunc,linModBetter,
@@ -260,7 +262,7 @@ Append[Join[{999,kk,999,tt},xt,xtp1],ee]]]
 
 (*
 anX0Z0 = genX0Z0Funcs[linModBetterMax];
-maxf = genMaxExtFunc[{6,1,6},linModBetterMax, {anX0Z0, 2}, 
+maxf = genMaxExtFunc[{6,1,6,5,0},linModBetterMax, {anX0Z0, 2}, 
    objBetterMax,rbcBetterCons];
 maxf @@ anXEpsFlatBetterMax
 
@@ -288,7 +290,7 @@ lagrangian[x1_,x2_,v1_,v2_]:=
 kFunc[x1,x2]+v1*g1[x1,x2]+v2*g2[x1,x2]
 
 smolRng=#[[{2,3}]]&/@Drop[aGSpecBetter,2][[1]];
-{pt,tf,ply,iply}=smolyakInterpolationPrep[1*{1,1,1},smolRng,theDistBetter];
+{pt,tf,ply,iply,dply}=smolyakInterpolationPrep[1*{1,1,1},smolRng,theDistBetter];
 toIg=aGSpecBetter[[1]];
 sgSpec={toIg,smolRng,pt,tf,ply,iply,1,1*{1,1,1}};
 {tm,theRes}=Timing[nestGenericIterREInterp[{genFRFunc},linModBetter,{X0Z0,2},eqnsCompiledBetter,sgSpec,smolyakInterpolation,{},1]];
@@ -354,7 +356,7 @@ theOldRes=doIterREInterp[{genFRFunc},linModBetter,{X0Z0,2},eqnsCompiledBetter,aG
 
 
 smolRng=#[[{2,3}]]&/@Drop[aGSpecBetter,2][[1]]
-{pt,tf,ply,iply}=smolyakInterpolationPrep[3*{1,1,1},smolRng,theDistBetter];
+{pt,tf,ply,iply,dply}=smolyakInterpolationPrep[3*{1,1,1},smolRng,theDistBetter];
 toIg=aGSpecBetter[[1]];
 sgSpec={toIg,smolRng,pt,tf,ply,iply,1,3*{1,1,1}};
 
@@ -372,7 +374,7 @@ theNewNewRes=doGenericIterREInterp[{genFRFunc},linModBetter,{X0Z0,2},eqnsCompile
 runs without errors
 approx=3*{1,1,1};
 smolRng=#[[{2,3}]]&/@Drop[aGSpecBetter,2][[1]];
-{pt,tf,ply,iply}=smolyakInterpolationPrep[approx,smolRng,theDistBetter];
+{pt,tf,ply,iply,dply}=smolyakInterpolationPrep[approx,smolRng,theDistBetter];
 toIg=aGSpecBetter[[1]];
 sgSpec={toIg,smolRng,pt,tf,ply,iply,1,approx};
 
@@ -381,7 +383,7 @@ Timing[theRes03=parallelNestGenericIterREInterp[{genFRFunc},linModBetter,{X0Z0,2
 
 approx={4,3,2};
 smolRng=#[[{2,3}]]&/@Drop[aGSpecBetter,2][[1]];
-{pt,tf,ply,iply}=smolyakInterpolationPrep[approx,smolRng,theDistBetter];
+{pt,tf,ply,iply,dply}=smolyakInterpolationPrep[approx,smolRng,theDistBetter];
 toIg=aGSpecBetter[[1]];
 sgSpec={toIg,smolRng,pt,tf,ply,iply,1,approx};
 
@@ -390,7 +392,7 @@ Timing[theRes432=parallelNestGenericIterREInterp[{genFRFunc},linModBetter,{X0Z0,
 
 approx={4,4,2};
 smolRng=#[[{2,3}]]&/@Drop[aGSpecBetter,2][[1]];
-{pt,tf,ply,iply}=smolyakInterpolationPrep[approx,smolRng,theDistBetter];
+{pt,tf,ply,iply,dply}=smolyakInterpolationPrep[approx,smolRng,theDistBetter];
 toIg=aGSpecBetter[[1]];
 sgSpec={toIg,smolRng,pt,tf,ply,iply,1,approx};
 
@@ -398,7 +400,7 @@ Timing[theRes442=parallelNestGenericIterREInterp[{genFRFunc},linModBetter,{X0Z0,
 
 approx=5*{1,1,1};
 smolRng=#[[{2,3}]]&/@Drop[aGSpecBetter,2][[1]];
-{pt,tf,ply,iply}=smolyakInterpolationPrep[approx,smolRng,theDistBetter];
+{pt,tf,ply,iply,dply}=smolyakInterpolationPrep[approx,smolRng,theDistBetter];
 toIg=aGSpecBetter[[1]];
 sgSpec={toIg,smolRng,pt,tf,ply,iply,1,approx};
 
@@ -408,7 +410,7 @@ Timing[theRes05=parallelNestGenericIterREInterp[{genFRFunc},linModBetter,
 
 approx=6*{1,1,1};
 smolRng=#[[{2,3}]]&/@Drop[aGSpecBetter,2][[1]];
-{pt,tf,ply,iply}=smolyakInterpolationPrep[approx,smolRng,theDistBetter];
+{pt,tf,ply,iply,dply}=smolyakInterpolationPrep[approx,smolRng,theDistBetter];
 toIg=aGSpecBetter[[1]];
 sgSpec={toIg,smolRng,pt,tf,ply,iply,1,approx};
 
@@ -419,7 +421,7 @@ Timing[theRes06=parallelNestGenericIterREInterp[{genFRFunc},linModBetter,{X0Z0,2
 throw not machine size number on second iteration
 approx=5*{1,1,1};
 smolRng=#[[{2,3}]]&/@Drop[aGSpecBetter,2][[1]];
-{pt,tf,ply,iply}=smolyakInterpolationPrep[approx,smolRng,theDistBetter];
+{pt,tf,ply,iply,dply}=smolyakInterpolationPrep[approx,smolRng,theDistBetter];
 toIg=aGSpecBetter[[1]];
 sgSpec={toIg,smolRng,pt,tf,ply,iply,1,approx};
 (*
@@ -435,7 +437,7 @@ Save["theRes01.mth",theRes01]
 Get["theRes01.mth"];
 approx=4*{1,1,1};
 smolRng=#[[{2,3}]]&/@Drop[aGSpecBetter,2][[1]];
-{pt,tf,ply,iply}=smolyakInterpolationPrep[approx,smolRng,theDistBetter];
+{pt,tf,ply,iply,dply}=smolyakInterpolationPrep[approx,smolRng,theDistBetter];
 toIg=aGSpecBetter[[1]];
 sgSpec={toIg,smolRng,pt,tf,ply,iply,1,approx};
 numX=Length[getB[linModBetter]];
@@ -515,7 +517,7 @@ Export["diffs443"<>ToString[nn]<>".pdf",boo=Plot3D[forPlot[kk,th,nn],{kk,kl,kh},
 
 approx=4*{1,1,1}
 smolRng=#[[{2,3}]]&/@Drop[aGSpecBetter,2][[1]]
-{pt,tf,ply,iply}=smolyakInterpolationPrep[approx,smolRng,theDistBetter];
+{pt,tf,ply,iply,dply}=smolyakInterpolationPrep[approx,smolRng,theDistBetter];
 toIg=aGSpecBetter[[1]];
 sgSpec={toIg,smolRng,pt,tf,ply,iply,1,approx};
 

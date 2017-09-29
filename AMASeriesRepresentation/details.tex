@@ -39,7 +39,7 @@ c_t + k_t=\theta_{t-1}k_{t-1}^\alpha \label{rbcSys}\\
  \theta_t =\theta_{t-1}^\rho e^{\epsilon_t}\nonumber
  \end{gather}
 
-We can construct a Lagrangean
+We can construct a Lagrangian
 assuming $\beta=1,f(k)=k^\alpha$
 
 
@@ -49,19 +49,17 @@ assuming $\beta=1,f(k)=k^\alpha$
 \lambda_t = E_t \lambda_{t+1} (\alpha \delta \theta_{t+1}k_t^{\alpha-1} -\delta(1-d))
  \end{gather*}
 
+defining investment and allowing for a constraint $I_t=k_t-(1-d)k_{t-1},I_t \ge \upsilon I_{ss}$
+
+{\small
+ \begin{gather*}
+   \mathcal{L}=    \max\left \{  u(c_t) + E_t \sum_{\tau=t}^\infty \beta \delta^{\tau+1-t}u(c_{\tau+1})+ \delta^t \lambda_t(c_\tau + k_\tau - ((1-d)k_\tau + \theta_\tau k_{\tau-1}^\alpha)) +\mu_t(k_t-(1-d)k_{t-1}-\upsilon I_{ss})\right \}\intertext{with first order conditions}
+\frac{1}{c_t}= \lambda_t\\
+\lambda_t +\mu_t= E_t (\lambda_{t+1} (\alpha \delta \theta_{t+1}k_t^{\alpha-1} -\delta(1-d))+\mu_{t+1}\delta(1-d))
+ \end{gather*}
+}
 
 
-Using $\begin{bmatrix}
-\alpha\\\beta\\\delta\\\rho\\\sigma
- \end{bmatrix}=
-\begin{bmatrix}
-\vcenter{\hbox{\includegraphics{paramVals.pdf}}}
- \end{bmatrix}$,  the steady state is $\begin{bmatrix}
-c^\ast\\k^\ast\\\mathcal{N}^\ast\\\theta^\ast
- \end{bmatrix}=
-\begin{bmatrix}
-\vcenter{\hbox{\includegraphics{ssSolnVals.pdf}}}
- \end{bmatrix}$.
 
 
 
@@ -1720,8 +1718,13 @@ Computing the first order conditions will require differentiating equations
 \ref{theSeries} and \ref{theSeriesIter} with respect to $x_t$.
 
 
+\begin{itemize}
+\item reimplement quasi geometric discounting
+\end{itemize}
 Vary parameters.  Show how this error measure more comprehensive and robust
 since it uses properties of entire system to assess impact on levels.
+
+
 
 Quickly move to show relative errors.
 
@@ -1739,8 +1742,27 @@ The smolyak grid has 69 points.
 \section{Parallel Speedup}
 \label{sec:parallel-speedup}
 
+\section{Large Models}
+\label{sec:large-models}
 
 
+\section{Support Vector Machine Regression}
+\label{sec:supp-vect-mach}
+
+\section{Role of Linear Reference Model}
+\label{sec:role-line-refer}
+
+\begin{itemize}
+\item Minimum requirements
+\item error tradeoff
+\end{itemize}
+
+\section{Linear Interpolation Implementation}
+\label{sec:line-interp-impl}
+
+
+\section{Bernstein other models known solutions}
+\label{sec:bernst-other-models}
 
 
   \bibliographystyle{plainnat}

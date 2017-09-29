@@ -27,9 +27,9 @@
 
 Consider an RBC example \cite{Maliar2005}
  \begin{gather*}
-   \max\left \{  u(c_t^t) + E_t \sum_{\tau=t}^\infty \beta \delta^{\tau+1-t}u(c_{\tau+1}^t)\right \}\\
-c_\tau^t + k_\tau^{t+1}=(1-d)k_\tau^{t-1} + \theta_\tau f(k_\tau^{t-1})\\
-f(k_\tau^{t-1})= k_\tau^\alpha
+   \max\left \{  u(c_t) + E_t \sum_{\tau=t}^\infty \beta \delta^{\tau+1-t}u(c_{\tau+1})\right \}\\
+c_\tau + k_\tau=(1-d)k_\tau + \theta_\tau f(k_\tau)\\
+f(k_\tau)= k_\tau^\alpha
 \end{gather*}
 with first order conditions
 \begin{gather}
@@ -38,6 +38,17 @@ c_t + k_t=\theta_{t-1}k_{t-1}^\alpha \label{rbcSys}\\
 \mathcal{N}_t=\frac{\theta_t}{c_t}\nonumber\\
  \theta_t =\theta_{t-1}^\rho e^{\epsilon_t}\nonumber
  \end{gather}
+
+We can construct a Lagrangean
+assuming $\beta=1,f(k)=k^\alpha$
+
+
+ \begin{gather*}
+   \mathcal{L}=    \max\left \{  u(c_t) + E_t \sum_{\tau=t}^\infty \beta \delta^{\tau+1-t}u(c_{\tau+1})+ \delta^t \lambda_t(c_\tau + k_\tau - ((1-d)k_\tau + \theta_\tau k_{\tau-1}^\alpha)))\right \}\intertext{with first order conditions}
+\frac{1}{c_t}= \lambda_t\\
+\lambda_t = E_t \lambda_{t+1} (\alpha \delta \theta_{t+1}k_t^{\alpha-1} -\delta(1-d))
+ \end{gather*}
+
 
 
 Using $\begin{bmatrix}
@@ -1697,7 +1708,7 @@ c_t + k_t=\theta_{t-1}k_{t-1}^\alpha \\
 
 It will be useful to construct a Lagrangian for the problem.
 \begin{gather*}
-  \mathcal{L}(x_t,\epsilon_t,\lambda_t)=u(c_t)+\delta E_t V(k_{t+1},\epsilon_{t+1}) + \lambda_t^T  \begin{bmatrix}
+  \mathcal{L}(x_t,\epsilon_t,\lambda_t)=u(c_t)+\delta E_t V(k_{t+1},\epsilon_{t+1}) + \lambda_t  \begin{bmatrix}
 \frac{1}{c_t} - \frac{0.342 E_t(\mathcal{N}_{t+1})}{k_t^{0.64}}\\
 c_t + k_t - k_{t-1}^{0.36}\theta_t\\
 \mathcal{N}_t - \frac{theta_t}{c_t}\\
@@ -1733,6 +1744,6 @@ The smolyak grid has 69 points.
 
 
   \bibliographystyle{plainnat}
-\bibliography{../../paperProduction/bibFiles/anderson,../../paperProduction/bibFiles/files}
+<\bibliography{../../paperProduction/bibFiles/anderson,../../paperProduction/bibFiles/files}
 
 \end{document}

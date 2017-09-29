@@ -15,8 +15,6 @@ aZFlatBetterMatch::usage="for test input";
 anXEpsZsFlatBetterMatch::usage="for test input";
 
 probDimsBetterMatch::usage="for test input";
-simpRBCExactDRBetterMatch::usage="simpRBCExactDR"
-betterRBCExactCondExp::usage="betterRBCExactCondExp"
 theDistBetterMatch::usage="theDist={{{ee,NormalDistribution[0,sigVal]}}};"
 thePFDistBetterMatch::usage="theDist={{{ee,PerfectForesight]}}};"
 linModBetterMatch::usage="linear model matrices for approx"
@@ -35,7 +33,7 @@ Begin["`Private`"] (* Begin Private Context *)
 
 
 
-CRRAUDrv[cc_,eta_]:=If[eta==1,D[Log[cc],cc],D[(1/(1-eta))*(cc^(1-eta)-1),cc]]
+
 
 
 
@@ -44,12 +42,15 @@ closed form solution version  beta=1 geometric discounting
 chkcobb douglas production*)
 
 rbcEqns={
-CRRAUDrv[cc[t],1]-
-(delta*(nlPart[t+1]*((alpha *(kk[t]^(alpha-1)) )))),
+lam[t] -1/cc[t],
 cc[t] + kk[t]-((theta[t])*(kk[t-1]^alpha)),
-nlPart[t] - (nlPartRHS=(1)* (theta[t]*CRRAUDrv[cc[t],1])),
-theta[t]-E^(rho*Log[theta[t-1]] + eps[theta][t])
+nlPart[t] -(nlPartRHS=lam[t]*theta[t]),
+theta[t]-E^(rho*Log[theta[t-1]] + eps[theta][t]),
+lam[t] - alpha*kk[t]^(-1+alpha)*delta*nlPart[t+1]
 }
+
+
+
 
 discMapEqns00=(Append[rbcEqns[[{1,2,3}]],
 (rbcEqns[[4]]/.{xx_-yy_->Log[xx]-Log[yy]})]/.{Log[betterRBC`Private`theta[zz__]]->lnTheta[zz],theta[xx__]->E^lnTheta[xx]})//PowerExpand
@@ -64,7 +65,8 @@ alpha->36/100,
 beta->1,
 delta->95/100,
 rho->95/100,
-sigma->1/100
+sigma->1/100,
+dd->0
 } ;
 
 
@@ -74,51 +76,25 @@ forParamSubs=Thread[nu->forSubs]//.paramSubs;
 simpParamSubs=Join[paramSubs,forParamSubs];
 
 
-rbcCompileGuts=(rbcEqns/.{
-cc[t-1]->cctm1,kk[t-1]->kktm1,nlPart[t-1]->nltm1,theta[t-1]->thtm1,
-cc[t]->cct,kk[t]->kkt,nlPart[t]->nlt,theta[t]->tht,
-cc[t+1]->cctp1,kk[t+1]->kktp1,nlPart[t+1]->nltp1,theta[t+1]->thtp1,
-eps[theta][t]->epsVal
-}//.paramSubs)//N
 
 
 rbcEqnsBetterMatch=eqnsCompiledBetterMatch=Compile @@ {
 {
-{cctm1,_Real},{kktm1,_Real},{nltm1,_Real},{thetatm1,_Real},
-{cct,_Real},{kkt,_Real},{nlt,_Real},{thetat,_Real},
-{cctp1,_Real},{kktp1,_Real},{nltp1,_Real},{thetatp1,_Real},
+{cctm1,_Real},{kktm1,_Real},{lamtm1,_Real},{nltm1,_Real},{thetatm1,_Real},
+{cct,_Real},{kkt,_Real},{lamt,_Real},{nlt,_Real},{thetat,_Real},
+{cctp1,_Real},{kktp1,_Real},{lamtp1,_Real},{nltp1,_Real},{thetatp1,_Real},
 {epsVal,_Real}
 },
-{cct^(-1) - (0.342*nltp1)/kkt^(16/25), 
-cct + kkt - 1.*kktm1^(9/25)*thetat, 
-nlt - thetat/cct,
-thetat - 1.*2.718281828459045^epsVal*thetatm1^(19/20)},"RuntimeOptions"->{"RuntimeErrorHandler"->Function[$Failed],"CatchMachineOverflow"->True,"CatchMachineUnderflow"->True}}
-
-
-
-objBetterMatch[cctm1_,kktm1_, nltm1_, thetatm1_, VVtm1_, cct_,  kkt_, nlt_, thetat_, VVt_, cctp1_,  kktp1_, nltp1_, thetatp1_, VVtp1_, epsVal_]:=Log[cct]+ 0.95*VVtp1
-
-
-rbcBetterMatchCons[cctm1_,kktm1_, nltm1_, thetatm1_, VVtm1_, cct_, kkt_, nlt_, thetat_, VVt_, cctp1_,  kktp1_, nltp1_, thetatp1_, VVtp1_, epsVal_]:=
-Module[{},{
- cct + kkt  - 1.*kktm1^(9/25)*thetat, 
- nlt - thetat/cct,
- thetat - 1.*2.718281828459045^epsVal*thetatm1^(19/20), 
- VVt - (Log[cct]+0.95*VVtp1)}]
-
-
-
-eqnsEulerCompiledBetterMatch=Compile @@ {
 {
-{cctm1,_Real},{kktm1,_Real},{nltm1,_Real},{thetatm1,_Real},
-{cct,_Real},{kkt,_Real},{nlt,_Real},{thetat,_Real},
-{cctp1,_Real},{kktp1,_Real},{nltp1,_Real},{thetatp1,_Real},
-{epsVal,_Real}
+-cct^(-1) + lamt , 
+ cct + kkt - (kktm1^.36)*thetat, 
+nlt - .95*lamt*thetat, 
+ thetat - 1.*2.718281828459045^epsVal*thetatm1^(19/20),
+ lamt - .36*(kkt^(-1 + .36))*0.95*nltp1
 },
-{((kkt^(16/25)) - (0.342*nltp1)*cct)/cct,
-cct + kkt - 1.*kktm1^(9/25)*thetat, 
-nlt - thetat/cct,
-thetat - 1.*2.718281828459045^epsVal*thetatm1^(19/20)},"RuntimeOptions"->{"RuntimeErrorHandler"->Function[$Failed],"CatchMachineOverflow"->True,"CatchMachineUnderflow"->True}}
+"RuntimeOptions"->{"RuntimeErrorHandler"->Function[$Failed],"CatchMachineOverflow"->True,"CatchMachineUnderflow"->True}}
+
+
 
 
 Needs["CompiledFunctionTools`"]
@@ -138,8 +114,9 @@ Off[Solve::ifun]
 thSubsRE=Flatten[Solve[theta==anExpRE*thNow[theta,0],theta][[2]]];
 kSSSubRE=Flatten[Solve[nxtK[kk,theta/.thSubsRE]==kk,kk][[-1]]];
 cSSSubRE=cc->(yNow[kk/.kSSSubRE,theta/.thSubsRE]-kk/.kSSSubRE);
+lamSSSubRE=lam->(1/cc)/.cSSSubRE;
 nlPartSSSubRE=(nlPart->(nlPartRHS/.xxxx_[t]->xxxx))//.Join[thSubsRE,Append[kSSSubRE,cSSSubRE]];
-ssSolnSubsRE=Flatten[{thSubsRE,kSSSubRE,cSSSubRE,nlPartSSSubRE}];
+ssSolnSubsRE=Flatten[{thSubsRE,kSSSubRE,cSSSubRE,nlPartSSSubRE,lamSSSubRE}];
 (*Print["RE done now PF"];*)
 thSubsPF=Flatten[Solve[theta==theta^rho,theta]][[1]];
 kSSSubPF=Flatten[Solve[nxtK[kk,theta/.thSubsPF]==kk,kk]][[-1]];
@@ -151,13 +128,6 @@ ssSolnSubsPF=Flatten[{thSubsPF,kSSSubPF,cSSSubPF,nlPartSSSubPF}];
 
 
 
-simpRBCExactDRBetterMatch = 
- Function[{cc, kk, nl, th, eps}, 
-With[{tht=(th^rho)*E^eps//.simpParamSubs//N},
-With[{kkt=(tht*alpha*delta*kk^alpha)//.simpParamSubs//N},
-With[{cct=((tht*kk^alpha)*(1-alpha*delta))//.simpParamSubs//N},
-Transpose[{{cct,kkt,tht/cct,tht}}]]]]]
-
 
 
 theDistBetterMatch={{{ee,NormalDistribution[0,sigma]}}}//.paramSubs;
@@ -165,14 +135,14 @@ thePFDistBetterMatch={{{ee,PerfectForesight}}};
 
 
 
-betterRBCExactCondExp = (*AMASeriesRepresentation`Private`*)makeREIterFunc[simpRBCExactDRBetterMatch,theDistBetterMatch]
 
 
 
 
 
 
-psiz=IdentityMatrix[4]
+
+psiz=IdentityMatrix[5]
 
 (*Print["RE solutions"]*)
 hmatSymbSlowRawRE00=(((equationsToMatrix[
@@ -184,16 +154,18 @@ rbcEqns/.simpParamSubs]//FullSimplify)/.{xxxx_[t+_.]->xxxx})//.ssSolnSubsRE)/.{e
 psiepsSymbRE=-Transpose[{((D[#,eps[theta][t]]&/@ rbcEqns)/.{eps[_][_]->0,xxxx_[t+_.]->xxxx})//.ssSolnSubsRE}/.simpParamSubs]
 
 hmatSymbRE=hmatSymbRawRE//.simpSubs
-hSumRE=hmatSymbRE[[All,Range[4]]]+hmatSymbRE[[All,4+Range[4]]]+hmatSymbRE[[All,8+Range[4]]];
+hSumRE=hmatSymbRE[[All,Range[5]]]+hmatSymbRE[[All,5+Range[5]]]+hmatSymbRE[[All,10+Range[5]]];
 
-ssSolnVecRE={{cc},{kk},{nlPart},{theta}}//.ssSolnSubsRE;
+ssSolnVecRE={{cc},{kk},{lam},{nlPart},{theta}}//.ssSolnSubsRE;
 psicSymbRE=hSumRE . ssSolnVecRE;
+
 
 
 {zfSymbRE,hfSymbRE}=symbolicAR[hmatSymbRE//.simpParamSubs];
 amatSymbRE=symbolicTransitionMatrix[hfSymbRE];
 {evlsSymbRE,evcsSymbRE}=Eigensystem[Transpose[amatSymbRE]];
 qmatSymbRE=Join[zfSymbRE,evcsSymbRE[[{1}]]];
+
 
 (*Print["computing and simplifying the symbolic b phi f etc"]*)
 {bmatSymbRE,phimatSymbRE,fmatSymbRE}=symbolicComputeBPhiF[hmatSymbRE,qmatSymbRE]//Simplify;
@@ -204,11 +176,11 @@ linModBetterMatch={hmatSymbRE//N,bmatSymbRE // N, phimatSymbRE // N,
 
 
 
-    
-anXBetterMatch=Transpose[{{.2,.18,1.0,1.01}}];
+
+anXBetterMatch=Transpose[{{.2,.18,1.0,99,1.01}}];
 anEpsBetterMatch={{0.01}};
 anXEpsBetterMatch=Join[anXBetterMatch,anEpsBetterMatch]
-aZBetterMatch=Transpose[{{.1,.2,.3,.4}}]
+aZBetterMatch=Transpose[{{.1,.2,.3,.4,.5}}]
 anXEpsZsBetterMatch=Join[anXEpsBetterMatch,aZBetterMatch];
 
 anXFlatBetterMatch=anXBetterMatch//Flatten;
@@ -217,7 +189,8 @@ anXEpsFlatBetterMatch=anXEpsBetterMatch//Flatten;
 aZFlatBetterMatch=aZBetterMatch//Flatten;
 anXEpsZsFlatBetterMatch=anXEpsZsBetterMatch//Flatten;
 
-probDimsBetterMatch={4,1,4};
+probDimsBetterMatch={5,1,5};
+
 
 
 thVal=(theta//.ssSolnSubsRE//.(simpParamSubs//N))//N;
@@ -232,10 +205,10 @@ thLow = 9/10;
 thHigh = 11/10;
 
 	(*
-aGSpecBetterMatch={{1,3},2,{{6,kLow,kHigh},{10,thLow,thHigh},{6,sigLow,3*sigHigh}}};
-	 aGSpecBetterMatch={{1,3},1,{{4,kLow,kHigh},{3,thLow,thHigh},{3,sigLow,3*sigHigh}}};*)
+aGSpecBetterMatch={{1,3,4},2,{{6,kLow,kHigh},{10,thLow,thHigh},{6,sigLow,3*sigHigh}}};
+	 aGSpecBetterMatch={{1,3,4},1,{{4,kLow,kHigh},{3,thLow,thHigh},{3,sigLow,3*sigHigh}}};*)
 
-	 aGSpecBetterMatch={{1,3},1,{{4,kLow,kHigh},{3,thLow,thHigh},{3,sigLow,3*sigHigh}}};
+	 aGSpecBetterMatch={{1,3,4},1,{{4,kLow,kHigh},{3,thLow,thHigh},{3,sigLow,3*sigHigh}}};
 End[] (* End Private Context *)
 
 EndPackage[]

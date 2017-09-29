@@ -557,7 +557,7 @@ smolPolyDrvs::usage="derivatives of smolyak polynomials"
 
 @d smolyakInterpolationPrep
 @{
-Options[smolyakInterpolationPrep]={"Derivatives"->True}
+Options[smolyakInterpolationPrep]={"Derivatives"->False}
 smolyakInterpolationPrep[approxLevels_?listOfIntegersQ,smolRngs_?MatrixQ,
 @<distribSpec@>,opts:OptionsPattern[]]:=
 Module[{smolRes=sparseGridEvalPolysAtPts[approxLevels],
@@ -2185,11 +2185,11 @@ myAbortKernels[]:=AbortKernels[];
 @{
 fSum[@<linMod@>,
 	{},
-	xtGuess:{{_(*?NumberQ*)..}..}]:=
+	xtGuess:{{_?NumberQ..}..}]:=
 ConstantArray[0,{Length[psiZ],1}]
 
 fSum[@<linMod@>,
-	@<XZFuncs@>,xtGuess:{{_(*NumberQ*)..}..}]:=
+	@<XZFuncs@>,xtGuess:{{_?NumberQ..}..}]:=
 With[{numXVars=getNumX[linMod],numZVars=getNumZ[linMod]},
 With[{xzRes=Apply[multiStepZ[XZFuncs,numXVars,numZVars,numSteps], 
 Flatten[xtGuess]]},
@@ -2604,7 +2604,8 @@ funcOfXtm1Eps
 (**)
 With[{frRes=FindRoot[
 funcOfXtZt[Apply[Sequence,Join[xLagArgs,eArgs,xArgs,zArgs]]],
-Join[xArgsInit,zArgsInit](*,EvaluationMonitor:>Print["xz",{xArgs,zArgs,xLagArgs,eArgs,funcOfXtm1Eps,funcOfXtZt,funcOfXtZt[Apply[Sequence,Join[xLagArgs,eArgs,xArgs,zArgs]]]}//InputForm]*)]},Transpose[{Flatten[Join[xArgs,zArgs]]/.frRes}]]];
+Join[xArgsInit,zArgsInit](*,EvaluationMonitor:>Print["xz",{xArgs,zArgs,xLagArgs,eArgs,funcOfXtm1Eps,funcOfXtZt,funcOfXtZt[Apply[Sequence,Join[xLagArgs,eArgs,xArgs,zArgs]]]}//InputForm]*)]},
+Transpose[{Flatten[Join[xArgs,zArgs]]/.frRes}]]];
 (**)
 Off[FindRoot::srect];
 Off[FindRoot::nlnum];

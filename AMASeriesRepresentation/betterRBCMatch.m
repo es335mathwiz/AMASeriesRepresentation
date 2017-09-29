@@ -88,7 +88,7 @@ rbcEqnsBetterMatch=eqnsCompiledBetterMatch=Compile @@ {
 {
 -cct^(-1) + lamt , 
  cct + kkt - (kktm1^.36)*thetat, 
-nlt - .95*lamt*thetat, 
+nlt - lamt*thetat, 
  thetat - 1.*2.718281828459045^epsVal*thetatm1^(19/20),
  lamt - .36*(kkt^(-1 + .36))*0.95*nltp1
 },

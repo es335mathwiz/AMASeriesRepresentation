@@ -285,34 +285,39 @@ cnf @@ anXEpsFlatBetterCnstrn
 
 
 (*
+
+ap={1,1,1};
+iters=3;
+
 X0Z0=genX0Z0Funcs[linModBetter];
 theFRExt=genFRExtFunc[{4,1,4},linModBetter,{X0Z0,2},eqnsCompiledBetter];
 theFRExt@@anXEpsFlatBetter
 smolRng=#[[{2,3}]]&/@Drop[aGSpecBetter,2][[1]];
-{pt,tf,ply,iply,dply}=smolyakInterpolationPrep[1*{1,1,1},smolRng,theDistBetter];
+{pt,tf,ply,iply,dply}=smolyakInterpolationPrep[ap,smolRng,theDistBetter];
 toIg=aGSpecBetter[[1]];
-sgSpec={toIg,smolRng,pt,tf,ply,iply,1,1*{1,1,1}};
+sgSpec={toIg,smolRng,pt,tf,ply,iply,1,ap};
 theRes=parallelNestGenericIterREInterp[genFRExtFunc,linModBetter,
-{X0Z0,2},eqnsCompiledBetter,sgSpec,smolyakInterpolation,{},2];
+{X0Z0,2},eqnsCompiledBetter,sgSpec,smolyakInterpolation,{},iters];
 
-
-
-*)
 
 
 
 X0Z0Match=genX0Z0Funcs[linModBetterMatch];
-theLilFunc=genLilXkZkFunc[linModBetterMatch, {X0Z0Match,2},anXEpsBetterMatch];
-
+theLilFuncMatch=genLilXkZkFunc[linModBetterMatch, {X0Z0Match,2},anXEpsBetterMatch];
 theFRExt=genFRExtFunc[{5,1,5},linModBetterMatch,{X0Z0Match,2},eqnsCompiledBetterMatch];
 theFRExt@@anXEpsFlatBetterMatch
-
 smolRng=#[[{2,3}]]&/@Drop[aGSpecBetterMatch,2][[1]];
-{pt,tf,ply,iply,dply}=smolyakInterpolationPrep[1*{1,1,1},smolRng,theDistBetterMatch];
+{pt,tf,ply,iply,dply}=smolyakInterpolationPrep[ap,smolRng,theDistBetterMatch];
 toIg=aGSpecBetterMatch[[1]];
-sgSpec={toIg,smolRng,pt,tf,ply,iply,1,1*{1,1,1}};
+sgSpecMatch={toIg,smolRng,pt,tf,ply,iply,1,ap};
 theResMatch=parallelNestGenericIterREInterp[genFRExtFunc,linModBetterMatch,
-{X0Z0Match,2},eqnsCompiledBetterMatch,sgSpec,smolyakInterpolation,{},2];
+{X0Z0Match,2},eqnsCompiledBetterMatch,sgSpecMatch,smolyakInterpolation,{},iters];
+
+
+
+
+
+*)
 
 
 

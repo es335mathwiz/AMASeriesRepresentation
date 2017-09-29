@@ -816,6 +816,7 @@ Module[{},(*Print["parallelMakeGenericInterpFuncs:",genericInterp];*)
 parallelSetup[];
 With[{interpData=parallelSmolyakGenInterpData[aVecFunc,smolGSpec],
 numArgs=Length[smolPts[[1]]]},
+(*Print["parallelMakeGenericInterpFuncs:",interpData];*)
 With[{numFuncs=Length[interpData[[1]]],
 funcArgs=Table[Unique["f03Args"],{numArgs}],theXs=Table[xx[ii],{ii,numArgs}]},
 With[{longFuncArgs=fillInSymb[{{},smolToIgnore,funcArgs}],
@@ -1454,7 +1455,7 @@ parallelMakeInterpFunc[aVecFunc:(_Function|_CompiledFunction),@<smolGSpec@>]:=
 Module[{},
 parallelSetup[];
 With[{sinterpData=parallelSmolyakGenInterpData[aVecFunc,smolGSpec],
-numArgs=getNumVars[smolGSpec]},
+numArgs=getNumVars[smolGSpec]},Print["parallelMakeInterpfunc:",sinterpData//InputForm];
 With[{interpData=smolInterpToGrid[sinterpData,smolGSpec]},
 With[{numFuncs=Length[interpData[[1,2]]],
 funcArgs=Table[Unique["f11Args"],{numArgs}]},

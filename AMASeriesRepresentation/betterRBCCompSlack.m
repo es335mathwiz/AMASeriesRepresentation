@@ -30,7 +30,7 @@ Begin["`Private`"] (* Begin Private Context *)
 
 
 
-
+Print["Private`"]
 
 
 
@@ -45,13 +45,6 @@ chkcobb douglas production*)
 
 
 
-discMapEqns00=(Append[rbcEqns[[{1,2,3}]],
-(rbcEqns[[4]]/.{xx_-yy_->Log[xx]-Log[yy]})]/.{Log[betterRBC`Private`theta[zz__]]->lnTheta[zz],theta[xx__]->E^lnTheta[xx]})//PowerExpand
-
-zfEqns=discMapEqns00[[{2,3,4}]]//PowerExpand
-discMapEqns01=Append[zfEqns/.t->t+1,discMapEqns00[[1]]]//PowerExpand
-(*soln=Solve[Thread[discMapEqns01==0],{cc[t+1],kk[t+1],nlPart[t+1],lnTheta[t+1]}]*)
-
 (*parameters page 21 using state 1*)
 paramSubs={
 alpha->36/100,
@@ -59,62 +52,79 @@ beta->1,
 delta->95/100,
 rho->95/100,
 sigma->1/100,
-dd->1
+dd->.5,
+upsilon->0.975
 } ;
 
 
 forSubs={alpha^(1 - alpha)^(-1)*delta^(1 - alpha)^(-1)};
 simpSubs=Thread[forSubs->nu];
 forParamSubs=Thread[nu->forSubs]//.paramSubs;
-simpParamSubs=Join[paramSubs,forParamSubs];
+simpParamSubs=Join[paramSubs,forParamSubs,simpSubs];
 
 
+Print["pre rbcEqns"]
 
 rbcEqns={
 lam[t] -1/cc[t],
 cc[t] + kk[t]-((theta[t])*(kk[t-1]^alpha)),
 nlPart[t] -(nlPartRHS=lam[t]*theta[t]),
 theta[t]-E^(rho*Log[theta[t-1]] + eps[theta][t]),
-lam[t] +mu[t] - (alpha*kk[t]^(-1+alpha)*delta*nlPart[t+1]+lam[t+1]*delta*(1-dd)+mu[t+1]*delta*(1-dd)),
-mu[t]*(kk[t]-(1-dd)*kk[t-1]-upsilon*Iss)
+lam[t] +mu1[t] - (alpha*kk[t]^(-1+alpha)*delta*nlPart[t+1]+lam[t+1]*delta*(1-dd)+mu1[t+1]*delta*(1-dd)),
+II[t] -(kk[t]-(1-dd)*kk[t-1]),
+mu1[t]*(kk[t]-(1-dd)*kk[t-1]-upsilon*IIss)
 }
+
+
+
+Print["post rbcEqns"]
+
 (*
-((betterRBCCompSlack`Private`rbcEqns/.betterRBCCompSlack`Private`paramSubs)
+(((betterRBCCompSlack`Private`rbcEqns/.betterRBCCompSlack`Private`paramSubs)
 /.{
 eps[betterRBCCompSlack`Private`theta][t]->epsVal,
 betterRBCCompSlack`Private`cc[t-1]->cctm1,
+betterRBCCompSlack`Private`II[t-1]->cctm1,
 betterRBCCompSlack`Private`kk[t-1]->kktm1,
 betterRBCCompSlack`Private`lam[t-1]->lamtm1,
+betterRBCCompSlack`Private`mu1[t-1]->mu1tm1,
 betterRBCCompSlack`Private`nlPart[t-1]->nltm1,
 betterRBCCompSlack`Private`theta[t-1]->thetatm1,
 betterRBCCompSlack`Private`cc[t]->cct,
+betterRBCCompSlack`Private`II[t]->iit,
 betterRBCCompSlack`Private`kk[t]->kkt,
 betterRBCCompSlack`Private`lam[t]->lamt,
+betterRBCCompSlack`Private`mu1[t]->mu1t,
 betterRBCCompSlack`Private`nlPart[t]->nlt,
 betterRBCCompSlack`Private`theta[t]->thetat,
 betterRBCCompSlack`Private`cc[t+1]->cctp1,
+betterRBCCompSlack`Private`II[t+1]->iitp1,
 betterRBCCompSlack`Private`kk[t+1]->kktp1,
 betterRBCCompSlack`Private`lam[t+1]->lamtp1,
+betterRBCCompSlack`Private`mu1[t+1]->mu1tp1,
 betterRBCCompSlack`Private`nlPart[t+1]->nltp1,
 betterRBCCompSlack`Private`theta[t+1]->thetat
-})//InputForm
-
+})/.
+betterRBCCompSlack`Private`ssSolnSubsRE)//N//InputForm
 
 *)
+
+
 rbcEqnsBetterCompSlack=eqnsCompiledBetterCompSlack=Compile @@ {
 {
-{cctm1,_Real},{kktm1,_Real},{lamtm1,_Real},{nltm1,_Real},{thetatm1,_Real},
-{cct,_Real},{kkt,_Real},{lamt,_Real},{nlt,_Real},{thetat,_Real},
-{cctp1,_Real},{kktp1,_Real},{lamtp1,_Real},{nltp1,_Real},{thetatp1,_Real},
+{cctm1,_Real},{iitm1,_Real},{kktm1,_Real},{lamtm1,_Real},{nltm1,_Real},{mu1tm1,_Real},{thetatm1,_Real},
+{cct,_Real},{iit,_Real},{kkt,_Real},{lamt,_Real},{mu1t,_Real},{nlt,_Real},{thetat,_Real},
+{cctp1,_Real},{iitp1,_Real},{kktp1,_Real},{lamtp1,_Real},{mu1tp1,_Real},{nltp1,_Real},{thetatp1,_Real},
 {epsVal,_Real}
 },
-{-cct^(-1) + lamt, cct + kkt - kktm1^(9/25)*thetat, nlt - lamt*thetat, 
- thetat - E^epsVal*thetatm1^(19/20), 
- lamt - (171*nltp1)/(500*kkt^(16/25))},
+{-1./cct + lamt, cct + kkt - 1.*kktm1^(9/25)*thetat, 
+ nlt - 1.*lamt*thetat, thetat - 1.*2.718281828459045^epsVal*
+   thetatm1^(19/20), lamt + mu1t - (0.342*nltp1)/kkt^(16/25), 
+ iit - 1.*kkt, (-0.1826413007716504 + kkt)*mu1t},
 "RuntimeOptions"->{"RuntimeErrorHandler"->Function[$Failed],"CatchMachineOverflow"->True,"CatchMachineUnderflow"->True}}
 
 
-
+Print["further"]
 
 Needs["CompiledFunctionTools`"]
 
@@ -135,7 +145,10 @@ kSSSubRE=Flatten[Solve[nxtK[kk,theta/.thSubsRE]==kk,kk][[-1]]];
 cSSSubRE=cc->(yNow[kk/.kSSSubRE,theta/.thSubsRE]-kk/.kSSSubRE);
 lamSSSubRE=lam->(1/cc)/.cSSSubRE;
 nlPartSSSubRE=(nlPart->(nlPartRHS/.xxxx_[t]->xxxx))//.Join[thSubsRE,Append[kSSSubRE,cSSSubRE]];
-ssSolnSubsRE=Flatten[{thSubsRE,kSSSubRE,cSSSubRE,nlPartSSSubRE,lamSSSubRE}];
+IISSubRE=({IIss->(dd*kk/.kSSSubRE),II->(dd*kk/.kSSSubRE)}/.simpParamSubs);
+mu1SSSubRE=mu1->0;
+pos1SSSubRE=pos1->0;
+ssSolnSubsRE=Flatten[{thSubsRE,kSSSubRE,cSSSubRE,nlPartSSSubRE,lamSSSubRE,IISSubRE,mu1SSSubRE,pos1SSSubRE}];
 (*Print["RE done now PF"];*)
 thSubsPF=Flatten[Solve[theta==theta^rho,theta]][[1]];
 kSSSubPF=Flatten[Solve[nxtK[kk,theta/.thSubsPF]==kk,kk]][[-1]];
@@ -145,7 +158,7 @@ nlPartSSSubPF=(nlPart->(nlPartRHS/.xxxx_[t]->xxxx))//.{kSSSubPF,cSSSubPF,thSubsP
 ssSolnSubsPF=Flatten[{thSubsPF,kSSSubPF,cSSSubPF,nlPartSSSubPF}];
 
 
-
+Print["post ss"]
 
 
 
@@ -161,28 +174,39 @@ thePFDistBetterCompSlack={{{ee,PerfectForesight}}};
 
 
 
-psiz=IdentityMatrix[5]
+psiz=IdentityMatrix[7]
 
 (*Print["RE solutions"]*)
-hmatSymbSlowRawRE00=(((equationsToMatrix[
-rbcEqns]//FullSimplify)));
-hmatSymbSlowRawRE01=(((equationsToMatrix[
-rbcEqns/.simpParamSubs]//FullSimplify)))//FullSimplify;
 hmatSymbRawRE=(((equationsToMatrix[
 rbcEqns/.simpParamSubs]//FullSimplify)/.{xxxx_[t+_.]->xxxx})//.ssSolnSubsRE)/.{eps[_]->0}//FullSimplify;
+
 psiepsSymbRE=-Transpose[{((D[#,eps[theta][t]]&/@ rbcEqns)/.{eps[_][_]->0,xxxx_[t+_.]->xxxx})//.ssSolnSubsRE}/.simpParamSubs]
 
-hmatSymbRE=hmatSymbRawRE//.simpSubs
-hSumRE=hmatSymbRE[[All,Range[5]]]+hmatSymbRE[[All,5+Range[5]]]+hmatSymbRE[[All,10+Range[5]]];
+Print["pre hmat"]
 
-ssSolnVecRE={{cc},{kk},{lam},{nlPart},{theta}}//.ssSolnSubsRE;
+
+
+hmatSymbRE=hmatSymbRawRE//.simpParamSubs
+hSumRE=hmatSymbRE[[All,Range[7]]]+hmatSymbRE[[All,7+Range[7]]]+hmatSymbRE[[All,2*7+Range[7]]];
+
+Print["post hmat"]
+
+
+
+ssSolnVecRE={{cc},{II},{kk},{lam},{mu1},{nlPart},{theta}}//.ssSolnSubsRE;
 psicSymbRE=hSumRE . ssSolnVecRE;
 
 
 
 {zfSymbRE,hfSymbRE}=symbolicAR[hmatSymbRE//.simpParamSubs];
 amatSymbRE=symbolicTransitionMatrix[hfSymbRE];
+
+Print["pre evals"]
+Print["amat=",{hmatSymbRE,amatSymbRE}//N]
+
 {evlsSymbRE,evcsSymbRE}=Eigensystem[Transpose[amatSymbRE]];
+
+
 qmatSymbRE=Join[zfSymbRE,evcsSymbRE[[{1}]]];
 
 
@@ -196,10 +220,10 @@ linModBetterCompSlack={hmatSymbRE//N,bmatSymbRE // N, phimatSymbRE // N,
 
 
 
-anXBetterCompSlack=Transpose[{{.2,.18,1.0,99,1.01}}];
+anXBetterCompSlack=Transpose[{{99,99,.18,99,99,99,1.01}}];
 anEpsBetterCompSlack={{0.01}};
 anXEpsBetterCompSlack=Join[anXBetterCompSlack,anEpsBetterCompSlack]
-aZBetterCompSlack=Transpose[{{.1,.2,.3,.4,.5}}]
+aZBetterCompSlack=Transpose[{{.1,.2,.3,.4,.5,.6,.7}}]
 anXEpsZsBetterCompSlack=Join[anXEpsBetterCompSlack,aZBetterCompSlack];
 
 anXFlatBetterCompSlack=anXBetterCompSlack//Flatten;
@@ -208,7 +232,7 @@ anXEpsFlatBetterCompSlack=anXEpsBetterCompSlack//Flatten;
 aZFlatBetterCompSlack=aZBetterCompSlack//Flatten;
 anXEpsZsFlatBetterCompSlack=anXEpsZsBetterCompSlack//Flatten;
 
-probDimsBetterCompSlack={5,1,5};
+probDimsBetterCompSlack={7,1,7};
 
 
 
@@ -224,11 +248,14 @@ thLow = 9/10;
 thHigh = 11/10;
 
 	(*
-aGSpecBetterCompSlack={{1,3,4},2,{{6,kLow,kHigh},{10,thLow,thHigh},{6,sigLow,3*sigHigh}}};
-	 aGSpecBetterCompSlack={{1,3,4},1,{{4,kLow,kHigh},{3,thLow,thHigh},{3,sigLow,3*sigHigh}}};*)
+aGSpecBetterCompSlack={{1,2,4,5,6},2,{{6,kLow,kHigh},{10,thLow,thHigh},{6,sigLow,3*sigHigh}}};
+	 aGSpecBetterCompSlack={{1,2,4,5,6},1,{{4,kLow,kHigh},{3,thLow,thHigh},{3,sigLow,3*sigHigh}}};*)
 
-	 aGSpecBetterCompSlack={{1,3,4},1,{{4,kLow,kHigh},{3,thLow,thHigh},{3,sigLow,3*sigHigh}}};
+	 aGSpecBetterCompSlack={{1,2,4,5,6},1,{{4,kLow,kHigh},{3,thLow,thHigh},{3,sigLow,3*sigHigh}}};
+
+
+
 End[] (* End Private Context *)
 
 EndPackage[]
-Print["done reading betterRBC.m"]
+Print["done reading betterRBCCompSlack.m"]

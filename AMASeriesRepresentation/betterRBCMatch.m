@@ -1,6 +1,7 @@
 (* Wolfram Language Package *)
 
-BeginPackage["betterRBCMatch`", { "AMASeriesRepresentation`", "ProtectedSymbols`", "AMAModel`", "SymbolicAMA`", "NumericAMA`"}]
+BeginPackage["betterRBCMatch`", 
+{ "AMASeriesRepresentation`", "ProtectedSymbols`", "AMAModel`", "SymbolicAMA`", "NumericAMA`"}]
 (* Exported symbols added here with SymbolName::usage *)  
 anXBetterMatch::usage="for test input";
 anEpsBetterMatch::usage="for test input";
@@ -36,7 +37,6 @@ Begin["`Private`"] (* Begin Private Context *)
 
 
 
-
 (*pg 165 of  maliar maliar solving neoclassical growth model  
 closed form solution version  beta=1 geometric discounting
 chkcobb douglas production*)
@@ -48,7 +48,6 @@ nlPart[t] -(nlPartRHS=lam[t]*theta[t]),
 theta[t]-E^(rho*Log[theta[t-1]] + eps[theta][t]),
 lam[t] - alpha*kk[t]^(-1+alpha)*delta*nlPart[t+1]
 }
-
 
 
 
@@ -66,7 +65,7 @@ beta->1,
 delta->95/100,
 rho->95/100,
 sigma->1/100,
-dd->0
+dd->1
 } ;
 
 
@@ -212,4 +211,4 @@ aGSpecBetterMatch={{1,3,4},2,{{6,kLow,kHigh},{10,thLow,thHigh},{6,sigLow,3*sigHi
 End[] (* End Private Context *)
 
 EndPackage[]
-Print["done reading betterRBC.m"]
+Print["done reading betterRBCMatch.m"]

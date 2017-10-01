@@ -317,7 +317,7 @@ theResMatch=parallelNestGenericIterREInterp[genFRExtFunc,linModBetterMatch,
 
 X0Z0CompSlack=genX0Z0Funcs[linModBetterCompSlack];
 theLilFuncCompSlack=genLilXkZkFunc[linModBetterCompSlack, {X0Z0CompSlack,2},anXEpsBetterCompSlack];
-theFRExt=genFRExtFunc[{5,1,5},linModBetterCompSlack,{X0Z0CompSlack,2},eqnsCompiledBetterCompSlack];
+theFRExt=genFRExtFunc[{7,1,7},linModBetterCompSlack,{X0Z0CompSlack,2},eqnsCompiledBetterCompSlack];
 theFRExt@@anXEpsFlatBetterCompSlack
 smolRng=#[[{2,3}]]&/@Drop[aGSpecBetterCompSlack,2][[1]];
 {pt,tf,ply,iply,dply}=smolyakInterpolationPrep[ap,smolRng,theDistBetterCompSlack];

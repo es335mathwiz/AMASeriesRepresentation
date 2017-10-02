@@ -89,7 +89,7 @@ generates the data:  application of function at the Smolyak points.
 
  
 smolyakGenInterpData[
-aVecFunc:(_Function|_CompiledFunction),@<smolGSpec@>]:=
+aVecFunc:(_Function|_CompiledFunction|_Symbol),@<smolGSpec@>]:=
 Module[{},
 With[{filledPts=Map[
 Function[xx,fillIn[{{},smolToIgnore,xx}]],N[smolPts]]},
@@ -687,7 +687,7 @@ Get["AMASeriesRepresentation`"]]
 
 
  
-parallelSmolyakGenInterpData[aVecFunc:(_Function|_CompiledFunction),
+parallelSmolyakGenInterpData[aVecFunc:(_Function|_CompiledFunction|_Symbol),
 @<gSpec@>,@<smolGSpec@>]:=
 Module[{},parallelSetup[];
 DistributeDefinitions[smolyakPts];
@@ -727,7 +727,7 @@ Map["parallelSmolyakGenInterpData"->#&,
 (*begin code for makeSmolyakInterpFuncs*)
 
 
-makeSmolyakInterpFuncs[aVecFunc:(_Function|_CompiledFunction),@<smolGSpec@>]:=
+makeSmolyakInterpFuncs[aVecFunc:(_Function|_CompiledFunction|_Symbol),@<smolGSpec@>]:=
 With[{interpData=smolyakGenInterpData[aVecFunc,smolGSpec],
 numArgs=Length[smolPts[[1]]]},
 With[{numFuncs=Length[interpData[[1]]],
@@ -779,7 +779,7 @@ makeGenericInterpFuncs::usage=
 (*begin code for makeGenericInterpFuncs*)
 
 
-makeGenericInterpFuncs[aVecFunc:(_Function|_CompiledFunction),@<smolGSpec@>,
+makeGenericInterpFuncs[aVecFunc:(_Function|_CompiledFunction|_Symbol),@<smolGSpec@>,
 genericInterp:(smolyakInterpolation|svmRegressionLinear|svmRegressionPoly|svmRegressionRBF|svmRegressionSigmoid),svmArgs:{_?NumberQ...}]:=
 Module[{},
 With[{interpData=smolyakGenInterpData[aVecFunc,smolGSpec],
@@ -1174,7 +1174,7 @@ needed for constructing an interpolating function.
 (*begin code for genInterpData*)
 
  
-genInterpData[aVecFunc:(_Function|_CompiledFunction),@<gSpec@>]:=
+genInterpData[aVecFunc:(_Function|_CompiledFunction|_Symbol),@<gSpec@>]:=
 With[{thePts=gridPts[gSpec]},
 With[{filledPts=Map[
 Function[xx,fillIn[{{},toIgnore,xx}]],thePts]},
@@ -1246,7 +1246,7 @@ Out[102]//InputForm=
 (*begin code for parallelGenInterpData*)
 
  
-parallelGenInterpData[aVecFunc:(_Function|_CompiledFunction),@<gSpec@>]:=
+parallelGenInterpData[aVecFunc:(_Function|_CompiledFunction|_Symbol),@<gSpec@>]:=
 With[{thePts=gridPts[gSpec]},
 parallelSetup[];
 With[{filledPts=ParallelMap[
@@ -1346,7 +1346,7 @@ the Takes a vector function and a grid point specification
 @{
 (*begin code for makeInterpFunc*)
 
-makeInterpFunc[aVecFunc:(_Function|_CompiledFunction),@<gSpec@>]:=
+makeInterpFunc[aVecFunc:(_Function|_CompiledFunction|_Symbol),@<gSpec@>]:=
 With[{interpData=genInterpData[aVecFunc,gSpec],numArgs=getNumVars[gSpec]},
 With[{numFuncs=Length[interpData[[1,2]]],
 funcArgs=Table[Unique["f04Args"],{numArgs}]},
@@ -1369,7 +1369,7 @@ Transpose[{smolPts,Map[Transpose[{#}]&,smolInterp]}]
 
 
 
-makeInterpFunc[aVecFunc:(_Function|_CompiledFunction),@<smolGSpec@>]:=
+makeInterpFunc[aVecFunc:(_Function|_CompiledFunction|_Symbol),@<smolGSpec@>]:=
 With[{sinterpData=smolyakGenInterpData[aVecFunc,smolGSpec],
 numArgs=getNumVars[smolGSpec]},
 With[{interpData=smolInterpToGrid[sinterpData,smolGSpec]},
@@ -1432,7 +1432,7 @@ Out[107]= {{0.09}, {0.0514286}, {6.84799 10   }, {0.01}}
 @{
 (*begin code for parallelMakeInterpFunc*)
 
-parallelMakeInterpFunc[aVecFunc:(_Function|_CompiledFunction),@<gSpec@>]:=
+parallelMakeInterpFunc[aVecFunc:(_Function|_CompiledFunction|_Symbol),@<gSpec@>]:=
 Module[{},
 parallelSetup[];
 With[{interpData=parallelGenInterpData[aVecFunc,gSpec],numArgs=getNumVars[gSpec]},(*Print["notgeneric:interpData",{aVecFunc,interpData}//InputForm];*)
@@ -1451,7 +1451,7 @@ Map[Function[xx,{xx[[1]], xx[[2, funcIdx, 1]]}] ,
 ]]]]]
 
 
-parallelMakeInterpFunc[aVecFunc:(_Function|_CompiledFunction),@<smolGSpec@>]:=
+parallelMakeInterpFunc[aVecFunc:(_Function|_CompiledFunction|_Symbol),@<smolGSpec@>]:=
 Module[{},
 parallelSetup[];
 With[{sinterpData=parallelSmolyakGenInterpData[aVecFunc,smolGSpec],
@@ -2522,7 +2522,7 @@ Join[AMASeriesRepCallGraph,Map["checkMod"->#&,{"genLilXkZkFunc","genX0Z0Funcs","
 (*begin code for genFRFunc*)
  
 genFRFunc[{numX_Integer,numEps_Integer,numZ_Integer},
-xkFunc:(_Function|_CompiledFunction),@<eqnsFunc@>,opts:OptionsPattern[]]:=
+xkFunc:(_Function|_CompiledFunction|_Symbol),@<eqnsFunc@>,opts:OptionsPattern[]]:=
 Module[{},
 With[{funcArgs=Flatten[genSlots[numX+numEps]],
 zArgs=Table[Unique["theFRZArgs"],{numZ}]},
@@ -2558,6 +2558,8 @@ Join[AMASeriesRepCallGraph,Map["genFRFunc"->#&,{"genSlots","cmpXZVals"}]];
 @d genFRExtFuncUsage
 @{genFRExtFunc::usage=
 "place holder for genFRExtFunc"
+makePatternArgs::usage="makePatternArgs"
+
 @}
 
 @d genFRExtFunc
@@ -2632,7 +2634,7 @@ delayEvalEqnsFunc[numX_Integer,eqnsFunc_,xArgs_List,theApp_?MatrixQ]:=
 Join[Apply[eqnsFunc,Flatten[theApp]],Flatten[xArgs-(Part[theApp,Range[numX]])]];
 
 
-delayEvalXkRes[xkFunc:(_Function|_CompiledFunction),funcArgs:{_?NumberQ..},
+delayEvalXkRes[xkFunc:(_Function|_CompiledFunction|_Symbol),funcArgs:{_?NumberQ..},
 zArgs:{_?NumberQ..},numX_Integer]:=
 Part[Drop[Apply[xkFunc,Join[funcArgs,zArgs]],numX],Range[numX]]
 
@@ -2838,8 +2840,8 @@ myNewNExpectation[fff_[fargs___],distStuff_]:=Module[{},Print["jhere",{(Apply[ff
 @d iterateDRREIntegrate
 @{
 (*begin code for iterateDRREIntegrate*)
-iterateDRREIntegrate[drFunc:(_Function|_CompiledFunction),
-drExpFunc:(_Function|_CompiledFunction),initVec_?MatrixQ,numEps_Integer,numPers_Integer]:=
+iterateDRREIntegrate[drFunc:(_Function|_CompiledFunction|_Symbol),
+drExpFunc:(_Function|_CompiledFunction|_Symbol),initVec_?MatrixQ,numEps_Integer,numPers_Integer]:=
 With[{firVal=Apply[drFunc,Flatten[initVec]]},
 	With[{numX=Length[initVec]-numEps},
 With[{iterated=
@@ -2871,7 +2873,7 @@ Join[AMASeriesRepCallGraph,Map["iterateDRREIntegrate"->#&,{}]];
 @{
 (*begin code for makeREIterFunc*)
 
-makeREIterFunc[drFunc:(_Function|_CompiledFunction),@<distribSpec@>]:=
+makeREIterFunc[drFunc:(_Function|_CompiledFunction|_Symbol),@<distribSpec@>]:=
 With[{numEps=getNumEpsVars[distribSpec]},
 With[{numX=Length[drFunc[[1]]]-numEps,numZ=0},
 	genXZFuncRE[{numX,numEps,numZ},drFunc,distribSpec]]]
@@ -2897,7 +2899,7 @@ Join[AMASeriesRepCallGraph,Map["makeREIterFunc"->#&,{"getNumEpsVars","genXZFuncR
 @{
 (*begin code for genNSFunc*)
 genNSFunc[{numX_Integer,numEps_Integer,numZ_Integer},
-xkFunc:(_Function|_CompiledFunction),@<eqnsFunc@>,opts:OptionsPattern[]]:=
+xkFunc:(_Function|_CompiledFunction|_Symbol),@<eqnsFunc@>,opts:OptionsPattern[]]:=
 With[{funcArgs=Table[Unique["theFRFuncArgs"],{numX+numEps}],
 zArgs=Table[Unique["theFRZArgs"],{numZ}]},
 funcName[funcArgsNot:{_(*?NumberQ*)..}]:=

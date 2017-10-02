@@ -190,6 +190,8 @@ linModBetter={hmatSymbRE//N,bmatSymbRE // N, phimatSymbRE // N,
 
 
 
+
+
     
 anXBetter=Transpose[{{.2,.18,1.0,1.01}}];
 anEpsBetter={{0.01}};

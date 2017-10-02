@@ -7,7 +7,7 @@ Get["betterRBC.m"]
 Get["betterRBCMatch.m"]
 Get["betterRBCCompSlack`"]
 (*Get["ImpulseResponseErgodic`"]*)
-Get["Perturbation`"]
+(*Get["Perturbation`"]*)
 phiMat=getPhi[linModBetter]
 fMat=getF[linModBetter]
 tErrMat=truncErrorMat[fMat,phiMat,0]
@@ -57,6 +57,7 @@ th=betterRBC`Private`thHigh
 sl=betterRBC`Private`sigLow
 sh=betterRBC`Private`sigHigh
 *)
+
 {kl,kh}={Min[theKs],Max[theKs]}
 {tl,th}={Min[theThetas],Max[theThetas]}
 sl=betterRBC`Private`sigLow
@@ -313,18 +314,16 @@ theResMatch=parallelNestGenericIterREInterp[genFRExtFunc,linModBetterMatch,
 {X0Z0Match,2},eqnsCompiledBetterMatch,sgSpecMatch,smolyakInterpolation,{},iters];
 
 
-
-
 X0Z0CompSlack=genX0Z0Funcs[linModBetterCompSlack];
 theLilFuncCompSlack=genLilXkZkFunc[linModBetterCompSlack, {X0Z0CompSlack,2},anXEpsBetterCompSlack];
-theFRExt=genFRExtFunc[{7,1,7},linModBetterCompSlack,{X0Z0CompSlack,2},eqnsCompiledBetterCompSlack];
+theFRExt=genFRExtFunc[{7,1,7},linModBetterCompSlack,{X0Z0CompSlack,2},rbcEqnsBetterCompSlack];
 theFRExt@@anXEpsFlatBetterCompSlack
 smolRng=#[[{2,3}]]&/@Drop[aGSpecBetterCompSlack,2][[1]];
 {pt,tf,ply,iply,dply}=smolyakInterpolationPrep[ap,smolRng,theDistBetterCompSlack];
 toIg=aGSpecBetterCompSlack[[1]];
 sgSpecCompSlack={toIg,smolRng,pt,tf,ply,iply,1,ap};
 theResCompSlack=parallelNestGenericIterREInterp[genFRExtFunc,linModBetterCompSlack,
-{X0Z0CompSlack,2},eqnsCompiledBetterCompSlack,sgSpecCompSlack,smolyakInterpolation,{},iters];
+{X0Z0CompSlack,2},rbcEqnsBetterCompSlack,sgSpecCompSlack,smolyakInterpolation,{},iters];
 
 
 

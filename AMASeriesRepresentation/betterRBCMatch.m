@@ -171,7 +171,7 @@ qmatSymbRE=Join[zfSymbRE,evcsSymbRE[[{1}]]];
 
 linModBetterMatch={hmatSymbRE//N,bmatSymbRE // N, phimatSymbRE // N, 
     fmatSymbRE // N, psiepsSymbRE // N, 
-    psicSymbRE // N, psiz // N,{{0}}};
+    psicSymbRE // N, psiz // N};
 
 
 

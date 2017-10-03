@@ -86,6 +86,8 @@ lam[t] +mu1[t] - (alpha*kk[t]^(-1+alpha)*delta*nlPart[t+1]+lam[t+1]*delta*(1-dd)
 II[t] -(kk[t]-(1-dd)*kk[t-1]),
 mu1[t]*(kk[t]-(1-dd)*kk[t-1]-upsilon*IIss)
 }
+rbcBackLookinEqns={E^(rho*Log[theta[t-1]] + eps[theta][t])}
+
 
 argsSubs={
 cc[t-1]->cctm1,
@@ -242,7 +244,7 @@ qmatSymbRE=Join[zfSymbRE,evcsSymbRE[[{1}]]];
 
 linModBetterCompSlack={hmatSymbRE//N,bmatSymbRE // N, phimatSymbRE // N, 
     fmatSymbRE // N, psiepsSymbRE // N, 
-    psicSymbRE // N, psiz // N,{{0}}};
+    psicSymbRE // N, psiz // N};
 
 (*
 

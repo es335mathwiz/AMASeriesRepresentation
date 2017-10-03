@@ -2052,7 +2052,7 @@ PerfectForesight::usage="degenerate distribution implementing perfect foresight"
 
 @d linMod
 @{linMod:{theHMat_?MatrixQ,BB_?MatrixQ,phi_?MatrixQ,FF_?MatrixQ, 
-psiEps_?MatrixQ,psiC_?MatrixQ,psiZ_?MatrixQ,psiZPreComp_?MatrixQ} @|
+psiEps_?MatrixQ,psiC_?MatrixQ,psiZ_?MatrixQ} @|
 linMod
 BB
 phi
@@ -2061,7 +2061,6 @@ psiZ
 psiEps
 theHMat
 psiC
-psiZPreComp 
 @}
 
 @d XZFuncs
@@ -2519,13 +2518,11 @@ iterDrvs[gFunc_,gFuncDrvs_]:=
 
 checkLinMod[@<linMod@>,
 anX_?MatrixQ,anEps_?MatrixQ]:=
-With[{X0Z0=genX0Z0Funcs[linMod],numZ=genNumZ[linMod]},
+With[{X0Z0=genX0Z0Funcs[linMod],numZ=getNumZ[linMod]},
 With[{lilxz=genLilXkZkFunc[linMod, {X0Z0,2}, Join[anX,anEps]]},
 	{Eigenvalues[BB]//Abs,Eigenvalues[FF]//Abs,Apply[X0Z0,Flatten[anX]],Apply[lilxz,Flatten[Join[anX,anEps,Table[{0},{numZ}]]]]}]]
 
-genNumZ[linMod:{theHMat_?MatrixQ,BB_?MatrixQ,phi_?MatrixQ,FF_?MatrixQ, 
-            psiEps_?MatrixQ,psiC_?MatrixQ,psiZ_?MatrixQ,psiZPreComp_?MatrixQ} ,
-anX_?MatrixQ,anEps_?MatrixQ]:=Length[psiZ[[1]]]
+
 
 
 

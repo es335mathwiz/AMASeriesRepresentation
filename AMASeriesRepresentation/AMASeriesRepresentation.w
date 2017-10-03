@@ -103,7 +103,7 @@ interpData]]]]
 parallelSmolyakGenInterpData[
 aVecFunc:(_Function|_CompiledFunction|_Symbol),@<smolGSpec@>]:=
 Module[{},(*Print["parallelSmolyakGenInterpData:"];*)
-(*DistributeDefinitions[aVecFunc];*)
+DistributeDefinitions[aVecFunc];
 With[{filledPts=ParallelMap[
 Check[Function[xx,fillIn[{{},smolToIgnore,xx}]],Print["aborting"];AbortKernels[];Throw["parallelSmolyakGenInterpData"]],N[smolPts]]},
 With[{theVals=ParallelMap[Function[xx,(Apply[aVecFunc,xx])],filledPts]},
@@ -921,6 +921,18 @@ genFPFunc[theSolver,linMod,XZFuncs,eqnsFunc],smolGSpec,
 genericInterp,svmArgs]},
 theFuncs]]
 
+doGenericIterREInterp[genFRExtFunc,
+	@<linMod@>,
+	@<XZFuncs@>,
+@<eqnsFunc@>,@<smolGSpec@>,
+genericInterp:(smolyakInterpolation|svmRegressionLinear|svmRegressionPoly|svmRegressionRBF|svmRegressionSigmoid),svmArgs:{_?NumberQ...}]:=
+With[{numX=Length[BB],numZ=Length[psiZ[[1]]]},
+tn=AbsoluteTime[];
+With[{theFuncs=
+makeGenericInterpFuncs[genFRExtFunc[{numX,numEps,numZ},linMod,XZFuncs,eqnsFunc],smolGSpec,
+genericInterp,svmArgs]},
+theFuncs]]
+
 parallelDoGenericIterREInterp[@<theSolver@>,
 	@<linMod@>,
 	@<XZFuncs@>,
@@ -1059,6 +1071,14 @@ nestGenericIterREInterp[@<theSolver@>,@<linMod@>,
 genericInterp:(smolyakInterpolation|svmRegressionLinear|svmRegressionPoly|svmRegressionRBF|svmRegressionSigmoid),svmArgs:{_?NumberQ...},
 numIters_Integer]:=
 NestList[Function[xx,doGenericIterREInterp[theSolver,linMod,
+{xx[[2]],numSteps},eqnsFunc,smolGSpec,genericInterp,svmArgs]],{99,XZFuncs[[1]]},numIters]
+
+
+nestGenericIterREInterp[genFRExtFunc,@<linMod@>,
+@<XZFuncs@>,@<eqnsFunc@>,@<smolGSpec@>,
+genericInterp:(smolyakInterpolation|svmRegressionLinear|svmRegressionPoly|svmRegressionRBF|svmRegressionSigmoid),svmArgs:{_?NumberQ...},
+numIters_Integer]:=
+NestList[Function[xx,doGenericIterREInterp[genFRExtFunc,linMod,
 {xx[[2]],numSteps},eqnsFunc,smolGSpec,genericInterp,svmArgs]],{99,XZFuncs[[1]]},numIters]
 
 
@@ -1570,6 +1590,38 @@ With[{XZRE=parallelGenXZREInterpFunc[{numX,numEps,numZ},theFuncs,smolGSpec,distr
 Print["parallelgenXZREInterpTime=",(AbsoluteTime[])-tn2];
 {theFuncs,XZRE}]]]
 
+parallelDoIterREInterp[genFRExtFunc,
+	@<linMod@>,
+	@<XZFuncs@>,
+@<eqnsFunc@>,@<gSpec@>,@<distribSpec@>]:=
+With[{numX=getNumX[linMod],numEps=getNumEps[linMod],numZ=getNumZ[linMod]},
+tn=AbsoluteTime[];
+parallelSetup[];
+DistributeDefinitions[XZFuncs[[1]]];
+DistributeDefinitions[eqnsFunc];
+DistributeDefinitions[linMod];
+With[{theFuncs=parallelMakeInterpFunc[genFRExtFunc[{numX,numEps,numZ},linMod,XZFuncs,eqnsFunc],gSpec]},
+Print["parallelMakeInterpTime=",(tn2=AbsoluteTime[])-tn];
+With[{XZRE=parallelGenXZREInterpFunc[{numX,numEps,numZ},theFuncs,gSpec,distribSpec]},
+Print["parallelgenXZREInterpTime=",(AbsoluteTime[])-tn2];
+{theFuncs,XZRE}]]]
+
+parallelDoIterREInterp[genFRExtFunc,
+	@<linMod@>,
+	@<XZFuncs@>,
+@<eqnsFunc@>,@<smolGSpec@>]:=
+With[{numX=getNumX[linMod],lclnumEps=getNumEps[linMod],numZ=getNumZ[linMod]},
+tn=AbsoluteTime[];
+parallelSetup[];
+DistributeDefinitions[XZFuncs[[1]]];
+DistributeDefinitions[eqnsFunc];
+DistributeDefinitions[linMod];
+With[{theFuncs=parallelMakeGenericInterpFuncs[genFRExtFunc[{numX,numEps,numZ},linMod,XZFuncs,eqnsFunc],smolGSpec,smolyakInterpolation,{}]},
+Print["parallelMakeInterpTime=",(tn2=AbsoluteTime[])-tn];
+With[{XZRE=parallelGenXZREInterpFunc[{numX,numEps,numZ},theFuncs,smolGSpec,distribSpec]},
+Print["parallelgenXZREInterpTime=",(AbsoluteTime[])-tn2];
+theFuncs]]]
+
 
 
 AMASeriesRepCallGraph=
@@ -1641,10 +1693,26 @@ NestList[Function[xx,parallelDoIterREInterp[theSolver,linMod,
 parallelNestIterREInterp[@<theSolver@>,@<linMod@>,
 @<XZFuncs@>,@<eqnsFunc@>,
 @<smolGSpec@>,
-@<distribSpec@>,numIters_Integer]:=
+numIters_Integer]:=
 Module[{},parallelSetup[];
 NestList[Function[xx,parallelDoIterREInterp[theSolver,linMod,
-{xx[[2]],numSteps},eqnsFunc,smolGSpec,distribSpec]],{ig,XZFuncs[[1]]},numIters]]
+{xx[[2]],numSteps},eqnsFunc,smolGSpec]],{ig,XZFuncs[[1]]},numIters]]
+
+parallelNestIterREInterp[genFRExtFunc,@<linMod@>,
+@<XZFuncs@>,@<eqnsFunc@>,
+@<gSpec@>,
+@<distribSpec@>,numIters_Integer]:=
+Module[{},parallelSetup[];
+NestList[Function[xx,parallelDoIterREInterp[genFRExtFunc,linMod,
+{xx[[2]],numSteps},eqnsFunc,gSpec,distribSpec]],{ig,XZFuncs[[1]]},numIters]]
+
+parallelNestIterREInterp[genFRExtFunc,@<linMod@>,
+@<XZFuncs@>,@<eqnsFunc@>,
+@<smolGSpec@>,
+numIters_Integer]:=
+Module[{},parallelSetup[];
+NestList[Function[xx,parallelDoIterREInterp[genFRExtFunc,linMod,
+{xx[[2]],numSteps},eqnsFunc,smolGSpec]],{ig,XZFuncs[[1]]},numIters]]
 
 AMASeriesRepCallGraph=
 Join[AMASeriesRepCallGraph,Map["parallelNestIterREInterp"->#&,{"parallelDoIterREInterp"}]];

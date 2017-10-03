@@ -118,7 +118,7 @@ eps[theta][t]->epsVal
 }
 
 thePatterns=makePatternArgs[Last/@argsSubs]
-
+lagPatterns=makeBlankPatternArgs[Last/@(argsSubs[[Range[7]]])]
 
 genCompSlackEqns[alpha_?NumberQ,beta_?NumberQ,delta_?NumberQ,rho_?NumberQ,sigma_?NumberQ,dd_?NumberQ,upsilon_?NumberQ]:=
 Module[{},
@@ -135,7 +135,7 @@ eqnsName[Apply[Sequence,thePatterns]],theGuts];DistributeDefinitions[eqnsName];
 SetDelayed[
 eqnsBackLookingName[Apply[Sequence,thePatterns]],theBLGuts];DistributeDefinitions[eqnsName];
 SetDelayed[
-eqnsBackLookingExpName[Apply[Sequence,thePatterns]],theBLExpGuts];DistributeDefinitions[eqnsName];
+eqnsBackLookingExpName[Apply[Sequence,lagPatterns]],theBLExpGuts];DistributeDefinitions[eqnsName];
 {eqnsName,eqnsBackLookingName,eqnsBackLookingExpName}]]
 
 
@@ -254,15 +254,16 @@ qmatSymbRE=Join[zfSymbRE,evcsSymbRE[[{1}]]];
 (*Print["computing and simplifying the symbolic b phi f etc"]*)
 {bmatSymbRE,phimatSymbRE,fmatSymbRE}=symbolicComputeBPhiF[hmatSymbRE,qmatSymbRE]//Simplify;
 
+{rbcEqnsBetterCompSlack,rbcEqnsBetterBackLookingCompSlack,rbcEqnsBetterBackLookingExpCompSlack}=genCompSlackEqns @@ {alpha,beta,delta,rho,sigma,dd,upsilon}/.simpParamSubs
+
 linModBetterCompSlack={hmatSymbRE//N,bmatSymbRE // N, phimatSymbRE // N, 
     fmatSymbRE // N, psiepsSymbRE // N, 
-    psicSymbRE // N, psiz // N,{}};
+    psicSymbRE // N, psiz // N,{{7,rbcEqnsBetterBackLookingExpCompSlack}}};
 
 (*
 
 *)
 
-{rbcEqnsBetterCompSlack,rbcEqnsBetterBackLookingCompSlack,rbcEqnsBetterBackLookingExpCompSlack}=genCompSlackEqns @@ {alpha,beta,delta,rho,sigma,dd,upsilon}/.simpParamSubs
 
 
 

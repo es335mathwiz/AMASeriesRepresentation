@@ -2362,12 +2362,13 @@ With[{xtp1Vals=BB.xtVals+Inverse[IdentityMatrix[Length[xtVals]]-FF] . phi . psiC
 genX0Z0Funcs[@<linMod@>]:=
 With[{numXVars=getNumX[linMod],numZVars=getNumZ[linMod]},
 With[{xtm1Vars=genSlots[numXVars]},
-With[{fromLinMod={Join[BB.xtm1Vars+
-Inverse[IdentityMatrix[Length[xtm1Vars]]-FF] . phi . psiC,ConstantArray[0,{numZVars,1}]]}},
-Apply[Function,replaceLinPart[fromLinMod,backLookingExp]]]]]
+With[{fromLinMod=Join[BB.xtm1Vars+
+Inverse[IdentityMatrix[Length[xtm1Vars]]-FF] . phi . psiC,ConstantArray[0,{numZVars,1}]]},
+Apply[Function,{replaceLinPart[fromLinMod,xtm1Vars,backLookingExp]}]]]]
 
-replaceLinPart[flm_List,ble:{{_Integer,_}...}]:=
-Fold[ReplacePart[#1,#2[[1]]->#2[[2]]]&,flm,ble]
+replaceLinPart[flm_List,xtm1Vars_List,ble:{{_Integer,_}...}]:=
+With[{theRes=Map[Function[uu,{uu[[1]],Apply[uu[[2]],Flatten[xtm1Vars]]}],ble]},
+Fold[ReplacePart[#1,#2[[1]]->#2[[2]]]&,flm,theRes]]
 
 
 AMASeriesRepCallGraph=
@@ -2628,6 +2629,7 @@ Join[AMASeriesRepCallGraph,Map["genFRFunc"->#&,{"genSlots","cmpXZVals"}]];
 @{genFRExtFunc::usage=
 "place holder for genFRExtFunc"
 makePatternArgs::usage="makePatternArgs"
+makeBlankPatternArgs::usage="makePatternArgs"
 
 @}
 

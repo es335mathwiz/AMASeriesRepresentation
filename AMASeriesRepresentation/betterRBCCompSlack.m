@@ -118,6 +118,7 @@ eps[theta][t]->epsVal
 }
 
 thePatterns=makePatternArgs[Last/@argsSubs]
+lagEpsPatterns=makeBlankPatternArgs[Last/@(Append[argsSubs[[Range[7]]],argsSubs[[-1]]])]
 lagPatterns=makeBlankPatternArgs[Last/@(argsSubs[[Range[7]]])]
 
 genCompSlackEqns[alpha_?NumberQ,beta_?NumberQ,delta_?NumberQ,rho_?NumberQ,sigma_?NumberQ,dd_?NumberQ,upsilon_?NumberQ]:=
@@ -133,7 +134,7 @@ theBLExpGuts=Flatten[
 SetDelayed[
 eqnsName[Apply[Sequence,thePatterns]],theGuts];DistributeDefinitions[eqnsName];
 SetDelayed[
-eqnsBackLookingName[Apply[Sequence,thePatterns]],theBLGuts];DistributeDefinitions[eqnsName];
+eqnsBackLookingName[Apply[Sequence,lagEpsPatterns]],theBLGuts];DistributeDefinitions[eqnsName];
 SetDelayed[
 eqnsBackLookingExpName[Apply[Sequence,lagPatterns]],theBLExpGuts];DistributeDefinitions[eqnsName];
 {eqnsName,eqnsBackLookingName,eqnsBackLookingExpName}]]
@@ -258,7 +259,7 @@ qmatSymbRE=Join[zfSymbRE,evcsSymbRE[[{1}]]];
 
 linModBetterCompSlack={hmatSymbRE//N,bmatSymbRE // N, phimatSymbRE // N, 
     fmatSymbRE // N, psiepsSymbRE // N, 
-    psicSymbRE // N, psiz // N,{{7,rbcEqnsBetterBackLookingExpCompSlack}}};
+    psicSymbRE // N, psiz // N,{{7,rbcEqnsBetterBackLookingCompSlack,rbcEqnsBetterBackLookingExpCompSlack}}};
 
 (*
 

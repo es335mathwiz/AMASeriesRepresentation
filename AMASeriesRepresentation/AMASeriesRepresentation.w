@@ -810,7 +810,7 @@ thePair
 	]
 ]]]]]]
 
-parallelMakeGenericInterpFuncs[aVecFunc:(_Function|_CompiledFunction|_Symbol),@<smolGSpec@>,
+parallelMakeGenericInterpFuncs[aVecFunc:(_Function|_CompiledFunction|_Symbol),backLookingInfo:{{_Integer,_,_}...},@<smolGSpec@>,
 genericInterp:(smolyakInterpolation|svmRegressionLinear|svmRegressionPoly|svmRegressionRBF|svmRegressionSigmoid),svmArgs:{_?NumberQ...}]:=
 Module[{},(*Print["parallelMakeGenericInterpFuncs:",genericInterp];*)
 parallelSetup[];
@@ -831,6 +831,7 @@ With[
 Map[First,interpFuncList]]}],
 appliedExp=Transpose[{ParallelMap[notApply[#,funcArgs]/.funcSubs&,
 Map[Last,interpFuncList]]}]},
+Print["parallelMakeGenericInterpFuncs:",{applied,appliedExp,backLooking,backLookingExp,backLookingInfo}];
 With[{thePair=
 {
 ReplacePart[
@@ -839,10 +840,22 @@ ReplacePart[
 ReplacePart[
 	Function[xxxxxxx, appliedExp],
 		{1->Drop[longFuncArgs,-numEps]}]/.notApply->Apply
-}},
-thePair
+}},Print["thePair",
+{thePair,
+replaceEqnOrExp[thePair[[1]],longFuncArgs,2,backLookingInfo],
+replaceEqnOrExp[thePair[[2]],Drop[longFuncArgs,-numEps],3,backLookingInfo]
+}//InputForm];
+{replaceEqnOrExp[thePair[[1]],longFuncArgs,2,backLookingInfo],
+replaceEqnOrExp[thePair[[2]],Drop[longFuncArgs,-numEps],3,backLookingInfo]}
 	]
 ]]]]]]
+
+replaceEqnOrExp[vecFunc_Function,theVars_List,indx_Integer,
+backLookingInfo:{{_Integer,_,_}...}]:=
+With[{theRes=Map[Function[uu,{uu[[1]],Apply[uu[[indx]],
+Flatten[theVars]]}],backLookingInfo]},Print["theRes:,"theRes];
+Fold[ReplacePart[#1[[2]],#2[[1]]->#2[[2]]]&,vecFunc,theRes]]
+
 
 makeSubs[thisFunc_Function,someArgs_List]:=
 MapThread[#1->#2&,{thisFunc[[1]],someArgs}]
@@ -943,7 +956,7 @@ tn=AbsoluteTime[];
 parallelSetup[];
 With[{theFuncs=
 parallelMakeGenericInterpFuncs[
-genFPFunc[theSolver,linMod,XZFuncs,eqnsFunc],smolGSpec,
+genFPFunc[theSolver,linMod,XZFuncs,eqnsFunc],backLookingInfo,smolGSpec,
 genericInterp,svmArgs]},
 theFuncs]]
 
@@ -957,7 +970,7 @@ tn=AbsoluteTime[];
 parallelSetup[];
 With[{theFuncs=
 parallelMakeGenericInterpFuncs[
-genFRExtFunc[{numX,numEps,numZ},linMod,XZFuncs,eqnsFunc],smolGSpec,
+genFRExtFunc[{numX,numEps,numZ},linMod,XZFuncs,eqnsFunc],backLookingInfo,smolGSpec,
 genericInterp,svmArgs]},
 theFuncs]]
 
@@ -1616,7 +1629,7 @@ parallelSetup[];
 DistributeDefinitions[XZFuncs[[1]]];
 DistributeDefinitions[eqnsFunc];
 DistributeDefinitions[linMod];
-With[{theFuncs=parallelMakeGenericInterpFuncs[genFRExtFunc[{numX,numEps,numZ},linMod,XZFuncs,eqnsFunc],smolGSpec,smolyakInterpolation,{}]},
+With[{theFuncs=parallelMakeGenericInterpFuncs[genFRExtFunc[{numX,numEps,numZ},linMod,XZFuncs,eqnsFunc],backLookingInfo,smolGSpec,smolyakInterpolation,{}]},
 Print["parallelMakeInterpTime=",(tn2=AbsoluteTime[])-tn];
 With[{XZRE=parallelGenXZREInterpFunc[{numX,numEps,numZ},theFuncs,smolGSpec,distribSpec]},
 Print["parallelgenXZREInterpTime=",(AbsoluteTime[])-tn2];
@@ -2052,7 +2065,8 @@ PerfectForesight::usage="degenerate distribution implementing perfect foresight"
 
 @d linMod
 @{linMod:{theHMat_?MatrixQ,BB_?MatrixQ,phi_?MatrixQ,FF_?MatrixQ, 
-psiEps_?MatrixQ,psiC_?MatrixQ,psiZ_?MatrixQ,backLookingExp:{{_Integer,_}...}}@|
+psiEps_?MatrixQ,psiC_?MatrixQ,psiZ_?MatrixQ,
+backLookingInfo:{{_Integer,backLooking_,backLookingExp_}...}}@|
 linMod
 BB
 phi
@@ -2364,10 +2378,10 @@ With[{numXVars=getNumX[linMod],numZVars=getNumZ[linMod]},
 With[{xtm1Vars=genSlots[numXVars]},
 With[{fromLinMod=Join[BB.xtm1Vars+
 Inverse[IdentityMatrix[Length[xtm1Vars]]-FF] . phi . psiC,ConstantArray[0,{numZVars,1}]]},
-Apply[Function,{replaceLinPart[fromLinMod,xtm1Vars,backLookingExp]}]]]]
+Apply[Function,{replaceLinPart[fromLinMod,xtm1Vars,backLookingInfo]}]]]]
 
-replaceLinPart[flm_List,xtm1Vars_List,ble:{{_Integer,_}...}]:=
-With[{theRes=Map[Function[uu,{uu[[1]],Apply[uu[[2]],Flatten[xtm1Vars]]}],ble]},
+replaceLinPart[flm_List,xtm1Vars_List,ble:{{_Integer,_,_}...}]:=
+With[{theRes=Map[Function[uu,{uu[[1]],Apply[uu[[3]],Flatten[xtm1Vars]]}],ble]},
 Fold[ReplacePart[#1,#2[[1]]->#2[[2]]]&,flm,theRes]]
 
 

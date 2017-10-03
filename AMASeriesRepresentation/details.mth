@@ -362,6 +362,8 @@ theSimCompSlack=simulateCompSlack[20000];
 (*ListPlot[Transpose[{theCSKs,theCSThetas}]];*)
 
 
+
+
 *)
 
 

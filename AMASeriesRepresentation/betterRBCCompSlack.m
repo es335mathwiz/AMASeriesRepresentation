@@ -19,6 +19,8 @@ theDistBetterCompSlack::usage="theDist={{{ee,NormalDistribution[0,sigVal]}}};"
 thePFDistBetterCompSlack::usage="theDist={{{ee,PerfectForesight]}}};"
 linModBetterCompSlack::usage="linear model matrices for approx"
 aGSpecBetterCompSlack::usage="aGSpec={{1},1,{{4,kLow,kHigh},{3,thLow,thHigh},{3,sigLow,3*sigHigh}}}";
+rbcEqnsBetterBackLookingCompSlack::usage="rbcEqnsBetterBackLookingCompSlack"
+rbcEqnsBetterBackLookingExpCompSlack::usage="rbcEqnsBetterBackLookingCompSlack"
 eqnsCompiledBetterCompSlack::usage="model equations function"
 rbcEqnsBetterCompSlack::usage="model equations"
 eqnsEulerCompiledBetterCompSlack::usage="eqnsEulerCompiledBetterCompSlack"
@@ -86,7 +88,8 @@ lam[t] +mu1[t] - (alpha*kk[t]^(-1+alpha)*delta*nlPart[t+1]+lam[t+1]*delta*(1-dd)
 II[t] -(kk[t]-(1-dd)*kk[t-1]),
 mu1[t]*(kk[t]-(1-dd)*kk[t-1]-upsilon*IIss)
 }
-rbcBackLookinEqns={E^(rho*Log[theta[t-1]] + eps[theta][t])}
+rbcBackLookingEqns={E^(rho*Log[theta[t-1]] + eps[theta][t])}
+rbcBackLookingExpEqns={Expectation[rbcBackLookingEqns[[1]],eps[theta][t] \[Distributed] NormalDistribution[0,sigma]]}
 
 
 argsSubs={
@@ -119,12 +122,21 @@ thePatterns=makePatternArgs[Last/@argsSubs]
 
 genCompSlackEqns[alpha_?NumberQ,beta_?NumberQ,delta_?NumberQ,rho_?NumberQ,sigma_?NumberQ,dd_?NumberQ,upsilon_?NumberQ]:=
 Module[{},
-With[{eqnsName=Unique["eqnsName"],theGuts=Flatten[
-({(rbcEqns/.paramSubs)/.argsSubs}/.ssSolnSubsRE)//N]
+With[{eqnsName=Unique["eqnsName"],eqnsBackLookingName=Unique["eqnsBLName"],eqnsBackLookingExpName=Unique["eqnsBLExpName"],
+theGuts=Flatten[
+({(rbcEqns/.paramSubs)/.argsSubs}/.ssSolnSubsRE)//N],
+theBLGuts=Flatten[
+({(rbcBackLookingEqns/.paramSubs)/.argsSubs}/.ssSolnSubsRE)//N],
+theBLExpGuts=Flatten[
+({(rbcBackLookingExpEqns/.paramSubs)/.argsSubs}/.ssSolnSubsRE)//N]
 },
 SetDelayed[
-eqnsName[Apply[Sequence,thePatterns]],theGuts];DistributeDefinitions[eqnsName];eqnsName]
-]
+eqnsName[Apply[Sequence,thePatterns]],theGuts];DistributeDefinitions[eqnsName];
+SetDelayed[
+eqnsBackLookingName[Apply[Sequence,thePatterns]],theBLGuts];DistributeDefinitions[eqnsName];
+SetDelayed[
+eqnsBackLookingExpName[Apply[Sequence,thePatterns]],theBLExpGuts];DistributeDefinitions[eqnsName];
+{eqnsName,eqnsBackLookingName,eqnsBackLookingExpName}]]
 
 
 
@@ -244,13 +256,13 @@ qmatSymbRE=Join[zfSymbRE,evcsSymbRE[[{1}]]];
 
 linModBetterCompSlack={hmatSymbRE//N,bmatSymbRE // N, phimatSymbRE // N, 
     fmatSymbRE // N, psiepsSymbRE // N, 
-    psicSymbRE // N, psiz // N};
+    psicSymbRE // N, psiz // N,{}};
 
 (*
 
 *)
 
-rbcEqnsBetterCompSlack=genCompSlackEqns @@ {alpha,beta,delta,rho,sigma,dd,upsilon}/.simpParamSubs
+{rbcEqnsBetterCompSlack,rbcEqnsBetterBackLookingCompSlack,rbcEqnsBetterBackLookingExpCompSlack}=genCompSlackEqns @@ {alpha,beta,delta,rho,sigma,dd,upsilon}/.simpParamSubs
 
 
 
@@ -292,7 +304,7 @@ aGSpecBetterCompSlack={{1,2,4,5,6},2,{{6,kLow,kHigh},{10,thLow,thHigh},{6,sigLow
 {alpha,beta,delta,rho,sigma,dd,upsilon}
 *)
 
-tryit=genCompSlackEqns[.36,1,.95,.95,.01,1,0.975]
+
 
 End[] (* End Private Context *)
 

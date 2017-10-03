@@ -2052,7 +2052,7 @@ PerfectForesight::usage="degenerate distribution implementing perfect foresight"
 
 @d linMod
 @{linMod:{theHMat_?MatrixQ,BB_?MatrixQ,phi_?MatrixQ,FF_?MatrixQ, 
-psiEps_?MatrixQ,psiC_?MatrixQ,psiZ_?MatrixQ} @|
+psiEps_?MatrixQ,psiC_?MatrixQ,psiZ_?MatrixQ,backLookingExp:{{_Integer,_}...}}@|
 linMod
 BB
 phi
@@ -2362,8 +2362,12 @@ With[{xtp1Vals=BB.xtVals+Inverse[IdentityMatrix[Length[xtVals]]-FF] . phi . psiC
 genX0Z0Funcs[@<linMod@>]:=
 With[{numXVars=getNumX[linMod],numZVars=getNumZ[linMod]},
 With[{xtm1Vars=genSlots[numXVars]},
-Apply[Function, {Join[BB.xtm1Vars+
-Inverse[IdentityMatrix[Length[xtm1Vars]]-FF] . phi . psiC,ConstantArray[0,{numZVars,1}]]}]]]
+With[{fromLinMod={Join[BB.xtm1Vars+
+Inverse[IdentityMatrix[Length[xtm1Vars]]-FF] . phi . psiC,ConstantArray[0,{numZVars,1}]]}},
+Apply[Function,replaceLinPart[fromLinMod,backLookingExp]]]]]
+
+replaceLinPart[flm_List,ble:{{_Integer,_}...}]:=
+Fold[ReplacePart[#1,#2[[1]]->#2[[2]]]&,flm,ble]
 
 
 AMASeriesRepCallGraph=

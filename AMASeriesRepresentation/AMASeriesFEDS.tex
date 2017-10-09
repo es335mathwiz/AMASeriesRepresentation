@@ -1,0 +1,166 @@
+\documentclass[12pt]{article}
+
+
+\usepackage[authoryear]{natbib}
+\usepackage{amsmath}
+\usepackage{hyperref}
+\usepackage{hyperref}
+\usepackage{geometry}
+\usepackage{graphicx}
+
+\begin{document}
+\begin{abstract}
+This paper proposes a new series representation of solutions
+for dynamic stochastic models and develops an algorithm for computing
+ time invariant discrete time maps that accurately characterize
+the solutions for a wide array of nonlinear rational expectations models. 
+The series representation makes it possible to reliably improve upon an initial
+guess for a stochastic model decision rule by solving a 
+potentially complicated, but deterministic problem in the initial time period.
+The algorithm can handle models with occasionally binding constraints and/or regime switching. 
+
+The series representation also provides a formula for computing 
+error bounds for any proposed time invariant model solution.
+These error bounds should prove useful for assessing the accuracy of 
+proposed model solutions independent of the algorithmic source.
+
+
+
+
+This paper proposes a new series representation of solutions
+for dynamic stochastic models and develops an algorithm for computing
+ time invariant discrete time maps that accurately characterize
+the solutions for a wide array of nonlinear rational expectations models. 
+The series representation makes it possible to reliably improve upon an initial
+guess for a stochastic model decision rule by solving a 
+potentially complicated, but deterministic problem in the initial time period.
+The algorithm can handle models with 
+occassionally binding constraints and/or regime switching. 
+
+
+The series representation also provides a formula for computing 
+error bounds for any proposed time invariant model solution.
+These error bounds should prove useful for assessing the accuracy of any
+proposed model solution regardless of the source.
+
+
+
+Anderson has developed a new series representation useful for
+solving a wide class of nonlinear dynamic stochastic models.
+The solutions computed by the technique accommodate the possibility that 
+model trajectories can depart from and re-engage
+occasionally binding constraints as well as transition between various regimes. Remarkably, this series representation makes it possible to characterize model solutions as a linear sum of orthogonal functions.  
+
+
+
+  I believe I have the only algorithm that provides useful error bound on the errors in the decision rule based on readily available calculations with the original nonlinear model.  These calculations should be useful to modellers whether or not they use other components of my algorithm. The algorithm is designed to exploit parallelism and I expect that the technique will scale up very nicely.
+
+
+This paper proposes a new series representation for bounded
+time invariant discrete time maps.
+The paper uses the representation to develop  formulae
+for computing accuracy bounds for any proposed time invariant model solution.
+The paper also provides an algorithm for computing
+solutions for dynamic economic models.
+
+With the series representation for time invariant maps in hand,
+the paper shows how to use the solution to a deterministic problem at
+time t, to improve upon a proposed solutions for
+any given dynamic economic models with occasionally
+binding constraints or regime switching or both.   The error bounds from the
+series representation help with determining algorithmic convergence by
+characterizing the potential benefits
+of further solution refinement.
+
+This paper shows how to apply the formulae in\citep{anderson10} to compute 
+rational expectations solutions for models linear except for occasionally binding constraints.  The formulae facilitate the recursive 
+computation of solutions that honor the 
+constraints for successively 
+longer horizons. The solutions thus computed
+accommodate the possibility that model
+trajectories may depart from and re-engage the constraints.
+The technique is applicable for nonlinear inequality constraints.
+
+
+
+This paper uses a series representation for bounded solutions
+to dynamic models to compute
+  time invariant discrete time
+maps that accurately characterize
+the solutions for a wide array of nonlinear
+rational expectations models. This solution also provides a formula for computing accuracy bounds for any proposed time invariant model solution.
+Support vector machine function approximation provides
+error bounds that 
+are especially useful used in conjuction with the series representation
+error formulae.
+One can  dynamically adjust the representation accuracy
+as needed to guarantee convergence to a true solution.
+
+
+
+This presentation reports on the efficiency gains associated with exploiting this linearity and with parallelizing the
+computation of the function approximations.
+
+Support vector machine function approximation provides
+error bounds that 
+are especially useful used in conjuction with the series representation
+error formulae.
+One can  dynamically adjust the representation accuracy
+as needed to guarantee convergence to a true solution.
+
+
+
+\end{abstract}
+
+
+Support vector machines occupy a prominent place applied machine learning
+Additionally they can reduce the burden of computation as they determine 
+a subset of points that are important in characterizing a given function.
+Kernel trick,  powerful representation quadratic programming solution to compute there are on-line techniques for adding and deleting individual points from the representation.  A weighted sum of kernel functions RBF, wavelet, special forms for time series.
+  This paper proposes a new series representation for bounded so-
+lutions to dynamic models. This series representation can be used
+to determine a series representation for time invariant discrete time
+maps that characterize the solutions to many models. Consequently,
+the technique constitutes an important component in a technique for
+accurately characterizing the solutions for a wide array of nonlinear
+rational expectations models. It can also provide a formula for com-
+puting accuracy bounds for any proposed time invariant model so-
+lution. The series representation serves as an important component
+in an algorithm for constructing approximate solutions for nonlinear
+rational expectations models.
+The technique recursively computes solutions that honor the con-
+straints for successively longer horizons. The technique also provides
+a metric for determining apriori how long the horizon must be for a
+given level of accuracy of the state vector. The solutions computed by
+the technique accommodate the possibility that model trajectories can
+depart from and re-engage inequality constraints as well as transition
+between various regimes.
+This paper applies support vector machine function approximation to
+reduce the computational burden associated with representing the
+unknown, potentially highly nonlinear stochstic functions that arise in
+solving dynamic models with occasionally binding constraints.
+
+
+Support vector machines 
+have become an essential tool in contemporary machine learning research
+where computer scientists exploit their flexibility and
+computational tractability in modelling complex high dimensional data.
+Like many other function approximation approaches,
+support vector machines represent functions as a linearly weighted sum
+of a family of basis functions.  They differ from other approaches in  the
+use of ``hinge loss functions'' that generate
+an easy to solve
+quadratic programming problem(QPP) for determining the weights.
+The solution of this QPP identifies a subset of points, the support vectors,
+that are influential in the representation.  With strategically chosen
+basis functions, this can dramatically reduce the number of terms needed
+to approximate a function to a given level of accuracy.
+
+
+
+
+\bibliographystyle{plainnat}
+\bibliography{anderson}
+
+\end{document}
+

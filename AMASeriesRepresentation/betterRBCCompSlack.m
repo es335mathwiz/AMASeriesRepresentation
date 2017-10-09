@@ -61,13 +61,14 @@ upsilon->0.975
 *)
 
 (*parameters page 28 guerrieri iacoviello*)
+
 paramSubs={
-alpha->.36,
+alpha->.33,
 beta->1,
 delta->.96,
-rho->.95,
-sigma->.01,
-dd->1,
+rho->.90,
+sigma->.013,
+dd->.1,
 upsilon->0.975
 } ;
 
@@ -117,7 +118,7 @@ theta[t+1]->thetatp1,
 eps[theta][t]->epsVal
 }
 
-thePatterns=makePatternArgs[Last/@argsSubs]
+thePatterns=makeBlankPatternArgs[Last/@argsSubs]
 lagEpsPatterns=makeBlankPatternArgs[Last/@(Append[argsSubs[[Range[7]]],argsSubs[[-1]]])]
 lagPatterns=makeBlankPatternArgs[Last/@(argsSubs[[Range[7]]])]
 
@@ -288,8 +289,9 @@ probDimsBetterCompSlack={7,1,7};
 thVal=(theta//.ssSolnSubsRE//.(simpParamSubs//N))//N;
 kVal = (kk //.kSSSubRE//.(simpParamSubs//N))//N;
 cVal = (cc //.cSSSubRE//.(simpParamSubs//N))//N ;
-kLow = 1/10*kVal//N;
-kHigh = 4*kVal//N;
+(*following guerrieri and iacoviello Appendix A*)
+kLow = kVal*.95//N;
+kHigh = kVal*1.4//N;
 sigVal = sigma //. (simpParamSubs//N);
 sigLow = -3*sigVal;
 sigHigh = 3*sigVal;

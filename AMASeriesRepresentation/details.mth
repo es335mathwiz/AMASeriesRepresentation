@@ -13,7 +13,7 @@ fMat=getF[linModBetter]
 tErrMat=truncErrorMat[fMat,phiMat,0]
 tErrMatMax=Norm[tErrMat,Infinity]
 Print["beginning exports"]
-
+<<JavaGraphics`
 (*
 Export["hminus.pdf",TableForm[hMinus=getH[linModBetter][[All,{1,2,3,4}]]]]
 Export["hzero.pdf",TableForm[hZero=getH[linModBetter][[All,4+{1,2,3,4}]]]]
@@ -49,20 +49,20 @@ theRes=simulateExact[20000];
 
 
 
-(*
+
 kl=betterRBC`Private`kLow 
 kh=betterRBC`Private`kHigh
 tl=betterRBC`Private`thLow
 th=betterRBC`Private`thHigh
 sl=betterRBC`Private`sigLow
 sh=betterRBC`Private`sigHigh
-*)
 
+(*
 {kl,kh}={Min[theKs],Max[theKs]}
 {tl,th}={Min[theThetas],Max[theThetas]}
 sl=betterRBC`Private`sigLow
 sh=betterRBC`Private`sigHigh
-
+*)
 X0Z0=genX0Z0Funcs[linModBetter];
 
 theLilFunc=genLilXkZkFunc[linModBetter, {X0Z0,2},anXEpsBetter];
@@ -312,13 +312,21 @@ theResMatch=parallelNestGenericIterREInterp[genFRExtFunc,linModBetterMatch,
 {X0Z0Match,2},eqnsCompiledBetterMatch,sgSpecMatch,smolyakInterpolation,{},iters];
 
 
+(*
+theFRExt=genFRExtFunc[{7,1,7},linModBetterCompSlack,{theResCompSlack[[-1,2]],2},rbcEqnsBetterCompSlack];
+
+
+*)
+
 
 ap=1*{1,1,1};
 iters=2;
 X0Z0CompSlack=genX0Z0Funcs[linModBetterCompSlack];
 theLilFuncCompSlack=genLilXkZkFunc[linModBetterCompSlack, {X0Z0CompSlack,2},anXEpsBetterCompSlack];
 theFRExt=genFRExtFunc[{7,1,7},linModBetterCompSlack,{X0Z0CompSlack,2},rbcEqnsBetterCompSlack];
+theNSExt=genNSExtFunc[{7,1,7},linModBetterCompSlack,{X0Z0CompSlack,2},rbcEqnsBetterCompSlack];
 theFRExt@@anXEpsFlatBetterCompSlack
+theNSExt@@anXEpsFlatBetterCompSlack
 smolRng=#[[{2,3}]]&/@Drop[aGSpecBetterCompSlack,2][[1]];
 {pt,tf,ply,iply,dply}=smolyakInterpolationPrep[ap,smolRng,theDistBetterCompSlack];
 toIg=aGSpecBetterCompSlack[[1]];
@@ -328,13 +336,30 @@ linModBetterCompSlack,
 {X0Z0CompSlack,2},rbcEqnsBetterCompSlack,sgSpecCompSlack,smolyakInterpolation,{},iters];
 
 
+
+(*check failure of 5*)
+ap=5*{1,1,1};
+iters=2;
+smolRng=#[[{2,3}]]&/@Drop[aGSpecBetterCompSlack,2][[1]];
+{pt,tf,ply,iply,dply}=smolyakInterpolationPrep[ap,smolRng,theDistBetterCompSlack];
+toIg=aGSpecBetterCompSlack[[1]];
+sgSpecCompSlack={toIg,smolRng,pt,tf,ply,iply,1,ap};
+Get["badNews"];
+theFRExtBad=genFRExtFunc[{7,1,7},linModBetterCompSlack,{theResCompSlack[[-1,2]],2},rbcEqnsBetterCompSlack];
+theFRExtBad @@ {1, 1, 0.761658, 1, 1, 1, 1., 0.03} produces huge arguments 
+
+
+
+parallelMakeGenericInterpFuncs[theFRExtBad,getBackLookingInfo[linModBetterCompSlack],sgSpecCompSlack,smolyakInterpolation,{}]  produces huge arguments
+parallelSmolyakGenInterpData[theFRExtBad,sgSpecCompSlack] produces huge arguments
+
+
 (    smolyak but not generic*)
 theResCompSlack=parallelNestIterREInterp[genFRExtFunc,linModBetterCompSlack,
 {X0Z0CompSlack,2},rbcEqnsBetterCompSlack,sgSpecCompSlack,iters];
 (*not smolyak but not generic*)
 theResCompSlack=parallelNestIterREInterp[genFRExtFunc,linModBetterCompSlack,
 {X0Z0CompSlack,2},rbcEqnsBetterCompSlack,aGSpecBetterCompSlack,theDistBetterCompSlack,iters];
-
 
 
 

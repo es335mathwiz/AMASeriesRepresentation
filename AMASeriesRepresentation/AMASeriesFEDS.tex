@@ -7,8 +7,22 @@
 \usepackage{hyperref}
 \usepackage{geometry}
 \usepackage{graphicx}
+\usepackage{amsfonts}
+
+\input{../../paperProduction/occBind/docs/AMArepresentationNewCmds}
+
+
+
+\author{Gary S. Anderson\thanks{The analysis and conclusions set forth are those of the author and do not indicate concurrence by other members of the research staff or the Board of Governors. I would like to thank Luca Guerrieri, Christopher Gust, Hess Chung, Benjamin Johannsen  and Robert Tetlow for their comments and suggestions.  Special thanks to Luca Guerieri for first noticing that the series representation formulation could lead to an error bound for model solutions.}}
+
+\title{A New Series Representation for Time Invariant Maps that
+ Arise in  Nonlinear Dynamic Stochastic Economic Models}
+
 
 \begin{document}
+
+\maketitle
+
 \begin{abstract}
 This paper proposes a new series representation of solutions
 for dynamic stochastic models and develops an algorithm for computing
@@ -18,7 +32,9 @@ The series representation makes it possible to reliably improve upon an initial
 guess for a stochastic model decision rule by solving a 
 potentially complicated, but deterministic problem in the initial time period.
 The algorithm can handle models with occasionally binding constraints and/or regime switching. 
-
+\newpage
+\tableofcontents
+\newpage
 The series representation also provides a formula for computing 
 error bounds for any proposed time invariant model solution.
 These error bounds should prove useful for assessing the accuracy of 
@@ -157,10 +173,266 @@ basis functions, this can dramatically reduce the number of terms needed
 to approximate a function to a given level of accuracy.
 
 
+\section{Introduction and Summary}
+
+
+
+
+
+Stochastic dynamic non linear economic
+models increasingly embody  occasionally binding constraints (OBC) essential
+Since \cite{Christiano2000} a host of
+authors have described a variety of approaches. 
+\cite{holden15:_exist_dsge,guerrieri15:_occbin,benigno09,hintermaier10,brumm10,nakov08,haefke98,nakata12,gordon11,billi11,Hintermaier2010,Guerrieri2015}
+This paper provides yet another.  This new series representation provides  a coherent framework for attacking a wide variety of complicated nonlinear models.
+The framework provides a new way to bound the error one can expect from
+employing a given proposed model solution and leads to a
+algorithm with  components similar to parameterized expectations that
+one can use to improve proposed solutions. The series representation makes
+it possible to organize the calculation around computing a deterministic
+problem at time t given a proposed solution.  The deterministic solution
+can accommodate inequality constraints or alternative regimes to produce a
+solution for each set of initial conditions.  One can typically arrange,
+perhaps by adding auxiliary variables, to produce a ``decision rule''
+that one can correctly integrate to get a deterministic conditional
+expectation function that can be iterated forward and serves to
+improve upon the original proposed solution.
+Time invariant stochastic functions 
+lead naturally to an associated family of deterministic maps
+which can conveniently represented by the series representation.
+
+
+
+
+
+\section{A New Series Representation For Nonlinear Dynamic Stochastic Time Invariant Maps}
+\label{sec:newseries}
+
+\subsection{A Linear Reference Model and a Formula for  ``Anticipated Shocks''}
+\label{sec:linref}
+\begin{itemize}
+\item Almost Arbitrary
+\item Impact of Choice
+\end{itemize}
+
+
+\subsection{A Series Representation for Bounded Paths}
+\label{sec:boundedpaths}
+
+
+
+\subsubsection{Assessing $x_t$ Error}
+\label{sec:truncationerr}
+\paragraph{Truncation Error}
+\paragraph{Pessimistic Error}
+
+\subsubsection{A Path Norm}
+\label{sec:pathnorm}
+
+\subsection{Application to Time Invariant Maps}
+\label{sec:extToMaps}
+
+
+\subsubsection{Dynamic Stochastic Models, Model Solutions  and Conditional Expectations}
+\label{sec:condExp}
+
+\subsubsection{An RBC Model Example}
+\label{sec:rbcexample}
+
+
+\subsubsection{Relation to Impulse Response Functions and Stochastic Simulations}
+\label{sec:relImp}
+
+
+Use (Impulse Response Functions?)
+
+Proceeding as though no uncertainty in the parameters.
+\href{https://books.google.co.uk/books?id=kLiRDgAAQBAJ&pg=PA77&lpg=PA77&dq=nonlinear+models+impulse+response+function+conditional+expectations&source=bl&ots=1pCjlcgxSu&sig=WA9INrvXVcFhVOd_2wq8-V6alw8&hl=en&sa=X&ved=0ahUKEwid1Y3fvuPWAhUlKsAKHT7lCDkQ6AEITjAF#v=onepage&q=nonlinear%20models%20impulse%20response%20function%20conditional%20expectations&f=false}{book on nonlinear impulse response}
+  Potter 1995 2000 and Koop 1996
+
+  from  Elements of Nonlinear Time Series Analysis and Forecasting  Jan G. De Gooijer
+
+CONDITIONAL EXPECTATIONS ASSOCIATED WITH STOCHASTIC PROCESSES
+R . A. BROOKS
+
+
+\href{http://www.pnas.org/content/103/11/3968.full}{discrete dynamical conditional expectation} 
+
+\subsection{Computing Model Solution Error Bounds}
+\label{sec:solnerrorbounds}
+
+\subsubsection{Worst Path: Pessimistic Error Bound}
+\label{worst}
+
+\subsubsection{Practical Considerations for Applying the Formula}
+\label{sec:practicalformula}
+
+
+\paragraph{MSNTO}
+\paragraph{Assessing a Proposed Soluion}
+\paragraph{RBC Example for Known Solution}
+\paragraph{RBC Example for Unknown Solution}
+\paragraph{Algorithm Agnostic: Your Solution Here}
+
+\section{An Algorithm for Improving Proposed Time Invariant Solutions}
+\label{sec:algoforsoln}
+
+\subsection{Auxiliary Variable Reformulation}
+\label{sec:aux}
+
+\subsubsection{RBC Example}
+\label{sec:rbcaux}
+
+\subsubsection{General Formulation}
+\label{sec:genAux}
+
+\subsection{Function Approximation Representation}
+\label{sec:funcApproxRep}
+
+\subsubsection{General Issues}
+\label{sec:generalissues}
+
+\paragraph{Function composition}
+
+
+
+\paragraph{Correct Expectations}
+
+\paragraph{Precomputig Integrals}
+
+
+\subsubsection{Smolyak Interpolation}
+\label{sec:smolyakinterp}
+
+\paragraph{Anisotropic}
+
+\paragraph{Ergodic Set}
+
+\subsection{Algorithm Overview}
+\label{sec:algoverview}
+
+
+\begin{figure}
+  \centering
+  
+
+
+  \begin{gather}
+    \fbox{Nonlinear Rational Expectations Model}\\ \Downarrow\\
+\fbox{Bounded Time Invariant Function Solution}\\\Downarrow\\
+\fbox{Series Representation}\\\Downarrow\\
+\fbox{Series Approximation}
+  \end{gather}
+  \caption{From Models to Approximate Solutions}
+  \label{fig:modelsto}
+\end{figure}
+
+
+
+This series representation for deterministic maps,
+broadly applicable for nonlinear rational expectations models 
+leads to a formulae for accuracy bounds for any proposed solution.
+As an important component in an algorithm for
+constructing approximate solutions it
+facilitates exploiting recursive computation of the solutions for complicated models.
+The algorithm has been implemented in
+Mathematica code that can compute solutions for
+nonlinear models with occasionally binding constraints and/or regime switching models.
+
+
+
+
+
+
+\subsubsection{Generality}
+\label{sec:generality}
+
+
+
+
+\begin{itemize}
+\item Time Invariant Maps
+\item Bounded Solutions
+\item Exists a Representation Problem is to Find One
+\item Algorithm terminates with a Proposed Solution With Solution
+  No further away from a true soltion than the specified tolerance 
+\item No Existence Guarantees or Uniquess Guarantees.
+\item Parallizable
+\end{itemize}
+
+
+Consider a family of {\it time invariant } stochastic functions:
+ \begin{gather}
+   \xWarg \in{R^L}\,\text{ with }\,\infNorm{\xWarg}  \le \bar{\mathcal{X}}\,\,\forall t> 0 \label{fFamily}.
+ \end{gather}
+The $x_{-1}$ is an  $L$ dimensional state vector and $\epsilon$ is a $K$ dimensional ``shock'' vector that together index
+individual trajectories for future state vectors.  
+Each member of the family characterizes the evolution of a {\em deterministic} trajectory of values.\footnote{Subsequent sections describe how these deterministic trajectories are useful for representing a wide array stochastic model solutions.}
+
+It will prove useful to also define a time invariant deterministic function $\XtFuncTI\equiv \expctEps{\xtFuncTI}$ and denote
+\begin{gather*}
+\xsubtFunc{t+k}{(x_{t-1},\epsilon_t)}\equiv\begin{cases}
+\xtFunc{(x_{t-1},\epsilon_t)} &k=0\\
+\XtFunc{(\xsubtFunc{t+k-1}{(x_{t-1},\epsilon_t)})} &k>0
+\end{cases}
+\end{gather*}
+
+
+\paragraph{Proposed Conditional Expection}
+
+\paragraph{Deterministic Problem}
+
+\paragraph{Conditional Expectation Update}
+
+\subsubsection{Algorithm Pseudocode}
+\label{sec:pseudocode}
+
+\subsubsection{RBC Example}
+\label{sec:generalRBCExample}
+
+\paragraph{unknown solutions}
+\begin{description}
+\item[Solution]
+\item[Error Bound]
+\end{description}
+
+\paragraph{unknown solutions occasionally binding constraints}
+\begin{description}
+\item[Solution]
+\item[Error Bound]
+\item[resources]\
+  \begin{itemize}
+  \item 
+  \end{itemize}
+\end{description}
+
+
+\subsection{ Other Examples}
+\label{sec:otherexamples}
+
+
+
+\section{Future Work}
+\label{sec:future}
+
+\begin{itemize}
+\item time varying:  regime switching, hammers need nails
+\item SVMR and other ML universal approximators
+\item function composition Fa Di Bruno
+\item divide and conquer solution space initially collect results stocastic steady state at center of divided region with overlap
+\item dynamical system theory implications
+\item relation to Koopman Operators
+\item Implications of almost arbitrary.  Small F eigenvalues versus small z values
+\end{itemize}
+
+\section{Conclusions}
+\label{sec:conc}
+
+
 
 
 \bibliographystyle{plainnat}
-\bibliography{anderson}
+\bibliography{anderson,files}
 
 \end{document}
 

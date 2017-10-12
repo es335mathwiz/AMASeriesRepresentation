@@ -24,154 +24,39 @@
 \maketitle
 
 \begin{abstract}
-This paper proposes a new series representation of solutions
-for dynamic stochastic models and develops an algorithm for computing
- time invariant discrete time maps that accurately characterize
-the solutions for a wide array of nonlinear rational expectations models. 
-The series representation makes it possible to reliably improve upon an initial
-guess for a stochastic model decision rule by solving a 
-potentially complicated, but deterministic problem in the initial time period.
-The algorithm can handle models with occasionally binding constraints and/or regime switching. 
-\newpage
-\tableofcontents
-\newpage
-The series representation also provides a formula for computing 
-error bounds for any proposed time invariant model solution.
-These error bounds should prove useful for assessing the accuracy of 
-proposed model solutions independent of the algorithmic source.
-
-
-
-
-This paper proposes a new series representation of solutions
-for dynamic stochastic models and develops an algorithm for computing
- time invariant discrete time maps that accurately characterize
-the solutions for a wide array of nonlinear rational expectations models. 
-The series representation makes it possible to reliably improve upon an initial
-guess for a stochastic model decision rule by solving a 
-potentially complicated, but deterministic problem in the initial time period.
-The algorithm can handle models with 
-occassionally binding constraints and/or regime switching. 
-
-
-The series representation also provides a formula for computing 
-error bounds for any proposed time invariant model solution.
+This paper proposes a new series representation for dynamic model solution paths and uses this representation to construct error bounds for proposed solutions to a very general class of dynamic stochastic models including models subject to occasionally binding constraints and/or regime switching.
+This which, incorporating the impact of errors across  all the equations in 
+the system makes it possible to compute
+apriori estimates of the computational cost for a
+given level of accuracy of each component of the solution.
 These error bounds should prove useful for assessing the accuracy of any
 proposed model solution regardless of the source.
 
 
-
-Anderson has developed a new series representation useful for
-solving a wide class of nonlinear dynamic stochastic models.
-The solutions computed by the technique accommodate the possibility that 
-model trajectories can depart from and re-engage
-occasionally binding constraints as well as transition between various regimes. Remarkably, this series representation makes it possible to characterize model solutions as a linear sum of orthogonal functions.  
-
+In addition, the paper also proposes an new algorithm for solving these types of models.
+The series representation makes it possible to reliably improve upon an initial
+guess for a stochastic model solution by solving a 
+potentially complicated, but deterministic problem in the initial time period.
+Like the error bound formula, the algorithm is appropriate for models with occasionally binding constraints and/or regime switching. 
 
 
-  I believe I have the only algorithm that provides useful error bound on the errors in the decision rule based on readily available calculations with the original nonlinear model.  These calculations should be useful to modellers whether or not they use other components of my algorithm. The algorithm is designed to exploit parallelism and I expect that the technique will scale up very nicely.
-
-
-This paper proposes a new series representation for bounded
-time invariant discrete time maps.
-The paper uses the representation to develop  formulae
-for computing accuracy bounds for any proposed time invariant model solution.
-The paper also provides an algorithm for computing
-solutions for dynamic economic models.
-
-With the series representation for time invariant maps in hand,
-the paper shows how to use the solution to a deterministic problem at
-time t, to improve upon a proposed solutions for
-any given dynamic economic models with occasionally
-binding constraints or regime switching or both.   The error bounds from the
-series representation help with determining algorithmic convergence by
-characterizing the potential benefits
-of further solution refinement.
-
-This paper shows how to apply the formulae in\citep{anderson10} to compute 
-rational expectations solutions for models linear except for occasionally binding constraints.  The formulae facilitate the recursive 
-computation of solutions that honor the 
-constraints for successively 
-longer horizons. The solutions thus computed
-accommodate the possibility that model
-trajectories may depart from and re-engage the constraints.
-The technique is applicable for nonlinear inequality constraints.
+The  paper uses a particular implementation of the algorithm to
+demonstrate how to use the 
+series representation in conjunction with 
+Smolyak polynomial function approximation to avoid numerical integration
+and to exploit the high degree of parallelism available in the algorithm.
 
 
 
-This paper uses a series representation for bounded solutions
-to dynamic models to compute
-  time invariant discrete time
-maps that accurately characterize
-the solutions for a wide array of nonlinear
-rational expectations models. This solution also provides a formula for computing accuracy bounds for any proposed time invariant model solution.
-Support vector machine function approximation provides
-error bounds that 
-are especially useful used in conjuction with the series representation
-error formulae.
-One can  dynamically adjust the representation accuracy
-as needed to guarantee convergence to a true solution.
 
-
-
-This presentation reports on the efficiency gains associated with exploiting this linearity and with parallelizing the
-computation of the function approximations.
-
-Support vector machine function approximation provides
-error bounds that 
-are especially useful used in conjuction with the series representation
-error formulae.
-One can  dynamically adjust the representation accuracy
-as needed to guarantee convergence to a true solution.
 
 
 
 \end{abstract}
 
-
-Support vector machines occupy a prominent place applied machine learning
-Additionally they can reduce the burden of computation as they determine 
-a subset of points that are important in characterizing a given function.
-Kernel trick,  powerful representation quadratic programming solution to compute there are on-line techniques for adding and deleting individual points from the representation.  A weighted sum of kernel functions RBF, wavelet, special forms for time series.
-  This paper proposes a new series representation for bounded so-
-lutions to dynamic models. This series representation can be used
-to determine a series representation for time invariant discrete time
-maps that characterize the solutions to many models. Consequently,
-the technique constitutes an important component in a technique for
-accurately characterizing the solutions for a wide array of nonlinear
-rational expectations models. It can also provide a formula for com-
-puting accuracy bounds for any proposed time invariant model so-
-lution. The series representation serves as an important component
-in an algorithm for constructing approximate solutions for nonlinear
-rational expectations models.
-The technique recursively computes solutions that honor the con-
-straints for successively longer horizons. The technique also provides
-a metric for determining apriori how long the horizon must be for a
-given level of accuracy of the state vector. The solutions computed by
-the technique accommodate the possibility that model trajectories can
-depart from and re-engage inequality constraints as well as transition
-between various regimes.
-This paper applies support vector machine function approximation to
-reduce the computational burden associated with representing the
-unknown, potentially highly nonlinear stochstic functions that arise in
-solving dynamic models with occasionally binding constraints.
-
-
-Support vector machines 
-have become an essential tool in contemporary machine learning research
-where computer scientists exploit their flexibility and
-computational tractability in modelling complex high dimensional data.
-Like many other function approximation approaches,
-support vector machines represent functions as a linearly weighted sum
-of a family of basis functions.  They differ from other approaches in  the
-use of ``hinge loss functions'' that generate
-an easy to solve
-quadratic programming problem(QPP) for determining the weights.
-The solution of this QPP identifies a subset of points, the support vectors,
-that are influential in the representation.  With strategically chosen
-basis functions, this can dramatically reduce the number of terms needed
-to approximate a function to a given level of accuracy.
-
+\newpage
+\tableofcontents
+\newpage
 
 \section{Introduction and Summary}
 
@@ -205,7 +90,7 @@ which can conveniently represented by the series representation.
 
 
 
-\section{A New Series Representation For Nonlinear Dynamic Stochastic Time Invariant Maps}
+\section{A New Series Representation For Stochastic Model Solution Paths}
 \label{sec:newseries}
 
 \subsection{A Linear Reference Model and a Formula for  ``Anticipated Shocks''}
@@ -213,6 +98,8 @@ which can conveniently represented by the series representation.
 \begin{itemize}
 \item Almost Arbitrary
 \item Impact of Choice
+\item represents impact of ``anticipated shocks'' interpretation error bounds on $x_t$
+\item any bounded path
 \end{itemize}
 
 
@@ -423,8 +310,13 @@ Note that for approximating $\xWarg$ the impact of  a given realization along th
 \subsubsection{A Path Norm}
 \label{sec:pathnorm}
 
+\section{Nonlinear Dynamic Stochastic Time Invariant Maps}
 \subsection{Application to Time Invariant Maps}
 \label{sec:extToMaps}
+
+\subsection{Auxiliary Variable Reformulation}
+\label{sec:aux}
+
 
 
 \subsubsection{Dynamic Stochastic Models, Model Solutions  and Conditional Expectations}
@@ -439,6 +331,312 @@ Note that for approximating $\xWarg$ the impact of  a given realization along th
 
 \end{itemize}
 
+
+\subsubsection{RBC Example General Formulation}
+\label{sec:rbcaux}
+
+\begin{itemize}
+\item composition in effect imposes for number of periods
+\end{itemize}
+
+
+
+To describe the algorithm we will, for the moment, omit inequality constraints
+and regime switching.
+We will develop an algorithm for finding solutions for models that can be written in  the form
+
+
+\begin{gather}
+  h_i(x_{t-1},x_{t},x_{t+1},\epsilon_t)=h^{det}_{io}(x_{t-1},x_{t},\epsilon_t)+\sum_{j=1}^{p_i} [h^{det}_{ij}(x_{t-1},x_{t},\epsilon_t)h^{nondet}_{ij}(x_{t+1})]=0
+\end{gather}
+This is a very broad class of models including most widely used
+macroeconomics models.
+
+For example, the Euler equations for the  neoclassical growth  model 
+\label{sec:simple-rbc-model-ext} can be written as
+\begin{gather}
+h_{10^{det}}(\cdot)=\frac{1}{c_t},\,\,
+h_{11}^{det}()=\alpha \delta k_{t}^{\alpha-1} ,\,\,
+h_{11}^{nondet}(\cdot)=E_t \left (\frac{\theta_{t+1}}{c_{t+1}} \right )\\
+h_{20}^{det}(\cdot)=c_t + k_t-\theta_tk_{t-1}^\alpha,\,\,
+h_{21}^{det}(\cdot)=0\\
+h_{30}^{det}(\cdot)=\ln \theta_t -(\rho \ln \theta_{t-1} + \epsilon_t),\,\,
+h_{31}^{det}(\cdot)=0
+\end{gather}
+Since we will be working with models where expectations are computed at time t, $\epsilon_t$ is known.  The only stochastic components are those with time subscripts greater than $t$. Since we will need to compute 
+the conditional expectation of nonlinear expressions,  
+this setup will make it possible for us to use auxiliary
+variables to correctly compute the required expected values.
+Below, we will consider 
+systems that augment these dynamic equations with additional constraints 
+on the evolution of the variables.
+
+
+The algorithm will construct
+ a time invariant function $g^\ast$ that satisfies
+\begin{gather}
+  \begin{split}
+h(x_{t+s-1},g^\ast(x_{t+s-1},\epsilon_{t+s}),\mathcal{H}[g^\ast(g^\ast(x_{t+s-1},\epsilon_{t+s}),\epsilon_{t+s+1})],\epsilon_{t+s}) \label{theProblem} \\
+%m(x_{t+s-1},g^\ast(x_{t+s-1},\epsilon_{t+s}),\mathcal{H}[g^\ast(g^\ast(x_{t+s-1},\epsilon_{t+s}),\epsilon_{t+s+1})],\epsilon_{t+s}) \ge 0  
+  \end{split}
+%  \intertext{define} 
+% \mathcal{G}^\ast(x_{t+s-1},\epsilon_{t+s})= \mathcal{H}[g^\ast(g^\ast(x_{t+s-1},\epsilon_{t+s}),\epsilon_{t+s+1})] \nonumber
+ \end{gather}
+ for all $s>0$ where $\mathcal{H}$ is an operator, 
+  that maps stochastic functions of $x$ and $\epsilon$ into deterministic 
+functions of $x$ alone.  In this paper we will consider two such operators:
+
+
+
+
+
+
+
+
+
+
+We begin by choosing some linear model of appropriate dimension that 
+has a uniquely convergent steady state.  
+Although this is not necessary, it may be possible to obtain this model by
+linearizing the original model around the deterministic steady state.\footnote{As noted above, one could construct a series representation using any linear
+ model of appropriate dimension with a unique stable solution.  The rate of convergence and the number of terms required for a  given level of accuracy will depend upon the linear model employed.}
+
+
+ \begin{gather}
+ g^0(x_{t-1},\epsilon_{t})=  
+B x_{t-1}+ \phi \psi_\epsilon\epsilon_{t} +
+ (I - F)^{-1} \phi \psi_c\\ \label{firstIter}
+z^{0}_{t+i}(x_{t-1},\epsilon_{t-1})=0 \,\, \forall i \ge 0
+ \end{gather}
+We are now in a position to easily compute 
+ \begin{gather}
+\xIter{0}{x}=\mathcal{H}^{PF}[g^{0}(x,\epsilon_{t-k+1})]=
+\mathcal{H}^{RE}[g^{0}(x,\epsilon_{t-k+1})]= 
+B x+  (I - F)^{-1} \phi \psi_c
+ \end{gather}
+\begin{gather}
+\underbrace{x_{t-1},0} 
+\underbrace{\xNow{0},\zNow{0}}
+\underbrace{\xNowtp{0}=\xIter{0}{x_{t}},0}
+\end{gather}
+In other words, from time t onwards, this approximation assumes 
+that our stand-in
+ convergent linear model completely characterizes the solution.\footnote{
+The algorithm terminates with an approximation for 
+the time invariant function $g^\ast$.}  It is unlikely that $g^0(x_{t-1},\epsilon_{t})$
+satisfies equation \refeq{theProblem} for arbitrary $x_{t-1}$ even for $s=0$.
+We can get a pessimistic upper bound for how far we are away from the solution 
+by computing the infinity norm of substituting the variables from into Equation \refeq{theProblem}.
+% \footnote{The values in Table \ref{truncTab} illustrate how
+%pessimistic this approximation can be, but it turns out we can expect the accur%acy of  approximate truncation errors improve as we expand the approximation series.}
+
+Next, we compute a solution in which the nonlinear equations are satisfied at time t alone while the stand-in linear system holds sway subsequently.
+Our algorithm will  compute
+\begin{gather}
+\underbrace{x_{t-1},0} 
+\underbrace{\xNow{1},\zNow{1}}
+\underbrace{\xNowtp{1}=\xIter{1}{x_{t+1}},0}
+\underbrace{\xNowtp{1}=\xIter{0}{x_{t+1}},0}
+\end{gather}
+that satisfy the nonlinear equation system at time t.
+For a given $x_{t-1}$, we substitute
+\begin{gather}
+x_{t-1}, \,\,
+  x_t=B x_{t-1} + \phi z^1(x_{t-1},\epsilon_t) , \,\,
+  x_{t+1}=B x_{t} + \phi \mathcal{Z}^1(x_t)
+\end{gather}
+into the non linear equation system to determine the 
+$z^1(x_{t-1},\epsilon_t)$ and consequently $x_t^1(x_{t-1},\epsilon_t)$.
+We then have
+ \begin{gather}
+ g^1(x_{t-1},\epsilon_{t})=  
+B x_{t-1}+ \phi \psi_\epsilon\epsilon_{t} +
+\phi \psi_\epsilon z^1(x_{t-1},\epsilon_t)+
+ (I - F)^{-1} \phi \psi_c\\ \label{firstIter}
+z^{1}_{t+i}(x_{t-1},\epsilon_{t-1})=0 \,\, \forall i \ge 1
+ \end{gather}
+Now, $g^1(x_{t-1},\epsilon_{t})$
+satisfies equation \refeq{theProblem} for arbitrary $x_{t-1}$ at time $t$ with $s=0$.  However, it probably does not solve the system for $s>0$.
+We can get a pessimistic upper bound for how far we are away from the solution 
+by substituting the variables and computing the infinity norm for plausible values of $x_{t-1}$.
+\begin{gather}
+\xNow{1},\xNowtp{1},\xNowtp{1}=\xIter{1}{x_{t+1}}
+\end{gather}
+into Equation \refeq{theProblem}. If the accuracy of the approximation is adequate, we need not compute any further  terms in the power series.  If not,
+we are now in a position to compute our choice of
+$\mathcal{Z}^1(x)=\mathcal{H}^{PF}[g^{1}(x,\epsilon_{t-k+1})]$ or
+$\mathcal{Z}^1(x)=\mathcal{H}^{RE}[g^{1}(x,\epsilon_{t-k+1})]$.
+
+%  \begin{gather}
+%  g^0(x_{t-1},\epsilon_{t})=  
+% B x_{t-1}+ \phi \psi_\epsilon\epsilon_{t} +
+%  (I - F)^{-1} \phi \psi_c\\ \label{firstIter}
+% z^{0}_{t+i}(x_{t-1},\epsilon_{t-1})=0 \,\, \forall i \ge 0
+%  \end{gather}
+%  \begin{gather}
+%  g^0(x_{t-1},\epsilon_{t})=  
+% B x_{t-1}+ \phi \psi_\epsilon\epsilon_{t} +
+%  (I - F)^{-1} \phi \psi_c\\ \label{firstIter}
+% z^{0}_{t+i}(x_{t-1},\epsilon_{t-1})=0 \,\, \forall i \ge 0
+%  \end{gather}
+
+Using these functions we can then compute a solution for a model whose trajectories satisfy equation system \refeq{rbcSys}
+for two time periods and satisfy equation \refeq{rbcLinSys} subsequently.
+
+\begin{gather}
+\underbrace{x_{t-1},0}
+\underbrace{\xNow{2},\zNow{2}} 
+\underbrace{\xNowtp{2}=\XNow{2}{t}{t},\ZNow{2}{1}{t}}
+\underbrace{\XNow{1}{t+1}{t},0}\underbrace{\XNow{0}{t+2}{t+1},0}    \intertext{where we have solved for $\xNow{2}$ and $\zNow{2}$ to satisfy the  equation system \refeq{theProblem}.}
+\xNowtp{2}=\XNow{1}{t}{t}
+\end{gather}
+
+\begin{gather}
+  \label{eq:1}
+  x_t=B x_{t-1} + \phi z^2(x_{t-1},\epsilon) + F \phi \mathcal{Z}^1(x_t)\\
+  x_{t+1}=B x_{t} + \phi \mathcal{Z}^1(x_t)+
+ (I - F)^{-1} \phi \psi_c\\
+  x_{t+2}=B x_{t+1} + (I - F)^{-1} \phi \psi_c\\
+  x_{t+3}=B x_{t+2} + (I - F)^{-1} \phi \psi_c
+\end{gather}
+
+The next iteration highlights an aspect of the algorithmic step which allows us
+to continue to exploit the series representation.
+
+{\small
+\begin{gather}
+\underbrace{x_{t-1},0}
+\underbrace{\xNow{3},\zNow{3}} 
+\underbrace{\xNowtp{3}=\XNow{3}{t}{t},\ZNow{3}{1}{t}} 
+\underbrace{\XNow{2}{t+1}{t},\ZNow{2}{2}{t+1}} 
+\underbrace{\XNow{1}{t+3}{t+2},0}
+\underbrace{\XNow{0}{t+4}{t+3},0}
+\end{gather}
+}
+
+\begin{gather}
+  \label{eq:1}
+  x_t=B x_{t-1} + \phi z^3(x_{t-1},\epsilon) + F \phi \mathcal{Z}^2(x_t)+ F^2 \phi \mathcal{Z}^1(x_t)+
+ (I - F)^{-1} \phi \psi_c\\
+  x_{t+1}=B x_{t} + \phi \mathcal{Z}^1(x_t)+ F^2 \phi \mathcal{Z}^1(x_t)+
+ (I - F)^{-1} \phi \psi_c\\
+  x_{t+2}=B x_{t+1} + (I - F)^{-1} \phi \psi_c\\
+  x_{t+3}=B x_{t+2} + (I - F)^{-1} \phi \psi_c\\
+  x_{t+4}=B x_{t+2} + (I - F)^{-1} \phi \psi_c
+\end{gather}
+
+
+
+In the general iteration step we will have
+\begin{gather}
+  \label{eq:1}
+  x_t=B x_{t-1}  \phi \psi_\epsilon \epsilon_t + (I - F)^{-1} \phi \psi_c +
+\sum_{s=0}^{k} F^s \phi \mathcal{Z}^{k-s}(x_{t+s}^{k+1})\\
+  x_{t+s}^{k+1}=\Pi_{s=0}^k \xIter{s}{ x_{t}^{k+1}}
+\end{gather}
+
+
+
+Needs generalization of ``chunk'' $\frac{1}{c_t}\rightarrow \left (\frac{\theta_{t+1}}{c_{t+1}^\eta} \right )$
+
+We construct our stand-in model by augmenting the model with the equation
+\begin{gather}
+  \rcpC_t=\frac{1}{c_t}
+\end{gather}
+substituting $\rcpC_{t+1}$ for $\frac{1}{c_{t+1}}$ in the first equation and 
+ linearizing the RBC model about the ergodic mean
+given in \refeq{rbcparams}
+{\small
+\begin{gather}
+  \begin{bmatrix}
+H_{-1}&H_{0}&H_{1} 
+  \end{bmatrix}=\\
+\vcenter{\hbox{\includegraphics{RBCHmatSymb.pdf}}} \label{rbcLinSys}
+\intertext{with}
+\psi_\epsilon=
+\begin{bmatrix}
+  0\\0\\1\\0
+\end{bmatrix}, \psi_z=I
+\end{gather}%(\footnote{generated by AMAPaperCalcs.mth {RBCHmatSymb.pdf}})
+}
+These coefficients  produce a unique stable linear solution.
+
+\begin{gather}
+  B=
+\vcenter{\hbox{\includegraphics{RBCBmatSymb.pdf}}},
+\phi=
+\vcenter{\hbox{\includegraphics{RBCPhimatSymb.pdf}}}\\
+F=
+\vcenter{\hbox{\includegraphics{RBCFmatSymb.pdf}}}\\
+\psi_c=
+\vcenter{\hbox{\includegraphics{RBCHSum.pdf}}}
+\vcenter{\hbox{\includegraphics{RBCSS.pdf}}}=\vcenter{\hbox{\includegraphics{RBCPsissSymb.pdf}}}
+\end{gather}%(\footnote{generated by AMAPaperCalcs.mth {RBCBmatSymb.pdf}})(\footnote{generated by AMAPaperCalcs.mth {RBCPhimatSymb.pdf}})(\footnote{generated by AMAPaperCalcs.mth {RBCFmatSymb.pdf}})(\footnote{generated by AMAPaperCalcs.mth {RBCHSum.pdf}})(\footnote{generated by AMAPaperCalcs.mth {RBCSS.pdf}})
+
+Applying the formula \refeq{firstIter} produces:
+
+{\tiny
+\begin{gather}
+  \begin{bmatrix}
+c_t\\k_t\\ \rcpC_t\\\theta_t
+  \end{bmatrix}=%paperCalcsRBCExample xt00
+   \left(
+   \begin{array}{c}
+ 0.359845 \epsilon _t+0.692632 k_{t-1}+0.341853 \theta _{t-1}-0.0442851
+   \text{z1}_{t-1}+0.658 \text{z2}_{t-1}+0.359845 \text{z3}_{t-1}-0.111552 \\
+ 0.187032 \epsilon _t+0.36 k_{t-1}+0.17768 \theta _{t-1}+0.0442851
+   \text{z1}_{t-1}+0.342 \text{z2}_{t-1}+0.187032 \text{z3}_{t-1}-0.0579799 \\
+ -5.34898 k_{t-1}+0.342 \text{z1}_{t-1}-5.08153
+   \text{z2}_{t-1}+\text{z4}_{t-1}+3.7794 \\
+ \epsilon _t+0.95 \theta _{t-1}+\text{z3}_{t-1}+0.05 \\
+   \end{array}
+   \right)
+\end{gather}
+}
+
+and 
+
+
+{\tiny
+%xt01=Private`computeNextXt[{Private`bmat,Private`phimat,Private`fmat,Private`psieps,Private`psic,Private`psiz},solnFunc00PF[[3+Range[3]]],{{cc},{kk},{tt}},{1}]//N//Expand//Simplify
+\begin{gather}
+  \begin{bmatrix}
+c_{t+1}\\k_{t+1}\\ \rcpC_{t+1}\\\theta_{t+1}
+  \end{bmatrix}=%paperCalcsRBCExample xt00
+  \left(
+   \begin{array}{c}
+ 0.471397 \epsilon _t+0.249347 k_{t-1}+0.447827 \theta _{t-1}+0.0306732
+   \text{z1}_{t-1}+0.23688 \text{z2}_{t-1}+0.471397 \text{z3}_{t-1}-0.134618 \\
+ 0.245012 \epsilon_t+0.1296 k_{t-1}+0.232761 \theta _{t-1}+0.0159426
+   \text{z1}_{t-1}+0.12312 \text{z2}_{t-1}+0.245012 \text{z3}_{t-1}-0.0699687 \\
+ -1.00043 \epsilon _t-1.92563 k_{t-1}-0.950409 \theta _{t-1}-0.23688
+   \text{z1}_{t-1}-1.82935 \text{z2}_{t-1}-1.00043 \text{z3}_{t-1}+4.08954 \\
+ 0.95 \epsilon _t+0.9025 \theta _{t-1}+0.95 \text{z3}_{t-1}+0.0975 \\
+   \end{array}
+   \right)
+\end{gather}}
+
+Substituting  these expressions into equation \refeq{rbcSys} produces
+a deterministic system such that, given specific values for 
+$(x_{t-1},\epsilon_{t})=(c_{t-1}, k_{t-1},\rcpC_{t-1}, \theta_{t-1}, \epsilon_t)$, we can solve for $z_{1t}(x_{t-1},\epsilon_{t})$, $z_{2t}(x_{t-1},\epsilon_{t})$, $z_{2t}(x_{t-1},\epsilon_{t})$, and $z_{4t}(x_{t-1},\epsilon_{t})$  completely determining
+$c_{t}(x_{t-1},\epsilon_{t})$, $k_{t}(x_{t-1},\epsilon_{t})$, $\rcpC_{t}(x_{t-1},\epsilon_{t})$  and $\theta_{t}(x_{t-1},\epsilon_{t})$.\footnote{In this example, the lagged value,  $c_{t-1}$ does not appear in the equation system and consequently plays no role in determining the solution.}  In effect we have 
+computed a solution for a model whose trajectories satisfy equation system \refeq{rbcSys}
+for one time period and satisfy equation \refeq{rbcLinSys} subsequently.
+
+We are now in a position to compute
+$\mathcal{H}^{PF}[g^{0}(x,\epsilon_{t-k+1})]$ or
+$\mathcal{H}^{RE}[g^{0}(x,\epsilon_{t-k+1})]$.
+Using these functions we can then compute a solution for a model whose trajectories satisfy equation system \refeq{rbcSys}
+for two time periods and satisfy equation \refeq{rbcLinSys} subsequently.
+\begin{gather}
+  \label{eq:1}
+  x_t=B x_{t-1} + \phi z_0(x_{t-1},\epsilon) + F \phi \mathcal{Z}^1(x_t)\\
+  x_{t+1}=B x_{t} + \phi \mathcal{Z}^1(x_t)
+\end{gather}
+
+We will see that all these can precomputed.
+\subsubsection{General Formulation}
+\label{sec:genAux}
   {Discovering Unknown Solutions}
 
 A, conceptually, very simple solution strategy:  
@@ -451,6 +649,11 @@ evolve according to the convergent
 linear model, $\linMod$.
   \item Given solutions valid for time $t$ to $t+k$, extend the solutions to be valid for time $t$ to $t+k+1$ \label{stepNo}
 \item Repeat step \ref{stepNo} unless truncation formulas indicate the solution is sufficiently accurate
+\item collection of equations systems with logic gate.
+  \begin{itemize}
+  \item mutually exclusive
+  \item exhaustive
+  \end{itemize}
   \end{enumerate}
 
 
@@ -813,316 +1016,6 @@ Consequently, will will have an aquation system an a gatekeeper logical expressi
 \section{An Algorithm for Improving Proposed Time Invariant Solutions}
 \label{sec:algoforsoln}
 
-\subsection{Auxiliary Variable Reformulation}
-\label{sec:aux}
-
-
-\subsubsection{RBC Example}
-\label{sec:rbcaux}
-
-\begin{itemize}
-\item composition in effect imposes for number of periods
-\end{itemize}
-
-
-
-To describe the algorithm we will, for the moment, omit inequality constraints
-and regime switching.
-We will develop an algorithm for finding solutions for models that can be written in  the form
-
-
-\begin{gather}
-  h_i(x_{t-1},x_{t},x_{t+1},\epsilon_t)=h^{det}_{io}(x_{t-1},x_{t},\epsilon_t)+\sum_{j=1}^{p_i} [h^{det}_{ij}(x_{t-1},x_{t},\epsilon_t)h^{nondet}_{ij}(x_{t+1})]=0
-\end{gather}
-This is a very broad class of models including most widely used
-macroeconomics models.
-
-For example, the Euler equations for the  neoclassical growth  model 
-\label{sec:simple-rbc-model-ext} can be written as
-\begin{gather}
-h_{10^{det}}(\cdot)=\frac{1}{c_t},\,\,
-h_{11}^{det}()=\alpha \delta k_{t}^{\alpha-1} ,\,\,
-h_{11}^{nondet}(\cdot)=E_t \left (\frac{\theta_{t+1}}{c_{t+1}} \right )\\
-h_{20}^{det}(\cdot)=c_t + k_t-\theta_tk_{t-1}^\alpha,\,\,
-h_{21}^{det}(\cdot)=0\\
-h_{30}^{det}(\cdot)=\ln \theta_t -(\rho \ln \theta_{t-1} + \epsilon_t),\,\,
-h_{31}^{det}(\cdot)=0
-\end{gather}
-Since we will be working with models where expectations are computed at time t, $\epsilon_t$ is known.  The only stochastic components are those with time subscripts greater than $t$. Since we will need to compute 
-the conditional expectation of nonlinear expressions,  
-this setup will make it possible for us to use auxiliary
-variables to correctly compute the required expected values.
-Below, we will consider 
-systems that augment these dynamic equations with additional constraints 
-on the evolution of the variables.
-
-
-The algorithm will construct
- a time invariant function $g^\ast$ that satisfies
-\begin{gather}
-  \begin{split}
-h(x_{t+s-1},g^\ast(x_{t+s-1},\epsilon_{t+s}),\mathcal{H}[g^\ast(g^\ast(x_{t+s-1},\epsilon_{t+s}),\epsilon_{t+s+1})],\epsilon_{t+s}) \label{theProblem} \\
-%m(x_{t+s-1},g^\ast(x_{t+s-1},\epsilon_{t+s}),\mathcal{H}[g^\ast(g^\ast(x_{t+s-1},\epsilon_{t+s}),\epsilon_{t+s+1})],\epsilon_{t+s}) \ge 0  
-  \end{split}
-%  \intertext{define} 
-% \mathcal{G}^\ast(x_{t+s-1},\epsilon_{t+s})= \mathcal{H}[g^\ast(g^\ast(x_{t+s-1},\epsilon_{t+s}),\epsilon_{t+s+1})] \nonumber
- \end{gather}
- for all $s>0$ where $\mathcal{H}$ is an operator, 
-  that maps stochastic functions of $x$ and $\epsilon$ into deterministic 
-functions of $x$ alone.  In this paper we will consider two such operators:
-
-
-
-
-
-
-
-
-
-
-We begin by choosing some linear model of appropriate dimension that 
-has a uniquely convergent steady state.  
-Although this is not necessary, it may be possible to obtain this model by
-linearizing the original model around the deterministic steady state.\footnote{As noted above, one could construct a series representation using any linear
- model of appropriate dimension with a unique stable solution.  The rate of convergence and the number of terms required for a  given level of accuracy will depend upon the linear model employed.}
-
-
- \begin{gather}
- g^0(x_{t-1},\epsilon_{t})=  
-B x_{t-1}+ \phi \psi_\epsilon\epsilon_{t} +
- (I - F)^{-1} \phi \psi_c\\ \label{firstIter}
-z^{0}_{t+i}(x_{t-1},\epsilon_{t-1})=0 \,\, \forall i \ge 0
- \end{gather}
-We are now in a position to easily compute 
- \begin{gather}
-\xIter{0}{x}=\mathcal{H}^{PF}[g^{0}(x,\epsilon_{t-k+1})]=
-\mathcal{H}^{RE}[g^{0}(x,\epsilon_{t-k+1})]= 
-B x+  (I - F)^{-1} \phi \psi_c
- \end{gather}
-\begin{gather}
-\underbrace{x_{t-1},0} 
-\underbrace{\xNow{0},\zNow{0}}
-\underbrace{\xNowtp{0}=\xIter{0}{x_{t}},0}
-\end{gather}
-In other words, from time t onwards, this approximation assumes 
-that our stand-in
- convergent linear model completely characterizes the solution.\footnote{
-The algorithm terminates with an approximation for 
-the time invariant function $g^\ast$.}  It is unlikely that $g^0(x_{t-1},\epsilon_{t})$
-satisfies equation \refeq{theProblem} for arbitrary $x_{t-1}$ even for $s=0$.
-We can get a pessimistic upper bound for how far we are away from the solution 
-by computing the infinity norm of substituting the variables from into Equation \refeq{theProblem}.
-% \footnote{The values in Table \ref{truncTab} illustrate how
-%pessimistic this approximation can be, but it turns out we can expect the accur%acy of  approximate truncation errors improve as we expand the approximation series.}
-
-Next, we compute a solution in which the nonlinear equations are satisfied at time t alone while the stand-in linear system holds sway subsequently.
-Our algorithm will  compute
-\begin{gather}
-\underbrace{x_{t-1},0} 
-\underbrace{\xNow{1},\zNow{1}}
-\underbrace{\xNowtp{1}=\xIter{1}{x_{t+1}},0}
-\underbrace{\xNowtp{1}=\xIter{0}{x_{t+1}},0}
-\end{gather}
-that satisfy the nonlinear equation system at time t.
-For a given $x_{t-1}$, we substitute
-\begin{gather}
-x_{t-1}, \,\,
-  x_t=B x_{t-1} + \phi z^1(x_{t-1},\epsilon_t) , \,\,
-  x_{t+1}=B x_{t} + \phi \mathcal{Z}^1(x_t)
-\end{gather}
-into the non linear equation system to determine the 
-$z^1(x_{t-1},\epsilon_t)$ and consequently $x_t^1(x_{t-1},\epsilon_t)$.
-We then have
- \begin{gather}
- g^1(x_{t-1},\epsilon_{t})=  
-B x_{t-1}+ \phi \psi_\epsilon\epsilon_{t} +
-\phi \psi_\epsilon z^1(x_{t-1},\epsilon_t)+
- (I - F)^{-1} \phi \psi_c\\ \label{firstIter}
-z^{1}_{t+i}(x_{t-1},\epsilon_{t-1})=0 \,\, \forall i \ge 1
- \end{gather}
-Now, $g^1(x_{t-1},\epsilon_{t})$
-satisfies equation \refeq{theProblem} for arbitrary $x_{t-1}$ at time $t$ with $s=0$.  However, it probably does not solve the system for $s>0$.
-We can get a pessimistic upper bound for how far we are away from the solution 
-by substituting the variables and computing the infinity norm for plausible values of $x_{t-1}$.
-\begin{gather}
-\xNow{1},\xNowtp{1},\xNowtp{1}=\xIter{1}{x_{t+1}}
-\end{gather}
-into Equation \refeq{theProblem}. If the accuracy of the approximation is adequate, we need not compute any further  terms in the power series.  If not,
-we are now in a position to compute our choice of
-$\mathcal{Z}^1(x)=\mathcal{H}^{PF}[g^{1}(x,\epsilon_{t-k+1})]$ or
-$\mathcal{Z}^1(x)=\mathcal{H}^{RE}[g^{1}(x,\epsilon_{t-k+1})]$.
-
-%  \begin{gather}
-%  g^0(x_{t-1},\epsilon_{t})=  
-% B x_{t-1}+ \phi \psi_\epsilon\epsilon_{t} +
-%  (I - F)^{-1} \phi \psi_c\\ \label{firstIter}
-% z^{0}_{t+i}(x_{t-1},\epsilon_{t-1})=0 \,\, \forall i \ge 0
-%  \end{gather}
-%  \begin{gather}
-%  g^0(x_{t-1},\epsilon_{t})=  
-% B x_{t-1}+ \phi \psi_\epsilon\epsilon_{t} +
-%  (I - F)^{-1} \phi \psi_c\\ \label{firstIter}
-% z^{0}_{t+i}(x_{t-1},\epsilon_{t-1})=0 \,\, \forall i \ge 0
-%  \end{gather}
-
-Using these functions we can then compute a solution for a model whose trajectories satisfy equation system \refeq{rbcSys}
-for two time periods and satisfy equation \refeq{rbcLinSys} subsequently.
-
-\begin{gather}
-\underbrace{x_{t-1},0}
-\underbrace{\xNow{2},\zNow{2}} 
-\underbrace{\xNowtp{2}=\XNow{2}{t}{t},\ZNow{2}{1}{t}}
-\underbrace{\XNow{1}{t+1}{t},0}\underbrace{\XNow{0}{t+2}{t+1},0}    \intertext{where we have solved for $\xNow{2}$ and $\zNow{2}$ to satisfy the  equation system \refeq{theProblem}.}
-\xNowtp{2}=\XNow{1}{t}{t}
-\end{gather}
-
-\begin{gather}
-  \label{eq:1}
-  x_t=B x_{t-1} + \phi z^2(x_{t-1},\epsilon) + F \phi \mathcal{Z}^1(x_t)\\
-  x_{t+1}=B x_{t} + \phi \mathcal{Z}^1(x_t)+
- (I - F)^{-1} \phi \psi_c\\
-  x_{t+2}=B x_{t+1} + (I - F)^{-1} \phi \psi_c\\
-  x_{t+3}=B x_{t+2} + (I - F)^{-1} \phi \psi_c
-\end{gather}
-
-The next iteration highlights an aspect of the algorithmic step which allows us
-to continue to exploit the series representation.
-
-{\small
-\begin{gather}
-\underbrace{x_{t-1},0}
-\underbrace{\xNow{3},\zNow{3}} 
-\underbrace{\xNowtp{3}=\XNow{3}{t}{t},\ZNow{3}{1}{t}} 
-\underbrace{\XNow{2}{t+1}{t},\ZNow{2}{2}{t+1}} 
-\underbrace{\XNow{1}{t+3}{t+2},0}
-\underbrace{\XNow{0}{t+4}{t+3},0}
-\end{gather}
-}
-
-\begin{gather}
-  \label{eq:1}
-  x_t=B x_{t-1} + \phi z^3(x_{t-1},\epsilon) + F \phi \mathcal{Z}^2(x_t)+ F^2 \phi \mathcal{Z}^1(x_t)+
- (I - F)^{-1} \phi \psi_c\\
-  x_{t+1}=B x_{t} + \phi \mathcal{Z}^1(x_t)+ F^2 \phi \mathcal{Z}^1(x_t)+
- (I - F)^{-1} \phi \psi_c\\
-  x_{t+2}=B x_{t+1} + (I - F)^{-1} \phi \psi_c\\
-  x_{t+3}=B x_{t+2} + (I - F)^{-1} \phi \psi_c\\
-  x_{t+4}=B x_{t+2} + (I - F)^{-1} \phi \psi_c
-\end{gather}
-
-
-
-In the general iteration step we will have
-\begin{gather}
-  \label{eq:1}
-  x_t=B x_{t-1}  \phi \psi_\epsilon \epsilon_t + (I - F)^{-1} \phi \psi_c +
-\sum_{s=0}^{k} F^s \phi \mathcal{Z}^{k-s}(x_{t+s}^{k+1})\\
-  x_{t+s}^{k+1}=\Pi_{s=0}^k \xIter{s}{ x_{t}^{k+1}}
-\end{gather}
-
-
-
-Needs generalization of ``chunk'' $\frac{1}{c_t}\rightarrow \left (\frac{\theta_{t+1}}{c_{t+1}^\eta} \right )$
-
-We construct our stand-in model by augmenting the model with the equation
-\begin{gather}
-  \rcpC_t=\frac{1}{c_t}
-\end{gather}
-substituting $\rcpC_{t+1}$ for $\frac{1}{c_{t+1}}$ in the first equation and 
- linearizing the RBC model about the ergodic mean
-given in \refeq{rbcparams}
-{\small
-\begin{gather}
-  \begin{bmatrix}
-H_{-1}&H_{0}&H_{1} 
-  \end{bmatrix}=\\
-\vcenter{\hbox{\includegraphics{RBCHmatSymb.pdf}}} \label{rbcLinSys}
-\intertext{with}
-\psi_\epsilon=
-\begin{bmatrix}
-  0\\0\\1\\0
-\end{bmatrix}, \psi_z=I
-\end{gather}%(\footnote{generated by AMAPaperCalcs.mth {RBCHmatSymb.pdf}})
-}
-These coefficients  produce a unique stable linear solution.
-
-\begin{gather}
-  B=
-\vcenter{\hbox{\includegraphics{RBCBmatSymb.pdf}}},
-\phi=
-\vcenter{\hbox{\includegraphics{RBCPhimatSymb.pdf}}}\\
-F=
-\vcenter{\hbox{\includegraphics{RBCFmatSymb.pdf}}}\\
-\psi_c=
-\vcenter{\hbox{\includegraphics{RBCHSum.pdf}}}
-\vcenter{\hbox{\includegraphics{RBCSS.pdf}}}=\vcenter{\hbox{\includegraphics{RBCPsissSymb.pdf}}}
-\end{gather}%(\footnote{generated by AMAPaperCalcs.mth {RBCBmatSymb.pdf}})(\footnote{generated by AMAPaperCalcs.mth {RBCPhimatSymb.pdf}})(\footnote{generated by AMAPaperCalcs.mth {RBCFmatSymb.pdf}})(\footnote{generated by AMAPaperCalcs.mth {RBCHSum.pdf}})(\footnote{generated by AMAPaperCalcs.mth {RBCSS.pdf}})
-
-Applying the formula \refeq{firstIter} produces:
-
-{\tiny
-\begin{gather}
-  \begin{bmatrix}
-c_t\\k_t\\ \rcpC_t\\\theta_t
-  \end{bmatrix}=%paperCalcsRBCExample xt00
-   \left(
-   \begin{array}{c}
- 0.359845 \epsilon _t+0.692632 k_{t-1}+0.341853 \theta _{t-1}-0.0442851
-   \text{z1}_{t-1}+0.658 \text{z2}_{t-1}+0.359845 \text{z3}_{t-1}-0.111552 \\
- 0.187032 \epsilon _t+0.36 k_{t-1}+0.17768 \theta _{t-1}+0.0442851
-   \text{z1}_{t-1}+0.342 \text{z2}_{t-1}+0.187032 \text{z3}_{t-1}-0.0579799 \\
- -5.34898 k_{t-1}+0.342 \text{z1}_{t-1}-5.08153
-   \text{z2}_{t-1}+\text{z4}_{t-1}+3.7794 \\
- \epsilon _t+0.95 \theta _{t-1}+\text{z3}_{t-1}+0.05 \\
-   \end{array}
-   \right)
-\end{gather}
-}
-
-and 
-
-
-{\tiny
-%xt01=Private`computeNextXt[{Private`bmat,Private`phimat,Private`fmat,Private`psieps,Private`psic,Private`psiz},solnFunc00PF[[3+Range[3]]],{{cc},{kk},{tt}},{1}]//N//Expand//Simplify
-\begin{gather}
-  \begin{bmatrix}
-c_{t+1}\\k_{t+1}\\ \rcpC_{t+1}\\\theta_{t+1}
-  \end{bmatrix}=%paperCalcsRBCExample xt00
-  \left(
-   \begin{array}{c}
- 0.471397 \epsilon _t+0.249347 k_{t-1}+0.447827 \theta _{t-1}+0.0306732
-   \text{z1}_{t-1}+0.23688 \text{z2}_{t-1}+0.471397 \text{z3}_{t-1}-0.134618 \\
- 0.245012 \epsilon_t+0.1296 k_{t-1}+0.232761 \theta _{t-1}+0.0159426
-   \text{z1}_{t-1}+0.12312 \text{z2}_{t-1}+0.245012 \text{z3}_{t-1}-0.0699687 \\
- -1.00043 \epsilon _t-1.92563 k_{t-1}-0.950409 \theta _{t-1}-0.23688
-   \text{z1}_{t-1}-1.82935 \text{z2}_{t-1}-1.00043 \text{z3}_{t-1}+4.08954 \\
- 0.95 \epsilon _t+0.9025 \theta _{t-1}+0.95 \text{z3}_{t-1}+0.0975 \\
-   \end{array}
-   \right)
-\end{gather}}
-
-Substituting  these expressions into equation \refeq{rbcSys} produces
-a deterministic system such that, given specific values for 
-$(x_{t-1},\epsilon_{t})=(c_{t-1}, k_{t-1},\rcpC_{t-1}, \theta_{t-1}, \epsilon_t)$, we can solve for $z_{1t}(x_{t-1},\epsilon_{t})$, $z_{2t}(x_{t-1},\epsilon_{t})$, $z_{2t}(x_{t-1},\epsilon_{t})$, and $z_{4t}(x_{t-1},\epsilon_{t})$  completely determining
-$c_{t}(x_{t-1},\epsilon_{t})$, $k_{t}(x_{t-1},\epsilon_{t})$, $\rcpC_{t}(x_{t-1},\epsilon_{t})$  and $\theta_{t}(x_{t-1},\epsilon_{t})$.\footnote{In this example, the lagged value,  $c_{t-1}$ does not appear in the equation system and consequently plays no role in determining the solution.}  In effect we have 
-computed a solution for a model whose trajectories satisfy equation system \refeq{rbcSys}
-for one time period and satisfy equation \refeq{rbcLinSys} subsequently.
-
-We are now in a position to compute
-$\mathcal{H}^{PF}[g^{0}(x,\epsilon_{t-k+1})]$ or
-$\mathcal{H}^{RE}[g^{0}(x,\epsilon_{t-k+1})]$.
-Using these functions we can then compute a solution for a model whose trajectories satisfy equation system \refeq{rbcSys}
-for two time periods and satisfy equation \refeq{rbcLinSys} subsequently.
-\begin{gather}
-  \label{eq:1}
-  x_t=B x_{t-1} + \phi z_0(x_{t-1},\epsilon) + F \phi \mathcal{Z}^1(x_t)\\
-  x_{t+1}=B x_{t} + \phi \mathcal{Z}^1(x_t)
-\end{gather}
-
-We will see that all these can precomputed.
-\subsubsection{General Formulation}
-\label{sec:genAux}
-
 \subsection{Function Approximation Representation}
 \label{sec:funcApproxRep}
 
@@ -1484,6 +1377,53 @@ Bounded solutions if and only if all eigenvalues of
 \begin{itemize}
 \item time varying:  regime switching, hammers need nails
 \item SVMR and other ML universal approximators
+
+
+
+Support vector machines occupy a prominent place applied machine learning
+Additionally they can reduce the burden of computation as they determine 
+a subset of points that are important in characterizing a given function.
+Kernel trick,  powerful representation quadratic programming solution to compute there are on-line techniques for adding and deleting individual points from the representation.  A weighted sum of kernel functions RBF, wavelet, special forms for time series.
+  This paper proposes a new series representation for bounded so-
+lutions to dynamic models. This series representation can be used
+to determine a series representation for time invariant discrete time
+maps that characterize the solutions to many models. Consequently,
+the technique constitutes an important component in a technique for
+accurately characterizing the solutions for a wide array of nonlinear
+rational expectations models. It can also provide a formula for com-
+puting accuracy bounds for any proposed time invariant model so-
+lution. The series representation serves as an important component
+in an algorithm for constructing approximate solutions for nonlinear
+rational expectations models.
+The technique recursively computes solutions that honor the con-
+straints for successively longer horizons.  The solutions computed by
+the technique accommodate the possibility that model trajectories can
+depart from and re-engage inequality constraints as well as transition
+between various regimes.
+This paper applies support vector machine function approximation to
+reduce the computational burden associated with representing the
+unknown, potentially highly nonlinear stochstic functions that arise in
+solving dynamic models with occasionally binding constraints.
+
+
+Support vector machines 
+have become an essential tool in contemporary machine learning research
+where computer scientists exploit their flexibility and
+computational tractability in modelling complex high dimensional data.
+Like many other function approximation approaches,
+support vector machines represent functions as a linearly weighted sum
+of a family of basis functions.  They differ from other approaches in  the
+use of ``hinge loss functions'' that generate
+an easy to solve
+quadratic programming problem(QPP) for determining the weights.
+The solution of this QPP identifies a subset of points, the support vectors,
+that are influential in the representation.  With strategically chosen
+basis functions, this can dramatically reduce the number of terms needed
+to approximate a function to a given level of accuracy.
+
+
+
+
 \item function composition Fa Di Bruno
 \item divide and conquer solution space initially collect results stocastic steady state at center of divided region with overlap
 \item dynamical system theory implications

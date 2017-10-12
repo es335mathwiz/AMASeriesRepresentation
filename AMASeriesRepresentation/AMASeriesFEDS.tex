@@ -215,6 +215,9 @@ genRandomPath[init_?MatrixQ,eps_?MatrixQ,kk_Integer]:=
 				  RandomReal[{-4,4},kk]]
 \end{verbatim}
 
+\begin{itemize}
+\item Should include closed form solution for RBC
+\end{itemize}
 
 The first set of trajectories(See Figure \ref{pipath}) is a function of
 the digits in the decimal representation of $\pi$.  
@@ -283,9 +286,9 @@ to the initial time have the most important impact.
 
 
 
-\subsubsection{Assessing $x_t$ Error}
+\subsection{A Path Norm and Assessing $x_t$ Error}
 \label{sec:truncationerr}
-\paragraph{Truncation Error}
+\subsubsection{Truncation Error}
 
 
 One could consider approximating $\mathcal{X}_t(x_{t-1},\epsilon)$ by 
@@ -304,23 +307,366 @@ Note that for approximating $\xWarg$ the impact of  a given realization along th
 
 
 
+\subsubsection{Path Error}
 
-\paragraph{Pessimistic Error}
 
-\subsubsection{A Path Norm}
 \label{sec:pathnorm}
 
 \section{Nonlinear Dynamic Stochastic Time Invariant Maps}
 \subsection{Application to Time Invariant Maps}
 \label{sec:extToMaps}
+\begin{itemize}
+\item Simple single equation system
+\item later will need to introduce collection of equation systems with  boolean gates
+\item later will need to make law iterated expectations applicable
+\item use truncation error to show formula works
+\end{itemize}
 
-\subsection{Auxiliary Variable Reformulation}
-\label{sec:aux}
+
+\subsubsection{ General RBC Example Formulation}
+\label{sec:rbcaux}
+
+\paragraph{An RBC Model Example Known Solution}
+\label{sec:rbcexample}
+
+\label{sec:simple-rbc-model-2}
+\begin{itemize}
+\item Truncation Error
+\item path error use solutions for ``wrong'' parameters
+\item show formula works
+\end{itemize}
+
+  {The RBC Model ($\eta=1$): Recovering a Known Solution}
+  \begin{itemize}
+  \item Compute $\linMod$ for RBC Model $\eta=1,\rcpC_t=\frac{1}{c_t}$
+  \end{itemize}
+
+Applying formula \refeq{theSeries} produces:
+
+{\tiny
+\begin{gather}
+  \begin{bmatrix}
+c_t\\k_t\\ \rcpC_t\\\theta_t
+  \end{bmatrix}=\\%paperCalcsRBCExample xt00
+   \left(
+   \begin{array}{c}
+ 0.359845 \epsilon _t+0.692632 k_{t-1}+0.341853 \theta _{t-1}-0.0442851
+   \text{z1}_{t-1}+0.658 \text{z2}_{t-1}+0.359845 \text{z3}_{t-1}-0.111552 \\
+ 0.187032 \epsilon _t+0.36 k_{t-1}+0.17768 \theta _{t-1}+0.0442851
+   \text{z1}_{t-1}+0.342 \text{z2}_{t-1}+0.187032 \text{z3}_{t-1}-0.0579799 \\
+ -5.34898 k_{t-1}+0.342 \text{z1}_{t-1}-5.08153
+   \text{z2}_{t-1}+\text{z4}_{t-1}+3.7794 \\
+ \epsilon _t+0.95 \theta _{t-1}+\text{z3}_{t-1}+0.05 \\
+   \end{array}
+   \right)
+\end{gather}
+}
+
+and 
+
+
+{\tiny
+%xt01=Private`computeNextXt[{Private`bmat,Private`phimat,Private`fmat,Private`psieps,Private`psic,Private`psiz},solnFunc00PF[[3+Range[3]]],{{cc},{kk},{tt}},{1}]//N//Expand//Simplify
+\begin{gather}
+  \begin{bmatrix}
+c_{t+1}\\k_{t+1}\\ \rcpC_{t+1}\\\theta_{t+1}
+  \end{bmatrix}=\\%paperCalcsRBCExample xt00
+  \left(
+   \begin{array}{c}
+ 0.471397 \epsilon _t+0.249347 k_{t-1}+0.447827 \theta _{t-1}+0.0306732
+   \text{z1}_{t-1}+0.23688 \text{z2}_{t-1}+0.471397 \text{z3}_{t-1}-0.134618 \\
+ 0.245012 \epsilon_t+0.1296 k_{t-1}+0.232761 \theta _{t-1}+0.0159426
+   \text{z1}_{t-1}+0.12312 \text{z2}_{t-1}+0.245012 \text{z3}_{t-1}-0.0699687 \\
+ -1.00043 \epsilon _t-1.92563 k_{t-1}-0.950409 \theta _{t-1}-0.23688
+   \text{z1}_{t-1}-1.82935 \text{z2}_{t-1}-1.00043 \text{z3}_{t-1}+4.08954 \\
+ 0.95 \epsilon _t+0.9025 \theta _{t-1}+0.95 \text{z3}_{t-1}+0.0975 \\
+   \end{array}
+   \right)
+\end{gather}}
+
+
+
+
+
+ {\bf RBC Model Example}
+  See \cite{Maliar2005}
+ \begin{gather*}
+   \max\left \{  u(c_t^t) + E_t \sum_{\tau=t}^\infty \beta \delta^{\tau+1-t}u(c_{\tau+1}^t)\right \}\\
+c_\tau^t + k_\tau^{t+1}=(1-d)k_\tau^{t-1} + \theta_\tau f(k_\tau^{t-1})\\
+f(k_\tau^{t-1})= k_\tau^\alpha
+ \end{gather*}
+
+\begin{gather}
+\frac{1}{c_t^{\eta}}=\alpha \delta k_{t}^{\alpha-1} E_t \left (\frac{\theta_{t}}{c_{t+1}^\eta} \right ) \\
+c_t + k_t=\theta_{t-1}k_{t-1}^\alpha \\
+ \theta_t =\theta_{t-1}^\rho e^{\epsilon_t}\label{rbcSys}
+\intertext{for $\eta=1$}
+\frac{1}{c_t}=\alpha \delta k_{t}^{\alpha-1} E_t \left (\frac{\theta_{t}}{c_{t+1}} \right ) \\
+c_t + k_t=\theta_{t-1}k_{t-1}^\alpha \\
+\theta_t =\theta_{t-1}^\rho e^{\epsilon_t}\label{rbcSys}
+\intertext{and there is a closed form solution}
+  k_{t}= \alpha \delta \theta_{t} k_{t-1}^\alpha.\label{soln}\\
+c_t=  (1-\alpha \delta) \theta_{t} k_{t-1}^\alpha
+\end{gather}
+For mean zero iid $\epsilon_t$ we can easily compute a family of trajectories like \refeq{fFamily}
+\begin{gather}
+  \begin{bmatrix}
+c_{t+s}(k_{t-1},\theta_t,\epsilon_t)\\k_{t+s}(k_{t-1},\theta_t,\epsilon_t)    \\ \theta_{t+s}(\theta_{t-1},\theta_t,\epsilon_t)    
+  \end{bmatrix}
+\intertext{with conditional mean converging over time to }
+  \begin{bmatrix}
+    c_{ss}\\k_{ss}
+  \end{bmatrix}=
+  \begin{bmatrix}
+\nu^\alpha-\nu\\ \nu
+  \end{bmatrix}\intertext{where}
+\nu= \alpha ^{\frac{1}{1-\alpha }} \delta ^{\frac{1}{1-\alpha }}
+\end{gather}
+
+
+We can use the family of conditional expectations
+along with the contrived reference model to recover an 
+approximation for equation \refeq{soln} along with error bounds.
+The series representation provides a weighted sum of z functions that give us
+an approximation for the known solution.
+\footnote{Note that the reference model is deterministic and the $z$ functions account for the stochastic nature of the model.}
+% \footnote{
+% We need not  make these adjustments for the steady state,
+% but doing so economizes on the number of terms 
+% required for a given level of approximation
+% accuracy.}
+
+Using the following parameter values
+
+\begin{gather}
+\vcenter{\hbox{\includegraphics{../../paperProduction/occBind/docs/RBCParamSubs.pdf}}} \,\, \text{ we have } \,\,
+  \begin{bmatrix}
+    c_{ss}\\k_{ss} \\ \theta_{ss} \label{rbcparams}
+  \end{bmatrix}=
+\vcenter{\hbox{\includegraphics{../../paperProduction/occBind/docs/RBCSSVal.pdf}}}
+\end{gather}%(\footnote{{../../paperProduction/occBind/docs/RBCParamSubs.pdf}})(\footnote{{RBCSSVal.pdf}})
+
+
+\begin{figure}
+  \centering
+\includegraphics{simpBoundsVActual.pdf}  
+  \label{rbcTrunc}
+  \caption{RBC Truncation Error Bound Versus Actual}
+\end{figure}
+
+
+
 
 
 
 \subsubsection{Dynamic Stochastic Models, Model Solutions  and Conditional Expectations}
 \label{sec:condExp}
+\subsection{General Formulation}
+\label{sec:genAux}
+  {Discovering Unknown Solutions}
+
+A, conceptually, very simple solution strategy:  
+
+  \begin{enumerate}
+  \item Begin with some convergent linear model, $\linMod$, of appropriate dimension.
+  \item Compute solutions honoring the model equations for time t, 
+but that assume the trajectories subsequently 
+evolve according to the convergent 
+linear model, $\linMod$.
+  \item Given solutions valid for time $t$ to $t+k$, extend the solutions to be valid for time $t$ to $t+k+1$ \label{stepNo}
+\item Repeat step \ref{stepNo} unless truncation formulas indicate the solution is sufficiently accurate
+\item collection of equations systems with logic gate.
+  \begin{itemize}
+  \item mutually exclusive
+  \item exhaustive
+  \end{itemize}
+  \end{enumerate}
+
+
+
+
+
+
+  {Algorithm based on basic properties of deterministic maps.}
+  \begin{itemize}
+  \item     The $\epsilon$'s  play two distinct roles in the algorithm.
+To see the two roles, consider a family of stochastic functions 
+$\{\stochF{T},\ldots,\stochF{0}\}$ with 
+$\stochF{k}(x,\epsilon_t): {\mathcal{R}}^{L+1} \rightarrow \mathcal{R}^L$ 
+    \begin{enumerate}
+\item I assume  $\epsilon_t \sim $ iid. Knowing the distribution 
+of the $\epsilon_t$ makes it possible to compute 
+a corresponding family of deterministic functions $\detF{k}(x)=E( \stochF{k}(x,\epsilon_t)|x) $
+    \item I assume that at some initial time, say t=0, a particular 
+ $\epsilon_0$ draw 
+along with an $x_{-1}$, determines a unique $x_0=\stochF{T}\initXE$.
+Subsequently, $x_{t}=\detF{{T-t}}(x_{t-1})\,\, \forall t>0$
+    \end{enumerate}
+ \item The series representation requires a unique trajectory beginning with $x_0=\stochF{T}\initXE$ and 
+evolving forward from any $x_0$ given by, a potentially time varying deterministic map,  $x_t=\detF{T-t}(x_{t-1})\,\, \forall t>0$. 
+  \item The algorithm for discovering unknown solutions does not rely on time invariance.
+  \end{itemize}
+    
+
+
+
+
+
+
+  {Recursive updating}
+{\small
+  \begin{itemize}
+  \item Given a linear reference model,$\linModMats$,  any bounded 
+sequence of deterministic maps $\{\detF{T},\ldots,\detF{0}\}, \,\, T>0$ generates 
+a series representation
+  \begin{gather}
+     \label{eq:2}
+	 \mathcal{X}_{t}(x_{t-1}) =B x_{t-1}+  (I - F)^{-1} \phi \psi_c +\\ \sum_{\sForSum=0}^{T-1} F^s \phi z_{T-\sForSum}(x_{t-1}) \intertext{it is straightforward to 
+update to a new series representation for the map trajectories resulting from prepending an additional deterministic map to the sequence $\detF{T+1},\ldots,\detF{0}\}$}
+	 \mathcal{X}_{t}(x_{t-1}) =B x_{t-1}+  (I - F)^{-1} \phi \psi_c +\\ 
+\phi z_{T+1}(x_{t-1}) + \sum_{\sForSum=1}^{T} F^s \phi z_{T+1-\sForSum}(x_{t-1}) 
+  \end{gather}
+\item 
+  \end{itemize}
+}
+
+
+
+%\footnote{We set $\psi_c=0$  without loss of generality 
+%in the expressions that follow merely to save on notation.}
+
+
+{The model of interest and a linear reference model}
+\begin{itemize}
+\item The target model is of the form
+\begin{gather}
+\nlEqnLHS{x_{t-1}}{x_t}{x_{t+1}}{t}=\\
+\nlEqn{x_{t-1}}{x_t}{x_{t+1}}{t}=0\\ \label{refMod}
+ (L \times 1) +  (L \times L ) \cdot (L \times 1)\\
+\nlEqnSel{x_{t-1}}{x_t}{x_{t+1}}{t}\\ 
+\end{gather}
+
+
+
+\item The algorithm constructs a sequence of stochastic 
+functions 
+  \begin{gather}
+	 \stochF{k}\initXE =B x_{t-1}+ (I - F)^{-1} \phi \psi_c+  \phi \psi_\epsilon\epsilon_0  +\\ \phi z^{\{k\}}\initXE+ \sum_{\sForSum=1}^{k-1} F^s \phi z^{\{k-\nu\}}_{\sForSum}\initXE 
+\label{theSeries}
+  \end{gather}
+
+\item One can show that the algorithm begins with solutions satisfying 
+the linear reference model $\linModMats$ and
+constructs a sequence of functions
+ honoring the target model equations for successively 
+longer solution horizons.
+  \end{itemize}
+
+
+
+
+  {Correctly Computing Expectations of Nonlinear Functions}
+
+  \begin{itemize}
+\item Auxiliary equations for non linear ``chunks'' provide mechanism for characterizing  nonlinear expectations in the future
+  \item Formula maps future equation errors  to current time changes in model
+variables.
+\item  $\epsilon_t$ is known so that,
+given a function characterizing future expectation,  model requires
+a deterministic solution at time $t$
+\item The formula is linear in the potentially nonlinear $z$ functions
+  \end{itemize}
+
+
+
+
+{Early iterations}
+{\small
+  \begin{itemize}
+  \item $k=0$: Completely ignore the target model
+  \begin{gather}
+z^{\itSup{0}}\initXE=0 \intertext{ so that}
+\stochF{0}\initXE=B x_{-1} + (I - F)^{-1} \phi \psi_c +\phi \psi_\epsilon \epsilon_0  \intertext{initialize the sequence of deterministic maps with }
+\{\detF{0}\initX=B x \}
+  \end{gather}
+  \item $k=1$: Employ the target model for one period. Use
+  \begin{gather}
+x_0\initXE=B x_{-1}+ (I - F)^{-1} \phi \psi_c +\phi \psi_\epsilon \epsilon_0 + \phi z^{\itSup{1}}\initXE\\
+E(x_1\initXE)=\detF{0}(x_0\initXE) \intertext{in the deterministic equation 
+\refeq{refMod} to determine $z^{\itSup{1}}\initXE$ so}
+\stochF{1}\initXE = B x_{-1}+ (I - F)^{-1} \phi \psi_c +\phi \psi_\epsilon \epsilon_0 + 
+\phi z^{\itSup{1}}\initXE \intertext{%Define $Z^{\itSup{1}}(x)\equiv E \left [ z^{\itSup{1}}\initXEN | x \right ]$ and 
+ augment the sequence}
+\{\detF{1}\initX=B x  + \phi Z^{\itSup{1}}(x),\detF{0}\}
+  \end{gather}
+  \end{itemize}
+}
+
+
+
+{Early iterations}
+{\small
+  \begin{itemize}
+  \item $k=2$: Employ the target model for two periods. Use
+  \begin{gather}
+x_0\initXE=B x_{-1}+ (I - F)^{-1} \phi \psi_c +\phi \psi_\epsilon \epsilon_0 +\\ \phi z^{\itSup{2}}\initXE + F \phi Z^{\itSup{1}}(x_0\initXE)\\
+E(x_1\initXE)=\detF{1}(x_0\initXE) \intertext{in the deterministic equation 
+\refeq{refMod} to determine $z^{\itSup{2}}\initXE$}
+\stochF{2}\initXE = B x_{-1}+ (I - F)^{-1} \phi \psi_c +\phi \psi_\epsilon \epsilon_0 +\\ \phi z^{\itSup{2}}\initXE + F \phi Z^{\itSup{1}}(x_0\initXE)\intertext{
+Define $Z^{\itSup{2}}(x)\equiv 
+E \left [ z^{\itSup{2}}\initXEN | x \right ]$}
+\{\detF{2}\initX=B x  + \phi  Z^{\itSup{2}}(x) + F \phi Z^{\itSup{1}}(x_0\initXE),
+\detF{1}\initX,\detF{0}\initX\}
+  \end{gather}
+  \end{itemize}
+}
+
+
+
+
+{Early iterations}
+{\small
+  \begin{itemize}
+  \item $k=3$: Employ the target model for two periods. Use
+  \begin{gather}
+x_0\initXE=B x_{-1}+ (I - F)^{-1} \phi \psi_c +\phi \psi_\epsilon \epsilon_0 + \phi z^{\itSup{3}}\initXE +\\ F \phi Z^{\itSup{2}}(x_0\initXE) + F^2 \phi Z^{\itSup{1}}(\detF{2}(x_0\initXE))\\
+E(x_1\initXE)=\detF{2}(x_0\initXE) \intertext{in the deterministic equation 
+\refeq{refMod} to determine $z^{\itSup{3}}\initXE$}
+\stochF{3}\initXE = B x_{-1}+ (I - F)^{-1} \phi \psi_c +\phi \psi_\epsilon \epsilon_0 + \phi z^{\itSup{3}}\initXE + \\F \phi Z^{\itSup{2}}(x_0\initXE) +F^2 \phi Z^{\itSup{1}}(\detF{2}(x_0\initXE))\intertext{
+Define $Z^{\itSup{3}}(x)\equiv 
+E \left [ z^{\itSup{3}}\initXEN | x \right ]$}
+\detF{2}\initX=B x  + \phi  Z^{\itSup{3}}(x) + 
+F \phi Z^{\itSup{2}}(x_0\initXE) + \\F^2 \phi Z^{\itSup{1}}(\detF{1}(x_0\initXE))
+  \end{gather}
+  \end{itemize}
+}
+
+
+
+{General iterations}
+{\small
+  \begin{itemize}
+  \item $k=K+1$: Employ the target model for $K+1$ periods. Use
+  \begin{gather}
+x_0\initXE=B x_{-1}+ (I - F)^{-1} \phi \psi_c +\phi \psi_\epsilon \epsilon_0 + \phi z^{\itSup{K+1}}\initXE +\\ \sum_\sForSum^K F^\nu \phi Z^{\itSup{K+1-s}}\detComp{x_0\initXE} \\
+E(x_1\initXE)=\detF{K}(x_0\initXE) \intertext{in the deterministic equation 
+\refeq{refMod} to determine $z^{\itSup{K+1}}\initXE$}
+\stochF{K+1}\initXE = B x_{-1}+ (I - F)^{-1} \phi \psi_c +\phi \psi_\epsilon \epsilon_0 + \phi z^{\itSup{K+1}}\initXE + \\
+\sum_\sForSum^K F^\nu \phi Z^{\itSup{K+1-s}}\detComp{x_0\initXE} 
+  \end{gather}
+  \end{itemize}
+}
+
+
+
+
+
+
+
+
+
+\subsubsection{Auxiliary Variable Reformulation}
+\label{sec:aux}
 
 \begin{itemize}
 \item iterated expectations $E (x | φ1) = E (E (x | φ2) | φ1) $
@@ -331,9 +677,6 @@ Note that for approximating $\xWarg$ the impact of  a given realization along th
 
 \end{itemize}
 
-
-\subsubsection{RBC Example General Formulation}
-\label{sec:rbcaux}
 
 \begin{itemize}
 \item composition in effect imposes for number of periods
@@ -635,334 +978,6 @@ for two time periods and satisfy equation \refeq{rbcLinSys} subsequently.
 \end{gather}
 
 We will see that all these can precomputed.
-\subsubsection{General Formulation}
-\label{sec:genAux}
-  {Discovering Unknown Solutions}
-
-A, conceptually, very simple solution strategy:  
-
-  \begin{enumerate}
-  \item Begin with some convergent linear model, $\linMod$, of appropriate dimension.
-  \item Compute solutions honoring the model equations for time t, 
-but that assume the trajectories subsequently 
-evolve according to the convergent 
-linear model, $\linMod$.
-  \item Given solutions valid for time $t$ to $t+k$, extend the solutions to be valid for time $t$ to $t+k+1$ \label{stepNo}
-\item Repeat step \ref{stepNo} unless truncation formulas indicate the solution is sufficiently accurate
-\item collection of equations systems with logic gate.
-  \begin{itemize}
-  \item mutually exclusive
-  \item exhaustive
-  \end{itemize}
-  \end{enumerate}
-
-
-
-
-
-
-  {Algorithm based on basic properties of deterministic maps.}
-  \begin{itemize}
-  \item     The $\epsilon$'s  play two distinct roles in the algorithm.
-To see the two roles, consider a family of stochastic functions 
-$\{\stochF{T},\ldots,\stochF{0}\}$ with 
-$\stochF{k}(x,\epsilon_t): {\mathcal{R}}^{L+1} \rightarrow \mathcal{R}^L$ 
-    \begin{enumerate}
-\item I assume  $\epsilon_t \sim $ iid. Knowing the distribution 
-of the $\epsilon_t$ makes it possible to compute 
-a corresponding family of deterministic functions $\detF{k}(x)=E( \stochF{k}(x,\epsilon_t)|x) $
-    \item I assume that at some initial time, say t=0, a particular 
- $\epsilon_0$ draw 
-along with an $x_{-1}$, determines a unique $x_0=\stochF{T}\initXE$.
-Subsequently, $x_{t}=\detF{{T-t}}(x_{t-1})\,\, \forall t>0$
-    \end{enumerate}
- \item The series representation requires a unique trajectory beginning with $x_0=\stochF{T}\initXE$ and 
-evolving forward from any $x_0$ given by, a potentially time varying deterministic map,  $x_t=\detF{T-t}(x_{t-1})\,\, \forall t>0$. 
-  \item The algorithm for discovering unknown solutions does not rely on time invariance.
-  \end{itemize}
-    
-
-
-
-
-
-
-  {Recursive updating}
-{\small
-  \begin{itemize}
-  \item Given a linear reference model,$\linModMats$,  any bounded 
-sequence of deterministic maps $\{\detF{T},\ldots,\detF{0}\}, \,\, T>0$ generates 
-a series representation
-  \begin{gather}
-     \label{eq:2}
-	 \mathcal{X}_{t}(x_{t-1}) =B x_{t-1}+  (I - F)^{-1} \phi \psi_c +\\ \sum_{\sForSum=0}^{T-1} F^s \phi z_{T-\sForSum}(x_{t-1}) \intertext{it is straightforward to 
-update to a new series representation for the map trajectories resulting from prepending an additional deterministic map to the sequence $\detF{T+1},\ldots,\detF{0}\}$}
-	 \mathcal{X}_{t}(x_{t-1}) =B x_{t-1}+  (I - F)^{-1} \phi \psi_c +\\ 
-\phi z_{T+1}(x_{t-1}) + \sum_{\sForSum=1}^{T} F^s \phi z_{T+1-\sForSum}(x_{t-1}) 
-  \end{gather}
-\item 
-  \end{itemize}
-}
-
-
-
-%\footnote{We set $\psi_c=0$  without loss of generality 
-%in the expressions that follow merely to save on notation.}
-
-
-{The model of interest and a linear reference model}
-\begin{itemize}
-\item The target model is of the form
-\begin{gather}
-\nlEqnLHS{x_{t-1}}{x_t}{x_{t+1}}{t}=\\
-\nlEqn{x_{t-1}}{x_t}{x_{t+1}}{t}=0\\ \label{refMod}
- (L \times 1) +  (L \times L ) \cdot (L \times 1)\\
-\nlEqnSel{x_{t-1}}{x_t}{x_{t+1}}{t}\\ 
-\end{gather}
-
-
-
-\item The algorithm constructs a sequence of stochastic 
-functions 
-  \begin{gather}
-	 \stochF{k}\initXE =B x_{t-1}+ (I - F)^{-1} \phi \psi_c+  \phi \psi_\epsilon\epsilon_0  +\\ \phi z^{\{k\}}\initXE+ \sum_{\sForSum=1}^{k-1} F^s \phi z^{\{k-\nu\}}_{\sForSum}\initXE 
-\label{theSeries}
-  \end{gather}
-
-\item One can show that the algorithm begins with solutions satisfying 
-the linear reference model $\linModMats$ and
-constructs a sequence of functions
- honoring the target model equations for successively 
-longer solution horizons.
-  \end{itemize}
-
-
-
-
-  {Correctly Computing Expectations of Nonlinear Functions}
-
-  \begin{itemize}
-\item Auxiliary equations for non linear ``chunks'' provide mechanism for characterizing  nonlinear expectations in the future
-  \item Formula maps future equation errors  to current time changes in model
-variables.
-\item  $\epsilon_t$ is known so that,
-given a function characterizing future expectation,  model requires
-a deterministic solution at time $t$
-\item The formula is linear in the potentially nonlinear $z$ functions
-  \end{itemize}
-
-
-
-
-{Early iterations}
-{\small
-  \begin{itemize}
-  \item $k=0$: Completely ignore the target model
-  \begin{gather}
-z^{\itSup{0}}\initXE=0 \intertext{ so that}
-\stochF{0}\initXE=B x_{-1} + (I - F)^{-1} \phi \psi_c +\phi \psi_\epsilon \epsilon_0  \intertext{initialize the sequence of deterministic maps with }
-\{\detF{0}\initX=B x \}
-  \end{gather}
-  \item $k=1$: Employ the target model for one period. Use
-  \begin{gather}
-x_0\initXE=B x_{-1}+ (I - F)^{-1} \phi \psi_c +\phi \psi_\epsilon \epsilon_0 + \phi z^{\itSup{1}}\initXE\\
-E(x_1\initXE)=\detF{0}(x_0\initXE) \intertext{in the deterministic equation 
-\refeq{refMod} to determine $z^{\itSup{1}}\initXE$ so}
-\stochF{1}\initXE = B x_{-1}+ (I - F)^{-1} \phi \psi_c +\phi \psi_\epsilon \epsilon_0 + 
-\phi z^{\itSup{1}}\initXE \intertext{%Define $Z^{\itSup{1}}(x)\equiv E \left [ z^{\itSup{1}}\initXEN | x \right ]$ and 
- augment the sequence}
-\{\detF{1}\initX=B x  + \phi Z^{\itSup{1}}(x),\detF{0}\}
-  \end{gather}
-  \end{itemize}
-}
-
-
-
-{Early iterations}
-{\small
-  \begin{itemize}
-  \item $k=2$: Employ the target model for two periods. Use
-  \begin{gather}
-x_0\initXE=B x_{-1}+ (I - F)^{-1} \phi \psi_c +\phi \psi_\epsilon \epsilon_0 +\\ \phi z^{\itSup{2}}\initXE + F \phi Z^{\itSup{1}}(x_0\initXE)\\
-E(x_1\initXE)=\detF{1}(x_0\initXE) \intertext{in the deterministic equation 
-\refeq{refMod} to determine $z^{\itSup{2}}\initXE$}
-\stochF{2}\initXE = B x_{-1}+ (I - F)^{-1} \phi \psi_c +\phi \psi_\epsilon \epsilon_0 +\\ \phi z^{\itSup{2}}\initXE + F \phi Z^{\itSup{1}}(x_0\initXE)\intertext{
-Define $Z^{\itSup{2}}(x)\equiv 
-E \left [ z^{\itSup{2}}\initXEN | x \right ]$}
-\{\detF{2}\initX=B x  + \phi  Z^{\itSup{2}}(x) + F \phi Z^{\itSup{1}}(x_0\initXE),
-\detF{1}\initX,\detF{0}\initX\}
-  \end{gather}
-  \end{itemize}
-}
-
-
-
-
-{Early iterations}
-{\small
-  \begin{itemize}
-  \item $k=3$: Employ the target model for two periods. Use
-  \begin{gather}
-x_0\initXE=B x_{-1}+ (I - F)^{-1} \phi \psi_c +\phi \psi_\epsilon \epsilon_0 + \phi z^{\itSup{3}}\initXE +\\ F \phi Z^{\itSup{2}}(x_0\initXE) + F^2 \phi Z^{\itSup{1}}(\detF{2}(x_0\initXE))\\
-E(x_1\initXE)=\detF{2}(x_0\initXE) \intertext{in the deterministic equation 
-\refeq{refMod} to determine $z^{\itSup{3}}\initXE$}
-\stochF{3}\initXE = B x_{-1}+ (I - F)^{-1} \phi \psi_c +\phi \psi_\epsilon \epsilon_0 + \phi z^{\itSup{3}}\initXE + \\F \phi Z^{\itSup{2}}(x_0\initXE) +F^2 \phi Z^{\itSup{1}}(\detF{2}(x_0\initXE))\intertext{
-Define $Z^{\itSup{3}}(x)\equiv 
-E \left [ z^{\itSup{3}}\initXEN | x \right ]$}
-\detF{2}\initX=B x  + \phi  Z^{\itSup{3}}(x) + 
-F \phi Z^{\itSup{2}}(x_0\initXE) + \\F^2 \phi Z^{\itSup{1}}(\detF{1}(x_0\initXE))
-  \end{gather}
-  \end{itemize}
-}
-
-
-
-{General iterations}
-{\small
-  \begin{itemize}
-  \item $k=K+1$: Employ the target model for $K+1$ periods. Use
-  \begin{gather}
-x_0\initXE=B x_{-1}+ (I - F)^{-1} \phi \psi_c +\phi \psi_\epsilon \epsilon_0 + \phi z^{\itSup{K+1}}\initXE +\\ \sum_\sForSum^K F^\nu \phi Z^{\itSup{K+1-s}}\detComp{x_0\initXE} \\
-E(x_1\initXE)=\detF{K}(x_0\initXE) \intertext{in the deterministic equation 
-\refeq{refMod} to determine $z^{\itSup{K+1}}\initXE$}
-\stochF{K+1}\initXE = B x_{-1}+ (I - F)^{-1} \phi \psi_c +\phi \psi_\epsilon \epsilon_0 + \phi z^{\itSup{K+1}}\initXE + \\
-\sum_\sForSum^K F^\nu \phi Z^{\itSup{K+1-s}}\detComp{x_0\initXE} 
-  \end{gather}
-  \end{itemize}
-}
-
-
-
-
-
-
-
-
-\subsubsection{An RBC Model Example}
-\label{sec:rbcexample}
-
-\subsection{Example: A Simple RBC Model Example With Known Solution}
-\label{sec:simple-rbc-model-2}
-
-
-  {The RBC Model ($\eta=1$): Recovering a Known Solution}
-  \begin{itemize}
-  \item Compute $\linMod$ for RBC Model $\eta=1,\rcpC_t=\frac{1}{c_t}$
-  \end{itemize}
-
-Applying formula \refeq{theSeries} produces:
-
-{\tiny
-\begin{gather}
-  \begin{bmatrix}
-c_t\\k_t\\ \rcpC_t\\\theta_t
-  \end{bmatrix}=\\%paperCalcsRBCExample xt00
-   \left(
-   \begin{array}{c}
- 0.359845 \epsilon _t+0.692632 k_{t-1}+0.341853 \theta _{t-1}-0.0442851
-   \text{z1}_{t-1}+0.658 \text{z2}_{t-1}+0.359845 \text{z3}_{t-1}-0.111552 \\
- 0.187032 \epsilon _t+0.36 k_{t-1}+0.17768 \theta _{t-1}+0.0442851
-   \text{z1}_{t-1}+0.342 \text{z2}_{t-1}+0.187032 \text{z3}_{t-1}-0.0579799 \\
- -5.34898 k_{t-1}+0.342 \text{z1}_{t-1}-5.08153
-   \text{z2}_{t-1}+\text{z4}_{t-1}+3.7794 \\
- \epsilon _t+0.95 \theta _{t-1}+\text{z3}_{t-1}+0.05 \\
-   \end{array}
-   \right)
-\end{gather}
-}
-
-and 
-
-
-{\tiny
-%xt01=Private`computeNextXt[{Private`bmat,Private`phimat,Private`fmat,Private`psieps,Private`psic,Private`psiz},solnFunc00PF[[3+Range[3]]],{{cc},{kk},{tt}},{1}]//N//Expand//Simplify
-\begin{gather}
-  \begin{bmatrix}
-c_{t+1}\\k_{t+1}\\ \rcpC_{t+1}\\\theta_{t+1}
-  \end{bmatrix}=\\%paperCalcsRBCExample xt00
-  \left(
-   \begin{array}{c}
- 0.471397 \epsilon _t+0.249347 k_{t-1}+0.447827 \theta _{t-1}+0.0306732
-   \text{z1}_{t-1}+0.23688 \text{z2}_{t-1}+0.471397 \text{z3}_{t-1}-0.134618 \\
- 0.245012 \epsilon_t+0.1296 k_{t-1}+0.232761 \theta _{t-1}+0.0159426
-   \text{z1}_{t-1}+0.12312 \text{z2}_{t-1}+0.245012 \text{z3}_{t-1}-0.0699687 \\
- -1.00043 \epsilon _t-1.92563 k_{t-1}-0.950409 \theta _{t-1}-0.23688
-   \text{z1}_{t-1}-1.82935 \text{z2}_{t-1}-1.00043 \text{z3}_{t-1}+4.08954 \\
- 0.95 \epsilon _t+0.9025 \theta _{t-1}+0.95 \text{z3}_{t-1}+0.0975 \\
-   \end{array}
-   \right)
-\end{gather}}
-
-
-
-
-
- {\bf RBC Model Example}
-  See \cite{Maliar2005}
- \begin{gather*}
-   \max\left \{  u(c_t^t) + E_t \sum_{\tau=t}^\infty \beta \delta^{\tau+1-t}u(c_{\tau+1}^t)\right \}\\
-c_\tau^t + k_\tau^{t+1}=(1-d)k_\tau^{t-1} + \theta_\tau f(k_\tau^{t-1})\\
-f(k_\tau^{t-1})= k_\tau^\alpha
- \end{gather*}
-
-\begin{gather}
-\frac{1}{c_t^{\eta}}=\alpha \delta k_{t}^{\alpha-1} E_t \left (\frac{\theta_{t}}{c_{t+1}^\eta} \right ) \\
-c_t + k_t=\theta_{t-1}k_{t-1}^\alpha \\
- \theta_t =\theta_{t-1}^\rho e^{\epsilon_t}\label{rbcSys}
-\intertext{for $\eta=1$}
-\frac{1}{c_t}=\alpha \delta k_{t}^{\alpha-1} E_t \left (\frac{\theta_{t}}{c_{t+1}} \right ) \\
-c_t + k_t=\theta_{t-1}k_{t-1}^\alpha \\
-\theta_t =\theta_{t-1}^\rho e^{\epsilon_t}\label{rbcSys}
-\intertext{and there is a closed form solution}
-  k_{t}= \alpha \delta \theta_{t} k_{t-1}^\alpha.\label{soln}\\
-c_t=  (1-\alpha \delta) \theta_{t} k_{t-1}^\alpha
-\end{gather}
-For mean zero iid $\epsilon_t$ we can easily compute a family of trajectories like \refeq{fFamily}
-\begin{gather}
-  \begin{bmatrix}
-c_{t+s}(k_{t-1},\theta_t,\epsilon_t)\\k_{t+s}(k_{t-1},\theta_t,\epsilon_t)    \\ \theta_{t+s}(\theta_{t-1},\theta_t,\epsilon_t)    
-  \end{bmatrix}
-\intertext{with conditional mean converging over time to }
-  \begin{bmatrix}
-    c_{ss}\\k_{ss}
-  \end{bmatrix}=
-  \begin{bmatrix}
-\nu^\alpha-\nu\\ \nu
-  \end{bmatrix}\intertext{where}
-\nu= \alpha ^{\frac{1}{1-\alpha }} \delta ^{\frac{1}{1-\alpha }}
-\end{gather}
-
-
-We can use the family of conditional expectations
-along with the contrived reference model to recover an 
-approximation for equation \refeq{soln} along with error bounds.
-The series representation provides a weighted sum of z functions that give us
-an approximation for the known solution.
-\footnote{Note that the reference model is deterministic and the $z$ functions account for the stochastic nature of the model.}
-% \footnote{
-% We need not  make these adjustments for the steady state,
-% but doing so economizes on the number of terms 
-% required for a given level of approximation
-% accuracy.}
-
-Using the following parameter values
-
-\begin{gather}
-\vcenter{\hbox{\includegraphics{../../paperProduction/occBind/docs/RBCParamSubs.pdf}}} \,\, \text{ we have } \,\,
-  \begin{bmatrix}
-    c_{ss}\\k_{ss} \\ \theta_{ss} \label{rbcparams}
-  \end{bmatrix}=
-\vcenter{\hbox{\includegraphics{../../paperProduction/occBind/docs/RBCSSVal.pdf}}}
-\end{gather}%(\footnote{{../../paperProduction/occBind/docs/RBCParamSubs.pdf}})(\footnote{{RBCSSVal.pdf}})
-
-
-\begin{figure}
-  \centering
-\includegraphics{simpBoundsVActual.pdf}  
-  \label{rbcTrunc}
-  \caption{RBC Truncation Error Bound Versus Actual}
-\end{figure}
-
 
 \subsubsection{Relation to Impulse Response Functions and Stochastic Simulations}
 \label{sec:relImp}
@@ -1197,6 +1212,8 @@ period and the stand-in linear model for subsequent periods.
   \end{itemize}
 }
 
+\subsubsection{Algorithm Pseudocode}
+\label{sec:pseudocode}
 
 
 \subsubsection{Approximating the Known Solution: $U(c) = Log(c)$ }
@@ -1204,6 +1221,11 @@ period and the stand-in linear model for subsequent periods.
 
 \subsubsection{Approximating an Unknown Solution: $U(c) \ne Log(c)$ }
 \label{sec:unknown-solutions}
+\subsection{ Other Examples}
+\label{sec:otherexamples}
+
+
+\label{sec:regime-switch-model}
 
 \subsubsection{Occasionally Binding Constraints}
 \label{sec:obc-solut}
@@ -1250,6 +1272,8 @@ h_{31}^{det}(\cdot)=0\\
 \end{gather}
 Since we will be working with models where expectations are computed at time t, $\epsilon_t$ is known.  Once again, the only stochastic components are those with time subscripts greater than t.
 
+\subsubsection{regime switching}
+\label{sec:regime}
 
 \paragraph{Proposed Conditional Expection}
 
@@ -1257,8 +1281,6 @@ Since we will be working with models where expectations are computed at time t, 
 
 \paragraph{Conditional Expectation Update}
 
-\subsubsection{Algorithm Pseudocode}
-\label{sec:pseudocode}
 
 \subsubsection{RBC Example}
 \label{sec:generalRBCExample}
@@ -1280,13 +1302,6 @@ Since we will be working with models where expectations are computed at time t, 
 \end{description}
 
 
-\subsection{ Other Examples}
-\label{sec:otherexamples}
-
-\subsection{regime switching}
-\label{sec:regime}
-
-\label{sec:regime-switch-model}
 
 For example,
 consider  the Barthelemy and Marx  Model 2: Regime Switching\cite{marxbarthelemy2012}
@@ -1377,6 +1392,13 @@ Bounded solutions if and only if all eigenvalues of
 \begin{itemize}
 \item time varying:  regime switching, hammers need nails
 \item SVMR and other ML universal approximators
+
+
+  \begin{itemize}
+  \item less need for anisotropic
+  \item less need to find ergodic set
+  \end{itemize}
+
 
 
 

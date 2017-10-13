@@ -316,32 +316,44 @@ same formula.
 
 
 \section{Nonlinear Dynamic Stochastic Time Invariant Maps}
+
+\begin{figure}
+  \centering
+  
+
+
+  \begin{gather}
+    \fbox{Nonlinear Rational Expectations Model}\\ \Downarrow\\
+\fbox{Bounded Time Invariant Function Solution}\\\Downarrow\\
+\fbox{Series Representation}\\\Downarrow\\
+\fbox{Series Approximation}
+  \end{gather}
+  \caption{From Models to Approximate Solutions}
+  \label{fig:modelsto}
+\end{figure}
+
+
+
 \subsection{Application to Time Invariant Maps}
 \label{sec:extToMaps}
-\begin{itemize}
-\item Will be interested in exploring time invariant maps that will
-impose additional stucture on the bounded time series paths.
-\item Simple single equation system?
-\item later will need to introduce collection of equation systems with  boolean gates
-\item later will need to make law iterated expectations applicable
-\item use truncation error to show formula works
-\end{itemize}
+
+In this paper we will be interested in computing with time
+ invariant maps. Many dynamic stochastic models have solutions that fall in this class. 
+These time invariant maps generate  bounded time series paths which can
+be represented using the framework from section \ref{sec:newseries}.
+These time invariant maps impose additional structure on the time 
+series they generate.  This structure will allow us to use the series formula to
+develop bounds for the error in the solution.
+In this section, to keep things simple, we will rule out regime switching and occasionally binding constraints and start
+ with  a simple single equation system?
+Later, in order to handle models with regime switching and occasionally binding constraints, will need to consider more complicated collections of 
+of equation systems with  boolean gates. We will show how to apply the 
+series formulation to get error bounds for these models as well.
+
 
 
 \subsubsection{ General RBC Example Formulation}
 \label{sec:rbcaux}
-
-\paragraph{An RBC Model Example Known Solution}
-\label{sec:rbcexample}
-
-  {The RBC Model ($\eta=1$): Recovering a Known Solution}
-  \begin{itemize}
-  \item Compute $\linMod$ for RBC Model $\eta=1,\rcpC_t=\frac{1}{c_t}$
-  \end{itemize}
-
-
-
- {\bf RBC Model Example}
   See \cite{Maliar2005}
  \begin{gather*}
    \max\left \{  u(c_t^t) + E_t \sum_{\tau=t}^\infty \beta \delta^{\tau+1-t}u(c_{\tau+1}^t)\right \}\\
@@ -353,7 +365,15 @@ f(k_\tau^{t-1})= k_\tau^\alpha
 \frac{1}{c_t^{\eta}}=\alpha \delta k_{t}^{\alpha-1} E_t \left (\frac{\theta_{t}}{c_{t+1}^\eta} \right ) \\
 c_t + k_t=\theta_{t-1}k_{t-1}^\alpha \\
  \theta_t =\theta_{t-1}^\rho e^{\epsilon_t}\label{rbcSys}
-\intertext{for $\eta=1$}
+ \end{gather}
+
+
+\paragraph{An RBC Model Example Known Solution}
+\label{sec:rbcexample}
+  {The RBC Model ($\eta=1$): Recovering a Known Solution}
+
+{for $\eta=1$}
+ \begin{gather}
 \frac{1}{c_t}=\alpha \delta k_{t}^{\alpha-1} E_t \left (\frac{\theta_{t}}{c_{t+1}} \right ) \\
 c_t + k_t=\theta_{t-1}k_{t-1}^\alpha \\
 \theta_t =\theta_{t-1}^\rho e^{\epsilon_t}\label{rbcSys}
@@ -361,7 +381,11 @@ c_t + k_t=\theta_{t-1}k_{t-1}^\alpha \\
   k_{t}= \alpha \delta \theta_{t} k_{t-1}^\alpha.\label{soln}\\
 c_t=  (1-\alpha \delta) \theta_{t} k_{t-1}^\alpha
 \end{gather}
-For mean zero iid $\epsilon_t$ we can easily compute a family of trajectories like \refeq{fFamily}
+For mean zero iid $\epsilon_t$ we can easily compute a family of bounded trajectories
+
+
+
+
 \begin{gather}
   \begin{bmatrix}
 c_{t+s}(k_{t-1},\theta_t,\epsilon_t)\\k_{t+s}(k_{t-1},\theta_t,\epsilon_t)    \\ \theta_{t+s}(\theta_{t-1},\theta_t,\epsilon_t)    
@@ -436,29 +460,6 @@ linear model, $\linMod$.
   \end{enumerate}
 
 
-
-
-
-
-  {Algorithm based on basic properties of deterministic maps.}
-  \begin{itemize}
-  \item     The $\epsilon$'s  play two distinct roles in the algorithm.
-To see the two roles, consider a family of stochastic functions 
-$\{\stochF{T},\ldots,\stochF{0}\}$ with 
-$\stochF{k}(x,\epsilon_t): {\mathcal{R}}^{L+1} \rightarrow \mathcal{R}^L$ 
-    \begin{enumerate}
-\item I assume  $\epsilon_t \sim $ iid. Knowing the distribution 
-of the $\epsilon_t$ makes it possible to compute 
-a corresponding family of deterministic functions $\detF{k}(x)=E( \stochF{k}(x,\epsilon_t)|x) $
-    \item I assume that at some initial time, say t=0, a particular 
- $\epsilon_0$ draw 
-along with an $x_{-1}$, determines a unique $x_0=\stochF{T}\initXE$.
-Subsequently, $x_{t}=\detF{{T-t}}(x_{t-1})\,\, \forall t>0$
-    \end{enumerate}
- \item The series representation requires a unique trajectory beginning with $x_0=\stochF{T}\initXE$ and 
-evolving forward from any $x_0$ given by, a potentially time varying deterministic map,  $x_t=\detF{T-t}(x_{t-1})\,\, \forall t>0$. 
-  \end{itemize}
-    
 
 
 
@@ -574,6 +575,10 @@ z^{0}_{t+i}(x_{t-1},\epsilon_{t-1})=0 \,\, \forall i \ge 0
 
 
 Needs generalization of ``chunk'' $\frac{1}{c_t}\rightarrow \left (\frac{\theta_{t+1}}{c_{t+1}^\eta} \right )$
+
+  \begin{itemize}
+  \item Compute $\linMod$ for RBC Model $\eta=1,\rcpC_t=\frac{1}{c_t}$
+  \end{itemize}
 
 We construct our stand-in model by augmenting the model with the equation
 \begin{gather}
@@ -742,7 +747,14 @@ Law of iterated expectations
 \item Truncation Error
 \item path error use solutions for ``wrong'' parameters
 \item show formula works
+\item later will need to make law iterated expectations applicable
+\item use truncation error to show formula works
 \end{itemize}
+
+
+ \begin{gather}
+   \xWarg \in{R^L}\,\text{ with }\,\infNorm{\xWarg}  \le \bar{\mathcal{X}}\,\,\forall t> 0 \label{fFamily}.
+ \end{gather}
 
 \section{Computing Model Solution Error Bounds}
 \label{sec:solnerrorbounds}
@@ -804,21 +816,6 @@ Consequently, will will have an aquation system an a gatekeeper logical expressi
 \label{sec:algoverview}
 
 
-\begin{figure}
-  \centering
-  
-
-
-  \begin{gather}
-    \fbox{Nonlinear Rational Expectations Model}\\ \Downarrow\\
-\fbox{Bounded Time Invariant Function Solution}\\\Downarrow\\
-\fbox{Series Representation}\\\Downarrow\\
-\fbox{Series Approximation}
-  \end{gather}
-  \caption{From Models to Approximate Solutions}
-  \label{fig:modelsto}
-\end{figure}
-
 
 
 This series representation for deterministic maps,
@@ -854,9 +851,6 @@ nonlinear models with occasionally binding constraints and/or regime switching m
 
 
 Consider a family of {\it time invariant } stochastic functions:
- \begin{gather}
-   \xWarg \in{R^L}\,\text{ with }\,\infNorm{\xWarg}  \le \bar{\mathcal{X}}\,\,\forall t> 0 \label{fFamily}.
- \end{gather}
 The $x_{-1}$ is an  $L$ dimensional state vector and $\epsilon$ is a $K$ dimensional ``shock'' vector that together index
 individual trajectories for future state vectors.  
 Each member of the family characterizes the evolution of a {\em deterministic} trajectory of values.\footnote{Subsequent sections describe how these deterministic trajectories are useful for representing a wide array stochastic model solutions.}
@@ -882,7 +876,7 @@ recursively applying $\XtFunc{}$ to compute a solution path
 \underbrace{\xsubtFunc{t+2}{(x_{t-1},\epsilon_t)}}
 \underbrace{\ldots}
 \intertext{Now, suppose this iteration produces bounded trajectories }
-\infNorm{\xsubtFunc{t+k}{(x_{t-1},\epsilon_t)}}  \le \bar{\mathcal{X}}\,\,\forall s\ge 0 \label{fFamily}.
+\infNorm{\xsubtFunc{t+k}{(x_{t-1},\epsilon_t)}}  \le \bar{\mathcal{X}}\,\,\forall s\ge 0 
  \end{gather}
 then it will then, be possible to write down a useful 
 series representation for
@@ -1474,6 +1468,36 @@ In the general iteration step we will have
 \sum_{s=0}^{k} F^s \phi \mathcal{Z}^{k-s}(x_{t+s}^{k+1})\\
   x_{t+s}^{k+1}=\Pi_{s=0}^k \xIter{s}{ x_{t}^{k+1}}
 \end{gather}
+
+
+\section{Distinct Roles}
+\label{sec:distinct-roles}
+
+
+
+  {Algorithm based on basic properties of deterministic maps.}
+  \begin{itemize}
+  \item     The $\epsilon$'s  play two distinct roles in the algorithm.
+To see the two roles, consider a family of stochastic functions 
+$\{\stochF{T},\ldots,\stochF{0}\}$ with 
+$\stochF{k}(x,\epsilon_t): {\mathcal{R}}^{L+1} \rightarrow \mathcal{R}^L$ 
+    \begin{enumerate}
+\item I assume  $\epsilon_t \sim $ iid. Knowing the distribution 
+of the $\epsilon_t$ makes it possible to compute 
+a corresponding family of deterministic functions $\detF{k}(x)=E( \stochF{k}(x,\epsilon_t)|x) $
+    \item I assume that at some initial time, say t=0, a particular 
+ $\epsilon_0$ draw 
+along with an $x_{-1}$, determines a unique $x_0=\stochF{T}\initXE$.
+Subsequently, $x_{t}=\detF{{T-t}}(x_{t-1})\,\, \forall t>0$
+    \end{enumerate}
+ \item The series representation requires a unique trajectory beginning with $x_0=\stochF{T}\initXE$ and 
+evolving forward from any $x_0$ given by, a potentially time varying deterministic map,  $x_t=\detF{T-t}(x_{t-1})\,\, \forall t>0$. 
+  \end{itemize}
+    
+
+
+
+
 
 
 

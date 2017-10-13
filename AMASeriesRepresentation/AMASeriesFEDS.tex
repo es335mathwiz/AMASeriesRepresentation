@@ -18,7 +18,7 @@
 \title{A New Series Representation for Time Invariant Maps that
  Arise in  Nonlinear Dynamic Stochastic Economic Models}
 
-
+\date{\today: \currenttime}
 \begin{document}
 
 \maketitle
@@ -70,6 +70,11 @@ Since \cite{Christiano2000} a host of
 authors have described a variety of approaches. 
 \cite{holden15:_exist_dsge,guerrieri15:_occbin,benigno09,hintermaier10,brumm10,nakov08,haefke98,nakata12,gordon11,billi11,Hintermaier2010,Guerrieri2015}
 This paper provides yet another.  This new series representation provides  a coherent framework for attacking a wide variety of complicated nonlinear models.
+
+The analysis develops a new series representation for bounded time series.  The author has found no analogous use of a reference dynamical system to generate a transformation of one infinite dimensional series into another. Under certain rank conditions, this transformation is one to one and onto.  The
+transformation $ {\{ x_{t}, x_{t}, x_{t+1},x_{t+2}\ldots\}} \rightarrow \linMod(x_{t-1}) \rightarrow{\{ z_{t}, z_{t+1}, z_{t+2},\ldots\}} $ is invertible under
+certain rank conditions. $ {\{ z_{t}, z_{t+1}, z_{t+2},\ldots\}} \rightarrow \linMod(x_{t-1})^{-1} \rightarrow{\{ x_{t}, x_{t}, x_{t+1},x_{t+2}\ldots\}} $ and the inverse can be interpreted as giving the impact of ``fully anticipated future shocks'' on the path of $x_t$ obeying the solution of a linear rational expectations model.  The formula supports the intuition that far distant shocks influence current conditions less than  imminent shocks.
+
 The framework provides a new way to bound the error one can expect from
 employing a given proposed model solution and leads to a
 algorithm with  components similar to parameterized expectations that
@@ -90,17 +95,11 @@ which can conveniently represented by the series representation.
 
 
 
-\section{A New Series Representation For Stochastic Model Solution Paths}
+\section{A New Series Representation For  Bounded Time Series}
 \label{sec:newseries}
 
-\subsection{A Linear Reference Model and a Formula for  ``Anticipated Shocks''}
+\subsection{Linear Reference Models and a Formula for  ``Anticipated Shocks''}
 \label{sec:linref}
-\begin{itemize}
-\item Almost Arbitrary
-\item Impact of Choice
-\item represents impact of ``anticipated shocks'' interpretation error bounds on $x_t$
-\item any bounded path
-\end{itemize}
 
 
 
@@ -125,59 +124,55 @@ It will be useful to collect the components of this representation for use in
 subsequent sections of the paper.
 Define $\linMod \equiv \linModMats$.
 
+Consider an arbitrary, but bounded path
+ \begin{gather}
+   \xWOarg \in{R^L}\,\text{ with }\,\infNorm{\xWOarg}  \le \bar{\mathcal{X}}\,\,\,\,\,\forall t> 0 \label{aBPath}.
+ \end{gather}
 
 {\small
-Now, given the trajectories \refeq{fFamily}, define 
-$  z_{t}(x_{t-1},\epsilon)$ as  %\footnote{These $z$ functions will soon prove useful in an algorithm for computing unknown trajectories like \refeq{fFamily}.}:
-{
-  \begin{align}
-  z_{t}(x_{t-1},\epsilon) \equiv& H_{-1} \mathcal{X}_{t-1}(x_{t-1},\epsilon) + \nonumber\\
-& H_0 \mathcal{X}_{t}(x_{t-1},\epsilon) +  \label{defZ} \\
-& H_1 \mathcal{X}_{t+1}(x_{t-1},\epsilon). \nonumber
-  \end{align}
-}
-\newtheorem{theorem}{Theorem}[section]
+Now, given the trajectories \refeq{aBPath}, define 
+$  z_{t}$ as  
+\begin{gather}
+  z_{t} \equiv H_{-1} \mathcal{X}_{t-1} +  H_0 \mathcal{X}_{t} +  H_1 \mathcal{X}_{t+1} \label{defZ} 
+\end{gather}
+
+
 
 
 \begin{theorem}
 	 \begin{gather}
-	 \mathcal{X}_{t}(x_{t-1},\epsilon) =B x_{t-1}+ \phi \psi_\epsilon\epsilon + (I - F)^{-1} \phi \psi_c + \sum_{\sForSum=0}^\infty F^s \phi z_{t+\sForSum}(x_{t-1},\epsilon) \label{theSeries}
+	 \mathcal{X}_{t} =B x_{t-1}+ \phi \psi_\epsilon\epsilon + (I - F)^{-1} \phi \psi_c + \sum_{\sForSum=0}^\infty F^s \phi z_{t+\sForSum} \label{theSeries}
 \intertext{and}
-	 \mathcal{X}_{t+1}(x_{t-1},\epsilon) =B \mathcal{X}_{t} + \sum_{\sForSum =0}^\infty F^\sForSum \phi z_{t+\sForSum}(x_{t-1},\epsilon) + (I - F)^{-1} \phi \psi_c \,\,\,\forall t \ge  0.
+	 \mathcal{X}_{t+1} =B \mathcal{X}_{t}  + (I - F)^{-1} \phi \psi_c+ \sum_{\sForSum =0}^\infty F^\sForSum \phi z_{t+\sForSum+1} \,\,\,\,\,\forall t \ge  0.
 	 \end{gather}
 \end{theorem}
 }
 \begin{myProof}
-  For every bounded family of functions,
-  $\mathcal{X}_t(x_{t-1},\epsilon_t)$, \citep{anderson10}  shows that for any given $x_{t-1},\epsilon_t$ this expression must be true.
-Since the eigenvalues of F are all less than one and the $z$'s are bounded,
- the series always converges.
+See \citep{anderson10},
 \end{myProof}
 
 
-	 Consequently, given a family of trajectories like those in \refeq{fFamily},
+	 Consequently, given a bounded time series \refeq{aBPath},
 and a stable linear homogeneous system like \refeq{hSystem},
-one can easily compute a series 
-representation \refeq{theSeries} for any  bounded function generating a family of
-trajectories.
+one can easily compute a corresponding series representation 
+\refeq{theSeries}.
 Interestingly, the linear model, $H$, the  constant term $\psi_c$ and the
 impact of the stochastic shocks $\psi_\epsilon $ can  be 
-chosen rather arbitrarily -- the only constraint being the existence of a saddle-point solution or the linear system.  
+chosen rather arbitrarily -- the only constraint being the existence of a saddle-point solution or the linear system.  Under certain rank conditions this series representation constitues a one to one onto transformation between the
+$L$ dimensionsal $x_t$ and $z_t$ time series.
 The formula will provide a series  for any 
 $L$ dimensional $\linMod$.
-This observation will give us some confidence in the 
+Later,this observation will give us some confidence in the 
 robustness of the algorithms described in section 
 \ref{sec:unknown-solutions} for constructing series 
 representations for unknown families of functions 
 satisfying complicated systems of dynamic non-linear equations.
 
 
+A key feature to note is that the series representation can accomodate arbitrarily complex time series trajectories, so long as these trajectories are bounded.
 
 
-\subsection{A Series Representation for Bounded Paths}
-\label{sec:boundedpaths}
-
-\subsection{A Simple Example: An ``Almost'' Arbitrary Linear Model and an Arbitrary Family of Bounded Solution Paths}
+\subsection{An Example: An ``Almost'' Arbitrary Linear Model and an Some Arbitrary  Bounded Time Series}
 \label{sec:almostarbitrary}
 
 
@@ -200,24 +195,16 @@ F=
 
 
 
-The series representation requires that the state values along the 
+The existence of a series 
+representation requires only that the state values along the 
 paths remain bounded.  For example, consider the following three
-bounded families of state vector paths generated by Mathematica code.
-\begin{verbatim}
-genPiPath[init_?MatrixQ,eps_?MatrixQ,kk_Integer]:=
-		With[{theDigits=RealDigits[Pi,10,kk][[1]]},
-			 N[(Norm @ init)]/(1+N[Norm @ eps]) *theDigits]
-genOscilPath[init_?MatrixQ,eps_?MatrixQ,kk_Integer]:=
-		With[{theOscil=NestList[-1*#&,1,kk-1]},
-			 N[(Norm @ init)]/(1+N[Norm @ eps])^2 *theOscil]
-genRandomPath[init_?MatrixQ,eps_?MatrixQ,kk_Integer]:=
-		Module[{},SeedRandom[Round[200*N[(Norm @ init)]+Norm[eps]]]; 
-				  RandomReal[{-4,4},kk]]
-\end{verbatim}
-
-\begin{itemize}
-\item Should include closed form solution for RBC
-\end{itemize}
+bounded families of state vector paths:
+\begin{gather}
+  x_{1,t}=\alpha D_\pi(t) \\
+x_{2,t}=\beta (-1)^t\\
+x_{3,t}=\epsilon_t 
+\end{gather} 
+where $D_\pi(t)$ gives the t-th digit of $\pi$ and the $\epsilon_t$ are a sequence of pseudo random draws from the uniform distributions $\mathcal{U}(-4,4)$
 
 The first set of trajectories(See Figure \ref{pipath}) is a function of
 the digits in the decimal representation of $\pi$.  
@@ -270,7 +257,7 @@ unbounded trajectories.}
 \end{figure}
 
 
-Figure \ref{arbFig} shows, for a particular initial state vector and shock value,  the paths for the state vectors and the correct z's that generate the path.
+Figure \ref{arbFig} shows, for a particular initial state vector and shock value,  the paths for the state vectors and the  z's that generate the path.
 One can repeat the calculations for any given initial condition to produce
 a z series exactly replicating the given set of trajectories.  The family
 of z functions along with equation \ref{theSeries} provide a series 
@@ -288,13 +275,15 @@ to the initial time have the most important impact.
 
 \subsection{A Path Norm and Assessing $x_t$ Error}
 \label{sec:truncationerr}
+The formula \ref{theSeries} was derived to compute he impact on the current statof fully anticipated future shocks.  The formula characterizes the impact exactly.  However one can contemplate the impact of at least two types of imprecision.  One could truncate a series of correct values of $z_t$.  One might have imprecise values of $z_t$ along the path.
+
 \subsubsection{Truncation Error}
 
 
-One could consider approximating $\mathcal{X}_t(x_{t-1},\epsilon)$ by 
+One could consider approximating $\mathcal{X}_t$ by 
 truncating the series \ref{theSeries} at a finite number of terms.
  	 \begin{gather}
- 	 \xWargK \equiv B x_{t-1}+ \phi \psi_\epsilon\epsilon + \sum_{s=0}^k F^s \phi z_{t}(x_{t-1},\epsilon) + (I - F)^{-1} \phi \psi_c \label{theTruncSeries}
+ 	 \xWOargK \equiv B x_{t-1}+ \phi \psi_\epsilon\epsilon  + (I - F)^{-1} \phi \psi_c + \sum_{s=0}^k F^s \phi z_{t}\label{theTruncSeries}
  \end{gather}
 We can bound the  series approximation truncation errors.
 Since
@@ -310,7 +299,20 @@ Note that for approximating $\xWarg$ the impact of  a given realization along th
 \subsubsection{Path Error}
 
 
+We can assess the impact of incorrect values for $z+t$ by computing the maximum correction required for the $z_t$ and applying the 
+same formula.
+
+
 \label{sec:pathnorm}
+
+\begin{itemize}
+\item Almost Arbitrary
+\item Impact of Choice
+\item represents impact of ``anticipated shocks'' interpretation error bounds on $x_t$
+\item any bounded path
+\item Should include closed form solution for RBC
+\end{itemize}
+
 
 \section{Nonlinear Dynamic Stochastic Time Invariant Maps}
 \subsection{Application to Time Invariant Maps}
@@ -997,7 +999,7 @@ R . A. BROOKS
 Law of iterated expectations
 \href{http://www.pnas.org/content/103/11/3968.full}{discrete dynamical conditional expectation} 
 
-\subsection{Computing Model Solution Error Bounds}
+\section{Computing Model Solution Error Bounds}
 \label{sec:solnerrorbounds}
 
 We will consider time invariant maps that arise form solving a time t optimization problem codified in a collection of systems of equations.  We will assume that we have a countable collection of equations systems that are mutually exclusive and exhaustive.  Given $\epsilon_t, x_{t-1}$  This system of equations produces a solution $x_t$.  The $x_t$ satisfies one and only one of the collection of equations and$x_t$ is (locally) the unique solution for the collection of
@@ -1006,10 +1008,10 @@ system of equations, occasionally binding constraints with solutions demonstrati
 
 Consequently, will will have an aquation system an a gatekeeper logical expression indicating which equation system is in force for a given solution for a give $x_{t-1}, \epsilon_t$
 
-\subsubsection{Worst Path: Pessimistic Error Bound}
+\subsection{Worst Path: Pessimistic Error Bound}
 \label{worst}
 
-\subsubsection{Practical Considerations for Applying the Formula}
+\subsection{Practical Considerations for Applying the Formula}
 \label{sec:practicalformula}
 
 

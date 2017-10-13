@@ -299,7 +299,7 @@ Note that for approximating $\xWarg$ the impact of  a given realization along th
 \subsubsection{Path Error}
 
 
-We can assess the impact of incorrect values for $z+t$ by computing the maximum correction required for the $z_t$ and applying the 
+We can assess the impact of incorrect values for $z_t$ by computing the maximum correction required for the $z_t$ and applying the 
 same formula.
 
 
@@ -311,6 +311,7 @@ same formula.
 \item represents impact of ``anticipated shocks'' interpretation error bounds on $x_t$
 \item any bounded path
 \item Should include closed form solution for RBC
+\item figure for truncation error incorrect \ref{figArbTrunc}
 \end{itemize}
 
 
@@ -318,7 +319,9 @@ same formula.
 \subsection{Application to Time Invariant Maps}
 \label{sec:extToMaps}
 \begin{itemize}
-\item Simple single equation system
+\item Will be interested in exploring time invariant maps that will
+impose additional stucture on the bounded time series paths.
+\item Simple single equation system?
 \item later will need to introduce collection of equation systems with  boolean gates
 \item later will need to make law iterated expectations applicable
 \item use truncation error to show formula works
@@ -331,62 +334,10 @@ same formula.
 \paragraph{An RBC Model Example Known Solution}
 \label{sec:rbcexample}
 
-\label{sec:simple-rbc-model-2}
-\begin{itemize}
-\item Truncation Error
-\item path error use solutions for ``wrong'' parameters
-\item show formula works
-\end{itemize}
-
   {The RBC Model ($\eta=1$): Recovering a Known Solution}
   \begin{itemize}
   \item Compute $\linMod$ for RBC Model $\eta=1,\rcpC_t=\frac{1}{c_t}$
   \end{itemize}
-
-Applying formula \refeq{theSeries} produces:
-
-{\tiny
-\begin{gather}
-  \begin{bmatrix}
-c_t\\k_t\\ \rcpC_t\\\theta_t
-  \end{bmatrix}=\\%paperCalcsRBCExample xt00
-   \left(
-   \begin{array}{c}
- 0.359845 \epsilon _t+0.692632 k_{t-1}+0.341853 \theta _{t-1}-0.0442851
-   \text{z1}_{t-1}+0.658 \text{z2}_{t-1}+0.359845 \text{z3}_{t-1}-0.111552 \\
- 0.187032 \epsilon _t+0.36 k_{t-1}+0.17768 \theta _{t-1}+0.0442851
-   \text{z1}_{t-1}+0.342 \text{z2}_{t-1}+0.187032 \text{z3}_{t-1}-0.0579799 \\
- -5.34898 k_{t-1}+0.342 \text{z1}_{t-1}-5.08153
-   \text{z2}_{t-1}+\text{z4}_{t-1}+3.7794 \\
- \epsilon _t+0.95 \theta _{t-1}+\text{z3}_{t-1}+0.05 \\
-   \end{array}
-   \right)
-\end{gather}
-}
-
-and 
-
-
-{\tiny
-%xt01=Private`computeNextXt[{Private`bmat,Private`phimat,Private`fmat,Private`psieps,Private`psic,Private`psiz},solnFunc00PF[[3+Range[3]]],{{cc},{kk},{tt}},{1}]//N//Expand//Simplify
-\begin{gather}
-  \begin{bmatrix}
-c_{t+1}\\k_{t+1}\\ \rcpC_{t+1}\\\theta_{t+1}
-  \end{bmatrix}=\\%paperCalcsRBCExample xt00
-  \left(
-   \begin{array}{c}
- 0.471397 \epsilon _t+0.249347 k_{t-1}+0.447827 \theta _{t-1}+0.0306732
-   \text{z1}_{t-1}+0.23688 \text{z2}_{t-1}+0.471397 \text{z3}_{t-1}-0.134618 \\
- 0.245012 \epsilon_t+0.1296 k_{t-1}+0.232761 \theta _{t-1}+0.0159426
-   \text{z1}_{t-1}+0.12312 \text{z2}_{t-1}+0.245012 \text{z3}_{t-1}-0.0699687 \\
- -1.00043 \epsilon _t-1.92563 k_{t-1}-0.950409 \theta _{t-1}-0.23688
-   \text{z1}_{t-1}-1.82935 \text{z2}_{t-1}-1.00043 \text{z3}_{t-1}+4.08954 \\
- 0.95 \epsilon _t+0.9025 \theta _{t-1}+0.95 \text{z3}_{t-1}+0.0975 \\
-   \end{array}
-   \right)
-\end{gather}}
-
-
 
 
 
@@ -506,63 +457,12 @@ Subsequently, $x_{t}=\detF{{T-t}}(x_{t-1})\,\, \forall t>0$
     \end{enumerate}
  \item The series representation requires a unique trajectory beginning with $x_0=\stochF{T}\initXE$ and 
 evolving forward from any $x_0$ given by, a potentially time varying deterministic map,  $x_t=\detF{T-t}(x_{t-1})\,\, \forall t>0$. 
-  \item The algorithm for discovering unknown solutions does not rely on time invariance.
   \end{itemize}
     
 
 
 
 
-
-
-  {Recursive updating}
-{\small
-  \begin{itemize}
-  \item Given a linear reference model,$\linModMats$,  any bounded 
-sequence of deterministic maps $\{\detF{T},\ldots,\detF{0}\}, \,\, T>0$ generates 
-a series representation
-  \begin{gather}
-     \label{eq:2}
-	 \mathcal{X}_{t}(x_{t-1}) =B x_{t-1}+  (I - F)^{-1} \phi \psi_c +\\ \sum_{\sForSum=0}^{T-1} F^s \phi z_{T-\sForSum}(x_{t-1}) \intertext{it is straightforward to 
-update to a new series representation for the map trajectories resulting from prepending an additional deterministic map to the sequence $\detF{T+1},\ldots,\detF{0}\}$}
-	 \mathcal{X}_{t}(x_{t-1}) =B x_{t-1}+  (I - F)^{-1} \phi \psi_c +\\ 
-\phi z_{T+1}(x_{t-1}) + \sum_{\sForSum=1}^{T} F^s \phi z_{T+1-\sForSum}(x_{t-1}) 
-  \end{gather}
-\item 
-  \end{itemize}
-}
-
-
-
-%\footnote{We set $\psi_c=0$  without loss of generality 
-%in the expressions that follow merely to save on notation.}
-
-
-{The model of interest and a linear reference model}
-\begin{itemize}
-\item The target model is of the form
-\begin{gather}
-\nlEqnLHS{x_{t-1}}{x_t}{x_{t+1}}{t}=\\
-\nlEqn{x_{t-1}}{x_t}{x_{t+1}}{t}=0\\ \label{refMod}
- (L \times 1) +  (L \times L ) \cdot (L \times 1)\\
-\nlEqnSel{x_{t-1}}{x_t}{x_{t+1}}{t}\\ 
-\end{gather}
-
-
-
-\item The algorithm constructs a sequence of stochastic 
-functions 
-  \begin{gather}
-	 \stochF{k}\initXE =B x_{t-1}+ (I - F)^{-1} \phi \psi_c+  \phi \psi_\epsilon\epsilon_0  +\\ \phi z^{\{k\}}\initXE+ \sum_{\sForSum=1}^{k-1} F^s \phi z^{\{k-\nu\}}_{\sForSum}\initXE 
-\label{theSeries}
-  \end{gather}
-
-\item One can show that the algorithm begins with solutions satisfying 
-the linear reference model $\linModMats$ and
-constructs a sequence of functions
- honoring the target model equations for successively 
-longer solution horizons.
-  \end{itemize}
 
 
 
@@ -578,88 +478,6 @@ given a function characterizing future expectation,  model requires
 a deterministic solution at time $t$
 \item The formula is linear in the potentially nonlinear $z$ functions
   \end{itemize}
-
-
-
-
-{Early iterations}
-{\small
-  \begin{itemize}
-  \item $k=0$: Completely ignore the target model
-  \begin{gather}
-z^{\itSup{0}}\initXE=0 \intertext{ so that}
-\stochF{0}\initXE=B x_{-1} + (I - F)^{-1} \phi \psi_c +\phi \psi_\epsilon \epsilon_0  \intertext{initialize the sequence of deterministic maps with }
-\{\detF{0}\initX=B x \}
-  \end{gather}
-  \item $k=1$: Employ the target model for one period. Use
-  \begin{gather}
-x_0\initXE=B x_{-1}+ (I - F)^{-1} \phi \psi_c +\phi \psi_\epsilon \epsilon_0 + \phi z^{\itSup{1}}\initXE\\
-E(x_1\initXE)=\detF{0}(x_0\initXE) \intertext{in the deterministic equation 
-\refeq{refMod} to determine $z^{\itSup{1}}\initXE$ so}
-\stochF{1}\initXE = B x_{-1}+ (I - F)^{-1} \phi \psi_c +\phi \psi_\epsilon \epsilon_0 + 
-\phi z^{\itSup{1}}\initXE \intertext{%Define $Z^{\itSup{1}}(x)\equiv E \left [ z^{\itSup{1}}\initXEN | x \right ]$ and 
- augment the sequence}
-\{\detF{1}\initX=B x  + \phi Z^{\itSup{1}}(x),\detF{0}\}
-  \end{gather}
-  \end{itemize}
-}
-
-
-
-{Early iterations}
-{\small
-  \begin{itemize}
-  \item $k=2$: Employ the target model for two periods. Use
-  \begin{gather}
-x_0\initXE=B x_{-1}+ (I - F)^{-1} \phi \psi_c +\phi \psi_\epsilon \epsilon_0 +\\ \phi z^{\itSup{2}}\initXE + F \phi Z^{\itSup{1}}(x_0\initXE)\\
-E(x_1\initXE)=\detF{1}(x_0\initXE) \intertext{in the deterministic equation 
-\refeq{refMod} to determine $z^{\itSup{2}}\initXE$}
-\stochF{2}\initXE = B x_{-1}+ (I - F)^{-1} \phi \psi_c +\phi \psi_\epsilon \epsilon_0 +\\ \phi z^{\itSup{2}}\initXE + F \phi Z^{\itSup{1}}(x_0\initXE)\intertext{
-Define $Z^{\itSup{2}}(x)\equiv 
-E \left [ z^{\itSup{2}}\initXEN | x \right ]$}
-\{\detF{2}\initX=B x  + \phi  Z^{\itSup{2}}(x) + F \phi Z^{\itSup{1}}(x_0\initXE),
-\detF{1}\initX,\detF{0}\initX\}
-  \end{gather}
-  \end{itemize}
-}
-
-
-
-
-{Early iterations}
-{\small
-  \begin{itemize}
-  \item $k=3$: Employ the target model for two periods. Use
-  \begin{gather}
-x_0\initXE=B x_{-1}+ (I - F)^{-1} \phi \psi_c +\phi \psi_\epsilon \epsilon_0 + \phi z^{\itSup{3}}\initXE +\\ F \phi Z^{\itSup{2}}(x_0\initXE) + F^2 \phi Z^{\itSup{1}}(\detF{2}(x_0\initXE))\\
-E(x_1\initXE)=\detF{2}(x_0\initXE) \intertext{in the deterministic equation 
-\refeq{refMod} to determine $z^{\itSup{3}}\initXE$}
-\stochF{3}\initXE = B x_{-1}+ (I - F)^{-1} \phi \psi_c +\phi \psi_\epsilon \epsilon_0 + \phi z^{\itSup{3}}\initXE + \\F \phi Z^{\itSup{2}}(x_0\initXE) +F^2 \phi Z^{\itSup{1}}(\detF{2}(x_0\initXE))\intertext{
-Define $Z^{\itSup{3}}(x)\equiv 
-E \left [ z^{\itSup{3}}\initXEN | x \right ]$}
-\detF{2}\initX=B x  + \phi  Z^{\itSup{3}}(x) + 
-F \phi Z^{\itSup{2}}(x_0\initXE) + \\F^2 \phi Z^{\itSup{1}}(\detF{1}(x_0\initXE))
-  \end{gather}
-  \end{itemize}
-}
-
-
-
-{General iterations}
-{\small
-  \begin{itemize}
-  \item $k=K+1$: Employ the target model for $K+1$ periods. Use
-  \begin{gather}
-x_0\initXE=B x_{-1}+ (I - F)^{-1} \phi \psi_c +\phi \psi_\epsilon \epsilon_0 + \phi z^{\itSup{K+1}}\initXE +\\ \sum_\sForSum^K F^\nu \phi Z^{\itSup{K+1-s}}\detComp{x_0\initXE} \\
-E(x_1\initXE)=\detF{K}(x_0\initXE) \intertext{in the deterministic equation 
-\refeq{refMod} to determine $z^{\itSup{K+1}}\initXE$}
-\stochF{K+1}\initXE = B x_{-1}+ (I - F)^{-1} \phi \psi_c +\phi \psi_\epsilon \epsilon_0 + \phi z^{\itSup{K+1}}\initXE + \\
-\sum_\sForSum^K F^\nu \phi Z^{\itSup{K+1-s}}\detComp{x_0\initXE} 
-  \end{gather}
-  \end{itemize}
-}
-
-
 
 
 
@@ -753,133 +571,6 @@ B x_{t-1}+ \phi \psi_\epsilon\epsilon_{t} +
  (I - F)^{-1} \phi \psi_c\\ \label{firstIter}
 z^{0}_{t+i}(x_{t-1},\epsilon_{t-1})=0 \,\, \forall i \ge 0
  \end{gather}
-We are now in a position to easily compute 
- \begin{gather}
-\xIter{0}{x}=\mathcal{H}^{PF}[g^{0}(x,\epsilon_{t-k+1})]=
-\mathcal{H}^{RE}[g^{0}(x,\epsilon_{t-k+1})]= 
-B x+  (I - F)^{-1} \phi \psi_c
- \end{gather}
-\begin{gather}
-\underbrace{x_{t-1},0} 
-\underbrace{\xNow{0},\zNow{0}}
-\underbrace{\xNowtp{0}=\xIter{0}{x_{t}},0}
-\end{gather}
-In other words, from time t onwards, this approximation assumes 
-that our stand-in
- convergent linear model completely characterizes the solution.\footnote{
-The algorithm terminates with an approximation for 
-the time invariant function $g^\ast$.}  It is unlikely that $g^0(x_{t-1},\epsilon_{t})$
-satisfies equation \refeq{theProblem} for arbitrary $x_{t-1}$ even for $s=0$.
-We can get a pessimistic upper bound for how far we are away from the solution 
-by computing the infinity norm of substituting the variables from into Equation \refeq{theProblem}.
-% \footnote{The values in Table \ref{truncTab} illustrate how
-%pessimistic this approximation can be, but it turns out we can expect the accur%acy of  approximate truncation errors improve as we expand the approximation series.}
-
-Next, we compute a solution in which the nonlinear equations are satisfied at time t alone while the stand-in linear system holds sway subsequently.
-Our algorithm will  compute
-\begin{gather}
-\underbrace{x_{t-1},0} 
-\underbrace{\xNow{1},\zNow{1}}
-\underbrace{\xNowtp{1}=\xIter{1}{x_{t+1}},0}
-\underbrace{\xNowtp{1}=\xIter{0}{x_{t+1}},0}
-\end{gather}
-that satisfy the nonlinear equation system at time t.
-For a given $x_{t-1}$, we substitute
-\begin{gather}
-x_{t-1}, \,\,
-  x_t=B x_{t-1} + \phi z^1(x_{t-1},\epsilon_t) , \,\,
-  x_{t+1}=B x_{t} + \phi \mathcal{Z}^1(x_t)
-\end{gather}
-into the non linear equation system to determine the 
-$z^1(x_{t-1},\epsilon_t)$ and consequently $x_t^1(x_{t-1},\epsilon_t)$.
-We then have
- \begin{gather}
- g^1(x_{t-1},\epsilon_{t})=  
-B x_{t-1}+ \phi \psi_\epsilon\epsilon_{t} +
-\phi \psi_\epsilon z^1(x_{t-1},\epsilon_t)+
- (I - F)^{-1} \phi \psi_c\\ \label{firstIter}
-z^{1}_{t+i}(x_{t-1},\epsilon_{t-1})=0 \,\, \forall i \ge 1
- \end{gather}
-Now, $g^1(x_{t-1},\epsilon_{t})$
-satisfies equation \refeq{theProblem} for arbitrary $x_{t-1}$ at time $t$ with $s=0$.  However, it probably does not solve the system for $s>0$.
-We can get a pessimistic upper bound for how far we are away from the solution 
-by substituting the variables and computing the infinity norm for plausible values of $x_{t-1}$.
-\begin{gather}
-\xNow{1},\xNowtp{1},\xNowtp{1}=\xIter{1}{x_{t+1}}
-\end{gather}
-into Equation \refeq{theProblem}. If the accuracy of the approximation is adequate, we need not compute any further  terms in the power series.  If not,
-we are now in a position to compute our choice of
-$\mathcal{Z}^1(x)=\mathcal{H}^{PF}[g^{1}(x,\epsilon_{t-k+1})]$ or
-$\mathcal{Z}^1(x)=\mathcal{H}^{RE}[g^{1}(x,\epsilon_{t-k+1})]$.
-
-%  \begin{gather}
-%  g^0(x_{t-1},\epsilon_{t})=  
-% B x_{t-1}+ \phi \psi_\epsilon\epsilon_{t} +
-%  (I - F)^{-1} \phi \psi_c\\ \label{firstIter}
-% z^{0}_{t+i}(x_{t-1},\epsilon_{t-1})=0 \,\, \forall i \ge 0
-%  \end{gather}
-%  \begin{gather}
-%  g^0(x_{t-1},\epsilon_{t})=  
-% B x_{t-1}+ \phi \psi_\epsilon\epsilon_{t} +
-%  (I - F)^{-1} \phi \psi_c\\ \label{firstIter}
-% z^{0}_{t+i}(x_{t-1},\epsilon_{t-1})=0 \,\, \forall i \ge 0
-%  \end{gather}
-
-Using these functions we can then compute a solution for a model whose trajectories satisfy equation system \refeq{rbcSys}
-for two time periods and satisfy equation \refeq{rbcLinSys} subsequently.
-
-\begin{gather}
-\underbrace{x_{t-1},0}
-\underbrace{\xNow{2},\zNow{2}} 
-\underbrace{\xNowtp{2}=\XNow{2}{t}{t},\ZNow{2}{1}{t}}
-\underbrace{\XNow{1}{t+1}{t},0}\underbrace{\XNow{0}{t+2}{t+1},0}    \intertext{where we have solved for $\xNow{2}$ and $\zNow{2}$ to satisfy the  equation system \refeq{theProblem}.}
-\xNowtp{2}=\XNow{1}{t}{t}
-\end{gather}
-
-\begin{gather}
-  \label{eq:1}
-  x_t=B x_{t-1} + \phi z^2(x_{t-1},\epsilon) + F \phi \mathcal{Z}^1(x_t)\\
-  x_{t+1}=B x_{t} + \phi \mathcal{Z}^1(x_t)+
- (I - F)^{-1} \phi \psi_c\\
-  x_{t+2}=B x_{t+1} + (I - F)^{-1} \phi \psi_c\\
-  x_{t+3}=B x_{t+2} + (I - F)^{-1} \phi \psi_c
-\end{gather}
-
-The next iteration highlights an aspect of the algorithmic step which allows us
-to continue to exploit the series representation.
-
-{\small
-\begin{gather}
-\underbrace{x_{t-1},0}
-\underbrace{\xNow{3},\zNow{3}} 
-\underbrace{\xNowtp{3}=\XNow{3}{t}{t},\ZNow{3}{1}{t}} 
-\underbrace{\XNow{2}{t+1}{t},\ZNow{2}{2}{t+1}} 
-\underbrace{\XNow{1}{t+3}{t+2},0}
-\underbrace{\XNow{0}{t+4}{t+3},0}
-\end{gather}
-}
-
-\begin{gather}
-  \label{eq:1}
-  x_t=B x_{t-1} + \phi z^3(x_{t-1},\epsilon) + F \phi \mathcal{Z}^2(x_t)+ F^2 \phi \mathcal{Z}^1(x_t)+
- (I - F)^{-1} \phi \psi_c\\
-  x_{t+1}=B x_{t} + \phi \mathcal{Z}^1(x_t)+ F^2 \phi \mathcal{Z}^1(x_t)+
- (I - F)^{-1} \phi \psi_c\\
-  x_{t+2}=B x_{t+1} + (I - F)^{-1} \phi \psi_c\\
-  x_{t+3}=B x_{t+2} + (I - F)^{-1} \phi \psi_c\\
-  x_{t+4}=B x_{t+2} + (I - F)^{-1} \phi \psi_c
-\end{gather}
-
-
-
-In the general iteration step we will have
-\begin{gather}
-  \label{eq:1}
-  x_t=B x_{t-1}  \phi \psi_\epsilon \epsilon_t + (I - F)^{-1} \phi \psi_c +
-\sum_{s=0}^{k} F^s \phi \mathcal{Z}^{k-s}(x_{t+s}^{k+1})\\
-  x_{t+s}^{k+1}=\Pi_{s=0}^k \xIter{s}{ x_{t}^{k+1}}
-\end{gather}
-
 
 
 Needs generalization of ``chunk'' $\frac{1}{c_t}\rightarrow \left (\frac{\theta_{t+1}}{c_{t+1}^\eta} \right )$
@@ -981,6 +672,52 @@ for two time periods and satisfy equation \refeq{rbcLinSys} subsequently.
 
 We will see that all these can precomputed.
 
+Applying formula \refeq{theSeries} produces:
+
+{\tiny
+\begin{gather}
+  \begin{bmatrix}
+c_t\\k_t\\ \rcpC_t\\\theta_t
+  \end{bmatrix}=\\%paperCalcsRBCExample xt00
+   \left(
+   \begin{array}{c}
+ 0.359845 \epsilon _t+0.692632 k_{t-1}+0.341853 \theta _{t-1}-0.0442851
+   \text{z1}_{t-1}+0.658 \text{z2}_{t-1}+0.359845 \text{z3}_{t-1}-0.111552 \\
+ 0.187032 \epsilon _t+0.36 k_{t-1}+0.17768 \theta _{t-1}+0.0442851
+   \text{z1}_{t-1}+0.342 \text{z2}_{t-1}+0.187032 \text{z3}_{t-1}-0.0579799 \\
+ -5.34898 k_{t-1}+0.342 \text{z1}_{t-1}-5.08153
+   \text{z2}_{t-1}+\text{z4}_{t-1}+3.7794 \\
+ \epsilon _t+0.95 \theta _{t-1}+\text{z3}_{t-1}+0.05 \\
+   \end{array}
+   \right)
+\end{gather}
+}
+
+and 
+
+
+{\tiny
+%xt01=Private`computeNextXt[{Private`bmat,Private`phimat,Private`fmat,Private`psieps,Private`psic,Private`psiz},solnFunc00PF[[3+Range[3]]],{{cc},{kk},{tt}},{1}]//N//Expand//Simplify
+\begin{gather}
+  \begin{bmatrix}
+c_{t+1}\\k_{t+1}\\ \rcpC_{t+1}\\\theta_{t+1}
+  \end{bmatrix}=\\%paperCalcsRBCExample xt00
+  \left(
+   \begin{array}{c}
+ 0.471397 \epsilon _t+0.249347 k_{t-1}+0.447827 \theta _{t-1}+0.0306732
+   \text{z1}_{t-1}+0.23688 \text{z2}_{t-1}+0.471397 \text{z3}_{t-1}-0.134618 \\
+ 0.245012 \epsilon_t+0.1296 k_{t-1}+0.232761 \theta _{t-1}+0.0159426
+   \text{z1}_{t-1}+0.12312 \text{z2}_{t-1}+0.245012 \text{z3}_{t-1}-0.0699687 \\
+ -1.00043 \epsilon _t-1.92563 k_{t-1}-0.950409 \theta _{t-1}-0.23688
+   \text{z1}_{t-1}-1.82935 \text{z2}_{t-1}-1.00043 \text{z3}_{t-1}+4.08954 \\
+ 0.95 \epsilon _t+0.9025 \theta _{t-1}+0.95 \text{z3}_{t-1}+0.0975 \\
+   \end{array}
+   \right)
+\end{gather}}
+
+
+
+
 \subsubsection{Relation to Impulse Response Functions and Stochastic Simulations}
 \label{sec:relImp}
 
@@ -998,6 +735,14 @@ R . A. BROOKS
 
 Law of iterated expectations
 \href{http://www.pnas.org/content/103/11/3968.full}{discrete dynamical conditional expectation} 
+\label{sec:simple-rbc-model-2}
+
+\begin{itemize}
+\item Figure needs attention  \ref{rbcTrunc}
+\item Truncation Error
+\item path error use solutions for ``wrong'' parameters
+\item show formula works
+\end{itemize}
 
 \section{Computing Model Solution Error Bounds}
 \label{sec:solnerrorbounds}
@@ -1397,6 +1142,7 @@ Bounded solutions if and only if all eigenvalues of
 
 \begin{itemize}
 \item time varying:  regime switching, hammers need nails
+\item   \item The algorithm for discovering unknown solutions does not rely on time invariance.  Setup for iterated expectations
 \item SVMR and other ML universal approximators
 
 
@@ -1468,6 +1214,274 @@ to approximate a function to a given level of accuracy.
 
 \bibliographystyle{plainnat}
 \bibliography{anderson,files}
+\appendix
+  {Recursive updating}
+{\small
+  \begin{itemize}
+  \item Given a linear reference model,$\linModMats$,  any bounded 
+sequence of deterministic maps $\{\detF{T},\ldots,\detF{0}\}, \,\, T>0$ generates 
+a series representation
+  \begin{gather}
+     \label{eq:2}
+	 \mathcal{X}_{t}(x_{t-1}) =B x_{t-1}+  (I - F)^{-1} \phi \psi_c +\\ \sum_{\sForSum=0}^{T-1} F^s \phi z_{T-\sForSum}(x_{t-1}) \intertext{it is straightforward to 
+update to a new series representation for the map trajectories resulting from prepending an additional deterministic map to the sequence $\detF{T+1},\ldots,\detF{0}\}$}
+	 \mathcal{X}_{t}(x_{t-1}) =B x_{t-1}+  (I - F)^{-1} \phi \psi_c +\\ 
+\phi z_{T+1}(x_{t-1}) + \sum_{\sForSum=1}^{T} F^s \phi z_{T+1-\sForSum}(x_{t-1}) 
+  \end{gather}
+\item 
+  \end{itemize}
+}
+
+
+
+%\footnote{We set $\psi_c=0$  without loss of generality 
+%in the expressions that follow merely to save on notation.}
+
+
+{The model of interest and a linear reference model}
+\begin{itemize}
+\item The target model is of the form
+\begin{gather}
+\nlEqnLHS{x_{t-1}}{x_t}{x_{t+1}}{t}=\\
+\nlEqn{x_{t-1}}{x_t}{x_{t+1}}{t}=0\\ \label{refMod}
+ (L \times 1) +  (L \times L ) \cdot (L \times 1)\\
+\nlEqnSel{x_{t-1}}{x_t}{x_{t+1}}{t}\\ 
+\end{gather}
+
+
+
+\item The algorithm constructs a sequence of stochastic 
+functions 
+  \begin{gather}
+	 \stochF{k}\initXE =B x_{t-1}+ (I - F)^{-1} \phi \psi_c+  \phi \psi_\epsilon\epsilon_0  +\\ \phi z^{\{k\}}\initXE+ \sum_{\sForSum=1}^{k-1} F^s \phi z^{\{k-\nu\}}_{\sForSum}\initXE 
+\label{theSeries}
+  \end{gather}
+
+\item One can show that the algorithm begins with solutions satisfying 
+the linear reference model $\linModMats$ and
+constructs a sequence of functions
+ honoring the target model equations for successively 
+longer solution horizons.
+  \end{itemize}
+
+\section{more from above}
+\label{sec:more-from-above}
+
+
+{Early iterations}
+{\small
+  \begin{itemize}
+  \item $k=0$: Completely ignore the target model
+  \begin{gather}
+z^{\itSup{0}}\initXE=0 \intertext{ so that}
+\stochF{0}\initXE=B x_{-1} + (I - F)^{-1} \phi \psi_c +\phi \psi_\epsilon \epsilon_0  \intertext{initialize the sequence of deterministic maps with }
+\{\detF{0}\initX=B x \}
+  \end{gather}
+  \item $k=1$: Employ the target model for one period. Use
+  \begin{gather}
+x_0\initXE=B x_{-1}+ (I - F)^{-1} \phi \psi_c +\phi \psi_\epsilon \epsilon_0 + \phi z^{\itSup{1}}\initXE\\
+E(x_1\initXE)=\detF{0}(x_0\initXE) \intertext{in the deterministic equation 
+\refeq{refMod} to determine $z^{\itSup{1}}\initXE$ so}
+\stochF{1}\initXE = B x_{-1}+ (I - F)^{-1} \phi \psi_c +\phi \psi_\epsilon \epsilon_0 + 
+\phi z^{\itSup{1}}\initXE \intertext{%Define $Z^{\itSup{1}}(x)\equiv E \left [ z^{\itSup{1}}\initXEN | x \right ]$ and 
+ augment the sequence}
+\{\detF{1}\initX=B x  + \phi Z^{\itSup{1}}(x),\detF{0}\}
+  \end{gather}
+  \end{itemize}
+}
+
+
+
+{Early iterations}
+{\small
+  \begin{itemize}
+  \item $k=2$: Employ the target model for two periods. Use
+  \begin{gather}
+x_0\initXE=B x_{-1}+ (I - F)^{-1} \phi \psi_c +\phi \psi_\epsilon \epsilon_0 +\\ \phi z^{\itSup{2}}\initXE + F \phi Z^{\itSup{1}}(x_0\initXE)\\
+E(x_1\initXE)=\detF{1}(x_0\initXE) \intertext{in the deterministic equation 
+\refeq{refMod} to determine $z^{\itSup{2}}\initXE$}
+\stochF{2}\initXE = B x_{-1}+ (I - F)^{-1} \phi \psi_c +\phi \psi_\epsilon \epsilon_0 +\\ \phi z^{\itSup{2}}\initXE + F \phi Z^{\itSup{1}}(x_0\initXE)\intertext{
+Define $Z^{\itSup{2}}(x)\equiv 
+E \left [ z^{\itSup{2}}\initXEN | x \right ]$}
+\{\detF{2}\initX=B x  + \phi  Z^{\itSup{2}}(x) + F \phi Z^{\itSup{1}}(x_0\initXE),
+\detF{1}\initX,\detF{0}\initX\}
+  \end{gather}
+  \end{itemize}
+}
+
+
+
+
+{Early iterations}
+{\small
+  \begin{itemize}
+  \item $k=3$: Employ the target model for two periods. Use
+  \begin{gather}
+x_0\initXE=B x_{-1}+ (I - F)^{-1} \phi \psi_c +\phi \psi_\epsilon \epsilon_0 + \phi z^{\itSup{3}}\initXE +\\ F \phi Z^{\itSup{2}}(x_0\initXE) + F^2 \phi Z^{\itSup{1}}(\detF{2}(x_0\initXE))\\
+E(x_1\initXE)=\detF{2}(x_0\initXE) \intertext{in the deterministic equation 
+\refeq{refMod} to determine $z^{\itSup{3}}\initXE$}
+\stochF{3}\initXE = B x_{-1}+ (I - F)^{-1} \phi \psi_c +\phi \psi_\epsilon \epsilon_0 + \phi z^{\itSup{3}}\initXE + \\F \phi Z^{\itSup{2}}(x_0\initXE) +F^2 \phi Z^{\itSup{1}}(\detF{2}(x_0\initXE))\intertext{
+Define $Z^{\itSup{3}}(x)\equiv 
+E \left [ z^{\itSup{3}}\initXEN | x \right ]$}
+\detF{2}\initX=B x  + \phi  Z^{\itSup{3}}(x) + 
+F \phi Z^{\itSup{2}}(x_0\initXE) + \\F^2 \phi Z^{\itSup{1}}(\detF{1}(x_0\initXE))
+  \end{gather}
+  \end{itemize}
+}
+
+
+
+{General iterations}
+{\small
+  \begin{itemize}
+  \item $k=K+1$: Employ the target model for $K+1$ periods. Use
+  \begin{gather}
+x_0\initXE=B x_{-1}+ (I - F)^{-1} \phi \psi_c +\phi \psi_\epsilon \epsilon_0 + \phi z^{\itSup{K+1}}\initXE +\\ \sum_\sForSum^K F^\nu \phi Z^{\itSup{K+1-s}}\detComp{x_0\initXE} \\
+E(x_1\initXE)=\detF{K}(x_0\initXE) \intertext{in the deterministic equation 
+\refeq{refMod} to determine $z^{\itSup{K+1}}\initXE$}
+\stochF{K+1}\initXE = B x_{-1}+ (I - F)^{-1} \phi \psi_c +\phi \psi_\epsilon \epsilon_0 + \phi z^{\itSup{K+1}}\initXE + \\
+\sum_\sForSum^K F^\nu \phi Z^{\itSup{K+1-s}}\detComp{x_0\initXE} 
+  \end{gather}
+  \end{itemize}
+}
+
+\section{Still another}
+\label{sec:still-another}
+
+We are now in a position to easily compute 
+ \begin{gather}
+\xIter{0}{x}=\mathcal{H}^{PF}[g^{0}(x,\epsilon_{t-k+1})]=
+\mathcal{H}^{RE}[g^{0}(x,\epsilon_{t-k+1})]= 
+B x+  (I - F)^{-1} \phi \psi_c
+ \end{gather}
+\begin{gather}
+\underbrace{x_{t-1},0} 
+\underbrace{\xNow{0},\zNow{0}}
+\underbrace{\xNowtp{0}=\xIter{0}{x_{t}},0}
+\end{gather}
+In other words, from time t onwards, this approximation assumes 
+that our stand-in
+ convergent linear model completely characterizes the solution.\footnote{
+The algorithm terminates with an approximation for 
+the time invariant function $g^\ast$.}  It is unlikely that $g^0(x_{t-1},\epsilon_{t})$
+satisfies equation \refeq{theProblem} for arbitrary $x_{t-1}$ even for $s=0$.
+We can get a pessimistic upper bound for how far we are away from the solution 
+by computing the infinity norm of substituting the variables from into Equation \refeq{theProblem}.
+% \footnote{The values in Table \ref{truncTab} illustrate how
+%pessimistic this approximation can be, but it turns out we can expect the accur%acy of  approximate truncation errors improve as we expand the approximation series.}
+
+Next, we compute a solution in which the nonlinear equations are satisfied at time t alone while the stand-in linear system holds sway subsequently.
+Our algorithm will  compute
+\begin{gather}
+\underbrace{x_{t-1},0} 
+\underbrace{\xNow{1},\zNow{1}}
+\underbrace{\xNowtp{1}=\xIter{1}{x_{t+1}},0}
+\underbrace{\xNowtp{1}=\xIter{0}{x_{t+1}},0}
+\end{gather}
+that satisfy the nonlinear equation system at time t.
+For a given $x_{t-1}$, we substitute
+\begin{gather}
+x_{t-1}, \,\,
+  x_t=B x_{t-1} + \phi z^1(x_{t-1},\epsilon_t) , \,\,
+  x_{t+1}=B x_{t} + \phi \mathcal{Z}^1(x_t)
+\end{gather}
+into the non linear equation system to determine the 
+$z^1(x_{t-1},\epsilon_t)$ and consequently $x_t^1(x_{t-1},\epsilon_t)$.
+We then have
+ \begin{gather}
+ g^1(x_{t-1},\epsilon_{t})=  
+B x_{t-1}+ \phi \psi_\epsilon\epsilon_{t} +
+\phi \psi_\epsilon z^1(x_{t-1},\epsilon_t)+
+ (I - F)^{-1} \phi \psi_c\\ \label{firstIter}
+z^{1}_{t+i}(x_{t-1},\epsilon_{t-1})=0 \,\, \forall i \ge 1
+ \end{gather}
+Now, $g^1(x_{t-1},\epsilon_{t})$
+satisfies equation \refeq{theProblem} for arbitrary $x_{t-1}$ at time $t$ with $s=0$.  However, it probably does not solve the system for $s>0$.
+We can get a pessimistic upper bound for how far we are away from the solution 
+by substituting the variables and computing the infinity norm for plausible values of $x_{t-1}$.
+\begin{gather}
+\xNow{1},\xNowtp{1},\xNowtp{1}=\xIter{1}{x_{t+1}}
+\end{gather}
+into Equation \refeq{theProblem}. If the accuracy of the approximation is adequate, we need not compute any further  terms in the power series.  If not,
+we are now in a position to compute our choice of
+$\mathcal{Z}^1(x)=\mathcal{H}^{PF}[g^{1}(x,\epsilon_{t-k+1})]$ or
+$\mathcal{Z}^1(x)=\mathcal{H}^{RE}[g^{1}(x,\epsilon_{t-k+1})]$.
+
+%  \begin{gather}
+%  g^0(x_{t-1},\epsilon_{t})=  
+% B x_{t-1}+ \phi \psi_\epsilon\epsilon_{t} +
+%  (I - F)^{-1} \phi \psi_c\\ \label{firstIter}
+% z^{0}_{t+i}(x_{t-1},\epsilon_{t-1})=0 \,\, \forall i \ge 0
+%  \end{gather}
+%  \begin{gather}
+%  g^0(x_{t-1},\epsilon_{t})=  
+% B x_{t-1}+ \phi \psi_\epsilon\epsilon_{t} +
+%  (I - F)^{-1} \phi \psi_c\\ \label{firstIter}
+% z^{0}_{t+i}(x_{t-1},\epsilon_{t-1})=0 \,\, \forall i \ge 0
+%  \end{gather}
+
+Using these functions we can then compute a solution for a model whose trajectories satisfy equation system \refeq{rbcSys}
+for two time periods and satisfy equation \refeq{rbcLinSys} subsequently.
+
+\begin{gather}
+\underbrace{x_{t-1},0}
+\underbrace{\xNow{2},\zNow{2}} 
+\underbrace{\xNowtp{2}=\XNow{2}{t}{t},\ZNow{2}{1}{t}}
+\underbrace{\XNow{1}{t+1}{t},0}\underbrace{\XNow{0}{t+2}{t+1},0}    \intertext{where we have solved for $\xNow{2}$ and $\zNow{2}$ to satisfy the  equation system \refeq{theProblem}.}
+\xNowtp{2}=\XNow{1}{t}{t}
+\end{gather}
+
+\begin{gather}
+  \label{eq:1}
+  x_t=B x_{t-1} + \phi z^2(x_{t-1},\epsilon) + F \phi \mathcal{Z}^1(x_t)\\
+  x_{t+1}=B x_{t} + \phi \mathcal{Z}^1(x_t)+
+ (I - F)^{-1} \phi \psi_c\\
+  x_{t+2}=B x_{t+1} + (I - F)^{-1} \phi \psi_c\\
+  x_{t+3}=B x_{t+2} + (I - F)^{-1} \phi \psi_c
+\end{gather}
+
+The next iteration highlights an aspect of the algorithmic step which allows us
+to continue to exploit the series representation.
+
+{\small
+\begin{gather}
+\underbrace{x_{t-1},0}
+\underbrace{\xNow{3},\zNow{3}} 
+\underbrace{\xNowtp{3}=\XNow{3}{t}{t},\ZNow{3}{1}{t}} 
+\underbrace{\XNow{2}{t+1}{t},\ZNow{2}{2}{t+1}} 
+\underbrace{\XNow{1}{t+3}{t+2},0}
+\underbrace{\XNow{0}{t+4}{t+3},0}
+\end{gather}
+}
+
+\begin{gather}
+  \label{eq:1}
+  x_t=B x_{t-1} + \phi z^3(x_{t-1},\epsilon) + F \phi \mathcal{Z}^2(x_t)+ F^2 \phi \mathcal{Z}^1(x_t)+
+ (I - F)^{-1} \phi \psi_c\\
+  x_{t+1}=B x_{t} + \phi \mathcal{Z}^1(x_t)+ F^2 \phi \mathcal{Z}^1(x_t)+
+ (I - F)^{-1} \phi \psi_c\\
+  x_{t+2}=B x_{t+1} + (I - F)^{-1} \phi \psi_c\\
+  x_{t+3}=B x_{t+2} + (I - F)^{-1} \phi \psi_c\\
+  x_{t+4}=B x_{t+2} + (I - F)^{-1} \phi \psi_c
+\end{gather}
+
+
+
+In the general iteration step we will have
+\begin{gather}
+  \label{eq:1}
+  x_t=B x_{t-1}  \phi \psi_\epsilon \epsilon_t + (I - F)^{-1} \phi \psi_c +
+\sum_{s=0}^{k} F^s \phi \mathcal{Z}^{k-s}(x_{t+s}^{k+1})\\
+  x_{t+s}^{k+1}=\Pi_{s=0}^k \xIter{s}{ x_{t}^{k+1}}
+\end{gather}
+
+
+
+
+
+
+
+
 
 \end{document}
 

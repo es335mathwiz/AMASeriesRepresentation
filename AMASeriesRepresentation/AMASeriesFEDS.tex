@@ -15,8 +15,8 @@
 
 \author{Gary S. Anderson\thanks{The analysis and conclusions set forth are those of the author and do not indicate concurrence by other members of the research staff or the Board of Governors. I would like to thank Luca Guerrieri, Christopher Gust, Hess Chung, Benjamin Johannsen  and Robert Tetlow for their comments and suggestions.  Special thanks to Luca Guerieri for first noticing that the series representation formulation could lead to an error bound for model solutions.}}
 
-\title{A New Series Representation for Time Invariant Maps that
- Arise in  Nonlinear Dynamic Stochastic Economic Models}
+\title{A New Series Representation for 
+Nonlinear Dynamic Stochastic Model Solutions: Error Bounds and Solution Algorithm}
 
 \date{\today: \currenttime}
 \begin{document}
@@ -955,6 +955,16 @@ period and the stand-in linear model for subsequent periods.
 
 \subsubsection{Algorithm Pseudocode}
 \label{sec:pseudocode}
+
+\begin{enumerate}
+\item Specify a (collection) model equations systems(s)
+\item specify a linear reference model
+\item specify an initial guess for decision rule $\xWargK$ obtain conditional expectations function
+\item decide uponnmber of Conditional Expectations function approximation.  Shorter means more truncation and higher error longer means including more terms from series In effect imposes nonlinear constraints for number of period specified and the linear reference model thereafter
+\item algorithm uses coditional expectation and model equations to produce an improved approximation to the decision rule.
+\item the algorithm fid a solution to the system that constrains $x_t= x_g$ determining $x_t,z_t$ at the interpolation points for $x_{t-1},\epsilon_t$  This can be done in parallel
+\item the data from the interplation points is used to produce an updated decision rule
+\end{enumerate}
 
 
 \subsubsection{Approximating the Known Solution: $U(c) = Log(c)$ }

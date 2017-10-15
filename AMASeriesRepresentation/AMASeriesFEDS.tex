@@ -16,7 +16,7 @@
 \author{Gary S. Anderson\thanks{The analysis and conclusions set forth are those of the author and do not indicate concurrence by other members of the research staff or the Board of Governors. I would like to thank Luca Guerrieri, Christopher Gust, Hess Chung, Benjamin Johannsen  and Robert Tetlow for their comments and suggestions.  Special thanks to Luca Guerieri for first noticing that the series representation formulation could lead to an error bound for model solutions.}}
 
 \title{A New Series Representation for 
-Nonlinear Dynamic Stochastic Model Solutions: Error Bounds and Solution Algorithm}
+Nonlinear Dynamic Stochastic Model Solutions: General Error Bounds and New Solution Algorithm}
 
 \date{\today: \currenttime}
 \begin{document}
@@ -25,15 +25,15 @@ Nonlinear Dynamic Stochastic Model Solutions: Error Bounds and Solution Algorith
 
 \begin{abstract}
 This paper proposes a new series representation for dynamic model solution paths and uses this representation to construct error bounds for proposed solutions to a very general class of dynamic stochastic models including models subject to occasionally binding constraints and/or regime switching.
-This which, incorporating the impact of errors across  all the equations in 
-the system makes it possible to compute
+This error bound calculation which, incorporating the impact of errors across  all the equations in 
+the system makes, it possible to compute
 apriori estimates of the computational cost for a
 given level of accuracy of each component of the solution.
 These error bounds should prove useful for assessing the accuracy of any
 proposed model solution regardless of the source.
 
 
-In addition, the paper also proposes an new algorithm for solving these types of models.
+In addition, the paper also proposes a new algorithm for solving these models.
 The series representation makes it possible to reliably improve upon an initial
 guess for a stochastic model solution by solving a 
 potentially complicated, but deterministic problem in the initial time period.
@@ -43,7 +43,8 @@ Like the error bound formula, the algorithm is appropriate for models with occas
 The  paper uses a particular implementation of the algorithm to
 demonstrate how to use the 
 series representation in conjunction with 
-Smolyak polynomial function approximation to avoid numerical integration
+Smolyak polynomial function approximation to completely
+avoid numerical integration in stochastic models
 and to exploit the high degree of parallelism available in the algorithm.
 
 
@@ -58,22 +59,20 @@ and to exploit the high degree of parallelism available in the algorithm.
 \tableofcontents
 \newpage
 
-\section{Introduction and Summary}
+\section{Introduction}
 
 
 
 
 
 Stochastic dynamic non linear economic
-models increasingly embody  occasionally binding constraints (OBC) essential
+models increasingly embody  occasionally binding constraints (OBC).
 Since \cite{Christiano2000} a host of
 authors have described a variety of approaches. 
 \cite{holden15:_exist_dsge,guerrieri15:_occbin,benigno09,hintermaier10,brumm10,nakov08,haefke98,nakata12,gordon11,billi11,Hintermaier2010,Guerrieri2015}
 This paper provides yet another.  This new series representation provides  a coherent framework for attacking a wide variety of complicated nonlinear models.
 
-The analysis develops a new series representation for bounded time series.  The author has found no analogous use of a reference dynamical system to generate a transformation of one infinite dimensional series into another. Under certain rank conditions, this transformation is one to one and onto.  The
-transformation $ {\{ x_{t}, x_{t}, x_{t+1},x_{t+2}\ldots\}} \rightarrow \linMod(x_{t-1}) \rightarrow{\{ z_{t}, z_{t+1}, z_{t+2},\ldots\}} $ is invertible under
-certain rank conditions. $ {\{ z_{t}, z_{t+1}, z_{t+2},\ldots\}} \rightarrow \linMod(x_{t-1})^{-1} \rightarrow{\{ x_{t}, x_{t}, x_{t+1},x_{t+2}\ldots\}} $ and the inverse can be interpreted as giving the impact of ``fully anticipated future shocks'' on the path of $x_t$ obeying the solution of a linear rational expectations model.  The formula supports the intuition that far distant shocks influence current conditions less than  imminent shocks.
+The analysis develops a new series representation for bounded time series.  The author has found no comparable use of a reference dynamical system to generate a transformation of one infinite dimensional series into another. 
 
 The framework provides a new way to bound the error one can expect from
 employing a given proposed model solution and leads to a
@@ -84,7 +83,7 @@ problem at time t given a proposed solution.  The deterministic solution
 can accommodate inequality constraints or alternative regimes to produce a
 solution for each set of initial conditions.  One can typically arrange,
 perhaps by adding auxiliary variables, to produce a ``decision rule''
-that one can correctly integrate to get a deterministic conditional
+that one can use to correctly precompute a deterministic conditional
 expectation function that can be iterated forward and serves to
 improve upon the original proposed solution.
 Time invariant stochastic functions 
@@ -92,8 +91,12 @@ lead naturally to an associated family of deterministic maps
 which can conveniently represented by the series representation.
 
 
-
-
+Section \ref{sec:newseries} presents a usefule new series representation for any bounded time series.
+Section \ref{sec:extToMaps} shows how to apply this series representation to time invariant maps.
+Section \ref{sec:solnerrorbounds} provides formulae for computing dynamic stochastic model error bounds for proposed  solutions.
+Section \ref{sec:algoforsoln} presents a new solution algorithm.
+Section \ref{sec:future} discusses directions for future work.
+Section \ref{sec:conc} concludes.
 
 \section{A New Series Representation For  Bounded Time Series}
 \label{sec:newseries}
@@ -171,6 +174,10 @@ satisfying complicated systems of dynamic non-linear equations.
 
 A key feature to note is that the series representation can accomodate arbitrarily complex time series trajectories, so long as these trajectories are bounded.
 
+Under certain rank conditions, this transformation is one to one and onto.  The
+transformation $ {\{ x_{t}, x_{t}, x_{t+1},x_{t+2}\ldots\}} \rightarrow \linMod(x_{t-1}) \rightarrow{\{ z_{t}, z_{t+1}, z_{t+2},\ldots\}} $ is invertible under
+certain rank conditions. $ {\{ z_{t}, z_{t+1}, z_{t+2},\ldots\}} \rightarrow \linMod(x_{t-1})^{-1} \rightarrow{\{ x_{t}, x_{t}, x_{t+1},x_{t+2}\ldots\}} $ and the inverse can be interpreted as giving the impact of ``fully anticipated future shocks'' on the path of $x_t$ obeying the solution of a linear rational expectations model.  The formula supports the intuition that far distant shocks influence current conditions less than  imminent shocks.
+
 
 \subsection{An Example: An ``Almost'' Arbitrary Linear Model and an Some Arbitrary  Bounded Time Series}
 \label{sec:almostarbitrary}
@@ -225,34 +232,39 @@ unbounded trajectories.}
 \begin{figure}
   \centering
 \includegraphics[width=2in]{piPath.pdf}
-  
-  \caption{$\pi$ Digits Path}\label{pipath}
-\end{figure}
-\begin{figure}
-  \centering
 \includegraphics[width=2in]{oscillPath.pdf}
-  
-  \caption{Oscillatory Path}\label{oscillpath}
-\end{figure}
-
-\begin{figure}
-  \centering
 \includegraphics[width=2in]{pseudoPath.pdf}
-  \caption{Uniformly Distributed Path}\label{pseudopath}
+\includegraphics[width=3in]{theZs.pdf}  
+  
+  \caption{Arbitrary Bounded Time Series Paths and Corresponding $z_{i,t}$ values}\label{pipath}
 \end{figure}
 
-\begin{figure}
-  \centering
-\includegraphics[width=3in]{theZs.pdf}  
-  \caption{The  z's Corresponding to  $x_{-1}=(1,2,3),\epsilon=(2,1,2)$} \label{arbFig}
-\end{figure}
+
+% \begin{figure}
+%   \centering
+% \includegraphics[width=2in]{oscillPath.pdf}
+  
+%   \caption{Oscillatory Path}\label{oscillpath}
+% \end{figure}
+
+% \begin{figure}
+%   \centering
+% \includegraphics[width=2in]{pseudoPath.pdf}
+%   \caption{Uniformly Distributed Path}\label{pseudopath}
+% \end{figure}
+
+% \begin{figure}
+%   \centering
+% \includegraphics[width=3in]{theZs.pdf}  
+%   \caption{The  z's Corresponding to  $x_{-1}=(1,2,3),\epsilon=(2,1,2)$} \label{arbFig}
+% \end{figure}
 
 \begin{figure}
   \centering
 
 
 \includegraphics[width=3in]{arbTruncErr.pdf}  
-  \caption{Error Bound Versus Actual Error} \label{figArbTrunc}
+  \caption{$x_t$ Error Bound Versus Actual Error} \label{figArbTrunc}
 
 \end{figure}
 
@@ -306,6 +318,7 @@ same formula.
 \label{sec:pathnorm}
 
 \begin{itemize}
+\item MSNTO
 \item Almost Arbitrary
 \item Impact of Choice
 \item represents impact of ``anticipated shocks'' interpretation error bounds on $x_t$
@@ -316,6 +329,7 @@ same formula.
 
 
 \section{Nonlinear Dynamic Stochastic Time Invariant Maps}
+\label{sec:extToMaps}
 
 \begin{figure}
   \centering
@@ -335,7 +349,7 @@ same formula.
 
 
 \subsection{Application to Time Invariant Maps}
-\label{sec:extToMaps}
+
 
 In this paper we will be interested in computing with time
  invariant maps. Many dynamic stochastic models have solutions that fall in this class. 
@@ -787,6 +801,154 @@ Consequently, will will have an aquation system an a gatekeeper logical expressi
 \paragraph{RBC Example for Unknown Solution}
 \paragraph{Algorithm Agnostic: Your Solution Here}
 
+
+
+
+    
+\begin{itemize}
+\item Choose an Almost  Arbitrary Linear Reference Model
+\item Construct Augmented Decision Rule Function (ADR)
+\item Along with Augmented Decision Rule Conditional Expectation Function (ADRCE)
+\item Compute Bound for Discretization Error
+\item Compute Bound for Truncation Error
+\end{itemize}
+
+
+
+
+
+
+
+
+
+
+ Given an exact solution $x^\star_t=g^\star(x_{t-1},\epsilon_t)$ define
+  \begin{gather}
+G^\star(x)\equiv\expct{g^\star(x,\epsilon)} \intertext{then with}
+E_tx^\star_{t+1}=G^\star(g^\star(x_{t-1},\epsilon_t))\\
+    \label{eq:2}
+\eqnFunc(x^\star_{t-1},x^\star_t,E_tx^\star_{t+1},\epsilon_t)=0  \,\, \forall  (x_{t-1},\epsilon_t)\\ \intertext{Using $G^\star$ and $\linMod$ construct the family of trajectories and corresponding $z^\star_t(x_{t-1},\epsilon)$ }
+   x^\star_t(x_{t-1},\epsilon_t) \in{R^L}\,\,\infNorm{x^\star_t(x_{t-1},\epsilon_t)}  \le \bar{\mathcal{X}}\,\,\forall t\ > 0
+  \end{gather}
+   \begin{align}
+   z^\star_{t}(x_{t-1},\epsilon_t) \equiv& H_{-1}  x^\star_{t-1}(x_{t-1},\epsilon_t) + \nonumber\\
+ & H_0  x^\star_{t}(x_{t-1},\epsilon_t) +  \label{defZ} \\
+ & H_1  x^\star_{t+1}(x_{t-1},\epsilon_t). \nonumber
+   \end{align}
+
+
+
+
+   The exact solution has a representation given by
+	 \begin{gather}
+	 x^\star_{t}(x_{t-1},\epsilon) =B x_{t-1}+ \phi \psi_\epsilon\epsilon + (I - F)^{-1} \phi \psi_c +\\ \sum_{\sForSum=0}^\infty F^s \phi z^\star_{t+\sForSum}(x_{t-1},\epsilon) \intertext{and}
+	 \expct{x^\star_{t+1}(x_{t-1},\epsilon)} =B x^\star_{t+k} + \sum_{\sForSum =0}^\infty F^\sForSum \phi \expct{z^\star_{t+1+\sForSum}(x_{t-1},\epsilon)} + (I - F)^{-1} \phi \psi_c 
+ \intertext{with}
+ \eqnFunc(x_{t-1},x^\star_t,E_tx^\star_{t+1},\epsilon_t)=0  \,\, \forall  (x_{t-1},\epsilon_t)\\ 
+	 \end{gather}
+
+
+
+
+\subsubsection{Quantifying the Inaccuracy of the Proposed Solution}
+
+
+
+
+ Given a proposed solution $x^p_t=g^p(x_{t-1},\epsilon_t)$ define
+$G^p(x)\equiv\expct{g^p(x,\epsilon)}$  so that 
+  \begin{gather}
+E_tx_{t+1}=G^p(g^p(x_{t-1},\epsilon_t))\\
+\mathbf{e}_t(x_{t-1},\epsilon)\equiv
+\eqnFunc(x_{t-1},x^p_t,E_tx^p_{t+1},\epsilon_t)\\\intertext{Using $G^p$ and $\linMod$ construct the family of trajectories and corresponding $z^p_t(x_{t-1},\epsilon)$ }
+   x^p_t(x_{t-1},\epsilon_t) \in{R^L}\,\,\infNorm{x^p_t(x_{t-1},\epsilon_t)}  \le \bar{\mathcal{X}}\,\,\forall t\ > 0
+  \end{gather}
+   \begin{align}
+   z^p_{t}(x_{t-1},\epsilon_t) \equiv& H_{-1}  x^p_{t-1}(x_{t-1},\epsilon_t) + \nonumber\\
+ & H_0  x^p_{t}(x_{t-1},\epsilon_t) +  \label{defZ} \\
+ & H_1  x^p_{t+1}(x_{t-1},\epsilon_t). \nonumber
+   \end{align}
+
+
+
+
+
+
+
+
+ The proposed solution has a representation given by 
+  \begin{gather}
+    \label{eq:4}
+	 x^p_{t}(x_{t-1},\epsilon) =B x_{t-1}+ \phi \psi_\epsilon\epsilon + (I - F)^{-1} \phi \psi_c +\\ \sum_{\sForSum=0}^\infty F^s \phi z^p_{t+\sForSum}(x_{t-1},\epsilon) 
+ \intertext{and}
+ 	 \expct{x^p_{t+1}(x_{t-1},\epsilon)} =B x^p_{t+k} + \sum_{\sForSum =0}^\infty F^\sForSum \phi z^p_{t+1+\sForSum}(x_{t-1},\epsilon) + (I - F)^{-1} \phi \psi_c \intertext{with}
+\mathbf{e}_t(x_{t-1},\epsilon)\equiv
+\eqnFunc(x_{t-1},x^p_t,E_tx^p_{t+1},\epsilon_t)
+  \end{gather}
+
+
+
+
+
+
+
+
+
+  \begin{gather}
+    \label{eq:3}
+\max_{\{x_{-},\epsilon\}} \infNorm{ \phi \eqnFunc(x_{-},g^p(x_{-},\epsilon),G^p(g^p(x_{-},\epsilon)),\epsilon) }\\
+\max_{\{x_{-},\epsilon\}} \infNorm{ \phi \expct{ \eqnFunc(x_{-},g^p(x_{-},\epsilon),G^p(g^p(x_{-},\epsilon)),\epsilon)} }\\
+\hat{G}^p(x,\epsilon)=G^p(x,\epsilon)+ \mathcal{I}_e(x,\epsilon)\\
+\max_{\{x_{-},\epsilon\}} \infNorm{ \phi \expct{ \eqnFunc(x_{-},g^p(x_{-},\epsilon),\hat{G}^p(g^p(x_{-},\epsilon)),\epsilon)} }\\
+\max_{\{x_{-},\epsilon\}} \infNorm{ \phi \expct{ \eqnFunc(x_{-},g^p(x_{-},\epsilon),B g^p(x_{-},\epsilon)+(I-F)^{-1}\psi_c,\epsilon)} }
+  \end{gather}
+
+
+
+
+
+
+  \begin{gather}
+    \label{eq:3}
+	 x^\star_{t}(x_{t-1},\epsilon) -	 x^p_{t}(x_{t-1},\epsilon) =
+\sum_{\sForSum=0}^\infty F^s \phi (z^\star_{t+\sForSum}(x_{t-1},\epsilon)-z^p_{t+\sForSum}(x_{t-1},\epsilon))     \\
+	 x^\star_{t}(x_{t-1},\epsilon) -	 x^p_{t}(x_{t-1},\epsilon) =
+\sum_{\sForSum=0}^\infty F^s \phi \mathbf{z_e}_{t+\sForSum}(x_{t-1},\epsilon_t)   \\ 
+	\infNorm{ x^\star_{t}(x_{t-1},\epsilon) -	 x^p_{t}(x_{t-1},\epsilon)} \le
+\sum_{\sForSum=0}^\infty F^s \phi \infNorm{\mathbf{z_e}_{t+\sForSum}(x_{t-1},\epsilon_t)}    
+  \end{gather}
+
+
+
+  \begin{itemize}
+  \item Law of iterated expectations applies for decision rules.
+  \item show why system approach important
+  \item Exact solution have zero discrepancy
+  \item Compute deviations  DR approximation error
+  \item Expectation computation approximation error
+  \item Series truncation error
+  \item Don't need to iterate a long path since all the potentials 
+errors attainable in first iteration step by searching across initial conditions
+\item condition number and error bounds
+  \item why system view better
+  \item factor out expectation function
+  \item allow loss function for model error
+  \item integration error 
+  \item bound other people's solutions, compare to bound Euler errors
+  \item show can determine number series terms then accuracy depends on number of nodes
+  \item compute errors and max norm for all relevant state $(x_{t-1},\epsilon_t)$ and consequently for all the conditional expectations
+  \item precompute  conditional expectations for basis since amaseries is
+just a linearly weighted sum
+\item what is best way to quantify characterize impact of error along the path
+inaccurately computed future trajectory
+\item can discover unknown solutions
+\end{itemize}
+
+
+
+
+
+
 \section{An Algorithm for Improving Proposed Time Invariant Solutions}
 \label{sec:algoforsoln}
 
@@ -802,7 +964,7 @@ Consequently, will will have an aquation system an a gatekeeper logical expressi
 
 \paragraph{Correct Expectations}
 
-\paragraph{Precomputig Integrals}
+\paragraph{Precomputing Integrals}
 
 
 \subsubsection{Smolyak Interpolation}
@@ -811,7 +973,7 @@ Consequently, will will have an aquation system an a gatekeeper logical expressi
 \paragraph{Anisotropic}
 
 \paragraph{Ergodic Set}
-
+\paragraph{MSNTO}
 \subsection{Algorithm Overview}
 \label{sec:algoverview}
 
@@ -1139,25 +1301,49 @@ Bounded solutions if and only if all eigenvalues of
 
 
 
-
+ \begin{description}
+ \item[mdoel equation function] \
+   \begin{gather}
+     f(x_{t-1},x_t,E_t(x_{t+1}|\iSet),\epsilon_t)=0 \intertext{later, mutually exclusive exhaustive}
+     \{f_1(x_{t-1},x_t,E_t(x_{t+1}|\iSet),\epsilon_t)=0,b_i(x_{t-1},x_t,E_t(x_{t+1}|\iSet),\epsilon_t),\\
+     f_2(x_{t-1},x_t,E_t(x_{t+1}|\iSet),\epsilon_t)=0,b_i(x_{t-1},x_t,E_t(x_{t+1}|\iSet),\epsilon_t),\\ \vdots,\\ f_K(x_{t-1},x_t,E_t(x_{t+1}|\iSet),\epsilon_t)=0,b_i(x_{t-1},x_t,E_t(x_{t+1}|\iSet),\epsilon_t)\}
+   \end{gather}
+\item[genxkzk]
+   \begin{gather}
+     \begin{bmatrix}
+       x_{t-1}\\x_t\\E_t(x_{t+1}|\iSet)\\\epsilon_t
+     \end{bmatrix}= \mathcal{G}(x_{t-1},\epsilon_t|\XtFunc(\cdot),x_t^g)
+   \end{gather}
+ % \item[Augmented Decision Rule (\ADR)]
+ %   \begin{gather}
+ %     \begin{bmatrix}
+ %       x_t\\z_t
+ %     \end{bmatrix}=
+ %     xtFunc(x_{t-1},z_t)
+ %   \end{gather}
+ % \item[Augmented Decision Rule Conditional Expectation (\ADRCE)] 
+ %   \begin{gather}
+ %    E_t\right ( \begin{bmatrix}
+ %       x_t\\z_t
+ %     \end{bmatrix} \left )=
+ %     XtFunc(x_{t-1},z_t
+ %   \end{gather}
+ \end{description}
 
 \section{Future Work}
 \label{sec:future}
 
 \begin{itemize}
+\item FRBUS VAR expectations and Agent Based Models:
+\item confidence intervals other  summary statistics how often constrained, how long
+\item replace stochastic sims
 \item time varying:  regime switching, hammers need nails
-\item   \item The algorithm for discovering unknown solutions does not rely on time invariance.  Setup for iterated expectations
+\item The algorithm for discovering unknown solutions does not rely on time invariance.  Setup for iterated expectations
 \item SVMR and other ML universal approximators
-
-
   \begin{itemize}
   \item less need for anisotropic
   \item less need to find ergodic set
   \end{itemize}
-
-
-
-
 Support vector machines occupy a prominent place applied machine learning
 Additionally they can reduce the burden of computation as they determine 
 a subset of points that are important in characterizing a given function.

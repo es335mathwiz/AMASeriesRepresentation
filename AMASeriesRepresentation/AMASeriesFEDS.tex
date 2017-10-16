@@ -977,7 +977,20 @@ inaccurately computed future trajectory
 \subsection{Algorithm Overview}
 \label{sec:algoverview}
 
-
+\begin{itemize}
+\item modify equation systems to allow application of law of iterated expectations
+\item choose $\linMod$ of appropriate dimensions
+\item choose accuracy goal
+\item choose $\tau$ number of periods of $z_t$ terms
+\end{itemize}
+  \begin{algorithm}[H]
+compute \ADRCE\  function\\
+construct $\mathbf{G}$ function\\
+solve system to get $x_t,z_t$ at interpolation points for $x_{t-1},\epsilon_t$\\
+assess accuracy\\
+repeat till accuracy goal achieved
+\caption{Improve Approximate \ADR }
+  \end{algorithm}
 
 
 This series representation for deterministic maps,
@@ -1302,34 +1315,37 @@ Bounded solutions if and only if all eigenvalues of
 
 
  \begin{description}
- \item[mdoel equation function] \
+ \item[model equation function] \
    \begin{gather}
      f(x_{t-1},x_t,E_t(x_{t+1}|\iSet),\epsilon_t)=0 \intertext{later, mutually exclusive exhaustive}
      \{f_1(x_{t-1},x_t,E_t(x_{t+1}|\iSet),\epsilon_t)=0,b_i(x_{t-1},x_t,E_t(x_{t+1}|\iSet),\epsilon_t),\\
      f_2(x_{t-1},x_t,E_t(x_{t+1}|\iSet),\epsilon_t)=0,b_i(x_{t-1},x_t,E_t(x_{t+1}|\iSet),\epsilon_t),\\ \vdots,\\ f_K(x_{t-1},x_t,E_t(x_{t+1}|\iSet),\epsilon_t)=0,b_i(x_{t-1},x_t,E_t(x_{t+1}|\iSet),\epsilon_t)\}
    \end{gather}
-\item[genxkzk]
-   \begin{gather}
-     \begin{bmatrix}
-       x_{t-1}\\x_t\\E_t(x_{t+1}|\iSet)\\\epsilon_t
-     \end{bmatrix}= \mathcal{G}(x_{t-1},\epsilon_t|\XtFunc(\cdot),x_t^g)
-   \end{gather}
- % \item[Augmented Decision Rule (\ADR)]
- %   \begin{gather}
- %     \begin{bmatrix}
- %       x_t\\z_t
- %     \end{bmatrix}=
- %     xtFunc(x_{t-1},z_t)
- %   \end{gather}
- % \item[Augmented Decision Rule Conditional Expectation (\ADRCE)] 
- %   \begin{gather}
- %    E_t\right ( \begin{bmatrix}
- %       x_t\\z_t
- %     \end{bmatrix} \left )=
- %     XtFunc(x_{t-1},z_t
- %   \end{gather}
- \end{description}
+ \item[genxkzk]
+    \begin{gather}
+      \begin{bmatrix}
+        x_{t-1}\\x_t\\E_t(x_{t+1}|\iSet)\\\epsilon_t
+      \end{bmatrix}= \mathcal{G}(x_{t-1},\epsilon_t|\XtFunc(\cdot),x_t^g)
+    \end{gather}
+  \item[Augmented Decision Rule (\ADR)]
+    \begin{gather}
+      \begin{bmatrix}
+        x_t\\z_t
+      \end{bmatrix}=
+      xtFunc(x_{t-1},z_t)
+    \end{gather}
+  \item[Augmented Decision Rule Conditional Expectation (\ADRCE)] 
+     \begin{gather}
+      E_t\left ( \begin{bmatrix}
+         x_t\\z_t
+       \end{bmatrix} \right )=
+       XtFunc(x_{t-1},z_t)
+     \end{gather}
+\end{description}
 
+\begin{itemize}
+\item backward looking equations no need to solve
+\end{itemize}
 \section{Future Work}
 \label{sec:future}
 

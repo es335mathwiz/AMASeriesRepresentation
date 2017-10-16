@@ -16,7 +16,7 @@
 \author{Gary S. Anderson\thanks{The analysis and conclusions set forth are those of the author and do not indicate concurrence by other members of the research staff or the Board of Governors. I would like to thank Luca Guerrieri, Christopher Gust, Hess Chung, Benjamin Johannsen  and Robert Tetlow for their comments and suggestions.  Special thanks to Luca Guerieri for first noticing that the series representation formulation could lead to an error bound for model solutions.}}
 
 \title{A New Series Representation for 
-Nonlinear Dynamic Stochastic Model Solutions: Error Bounds and Solution Algorithm}
+Nonlinear Dynamic Stochastic Model Solutions: A General Error Bounds and Solution Algorithm}
 
 \date{\today: \currenttime}
 \begin{document}
@@ -24,7 +24,7 @@ Nonlinear Dynamic Stochastic Model Solutions: Error Bounds and Solution Algorith
 \maketitle
 
 \begin{abstract}
-This paper proposes a new series representation for dynamic model solution paths and uses this representation to construct error bounds for proposed solutions to a very general class of dynamic stochastic models including models subject to occasionally binding constraints and/or regime switching.
+This paper proposes a new series representation for bounded time series paths and uses this representation to construct error bounds for proposed solutions to a very general class of dynamic stochastic models including models subject to occasionally binding constraints and/or regime switching.
 This which, incorporating the impact of errors across  all the equations in 
 the system makes it possible to compute
 apriori estimates of the computational cost for a
@@ -43,7 +43,7 @@ Like the error bound formula, the algorithm is appropriate for models with occas
 The  paper uses a particular implementation of the algorithm to
 demonstrate how to use the 
 series representation in conjunction with 
-Smolyak polynomial function approximation to avoid numerical integration
+Smolyak polynomial function approximation to avoid repeated numerical integration
 and to exploit the high degree of parallelism available in the algorithm.
 
 
@@ -58,7 +58,7 @@ and to exploit the high degree of parallelism available in the algorithm.
 \tableofcontents
 \newpage
 
-\section{Introduction and Summary}
+\section{Introduction}
 
 
 
@@ -172,7 +172,7 @@ satisfying complicated systems of dynamic non-linear equations.
 A key feature to note is that the series representation can accomodate arbitrarily complex time series trajectories, so long as these trajectories are bounded.
 
 
-\subsection{An Example: An ``Almost'' Arbitrary Linear Model and an Some Arbitrary  Bounded Time Series}
+\subsection{An Example: An ``Almost'' Arbitrary Linear Model and  Some Arbitrary  Bounded Time Series}
 \label{sec:almostarbitrary}
 
 
@@ -352,7 +352,7 @@ series formulation to get error bounds for these models as well.
 
 
 
-\subsubsection{ General RBC Example Formulation}
+\subsubsection{General RBC Example Formulation}
 \label{sec:rbcaux}
   See \cite{Maliar2005}
  \begin{gather*}
@@ -756,6 +756,12 @@ Law of iterated expectations
    \xWarg \in{R^L}\,\text{ with }\,\infNorm{\xWarg}  \le \bar{\mathcal{X}}\,\,\forall t> 0 \label{fFamily}.
  \end{gather}
 
+ \begin{itemize}
+ \item time invariance ``connects to the dots''  
+ \item one step gives information for entire path
+ \end{itemize}
+
+
 \section{Computing Model Solution Error Bounds}
 \label{sec:solnerrorbounds}
 
@@ -765,8 +771,15 @@ system of equations, occasionally binding constraints with solutions demonstrati
 
 Consequently, will will have an aquation system an a gatekeeper logical expression indicating which equation system is in force for a given solution for a give $x_{t-1}, \epsilon_t$
 
-\subsection{Worst Path: Pessimistic Error Bound}
+\subsection{Truncation Error}
 \label{worst}
+
+\subsection{Path Error}
+\label{sec:path-error}
+\label{worst}
+
+\paragraph{Worst Path: Pessimistic Error Bound}
+
 
 \subsection{Practical Considerations for Applying the Formula}
 \label{sec:practicalformula}

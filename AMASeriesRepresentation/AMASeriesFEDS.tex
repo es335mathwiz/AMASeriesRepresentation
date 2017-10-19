@@ -16,7 +16,7 @@
 \author{Gary S. Anderson\thanks{The analysis and conclusions set forth are those of the author and do not indicate concurrence by other members of the research staff or the Board of Governors. I would like to thank Luca Guerrieri, Christopher Gust, Hess Chung, Benjamin Johannsen  and Robert Tetlow for their comments and suggestions.  Special thanks to Luca Guerieri for first noticing that the series representation formulation could lead to an error bound for model solutions.}}
 
 \title{A New Series Representation for 
-Nonlinear Dynamic Stochastic Model Solutions: A General Error Bounds and Solution Algorithm}
+Nonlinear Dynamic Stochastic Model Solutions: General Error Bounds and New Solution Algorithm}
 
 \date{\today: \currenttime}
 \begin{document}
@@ -25,15 +25,14 @@ Nonlinear Dynamic Stochastic Model Solutions: A General Error Bounds and Solutio
 
 \begin{abstract}
 This paper proposes a new series representation for bounded time series paths and uses this representation to construct error bounds for proposed solutions to a very general class of dynamic stochastic models including models subject to occasionally binding constraints and/or regime switching.
-This which, incorporating the impact of errors across  all the equations in 
-the system makes it possible to compute
-apriori estimates of the computational cost for a
+This error bound calculation which, incorporating the impact of errors across  all the equations in 
+the system makes, it possible to compute, ahead of time, estimates of the computational cost for a
 given level of accuracy of each component of the solution.
 These error bounds should prove useful for assessing the accuracy of any
 proposed model solution regardless of the source.
 
 
-In addition, the paper also proposes an new algorithm for solving these types of models.
+In addition, the paper also proposes a new algorithm for solving these models.
 The series representation makes it possible to reliably improve upon an initial
 guess for a stochastic model solution by solving a 
 potentially complicated, but deterministic problem in the initial time period.
@@ -65,15 +64,13 @@ and to exploit the high degree of parallelism available in the algorithm.
 
 
 Stochastic dynamic non linear economic
-models increasingly embody  occasionally binding constraints (OBC) essential
+models increasingly embody  occasionally binding constraints (OBC).
 Since \cite{Christiano2000} a host of
 authors have described a variety of approaches. 
 \cite{holden15:_exist_dsge,guerrieri15:_occbin,benigno09,hintermaier10,brumm10,nakov08,haefke98,nakata12,gordon11,billi11,Hintermaier2010,Guerrieri2015}
 This paper provides yet another.  This new series representation provides  a coherent framework for attacking a wide variety of complicated nonlinear models.
 
-The analysis develops a new series representation for bounded time series.  The author has found no analogous use of a reference dynamical system to generate a transformation of one infinite dimensional series into another. Under certain rank conditions, this transformation is one to one and onto.  The
-transformation $ {\{ x_{t}, x_{t}, x_{t+1},x_{t+2}\ldots\}} \rightarrow \linMod(x_{t-1}) \rightarrow{\{ z_{t}, z_{t+1}, z_{t+2},\ldots\}} $ is invertible under
-certain rank conditions. $ {\{ z_{t}, z_{t+1}, z_{t+2},\ldots\}} \rightarrow \linMod(x_{t-1})^{-1} \rightarrow{\{ x_{t}, x_{t}, x_{t+1},x_{t+2}\ldots\}} $ and the inverse can be interpreted as giving the impact of ``fully anticipated future shocks'' on the path of $x_t$ obeying the solution of a linear rational expectations model.  The formula supports the intuition that far distant shocks influence current conditions less than  imminent shocks.
+The analysis develops a new series representation for bounded time series.  The author has found no comparable use of a reference dynamical system to generate a transformation of one infinite dimensional series into another. 
 
 The framework provides a new way to bound the error one can expect from
 employing a given proposed model solution and leads to a
@@ -84,7 +81,7 @@ problem at time t given a proposed solution.  The deterministic solution
 can accommodate inequality constraints or alternative regimes to produce a
 solution for each set of initial conditions.  One can typically arrange,
 perhaps by adding auxiliary variables, to produce a ``decision rule''
-that one can correctly integrate to get a deterministic conditional
+that one can use to correctly precompute a deterministic conditional
 expectation function that can be iterated forward and serves to
 improve upon the original proposed solution.
 Time invariant stochastic functions 
@@ -92,8 +89,12 @@ lead naturally to an associated family of deterministic maps
 which can conveniently represented by the series representation.
 
 
-
-
+Section \ref{sec:newseries} presents a useful new series representation for any bounded time series.
+Section \ref{sec:extToMaps} shows how to apply this series representation to time invariant maps.
+Section \ref{sec:solnerrorbounds} provides formulas for computing dynamic stochastic model error bounds for proposed  solutions.
+Section \ref{sec:algoforsoln} presents a new solution algorithm.
+Section \ref{sec:future} discusses directions for future work.
+Section \ref{sec:conc} concludes.
 
 \section{A New Series Representation For  Bounded Time Series}
 \label{sec:newseries}
@@ -158,8 +159,8 @@ one can easily compute a corresponding series representation
 \refeq{theSeries}.
 Interestingly, the linear model, $H$, the  constant term $\psi_c$ and the
 impact of the stochastic shocks $\psi_\epsilon $ can  be 
-chosen rather arbitrarily -- the only constraint being the existence of a saddle-point solution or the linear system.  Under certain rank conditions this series representation constitues a one to one onto transformation between the
-$L$ dimensionsal $x_t$ and $z_t$ time series.
+chosen rather arbitrarily -- the only constraint being the existence of a saddle-point solution or the linear system.  Under certain rank conditions this series representation constitutes a one to one onto transformation between the
+$L$ dimensional $x_t$ and $z_t$ time series.
 The formula will provide a series  for any 
 $L$ dimensional $\linMod$.
 Later,this observation will give us some confidence in the 
@@ -169,7 +170,11 @@ representations for unknown families of functions
 satisfying complicated systems of dynamic non-linear equations.
 
 
-A key feature to note is that the series representation can accomodate arbitrarily complex time series trajectories, so long as these trajectories are bounded.
+A key feature to note is that the series representation can accommodate arbitrarily complex time series trajectories, so long as these trajectories are bounded.
+
+Under certain rank conditions, this transformation is one to one and onto.  The
+transformation $ {\{ x_{t}, x_{t}, x_{t+1},x_{t+2}\ldots\}} \rightarrow \linMod(x_{t-1}) \rightarrow{\{ z_{t}, z_{t+1}, z_{t+2},\ldots\}} $ is invertible under
+certain rank conditions. $ {\{ z_{t}, z_{t+1}, z_{t+2},\ldots\}} \rightarrow \linMod(x_{t-1})^{-1} \rightarrow{\{ x_{t}, x_{t}, x_{t+1},x_{t+2}\ldots\}} $ and the inverse can be interpreted as giving the impact of ``fully anticipated future shocks'' on the path of $x_t$ obeying the solution of a linear rational expectations model.  The formula supports the intuition that far distant shocks influence current conditions less than  imminent shocks.
 
 
 \subsection{An Example: An ``Almost'' Arbitrary Linear Model and  Some Arbitrary  Bounded Time Series}
@@ -206,12 +211,12 @@ x_{3,t}=\epsilon_t
 \end{gather} 
 where $D_\pi(t)$ gives the t-th digit of $\pi$ and the $\epsilon_t$ are a sequence of pseudo random draws from the uniform distributions $\mathcal{U}(-4,4)$
 
-The first set of trajectories(See Figure \ref{pipath}) is a function of
+The first set of trajectories(See Figure \ref{arbpaths}) is a function of
 the digits in the decimal representation of $\pi$.  
 determined by a nonlinear function of the initial conditions and a random shock.
-The second set of trajectories (See Figure \ref{oscillpath}) oscillates between two values
+The second set of trajectories (See Figure \ref{arbpaths}) oscillates between two values
 determined by  a nonlinear function of the initial conditions and the shock.
-The third set of trajectories (See Figure \ref{pseudopath}) is a sequence of uniformly distributed random
+The third set of trajectories (See Figure \ref{arbpaths}) is a sequence of uniformly distributed random
 numbers based on a seed determined by  a nonlinear function of  the initial conditions and the shock.
 These examples paths were chosen to emphasize that the trajectories
  need not converge to a fixed point, and 
@@ -225,39 +230,44 @@ unbounded trajectories.}
 \begin{figure}
   \centering
 \includegraphics[width=2in]{piPath.pdf}
-  
-  \caption{$\pi$ Digits Path}\label{pipath}
-\end{figure}
-\begin{figure}
-  \centering
 \includegraphics[width=2in]{oscillPath.pdf}
-  
-  \caption{Oscillatory Path}\label{oscillpath}
-\end{figure}
-
-\begin{figure}
-  \centering
 \includegraphics[width=2in]{pseudoPath.pdf}
-  \caption{Uniformly Distributed Path}\label{pseudopath}
+\includegraphics[width=3in]{theZs.pdf}  
+  
+  \caption{Arbitrary Bounded Time Series Paths and Corresponding $z_{i,t}$ values}\label{arbpaths}
 \end{figure}
 
-\begin{figure}
-  \centering
-\includegraphics[width=3in]{theZs.pdf}  
-  \caption{The  z's Corresponding to  $x_{-1}=(1,2,3),\epsilon=(2,1,2)$} \label{arbFig}
-\end{figure}
+
+% \begin{figure}
+%   \centering
+% \includegraphics[width=2in]{oscillPath.pdf}
+  
+%   \caption{Oscillatory Path}\label{oscillpath}
+% \end{figure}
+
+% \begin{figure}
+%   \centering
+% \includegraphics[width=2in]{pseudoPath.pdf}
+%   \caption{Uniformly Distributed Path}\label{pseudopath}
+% \end{figure}
+
+% \begin{figure}
+%   \centering
+% \includegraphics[width=3in]{theZs.pdf}  
+%   \caption{The  z's Corresponding to  $x_{-1}=(1,2,3),\epsilon=(2,1,2)$} \label{arbFig}
+% \end{figure}
 
 \begin{figure}
   \centering
 
 
 \includegraphics[width=3in]{arbTruncErr.pdf}  
-  \caption{Error Bound Versus Actual Error} \label{figArbTrunc}
+  \caption{$x_t$ Error Bound Versus Actual Error} \label{figArbTrunc}
 
 \end{figure}
 
 
-Figure \ref{arbFig} shows, for a particular initial state vector and shock value,  the paths for the state vectors and the  z's that generate the path.
+Figure \ref{arbpaths} shows, for a particular initial state vector and shock value,  the paths for the state vectors and the  z's that generate the path.
 One can repeat the calculations for any given initial condition to produce
 a z series exactly replicating the given set of trajectories.  The family
 of z functions along with equation \ref{theSeries} provide a series 
@@ -275,7 +285,7 @@ to the initial time have the most important impact.
 
 \subsection{A Path Norm and Assessing $x_t$ Error}
 \label{sec:truncationerr}
-The formula \ref{theSeries} was derived to compute he impact on the current statof fully anticipated future shocks.  The formula characterizes the impact exactly.  However one can contemplate the impact of at least two types of imprecision.  One could truncate a series of correct values of $z_t$.  One might have imprecise values of $z_t$ along the path.
+The formula \ref{theSeries} was derived to compute he impact on the current state of fully anticipated future shocks.  The formula characterizes the impact exactly.  However one can contemplate the impact of at least two types of imprecision.  One could truncate a series of correct values of $z_t$.  One might have imprecise values of $z_t$ along the path.
 
 \subsubsection{Truncation Error}
 
@@ -306,16 +316,19 @@ same formula.
 \label{sec:pathnorm}
 
 \begin{itemize}
+\item MSNTO
 \item Almost Arbitrary
 \item Impact of Choice
 \item represents impact of ``anticipated shocks'' interpretation error bounds on $x_t$
 \item any bounded path
 \item Should include closed form solution for RBC
 \item figure for truncation error incorrect \ref{figArbTrunc}
+\item interaction between series  through z's
 \end{itemize}
 
 
 \section{Nonlinear Dynamic Stochastic Time Invariant Maps}
+\label{sec:extToMaps}
 
 \begin{figure}
   \centering
@@ -335,7 +348,7 @@ same formula.
 
 
 \subsection{Application to Time Invariant Maps}
-\label{sec:extToMaps}
+
 
 In this paper we will be interested in computing with time
  invariant maps. Many dynamic stochastic models have solutions that fall in this class. 
@@ -347,7 +360,7 @@ develop bounds for the error in the solution.
 In this section, to keep things simple, we will rule out regime switching and occasionally binding constraints and start
  with  a simple single equation system?
 Later, in order to handle models with regime switching and occasionally binding constraints, will need to consider more complicated collections of 
-of equation systems with  boolean gates. We will show how to apply the 
+of equation systems with  Boolean gates. We will show how to apply the 
 series formulation to get error bounds for these models as well.
 
 
@@ -492,8 +505,8 @@ a deterministic solution at time $t$
 \begin{itemize}
 \item iterated expectations $E (x | φ1) = E (E (x | φ2) | φ1) $
   \href{https://stats.stackexchange.com/questions/95947/a-generalization-of-the-law-of-iterated-expectations}{a proof}
-\item will want to apply the law of iterated expectations so we will construct aixiliary variables that embed any nonlinear combinanation  of the orignal
-  variables that might be requred to make this work.  Although it is possible to construct models where this may be difficult, many important economic models
+\item will want to apply the law of iterated expectations so we will construct auxiliary variables that embed any nonlinear combination  of the original
+  variables that might be required to make this work.  Although it is possible to construct models where this may be difficult, many important economic models
   can easily be adapted this way.
 
 \end{itemize}
@@ -766,10 +779,10 @@ Law of iterated expectations
 \label{sec:solnerrorbounds}
 
 We will consider time invariant maps that arise form solving a time t optimization problem codified in a collection of systems of equations.  We will assume that we have a countable collection of equations systems that are mutually exclusive and exhaustive.  Given $\epsilon_t, x_{t-1}$  This system of equations produces a solution $x_t$.  The $x_t$ satisfies one and only one of the collection of equations and$x_t$ is (locally) the unique solution for the collection of
-equations.  Examples of such systems include typcial DSGE models that have one
+equations.  Examples of such systems include typical DSGE models that have one
 system of equations, occasionally binding constraints with solutions demonstrating complementary slackness, regime switching models with systems corresponding to the status in each given regime or combinations of the above.
 
-Consequently, will will have an aquation system an a gatekeeper logical expression indicating which equation system is in force for a given solution for a give $x_{t-1}, \epsilon_t$
+Consequently, will will have an equation system an a gatekeeper logical expression indicating which equation system is in force for a given solution for a give $x_{t-1}, \epsilon_t$
 
 \subsection{Truncation Error}
 \label{worst}
@@ -777,6 +790,77 @@ Consequently, will will have an aquation system an a gatekeeper logical expressi
 \subsection{Path Error}
 \label{sec:path-error}
 \label{worst}
+
+
+
+\paragraph{Quantifying the Inaccuracy of the Proposed Solution}
+
+
+
+
+ Given a proposed solution $x^p_t=g^p(x_{t-1},\epsilon_t)$ define
+$G^p(x)\equiv\expct{g^p(x,\epsilon)}$  so that 
+  \begin{gather}
+E_tx_{t+1}=G^p(g^p(x_{t-1},\epsilon_t))\\
+\mathbf{e}_t(x_{t-1},\epsilon)\equiv
+\eqnFunc(x_{t-1},x^p_t,E_tx^p_{t+1},\epsilon_t)\\\intertext{Using $G^p$ and $\linMod$ construct the family of trajectories and corresponding $z^p_t(x_{t-1},\epsilon)$ }
+   x^p_t(x_{t-1},\epsilon_t) \in{R^L}\,\,\infNorm{x^p_t(x_{t-1},\epsilon_t)}  \le \bar{\mathcal{X}}\,\,\forall t\ > 0
+  \end{gather}
+   \begin{align}
+   z^p_{t}(x_{t-1},\epsilon_t) \equiv& H_{-1}  x^p_{t-1}(x_{t-1},\epsilon_t) + \nonumber\\
+ & H_0  x^p_{t}(x_{t-1},\epsilon_t) +  \label{defZ} \\
+ & H_1  x^p_{t+1}(x_{t-1},\epsilon_t). \nonumber
+   \end{align}
+
+
+
+
+
+
+
+
+ The proposed solution has a representation given by 
+  \begin{gather}
+    \label{eq:4}
+	 x^p_{t}(x_{t-1},\epsilon) =B x_{t-1}+ \phi \psi_\epsilon\epsilon + (I - F)^{-1} \phi \psi_c +\\ \sum_{\sForSum=0}^\infty F^s \phi z^p_{t+\sForSum}(x_{t-1},\epsilon) 
+ \intertext{and}
+ 	 \expct{x^p_{t+1}(x_{t-1},\epsilon)} =B x^p_{t+k} + \sum_{\sForSum =0}^\infty F^\sForSum \phi z^p_{t+1+\sForSum}(x_{t-1},\epsilon) + (I - F)^{-1} \phi \psi_c \intertext{with}
+\mathbf{e}_t(x_{t-1},\epsilon)\equiv
+\eqnFunc(x_{t-1},x^p_t,E_tx^p_{t+1},\epsilon_t)
+  \end{gather}
+
+
+
+
+
+
+
+
+
+  \begin{gather}
+    \label{eq:3}
+\max_{\{x_{-},\epsilon\}} \infNorm{ \phi \eqnFunc(x_{-},g^p(x_{-},\epsilon),G^p(g^p(x_{-},\epsilon)),\epsilon) }\\
+\max_{\{x_{-},\epsilon\}} \infNorm{ \phi \expct{ \eqnFunc(x_{-},g^p(x_{-},\epsilon),G^p(g^p(x_{-},\epsilon)),\epsilon)} }\\
+\hat{G}^p(x,\epsilon)=G^p(x,\epsilon)+ \mathcal{I}_e(x,\epsilon)\\
+\max_{\{x_{-},\epsilon\}} \infNorm{ \phi \expct{ \eqnFunc(x_{-},g^p(x_{-},\epsilon),\hat{G}^p(g^p(x_{-},\epsilon)),\epsilon)} }\\
+\max_{\{x_{-},\epsilon\}} \infNorm{ \phi \expct{ \eqnFunc(x_{-},g^p(x_{-},\epsilon),B g^p(x_{-},\epsilon)+(I-F)^{-1}\psi_c,\epsilon)} }
+  \end{gather}
+
+
+
+
+
+
+  \begin{gather}
+    \label{eq:3}
+	 x^\star_{t}(x_{t-1},\epsilon) -	 x^p_{t}(x_{t-1},\epsilon) =
+\sum_{\sForSum=0}^\infty F^s \phi (z^\star_{t+\sForSum}(x_{t-1},\epsilon)-z^p_{t+\sForSum}(x_{t-1},\epsilon))     \\
+	 x^\star_{t}(x_{t-1},\epsilon) -	 x^p_{t}(x_{t-1},\epsilon) =
+\sum_{\sForSum=0}^\infty F^s \phi \mathbf{z_e}_{t+\sForSum}(x_{t-1},\epsilon_t)   \\ 
+	\infNorm{ x^\star_{t}(x_{t-1},\epsilon) -	 x^p_{t}(x_{t-1},\epsilon)} \le
+\sum_{\sForSum=0}^\infty F^s \phi \infNorm{\mathbf{z_e}_{t+\sForSum}(x_{t-1},\epsilon_t)}    
+  \end{gather}
+
 
 \paragraph{Worst Path: Pessimistic Error Bound}
 
@@ -786,7 +870,7 @@ Consequently, will will have an aquation system an a gatekeeper logical expressi
 
 
 \paragraph{MSNTO}
-\paragraph{Assessing a Proposed Soluion}
+\paragraph{Assessing a Proposed Solution}
 \paragraph{RBC Example for Known Solution}
 
 
@@ -800,40 +884,108 @@ Consequently, will will have an aquation system an a gatekeeper logical expressi
 \paragraph{RBC Example for Unknown Solution}
 \paragraph{Algorithm Agnostic: Your Solution Here}
 
+
+
+
+    
+\begin{itemize}
+\item Choose an Almost  Arbitrary Linear Reference Model
+\item Construct Augmented Decision Rule Function (ADR)
+\item Along with Augmented Decision Rule Conditional Expectation Function (ADRCE)
+\item Compute Bound for Discretization Error
+\item Compute Bound for Truncation Error
+\end{itemize}
+
+
+
+
+
+
+
+
+
+
+ Given an exact solution $x^\star_t=g^\star(x_{t-1},\epsilon_t)$ define
+  \begin{gather}
+G^\star(x)\equiv\expct{g^\star(x,\epsilon)} \intertext{then with}
+E_tx^\star_{t+1}=G^\star(g^\star(x_{t-1},\epsilon_t))\\
+    \label{eq:2}
+\eqnFunc(x^\star_{t-1},x^\star_t,E_tx^\star_{t+1},\epsilon_t)=0  \,\, \forall  (x_{t-1},\epsilon_t)\\ \intertext{Using $G^\star$ and $\linMod$ construct the family of trajectories and corresponding $z^\star_t(x_{t-1},\epsilon)$ }
+   x^\star_t(x_{t-1},\epsilon_t) \in{R^L}\,\,\infNorm{x^\star_t(x_{t-1},\epsilon_t)}  \le \bar{\mathcal{X}}\,\,\forall t\ > 0
+  \end{gather}
+   \begin{align}
+   z^\star_{t}(x_{t-1},\epsilon_t) \equiv& H_{-1}  x^\star_{t-1}(x_{t-1},\epsilon_t) + \nonumber\\
+ & H_0  x^\star_{t}(x_{t-1},\epsilon_t) +  \label{defZ} \\
+ & H_1  x^\star_{t+1}(x_{t-1},\epsilon_t). \nonumber
+   \end{align}
+
+
+
+
+   The exact solution has a representation given by
+	 \begin{gather}
+	 x^\star_{t}(x_{t-1},\epsilon) =B x_{t-1}+ \phi \psi_\epsilon\epsilon + (I - F)^{-1} \phi \psi_c +\\ \sum_{\sForSum=0}^\infty F^s \phi z^\star_{t+\sForSum}(x_{t-1},\epsilon) \intertext{and}
+	 \expct{x^\star_{t+1}(x_{t-1},\epsilon)} =B x^\star_{t+k} + \sum_{\sForSum =0}^\infty F^\sForSum \phi \expct{z^\star_{t+1+\sForSum}(x_{t-1},\epsilon)} + (I - F)^{-1} \phi \psi_c 
+ \intertext{with}
+ \eqnFunc(x_{t-1},x^\star_t,E_tx^\star_{t+1},\epsilon_t)=0  \,\, \forall  (x_{t-1},\epsilon_t)\\ 
+	 \end{gather}
+
+
+
+  \begin{itemize}
+  \item Law of iterated expectations applies for decision rules.
+  \item show why system approach important
+  \item Exact solution have zero discrepancy
+  \item Compute deviations  DR approximation error
+  \item Expectation computation approximation error
+  \item Series truncation error
+  \item Don't need to iterate a long path since all the potentials 
+errors attainable in first iteration step by searching across initial conditions
+\item condition number and error bounds
+  \item why system view better
+  \item factor out expectation function
+  \item allow loss function for model error
+  \item integration error 
+  \item bound other people's solutions, compare to bound Euler errors
+  \item show can determine number series terms then accuracy depends on number of nodes
+  \item compute errors and max norm for all relevant state $(x_{t-1},\epsilon_t)$ and consequently for all the conditional expectations
+  \item precompute  conditional expectations for basis since amaseries is
+just a linearly weighted sum
+\item what is best way to quantify characterize impact of error along the path
+inaccurately computed future trajectory
+\item can discover unknown solutions
+\end{itemize}
+
+
+
+
+
+
 \section{An Algorithm for Improving Proposed Time Invariant Solutions}
 \label{sec:algoforsoln}
-
-\subsection{Function Approximation Representation}
-\label{sec:funcApproxRep}
-
-\subsubsection{General Issues}
-\label{sec:generalissues}
-
-\paragraph{Function composition}
-
-
-
-\paragraph{Correct Expectations}
-
-\paragraph{Precomputig Integrals}
-
-
-\subsubsection{Smolyak Interpolation}
-\label{sec:smolyakinterp}
-
-\paragraph{Anisotropic}
-
-\paragraph{Ergodic Set}
 
 \subsection{Algorithm Overview}
 \label{sec:algoverview}
 
-
+\begin{itemize}
+\item modify equation systems to allow application of law of iterated expectations
+\item choose $\linMod$ of appropriate dimensions
+\item choose accuracy goal
+\item choose $\tau$ number of periods of $z_t$ terms
+\end{itemize}
+  \begin{algorithm}[H]
+compute \ADRCE\  function\\
+construct $\mathbf{G}$ function\\
+solve system to get $x_t,z_t$ at interpolation points for $x_{t-1},\epsilon_t$\\
+assess accuracy\\
+repeat till accuracy goal achieved
+\caption{Improve Approximate \ADR }
+  \end{algorithm}
 
 
 This series representation for deterministic maps,
 broadly applicable for nonlinear rational expectations models 
-leads to a formulae for accuracy bounds for any proposed solution.
+leads to a formulas for accuracy bounds for any proposed solution.
 As an important component in an algorithm for
 constructing approximate solutions it
 facilitates exploiting recursive computation of the solutions for complicated models.
@@ -857,9 +1009,9 @@ nonlinear models with occasionally binding constraints and/or regime switching m
 \item Bounded Solutions
 \item Exists a Representation Problem is to Find One
 \item Algorithm terminates with a Proposed Solution With Solution
-  No further away from a true soltion than the specified tolerance 
-\item No Existence Guarantees or Uniquess Guarantees.
-\item Parallizable
+  No further away from a true solution than the specified tolerance 
+\item No Existence Guarantees or Uniqueness Guarantees.
+\item Realizable
 \end{itemize}
 
 
@@ -966,18 +1118,45 @@ period and the stand-in linear model for subsequent periods.
   \end{itemize}
 }
 
-\subsubsection{Algorithm Pseudocode}
+\subsubsection{Algorithm Pseudo-code}
 \label{sec:pseudocode}
 
 \begin{enumerate}
 \item Specify a (collection) model equations systems(s)
 \item specify a linear reference model
 \item specify an initial guess for decision rule $\xWargK$ obtain conditional expectations function
-\item decide uponnmber of Conditional Expectations function approximation.  Shorter means more truncation and higher error longer means including more terms from series In effect imposes nonlinear constraints for number of period specified and the linear reference model thereafter
-\item algorithm uses coditional expectation and model equations to produce an improved approximation to the decision rule.
-\item the algorithm fid a solution to the system that constrains $x_t= x_g$ determining $x_t,z_t$ at the interpolation points for $x_{t-1},\epsilon_t$  This can be done in parallel
-\item the data from the interplation points is used to produce an updated decision rule
+\item decide upon number of Conditional Expectations function approximation.  Shorter means more truncation and higher error longer means including more terms from series In effect imposes nonlinear constraints for number of period specified and the linear reference model thereafter
+\item algorithm uses conditional expectation and model equations to produce an improved approximation to the decision rule.
+\item the algorithm finds a solution to the system that constrains $x_t= x_g$ determining $x_t,z_t$ at the interpolation points for $x_{t-1},\epsilon_t$  This can be done in parallel
+\item the data from the interpolation points is used to produce an updated decision rule
 \end{enumerate}
+
+
+\subsection{Function Approximation Representation}
+\label{sec:funcApproxRep}
+
+\subsubsection{General Issues}
+\label{sec:generalissues}
+
+\paragraph{Function composition}
+
+
+
+\paragraph{Correct Expectations}
+
+\paragraph{Precomputing Integrals}
+
+
+\subsubsection{Smolyak Interpolation}
+\label{sec:smolyakinterp}
+
+\paragraph{An-isotropic}
+
+\paragraph{Ergodic Set}
+\paragraph{MSNTO}
+
+\subsection{RBC Example}
+\label{sec:rbc-example}
 
 
 \subsubsection{Approximating the Known Solution: $U(c) = Log(c)$ }
@@ -1043,7 +1222,7 @@ Since we will be working with models where expectations are computed at time t, 
 \subsubsection{regime switching}
 \label{sec:regime}
 
-\paragraph{Proposed Conditional Expection}
+\paragraph{Proposed Conditional Expectation}
 
 \paragraph{Deterministic Problem}
 
@@ -1152,55 +1331,78 @@ Bounded solutions if and only if all eigenvalues of
 
 
 
+ \begin{description}
+ \item[model equation function] \
+   \begin{gather}
+     f(x_{t-1},x_t,E_t(x_{t+1}|\iSet),\epsilon_t)=0 \intertext{later, mutually exclusive exhaustive}
+     \{f_1(x_{t-1},x_t,E_t(x_{t+1}|\iSet),\epsilon_t)=0,b_i(x_{t-1},x_t,E_t(x_{t+1}|\iSet),\epsilon_t),\\
+     f_2(x_{t-1},x_t,E_t(x_{t+1}|\iSet),\epsilon_t)=0,b_i(x_{t-1},x_t,E_t(x_{t+1}|\iSet),\epsilon_t),\\ \vdots,\\ f_K(x_{t-1},x_t,E_t(x_{t+1}|\iSet),\epsilon_t)=0,b_i(x_{t-1},x_t,E_t(x_{t+1}|\iSet),\epsilon_t)\}
+   \end{gather}
+ \item[genxkzk]
+    \begin{gather}
+      \begin{bmatrix}
+        x_{t-1}\\x_t\\E_t(x_{t+1}|\iSet)\\\epsilon_t
+      \end{bmatrix}= \mathcal{G}(x_{t-1},\epsilon_t|\XtFunc(\cdot),x_t^g)
+    \end{gather}
+  \item[Augmented Decision Rule (\ADR)]
+    \begin{gather}
+      \begin{bmatrix}
+        x_t\\z_t
+      \end{bmatrix}=
+      xtFunc(x_{t-1},z_t)
+    \end{gather}
+  \item[Augmented Decision Rule Conditional Expectation (\ADRCE)] 
+     \begin{gather}
+      E_t\left ( \begin{bmatrix}
+         x_t\\z_t
+       \end{bmatrix} \right )=
+       XtFunc(x_{t-1},z_t)
+     \end{gather}
+\end{description}
 
-
+\begin{itemize}
+\item backward looking equations no need to solve
+\end{itemize}
 \section{Future Work}
 \label{sec:future}
 
 \begin{itemize}
+\item FRBUS VAR expectations and Agent Based Models:
+\item confidence intervals other  summary statistics how often constrained, how long
+\item replace stochastic sims
 \item time varying:  regime switching, hammers need nails
-\item   \item The algorithm for discovering unknown solutions does not rely on time invariance.  Setup for iterated expectations
+\item The algorithm for discovering unknown solutions does not rely on time invariance.  Setup for iterated expectations
 \item SVMR and other ML universal approximators
-
-
   \begin{itemize}
-  \item less need for anisotropic
+  \item less need for an-isotropic
   \item less need to find ergodic set
   \end{itemize}
-
-
-
-
 Support vector machines occupy a prominent place applied machine learning
 Additionally they can reduce the burden of computation as they determine 
 a subset of points that are important in characterizing a given function.
 Kernel trick,  powerful representation quadratic programming solution to compute there are on-line techniques for adding and deleting individual points from the representation.  A weighted sum of kernel functions RBF, wavelet, special forms for time series.
-  This paper proposes a new series representation for bounded so-
-lutions to dynamic models. This series representation can be used
+  This paper proposes a new series representation for bounded solutions to dynamic models. This series representation can be used
 to determine a series representation for time invariant discrete time
 maps that characterize the solutions to many models. Consequently,
 the technique constitutes an important component in a technique for
 accurately characterizing the solutions for a wide array of nonlinear
-rational expectations models. It can also provide a formula for com-
-puting accuracy bounds for any proposed time invariant model so-
-lution. The series representation serves as an important component
+rational expectations models. It can also provide a formula for computing accuracy bounds for any proposed time invariant model solution. The series representation serves as an important component
 in an algorithm for constructing approximate solutions for nonlinear
 rational expectations models.
-The technique recursively computes solutions that honor the con-
-straints for successively longer horizons.  The solutions computed by
+The technique recursively computes solutions that honor the constraints for successively longer horizons.  The solutions computed by
 the technique accommodate the possibility that model trajectories can
 depart from and re-engage inequality constraints as well as transition
 between various regimes.
 This paper applies support vector machine function approximation to
 reduce the computational burden associated with representing the
-unknown, potentially highly nonlinear stochstic functions that arise in
+unknown, potentially highly nonlinear stochastic functions that arise in
 solving dynamic models with occasionally binding constraints.
 
 
 Support vector machines 
 have become an essential tool in contemporary machine learning research
 where computer scientists exploit their flexibility and
-computational tractability in modelling complex high dimensional data.
+computational tractability in modeling complex high dimensional data.
 Like many other function approximation approaches,
 support vector machines represent functions as a linearly weighted sum
 of a family of basis functions.  They differ from other approaches in  the
@@ -1216,7 +1418,7 @@ to approximate a function to a given level of accuracy.
 
 
 \item function composition Fa Di Bruno
-\item divide and conquer solution space initially collect results stocastic steady state at center of divided region with overlap
+\item divide and conquer solution space initially collect results stochastic steady state at center of divided region with overlap
 \item dynamical system theory implications
 \item relation to Koopman Operators
 \item Implications of almost arbitrary.  Small F eigenvalues versus small z values

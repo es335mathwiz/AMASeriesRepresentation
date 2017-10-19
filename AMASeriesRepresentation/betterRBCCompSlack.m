@@ -80,7 +80,16 @@ simpParamSubs=Join[paramSubs,forParamSubs,simpSubs];
 
 
 
-rbcEqns={
+rbcEqnsBinding={
+lam[t] -1/cc[t],
+cc[t] + kk[t]-((theta[t])*(kk[t-1]^alpha)),
+nlPart[t] -(nlPartRHS=lam[t]*theta[t]),
+theta[t]-E^(rho*Log[theta[t-1]] + eps[theta][t]),
+lam[t] +mu1[t] - (alpha*kk[t]^(-1+alpha)*delta*nlPart[t+1]+lam[t+1]*delta*(1-dd)+mu1Sqrt[t+1]*delta*(1-dd)),
+II[t] -(kk[t]-(1-dd)*kk[t-1]),
+mu1[t]*(kk[t]-(1-dd)*kk[t-1]-upsilon*IIss)
+}
+rbcEqnsNotBinding={
 lam[t] -1/cc[t],
 cc[t] + kk[t]-((theta[t])*(kk[t-1]^alpha)),
 nlPart[t] -(nlPartRHS=lam[t]*theta[t]),
@@ -89,6 +98,8 @@ lam[t] +mu1[t] - (alpha*kk[t]^(-1+alpha)*delta*nlPart[t+1]+lam[t+1]*delta*(1-dd)
 II[t] -(kk[t]-(1-dd)*kk[t-1]),
 mu1[t]*(kk[t]-(1-dd)*kk[t-1]-upsilon*IIss)
 }
+boolNotBinding= And[(kk[t]-(1-dd)*kk[t-1]-upsilon*IIss)>0,mu1==0]
+  boolBinding= And[(kk[t]-(1-dd)*kk[t-1]-upsilon*IIss)==0,mu1>=0]
 rbcBackLookingEqns={E^(rho*Log[theta[t-1]] + eps[theta][t])}
 rbcBackLookingExpEqns={Expectation[rbcBackLookingEqns[[1]],eps[theta][t] \[Distributed] NormalDistribution[0,sigma]]}
 

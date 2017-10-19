@@ -1,3 +1,5 @@
+
+
 Get["pathSetup.mth"]
 PrependTo[$Path,"../../mathAMA/NumericAMA"];
 PrependTo[$Path,"../../mathAMA/SymbolicAMA"];
@@ -49,7 +51,8 @@ toOccDir/@{
 
 Get["arbGenPath.mth"]
 
-genZsFromPath[linMod:{theHMat_?MatrixQ,BB_?MatrixQ,phi_?MatrixQ,FF_?MatrixQ,psiEps_?MatrixQ,psiC_?MatrixQ,psiZ_?MatrixQ,psiZPreComp_?MatrixQ},
+genZsFromPath[linMod:{theHMat_?MatrixQ,BB_?MatrixQ,phi_?MatrixQ,FF_?MatrixQ,psiEps_?MatrixQ,psiC_?MatrixQ,psiZ_?MatrixQ,
+backLookingInfo:{{_Integer,backLooking_,backLookingExp_}...}},
 	thePath_?MatrixQ,theEps_?MatrixQ]:=
 		Module[{numX=Length[theHMat],theMatPath=thePath},
  			   With[{firstVal=theHMat .theMatPath[[Range[3*numX]]]-
@@ -59,16 +62,17 @@ genZsFromPath[linMod:{theHMat_?MatrixQ,BB_?MatrixQ,phi_?MatrixQ,FF_?MatrixQ,psiE
 								  Range[(Length[thePath]/numX)-3]},
      Join[{firstVal},restVals]]]]
 
-genASeriesRep[linMod:{theHMat_?MatrixQ,BB_?MatrixQ,phi_?MatrixQ,FF_?MatrixQ,psiEps_?MatrixQ,psiC_?MatrixQ,psiZ_?MatrixQ,psiZPreComp_?MatrixQ},
+genASeriesRep[linMod:{theHMat_?MatrixQ,BB_?MatrixQ,phi_?MatrixQ,FF_?MatrixQ,psiEps_?MatrixQ,psiC_?MatrixQ,psiZ_?MatrixQ,
+backLookingInfo:{{_Integer,backLooking_,backLookingExp_}...}},
 	initVec_?MatrixQ,theZs:{_?MatrixQ..}]:=
 	Module[{},(*Print["theZFuncs",theZFuncs];*)
-   With[{maybe = genLilXkZkFunc[linMod,Drop[theZs,1]]},(*	Print["zzts",Join[initVec,theZs[[1]]]];*)
+   With[{maybe = genLilXkZkFunc[linMod,Drop[theZs,1]]},Print["zzts",{maybe,linMod,Drop[theZs,1],Join[initVec,theZs[[1]]]}//InputForm];
    	maybe@@ Join[Flatten[initVec],Flatten[theZs[[1]]]]]]
 
 
 
 
-linModArb={theHMatArb,BBArb,phiArb,FFArb,psiEpsArb,psiCArb,psiZArb,psiZPreCompArb={{}}};
+linModArb={theHMatArb,BBArb,phiArb,FFArb,psiEpsArb,psiCArb,psiZArb,psiZPreCompArb={}};
 exmplLen=50;
 initX=Transpose[{{10,10,10}}];
 theEpsVal=Transpose[{{5,5,5}}];
@@ -97,11 +101,12 @@ theArbErrNorms=Norm[somePts[[All,2]]-Flatten[#[[{4,5,6}]]],Infinity]&/@
 				   bunchSeries;
 theArbErrNormMaxs=arbTruncErr/@Range[Length[bunchSeries]];
 			
+(*
 Export["arbTruncErr.pdf",
 	   ListPlot[{theArbErrNorms,theArbErrNormMaxs},
 				PlotJoined->True,PlotRange->All,
 	   PlotLabel->"Truncation Error Bound and Actural Error"]];
-
+*)p
 Export["piPath.pdf",ListPlot[somePts[[1]],PlotJoined->True,PlotLabel->"Pi Digits Path("<>ToString[initX]<>","<>ToString[theEpsVal]<>")"]];
 Export["oscillPath.pdf",ListPlot[somePts[[2]],PlotJoined->True,PlotLabel->"Oscillatory Path("<>ToString[initX]<>","<>ToString[theEpsVal]<>")"]];
 Export["pseudoPath.pdf",ListPlot[somePts[[3]],PlotJoined->True,PlotLabel->"Pseudo Random Path("<>ToString[initX]<>","<>ToString[theEpsVal]<>")"]];

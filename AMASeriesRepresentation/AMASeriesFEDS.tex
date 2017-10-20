@@ -427,29 +427,69 @@ c_{t+s}(k_{t-1},\theta_t,\epsilon_t)\\k_{t+s}(k_{t-1},\theta_t,\epsilon_t)    \\
 \nu= \alpha ^{\frac{1}{1-\alpha }} \delta ^{\frac{1}{1-\alpha }}
 \end{gather}
 
-
-We can use the family of conditional expectations
+We can also compute the conditional expectation of the model variables for any given $\theta_{t-1},k_{t-1}$
+\begin{gather*}
+  E_t(c_t|\theta_{t-1},k_{t-1})=(1-\alpha\delta)k_{t-1}^\alpha e^{\frac{\sigma^2}{2}}\theta_{t-1}^\rho\\
+  E_t(k_t|\theta_{t-1},k_{t-1})=\alpha\delta k_{t-1}^\alpha e^{\frac{\sigma^2}{2}}\theta_{t-1}^\rho\\
+  E_t(\theta_t|\theta_{t-1},k_{t-1})=e^{\frac{\sigma^2}{2}}\theta_{t-1}^\rho
+\end{gather*}
+Consequently, we can use the decision rule to compute values for $c_t$ and $k_t$ for any intial values for $k_{t-1}$ and $\theta_{t-1}$ and realization of $\epsilon_t$.
+By applying the law of iterated expectations, we can compute conditional expected solution paths forward from any initial values 
+and realization of $\epsilon_t$.
+As a result, we can use the family of conditional expectations
 along with the contrived reference model to recover an 
 approximation for equation \refeq{soln} along with error bounds.
 The series representation provides a weighted sum of z functions that give us
 an approximation for the known solution.
-\footnote{Note that the reference model is deterministic and the $z$ functions account for the stochastic nature of the model.}
+Note that the reference model is deterministic and the $z$ functions account for the stochastic nature of the model.
+
+For any given values of $k_{t-1},\theta_{t-1}, \epsilon_t$ the model solution and conditional expectations path produces paths for $z_{1t}, z_{2t}, z_{3t}$
+
+\begin{gather*}
+  \begin{bmatrix}
+c_t(k_{t-1},\theta_{t-1}, \epsilon_t)\\
+k_t(k_{t-1},\theta_{t-1}, \epsilon_t)\\
+\theta_t(k_{t-1},\theta_{t-1}, \epsilon_t)
+  \end{bmatrix} \rightarrow
+  \begin{bmatrix}
+  z_{1t}(k_{t-1},\theta_{t-1}, \epsilon_t)\\
+  z_{2t}(k_{t-1},\theta_{t-1}, \epsilon_t)\\
+  z_{3t}(k_{t-1},\theta_{t-1}, \epsilon_t) 
+  \end{bmatrix}\equiv z(k_{t-1},\theta_{t-1}, \epsilon_t)\intertext{where}
+  \begin{bmatrix}
+c_t(k_{t-1},\theta_{t-1}, \epsilon_t)\\
+k_t(k_{t-1},\theta_{t-1}, \epsilon_t)\\
+\theta_t(k_{t-1},\theta_{t-1}, \epsilon_t)
+  \end{bmatrix}  =
+B   \begin{bmatrix}
+c_{t-1}\\
+k_{t-1}\\
+\theta_{t-1}
+  \end{bmatrix}  + \phi \psi_\epsilon\epsilon_t + (I - F)^{-1} \phi \psi_c + \sum_{\sForSum=0}^\infty F^s \phi z_{t+\sForSum}(k_{t-1},\theta_{t-1}, \epsilon_t) \label{theSeries}
+\end{gather*}
 % \footnote{
 % We need not  make these adjustments for the steady state,
 % but doing so economizes on the number of terms 
 % required for a given level of approximation
 % accuracy.}
 
-Using the following parameter values
+For example, using the following parameter values
 
 \begin{gather}
 \vcenter{\hbox{\includegraphics{../../paperProduction/occBind/docs/RBCParamSubs.pdf}}} \,\, \text{ we have } \,\,
   \begin{bmatrix}
     c_{ss}\\k_{ss} \\ \theta_{ss} \label{rbcparams}
   \end{bmatrix}=
-\vcenter{\hbox{\includegraphics{../../paperProduction/occBind/docs/RBCSSVal.pdf}}}
-\end{gather}%(\footnote{{../../paperProduction/occBind/docs/RBCParamSubs.pdf}})(\footnote{{RBCSSVal.pdf}})
+\left [ \vcenter{\hbox{\includegraphics{RBCSSVal.pdf}}}\right ]
+\end{gather}
 
+With 
+\begin{gather*}
+  \begin{bmatrix}
+ k_{t-1}\\\theta_{t-1}\\\epsilon_t
+  \end{bmatrix}=
+\left [ \vcenter{\hbox{\includegraphics{anXEps.pdf}}}\right ]
+\end{gather*}
 
 \begin{figure}
   \centering

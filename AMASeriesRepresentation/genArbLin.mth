@@ -66,7 +66,7 @@ genASeriesRep[linMod:{theHMat_?MatrixQ,BB_?MatrixQ,phi_?MatrixQ,FF_?MatrixQ,psiE
 backLookingInfo:{{_Integer,backLooking_,backLookingExp_}...}},
 	initVec_?MatrixQ,theZs:{_?MatrixQ..}]:=
 	Module[{},(*Print["theZFuncs",theZFuncs];*)
-   With[{maybe = genLilXkZkFunc[linMod,Drop[theZs,1]]},Print["zzts",{maybe,linMod,Drop[theZs,1],Join[initVec,theZs[[1]]]}//InputForm];
+   With[{maybe = genLilXkZkFunc[linMod,Drop[theZs,1]]},
    	maybe@@ Join[Flatten[initVec],Flatten[theZs[[1]]]]]]
 
 
@@ -101,12 +101,12 @@ theArbErrNorms=Norm[somePts[[All,2]]-Flatten[#[[{4,5,6}]]],Infinity]&/@
 				   bunchSeries;
 theArbErrNormMaxs=arbTruncErr/@Range[Length[bunchSeries]];
 			
-(*
+
 Export["arbTruncErr.pdf",
 	   ListPlot[{theArbErrNorms,theArbErrNormMaxs},
 				PlotJoined->True,PlotRange->All,
 	   PlotLabel->"Truncation Error Bound and Actural Error"]];
-*)p
+
 Export["piPath.pdf",ListPlot[somePts[[1]],PlotJoined->True,PlotLabel->"Pi Digits Path("<>ToString[initX]<>","<>ToString[theEpsVal]<>")"]];
 Export["oscillPath.pdf",ListPlot[somePts[[2]],PlotJoined->True,PlotLabel->"Oscillatory Path("<>ToString[initX]<>","<>ToString[theEpsVal]<>")"]];
 Export["pseudoPath.pdf",ListPlot[somePts[[3]],PlotJoined->True,PlotLabel->"Pseudo Random Path("<>ToString[initX]<>","<>ToString[theEpsVal]<>")"]];

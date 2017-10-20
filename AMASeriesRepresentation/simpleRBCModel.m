@@ -49,7 +49,7 @@ anXEpsZsFlat::usage="for test input";
 probDims::usage="for test input";
 
 simpRBCExactDR::usage="simpRBCExactDR"
-
+simpRBCExactCondExp::usage="simpRBCExactCondExp"
 theDist::usage="theDist={{{ee,NormalDistribution[0,sigVal]}}};"
 thePFDist::usage="theDist={{{ee,PerfectForesight]}}};"
 linMod::usage="linear model matrices for approx"
@@ -166,7 +166,7 @@ thetat - 1.*2.718281828459045^epsVal*thetatm1^(19/20)}]
 
 linMod={hmatSymbRE//N,bmatSymbRE // N, phimatSymbRE // N, 
     fmatSymbRE // N, psiepsSymbRE // N, 
-    psicSymbRE // N, psiz // N,{{0}}};
+    psicSymbRE // N, psiz // N,{}};
     
 lilLinMod=linMod;
 lilHmat=hmat;

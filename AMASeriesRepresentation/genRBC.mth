@@ -1,31 +1,35 @@
 PrependTo[$Path,"../../../AMASeriesRepresentation/AMASeriesRepresentation/"]
 
 (*"../../../paperProduction/occBind/docs/"*)
-
+(*
 Print["pre prep",Directory[]]
 Get["redoPrepRBC.mth"]
 Print["post prep",Directory[]]
+*)
 Get["genArbLin.mth"]
 
+Get["simpleRBCModel.m"]
 genSeriesReps[
-linMod:{theHMat_?MatrixQ,BB_?MatrixQ,phi_?MatrixQ,FF_?MatrixQ,psiEps_?MatrixQ,psiC_?MatrixQ,psiZ_?MatrixQ,psiZPreComp_?MatrixQ},
-initVec_?MatrixQ,distribSpec:{expctSpec:{{_Symbol,_}..},regimeTransProbFunc_:{}},theExactDR:(_Function|_CompiledFunction),
+linMod:{theHMat_?MatrixQ,BB_?MatrixQ,phi_?MatrixQ,FF_?MatrixQ,psiEps_?MatrixQ,psiC_?MatrixQ,psiZ_?MatrixQ,
+backLookingInfo:{{_Integer,backLooking_,backLookingExp_}...}},
+initVec_?MatrixQ,distribSpec:{expctSpec:{{_Symbol,_}..},regimeTransProbFunc_:{}},theExactDR:(_Function|_CompiledFunction),theCondExp:(_Function|_CompiledFunction),
 maxIters_Integer]:=
-With[{theZs=genZsREExact[linMod,initVec,distribSpec,theExactDR,maxIters]},
+With[{theZs=genZsREExact[linMod,initVec,distribSpec,theExactDR,theCondExp,maxIters]},
 	genASeriesRep[linMod,initVec,theZs[[Range[#]]]]&/@(Range[Length[theZs]])]
 	
 	
 
 	
 genSeriesRepFunc[
-linMod:{theHMat_?MatrixQ,BB_?MatrixQ,phi_?MatrixQ,FF_?MatrixQ,psiEps_?MatrixQ,psiC_?MatrixQ,psiZ_?MatrixQ,psiZPreComp_?MatrixQ},
-distribSpec:{expctSpec:{{_Symbol,_}..},regimeTransProbFunc_:{}},theExactDR:(_Function|_CompiledFunction),
+linMod:{theHMat_?MatrixQ,BB_?MatrixQ,phi_?MatrixQ,FF_?MatrixQ,psiEps_?MatrixQ,psiC_?MatrixQ,psiZ_?MatrixQ,
+backLookingInfo:{{_Integer,backLooking_,backLookingExp_}...}},
+distribSpec:{expctSpec:{{_Symbol,_}..},regimeTransProbFunc_:{}},theExactDR:(_Function|_CompiledFunction),theCondExp:(_Function|_CompiledFunction),
 terms_Integer]:=
 Module[{numX=Length[BB[[1]]],numEps=Length[psiEps[[1]]]},
 With[{theArgs=Table[Unique["funArgs"],{numX+numEps}]},
 With[{theFunc=
 Function[xxxx,	
-With[{theZs=genZsREExact[linMod,xxxx,distribSpec,theExactDR,terms]},
+With[{theZs=genZsREExact[linMod,xxxx,distribSpec,theExactDR,theCondExp,terms]},
 	genASeriesRep[linMod,xxxx,theZs]]]},
 With[{xxxxPos=Position[theFunc,xxxx$]},
 ReplacePart[theFunc,
@@ -33,11 +37,12 @@ ReplacePart[theFunc,
 ]]]]]
 
 
-genZsREExact[linMod:{theHMat_?MatrixQ,BB_?MatrixQ,phi_?MatrixQ,FF_?MatrixQ,psiEps_?MatrixQ,psiC_?MatrixQ,psiZ_?MatrixQ,psiZPreComp_?MatrixQ},
-	initVec_?MatrixQ,distribSpec:{expctSpec:{{_Symbol,_}..},regimeTransProbFunc_:{}},theExactDR:(_Function|_CompiledFunction),iters_Integer]:=
+genZsREExact[linMod:{theHMat_?MatrixQ,BB_?MatrixQ,phi_?MatrixQ,FF_?MatrixQ,psiEps_?MatrixQ,psiC_?MatrixQ,psiZ_?MatrixQ,
+backLookingInfo:{{_Integer,backLooking_,backLookingExp_}...}},
+	initVec_?MatrixQ,distribSpec:{expctSpec:{{_Symbol,_}..},regimeTransProbFunc_:{}},theExactDR:(_Function|_CompiledFunction),theCondExp:(_Function|_CompiledFunction),iters_Integer]:=
 Module[{numEps=getNumEpsVars[distribSpec]},
 With[{numX=Length[initVec]-numEps,
- 	thePath=Flatten[iterateDRREIntegrate[theExactDR,initVec,distribSpec,iters+1]]},
+ 	thePath=Flatten[iterateDRREIntegrate[theExactDR,theCondExp,initVec,numEps,iters+1]]},
  	With[{firstVal=theHMat .thePath[[Range[3*numX]]]- psiC - psiEps . Take[initVec,-numEps]},
  		With[{restVals=
       (theHMat .thePath[[Range[3*numX]+numX*#]] -psiC)&/@Range[(Length[thePath]/numX)-3]},
@@ -62,8 +67,8 @@ numVals=30;
 
 simpMod = 
   genSeriesReps[ linMod,anXEps, theDist, 
-   simpRBCExactDR, numVals];
-theSimpZs=genZsREExact[linMod,anXEps,theDist,simpRBCExactDR,numVals];
+   simpRBCExactDR,simpRBCExactCondExp, numVals];
+theSimpZs=genZsREExact[linMod,anXEps,theDist,simpRBCExactDR,simpRBCExactCondExp,numVals];
 simpErrMatNorms=Norm[truncErrorMat[notLinMod[[3]],notLinMod[[2]],#-1],Infinity]&/@Range[numVals]
 
 

@@ -2152,6 +2152,8 @@ With[{theRes=genLilXkZkFunc[linMod,fCon]},theRes]]]
 AMASeriesRepCallGraph=
 Join[AMASeriesRepCallGraph,Map["genLilXkZkFunc"->#&,{"genLilXkZkFunc"}]];
 
+AMASeriesRepCallGraph=
+Join[AMASeriesRepCallGraph,Map["genLilXkZkFunc"->#&,{"fSumC"}]];
 
 @}
 
@@ -2162,18 +2164,16 @@ Join[AMASeriesRepCallGraph,Map["genLilXkZkFunc"->#&,{"genLilXkZkFunc"}]];
 @d genLilXkZkFunc
 @{
 @< genLilXkZkFunc theZs call@>:=
-Module[{},Print["here we go"];
+Module[{},
 @<Z Matrices Given@>
 ]
 @}
 
 @d Z Matrices Given
-@{With[{fCon=Check[fSumC[phi,FF,psiZ,theZs],Print["trying to throw low"];Throw["low"]]},Print["fcon=",fCon];
+@{With[{fCon=Check[fSumC[phi,FF,psiZ,theZs],Print["trying to throw low"];Throw["low"]]},
 With[{theRes=genLilXkZkFunc[linMod,fCon]},
 theRes]]
 
-AMASeriesRepCallGraph=
-Join[AMASeriesRepCallGraph,Map["genLilXkZkFunc"->#&,{"fSumC"}]];
 
 
 @}
@@ -2215,7 +2215,7 @@ With[{theRes=genLilXkZkFunc[linMod,fCon]},theRes]]]
 @d genLilXkZkFunc
 @{
 @<genLilXkZkFunc fcon call@>:=
-Module[{},Print["why"];
+Module[{},
 @<apply formula F...@>
 ]
 AMASeriesRepCallGraph=
@@ -2224,15 +2224,15 @@ Join[AMASeriesRepCallGraph,Map["genLilXkZkFunc"->#&,{"genSlots","getNumX","getNu
 
 @d apply formula F contribution given
 @{With[{numXVars=getNumX[linMod],numEpsVars=getNumEps[linMod],
-numZVars=getNumZ[linMod]},Print["applying f formula"];
-With[{theSlots=genSlots[numXVars+numEpsVars+numZVars]},Print["A"];
+numZVars=getNumZ[linMod]},
+With[{theSlots=genSlots[numXVars+numEpsVars+numZVars]},
 With[{xtm1Vars=theSlots[[Range[numXVars]]],
 epsVars=theSlots[[numXVars+Range[numEpsVars]]],
-zVars=theSlots[[numXVars+numEpsVars+Range[numZVars]]]},Print["B"];
-With[{xtVals=genXtOfXtm1[linMod,xtm1Vars,epsVars,zVars,fCon]},Print["C"];
-With[{xtp1Vals=genXtp1OfXt[linMod,xtVals,fCon]},Print["D"];
-With[{fullVec=Join[xtm1Vars,xtVals,xtp1Vals,epsVars]},Print["E",fullVec//InputForm];
-With[{chk=notFunction[fullVec]},Print["F",chk//InputForm];
+zVars=theSlots[[numXVars+numEpsVars+Range[numZVars]]]},
+With[{xtVals=genXtOfXtm1[linMod,xtm1Vars,epsVars,zVars,fCon]},
+With[{xtp1Vals=genXtp1OfXt[linMod,xtVals,fCon]},
+With[{fullVec=Join[xtm1Vars,xtVals,xtp1Vals,epsVars]},
+With[{chk=Function[fullVec]},
 chk
 ]]]]]]]@}
 

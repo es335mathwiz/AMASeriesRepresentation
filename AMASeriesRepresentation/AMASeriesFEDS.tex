@@ -13,10 +13,10 @@
 
 
 
-\author{Gary S. Anderson\thanks{The analysis and conclusions set forth are those of the author and do not indicate concurrence by other members of the research staff or the Board of Governors. I would like to thank Luca Guerrieri, Christopher Gust, Hess Chung, Benjamin Johannsen  and Robert Tetlow for their comments and suggestions.  Special thanks to Luca Guerieri for first noticing that the series representation formulation could lead to an error bound for model solutions.}}
+\author{Gary S. Anderson\thanks{The analysis and conclusions set forth are those of the author and do not indicate concurrence by other members of the research staff or the Board of Governors. I would like to thank Luca Guerrieri, Christopher Gust, Hess Chung, Benjamin Johannsen  and Robert Tetlow for their comments and suggestions.  Special thanks to Luca Guerrieri for first noticing that the series representation formulation could lead to an error bound for model solutions.}}
 
 \title{A New Series Representation for 
-Nonlinear Dynamic Stochastic Model Solutions: General Error Bounds and New Solution Algorithm}
+Nonlinear Dynamic Stochastic Model Solutions: General Error Bounds and a New Solution Algorithm}
 
 \date{\today: \currenttime}
 \begin{document}
@@ -125,29 +125,30 @@ It will be useful to collect the components of this representation for use in
 subsequent sections of the paper.
 Define $\linMod \equiv \linModMats$.
 
+
+
+
+\begin{theorem}
 Consider an arbitrary, but bounded path
  \begin{gather}
    \xWOarg \in{R^L}\,\text{ with }\,\infNorm{\xWOarg}  \le \bar{\mathcal{X}}\,\,\,\,\,\forall t> 0 \label{aBPath}.
  \end{gather}
 
-{\small
 Now, given the trajectories \refeq{aBPath}, define 
 $  z_{t}$ as  
 \begin{gather}
   z_{t} \equiv H_{-1} \mathcal{X}_{t-1} +  H_0 \mathcal{X}_{t} +  H_1 \mathcal{X}_{t+1} \label{defZ} 
 \end{gather}
 
+Then
 
-
-
-\begin{theorem}
 	 \begin{gather}
 	 \mathcal{X}_{t} =B x_{t-1}+ \phi \psi_\epsilon\epsilon + (I - F)^{-1} \phi \psi_c + \sum_{\sForSum=0}^\infty F^s \phi z_{t+\sForSum} \label{theSeries}
 \intertext{and}
-	 \mathcal{X}_{t+1} =B \mathcal{X}_{t}  + (I - F)^{-1} \phi \psi_c+ \sum_{\sForSum =0}^\infty F^\sForSum \phi z_{t+\sForSum+1} \,\,\,\,\,\forall t \ge  0.
+	 \mathcal{X}_{t+k+1} =B \mathcal{X}_{t+k}  + (I - F)^{-1} \phi \psi_c+ \sum_{\sForSum =0}^\infty F^\sForSum \phi z_{t+k+\sForSum+1} \,\,\,\,\,\forall t,k \ge  0.
 	 \end{gather}
 \end{theorem}
-}
+
 \begin{myProof}
 See \citep{anderson10},
 \end{myProof}
@@ -257,27 +258,13 @@ unbounded trajectories.}
 %   \caption{The  z's Corresponding to  $x_{-1}=(1,2,3),\epsilon=(2,1,2)$} \label{arbFig}
 % \end{figure}
 
-\begin{figure}
-  \centering
-
-
-\includegraphics[width=3in]{arbTruncErr.pdf}  
-  \caption{$x_t$ Error Bound Versus Actual Error} \label{figArbTrunc}
-
-\end{figure}
 
 
 Figure \ref{arbpaths} shows, for a particular initial state vector and shock value,  the paths for the state vectors and the  z's that generate the path.
 One can repeat the calculations for any given initial condition to produce
 a z series exactly replicating the given set of trajectories.  The family
 of z functions along with equation \ref{theSeries} provide a series 
-representation for the family of trajectories.  Figure \ref{figArbTrunc} shows
-that the truncation error bound is a very conservative measure of the accuracy
-of the truncated series.  The series requires only the first 20 terms to compute
-the initial value of the state vector to machine precision. 
-The series representation can compute the entire series to machine precision
-if all the terms are included, but the terms for state vectors closer 
-to the initial time have the most important impact.
+representation for the family of trajectories. 
 
 
 
@@ -304,13 +291,40 @@ Since
     \end{gather}
 Note that for approximating $\xWarg$ the impact of  a given realization along the path declines for those realizations which are  more temporally distant.
 
+ Figure \ref{figArbTrunc} shows
+that the truncation error bound is a very conservative measure of the accuracy
+of the truncated series.  The series requires only the first 20 terms to compute
+the initial value of the state vector to machine precision. 
+The series representation can compute the entire series to machine precision
+if all the terms are included, but the terms for state vectors closer 
+to the initial time have the most important impact.
 
+
+\begin{figure}
+  \centering
+
+
+\includegraphics[width=3in]{arbTruncErr.pdf}  
+  \caption{$x_t$ Error Bound Versus Actual Error} \label{figArbTrunc}
+
+\end{figure}
 
 \subsubsection{Path Error}
 
 
 We can assess the impact of incorrect values for $z_t$ by computing the maximum correction required for the $z_t$ and applying the 
 same formula.
+One could consider approximating $\mathcal{X}_t$ using
+ 	 \begin{gather}
+ 	 \xWOargK \equiv B x_{t-1}+ \phi \psi_\epsilon\epsilon  + (I - F)^{-1} \phi \psi_c + \sum_{s=0}^\infty F^s \phi (z_{t}+\Delta z_{t})\label{theDeltaSeries}
+ \end{gather}
+Note that for approximating $\xWarg$ the impact of  a given realization along the path declines for those realizations which are  more temporally distant.
+However, we can bound the  series approximation  errors.
+Since
+    \begin{gather}
+      \label{eq:1}
+\infNorm{\xWarg-\xWargK} \le \infNorm{(I -F)^{-1} \phi \psi_z}  \infNorm{\Delta z_t } 
+    \end{gather}
 
 
 \label{sec:pathnorm}
@@ -322,7 +336,6 @@ same formula.
 \item represents impact of ``anticipated shocks'' interpretation error bounds on $x_t$
 \item any bounded path
 \item Should include closed form solution for RBC
-\item figure for truncation error incorrect \ref{figArbTrunc}
 \item interaction between series  through z's
 \end{itemize}
 
@@ -383,7 +396,7 @@ c_t + k_t=\theta_{t-1}k_{t-1}^\alpha \\
 
 \paragraph{An RBC Model Example Known Solution}
 \label{sec:rbcexample}
-  {The RBC Model ($\eta=1$): Recovering a Known Solution}
+  {The RBC Model ($\eta=d=1$): Recovering a Known Solution}
 
 {for $\eta=1$}
  \begin{gather}
@@ -391,8 +404,9 @@ c_t + k_t=\theta_{t-1}k_{t-1}^\alpha \\
 c_t + k_t=\theta_{t-1}k_{t-1}^\alpha \\
 \theta_t =\theta_{t-1}^\rho e^{\epsilon_t}\label{rbcSys}
 \intertext{and there is a closed form solution}
+c_t=  (1-\alpha \delta) \theta_{t} k_{t-1}^\alpha\\
   k_{t}= \alpha \delta \theta_{t} k_{t-1}^\alpha.\label{soln}\\
-c_t=  (1-\alpha \delta) \theta_{t} k_{t-1}^\alpha
+\theta_t =\theta_{t-1}^\rho e^{\epsilon_t}
 \end{gather}
 For mean zero iid $\epsilon_t$ we can easily compute a family of bounded trajectories
 

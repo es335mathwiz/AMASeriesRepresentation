@@ -473,7 +473,7 @@ k_{t-1}\\
 % required for a given level of approximation
 % accuracy.}
 
-For example, using the following parameter values
+For example, using the following parameter values and using the linearized version of the model to generate the linear reference model.
 
 \begin{gather}
 \vcenter{\hbox{\includegraphics{../../paperProduction/occBind/docs/RBCParamSubs.pdf}}} \,\, \text{ we have } \,\,
@@ -490,6 +490,19 @@ With
   \end{bmatrix}=
 \left [ \vcenter{\hbox{\includegraphics{anXEps.pdf}}}\right ]
 \end{gather*}
+
+
+\begin{figure}
+  \centering
+\includegraphics[width=2.5in]{simprbcvals.pdf}  
+\includegraphics[width=2.5in]{simprbczvals.pdf}  
+  \label{rbcpaths}
+  \caption{model variable values and z values}
+\end{figure}
+
+The figure   \ref{rbcTrunc} shows the impact on the initial value of the state variables of truncating the series.   The bound again is very pessimistic. 
+The first few terms make all the difference in approximating the value of the state variables.
+
 
 \begin{figure}
   \centering

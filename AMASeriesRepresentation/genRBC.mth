@@ -64,29 +64,15 @@ numVals=30;
 
 
 
-
 simpMod = 
   genSeriesReps[ linMod,anXEps, 1, 
    simpRBCExactDR,simpRBCExactCondExp, numVals];
 theSimpZs=genZsREExact[linMod,anXEps,1,simpRBCExactDR,simpRBCExactCondExp,numVals];
-simpErrMatNorms=Norm[truncErrorMat[notLinMod[[3]],notLinMod[[2]],#-1],Infinity]&/@Range[numVals]
-
-
-
+simpErrMatNorms=Norm[truncErrorMat[linMod[[4]],linMod[[3]],#-1],Infinity]&/@Range[numVals]
 
 simpRes={simpErrMatNorms[[#]],Norm[theSimpZs[[#]],Infinity],
 simpErrMatNorms[[#]]*Norm[theSimpZs[[#]],Infinity],
 Norm[Flatten[simpMod[[#,{4,5,6}]]-trueVal],Infinity]}& /@ Range[numVals];
-
-
-Export["RBCSSVal.pdf",Transpose[{{cc,kk,theta}}]/.ssSolnSubsRE//N]
-Export["anXEps.pdf",TableForm[Drop[anXEps,1]]]
-theVals=iterateDRREIntegrate[simpRBCExactDR,simpRBCExactCondExp,anXEps,1,30];
-zVals={z1Vals,z2Vals,z3Vals}=Transpose[Partition[Flatten[theSimpZs],3]];
-mVals={cVals,kVals,thetaVals}=Transpose[Partition[Flatten[theVals],3]];
-
-Export["simprbczvals.pdf",ListLinePlot[zVals,PlotRange->All]]
-Export["simprbcvals.pdf",ListLinePlot[mVals,PlotRange->All]]
 
 Export["simpBoundsVActual.pdf",ListPlot[Transpose[simpRes[[All,{-2,-1}]]],
 PlotStyle->{Red,Blue},
@@ -94,6 +80,39 @@ PlotRange->All,
 PlotJoined->True,
 PlotLegends->{Text[Subscript[B,n]],Text[Subscript[Z,n]]},
 PlotLabel->"RBC Model: Bounds versus Actual"]]
+
+
+
+
+simpArbMod = 
+  genSeriesReps[ notLinMod,anXEps, 1, 
+   simpRBCExactDR,simpRBCExactCondExp, numVals];
+theSimpArbZs=genZsREExact[notLinMod,anXEps,1,simpRBCExactDR,simpRBCExactCondExp,numVals];
+simpArbErrMatNorms=Norm[truncErrorMat[notLinMod[[4]],notLinMod[[3]],#-1],Infinity]&/@Range[numVals]
+
+simpArbRes={simpArbErrMatNorms[[#]],Norm[theSimpArbZs[[#]],Infinity],
+simpArbErrMatNorms[[#]]*Norm[theSimpArbZs[[#]],Infinity],
+Norm[Flatten[simpArbMod[[#,{4,5,6}]]-trueVal],Infinity]}& /@ Range[numVals];
+
+
+Export["simpArbBoundsVActual.pdf",ListPlot[Transpose[simpArbRes[[All,{-2,-1}]]],
+PlotStyle->{Red,Blue},
+PlotRange->All,
+PlotJoined->True,
+PlotLegends->{Text[Subscript[B,n]],Text[Subscript[Z,n]]},
+PlotLabel->"RBC Model: Bounds versus Actual"]]
+
+
+
+
+Export["RBCSSVal.pdf",TableForm[Transpose[{{cc,kk,theta}}]]/.ssSolnSubsRE//N]
+Export["anXEps.pdf",TableForm[Drop[anXEps,1]]]
+theVals=iterateDRREIntegrate[simpRBCExactDR,simpRBCExactCondExp,anXEps,1,30];
+zVals={z1Vals,z2Vals,z3Vals}=Transpose[Partition[Flatten[theSimpZs],3]];
+mVals={cVals,kVals,thetaVals}=Transpose[Partition[Flatten[theVals],3]];
+
+Export["simprbczvals.pdf",ListLinePlot[zVals,PlotRange->All]]
+Export["simprbcvals.pdf",ListLinePlot[mVals,PlotRange->All]]
 
 toOccDir/@{
 "simpBoundsVActual.pdf"

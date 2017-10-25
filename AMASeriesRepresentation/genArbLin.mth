@@ -26,8 +26,8 @@ psiCArb=(theHMatArb . Join[ssVal,ssVal,ssVal])
 
 
 notLinMod={theHMatArb,BBArb // N, phiArb // N, 
-    FFArb // N, psiEpsArb // N, 
-    psiCArb // N, psiZArb // N,{{0}}};
+    FFArb // N, psiEpsArb[[All,{3}]] // N, 
+    psiCArb // N, psiZArb // N,{}};
 
 notX0Z0=genX0Z0Funcs[notLinMod];
 

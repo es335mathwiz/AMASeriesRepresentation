@@ -322,8 +322,7 @@ Note that for approximating $\xWarg$ the impact of  a given realization along th
 However, we can bound the  series approximation  errors.
 Since
     \begin{gather}
-      \label{eq:1}
-\infNorm{\xWarg-\xWargK} \le \infNorm{(I -F)^{-1} \phi \psi_z}  \infNorm{\Delta z_t } 
+\infNorm{\xWarg-\xWargK} \le \infNorm{(I -F)^{-1} \phi \psi_z}  \infNorm{\Delta z_t } \label{pathErr}
     \end{gather}
 
 
@@ -433,7 +432,7 @@ We can also compute the conditional expectation of the model variables for any g
   E_t(k_t|\theta_{t-1},k_{t-1})=\alpha\delta k_{t-1}^\alpha e^{\frac{\sigma^2}{2}}\theta_{t-1}^\rho\\
   E_t(\theta_t|\theta_{t-1},k_{t-1})=e^{\frac{\sigma^2}{2}}\theta_{t-1}^\rho
 \end{gather*}
-Consequently, we can use the decision rule to compute values for $c_t$ and $k_t$ for any intial values for $k_{t-1}$ and $\theta_{t-1}$ and realization of $\epsilon_t$.
+Consequently, we can use the arbitrary linear system along with the decision rule to compute values for $c_t$ and $k_t$ for any intial values for $k_{t-1}$ and $\theta_{t-1}$ and realization of $\epsilon_t$.
 By applying the law of iterated expectations, we can compute conditional expected solution paths forward from any initial values 
 and realization of $\epsilon_t$.
 As a result, we can use the family of conditional expectations
@@ -473,7 +472,7 @@ k_{t-1}\\
 % required for a given level of approximation
 % accuracy.}
 
-For example, using the following parameter values and using the linearized version of the model to generate the linear reference model.
+For example, using the following parameter values and using the arbitrary linear reference model we can generate a series representation for the model solutions.
 
 \begin{gather}
 \vcenter{\hbox{\includegraphics{../../paperProduction/occBind/docs/RBCParamSubs.pdf}}} \,\, \text{ we have } \,\,
@@ -500,7 +499,18 @@ With
   \caption{model variable values and z values}
 \end{figure}
 
-The figure   \ref{rbcTrunc} shows the impact on the initial value of the state variables of truncating the series.   The bound again is very pessimistic. 
+The figure   \ref{rbcTrunc} shows the impact that truncating the series has 
+on the initial value of the state variables.   The bound again is very pessimistic. Even with an arbitrarily chosen linear model, ultimately the series approximation provides an accurate value for the initial state vector.  Using a linearization that better tracks the nonlinear model paths, improves the approximation.
+
+\begin{figure}
+  \centering
+\includegraphics{simpArbBoundsVActual.pdf}  
+  \label{rbcTrunc}
+  \caption{RBC Truncation Error Bound Versus Actual}
+\end{figure}
+
+
+Using the linearization of the RBC model produces a tighter but still pessimistic bound on the errors for the initial state vector.
 The first few terms make all the difference in approximating the value of the state variables.
 
 
@@ -512,10 +522,12 @@ The first few terms make all the difference in approximating the value of the st
 \end{figure}
 
 
+Alternatively, for assessing the precision of the computation across an array of initial conditions, we can apply a variation on the formula \ref{pathErr}
 
-
-
-
+    \begin{gather}
+\infNorm{\xWarg-\xWargK} \le \infNorm{(I -F)^{-1} \phi \psi_z}  \max \left ( \infNorm{\Delta z_t } \right ) \label{pathErrMax}
+    \end{gather}  
+By identifying the largest value that we find for adjusting the $z_t$, we bound the maximum deviation that will impact the inital  $x_t$ values.
 \subsubsection{Dynamic Stochastic Models, Model Solutions  and Conditional Expectations}
 \label{sec:condExp}
 \subsection{General Formulation}
@@ -853,16 +865,33 @@ Consequently, will will have an equation system an a gatekeeper logical expressi
 
 \subsection{Truncation Error}
 \label{worst}
+\begin{algorithm}
+ \SetKwInOut{Input}{input}
+ \SetKwInOut{Output}{output}
+\Input{$\linMod$, $\tArg$, $\xWOarg^p$, $\XWOarg^p$, $N$}
+$x_{t}=\xWOarg^p\tArg$\;
+$x_{t+1}=\XWOarg^p(x_t)$\;
+\For{$i=2$ to $N$}{
+$x_{t+i}=\XWOarg^k(x_{t+i-1})$\;
+}
+\For{$i=0$ to $N-1$}{
+$   z^p_{t}(x_{t-1},\epsilon_t) = H_{-1}  x^p_{t-1}(x_{t-1},\epsilon_t) + 
+ H_0  x^p_{t}(x_{t-1},\epsilon_t) +  \label{defZ} 
+ H_1  x^p_{t+1}(x_{t-1},\epsilon_t)$
+}
+\Output{$\sum_{\nu=1}^N F^{\nu-1} \phi z_{t+\nu}$}
+\caption{$\fSum(\linMod, \xguss, \XWOarg^k, \ZWOarg^k, N)$} 
+\label{conPath}
+\end{algorithm}
 
 \subsection{Path Error}
+
 \label{sec:path-error}
 \label{worst}
 
 
 
 \paragraph{Quantifying the Inaccuracy of the Proposed Solution}
-
-
 
 
  Given a proposed solution $x^p_t=g^p(x_{t-1},\epsilon_t)$ define
@@ -937,6 +966,25 @@ E_tx_{t+1}=G^p(g^p(x_{t-1},\epsilon_t))\\
 
 
 \paragraph{MSNTO}
+ 
+This section describes a method for finding optima in a closed bounded domain.
+Let $D=[a,b]$ in $R^s$ where $a_i \le x_i \le b_i$. We want to find  $M=f(x^\ast)= \max_{x \in D}f(x)$.
+Th number theoretic (Quasi-Monte Carlo) approached is designed for finding optima with many local optima.  It is based on the used of space filling points.\cite{Xu2005}
+The number theoretic method of optimization includes two basic steps.
+\begin{enumerate}
+\item Choose a set $p=x_i, i=1,\dots,n$ of potential optima that are uniformly scatered.
+\item Find $M_n\text{ and } x^\ast \in p =\max_{1\le i \le n}f(x_i)$
+\end{enumerate}
+
+Choosing p wisely convergence slow until \cite{Niederreiter1983}.  They speed up the convergence by contracting the domain.
+Their algorithm discards all but the best in the domain. Must have very many points to guarantee choosing a point close to the optimum.
+Multilocal searches.
+
+MSNTO selects a finite number of sample points uniformly scattered on D.  Next it discard inferior points retaining small sample of potential maxima.  These form the clusters for the next step.  The algoritm performs a domain contraction on each of the clusters.
+
+I Neiderreiter 
+
+
 \paragraph{Assessing a Proposed Solution}
 \paragraph{RBC Example for Known Solution}
 
@@ -1188,8 +1236,104 @@ period and the stand-in linear model for subsequent periods.
 \subsubsection{Algorithm Pseudo-code}
 \label{sec:pseudocode}
 
+
+It will be convenient for describing the algorithms to
+ augment the model equations to include auxiliary variables so that we can write the model in the form
+$  \eqnFunc(x_{t-1},x_t,\expct{x_{t+1}},\epsilon)=0$.  We will consider time invariant model solutions $x_t=\xWarg$.  Compute $\XWOarg(x_{t-1})\equiv \expct{\xWarg}$. We will have
+
+\begin{gather}
+\eqnFunc(x_{t-1},\xWarg,\XWOarg(\xWarg),\epsilon)=0 \intertext{Given a linear reference model,}
+\linMod  \equiv \linModMats \intertext{we can define functions $\zWOarg$ by}
+\zWarg\equiv H
+\begin{bmatrix}
+x_{t-1}\\ \xWarg\\ \XWOarg(\xWarg)
+\end{bmatrix}+\phi_\epsilon \epsilon_t+\phi_c\intertext{compute $\ZWOarg$ }
+\ZWOarg(x_{t-1})\equiv \expct{\zWarg}\intertext{define conditional expectations paths for $x_t, z_t$}
+x_{t+k+1}=\XWOarg(x_{t+k}),\,\,\,z_{t+k+1}=\ZWOarg(x_{t+k})\,\,\,\,  \forall k\ge 0\\
+	 \mathcal{X}_{t} =B x_{t-1}+ \phi \psi_\epsilon\epsilon + (I - F)^{-1} \phi \psi_c + \sum_{\sForSum=0}^\infty F^s \phi z_{t+\sForSum} \label{theSeries}
+\intertext{and}
+	 \mathcal{X}_{t+1} =B \mathcal{X}_{t}  + (I - F)^{-1} \phi \psi_c+ \sum_{\sForSum =0}^\infty F^\sForSum \phi z_{t+\sForSum+1} \,\,\,\,\,\forall t,k \ge  0 \\
+	\expct{ \mathcal{X}_{t+1}} =B \mathcal{X}_{t}  + (I - F)^{-1} \phi \psi_c+ \sum_{\sForSum =0}^\infty F^\sForSum \phi \expct{z_{t+\sForSum+1}} \,\,\,\,\,\forall t,k \ge  0\\
+	\expct{ \mathcal{X}_{t+1}} =B \mathcal{X}_{t}  + (I - F)^{-1} \phi \psi_c+ \sum_{\sForSum =0}^\infty F^\sForSum \phi \ZWOarg(x_{t+\nu}) \,\,\,\,\,\forall t,k \ge  0
+\end{gather}
+
+The $g$ function uses equation \ref{theSeries} to construct values needed to evaluate the model equations.
+\begin{gather}
+  g(x_{t-1},\epsilon_t,z_t)=
+  \begin{bmatrix}
+    x_{t-1}\\
+B x_{t-1}+ \phi \psi_\epsilon\epsilon + (I - F)^{-1} \phi \psi_c + \sum_{\sForSum=0}^K F^s \phi z_{t+\sForSum} \\
+B x_{t}+   (I - F)^{-1} \phi \psi_c + \sum_{\sForSum=0}^K F^s \phi z_{t+\sForSum} \\
+\epsilon_t
+  \end{bmatrix}
+\end{gather}
+\begin{algorithm}
+ \SetKwInOut{Input}{input}
+ \SetKwInOut{Output}{output}
+\Input{$\linMod$, $\sum_{\nu=1}^N F^{\nu-1} \phi z_{t+\nu}$}
+$x_t(x_{t-1},\epsilon_t,z_t)=B x_{t-1} + (I-F)^{-1} \phi. \psi_c+\phi \psi_\epsilon \epsilon_t + \phi . \psi_z z_t + F\sum_{\nu=1}^N F^{\nu-1} \phi z_{t+\nu} $\;
+$\expct{x_{t+1}}(x_{t-1},\epsilon_t,z_t)=B x_{t}(x_{t-1},\epsilon_t,z_t) + (I-F)^{-1} \phi. \psi_c + \sum_{\nu=1}^N F^{\nu-1} \phi z_{t+\nu} $\;
+$g(x_{t-1},\epsilon_t,z_t)\equiv
+\begin{bmatrix}
+  x_{t-1}\\x_t(x_{t-1},\epsilon_t,z_t)\\\expct{x_{t+1}}(x_{t-1},\epsilon_t,z_t)\\ \epsilon_t
+\end{bmatrix}
+$\;
+\Output{$g(x_{t-1},\epsilon_t,z_t)$}
+\caption{$\modArgs(\linMod,\sum_{\nu=1}^N F^{\nu-1} \phi z_{t+\nu})$}
+\label{gEqn}
+\end{algorithm}
+
+We will represent model solutions using the anisotropic Smolyak interpolation method outlined in \cite{Judd2014}.\footnote{ This choice makes it possible to precompute all the integrals necessary for the conditional expectations calculations. See section \ref{sec:smolyakinterp} for details.}  This will require solving
+the following system at a prespecified number of points.  This can be done in parallel. We can use the linear system associated with some 
+linear reference model, $\linMod$, as the initial guess.  
+It is not necessary, but it may be useful to use some linearization of the model, $\eqnFunc$.  Typically one would start with the inital values for $z_t\tArg=0$.
+
+From the  trial value for the model solution codified in the \ADR, $\xWOarg^k\tArg$, we obtain the corresponding \ADRCE, $\XWOarg^k\tNo$ and, as
+ shown in algorithm \ref{fSum}, using
+a guess for $x_t\tArg$ we compute a conditional expectations path of length N from $\tArg$ forward.  We use the \ADRCE expressions for $Z^k$ to compute the expected values for future $z_t$. As shown in algorithm \ref{gEqn}, we 
+will use these values in the formula \ref{theSeries} to compute $x_t$ and $\expct{x_{t+1}}$ Algorithm \ref{gEqn} provides all the arguments needed for solving the equation system, $\eqnFunc$.  Algorithm \ref{theSys} obtains  $\xWOarg^k\tArg,\zWOarg^k\tArg$ at the designated points so that the model equations are satisfied and the $\xguss=x$
+
+\begin{algorithm}
+ \SetKwInOut{Input}{input}
+ \SetKwInOut{Output}{output}
+\Input{$\linMod$, $\xguss$, $\XWOarg^k$, $\ZWOarg^k$, $N$}
+$x_{t+1}=\XWOarg^k(\xguss)$\;
+$z_{t+1}=\ZWOarg^k(\xguss)$\;
+\For{$i=2$ to $N$}{
+$x_{t+i}=\XWOarg^k(x_{t+i-1})$\;
+$z_{t+i}=\ZWOarg^k(x_{t+i-1})$\;
+}
+\Output{$\sum_{\nu=1}^N F^{\nu-1} \phi z_{t+\nu}$}
+\caption{$\fSum(\linMod, \xguss, \XWOarg^k, \ZWOarg^k, N)$} 
+\label{fSum}
+\end{algorithm}
+
+
+\begin{algorithm}
+ \SetKwInOut{Input}{input}
+ \SetKwInOut{Output}{output}
+\Input{$\eqnFunc$, $\linMod$,  $\XWOarg^k$, $\ZWOarg^k$, $N$, $x_{t-1}$, $\epsilon_t$}
+Find $x_t$ and $z_t$
+$\eqnFunc(\modArgs(\linMod,\fSum(\linMod,\xguss,\XWOarg^k,\ZWOarg^k)))=0$\;
+$\xguss=x_t(x_{t-1},\epsilon)$\;
+\Output{$\xWOarg^{k+1}(x_{t-1},\epsilon_t)$, $\zWOarg^{k+1}(x_{t-1},\epsilon_t)$}
+\caption{$\xWOarg^{k+1}(x_{t-1},\epsilon_t)$, $\zWOarg^{k+1}(x_{t-1},\epsilon_t)$}
+\label{theSys}
+\end{algorithm}
+
 \begin{enumerate}
 \item Specify a (collection) model equations systems(s)
+
+
+It will be convenient for describing the algorithms to
+ augment the model equations to include auxiliary variables so that we can write the model in the form
+$ \eqnFuncSys$.  Where, each 
+\begin{gather}
+\eqnFuncSysI{i}\equiv \eqnFuncSysIExpl{i}
+\end{gather}
+ Represent a collection of models and boolean valued gates.  They represent exhaustive and mutually exclusive equation system determining the solution at time t for the model.  They could be complementary slackness conditions or could represent a model with different regimes. We will consider time invariant model solutions $x_t=\xWarg$.  Compute $\XWOarg(x_{t-1})\equiv \expct{\xWarg}$. We will have
+For all relevant values of $\tArg$ there is one and only one solution
+
 \item specify a linear reference model
 \item specify an initial guess for decision rule $\xWargK$ obtain conditional expectations function
 \item decide upon number of Conditional Expectations function approximation.  Shorter means more truncation and higher error longer means including more terms from series In effect imposes nonlinear constraints for number of period specified and the linear reference model thereafter
@@ -1218,9 +1362,43 @@ period and the stand-in linear model for subsequent periods.
 \label{sec:smolyakinterp}
 
 \paragraph{An-isotropic}
+It is possible to precompute each of the integrals. Since the solution will be linear combination of the polynomials, precomputing the polynomials means the weighted sum of the precomputed integrals will provide the integrals.
+
+\begin{algorithm}
+  \SetKwInOut{Input}{input}
+ \SetKwInOut{Output}{output}
+\Input{$\aSmolPoly$, $\smolRngs$, $\distribSpec$} 
+\Output{$\int \aSmolPoly \Pi (f_i(\epsilon_i)) d\epsilon_1 \ldots d\epsilon_k$}
+\end{algorithm}
+
+
+
+\begin{verbatim}
+
+
+smolPolyExp[aSmolPoly_,smolRngs_?MatrixQ,distribSpec:{expctSpec:{{_Symbol,_}..}}]:=
+With[{numEps=Length[distribSpec[[1]]],
+polyVars=Sort[Cases[aSmolPoly,xx[_Integer]]]},
+With[{theChebValSubs=Thread[polyVars->
+MapThread[xformXValToCheb,{polyVars,smolRngs}]]
+},
+With[{numX=Length[polyVars]-numEps},
+With[{intVarRes=genIntVars[numX,distribSpec]},
+With[{polyEps=Drop[polyVars,numX],intEps=Drop[intVarRes[[2]],numX]},
+With[{epsSubs=MapThread[#1->#2&,{polyEps,intEps}]},
+With[{funcGuts=((aSmolPoly/.theChebValSubs)/.epsSubs)},
+myExpectation[funcGuts,intVarRes[[3]]]]]]]]]]
+\end{verbatim}
 
 \paragraph{Ergodic Set}
 \paragraph{MSNTO}
+
+\begin{algorithm}
+   \SetKwInOut{Input}{input}
+ \SetKwInOut{Output}{output}
+\Input{$\linMod$, $\tArg$, $\xWOarg^p$, $\XWOarg^p$, $N$}
+
+\end{algorithm}
 
 \subsection{RBC Example}
 \label{sec:rbc-example}
@@ -1307,6 +1485,47 @@ Since we will be working with models where expectations are computed at time t, 
 
 \paragraph{unknown solutions occasionally binding constraints}
 \begin{description}
+\item[Equation System] \ 
+For example, the Euler equations for the  neoclassical growth  model 
+\label{sec:simple-rbc-model-ext} can be written as
+\begin{gather}
+\mu>0 \land (k_t - (1-d)k_{t-1}-\upsilon I_{ss})=0=\mathbf{true}\\
+  \lambda_t -\frac{1}{c_t}\\
+c_t+k_t-\theta_tk_{t-1}^\alpha\\
+N_t-\lambda_t \theta_t\\
+\theta_t-e^{(\rho\ln(\theta_{t-1})+\epsilon)}\\
+\lambda_t + \sqrt{\mu_t} - (\alpha k_t^{(\alpha-1)}\delta*N_{t+1}+\lambda_{t+1}*\delta*(1-d)+\sqrt{\mu_{t+1}}+\delta*(1-d)\\
+I_t-(K_t-(1-d)k_{t-1}\\
+\mu_t(k_t - (1-d)*k_{t-1}-\upsilon I_{ss})\\
+\mu=0 \land (k_t - (1-d)k_{t-1}-\upsilon I_{ss})\ge 0=\mathbf{true}\\
+  \lambda_t -\frac{1}{c_t}\\
+c_t+k_t-\theta_tk_{t-1}^\alpha\\
+N_t-\lambda_t \theta_t\\
+\theta_t-e^{(\rho\ln(\theta_{t-1})+\epsilon)}\\
+\lambda_t + \sqrt{\mu_t} - (\alpha k_t^{(\alpha-1)}\delta*N_{t+1}+\lambda_{t+1}*\delta*(1-d)+\sqrt{\mu_{t+1}}+\delta*(1-d)\\
+I_t-(K_t-(1-d)k_{t-1}\\
+\mu_t(k_t - (1-d)*k_{t-1}-\upsilon I_{ss})\\
+\end{gather}
+\begin{verbatim}
+lam[t] -1/cc[t],
+cc[t] + kk[t]-((theta[t])*(kk[t-1]^alpha)),
+nlPart[t] -(nlPartRHS=lam[t]*theta[t]),
+theta[t]-E^(rho*Log[theta[t-1]] + eps[theta][t]),
+lam[t] +mu1[t] - (alpha*kk[t]^(-1+alpha)*delta*nlPart[t+1]+
+lam[t+1]*delta*(1-dd)+mu1Sqrt[t+1]*delta*(1-dd)),
+II[t] -(kk[t]-(1-dd)*kk[t-1]),
+mu1[t]*(kk[t]-(1-dd)*kk[t-1]-upsilon*IIss)
+}
+rbcEqnsNotBinding={
+lam[t] -1/cc[t],
+cc[t] + kk[t]-((theta[t])*(kk[t-1]^alpha)),
+nlPart[t] -(nlPartRHS=lam[t]*theta[t]),
+theta[t]-E^(rho*Log[theta[t-1]] + eps[theta][t]),
+lam[t] +mu1[t] - (alpha*kk[t]^(-1+alpha)*delta*nlPart[t+1]+lam[t+1]*delta*(1-dd)+mu1[t+1]*delta*(1-dd)),
+II[t] -(kk[t]-(1-dd)*kk[t-1]),
+mu1[t]*(kk[t]-(1-dd)*kk[t-1]-upsilon*IIss)
+}
+\end{verbatim}
 \item[Solution]
 \item[Error Bound]
 \item[resources]\
@@ -1409,7 +1628,7 @@ Bounded solutions if and only if all eigenvalues of
     \begin{gather}
       \begin{bmatrix}
         x_{t-1}\\x_t\\E_t(x_{t+1}|\iSet)\\\epsilon_t
-      \end{bmatrix}= \mathcal{G}(x_{t-1},\epsilon_t|\XtFunc(\cdot),x_t^g)
+      \end{bmatrix}= \mathcal{G}(x_{t-1},\epsilon_t,z_t|\linMod,\XtFunc(\cdot),x_t^g)
     \end{gather}
   \item[Augmented Decision Rule (\ADR)]
     \begin{gather}
@@ -1786,9 +2005,247 @@ Subsequently, $x_{t}=\detF{{T-t}}(x_{t-1})\,\, \forall t>0$
 evolving forward from any $x_0$ given by, a potentially time varying deterministic map,  $x_t=\detF{T-t}(x_{t-1})\,\, \forall t>0$. 
   \end{itemize}
     
+\section{Symbols}
+\label{sec:symbols}
+\begin{gather}
+\intertext{xgusst}%[1]{x^{guess}_{#1}}
+\xgusst{x}
+ \intertext{xnxt}%[1]{x^{next}_{#1}}
+\xnxt{x}
+ \intertext{znxt}%[1]{z^{next}_{#1}}
+\znxt{x}
+ \intertext{xlst}%[1]{x^{last}_{#1}}
+\xlst{x}
+ \intertext{zlst}%[1]{z^{last}_{#1}}
+\zlst{x}
+ \intertext{zgusst}%[1]{z^{guess}_{#1}}
+\zgusst{x}
+ \intertext{xguss}%{\xgusst{}}
+\xguss
+ \intertext{xtpguss}%{x^{tp1guess}}
+\xtpguss
+ \intertext{iSet}%{{\mathcal{I}_t}}
+\iSet
+ \intertext{posInt}%{{\mathcal{N}^+}}
+\posInt
+ \intertext{Rn}%[1]{{\mathcal{R}^{#1}}}
+\Rn{x}
+ \intertext{numX}%{{N_x}}
+\numX
+ \intertext{numZ}%{{N_z}}
+\numZ
+ \intertext{numEps}%{{N_\epsilon}}
+\numEps
+ \intertext{numR}%{{N_r}}
+\numR
+ \intertext{numIters}%{{K}}
+\numIters
+\intertext{numTerms}%{{N_{terms}}}
+\numTerms
+ \intertext{numPts}%{{N_{points}}}
+\numPts
+ \intertext{thePoints}%{{\{(x_{t-1},\epsilon_t)^{1} \ldots (x_{t-1},\epsilon_t)^{\numPts}\}}}
+\thePoints
+ \intertext{thePts}%{{\mathcal{P}}}
+\thePts
+ \intertext{xtmEpsArg}%{{x_{t-1},\epsilon_t}} 
+\xtmEpsArg
+ \intertext{xtArg}%{{x_{t} }}
+\xtArg
+ \intertext{sumLinPart}%{{
+\sumLinPart
+ \intertext{sumZPart}%{{
+\sumZPart
+ \intertext{sumZPartZero}%{{
+\sumZPartZero
+ \intertext{sumZPartPos}%{{
+\sumZPartPos
+ \intertext{EsumLinPart}%{{
+\EsumLinPart
+ \intertext{EsumZPartZero}%{{
+\EsumZPartZero
+ \intertext{EsumZPartEpsilon}%{{
+\EsumZPartEpsilon
+ \intertext{EsumCapZPart}%[1]{{
+\EsumCapZPart{x}
+ \intertext{uncnxpt}%[2]{{\mathcal{E}\left [ \left . #1 \right | #2  \right ]}}
+\uncnxpt{x}{y}
+ \intertext{expct}%[1]{{\mathcal{E}\left [ #1 \right ]}}
+\expct{x}
+ \intertext{xzFuncGuess}%{{\mathbb{g}}}
+\xzFuncGuess
+ \intertext{xzFuncGuessIn}%{{\mathbf{\mathbb{g}_{in}}}}
+\xzFuncGuessIn
+ \intertext{genxzFuncGuessIn}%{{\mathbf{gen\mathbb{g}_{in}}}}
+\genxzFuncGuessIn
+ \intertext{xzFuncGuessSig}%{{(\Rn{\numX})\rightarrow
+\xzFuncGuessSig
+ \intertext{xzFunc}%{{{\gamma}}}
+\xzFunc
+ \intertext{xzFuncSig}%{{(\Rn{\numX+\numEps})\rightarrow
+\xzFuncSig
+ \intertext{XZFunc}%{{\mathbb{G}}}
+\XZFunc
+ \intertext{genXZFunc}%{{\mathbf{gen\mathbb{G}}}}
+\genXZFunc
+ \intertext{bigXFuncSig}%{{(\Rn{\numX})\rightarrow
+\bigXFuncSig
+ \intertext{genXGFP}%{{\mathcal{U}}}
+\genXGFP
+ \intertext{xgFP}%{{\mathcal{V}}}
+\xgFP
+ \intertext{genFpf}%{{\mathbf{gen}_\fpf}}
+\genFpf
+ \intertext{fpf}%{{\mathcal{T}}}
+\fpf
+ \intertext{fpfIn}%{{\mathbf{t}_{in}}}
+\fpfIn
+ \intertext{fpfOut}%{{\mathbf{t}_{out}}}
+\fpfOut
+ \intertext{genFpfIn}%{{\mathbf{gen\fpf}_{in}}}
+\genFpfIn
+ \intertext{genFpfOut}%{{\mathbf{gen\fpf}_{out}}}
+\genFpfOut
+ \intertext{genSlvr}%{{\mathbf{gen}_{\slvr}}}
+\genSlvr
+ \intertext{slvr}%{{\mathcal{S}}}
+\slvr
+ \intertext{slvrIn}%{{\mathbf{s}_{in}}}
+\slvrIn
+ \intertext{slvrOut}%{{\mathbf{s}_{out}}}
+\slvrOut
+ \intertext{genSlvrIn}%{{\mathbf{gen\slvr}_{in}}}
+\genSlvrIn
+ \intertext{genSlvrOut}%{{\mathbf{gen\slvr}_{out}}}
+\genSlvrOut
+ \intertext{solverSig}
+ \intertext{proj}%[1]{{\pi_{#1}}}
+\proj{x}
+ \intertext{eqnArg}%{\mathbf{m}_{in}}
+\eqnArg
+ \intertext{eqnOut}%{\mathbf{m}_{err}}
+\eqnOut
+ \intertext{eqnFunc}%{\mathbb{M}}
+\eqnFunc
+ \intertext{eqnErrs}%{{{m}_e}}
+\eqnErrs
+ \intertext{eqnFuncSig}%{{\Rn{3\numX+\numEps+\numZ}\rightarrow\Rn{\numX}}}
+\eqnFuncSig
+ \intertext{lilXFuncSig}%{{fix lilXFuncSig}}
+\lilXFuncSig
+ \intertext{frfpnsFuncSig}%{{\Rn{\numX+\numEps}\rightarrow\Rn{\numX+\numZ}}}
+\frfpnsFuncSig
+ \intertext{bigXRegimeFuncSig}%{{(\Rn{\numX+1})\rightarrow
+\bigXRegimeFuncSig
+ \intertext{lilXRegimeFuncSig}%{{(\Rn{\numX+1+\numEps+\numZ})\rightarrow
+\lilXRegimeFuncSig
+ \intertext{eqnRegimeFuncSig}%{{
+\eqnRegimeFuncSig
+\intertext{frfpnsRegimeFuncHelp}%%{{\Rn{\numX+\numEps}\rightarrow\Rn{\numX+\numZ}}}
+\frfpnsRegimeFuncHelp
+ \intertext{frfpnsRegimeFuncSig}%{{
+\frfpnsRegimeFuncSig
+ \intertext{dstSpec}%{{\mathbf{distSpec}}}
+\dstSpec
+ \intertext{expctSpec}%{{\mathbf{expctSpec}}}
+\expctSpec
+ \intertext{grdSpec}%{{\mathbf{grdSpec}}}
+\grdSpec
+ \intertext{linMod}%{{\mathcal{L}}}
+\linMod
+ \intertext{linModMats}%{{\{H,\psi_\epsilon,\psi_c;B,\phi,F\}}}
+\linModMats
+ \intertext{sForSum}%{{\nu}}
+\sForSum
+ \intertext{xWOarg}%{   \mathcal{X}_{t}}
+\xWOarg
+ \intertext{xWarg}%{   \mathcal{X}_{t}(x_{-1},\epsilon)}
+\xWarg
+ \intertext{xWargK}%{   \hat{\mathcal{X}}_{t}(x_{-1},\epsilon,k)}
+\xWargK
+ \intertext{xWOargK}%{   \hat{\mathcal{X}}_{t}}
+\xWOargK
+ \intertext{xIter}%[2]{\mathcal{X}^{#1}(#2)}
+\xIter{x}{y}
+\intertext{zWOarg}
+\zWOarg
+\intertext{zWarg}
+\zWarg
+\intertext{zWargK}
+\zWargK
+\intertext{zWOargK}
+\zWOargK
+ \intertext{xNow}%[1]{x^{#1}_t(x_{t-1},\epsilon_t)}
+\xNow{x}
+ \intertext{zNow}%[1]{z^{#1}(x_{t-1},\epsilon_t)}
+\zNow{x}
+ \intertext{xNowtp}%[1]{x^{#1}_{t+1}(x_{t-1},\epsilon_t)}
+\xNowtp{x}
+ \intertext{XNow}%[3]{\mathcal{X}^{#1}_{#2}(x_{#3})}
+\XNow{x}{y}{z}
+ \intertext{ZNow}%[3]{\mathcal{Z}^{#1}(x_{#3})}
+\ZNow{x}{y}{z}
+ \intertext{rcpC}%{{\mathbf{N}}}
+\rcpC
+ \intertext{gssaKtp}%{{\left \{  
+\gssaKtp
+\intertext{QED}
+\myQed\intertext{xtfuncti}
+\xtFuncTI
+\intertext{Xtfuncti}
+\XtFuncTI\intertext{expctEps}
+\expctEps{x}\intertext{xsubtfunc}
+\xsubtFunc{x}{y}
+\intertext{xtFunc}
+\xtFunc{x}
+\intertext{XtFunc}
+\XtFunc{x}
+\intertext{stochF}
+\stochF{x}
+\intertext{detF}
+\detF{x}
+\intertext{initXE}
+\initXE
+\intertext{nlEqnLHS}
+\nlEqnLHS{a}{b}{c}{d}
+\intertext{nlEqn}
+\nlEqn{a}{b}{c}{d}
+\intertext{nlEqnSel}
+\nlEqnSel{a}{b}{c}{d}
+\intertext{itSup}
+\itSup{x}
+\intertext{initX}
+\initX
+\intertext{initXEN}
+\initXEN
+\intertext{detComp}
+\detComp{x}
+\intertext{tArg}
+\tArg
+\intertext{fSum}
+\fSum
+\intertext{modArgs}
+\modArgs
+\intertext{eqnFuncSys}
+\eqnFuncSys
+\end{gather}
 
+\begin{myProof}
+  a proof
+\end{myProof}
 
+\begin{myDefinition}
+  a definition
+\end{myDefinition}
+\begin{myExample}
+  an example
+\end{myExample}
+\begin{myRemark}
+  a remark
+\end{myRemark}
 
+\ADRCE
+\ADR
 
 
 

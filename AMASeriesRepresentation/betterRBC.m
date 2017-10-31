@@ -24,7 +24,12 @@ aGSpecBetter::usage="aGSpec={{1},1,{{4,kLow,kHigh},{3,thLow,thHigh},{3,sigLow,3*
 eqnsCompiledBetter::usage="model equations function"
 rbcEqnsBetter::usage="model equations"
 eqnsEulerCompiledBetter::usage="eqnsEulerCompiledBetter"
-
+simulateBetterRBCExact::usage="simulateBetterRBCExact[numPers_Integer]"
+betterRBCMean::usage="betterRBCMean"
+betterRBCSD::usage="betterRBCSD"
+betterRBCvv::usage="betterRBCvv"
+betterRBCMinZ::usage="betterRBCMinZ"
+betterRBCMaxZ::usage="betterRBCMaxZ"
 
 Begin["`Private`"] (* Begin Private Context *) 
 
@@ -146,9 +151,16 @@ Transpose[{{cct,kkt,tht/cct,tht}}]]]]]
 
 
 
+
 theDistBetter={{{ee,NormalDistribution[0,sigma]}}}//.paramSubs;
 thePFDistBetter={{{ee,PerfectForesight}}};
 
+
+
+simulateBetterRBCExact[numPers_Integer]:=
+With[{draws=RandomVariate[theDistBetter[[1,1,2]],numPers],
+initVec={99,betterRBC`Private`kVal,99,betterRBC`Private`thVal}},
+FoldList[Flatten[simpRBCExactDRBetter@@ Append[Flatten[#1],#2]]&,initVec,draws]]
 
 
 betterRBCExactCondExp = (*AMASeriesRepresentation`Private`*)makeREIterFunc[simpRBCExactDRBetter,theDistBetter]
@@ -212,7 +224,7 @@ thVal=(theta//.ssSolnSubsRE//.(simpParamSubs//N))//N;
 kVal = (kk //.kSSSubRE//.(simpParamSubs//N))//N;
 cVal = (cc //.cSSSubRE//.(simpParamSubs//N))//N ;
 kLow = 1/10*kVal//N;
-kHigh = 4*kVal//N;
+kHigh = 1.2*kVal//N;
 sigVal = sigma //. (simpParamSubs//N);
 sigLow = -3*sigVal;
 sigHigh = 3*sigVal;
@@ -224,6 +236,26 @@ aGSpecBetter={{1,3},2,{{6,kLow,kHigh},{10,thLow,thHigh},{6,sigLow,3*sigHigh}}};
 	 aGSpecBetter={{1,3},1,{{4,kLow,kHigh},{3,thLow,thHigh},{3,sigLow,3*sigHigh}}};*)
 
 	 aGSpecBetter={{1,3},1,{{4,kLow,kHigh},{3,thLow,thHigh},{3,sigLow,3*sigHigh}}};
+
+theRes=simulateBetterRBCExact[20000];
+justKT=theRes[[All,{2,4}]];
+betterRBCMean=Mean[justKT]
+betterRBCSD=StandardDeviation[justKT]
+normedRes=(#/betterRBCSD)&/@((#-betterRBCMean)&/@justKT)
+{uu,ss,vv}=SingularValueDecomposition[normedRes];
+zz=normedRes .vv;
+betterRBCMinZ=Min/@Transpose[zz];
+betterRBCMaxZ=Max/@Transpose[zz];
+{ig,theKs,ig,theThetas}=Transpose[theRes];
+
+betterRBCMean=Append[betterRBCMean,0]
+betterRBCSD=Append[betterRBCSD,sigVal]
+betterRBCMinZ=Append[betterRBCMinZ,-3*sigVal]
+betterRBCMaxZ=Append[betterRBCMaxZ,3*sigVal]
+betterRBCvv=ArrayFlatten[{{ArrayFlatten[{{vv,{{0},{0}}}}]},{{{0,0,1}}}}]
+
+(*ListPlot[Transpose[{theKs,theThetas}]];*)
+
 End[] (* End Private Context *)
 
 EndPackage[]

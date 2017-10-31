@@ -66,7 +66,7 @@ smolRng=#[[{2,3}]]&/@Drop[aGSpecBetter,2][[1]]
 
 *)
 
-sgSpec={toIg,smolRng,pt,tf,ply,{}};
+sgSpec={toIg,smolRng,pt,tf,ply,{},0};
 siData=smolyakGenInterpData[theFP,sgSpec];
 
 

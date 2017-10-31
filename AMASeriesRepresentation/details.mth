@@ -43,9 +43,7 @@ simulateExact[numPers_Integer]:=
 With[{draws=RandomVariate[theDistBetter[[1,1,2]],numPers],
 initVec={99,betterRBC`Private`kVal,99,betterRBC`Private`thVal}},
 FoldList[Flatten[simpRBCExactDRBetter@@ Append[Flatten[#1],#2]]&,initVec,draws]]
-theRes=simulateExact[20000];
-{ig,theKs,ig,theThetas}=Transpose[theRes];
-(*ListPlot[Transpose[{theKs,theThetas}]];*)
+
 
 
 
@@ -139,7 +137,8 @@ approxDRErr03[kk_?NumberQ,tt_?NumberQ,ee_?NumberQ]:=approxErrs[forDR,forDRCE,{kk
 DistributeDefinitions[approxDRErr03];
 approxDRErr04[kk_?NumberQ,tt_?NumberQ,ee_?NumberQ]:=approxErrs[forDR,forDRCE,{kk,tt,ee}][[4]];
 DistributeDefinitions[approxDRErr04];
-(*Export["cErr"<>idStr<>".pdf",Plot3D[aDR01[kk,tt,0],{kk,kl,kh},{tt,tl,th}]];
+(*
+Export["cErr"<>idStr<>".pdf",Plot3D[aDR01[kk,tt,0],{kk,kl,kh},{tt,tl,th}]];
 Export["kErr"<>idStr<>".pdf",Plot3D[aDR02[kk,tt,0],{kk,kl,kh},{tt,tl,th}]];
 Export["nErr"<>idStr<>".pdf",Plot3D[aDR03[kk,tt,0],{kk,kl,kh},{tt,tl,th}]];
 Export["tErr"<>idStr<>".pdf",Plot3D[aDR04[kk,tt,0],{kk,kl,kh},{tt,tl,th}]];

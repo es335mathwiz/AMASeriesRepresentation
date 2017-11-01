@@ -341,8 +341,9 @@ c_t=  (1-\alpha \delta) \theta_{t} k_{t-1}^\alpha\\
 
 \begin{frame}
 
-For mean zero iid $\epsilon_t$ we can easily 
-compute the conditional expectation of the model variables for any given $\theta_{t-1},k_{t-1}$
+  \begin{itemize}
+  \item Mean zero iid $\epsilon_t$ 
+  \item compute the conditional expectation of the model variables for any given $\theta_{t-1},k_{t-1}$
 \begin{gather*}
   E_t(c_t|\theta_{t-1},k_{t-1})=(1-\alpha\delta)k_{t-1}^\alpha e^{\frac{\sigma^2}{2}}\theta_{t-1}^\rho\\
   E_t(k_t|\theta_{t-1},k_{t-1})=\alpha\delta k_{t-1}^\alpha e^{\frac{\sigma^2}{2}}\theta_{t-1}^\rho\\
@@ -350,19 +351,17 @@ compute the conditional expectation of the model variables for any given $\theta
 \end{gather*}
 
 
-By applying the law of iterated expectations, we can compute conditional expected solution paths forward from any initial values $x_{t-1}$
-and realization of $\epsilon_t$.
-As a result, we can use the family of conditional expectations
-along with the contrived reference model to recover an 
-approximation for equation \refeq{soln} along with error bounds.
-The series representation provides a weighted sum of $z_t\tArg$ functions that give us
-an approximation for the known solution.
-Note that the reference model is deterministic and the $z_t\tArg$ functions account for the stochastic nature of the model.
+\item applying the law of iterated expectations
+\item   compute conditional expected solution paths forward from any initial values $(x_{t-1},\epsilon_t)$.
+\item obtain series representation from the family of conditional expectations
+along with the $\linMod$
+  \end{itemize}
+
 \end{frame}
 
 \begin{frame}
   
-
+{\small
 
 For any given values of $k_{t-1},\theta_{t-1}, \epsilon_t$ the model solution and conditional expectations path produces paths for $z_{1t}\tArg, z_{2t}\tArg, z_{3t}\tArg$
 
@@ -386,13 +385,9 @@ B   \begin{bmatrix}
 c_{t-1}\\
 k_{t-1}\\
 \theta_{t-1}
-  \end{bmatrix}  + \phi \psi_\epsilon\epsilon_t + (I - F)^{-1} \phi \psi_c + \sum_{\sForSum=0}^\infty F^s \phi z_{t+\sForSum}(k_{t-1},\theta_{t-1}, \epsilon_t) 
+  \end{bmatrix}  + \phi \psi_\epsilon\epsilon_t + (I - F)^{-1} \phi \psi_c +\\ \sum_{\sForSum=0}^\infty F^s \phi z_{t+\sForSum}(k_{t-1},\theta_{t-1}, \epsilon_t) 
 \end{gather*}
-% \footnote{
-% We need not  make these adjustments for the steady state,
-% but doing so economizes on the number of terms 
-% required for a given level of approximation
-% accuracy.}
+}
 \end{frame}
 \begin{frame}
   
@@ -423,27 +418,21 @@ With
 
 \begin{figure}
   \centering
-\includegraphics[width=2.5in]{simprbcvals.pdf}  
-\includegraphics[width=2.5in]{simprbczvals.pdf}  
+\includegraphics[width=1.7in]{simprbcvals.pdf}  
+\includegraphics[width=1.7in]{simprbczvals.pdf}  
   \caption{model variable values and z values}
   \label{rbcpaths}
 \end{figure}
 
-The left panel of Figure \refeq{rbcpaths} shows the paths, from top to bottom, of $\theta_t, c_t, \text{and} k_t$ from the initial values given in Equation \refeq{theInits}.  The right panel shows the paths for the $z_t$ variables associated with the linear reference model. The orange line corresponds to $z_{1t}\tArg$,
-the blue line corresponds to $z_{2t}\tArg$ and the green line corresponds to $z_{3t}\tArg$.
 \end{frame}
 
 \begin{frame}
   
 
-Figure \ref{rbcTrunc} shows the impact that truncating the series has 
-on the initial value of the state variables.   The bound, $B_n$, shown in red 
-again is very pessimistic compared to the actual, $Z_n$, shown in blue.
- But even with an arbitrarily chosen linear model, ultimately the series approximation provides an accurate value for the initial state vector.  
-
 \begin{figure}
   \centering
-\includegraphics[width=2.7in]{simpArbBoundsVActual.pdf}  
+\includegraphics[width=1.7in]{simpArbBoundsVActual.pdf}  
+\includegraphics[width=1.7in]{simpBoundsVActual.pdf}  
   \caption{RBC Truncation Error Bound Versus Actual}
   \label{rbcTrunc}
 \end{figure}
@@ -451,36 +440,11 @@ again is very pessimistic compared to the actual, $Z_n$, shown in blue.
 
 \begin{frame}
   
-
-\begin{figure}
-  \centering
-\includegraphics[width=2.7in]{simpBoundsVActual.pdf}  
-  \caption{RBC Truncation Error Bound Versus Actual}
-  \label{rbcTruncSimp}
-\end{figure}
-
-
-
-Figure \ref{rbcTruncSimp} shows that using a 
-linearization that better tracks the 
-nonlinear model paths, improves the approximation $Z_n$, shown in blue  and the error bound $B_n$ shown in red.
-Using the linearization of the RBC model produces a tighter but still pessimistic bound on the errors for the initial state vector.
-The first few terms make most of the difference in approximating the value of the state variables.
-
-
-\end{frame}
-
-For convenience of notation in what follows, 
-we will focus on models built up from components of the form
+  \begin{itemize}
+  \item convenience of notation 
 \begin{gather}
-  h_i(x_{t-1},x_{t},x_{t+1},\epsilon_t)=h^{det}_{io}(x_{t-1},x_{t},\epsilon_t)+\sum_{j=1}^{p_i} [h^{det}_{ij}(x_{t-1},x_{t},\epsilon_t)h^{nondet}_{ij}(x_{t+1})]=0
-\end{gather}
-This is a very broad class of models including most widely used
-macroeconomics models.
-
-For example, the Euler equations for the  neoclassical growth  model 
-\label{sec:simple-rbc-model-ext} can be written as
-\begin{gather}
+  h_i(x_{t-1},x_{t},x_{t+1},\epsilon_t)=h^{det}_{io}(x_{t-1},x_{t},\epsilon_t)+\\ \sum_{j=1}^{p_i} [h^{det}_{ij}(x_{t-1},x_{t},\epsilon_t)h^{nondet}_{ij}(x_{t+1})]=0
+\intertext{For example, the Euler equations for the  neoclassical growth  model }
 h_{10^{det}}(\cdot)=\frac{1}{c_t^\eta},\,\,
 h_{11}^{det}()=\alpha \delta k_{t}^{\alpha-1} ,\,\,
 h_{11}^{nondet}(\cdot)=E_t \left (\frac{\theta_{t+1}}{c_{t+1}^\eta} \right )\\
@@ -489,26 +453,24 @@ h_{21}^{det}(\cdot)=0\\
 h_{30}^{det}(\cdot)=\ln \theta_t -(\rho \ln \theta_{t-1} + \epsilon_t),\,\,
 h_{31}^{det}(\cdot)=0
 \end{gather}
-Since we would otherwise  need to compute 
-the conditional expectation of nonlinear expressions,  
-this setup will make it possible for us to use auxiliary
-variables to correctly compute the required expected values.
+  \end{itemize}
 
-It is worth noting that since we will be working with models where expectations are computed at time t, with  $\epsilon_t$  known,  the only stochastic components are those with time subscripts greater than $t$. 
+\end{frame}
 
 
+\begin{frame}
+  
 
-
-
+\begin{itemize}
+\item 
 We now construct our linear reference model by increasing its dimension by one , $\linMod$, to accommodate 
  augmenting the RBC model with the equation
 \begin{tcolorbox}[ams gather]
-  \rcpC_t=\frac{\eta}{c_t}
+  \rcpC_t=\frac{\eta\theta_t}{c_t}
 \end{tcolorbox}
-substituting $\rcpC_{t+1}$ for $\frac{1}{c_{t+1}}$ in the first equation and 
+substituting $\rcpC_{t+1}$ for $\frac{\theta_t}{c_{t+1}}$ in the first equation and 
  linearizing the RBC model about the ergodic mean
-given in \refeq{rbcparams}
-{\small
+{\tiny
 \begin{gather}
   \begin{bmatrix}
 H_{-1}&H_{0}&H_{1} 
@@ -521,11 +483,19 @@ H_{-1}&H_{0}&H_{1}
 \end{bmatrix}, \psi_z=I
 \end{gather}%(\footnote{generated by AMAPaperCalcs.mth {RBCHmatSymb.pdf}})
 }
-These coefficients  produce a unique stable linear solution.
+\end{itemize}
+\end{frame}
 
+ \begin{frame}
+  
+ \begin{itemize}
+\item 
+
+These coefficients  produce a unique stable linear solution.
+{\tiny
 \begin{gather}
   B=
-\vcenter{\hbox{\includegraphics{RBCBmatSymb.pdf}}},
+\vcenter{\hbox{\includegraphics{RBCBmatSymb.pdf}}},\\
 \phi=
 \vcenter{\hbox{\includegraphics{RBCPhimatSymb.pdf}}}\\
 F=
@@ -534,7 +504,9 @@ F=
 \vcenter{\hbox{\includegraphics{RBCHSum.pdf}}}
 \vcenter{\hbox{\includegraphics{RBCSS.pdf}}}=\vcenter{\hbox{\includegraphics{RBCPsissSymb.pdf}}}
 \end{gather}
-
+}
+ \end{itemize}
+ \end{frame}
 
 \section{A Model Error Bound}
 \label{sec:bound}

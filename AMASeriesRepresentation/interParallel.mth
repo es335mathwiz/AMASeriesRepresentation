@@ -1,0 +1,10 @@
+Get["pathSetup.mth"]
+ParallelEvaluate[SetDirectory["/msu/scratch2/m1gsa00/git/AMASeriesRepresentation/AMASeriesRepresentation"]]
+Needs["AMASeriesRepresentation`"]
+Needs["betterRBC`"]
+ParallelEvaluate[Get["pathSetup.mth"]]
+ParallelNeeds["AMASeriesRepresentation`"]
+ParallelNeeds["betterRBC`"]
+Get["AMAFedsBetterRBC.mth"]
+doIt[{4,4,2},6,3]
+Quit

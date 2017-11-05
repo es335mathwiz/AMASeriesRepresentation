@@ -6,7 +6,7 @@ genOscilPath[init_?MatrixQ,eps_?MatrixQ,kk_Integer]:=
 			 N[(Norm @ init)]/(1+N[Norm @ eps])^2 *theOscil]
 genRandomPath[init_?MatrixQ,eps_?MatrixQ,kk_Integer]:=
 		Module[{},SeedRandom[Round[200*N[(Norm @ init)]+Norm[eps]]]; 
-				  RandomReal[{-4,4},kk]]
+		Map[Max[2.5,#]&, RandomReal[{-4,4},kk]]]
 genXPath[init_?MatrixQ,eps_?MatrixQ,kk_Integer]:=
 		Transpose[{(Join[init,(Through[
 				{genPiPath,

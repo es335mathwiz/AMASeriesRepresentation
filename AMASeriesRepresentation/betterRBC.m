@@ -97,8 +97,20 @@ rbcEqnsBetter=eqnsCompiledBetter=Compile @@ {
 {cct^(-1) - (0.342*nltp1)/kkt^(16/25), 
 cct + kkt - 1.*kktm1^(9/25)*thetat, 
 nlt - thetat/cct,
-thetat - 1.*2.718281828459045^epsVal*thetatm1^(19/20)},"RuntimeOptions"->{"RuntimeErrorHandler"->Function[$Failed],"CatchMachineOverflow"->True,"CatchMachineUnderflow"->True}}
+thetat - ((2.718281828459045^epsVal)*(thetatm1^(.95)))},"RuntimeOptions"->{"RuntimeErrorHandler"->Function[$Failed],"CatchMachineOverflow"->True,"CatchMachineUnderflow"->True}}
 
+
+(*
+causes error a
+CompiledFunction::cfn: 
+   Numerical error encountered at instruction 2; proceeding with
+     uncompiled evaluation.
+
+eqnsCompiledBetter  @@ Flatten[{{1}, {0.0187324}, {1}, {1.1}, {0.293437}, {-0.0351748},      {7.51431}, {1.08125}, {0.232894}, {0.120986}, {3.96721}, 
+     {1.07709}, {-0.0124264}}]
+
+*)
+(*
 eqnsEulerCompiledBetter=Compile @@ {
 {
 {cctm1,_Real},{kktm1,_Real},{nltm1,_Real},{thetatm1,_Real},
@@ -110,7 +122,7 @@ eqnsEulerCompiledBetter=Compile @@ {
 cct + kkt - 1.*kktm1^(9/25)*thetat, 
 nlt - thetat/cct,
 thetat - 1.*2.718281828459045^epsVal*thetatm1^(19/20)},"RuntimeOptions"->{"RuntimeErrorHandler"->Function[$Failed],"CatchMachineOverflow"->True,"CatchMachineUnderflow"->True}}
-
+*)
 
 Needs["CompiledFunctionTools`"]
 

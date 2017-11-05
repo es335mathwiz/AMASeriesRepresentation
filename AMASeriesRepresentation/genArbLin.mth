@@ -109,7 +109,7 @@ Export["arbTruncErr.pdf",
 
 Export["piPath.pdf",ListPlot[somePts[[1]],PlotJoined->True,PlotLabel->"Pi Digits Path("<>ToString[initX]<>","<>ToString[theEpsVal]<>")"]];
 Export["oscillPath.pdf",ListPlot[somePts[[2]],PlotJoined->True,PlotLabel->"Oscillatory Path("<>ToString[initX]<>","<>ToString[theEpsVal]<>")"]];
-Export["pseudoPath.pdf",ListPlot[somePts[[3]],PlotJoined->True,PlotLabel->"Pseudo Random Path("<>ToString[initX]<>","<>ToString[theEpsVal]<>")"]];
+Export["pseudoPath.pdf",ListPlot[somePts[[3]],PlotJoined->True,PlotLabel->"Pseudo Random Path("<>ToString[initX]<>","<>ToString[theEpsVal]<>")"],PlotRange->All];
 
 Export["theZs.pdf",
 	   ListPlot[Transpose[Partition[Flatten[someZs],3]],PlotJoined->True,PlotLabel->"z's for  Path("<>ToString[initX]<>","<>ToString[theEpsVal]<>")"]];

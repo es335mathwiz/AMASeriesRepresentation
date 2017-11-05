@@ -2288,7 +2288,6 @@ With[{numXVars=Length[psiZ]},
 With[{fPows=Drop[NestList[Function[xx,FF. xx],IdentityMatrix[numXVars],Length[zPath]],-1]},
 Apply[Plus,
 MapThread[Function[{xx,yy},Dot[xx,phi.psiZ.yy]],{fPows , zPath}]]]]
-
 @}
 
 \subsection{fSum}

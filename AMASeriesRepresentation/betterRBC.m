@@ -24,6 +24,8 @@ aGSpecBetter::usage="aGSpec={{1},1,{{4,kLow,kHigh},{3,thLow,thHigh},{3,sigLow,3*
 eqnsCompiledBetter::usage="model equations function"
 rbcEqnsBetter::usage="model equations"
 eqnsEulerCompiledBetter::usage="eqnsEulerCompiledBetter"
+betterExactXZ::usage="betterExactXZ"
+betterExactZ::usage="betterExactZ"
 simulateBetterRBCExact::usage="simulateBetterRBCExact[numPers_Integer]"
 betterRBCMean::usage="betterRBCMean"
 betterRBCSD::usage="betterRBCSD"
@@ -65,11 +67,12 @@ discMapEqns01=Append[zfEqns/.t->t+1,discMapEqns00[[1]]]//PowerExpand
 
 (*parameters page 21 using state 1*)
 paramSubs={
-alpha->36/100,
+alpha->.36,
 beta->1,
-delta->95/100,
-rho->95/100,
-sigma->1/100
+eta->1,
+delta->.95,
+rho->.95,
+sigma->.01
 } ;
 
 
@@ -94,10 +97,10 @@ rbcEqnsBetter=eqnsCompiledBetter=Compile @@ {
 {cctp1,_Real},{kktp1,_Real},{nltp1,_Real},{thetatp1,_Real},
 {epsVal,_Real}
 },
-{cct^(-1) - (0.342*nltp1)/kkt^(16/25), 
-cct + kkt - 1.*kktm1^(9/25)*thetat, 
+({cct^(-1) - (alpha*delta*nltp1)/kkt^(1-alpha), 
+cct + kkt - 1.*kktm1^(alpha)*thetat, 
 nlt - thetat/cct,
-thetat - ((2.718281828459045^epsVal)*(thetatm1^(.95)))},"RuntimeOptions"->{"RuntimeErrorHandler"->Function[$Failed],"CatchMachineOverflow"->True,"CatchMachineUnderflow"->True}}
+thetat - ((N[E]^epsVal)*(thetatm1^(rho)))}/.paramSubs),"RuntimeOptions"->{"RuntimeErrorHandler"->Function[$Failed],"CatchMachineOverflow"->True,"CatchMachineUnderflow"->True}}
 
 
 (*
@@ -178,9 +181,18 @@ FoldList[Flatten[simpRBCExactDRBetter@@ Append[Flatten[#1],#2]]&,initVec,draws]]
 betterRBCExactCondExp = (*AMASeriesRepresentation`Private`*)makeREIterFunc[simpRBCExactDRBetter,theDistBetter]
 
 
+betterExactZ=
+Function[{cc, kk, nl, th, eps},
+With[{hm=getH[linModBetter],pc=getPsiC[linModBetter],pe=getPsiEps[linModBetter],
+xt=Flatten[simpRBCExactDRBetter[cc,kk,nl,th,eps]]},
+With[{xtp1=Flatten[betterRBCExactCondExp @@ xt]},
+hm.Transpose[{Join[{cc,kk,nl,th},xt,xtp1]}]-pc-pe*eps]]]
 
-
-
+betterExactXZ=
+Function[{cc, kk, nl, th, eps},
+With[{xval=simpRBCExactDRBetter[cc,kk,nl,th,eps],
+zval=betterExactZ[cc,kk,nl,th,eps]},
+Join[xval,zval]]]
 
 psiz=IdentityMatrix[4]
 
@@ -249,7 +261,7 @@ aGSpecBetter={{1,3},2,{{6,kLow,kHigh},{10,thLow,thHigh},{6,sigLow,3*sigHigh}}};
 
 	 aGSpecBetter={{1,3},1,{{4,kLow,kHigh},{3,thLow,thHigh},{3,sigLow,3*sigHigh}}};
 
-theRes=simulateBetterRBCExact[20000];
+theRes=simulateBetterRBCExact[200];
 justKT=theRes[[All,{2,4}]];
 betterRBCMean=Mean[justKT]
 betterRBCSD=StandardDeviation[justKT]

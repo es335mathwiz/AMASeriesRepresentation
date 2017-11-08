@@ -702,10 +702,15 @@ Map["xformToXVec"->#&,
 
 parallelSetup[]:=
 Module[{},
+Print["parallelSetup:"];
 Get["pathSetup.mth"];
+Print["after pathSetup:"];
 ParallelNeeds["AMASeriesRepresentation`"];
+Print["after parallelneedsama:"];
 ParallelNeeds["betterRBC`"];
+Print["after parallelneedsbetter:"];
 SetSharedFunction[myAbortKernels];
+Print["about toe get amarep:"];
 Get["AMASeriesRepresentation`"]]
 
 
@@ -1616,7 +1621,7 @@ Print["parallelgenXZREInterpTime=",(AbsoluteTime[])-tn2];
 parallelDoIterREInterp[@<theSolver@>,
 	@<linMod@>,
 	@<XZFuncs@>,
-@<eqnsFunc@>,@<smolGSpec@>,@<distribSpec@>]:=
+@<eqnsFunc@>,@<smolGSpec@>]:=
 With[{numX=getNumX[linMod],lclnumEps=getNumEps[linMod],numZ=getNumZ[linMod]},
 tn=AbsoluteTime[];
 parallelSetup[];
@@ -1651,12 +1656,14 @@ parallelDoIterREInterp[genFRExtFunc,
 	@<XZFuncs@>,
 @<eqnsFunc@>,@<smolGSpec@>,opts:OptionsPattern[]]:=
 With[{numX=getNumX[linMod],lclnumEps=getNumEps[linMod],numZ=getNumZ[linMod]},
-tn=AbsoluteTime[];
+tn=AbsoluteTime[];Print["parallelDoInterREInterp:"];
 parallelSetup[];
 DistributeDefinitions[XZFuncs[[1]]];
 DistributeDefinitions[eqnsFunc];
 DistributeDefinitions[linMod];
+Print["done distributing defs:"];
 With[{theFuncs=parallelMakeGenericInterpFuncs[genFRExtFunc[{numX,numEps,numZ},linMod,XZFuncs,eqnsFunc,Apply[Sequence,FilterRules[{opts},Options[genFRExtFunc]]]],backLookingInfo,smolGSpec,smolyakInterpolation,{}]},
+Print["done parallelmakegenericinterpfunc:"];
 Print["parallelMakeInterpTime=",(tn2=AbsoluteTime[])-tn];
 With[{XZRE=parallelGenXZREInterpFunc[{numX,numEps,numZ},theFuncs,smolGSpec,distribSpec]},
 Print["parallelgenXZREInterpTime=",(AbsoluteTime[])-tn2];
@@ -1751,6 +1758,7 @@ parallelNestIterREInterp[genFRExtFunc,@<linMod@>,
 @<smolGSpec@>,
 numIters_Integer]:=
 Module[{},parallelSetup[];
+Print["pre nestlist"];
 NestList[Function[xx,parallelDoIterREInterp[genFRExtFunc,linMod,
 {xx[[2]],numSteps},eqnsFunc,smolGSpec]],{ig,XZFuncs[[1]]},numIters]]
 
@@ -2310,11 +2318,11 @@ fSum[@<linMod@>,
 	@<XZFuncs@>,xtGuess:{{_?NumberQ..}..}]:=
 With[{numXVars=getNumX[linMod],numZVars=getNumZ[linMod]},
 With[{xzRes=Apply[multiStepZ[XZFuncs,numXVars,numZVars,numSteps], 
-Flatten[xtGuess]]},
+Flatten[xtGuess]]},Print["xzRes:",xzRes];
 Check[fSumC[phi,FF,psiZ,xzRes],Print["trying to throw high"];Throw[xtGuess]]
 ]]
 
-
+(*
 fSum[@<linMod@>,
 	@<XZFuncs@>,xtGuess_?MatrixQ]:=
 With[{numXVars=getNumX[linMod],numZVars=getNumZ[linMod]},
@@ -2322,7 +2330,7 @@ With[{xzRes=Apply[multiStepZ[XZFuncs,numXVars,numZVars,numSteps],
 Flatten[xtGuess]]},
 Check[fSumNotC[phi,FF,psiZ,xzRes],Print["trying to throw high"];Throw[xtGuess]]
 ]]
-
+*)
 okNums[theVals_?VectorQ]:=
 Apply[And,Map[Or[MachineNumberQ[#],IntegerQ[#]]&,theVals]]
 
@@ -2342,7 +2350,7 @@ Join[AMASeriesRepCallGraph,Map["fSum"->#&,{"numXVars","numZVars","multiStepZ","f
 (*begin code for genSlots*)
 genSlots[numVars_Integer]:=
 Module[{},
-genSlots[numVars]=
+(*genSlots[numVars]=*)
 replaceMySlotStandIn[Table[{mySlotStandIn[ii]},{ii,numVars}]]]/;And[numVars>=0]
 
 AMASeriesRepCallGraph=
@@ -2354,13 +2362,9 @@ replaceMySlotStandIn[xx_]:=xx/.mySlotStandIn->Slot
 
 
 
-genSlot[slotNum_Integer]:=
-Module[{},
-genSlot[slotNum]=
-replaceMySlotStandIn[mySlotStandIn[slotNum]]]/;And[slotNum>0]
 
-AMASeriesRepCallGraph=
-Join[AMASeriesRepCallGraph,Map["genSlot"->#&,{"replaceMySlotStandIn","mySlotStandIn"}]];
+
+
 
 
 (*end code for genSlots*)
@@ -2485,13 +2489,13 @@ theFunc]]]]]]/;numSteps>0
 
 
 multiStep[@<XZFuncs@>,numX_Integer,valRange:{_Integer..},numTerms_Integer]:=
-Module[{xfName=Unique["msXFName"],xzfName=Unique["msXZFName"]},
+Module[{xfName=Unique["msXFName"],xzfName=Unique["msXZFName"]},Print["naming:",xzfName];
 With[{slotArgs=Flatten[genSlots[numX]],
 funcArgs=Unique["msArgs"]},
 With[{appGuts=(notApply[XZFuncs[[1]],theArgs$])},
-xfName[theArgs:{_(*?NumberQ*)..}]:=
+xfName[theArgs:{_?NumberQ..}]:=
 Flatten[Apply[XZFuncs[[1]],theArgs$]][[Range[numX]]];
-xzfName[theArgs:{_(*?NumberQ*)..}]:=
+xzfName[theArgs:{_?NumberQ..}]:=
 Apply[XZFuncs[[1]],theArgs$];
 With[{iterGuts=
 NestList[xfName,funcArgs,numTerms-1]/.funcArgs-> slotArgs},

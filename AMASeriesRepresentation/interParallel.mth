@@ -6,5 +6,5 @@ ParallelEvaluate[Get["pathSetup.mth"]]
 ParallelNeeds["AMASeriesRepresentation`"]
 ParallelNeeds["betterRBC`"]
 Get["AMAFedsBetterRBC.mth"]
-doIt[{4,4,2},6,3]
+doIt[{4,4,4},6,6]
 Quit

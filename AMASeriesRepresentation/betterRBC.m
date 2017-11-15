@@ -97,7 +97,7 @@ rbcEqnsBetter=eqnsCompiledBetter=Compile @@ {
 {cctp1,_Real},{kktp1,_Real},{nltp1,_Real},{thetatp1,_Real},
 {epsVal,_Real}
 },
-({cct^(-1) - (alpha*delta*nltp1)/kkt^(1-alpha), 
+({cct^(-1) - (alpha*delta*nltp1)/kkt^(1-alpha),
 cct + kkt - 1.*kktm1^(alpha)*thetat, 
 nlt - thetat/cct,
 thetat - ((N[E]^epsVal)*(thetatm1^(rho)))}/.paramSubs),"RuntimeOptions"->{"RuntimeErrorHandler"->Function[$Failed],"CatchMachineOverflow"->True,"CatchMachineUnderflow"->True}}
@@ -259,7 +259,7 @@ thHigh = 11/10;
 aGSpecBetter={{1,3},2,{{6,kLow,kHigh},{10,thLow,thHigh},{6,sigLow,3*sigHigh}}};
 	 aGSpecBetter={{1,3},1,{{4,kLow,kHigh},{3,thLow,thHigh},{3,sigLow,3*sigHigh}}};*)
 
-	 aGSpecBetter={{1,3},1,{{4,kLow,kHigh},{3,thLow,thHigh},{3,sigLow,3*sigHigh}}};
+	 aGSpecBetter={{1,3},1,{{4,kLow,kHigh},{3,thLow,thHigh},{3,sigLow,sigHigh}}};
 
 theRes=simulateBetterRBCExact[200];
 justKT=theRes[[All,{2,4}]];

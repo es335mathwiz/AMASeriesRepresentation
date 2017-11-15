@@ -162,7 +162,7 @@ postInt=({shortXs,ExpandAll[
 With[{taylorOrd=maxExponent[preInt[[2]],preInt[[1]]]},
 With[{preIntTaylor={preInt[[1]],multivariateTaylor[preInt[[2]],preInt[[1]],taylorOrd]},
 postIntTaylor={postInt[[1]],multivariateTaylor[postInt[[2]],postInt[[1]],taylorOrd]}},
-Print["smolyakInterpolation:",{preInt},{preInt-preIntTaylor,postInt-postIntTaylor}//InputForm];
+Print["smolyakInterpolation:",{preInt,preIntTaylor,postIntTaylor}//InputForm];
 If[ergodic==={},
 {Apply[Function,preIntTaylor],
 Apply[Function,postIntTaylor]},
@@ -170,7 +170,8 @@ With[{xformed=Flatten[backXtoZ[{moreXs},means,stds,vv]]},
 Print["xformed=",{xformed,preIntTaylor}];
 {Apply[Function,{moreXs,Apply[
 Apply[Function,preIntTaylor],xformed]}],
-Apply[Function,postIntTaylor]}]]]]]]]]
+Apply[Function,{Drop[moreXs,-numEps],Apply[
+Apply[Function,postIntTaylor],Drop[xformed,-numEps]]}]}]]]]]]]]
 
 
 AMASeriesRepCallGraph=
@@ -621,8 +622,8 @@ With[{theSubs=Thread[allOldXs->Flatten[backXtoZ[{allXs},means,stds,vv]]]},
 Print[{oldSmolPolys,theSubs,smolPolys,ExpandAll[oldSmolPolys/.theSubs]}//InputForm];
 {xPts,smolMat,
 ExpandAll[smolPolys(*oldSmolPolys/.theSubs*)],
-oldIntPolys/.theSubs,
-oldDPolys/.theSubs}]]]]]]]]]/;And[Length[means]==Length[approxLevels]]
+intPolys(*oldIntPolys/.theSubs*),
+dintPolys(*oldDPolys/.theSubs*)}]]]]]]]]]/;And[Length[means]==Length[approxLevels]]
 
 
 smolyakInterpolationPrep[approxLevels_?listOfIntegersQ,smolRngs_?MatrixQ]:=

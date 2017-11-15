@@ -607,7 +607,6 @@ numVars=Length[approxLevels],numEps=Length[distribSpec[[1]]]},
 With[{thePts=smolRes[[1]],smolPolys=smolRes[[2]],smolMat=smolRes[[3]]},
 With[{zPts=Map[Function[xx,xformToXVec[xx,smolRngs]],thePts]},
 With[{xPts=backZtoX[zPts,means,stds,vv]},
-Print[{zPts,xPts,backXtoZ[xPts,means,stds,vv]}];
 With[{numPolys=Length[smolPolys]},
 With[{intPolys=ExpandAll[smolPolyExp[smolPolys,smolRngs,distribSpec]]},
 With[{dintPolys=
@@ -619,7 +618,6 @@ oldDPolys=dPolys/.xx->oldX,
 allXs=Table[xx[ii],{ii,Length[means]}],
 allOldXs=Table[oldX[ii],{ii,Length[means]}]},
 With[{theSubs=Thread[allOldXs->Flatten[backXtoZ[{allXs},means,stds,vv]]]},
-Print[{oldSmolPolys,theSubs,smolPolys,ExpandAll[oldSmolPolys/.theSubs]}//InputForm];
 {xPts,smolMat,
 ExpandAll[smolPolys(*oldSmolPolys/.theSubs*)],
 intPolys(*oldIntPolys/.theSubs*),

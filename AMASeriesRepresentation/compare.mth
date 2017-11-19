@@ -8,7 +8,7 @@ ParallelNeeds["AMASeriesRepresentation`"]
 ParallelNeeds["betterRBC`"]
 smolRng=#[[{2,3}]]&/@Drop[aGSpecBetter,2][[1]]
 
-approx=4*{1,1,1};theK=3;iters=2;
+approx=2*{1,1,1};theK=3;iters=3;
 
 toIg=aGSpecBetter[[1]];
 {pt,tf,ply,iply,dply}=smolyakInterpolationPrep[approx,smolRng,theDistBetter];
@@ -40,86 +40,64 @@ eqnsCompiledBetter @@ xkApply]
 
 
 (*
-sillyVals=Range[7];
-sillyFuncs=smolyakInterpolation[sillyVals,sgSpec];
-sillyFuncs[[1]] @@ # & /@ pt
-
-NExpectation[sillyFuncs[[1]] @@ {pt[[1,1]],pt[[1,2]],anEpsVar},anEpsVar \[Distributed] NormalDistribution[0, 0.01]]
-
-sillyFuncs[[2]] @@ {pt[[1,1]],pt[[1,2]]}
-
-
-sillyErgFuncs=smolyakInterpolation[sillyVals,sgSpecErg];
-
-sillyErgFuncs[[1]] @@ # & /@  ptErg
-
-NExpectation[sillyErgFuncs[[1]] @@ {ptErg[[1,1]],ptErg[[1,2]],anEpsVar},anEpsVar \[Distributed] NormalDistribution[0, 0.01]]
-
-sillyErgFuncs[[2]] @@ {ptErg[[1,1]],ptErg[[1,2]]}
-
-
-
-  {{xx94, xx95, xx96}, 1.1860332288880935 + 0.6167861517804166*xx94 + 
-      0.4609283773108644*xx94^2 + 1.2826257722075232*xx95 + 
-      46.120095724308264*xx95^2 + 16.666666666666668*xx96 + 
-      1666.666666666667*xx96^2}
- 
-
-
-
-
-
-NExpectation[ 1.1860332288880935 + 0.6167861517804166*xx94 + 
-      0.4609283773108644*xx94^2 + 1.2826257722075232*xx95 + 
-      46.120095724308264*xx95^2 + 16.666666666666668*xx96 + 
-      1666.666666666667*xx96^2/.{xx94->.5, xx95->.3}, xx96 \[Distributed] NormalDistribution[0, 0.01]]
-
-    { 4990.0091507545585 + 78995.18638183166*xx94 + 
-      437814.0278774727*xx94^2 - 24730.102972218352*xx95 - 
-      243072.16357882076*xx94*xx95 + 35114.208184707604*xx95^2}/.{xx94->.5, xx95->.3}
-
-
-
-
-In[30]:= AMASeriesRepresentation`Private`backXtoZ[{{x1,x2,x3}},betterRBCMean,betterRBCSD,betterRBCvv]//ExpandAll//InputForm
-
-Out[30]//InputForm= 
-{{41.280596254354236 - 90.1784896654123*x1 - 25.327253325435*x2, 
-  -8.471525951587573 - 90.17848966541227*x1 + 25.327253325435006*x2, 
-  0. + 100.*x3}}
-
-
-In[28]:= sillyErgFuncs[[1]]//InputForm
-Out[28]//InputForm= 
-Function[{xx118, xx119, xx120}, 1.088223620333455 + 
-  0.5098285180854054*xx118 + 0.5536039427173546*xx118^2 - 
-  0.11024322423416932*xx119 + 46.206563772290146*xx119^2 + 
-  16.666666666666668*xx120 + 1666.666666666667*xx120^2]
-
-wts=LinearSolve[tf,Range[7]]
-
-wts . plyErg
-
-tryGenFR=parallelNestIterREInterp[{genFRFunc},linModBetter,{genX0Z0Funcs[linModBetter],theK},eqnsCompiledBetter,aGSpecBetter,theDistBetter,iters]
-
-tryGenFRExt=parallelNestIterREInterp[genFRExtFunc,linModBetter,{genX0Z0Funcs[linModBetter],theK},eqnsCompiledBetter,aGSpecBetter,theDistBetter,iters]
-
-
-Trace[trySmolGenFRExt=parallelNestIterREInterp[genFRExtFunc,linModBetter,{genX0Z0Funcs[linModBetter],theK},eqnsCompiledBetter,sgSpec,iters],LinearSolve[___]//InputForm,TraceForward->True]//InputForm
-
-
-
 gsPts=gridPts[aGSpecBetter];
 
-bunch=checkPt[tryGenFR[[-1,1]],tryGenFR[[-2,2]],theK,#]&/@ gsPts;
-Max[Norm/@bunch]
+tryGenFR=parallelNestIterREInterp[{genFRFunc},linModBetter,{genX0Z0Funcs[linModBetter],theK},eqnsCompiledBetter,aGSpecBetter,theDistBetter,iters];
+bunch=.;bunch=checkPt[tryGenFR[[-1,1]],tryGenFR[[-2,2]],theK,#]&/@ gsPts;
+Max[Norm/@bunch](*checks out small*)
+
+tryGenFRExt=parallelNestIterREInterp[genFRExtFunc,linModBetter,{genX0Z0Funcs[linModBetter],theK},eqnsCompiledBetter,aGSpecBetter,theDistBetter,iters];
+bunch=.;bunch=checkPt[tryGenFRExt[[-1,1]],tryGenFRExt[[-2,2]],theK,#]&/@ gsPts;
+Max[Norm/@bunch](*checks out small*)
 
 
-bunch=checkPt[tryGenFRExt[[-1,1]],tryGenFRExt[[-2,2]],theK,#]&/@ gsPts;
-Max[Norm/@bunch]
+trySmolGenFR=parallelNestIterREInterp[{genFRFunc},linModBetter,{genX0Z0Funcs[linModBetter],theK},eqnsCompiledBetter,sgSpec,iters];
+bunch=.;bunch=checkPt[trySmolGenFR[[-1,1]],trySmolGenFR[[-2,2]],theK,#]&/@ pt;
+Max[Norm/@bunch](*checkPt fails with huge numbers but no errors during nestlist*)
 
-bunch=checkPt[trySmolGenFRExt[[-1,1]],trySmolGenFRExt[[-2,2]],theK,#]&/@ pt;
-Max[Norm/@bunch]
+trySmolGenFRExt=parallelNestIterREInterp[genFRExtFunc,linModBetter,{genX0Z0Funcs[linModBetter],theK},eqnsCompiledBetter,sgSpec,iters];
+bunch=.;bunch=checkPt[trySmolGenFRExt[[-1,1]],trySmolGenFRExt[[-2,2]],theK,#]&/@ pt;(*fails with huge numbers*)
+
+trySmolErgGenFR=parallelNestIterREInterp[{genFRFunc},linModBetter,{genX0Z0Funcs[linModBetter],theK},eqnsCompiledBetter,sgSpecErg,iters];
+bunch=.;bunch=checkPt[trySmolErgGenFR[[-1,1]],trySmolErgGenFR[[-2,2]],theK,#]&/@ ptErg;
+Max[Norm/@bunch](*small errors*)
+
+trySmolErgGenFRExt=parallelNestIterREInterp[genFRExtFunc,linModBetter,{genX0Z0Funcs[linModBetter],theK},eqnsCompiledBetter,sgSpecErg,iters];
+bunch=.;bunch=checkPt[trySmolErgGenFRExt[[-1,1]],trySmolErgGenFRExt[[-2,2]],theK,#]&/@ ptErg;
+Max[Norm/@bunch] (*small errors*)
+
+bmr=ConvexHullMesh[ptErg[[All,{1,2}]]]
+rbnds=RegionBounds[bmr]
+Plot3D[actualErrs[trySmolErgGenFRExt[[-1,1]],{kk,tt,0}][[1]],{kk,rbnds[[1,1]],rbnds[[1,2]]},{tt,rbnds[[2,1]],rbnds[[2,2]]},RegionFunction->Function[{kk,tt,zz},RegionMember[bmr,{kk,tt}]],PlotRange->All]
+
+ContourPlot[Norm[actualErrs[trySmolErgGenFRExt[[-1,1]],{kk,tt,0.03}]],{kk,rbnds[[1,1]],rbnds[[1,2]]},{tt,rbnds[[2,1]],rbnds[[2,2]]},RegionFunction->Function[{kk,tt,zz},RegionMember[bmr,{kk,tt}]],PlotRange->All,PlotLegends->Automatic]
+
+ContourPlot[Norm[actualErrs[trySmolErgGenFRExt[[-1,1]],
+backZtoX[{{z1,z2,-0.03}},betterRBCMean,betterRBCSD,betterRBCvv][[1]]]],
+{z1,betterRBCMinZ[[1]],betterRBCMaxZ[[1]]},{z2,betterRBCMinZ[[2]],betterRBCMaxZ[[2]]},PlotRange->All,PlotLegends->Automatic]
+
+SliceContourPlot3D[
+Norm[actualErrs[trySmolErgGenFRExt[[-1,1]],
+backZtoX[{{z1,z2,-0.03}},betterRBCMean,betterRBCSD,betterRBCvv][[1]]]],
+"ZStackedPlanes",
+{z1,betterRBCMinZ[[1]],betterRBCMaxZ[[1]]},{z2,betterRBCMinZ[[2]],betterRBCMaxZ[[2]]},{ee,-.03,.03},PlotRange->All,PlotLegends->Automatic,PlotLabel->"curious"]
+
+
+
+
+ContourPlot[actualErrs[trySmolErgGenFRExt[[-1,1]],{kk,tt,0}][[1]],{kk,rbnds[[1,1]],rbnds[[1,2]]},{tt,rbnds[[2,1]],rbnds[[2,2]]},RegionFunction->Function[{kk,tt,zz},RegionMember[bmr,{kk,tt}]],PlotRange->All,PlotLegends->Automatic]
+
+ContourPlot[actualErrs[trySmolErgGenFRExt[[-1,1]],{kk,tt,-.03}][[1]],{kk,rbnds[[1,1]],rbnds[[1,2]]},{tt,rbnds[[2,1]],rbnds[[2,2]]},RegionFunction->Function[{kk,tt,zz},RegionMember[bmr,{kk,tt}]],PlotRange->All,PlotLegends->Automatic]
+
+ContourPlot3D[actualErrs[trySmolErgGenFRExt[[-1,1]],{kk,tt,ee}][[1]],{kk,rbnds[[1,1]],rbnds[[1,2]]},{tt,rbnds[[2,1]],rbnds[[2,2]]},{ee,-.03,.03},RegionFunction->Function[{kk,tt,zz},RegionMember[bmr,{kk,tt}]],PlotRange->All]
+
+SliceContourPlot3D[actualErrs[trySmolErgGenFRExt[[-1,1]],{kk,tt,ee}][[1]],"ZStackedPlanes",{kk,rbnds[[1,1]],rbnds[[1,2]]},{tt,rbnds[[2,1]],rbnds[[2,2]]},{ee,-.03,.03},RegionFunction->Function[{kk,tt,zz},RegionMember[bmr,{kk,tt}]],PlotRange->All]
+
+
+
+tryGenericSmolErgGenFRExt=parallelNestGenericIterREInterp[genFRExtFunc,linModBetter,{genX0Z0Funcs[linModBetter],theK},eqnsCompiledBetter,sgSpecErg,smolyakInterpolation,{},iters];
+bunch=.;bunch=checkPt[tryGenericSmolErgGenFRExt[[-1,1]],tryGenericSmolErgGenFRExt[[-2,2]],theK,#]&/@ ptErg;
+Max[Norm/@bunch] (*small errors*)
 
 
 

@@ -1032,6 +1032,77 @@ It is possible to precompute each of the integrals. Since the solution will be l
 \subsubsection{Approximating the Known Solution: $U(c) = Log(c)$ }
 \label{sec:recov-known-solut}
 
+\begin{itemize}
+\item for linear init iters =1 varying bigK has no effect
+\item for linear init iters =2 varying bigK has some effect
+\item msnto predicted and actual err added to graphs
+\item 3D to 2D since epsilon doesn't matter much
+\item big change from linear to nonliner iter >1
+\begin{verbatim}
+In[14]:= !grep -l chooseLower resDir/*
+resDir/forBetterRBC${1,1,4}Iters10theK1numKern0.mth
+resDir/forBetterRBC${1,1,4}Iters10theK1numKern48.mth
+resDir/forBetterRBC${1,1,4}Iters10theK5numKern48.mth
+resDir/forBetterRBC${1,1,4}Iters20theK1numKern48.mth
+resDir/forBetterRBC${1,1,4}Iters20theK20numKern48.mth
+resDir/forBetterRBC${1,1,5}Iters10theK1numKern48.mth
+resDir/forBetterRBC${1,1,5}Iters1theK10numKern48.mth
+resDir/forBetterRBC${1,1,5}Iters1theK1numKern48.mth
+resDir/forBetterRBC${1,1,5}Iters1theK20numKern48.mth
+resDir/forBetterRBC${1,1,5}Iters1theK5numKern48.mth
+resDir/forBetterRBC${1,1,5}Iters20theK10numKern48.mth
+
+\end{verbatim}
+\end{itemize}
+
+\begin{figure}
+  \centering
+  \includegraphics{resDir/forBetterRBC--1,1,1-Iters2theK2numKern5.pdf}
+  \caption{Contour Plot for approx=(1,1,1) 2 iterations and K =2}
+  \label{fig:cntplt}
+\end{figure}
+
+\begin{figure}
+  \centering
+  \includegraphics{resDir/forBetterRBC--2,2,2-Iters2theK2numKern5.pdf}
+  \caption{Contour Plot for approx=(2,2,2) 2 iterations and K =2}
+  \label{fig:cntplt}
+\end{figure}
+
+\begin{figure}
+  \centering
+  \includegraphics{resDir/forBetterRBC--2,2,2-Iters5theK5numKern5.pdf}
+  \caption{Contour Plot for approx=(2,2,2) 5 iterations and K =5}
+  \label{fig:cntplt}
+\end{figure}
+
+\begin{figure}
+  \centering
+  \includegraphics{resDir/forBetterRBC--2,2,1-Iters4theK10numKern5.pdf}
+  \caption{Contour Plot for approx=(2,2,2) 5 iterations and K =5}
+  \label{fig:cntplt}
+\end{figure}
+
+\begin{figure}
+  \centering
+  \includegraphics{resDir/forBetterRBC--2,2,2-Iters5theK10numKern0.pdf}
+  \caption{Contour Plot for approx=(2,2,2) 5 iterations and K =10}
+  \label{fig:cntplt}
+\end{figure}
+
+\begin{figure}
+  \centering
+  \includegraphics{resDir/forBetterRBC--5,5,1-Iters5theK10numKern5.pdf}
+  \caption{Contour Plot for approx=(2,2,2) 5 iterations and K =10}
+  \label{fig:cntplt}
+\end{figure}
+
+\begin{figure}
+  \centering
+  \includegraphics{resDir/forBetterRBC--5,5,2-Iters10theK10numKern5.pdf}
+  \caption{Contour Plot for approx=(5,5,2) 2 iterations and K =10}
+  \label{fig:cntplt}
+\end{figure}
 \subsubsection{Approximating an Unknown Solution: $U(c) \ne Log(c)$ }
 \label{sec:unknown-solutions}
 

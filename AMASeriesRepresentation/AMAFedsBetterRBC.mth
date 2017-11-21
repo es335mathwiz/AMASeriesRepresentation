@@ -93,66 +93,49 @@ drerrName[z1_?NumberQ,z2_?NumberQ]:=
 Module[{},
 With[{resNow=-Norm[approxErrs[forDR,forDRCE,
 backZtoX[{{z1,z2,0}},betterRBCMean,betterRBCSD,betterRBCvv][[1]]]]},
-Print["approxDRErr:",{z1,z2,resNow}//InputForm];
 resNow]];
 DistributeDefinitions[drerrName,drName];
-msntoIters=1000;
-msntoval=MSNTO[drerrName,
-{{ { {{betterRBCMinZ[[1]],betterRBCMaxZ[[1]]},{betterRBCMinZ[[2]],betterRBCMaxZ[[2]]}},{} },{{0},Infinity}}},msntoIters,Nied,.1,1.2,.5];
-prederr=(-1)*pickBestMSNTO[msntoval];prederrLoc=MSNTOMinimizer[msntoval];
-Print["done first msnto"];
-msntoval=MSNTO[drName,{{ { {{betterRBCMinZ[[1]],betterRBCMaxZ[[1]]},{betterRBCMinZ[[2]],betterRBCMaxZ[[2]]}},{} },{{0},Infinity}}},
-msntoIters,Nied,.1,1.2,.5];
-Print["done second msnto"];
-drfMax={drfMaxVal,drfMaxSubs}=NMinimize[drName[z1,z2],
+acterr={acterrVal,acterrSubs}=NMinimize[drName[z1,z2],
 And[betterRBCMinZ[[1]] <=z1<=betterRBCMaxZ[[1]],
-betterRBCMinZ[[2]]<=z2<=betterRBCMaxZ[[2]]],{z1,z2},Method->"NelderMead"];Print["fMax:",fMax];
-fMax={fMaxVal,fMaxSubs}=NMinimize[drerrName[z1,z2],
+betterRBCMinZ[[2]]<=z2<=betterRBCMaxZ[[2]]],{z1,z2},Method->"NelderMead"];Print["acterr:",acterr];
+errBnd={errBndVal,errBndSubs}=NMinimize[drerrName[z1,z2],
 And[betterRBCMinZ[[1]] <=z1<=betterRBCMaxZ[[1]],
-betterRBCMinZ[[2]]<=z2<=betterRBCMaxZ[[2]]],{z1,z2},Method->"NelderMead"];Print["fMax:",fMax];
-fMaxLoc={z1,z2}/.fMaxSubs;
-drfMaxLoc={z1,z2}/.drfMaxSubs;
-acterr=(-1)*pickBestMSNTO[msntoval];acterrLoc=MSNTOMinimizer[msntoval];
+betterRBCMinZ[[2]]<=z2<=betterRBCMaxZ[[2]]],{z1,z2},Method->"NelderMead"];Print["errBnd:",errBnd];
+errBndLoc={z1,z2}/.errBndSubs;
+acterrLoc={z1,z2}/.acterrSubs;
 mthName=theName<>".mth";
 If[FileExistsQ[mthName],DeleteFile[mthName]];
 Save[mthName,theRes,tm,numKern,condNum,
-prederr,prederrLoc,acterr,acterrLoc];
-actStr="actual="<>ToString[NumberForm[acterr,NumberFormat->(Row[{#1,"e",#3}]&)]];
-predStr="MSNTO="<>ToString[NumberForm[prederr,NumberFormat->(Row[{#1,"e",#3}]&)]];
-fMaxStr="fMax="<>ToString[NumberForm[-fMaxVal,NumberFormat->(Row[{#1,"e",#3}]&)]];
-drfMaxStr="drfMax="<>ToString[NumberForm[-drfMaxVal,NumberFormat->(Row[{#1,"e",#3}]&)]];
-errStr="\n("<>predStr<>","<>actStr<>")"<>"\n("<>fMaxStr<>","<>drfMaxStr<>")";
-Print["here",{actStr,acterr,predStr,prederr,fMaxStr,fMaxVal,drfMaxStr,drfMaxVal}];
-zPts=backXtoZ[ptErg,betterRBCMean,betterRBCSD,betterRBCvv];Print["fMaxLoc=",fMaxLoc];
-Export[theName<>"DRErr.pdf",
-Plot3D[
-Norm[drerrName[z1,z2]],
-{z1,betterRBCMinZ[[1]],betterRBCMaxZ[[1]]},{z2,betterRBCMinZ[[2]],betterRBCMaxZ[[2]]},PlotRange->All,PlotLegends->Automatic,PlotLabel->theName<>errStr,
-Epilog->{PointSize[0.07],Red,Point[fMaxLoc[[{1,2}]]],PointSize[0.05],Green,Point[acterrLoc[[{1,2}]]],PointSize[0.025],Orange,Point[prederrLoc[[{1,2}]]],PointSize[0.0125],Black,Point[#]&/@zPts[[All,{1,2}]]},PlotRangeClipping->False]];
+errBndVal,errBndLoc,acterrVal,acterrLoc];
+errBndStr=
+"errBnd="<>ToString[NumberForm[-errBndVal,NumberFormat->(Row[{#1,"e",#3}]&)]];
+acterrStr="actualErr="<>ToString[NumberForm[-acterrVal,NumberFormat->(Row[{#1,"e",#3}]&)]];
+Print["here",{acterrStr,acterr,errBnd,errBndStr,errBndVal}];
+zPts=backXtoZ[ptErg,betterRBCMean,betterRBCSD,betterRBCvv];Print["errBndLoc=",errBndLoc];
 Export[theName<>".pdf",
 ContourPlot[
 Norm[actualErrs[theRes[[-1,1]],
 backZtoX[{{z1,z2,0}},betterRBCMean,betterRBCSD,betterRBCvv][[1]]]],
 {z1,betterRBCMinZ[[1]],betterRBCMaxZ[[1]]},{z2,betterRBCMinZ[[2]],betterRBCMaxZ[[2]]},PlotRange->All,PlotLegends->Automatic,PlotLabel->theName<>errStr,
-Epilog->{PointSize[0.07],Red,Point[fMaxLoc[[{1,2}]]],PointSize[0.05],Green,Point[acterrLoc[[{1,2}]]],PointSize[0.025],Orange,Point[prederrLoc[[{1,2}]]],PointSize[0.0125],Black,Point[#]&/@zPts[[All,{1,2}]]},PlotRangeClipping->False]];
+Epilog->{PointSize[0.05],Green,Point[acterrLoc[[{1,2}]]],PointSize[0.025],Orange,Point[errBndLoc[[{1,2}]]],PointSize[0.0125],Black,Point[#]&/@zPts[[All,{1,2}]]},PlotRangeClipping->False]];
 Export[theName<>"Minus.pdf",
 ContourPlot[
 Norm[actualErrs[theRes[[-1,1]],
 backZtoX[{{z1,z2,-.03}},betterRBCMean,betterRBCSD,betterRBCvv][[1]]]],
 {z1,betterRBCMinZ[[1]],betterRBCMaxZ[[1]]},{z2,betterRBCMinZ[[2]],betterRBCMaxZ[[2]]},PlotRange->All,PlotLegends->Automatic,PlotLabel->theName<>errStr,
-Epilog->{PointSize[0.05],Green,Point[acterrLoc[[{1,2}]]],PointSize[0.025],Orange,Point[prederrLoc[[{1,2}]]],PointSize[0.0125],Black,Point[#]&/@zPts[[All,{1,2}]]}]];
+Epilog->{PointSize[0.05],Green,Point[acterrLoc[[{1,2}]]],PointSize[0.025],Orange,Point[errBndLoc[[{1,2}]]],PointSize[0.0125],Black,Point[#]&/@zPts[[All,{1,2}]]}]];
 Export[theName<>"Plus.pdf",
 ContourPlot[
 Norm[actualErrs[theRes[[-1,1]],
 backZtoX[{{z1,z2,.03}},betterRBCMean,betterRBCSD,betterRBCvv][[1]]]],
 {z1,betterRBCMinZ[[1]],betterRBCMaxZ[[1]]},{z2,betterRBCMinZ[[2]],betterRBCMaxZ[[2]]},PlotRange->All,PlotLegends->Automatic,PlotLabel->theName<>errStr,
-Epilog->{PointSize[0.05],Green,Point[acterrLoc[[{1,2}]]],PointSize[0.025],Orange,Point[prederrLoc[[{1,2}]]],PointSize[0.0125],Black,Point[#]&/@zPts[[All,{1,2}]]}]];
+Epilog->{PointSize[0.05],Green,Point[acterrLoc[[{1,2}]]],PointSize[0.025],Orange,Point[errBndLoc[[{1,2}]]],PointSize[0.0125],Black,Point[#]&/@zPts[[All,{1,2}]]}]];
 Export[theName<>"Approx.pdf",
 ContourPlot[
 Norm[checkPt[theRes[[-1,1]],theRes[[-2,2]],theK,
 backZtoX[{{z1,z2,0}},betterRBCMean,betterRBCSD,betterRBCvv][[1]]]],
 {z1,betterRBCMinZ[[1]],betterRBCMaxZ[[1]]},{z2,betterRBCMinZ[[2]],betterRBCMaxZ[[2]]},PlotRange->All,PlotLegends->Automatic,PlotLabel->theName<>errStr,
-Epilog->{PointSize[0.05],Green,Point[acterrLoc[[{1,2}]]],PointSize[0.025],Orange,Point[prederrLoc[[{1,2}]]],PointSize[0.0125],Black,Point[#]&/@zPts[[All,{1,2}]]}]];
+Epilog->{PointSize[0.05],Green,Point[acterrLoc[[{1,2}]]],PointSize[0.025],Orange,Point[errBndLoc[[{1,2}]]],PointSize[0.0125],Black,Point[#]&/@zPts[[All,{1,2}]]}]];
 Print["doIt:saving done"];
 theRes]
 
@@ -161,12 +144,19 @@ getErrs[approx_?VectorQ,iters_Integer,theK_Integer,numKern_Integer]:=
 Module[{},
 With[{mthName=fNameString[approx,iters,theK,numKern]<>".mth"},
 theSave=Get[mthName];
-{prederr,prederrLoc,acterr,acterrLoc}]]
+{errBnd,errBndLoc,acterr,acterrLoc}]]
 
 (*
 
 Plot3D[actualErrs[theRes[[-1,1]],{kk,tt,0}][[1]],{kk,rbnds[[1,1]],rbnds[[1,2]]},{tt,rbnds[[2,1]],rbnds[[2,2]]},RegionFunction->Function[{kk,tt,zz},RegionMember[bmr,{kk,tt}]],PlotRange->All]
 
 
+msntoval=MSNTO[drerrName,
+{{ { {{betterRBCMinZ[[1]],betterRBCMaxZ[[1]]},{betterRBCMinZ[[2]],betterRBCMaxZ[[2]]}},{} },{{0},Infinity}}},msntoIters,Nied,.1,1.2,.5];
+errBnd=(-1)*pickBestMSNTO[msntoval];errBndLoc=MSNTOMinimizer[msntoval];
+Print["done first msnto"];
+msntoval=MSNTO[drName,{{ { {{betterRBCMinZ[[1]],betterRBCMaxZ[[1]]},{betterRBCMinZ[[2]],betterRBCMaxZ[[2]]}},{} },{{0},Infinity}}},
+msntoIters,Nied,.1,1.2,.5];
+Print["done second msnto"];
 
 *)

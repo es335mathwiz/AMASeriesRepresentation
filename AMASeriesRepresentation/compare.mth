@@ -8,7 +8,7 @@ ParallelNeeds["AMASeriesRepresentation`"]
 ParallelNeeds["betterRBC`"]
 smolRng=#[[{2,3}]]&/@Drop[aGSpecBetter,2][[1]]
 
-approx=2*{1,1,1};theK=3;iters=3;
+approx={1,1,1};theK=0;iters=3;
 
 toIg=aGSpecBetter[[1]];
 {pt,tf,ply,iply,dply}=smolyakInterpolationPrep[approx,smolRng,theDistBetter];

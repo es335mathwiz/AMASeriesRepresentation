@@ -2327,10 +2327,11 @@ ConstantArray[0,{Length[psiZ],1}]
 fSum[@<linMod@>,
 	@<XZFuncs@>,xtGuess:{{_?NumberQ..}..}]:=
 With[{numXVars=getNumX[linMod],numZVars=getNumZ[linMod]},
+If[numSteps===0,{Table[{0},{numZVars}]},
 With[{xzRes=Apply[multiStepZ[XZFuncs,numXVars,numZVars,numSteps], 
 Flatten[xtGuess]]},
 Check[fSumC[phi,FF,psiZ,xzRes],Print["trying to throw high"];Throw[xtGuess]]
-]]
+]]]
 
 (*
 fSum[@<linMod@>,

@@ -1055,10 +1055,42 @@ resDir/forBetterRBC${1,1,5}Iters20theK10numKern48.mth
 \end{verbatim}
 \end{itemize}
 
+In what follows I show the impact of increasing the number of terms in the 
+employed in the series representation.  
+The figures  show contour plots for the norm of the error 
+$\sqrt{(c_t-c_t^\star)^2 +(k_t-k_t^\star)^2 +(\theta_t-\theta_t^\star)^2 +(N_t-N_t^\star)^2 }$ for the approximated decision rule. The green dot shows the values of $(y_1,y_2)$ associated with the largest actual error.  The orange dot shows $(y_1,y_2)$ associated with  the largest equation system discrepancy 
+that was used in computing the error bound. The black dots show the interpolation points. The label of the figure provides the predicted error bound along with the largest error.
+
+Figure \ref{fig:cntpltA} shows the results when $K=0$, the standard approach
+ for computing the decision rule.  The error bound, 0.0112529 is 25\% larger than the actual error 0.00912752.
+
 \begin{figure}
   \centering
-  \includegraphics{resDir/forBetterRBC--1,1,1-Iters2theK2numKern5.pdf}
-  \caption{Contour Plot for approx=(1,1,1) 2 iterations and K =2}
+  \includegraphics{resDir/forBetterRBC--1,1,1-Iters20theK0numKern16.pdf}
+  \caption{Contour Plot for approx=(1,1,1) K =0 (Standard Approach)}
+  \label{fig:cntpltA}
+\end{figure}
+
+
+
+\begin{figure}
+  \centering
+\includegraphics[width=1.0in]{resDir/forBetterRBC--1,1,1-Iters30theK1numKern16.pdf}
+\includegraphics[width=1.0in]{resDir/forBetterRBC--1,1,1-Iters30theK2numKern16.pdf}
+\includegraphics[width=1.0in]{resDir/forBetterRBC--1,1,1-Iters30theK3numKern16.pdf}
+\includegraphics[width=1.0in]{resDir/forBetterRBC--1,1,1-Iters30theK4numKern16.pdf}
+\includegraphics[width=1.0in]{resDir/forBetterRBC--1,1,1-Iters30theK5numKern16.pdf}
+  \caption{Contour Plot for approx=(1,1,1)  K =1,2,3,4,5}
+  \label{fig:cntplt}
+\end{figure}
+
+
+
+
+\begin{figure}
+  \centering
+  \includegraphics{resDir/forBetterRBC--1,1,1-Iters30theK10numKern16.pdf}
+  \caption{Contour Plot for approx=(1,1,1) K =10}
   \label{fig:cntplt}
 \end{figure}
 

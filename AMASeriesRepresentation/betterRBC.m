@@ -274,8 +274,8 @@ betterRBCMaxZ=Max/@Transpose[zz];
 
 betterRBCMean=Append[betterRBCMean,0]
 betterRBCSD=Append[betterRBCSD,sigVal]
-betterRBCMinZ=Append[betterRBCMinZ,-3*sigVal]
-betterRBCMaxZ=Append[betterRBCMaxZ,3*sigVal]
+betterRBCMinZ=Append[betterRBCMinZ,-3]
+betterRBCMaxZ=Append[betterRBCMaxZ,3]
 betterRBCvv=ArrayFlatten[{{ArrayFlatten[{{vv,{{0},{0}}}}]},{{{0,0,1}}}}]
 
 (*ListPlot[Transpose[{theKs,theThetas}]];*)

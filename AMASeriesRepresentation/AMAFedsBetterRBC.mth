@@ -16,11 +16,20 @@ With[{approxVals=(approxDR @@ {ig,kk,ig,tt,ee})[[Range[4]]],
 actualVals=simpRBCExactDRBetter@@ {ig,kk,ig,tt,ee}},
 (-1)*Abs[Flatten[(approxVals-actualVals)]]]
 
+
 approxErrs[approxDR_Function,approxDRCE_Function,
 xeps:{kk_?NumberQ,tt_?NumberQ,ee_?NumberQ}]:=
 Module[{approxVals=approxDR[99,kk,99,tt,ee][[Range[4]]]},
 (-1)*Abs[Flatten[(tErrMat. 
 Transpose[{eqnsCompiledBetter @@ makeArgs[{approxDR,approxDRCE},xeps]}])]]]
+
+
+approxErrsK[approxDR_Function,approxDRCE_Function,theK_Integer,
+xeps:{kk_?NumberQ,tt_?NumberQ,ee_?NumberQ}]:=
+Module[{approxVals=approxDR[99,kk,99,tt,ee][[Range[4]]]},
+(-1)*Abs[Flatten[(tErrMat. 
+Transpose[{checkPt[approxDR,approxDRCE,theK,xeps]}])]]]
+
 
 makeArgs[{adr_,adrce_},{kk_?NumberQ,tt_?NumberQ,ee_?NumberQ}]:=
 Module[{},
@@ -105,41 +114,43 @@ errBndLoc={z1,z2}/.errBndSubs;
 acterrLoc={z1,z2}/.acterrSubs;
 mthName=theName<>".mth";
 If[FileExistsQ[mthName],DeleteFile[mthName]];
-errBndStr=
+bothErrStr=
 "\nerrBnd="<>
-ToString[NumberForm[-errBndVal,NumberFormat->(Row[{#1,"e",#3}]&)]]<>","<>
-(acterrStr="actualErr="<>ToString[NumberForm[-acterrVal,NumberFormat->(Row[{#1,"e",#3}]&)]]);
-Print["here",{acterrStr,acterr,errBnd,errBndStr,errBndVal}];
+(errBndStr=ToString[NumberForm[-errBndVal,NumberFormat->(Row[{#1,"e",#3}]&)]])<>","<>
+"actualErr="<>(acterrStr=ToString[NumberForm[-acterrVal,NumberFormat->(Row[{#1,"e",#3}]&)]]);
+WriteString[theName<>"acterr.tex",acterrStr];
+WriteString[theName<>"errBnd.tex",errBndStr];
+Print["here",{acterrStr,acterr,errBnd,bothErrStr,errBndVal}];
 zPts=backXtoZ[ptErg,betterRBCMean,betterRBCSD,betterRBCvv];Print["errBndLoc=",errBndLoc];
 Export[theName<>".pdf",acterrsCP=
 ContourPlot[
 Norm[actualErrs[theRes[[-1,1]],
 backZtoX[{{z1,z2,0}},betterRBCMean,betterRBCSD,betterRBCvv][[1]]]],
-{z1,betterRBCMinZ[[1]],betterRBCMaxZ[[1]]},{z2,betterRBCMinZ[[2]],betterRBCMaxZ[[2]]},PlotRange->All,PlotLegends->Automatic,PlotLabel->theName<>errBndStr,
+{z1,betterRBCMinZ[[1]],betterRBCMaxZ[[1]]},{z2,betterRBCMinZ[[2]],betterRBCMaxZ[[2]]},PlotRange->All,PlotLegends->Automatic,PlotLabel->theName<>bothErrStr,
 Epilog->{PointSize[0.05],Green,Point[acterrLoc[[{1,2}]]],PointSize[0.025],Orange,Point[errBndLoc[[{1,2}]]],PointSize[0.0125],Black,Point[#]&/@zPts[[All,{1,2}]]},PlotRangeClipping->False]];
 Export[theName<>"Minus.pdf",
 ContourPlot[
 Norm[actualErrs[theRes[[-1,1]],
 backZtoX[{{z1,z2,-.03}},betterRBCMean,betterRBCSD,betterRBCvv][[1]]]],
-{z1,betterRBCMinZ[[1]],betterRBCMaxZ[[1]]},{z2,betterRBCMinZ[[2]],betterRBCMaxZ[[2]]},PlotRange->All,PlotLegends->Automatic,PlotLabel->theName<>"Minus"<>errBndStr,
+{z1,betterRBCMinZ[[1]],betterRBCMaxZ[[1]]},{z2,betterRBCMinZ[[2]],betterRBCMaxZ[[2]]},PlotRange->All,PlotLegends->Automatic,PlotLabel->theName<>"Minus"<>bothErrStr,
 Epilog->{PointSize[0.05],Green,Point[acterrLoc[[{1,2}]]],PointSize[0.025],Orange,Point[errBndLoc[[{1,2}]]],PointSize[0.0125],Black,Point[#]&/@zPts[[All,{1,2}]]}]];
 Export[theName<>"Plus.pdf",
 ContourPlot[
 Norm[actualErrs[theRes[[-1,1]],
 backZtoX[{{z1,z2,.03}},betterRBCMean,betterRBCSD,betterRBCvv][[1]]]],
-{z1,betterRBCMinZ[[1]],betterRBCMaxZ[[1]]},{z2,betterRBCMinZ[[2]],betterRBCMaxZ[[2]]},PlotRange->All,PlotLegends->Automatic,PlotLabel->theName<>"Plus"<>errBndStr,
+{z1,betterRBCMinZ[[1]],betterRBCMaxZ[[1]]},{z2,betterRBCMinZ[[2]],betterRBCMaxZ[[2]]},PlotRange->All,PlotLegends->Automatic,PlotLabel->theName<>"Plus"<>bothErrStr,
 Epilog->{PointSize[0.05],Green,Point[acterrLoc[[{1,2}]]],PointSize[0.025],Orange,Point[errBndLoc[[{1,2}]]],PointSize[0.0125],Black,Point[#]&/@zPts[[All,{1,2}]]}]];
 Export[theName<>"Approx.pdf",
 ContourPlot[
 Norm[checkPt[theRes[[-1,1]],theRes[[-2,2]],theK,
 backZtoX[{{z1,z2,0}},betterRBCMean,betterRBCSD,betterRBCvv][[1]]]],
-{z1,betterRBCMinZ[[1]],betterRBCMaxZ[[1]]},{z2,betterRBCMinZ[[2]],betterRBCMaxZ[[2]]},PlotRange->All,PlotLegends->Automatic,PlotLabel->theName<>"Approx"<>errBndStr,
+{z1,betterRBCMinZ[[1]],betterRBCMaxZ[[1]]},{z2,betterRBCMinZ[[2]],betterRBCMaxZ[[2]]},PlotRange->All,PlotLegends->Automatic,PlotLabel->theName<>"Approx"<>bothErrStr,
 Epilog->{PointSize[0.05],Green,Point[acterrLoc[[{1,2}]]],PointSize[0.025],Orange,Point[errBndLoc[[{1,2}]]],PointSize[0.0125],Black,Point[#]&/@zPts[[All,{1,2}]]}]];
 Export[theName<>"truncApprox.pdf",
 ContourPlot[
 Norm[tErrMat.Transpose[{checkPt[theRes[[-1,1]],theRes[[-2,2]],theK,
 backZtoX[{{z1,z2,0}},betterRBCMean,betterRBCSD,betterRBCvv][[1]]]}]],
-{z1,betterRBCMinZ[[1]],betterRBCMaxZ[[1]]},{z2,betterRBCMinZ[[2]],betterRBCMaxZ[[2]]},PlotRange->All,PlotLegends->Automatic,PlotLabel->theName<>"TruncApprox"<>errBndStr,
+{z1,betterRBCMinZ[[1]],betterRBCMaxZ[[1]]},{z2,betterRBCMinZ[[2]],betterRBCMaxZ[[2]]},PlotRange->All,PlotLegends->Automatic,PlotLabel->theName<>"TruncApprox"<>bothErrStr,
 Epilog->{PointSize[0.05],Green,Point[acterrLoc[[{1,2}]]],PointSize[0.025],Orange,Point[errBndLoc[[{1,2}]]],PointSize[0.0125],Black,Point[#]&/@zPts[[All,{1,2}]]}]];
 Save[mthName,theRes,tm,numKern,condNum,
 errBndVal,errBndLoc,acterrVal,acterrLoc,acterrsCP];
@@ -166,5 +177,15 @@ Print["done first msnto"];
 msntoval=MSNTO[drName,{{ { {{betterRBCMinZ[[1]],betterRBCMaxZ[[1]]},{betterRBCMinZ[[2]],betterRBCMaxZ[[2]]}},{} },{{0},Infinity}}},
 msntoIters,Nied,.1,1.2,.5];
 Print["done second msnto"];
+
+errKBnd={errKBndVal,errKBndSubs}=NMinimize[drerrKName[z1,z2],
+And[betterRBCMinZ[[1]] <=z1<=betterRBCMaxZ[[1]],
+betterRBCMinZ[[2]]<=z2<=betterRBCMaxZ[[2]]],{z1,z2},Method->"NelderMead"];Print["errKBnd:",errKBnd];
+errKBndLoc={z1,z2}/.errKBndSubs;
+errKBnd={errKBndVal,errKBndSubs}=NMinimize[drerrKName[z1,z2],
+And[betterRBCMinZ[[1]] <=z1<=betterRBCMaxZ[[1]],
+betterRBCMinZ[[2]]<=z2<=betterRBCMaxZ[[2]]],{z1,z2},Method->"NelderMead"];Print["errKBnd:",errKBnd];
+errKBndLoc={z1,z2}/.errKBndSubs;
+
 
 *)

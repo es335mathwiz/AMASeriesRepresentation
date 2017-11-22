@@ -1056,6 +1056,37 @@ resDir/forBetterRBC${1,1,5}Iters20theK10numKern48.mth
 
 \end{verbatim}
 \end{itemize}
+Figure \ref{fig:erg}  characterizes the use of the parallelotope
+transformation described in \cite{Judd2013}. The left panel shows the 200 values of $k_t$ and $\theta_t$ resulting from a stochastic simulation of the the known decision rule. The right panel shows the transformed variables the constitute
+an improved set of variables for constructing function approximation values.
+\begin{figure}
+  \centering
+  \includegraphics[width=2.5in]{ergodicKTheta.pdf}
+  \includegraphics[width=2.5in]{ergodicZs.pdf}
+  \caption{The Ergodic Values for $k_t, \theta_t$ }
+  \label{fig:erg}
+\end{figure}
+
+
+\begin{gather}
+\bar{X}= \vcenter{\hbox{\includegraphics{ergodicMean.pdf}}}
+\end{gather}
+\begin{gather}
+\sigma_{X}= \vcenter{\hbox{\includegraphics{ergodicSD.pdf}}}
+\end{gather}
+
+
+\begin{gather}
+V= \vcenter{\hbox{\includegraphics{ergodicV.pdf}}}
+\end{gather}
+
+\begin{gather}
+\max Z= \vcenter{\hbox{\includegraphics{ergodicMaxZ.pdf}}}
+\end{gather}
+\begin{gather}
+\min Z= \vcenter{\hbox{\includegraphics{ergodicMinZ.pdf}}}
+\end{gather}
+
 
 In what follows I show the impact of increasing the number of terms in the 
 employed in the series representation.  
@@ -1063,77 +1094,124 @@ The figures  show contour plots for the norm of the error
 $\sqrt{(c_t-c_t^\star)^2 +(k_t-k_t^\star)^2 +(\theta_t-\theta_t^\star)^2 +(N_t-N_t^\star)^2 }$ for the approximated decision rule. The green dot shows the values of $(y_1,y_2)$ associated with the largest actual error.  The orange dot shows $(y_1,y_2)$ associated with  the largest equation system discrepancy 
 that was used in computing the error bound. The black dots show the interpolation points. The label of the figure provides the predicted error bound along with the largest error.
 
-Figure \ref{fig:cntpltA} shows the results when $K=0$, the standard approach
- for computing the decision rule.  The error bound, 0.0112529 is 25\% larger than the actual error 0.00912752.
+
+Figure \ref{fig:cntpltA} shows the results when $K=0$, with degree of approximation $(1,1,1)$, the standard approach
+for computing the decision rule.  The top panel provides a contour plot of the
+norm of the equation errors. The bottom plot shows the error in the decision rule for different values of $k_{t-1}, \theta_{t-1}$ with $\epsilon_t=0$.  The plots for different values of $\epsilon_t$ are not different. The error bound, \input{resDir/forBetterRBC--1,1,1-Iters20theK0numKern2errBnd.tex} is 25\% larger than the actual error \input{resDir/forBetterRBC--1,1,1-Iters20theK0numKern2actErr.tex}
 
 \begin{figure}
   \centering
-  \includegraphics{resDir/forBetterRBC--1,1,1-Iters20theK0numKern16.pdf}
+\ifmacosx
+  \includegraphics{resDir/forBetterRBC--1,1,1-Iters20theK0numKern2Approx.pdf}
+  \includegraphics{resDir/forBetterRBC--1,1,1-Iters20theK0numKern2.pdf}
+\fi
   \caption{Contour Plot for approx=(1,1,1) K =0 (Standard Approach)}
   \label{fig:cntpltA}
 \end{figure}
 
+The panels in Figure \ref{fig:cntpltB} shows the results when $K=1,2,3,4,5$
+while Figure
+
 
 
 \begin{figure}
   \centering
+\iflinux
 \includegraphics[width=1.0in]{resDir/forBetterRBC--1,1,1-Iters30theK1numKern16.pdf}
 \includegraphics[width=1.0in]{resDir/forBetterRBC--1,1,1-Iters30theK2numKern16.pdf}
 \includegraphics[width=1.0in]{resDir/forBetterRBC--1,1,1-Iters30theK3numKern16.pdf}
 \includegraphics[width=1.0in]{resDir/forBetterRBC--1,1,1-Iters30theK4numKern16.pdf}
 \includegraphics[width=1.0in]{resDir/forBetterRBC--1,1,1-Iters30theK5numKern16.pdf}
+\fi
+\ifmacosx
+\includegraphics[width=1.0in]{resDir/forBetterRBC--1,1,1-Iters20theK1numKern2.pdf}
+\includegraphics[width=1.0in]{resDir/forBetterRBC--1,1,1-Iters20theK2numKern2.pdf}
+\includegraphics[width=1.0in]{resDir/forBetterRBC--1,1,1-Iters20theK3numKern2.pdf}
+\includegraphics[width=1.0in]{resDir/forBetterRBC--1,1,1-Iters20theK4numKern2.pdf}
+\includegraphics[width=1.0in]{resDir/forBetterRBC--1,1,1-Iters20theK5numKern2.pdf}
+\fi
   \caption{Contour Plot for approx=(1,1,1)  K =1,2,3,4,5}
-  \label{fig:cntplt}
+  \label{fig:cntpltB}
 \end{figure}
 
+
+
+Figure \ref{fig:cntpltC} shows the results when $K=10$, with degree of approximation $(1,1,1)$
+for computing the decision rule.  The top panel provides a contour plot of the
+norm of the equation errors. The bottom plot shows the error in the decision rule for different values of $k_{t-1}, \theta_{t-1}$ with $\epsilon_t=0$.  The plots for different values of $\epsilon_t$ are not different.  The error bound, \input{resDir/forBetterRBC--1,1,1-Iters20theK10numKern2errBnd.tex} is 25\% larger than the actual error \input{resDir/forBetterRBC--1,1,1-Iters20theK10numKern2actErr.tex}  Notice that even thought equation errors are comparable in magnitude, the error in the decision rule is significantly smaller for the series representation solution.  The additional constraints on the equation system provided by computing conditional expectations paths and incorporating them into the solution at time $t$ leads to better solutions.
 
 
 
 \begin{figure}
   \centering
-  \includegraphics{resDir/forBetterRBC--1,1,1-Iters30theK10numKern16.pdf}
-  \caption{Contour Plot for approx=(1,1,1) K =10}
-  \label{fig:cntplt}
+\iflinux
+  \includegraphics{resDir/forBetterRBC--1,1,1-Iters20theK10numKern16Approx.pdf}
+  \includegraphics{resDir/forBetterRBC--1,1,1-Iters20theK10numKern16.pdf}
+\fi
+\ifmacosx
+  \includegraphics{resDir/forBetterRBC--1,1,1-Iters20theK10numKern2Approx.pdf}
+  \includegraphics{resDir/forBetterRBC--1,1,1-Iters20theK10numKern2.pdf}
+\fi
+  \caption{Contour Plot for approx=(1,1,1) iters 20 K =10}
+  \label{fig:cntpltC}
 \end{figure}
 
 \begin{figure}
   \centering
-  \includegraphics{resDir/forBetterRBC--2,2,2-Iters2theK2numKern5.pdf}
-  \caption{Contour Plot for approx=(2,2,2) 2 iterations and K =2}
-  \label{fig:cntplt}
+\iflinux  
+\includegraphics{resDir/forBetterRBC--2,2,2-Iters20theK0numKern5.pdf}
+\fi
+\ifmacosx  
+\includegraphics{resDir/forBetterRBC--2,2,2-Iters20theK0numKern2.pdf}
+\fi
+  \caption{Contour Plot for approx=(2,2,2) 20 iterations and K =0}
+  \label{fig:cntpltD}
 \end{figure}
 
 \begin{figure}
   \centering
-  \includegraphics{resDir/forBetterRBC--2,2,2-Iters5theK5numKern5.pdf}
-  \caption{Contour Plot for approx=(2,2,2) 5 iterations and K =5}
-  \label{fig:cntplt}
+\iflinux
+  \includegraphics{resDir/forBetterRBC--2,2,2-Iters20theK5numKern5.pdf}
+\fi
+\ifmacosx  
+\includegraphics{resDir/forBetterRBC--2,2,2-Iters20theK5numKern2.pdf}
+\fi
+  \caption{Contour Plot for approx=(2,2,2) 20 iterations and K =5}
+  \label{fig:cntpltE}
 \end{figure}
 
 \begin{figure}
   \centering
-  \includegraphics{resDir/forBetterRBC--2,2,1-Iters4theK10numKern5.pdf}
-  \caption{Contour Plot for approx=(2,2,2) 5 iterations and K =5}
-  \label{fig:cntplt}
+\ifmacosx
+  \includegraphics{resDir/forBetterRBC--2,2,2-Iters20theK10numKern2.pdf}
+\fi
+  \caption{Contour Plot for approx=(2,2,2) 20 iterations and K =10}
+  \label{fig:cntpltF}
 \end{figure}
 
 \begin{figure}
   \centering
+\iflinux
   \includegraphics{resDir/forBetterRBC--2,2,2-Iters5theK10numKern0.pdf}
+\fi
   \caption{Contour Plot for approx=(2,2,2) 5 iterations and K =10}
   \label{fig:cntplt}
 \end{figure}
 
 \begin{figure}
   \centering
+\iflinux
   \includegraphics{resDir/forBetterRBC--5,5,1-Iters5theK10numKern5.pdf}
+\fi
   \caption{Contour Plot for approx=(2,2,2) 5 iterations and K =10}
   \label{fig:cntplt}
 \end{figure}
 
 \begin{figure}
   \centering
+\iflinux
   \includegraphics{resDir/forBetterRBC--5,5,2-Iters10theK10numKern5.pdf}
+  \fi
   \caption{Contour Plot for approx=(5,5,2) 2 iterations and K =10}
   \label{fig:cntplt}
 \end{figure}

@@ -1038,6 +1038,8 @@ It is possible to precompute each of the integrals. Since the solution will be l
 \item msnto predicted and actual err added to graphs
 \item 3D to 2D since epsilon doesn't matter much
 \item big change from linear to nonliner iter >1
+\item should use tErrMat * checkPt for ``closer error bound''
+\item need \LaTeX conditional for mac runs instead of linux
 \begin{verbatim}
 In[14]:= !grep -l chooseLower resDir/*
 resDir/forBetterRBC${1,1,4}Iters10theK1numKern0.mth

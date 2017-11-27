@@ -1,0 +1,68 @@
+\documentclass[12pt]{article}
+\usepackage{qtree}
+\begin{document}
+
+\Tree [.nestIterREInterp  [.doIterEInterp genXZREInterpFunc [.makeInterpFunc  [.genInterpData ] ] ] ]
+
+\begin{description}
+\item[theSolver] 
+\item[gSpec, smolSpec] 
+\end{description}
+
+
+
+\Tree [.parallelNestIterREInterp  [.parallelDoIterEInterp parallelGenXZREInterpFunc [.parallelMakeInterpFunc  [.parallelGenInterpData ] ] ] ]
+
+
+\begin{description}
+\item[theSolver,genFRExtFunc] 
+\item[gSpec, smolSpec] 
+\end{description}
+
+
+
+\vspace{1.0in}
+
+
+
+
+\Tree [.S a [.NP {\bf b} c ] d ]
+
+
+
+
+
+\begin{description}
+\item[ nada  ]\ 
+  \begin{description}
+  \item[evaluateTriples] 
+  \end{description}
+
+  
+  \begin{description}
+
+
+
+
+    
+
+\item[      makeSmolyakInterpFuncs]
+\item[      makeGenericInterpFuncs]
+\item[      parallelMakeGenericInterpFuncs]
+\end{description}
+
+
+\item[smolyakGenInterpData]
+\item[parallelSmolyakGenInterpData]
+
+\item[      genSmolyakXZREInterpFunc]
+      
+
+
+\item[parallelSmolyakNestIterREInterp] 
+\end{description}
+
+
+
+
+\end{document}

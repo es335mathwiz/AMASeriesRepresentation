@@ -5,6 +5,7 @@ Get["AMASeriesRepresentation`"]
 Print["preemscstomma"]
 Get["emscsToMma`"]
 Get["betterRBC`"]
+Get["betterRBCCSTrips`"]
 phiMat=getPhi[linModBetter]
 fMat=getF[linModBetter]
 tErrMat=truncErrorMat[fMat,phiMat,0]
@@ -186,6 +187,28 @@ errKBnd={errKBndVal,errKBndSubs}=NMinimize[drerrKName[z1,z2],
 And[betterRBCMinZ[[1]] <=z1<=betterRBCMaxZ[[1]],
 betterRBCMinZ[[2]]<=z2<=betterRBCMaxZ[[2]]],{z1,z2},Method->"NelderMead"];Print["errKBnd:",errKBnd];
 errKBndLoc={z1,z2}/.errKBndSubs;
+
+
+*)
+(*
+theFRExtGate=genFRExtFunc[{4,1,4},linModBetterCSTrips,{genX0Z0Funcs[linModBetterCSTrips],2},eqnsCompiledBetterCSTrips,"xVarRanges"->{{0.01,2},{0.01,2},{0.01,20},{0.85,1.3}}]
+
+theFRExtNoGate=genFRExtFunc[{4,1,4},linModBetterCSTrips,{genX0Z0Funcs[linModBetterCSTrips],2},eqnsCompiledBetterCSTrips[[1,2]],"xVarRanges"->{{0.01,2},{0.01,2},{0.01,20},{0.85,1.3}}]
+
+theFRExtNoGate @@ anXEpsFlatBetter
+evaluateTriple[theFRExtGate[[1]],anXEpsFlatBetter]
+
+approx=1*{1,1,1};
+{ptErg,tfErg,plyErg,iplyErg,dplyErg}=smolyakInterpolationPrep[approx,{betterRBCMean,betterRBCSD,betterRBCMinZ,betterRBCMaxZ,betterRBCvv},theDistBetter];
+smolRngErg=Transpose[{betterRBCMinZ,betterRBCMaxZ}];
+toIg=aGSpecBetter[[1]];
+sgSpecErg={toIg,smolRngErg,ptErg,tfErg,plyErg,iplyErg,1,approx,
+{betterRBCMean,betterRBCSD,betterRBCMinZ,betterRBCMaxZ,betterRBCvv}};
+
+
+X0Z0=genX0Z0Funcs[linModBetter];
+theRes=parallelNestIterREInterp[genFRExtFunc,linModBetter,
+{X0Z0,2},eqnsCompiledBetterCSTrips,sgSpecErg,3,"xVarRanges"->{{0.01,2},{0.01,2},{0.01,20},{0.85,1.2}}];
 
 
 *)

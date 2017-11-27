@@ -97,6 +97,31 @@ Function[xx,fillIn[{{},smolToIgnore,xx}]],N[smolPts]]},
 With[{theVals=Map[checkEval[aVecFunc],filledPts]},
 With[{interpData=Map[Flatten,theVals]},
 interpData]]]]
+ 
+smolyakGenInterpData[
+triples:{{_Function,(_Function|_CompiledFunction|_Symbol),
+_Function}..},@<smolGSpec@>]:=
+Module[{},Print["smolyakGenInterpData(gated)"];
+With[{filledPts=Map[Function[xx,fillIn[{{},smolToIgnore,xx}]],N[smolPts]]},
+With[{theVals=Table[evaluateTriple[aTriple,Flatten[aPt]],
+{aTriple,triples},{aPt,filledPts}]},
+With[{interpData=theVals},
+Map[Flatten,Flatten[interpData,1]]]]]]
+
+ 
+parallelSmolyakGenInterpData[
+triples:{{_Function,(_Function|_CompiledFunction|_Symbol),
+_Function}..},@<smolGSpec@>]:=
+Module[{},Print["smolyakGenInterpData(gated)"];
+With[{filledPts=Map[Function[xx,fillIn[{{},smolToIgnore,xx}]],N[smolPts]]},
+With[{theVals=ParallelTable[evaluateTriple[aTriple,Flatten[aPt]],
+{aTriple,triples},{aPt,filledPts}]},
+With[{interpData=theVals},
+Map[Flatten,Flatten[interpData,1]]]]]]
+
+
+
+
 
 checkEval[aVecFunc_]:=
 Catch[Function[xx,(Print["checkEval:",xx];Apply[aVecFunc,xx])],{$Failed,xx}]
@@ -809,6 +834,35 @@ ReplacePart[
 ]]]]
 
 
+makeSmolyakInterpFuncs[triples:{{_Function,(_Function|_CompiledFunction|_Symbol),
+_Function}..},@<smolGSpec@>]:=
+With[{interpData=smolyakGenInterpData[triples,smolGSpec],
+numArgs=Length[smolPts[[1]]]},
+With[{numFuncs=Length[interpData[[1]]],
+funcArgs=Table[Unique["f01Args"],{numArgs}]},
+With[{longFuncArgs=fillInSymb[{{},smolToIgnore,funcArgs}]},
+With[{interpFuncList=
+Map[Function[funcIdx,
+With[{theInterps=smolyakInterpolation[interpData[[All,funcIdx]],smolGSpec]},
+With[{smolApp=theInterps},
+smolApp]]],Range[numFuncs]]},
+With[
+{applied=
+Transpose[{Through[Apply[Map[First,interpFuncList],funcArgs]]}],
+appliedExp=
+Transpose[{Through[Apply[Map[Last,interpFuncList],funcArgs]]}]},
+{
+ReplacePart[
+	Function[xxxxxxx, applied],
+		{1->longFuncArgs}],
+ReplacePart[
+	Function[xxxxxxx, appliedExp],
+		{1->Drop[longFuncArgs,-numEps]}]
+}
+	]
+]]]]
+
+
 AMASeriesRepCallGraph=
 Join[AMASeriesRepCallGraph,Map["makeSmolyakInterpFuncs"->#&,{"smolyakInterpolation","smolyakGenInterpData","fillInSymb"}]];
 (*end code for makeSmolyakInterpFuncs*)
@@ -866,6 +920,45 @@ replaceEqnOrExp[thePair[[2]],Drop[longFuncArgs,-numEps],3,backLookingInfo]}
 ]]]]]]
 
 parallelMakeGenericInterpFuncs[aVecFunc:(_Function|_CompiledFunction|_Symbol),backLookingInfo:{{_Integer,_,_}...},@<smolGSpec@>,
+genericInterp:(smolyakInterpolation|svmRegressionLinear|svmRegressionPoly|svmRegressionRBF|svmRegressionSigmoid),svmArgs:{_?NumberQ...}]:=
+Module[{},(*Print["parallelMakeGenericInterpFuncs:",genericInterp];*)
+parallelSetup[];
+With[{interpData=parallelSmolyakGenInterpData[aVecFunc,smolGSpec],
+numArgs=Length[smolPts[[1]]]},
+(*Print["parallelMakeGenericInterpFuncs:",interpData];*)
+With[{numFuncs=Length[interpData[[1]]],
+funcArgs=Table[Unique["f03Args"],{numArgs}],theXs=Table[xx[ii],{ii,numArgs}]},
+With[{longFuncArgs=fillInSymb[{{},smolToIgnore,funcArgs}],
+funcSubs=Thread[theXs->funcArgs]},
+With[{interpFuncList=
+ParallelMap[Function[funcIdx,
+With[{theInterps=genericInterp[interpData[[All,funcIdx]],smolGSpec,svmArgs]},
+With[{smolApp=theInterps},
+smolApp]]],Range[numFuncs]]},(*Print["interpFuncList=",interpFuncList//InputForm];*)
+With[
+{applied=Transpose[{ParallelMap[notApply[#,funcArgs]/.funcSubs&,
+Map[First,interpFuncList]]}],
+appliedExp=Transpose[{ParallelMap[notApply[#,funcArgs]/.funcSubs&,
+Map[Last,interpFuncList]]}]},
+(*Print["parallelMakeGenericInterpFuncs:",{applied,appliedExp,backLooking,backLookingExp,backLookingInfo}];*)
+With[{thePair=
+{
+ReplacePart[
+	Function[xxxxxxx, applied],
+		{1->longFuncArgs}]/.notApply->Apply,
+ReplacePart[
+	Function[xxxxxxx, appliedExp],
+		{1->Drop[longFuncArgs,-numEps]}]/.notApply->Apply
+}},
+{replaceEqnOrExp[thePair[[1]],longFuncArgs,2,backLookingInfo],
+replaceEqnOrExp[thePair[[2]],Drop[longFuncArgs,-numEps],3,backLookingInfo]}
+	]
+]]]]]]
+
+
+
+parallelMakeGenericInterpFuncs[triples:{{_Function,(_Function|_CompiledFunction|_Symbol),
+_Function}..},backLookingInfo:{{_Integer,_,_}...},@<smolGSpec@>,
 genericInterp:(smolyakInterpolation|svmRegressionLinear|svmRegressionPoly|svmRegressionRBF|svmRegressionSigmoid),svmArgs:{_?NumberQ...}]:=
 Module[{},(*Print["parallelMakeGenericInterpFuncs:",genericInterp];*)
 parallelSetup[];
@@ -1272,6 +1365,29 @@ Function[xx,(Apply[aVecFunc,xx])],filledPts]},
 With[{interpData=Transpose[{thePts,theVals}]},
 interpData]]]]
 
+genInterpData[triples:{{_Function,(_Function|_CompiledFunction|_Symbol),
+_Function}..},@<gSpec@>]:=
+With[{thePts=gridPts[gSpec]},
+With[{filledPts=Map[
+Function[xx,fillIn[{{},toIgnore,xx}]],thePts]},
+With[{theVals=Table[evaluateTriple[aTriple,Flatten[aPt]],
+{aTriple,triples},{aPt,filledPts}]},
+With[{interpData={thePts,theVals}},
+MapThread[{#1,#2}&,{interpData[[1]],interpData[[2,1]]}]]]]]
+
+
+
+parallelGenInterpData[triples:{{_Function,(_Function|_CompiledFunction|_Symbol),
+_Function}..},@<gSpec@>]:=
+With[{thePts=gridPts[gSpec]},
+With[{filledPts=Map[
+Function[xx,fillIn[{{},toIgnore,xx}]],thePts]},
+With[{theVals=ParallelTable[evaluateTriple[aTriple,Flatten[aPt]],
+{aTriple,triples},{aPt,filledPts}]},
+With[{interpData={thePts,theVals}},
+MapThread[{#1,#2}&,{interpData[[1]],interpData[[2,1]]}]]]]]
+
+
 
 AMASeriesRepCallGraph=
 Join[AMASeriesRepCallGraph,Map["genInterpData"->#&,{"gridPts","fillIn"}]];
@@ -1452,6 +1568,24 @@ Map[Function[xx,{xx[[1]], xx[[2, funcIdx, 1]]}] ,
 ]]]]
 
 
+makeInterpFunc[triples:{{_Function,(_Function|_CompiledFunction|_Symbol),
+_Function}..},@<gSpec@>]:=
+With[{interpData=genInterpData[triples,gSpec],numArgs=getNumVars[gSpec]},
+With[{numFuncs=Length[interpData[[1,2]]],
+funcArgs=Table[Unique["f04Args"],{numArgs}]},
+With[{longFuncArgs=fillInSymb[{{},toIgnore,funcArgs}]},
+With[{interpFuncList=
+Map[Function[funcIdx,Interpolation[
+Map[Function[xx,{xx[[1]], xx[[2, funcIdx, 1]]}] , 
+		interpData],InterpolationOrder -> iOrd]],Range[numFuncs]]},
+		With[{applied=Transpose[{Through[Apply[interpFuncList,funcArgs]]}]},
+	ReplacePart[
+	Function[xxxxxxx, applied],
+		{1->Drop[longFuncArgs]}]
+	]
+]]]]
+
+
 smolInterpToGrid[smolInterp_?MatrixQ,@<smolGSpec@>]:=
 Transpose[{smolPts,Map[Transpose[{#}]&,smolInterp]}]
 
@@ -1460,6 +1594,25 @@ Transpose[{smolPts,Map[Transpose[{#}]&,smolInterp]}]
 
 makeInterpFunc[aVecFunc:(_Function|_CompiledFunction|_Symbol),@<smolGSpec@>]:=
 With[{sinterpData=smolyakGenInterpData[aVecFunc,smolGSpec],
+numArgs=getNumVars[smolGSpec]},
+With[{interpData=smolInterpToGrid[sinterpData,smolGSpec]},
+With[{numFuncs=Length[interpData[[1,2]]],
+funcArgs=Table[Unique["f05Args"],{numArgs}]},
+With[{longFuncArgs=fillInSymb[{{},smolToIgnore,funcArgs}]},
+With[{interpFuncList=
+Map[Function[funcIdx,Interpolation[
+Map[Function[xx,{xx[[1]], xx[[2, funcIdx, 1]]}] , 
+		interpData],InterpolationOrder -> 1]],Range[numFuncs]]},
+		With[{applied=Transpose[{Through[Apply[interpFuncList,funcArgs]]}]},
+	ReplacePart[
+	Function[xxxxxxx, applied],
+		{1->Drop[longFuncArgs]}]
+	]
+]]]]]
+
+makeInterpFunc[triples:{{_Function,(_Function|_CompiledFunction|_Symbol),
+_Function}..},@<smolGSpec@>]:=
+With[{sinterpData=smolyakGenInterpData[triples,smolGSpec],
 numArgs=getNumVars[smolGSpec]},
 With[{interpData=smolInterpToGrid[sinterpData,smolGSpec]},
 With[{numFuncs=Length[interpData[[1,2]]],
@@ -1540,6 +1693,33 @@ Map[Function[xx,{xx[[1]], xx[[2, funcIdx, 1]]}] ,
 ]]]]]
 
 
+parallelMakeInterpFunc[triples:{{_Function,(_Function|_CompiledFunction|_Symbol),
+_Function}..},@<gSpec@>]:=
+Module[{},
+parallelSetup[];
+With[{interpData=parallelGenInterpData[triples,gSpec],numArgs=getNumVars[gSpec]},(*Print["notgeneric:interpData",{aVecFunc,interpData}//InputForm];*)
+With[{numFuncs=Length[interpData[[1,2]]],
+funcArgs=Table[Unique["f10Args"],{numArgs}]},
+With[{longFuncArgs=fillInSymb[{{},toIgnore,funcArgs}]},
+With[{interpFuncList=
+Map[Function[funcIdx,Interpolation[
+Map[Function[xx,{xx[[1]], xx[[2, funcIdx, 1]]}] , 
+		interpData],InterpolationOrder -> iOrd]],Range[numFuncs]]},
+		With[{applied=Transpose[{Through[Apply[interpFuncList,funcArgs]]}]},
+	ReplacePart[
+	Function[xxxxxxx, applied],
+		{1->longFuncArgs}]
+	]
+]]]]]
+
+
+parallelMakeInterpFunc[triples:{{_Function,(_Function|_CompiledFunction|_Symbol),
+_Function}..},backLookingInfo:{{_Integer,_,_}...},@<smolGSpec@>]:=
+Module[{},
+parallelSetup[];
+parallelMakeGenericInterpFuncs[triples,backLookingInfo,smolGSpec,smolyakInterpolation,{}]]
+
+
 parallelMakeInterpFunc[aVecFunc:(_Function|_CompiledFunction|_Symbol),backLookingInfo:{{_Integer,_,_}...},@<smolGSpec@>]:=
 Module[{},
 parallelSetup[];
@@ -1569,7 +1749,7 @@ Join[AMASeriesRepCallGraph,Map["parallelMakeInterpFunc"->#&,{"fillInSymb","paral
 doIterREInterp[@<theSolver@>,
 	@<linMod@>,
 	@<XZFuncs@>,
-@<eqnsFunc@>,@<gSpec@>,@<distribSpec@>]:=
+@<eqnsFunc@>,@<gSpec@>,@<distribSpec@>,opts:OptionsPattern[]]:=
 With[{numX=getNumX[linMod],numEps=getNumEps[linMod],numZ=getNumZ[linMod]},
 tn=AbsoluteTime[];
 With[{theDRFuncs=makeInterpFunc[genFPFunc[theSolver,linMod,XZFuncs,eqnsFunc],gSpec]},
@@ -1580,7 +1760,7 @@ With[{XZRE=genXZREInterpFunc[{numX,numEps,numZ},theDRFuncs,gSpec,distribSpec]},
 doIterREInterp[@<theSolver@>,
 	@<linMod@>,
 	@<XZFuncs@>,
-@<eqnsFunc@>,@<smolGSpec@>,@<distribSpec@>]:=
+@<eqnsFunc@>,@<smolGSpec@>,opts:OptionsPattern[]]:=
 With[{numX=getNumX[linMod],numZ=getNumZ[linMod]},
 tn=AbsoluteTime[];
 With[{theFuncs=makeInterpFunc[genFPFunc[theSolver,linMod,XZFuncs,eqnsFunc],
@@ -1680,6 +1860,43 @@ theFuncs]]]
 
 
 
+Options[parallelDoIterREInterp]="xVarRanges"->{}
+parallelDoIterREInterp[genFRExtFunc,
+	@<linMod@>,
+	@<XZFuncs@>,triples:{{_Function,(_Function|_CompiledFunction|_Symbol),_Function}..},@<gSpec@>,@<distribSpec@>,opts:OptionsPattern[]]:=
+With[{numX=getNumX[linMod],numEps=getNumEps[linMod],numZ=getNumZ[linMod]},
+tn=AbsoluteTime[];
+parallelSetup[];
+DistributeDefinitions[XZFuncs[[1]]];
+DistributeDefinitions[eqnsFunc];
+DistributeDefinitions[linMod];Print["parallelDoIterREInterp:"];
+With[{theDRFuncs=parallelMakeInterpFunc[genFRExtFunc[{numX,numEps,numZ},linMod,XZFuncs,triples,Apply[Sequence,FilterRules[{opts},Options[genFRExtFunc]]]],gSpec]},
+Print["parallelMakeInterpTime=",(tn2=AbsoluteTime[])-tn];
+With[{XZRE=parallelGenXZREInterpFunc[{numX,numEps,numZ},theDRFuncs,gSpec,distribSpec]},
+Print["parallelgenXZREInterpTime=",(AbsoluteTime[])-tn2];
+{theDRFuncs,XZRE}]]]
+
+parallelDoIterREInterp[genFRExtFunc,
+	@<linMod@>,
+	@<XZFuncs@>,triples:{{_Function,(_Function|_CompiledFunction|_Symbol),_Function}..},@<smolGSpec@>,opts:OptionsPattern[]]:=
+With[{numX=getNumX[linMod],lclnumEps=getNumEps[linMod],numZ=getNumZ[linMod]},
+tn=AbsoluteTime[];
+parallelSetup[];
+DistributeDefinitions[XZFuncs[[1]]];
+DistributeDefinitions[eqnsFunc];
+DistributeDefinitions[linMod];
+Print["done distributing defs:"];
+With[{theFuncs=parallelMakeGenericInterpFuncs[genFRExtFunc[{numX,numEps,numZ},linMod,XZFuncs,triples,Apply[Sequence,FilterRules[{opts},Options[genFRExtFunc]]]],backLookingInfo,smolGSpec,smolyakInterpolation,{}]},Print["theFuncs:",theFuncs];
+Print["done parallelmakegenericinterpfunc:"];
+Print["parallelMakeInterpTime=",(tn2=AbsoluteTime[])-tn];
+With[{},
+Print["parallelgenXZREInterpTime=",(AbsoluteTime[])-tn2];
+theFuncs]]]
+
+
+
+
+
 AMASeriesRepCallGraph=
 Join[AMASeriesRepCallGraph,Map["parallelDoIterREInterp"->#&,{"parallelMakeInterpFunc","genFPFunc","getNumX","getNumEps","getNumZ","parallelGenXZREInterpFunc"}]];
 
@@ -1755,20 +1972,21 @@ NestList[Function[xx,parallelDoIterREInterp[theSolver,linMod,
 {xx[[2]],numSteps},eqnsFunc,smolGSpec]],{ig,XZFuncs[[1]]},numIters,Apply[Sequence,FilterRules[{opts},Options[parallelDoIterREInterp]]]]]
 
 parallelNestIterREInterp[genFRExtFunc,@<linMod@>,
-@<XZFuncs@>,@<eqnsFunc@>,
+@<XZFuncs@>,triples:{{_Function,(_Function|_CompiledFunction|_Symbol),_Function}..},
 @<gSpec@>,
 @<distribSpec@>,numIters_Integer,opts:OptionsPattern[]]:=
 Module[{},parallelSetup[];
 NestList[Function[xx,parallelDoIterREInterp[genFRExtFunc,linMod,
-{xx[[2]],numSteps},eqnsFunc,gSpec,distribSpec]],{ig,XZFuncs[[1]]},numIters,Apply[Sequence,FilterRules[{opts},Options[parallelDoIterREInterp]]]]]
+{xx[[2]],numSteps},triples,gSpec,distribSpec]],{ig,XZFuncs[[1]]},numIters,Apply[Sequence,FilterRules[{opts},Options[parallelDoIterREInterp]]]]]
 
 parallelNestIterREInterp[genFRExtFunc,@<linMod@>,
-@<XZFuncs@>,@<eqnsFunc@>,
+@<XZFuncs@>,triples:{{_Function,(_Function|_CompiledFunction|_Symbol),_Function}..},
 @<smolGSpec@>,
 numIters_Integer,opts:OptionsPattern[]]:=
 Module[{},parallelSetup[];
 NestList[Function[xx,parallelDoIterREInterp[genFRExtFunc,linMod,
-{xx[[2]],numSteps},eqnsFunc,smolGSpec,Apply[Sequence,FilterRules[{opts},Options[parallelDoIterREInterp]]]]],{ig,XZFuncs[[1]]},numIters]]
+{xx[[2]],numSteps},triples,smolGSpec,Apply[Sequence,FilterRules[{opts},Options[parallelDoIterREInterp]]]]],{ig,XZFuncs[[1]]},numIters]]
+
 
 AMASeriesRepCallGraph=
 Join[AMASeriesRepCallGraph,Map["parallelNestIterREInterp"->#&,{"parallelDoIterREInterp"}]];
@@ -2680,6 +2898,8 @@ Join[AMASeriesRepCallGraph,Map["genFRFunc"->#&,{"genSlots","cmpXZVals"}]];
 @d genFRExtFuncUsage
 @{genFRExtFunc::usage=
 "place holder for genFRExtFunc"
+evaluateTriple::usage=
+"place holder for genFRExtFunc"
 makePatternArgs::usage="makePatternArgs"
 makeBlankPatternArgs::usage="makePatternArgs"
 
@@ -2742,6 +2962,23 @@ Off[FindRoot::nlnum];
 funcOfXtm1Eps
 ]]]]
 
+genFRExtFunc[{numX_Integer,numEps_Integer,numZ_Integer},@<linMod@>,@<XZFuncs@>,
+triples:{{_Function,(_Function|_CompiledFunction|_Symbol),_Function}..},
+opts:OptionsPattern[]]:=
+Module[{varRanges=OptionValue["xVarRanges"]},
+With[{funcTrips=
+Map[{#[[1]],genFRExtFunc[{numX,numEps,numZ},linMod,XZFuncs,#[[2]],
+Apply[Sequence,FilterRules[{opts},Options[genFRExtFunc]]]],#[[3]]}&,triples]},
+Print["genFREXTFunc:",funcTrips//InputForm];funcTrips
+]]
+
+evaluateTriple[
+triple:{preFunc_Function,theFunc:(_Function|_CompiledFunction|_Symbol),
+postFunc_Function},
+thePt_?VectorQ]:=
+If[Apply[preFunc,thePt],
+With[{theRes=Apply[theFunc,thePt]},
+If[Apply[postFunc,Flatten[Join[thePt,theRes]]],theRes,$Failed]],$Failed]
 
 
 makePatternArgs[theNames_List]:=

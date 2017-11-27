@@ -1215,6 +1215,15 @@ norm of the equation errors. The bottom plot shows the error in the decision rul
   \caption{Contour Plot for approx=(3,3,3) 20 iterations and K =10}
   \label{fig:cntpltI}
 \end{figure}
+
+\begin{figure}
+  \centering
+\ifmacosx
+  \includegraphics{resDir/forBetterRBC--3,3,3-Iters20theK20numKern2.pdf}
+  \fi
+  \caption{Contour Plot for approx=(3,3,3) 20 iterations and K =20}
+  \label{fig:cntpltI}
+\end{figure}
 \subsubsection{Approximating an Unknown Solution: $U(c) \ne Log(c)$ }
 \label{sec:unknown-solutions}
 
@@ -1238,6 +1247,10 @@ constraints.\footnote{See section \ref{sec:regime-switch-model} characterizing
 
 \section{Future Work}
 \label{sec:future}
+
+\begin{itemize}
+\item parallelMap don't need order, so ParallelTry  four args pretest posttest xvals keep all except failed  be sure to fail conflicts
+\end{itemize}
 
 \begin{description}
 \item[Support Vector Machine Regression (SVMR)] By using SVMR to represent the solutions in place of Smolyak interpolation, a by product of the representation is the identification of influential points.  It should be possible to improve the algorithm performance by updating solutions only at these influential points.

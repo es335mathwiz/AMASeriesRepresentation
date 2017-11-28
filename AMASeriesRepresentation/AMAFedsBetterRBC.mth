@@ -88,6 +88,7 @@ Print["doIt:DistributeDefinitions done"];
 {tm,ig}=Timing[
 theRes=parallelNestIterREInterp[genFRExtFunc,linModBetter,
 {X0Z0,theK},eqnsCompiledBetter,sgSpecErg,iters,"xVarRanges"->{{0.01,2},{0.01,2},{0.01,20},{0.85,1.2}}]];
+Print["theRes=",theRes//InputForm];
 numKern=Length[Kernels[]];
 Print["doIt:parallelNestGeneric done"];
 theName=fNameString[approx,iters,theK,numKern];

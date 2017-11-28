@@ -5,7 +5,6 @@
 \Tree [.nestIterREInterp  [.doIterEInterp genXZREInterpFunc [.makeInterpFunc  [.genInterpData ] ] ] ]
 
 \begin{description}
-\item[theSolver] 
 \item[gSpec, smolSpec] 
 \end{description}
 
@@ -15,13 +14,64 @@
 
 
 \begin{description}
-\item[theSolver,genFRExtFunc] 
+\item[genFRExtFunc] 
 \item[gSpec, smolSpec] 
 \end{description}
 
 
 
 \vspace{1.0in}
+
+
+
+
+
+
+\Tree [.nestIterREInterp  [.doGenericIterEInterp  [.makeGenericInterpFunc  [.smolyakGenInterpData ] ] ] ]
+
+
+
+\begin{description}
+\item[ smolSpec] 
+\end{description}
+
+
+
+\Tree [.parallelNestIterREInterp  [.parallelDoIterEInterp [.parallelMakeGenericInterpFunc  [.parallelSmolyakGenInterpData ] ] ] ]
+
+
+
+
+
+\begin{description}
+\item[genFRExtFunc] 
+\item[gSpec, smolSpec] 
+\end{description}
+
+
+
+\Tree [.parallelNestIterREInterp  [.parallelDoIterEInterp parallelGenXZREInterpFunc [.parallelMakeInterpFunc  [.parallelMakeGenericInterpFunc  [.parallelGenInterpData ] ] ] ] ]
+
+\begin{description}
+\item[genFRExtFunc] 
+\item[gSpec, smolSpec] 
+\end{description}
+
+TRIPLES
+
+\Tree [.parallelNestIterREInterp  [.parallelDoIterEInterp parallelGenXZREInterpFunc [.parallelMakeInterpFunc  [.parallelMakeGenericInterpFunc  [.parallelGenInterpData ] ] ] ] ]
+
+
+\begin{description}
+\item[genFRExtFunc] 
+\item[gSpec, smolSpec] 
+\end{description}
+
+
+
+\vspace{1.0in}
+
+
 
 
 

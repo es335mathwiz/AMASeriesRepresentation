@@ -2,115 +2,57 @@
 \usepackage{qtree}
 \begin{document}
 
-\Tree [.nestIterREInterp  [.doIterEInterp genXZREInterpFunc [.makeInterpFunc  [.genInterpData ] ] ] ]
-
 \begin{description}
-\item[gSpec, smolSpec] 
-\end{description}
+\item[gSpec, genFRExt] 
+
+
+%\Tree [.nestIterREInterp  [.doIterEInterp genXZREInterpFunc [.makeInterpFunc  [.genInterpData ] ] ] ]
+%\vspace{.5in}
 
 
 
 \Tree [.parallelNestIterREInterp  [.parallelDoIterEInterp parallelGenXZREInterpFunc [.parallelMakeInterpFunc  [.parallelGenInterpData ] ] ] ]
+\vspace{.5in}
 
 
-\begin{description}
-\item[genFRExtFunc] 
-\item[gSpec, smolSpec] 
+\item[smolSpec, genFRExt] 
+
+%\Tree [.nestIterREInterp  [.doIterEInterp  [.makeInterpFunc  [.genInterpData ] ] ] ]
+%\vspace{.5in}
+
+\Tree [.nestGenericIterREInterp  [.doGenericIterEInterp  [.makeGenericInterpFunc  [.smolyakGenInterpData ] ] ] ]
+
+\vspace{.5in}
+
+\Tree [.parallelNestIterREInterp  [.parallelDoIterEInterp  [.parallelMakeInterpFunc  [.parallelGenInterpData ] ] ] ]
+\vspace{.5in}
+
+
+\Tree [.parallelNestGenericIterREInterp  [.parallelDoGenericIterEInterp [.parallelMakeGenericInterpFunc  [.parallelSmolyakGenInterpData ] ] ] ]
+\vspace{.5in}
+
+
+
+
+
+\item[gSpec, triples] 
+
+\Tree [.parallelNestIterREInterp  [.parallelDoIterEInterp parallelGenXZREInterpFunc [.parallelMakeInterpFunc  [.parallelMakeGenericInterpFunc  [.parallelGenInterpData  [.evaluateTriple ] ] ] ] ] ]
+
+\vspace{.5in}
+
+
+\item[smolSpec, triples] 
+
+
+\Tree [.parallelNestIterREInterp  [.parallelDoIterEInterp  [.parallelMakeInterpFunc  [.parallelMakeGenericInterpFunc  [.parallelSmolyakGenInterpData [.evaluateTriple ]] ] ] ] ]
+
+\vspace{.5in}
 \end{description}
 
 
-
-\vspace{1.0in}
-
-
-
-
-
-
-\Tree [.nestIterREInterp  [.doGenericIterEInterp  [.makeGenericInterpFunc  [.smolyakGenInterpData ] ] ] ]
-
-
-
-\begin{description}
-\item[ smolSpec] 
-\end{description}
-
-
-
-\Tree [.parallelNestIterREInterp  [.parallelDoIterEInterp [.parallelMakeGenericInterpFunc  [.parallelSmolyakGenInterpData ] ] ] ]
-
-
-
-
-
-\begin{description}
-\item[genFRExtFunc] 
-\item[gSpec, smolSpec] 
-\end{description}
-
-
-
-\Tree [.parallelNestIterREInterp  [.parallelDoIterEInterp parallelGenXZREInterpFunc [.parallelMakeInterpFunc  [.parallelMakeGenericInterpFunc  [.parallelGenInterpData ] ] ] ] ]
-
-\begin{description}
-\item[genFRExtFunc] 
-\item[gSpec, smolSpec] 
-\end{description}
-
-TRIPLES
-
-\Tree [.parallelNestIterREInterp  [.parallelDoIterEInterp parallelGenXZREInterpFunc [.parallelMakeInterpFunc  [.parallelMakeGenericInterpFunc  [.parallelGenInterpData ] ] ] ] ]
-
-
-\begin{description}
-\item[genFRExtFunc] 
-\item[gSpec, smolSpec] 
-\end{description}
-
-
-
-\vspace{1.0in}
-
-
-
-
-
-
-\Tree [.S a [.NP {\bf b} c ] d ]
-
-
-
-
-
-\begin{description}
-\item[ nada  ]\ 
-  \begin{description}
-  \item[evaluateTriples] 
-  \end{description}
 
   
-  \begin{description}
-
-
-
-
-    
-
-\item[      makeSmolyakInterpFuncs]
-\item[      makeGenericInterpFuncs]
-\item[      parallelMakeGenericInterpFuncs]
-\end{description}
-
-
-\item[smolyakGenInterpData]
-\item[parallelSmolyakGenInterpData]
-
-\item[      genSmolyakXZREInterpFunc]
-      
-
-
-\item[parallelSmolyakNestIterREInterp] 
-\end{description}
 
 
 

@@ -207,9 +207,41 @@ sgSpecErg={toIg,smolRngErg,ptErg,tfErg,plyErg,iplyErg,1,approx,
 {betterRBCMean,betterRBCSD,betterRBCMinZ,betterRBCMaxZ,betterRBCvv}};
 
 
+
+(* uses triples
+
 X0Z0=genX0Z0Funcs[linModBetter];
-theRes=parallelNestIterREInterp[genFRExtFunc,linModBetter,
+theResPNestG=parallelNestIterREInterp[genFRExtFunc,linModBetter,
+{X0Z0,2},eqnsCompiledBetter,aGSpecBetter,theDistBetterCSTrips,3,"xVarRanges"->{{0.01,2},{0.01,2},{0.01,20},{0.85,1.2}}];
+
+X0Z0=genX0Z0Funcs[linModBetter];
+theResNestS=parallelNestIterREInterp[genFRExtFunc,linModBetter,
 {X0Z0,2},eqnsCompiledBetterCSTrips,sgSpecErg,3,"xVarRanges"->{{0.01,2},{0.01,2},{0.01,20},{0.85,1.2}}];
 
+
+
+X0Z0=genX0Z0Funcs[linModBetter];
+theResNestGS=parallelNestGenericIterREInterp[genFRExtFunc,linModBetter,
+{X0Z0,2},eqnsCompiledBetterCSTrips,sgSpecErg,smolyakInterpolation,{},3,"xVarRanges"->{{0.01,2},{0.01,2},{0.01,20},{0.85,1.2}}];
+*)
+
+
+
+X0Z0=genX0Z0Funcs[linModBetter];
+theResPNestG=parallelNestIterREInterp[genFRExtFunc,linModBetter,
+{X0Z0,2},eqnsCompiledBetter,aGSpecBetter,theDistBetterCSTrips,3,"xVarRanges"->{{0.01,2},{0.01,2},{0.01,20},{0.85,1.2}}];
+
+X0Z0=genX0Z0Funcs[linModBetter];
+theResNestGS=nestGenericIterREInterp[genFRExtFunc,linModBetter,
+{X0Z0,2},eqnsCompiledBetter,sgSpecErg,smolyakInterpolation,{},3,"xVarRanges"->{{0.01,2},{0.01,2},{0.01,20},{0.85,1.2}}];
+
+
+X0Z0=genX0Z0Funcs[linModBetter];
+theResNestS=parallelNestIterREInterp[genFRExtFunc,linModBetter,
+{X0Z0,2},eqnsCompiledBetter,sgSpecErg,3,"xVarRanges"->{{0.01,2},{0.01,2},{0.01,20},{0.85,1.2}}];
+
+X0Z0=genX0Z0Funcs[linModBetter];
+theResNestS=parallelNestGenericIterREInterp[genFRExtFunc,linModBetter,
+{X0Z0,2},eqnsCompiledBetter,sgSpecErg,smolyakInterpolation,{},3,"xVarRanges"->{{0.01,2},{0.01,2},{0.01,20},{0.85,1.2}}];
 
 *)

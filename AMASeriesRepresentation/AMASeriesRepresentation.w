@@ -104,9 +104,10 @@ _Function}..},@<smolGSpec@>]:=
 Module[{},Print["smolyakGenInterpData(gated)"];
 With[{filledPts=Map[Function[xx,fillIn[{{},smolToIgnore,xx}]],N[smolPts]]},
 With[{theVals=Table[evaluateTriple[aTriple,Flatten[aPt]],
-{aTriple,triples},{aPt,filledPts}]},
-With[{interpData=theVals},
-Map[Flatten,Flatten[interpData,1]]]]]]
+{aTriple,triples},{aPt,filledPts}]},Print["smolyakGenInterpData:",theVals//InputForm];
+With[{interpData=Map[Flatten,Flatten[Map[DeleteCases[#,$Failed]&,Transpose[theVals]],1]]},
+Print["interpData:",interpData];
+interpData]]]]
 
  
 parallelSmolyakGenInterpData[
@@ -116,8 +117,8 @@ Module[{},Print["smolyakGenInterpData(gated)"];
 With[{filledPts=Map[Function[xx,fillIn[{{},smolToIgnore,xx}]],N[smolPts]]},
 With[{theVals=ParallelTable[evaluateTriple[aTriple,Flatten[aPt]],
 {aTriple,triples},{aPt,filledPts}]},
-With[{interpData=theVals},
-Map[Flatten,Flatten[interpData,1]]]]]]
+With[{interpData=Map[Flatten,Flatten[Map[DeleteCases[#,$Failed]&,Transpose[theVals]],1]]},
+interpData]]]]
 
 
 
@@ -764,7 +765,7 @@ SetSharedFunction[myAbortKernels];
 Get["AMASeriesRepresentation`"]]
 
 
-
+(*
  
 parallelSmolyakGenInterpData[aVecFunc:(_Function|_CompiledFunction|_Symbol),
 @<gSpec@>,@<smolGSpec@>]:=
@@ -777,7 +778,7 @@ Function[xx,(Apply[aVecFunc,xx])],filledPts]},
 With[{interpData=Transpose[{smolyakPts,theVals}]},
 interpData]]]]
 
-
+*)
 
   
 AMASeriesRepCallGraph=
@@ -886,7 +887,7 @@ makeGenericInterpFuncs::usage=
 @{
 (*begin code for makeGenericInterpFuncs*)
 
-(*
+
 makeGenericInterpFuncs[aVecFunc:(_Function|_CompiledFunction|_Symbol),backLookingInfo:{{_Integer,_,_}...},@<smolGSpec@>,
 genericInterp:(smolyakInterpolation|svmRegressionLinear|svmRegressionPoly|svmRegressionRBF|svmRegressionSigmoid),svmArgs:{_?NumberQ...}]:=
 Module[{},
@@ -918,7 +919,7 @@ ReplacePart[
 replaceEqnOrExp[thePair[[2]],Drop[longFuncArgs,-numEps],3,backLookingInfo]}
 	]
 ]]]]]]
-
+(*
 parallelMakeGenericInterpFuncs[aVecFunc:(_Function|_CompiledFunction|_Symbol),backLookingInfo:{{_Integer,_,_}...},@<smolGSpec@>,
 genericInterp:(smolyakInterpolation|svmRegressionLinear|svmRegressionPoly|svmRegressionRBF|svmRegressionSigmoid),svmArgs:{_?NumberQ...}]:=
 Module[{},(*Print["parallelMakeGenericInterpFuncs:",genericInterp];*)
@@ -934,7 +935,8 @@ With[{interpFuncList=
 ParallelMap[Function[funcIdx,
 With[{theInterps=genericInterp[interpData[[All,funcIdx]],smolGSpec,svmArgs]},
 With[{smolApp=theInterps},
-smolApp]]],Range[numFuncs]]},(*Print["interpFuncList=",interpFuncList//InputForm];*)
+smolApp]]],Range[numFuncs]]},(*Print["interpFuncList=",interpFuncList//InputForm];
+*)
 With[
 {applied=Transpose[{ParallelMap[notApply[#,funcArgs]/.funcSubs&,
 Map[First,interpFuncList]]}],
@@ -954,7 +956,7 @@ ReplacePart[
 replaceEqnOrExp[thePair[[2]],Drop[longFuncArgs,-numEps],3,backLookingInfo]}
 	]
 ]]]]]]
-
+*)
 
 
 parallelMakeGenericInterpFuncs[triples:{{_Function,(_Function|_CompiledFunction|_Symbol),
@@ -993,7 +995,7 @@ ReplacePart[
 replaceEqnOrExp[thePair[[2]],Drop[longFuncArgs,-numEps],3,backLookingInfo]}
 	]
 ]]]]]]
-*)
+
 
 replaceEqnOrExp[vecFunc_Function,theVars_List,indx_Integer,
 backLookingInfo:{{_Integer,_,_}...}]:=
@@ -1332,7 +1334,7 @@ With[{filledPts=Map[
 Function[xx,fillIn[{{},toIgnore,xx}]],thePts]},
 With[{theVals=ParallelTable[evaluateTriple[aTriple,Flatten[aPt]],
 {aTriple,triples},{aPt,filledPts}]},
-With[{interpData={thePts,theVals}},
+With[{interpData={thePts,Map[Flatten,Flatten[Map[DeleteCases[#,$Failed]&,Transpose[theVals]],1]]}},
 MapThread[{#1,#2}&,{interpData[[1]],interpData[[2,1]]}]]]]]
 
 

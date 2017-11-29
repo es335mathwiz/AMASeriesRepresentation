@@ -167,6 +167,13 @@ theSave=Get[mthName];
 Show[acterrsCP];
 {errBnd,errBndLoc,acterr,acterrLoc}]]
 
+approx=1*{1,1,1};
+{ptErg,tfErg,plyErg,iplyErg,dplyErg}=smolyakInterpolationPrep[approx,{betterRBCMean,betterRBCSD,betterRBCMinZ,betterRBCMaxZ,betterRBCvv},theDistBetter];
+smolRngErg=Transpose[{betterRBCMinZ,betterRBCMaxZ}];
+toIg=aGSpecBetter[[1]];
+sgSpecErg={toIg,smolRngErg,ptErg,tfErg,plyErg,iplyErg,1,approx,
+{betterRBCMean,betterRBCSD,betterRBCMinZ,betterRBCMaxZ,betterRBCvv}};
+
 (*
 
 Plot3D[actualErrs[theRes[[-1,1]],{kk,tt,0}][[1]],{kk,rbnds[[1,1]],rbnds[[1,2]]},{tt,rbnds[[2,1]],rbnds[[2,2]]},RegionFunction->Function[{kk,tt,zz},RegionMember[bmr,{kk,tt}]],PlotRange->All]
@@ -211,18 +218,15 @@ sgSpecErg={toIg,smolRngErg,ptErg,tfErg,plyErg,iplyErg,1,approx,
 (* uses triples
 
 X0Z0=genX0Z0Funcs[linModBetter];
-theResPNestG=parallelNestIterREInterp[genFRExtFunc,linModBetter,
+theResPNestGT=parallelNestIterREInterp[genFRExtFunc,linModBetter,
 {X0Z0,2},eqnsCompiledBetter,aGSpecBetter,theDistBetterCSTrips,3,"xVarRanges"->{{0.01,2},{0.01,2},{0.01,20},{0.85,1.2}}];
 
 X0Z0=genX0Z0Funcs[linModBetter];
-theResNestS=parallelNestIterREInterp[genFRExtFunc,linModBetter,
+theResPNestST=parallelNestIterREInterp[genFRExtFunc,linModBetter,
 {X0Z0,2},eqnsCompiledBetterCSTrips,sgSpecErg,3,"xVarRanges"->{{0.01,2},{0.01,2},{0.01,20},{0.85,1.2}}];
 
 
 
-X0Z0=genX0Z0Funcs[linModBetter];
-theResNestGS=parallelNestGenericIterREInterp[genFRExtFunc,linModBetter,
-{X0Z0,2},eqnsCompiledBetterCSTrips,sgSpecErg,smolyakInterpolation,{},3,"xVarRanges"->{{0.01,2},{0.01,2},{0.01,20},{0.85,1.2}}];
 *)
 
 
@@ -237,11 +241,11 @@ theResNestGS=nestGenericIterREInterp[genFRExtFunc,linModBetter,
 
 
 X0Z0=genX0Z0Funcs[linModBetter];
-theResNestS=parallelNestIterREInterp[genFRExtFunc,linModBetter,
+theResPNestS=parallelNestIterREInterp[genFRExtFunc,linModBetter,
 {X0Z0,2},eqnsCompiledBetter,sgSpecErg,3,"xVarRanges"->{{0.01,2},{0.01,2},{0.01,20},{0.85,1.2}}];
 
 X0Z0=genX0Z0Funcs[linModBetter];
-theResNestS=parallelNestGenericIterREInterp[genFRExtFunc,linModBetter,
+theResPNestGenS=parallelNestGenericIterREInterp[genFRExtFunc,linModBetter,
 {X0Z0,2},eqnsCompiledBetter,sgSpecErg,smolyakInterpolation,{},3,"xVarRanges"->{{0.01,2},{0.01,2},{0.01,20},{0.85,1.2}}];
 
 *)

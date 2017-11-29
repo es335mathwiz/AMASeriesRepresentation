@@ -106,6 +106,19 @@ eps[theta][t]->epsVal
 cct + kkt - 1.*kktm1^(alpha)*thetat, 
 nlt - thetat/cct,
   thetat - ((N[E]^epsVal)*(thetatm1^(rho)))}/.paramSubs),"RuntimeOptions"->{"RuntimeErrorHandler"->Function[$Failed],"CatchMachineOverflow"->True,"CatchMachineUnderflow"->True}},
+   True&},
+ {False&,
+  Compile @@ {
+{
+{cctm1,_Real},{kktm1,_Real},{nltm1,_Real},{thetatm1,_Real},
+{cct,_Real},{kkt,_Real},{nlt,_Real},{thetat,_Real},
+{cctp1,_Real},{kktp1,_Real},{nltp1,_Real},{thetatp1,_Real},
+{epsVal,_Real}
+},
+({cct^(-1) - (alpha*delta*nltp1)/kkt^(1-alpha),
+cct + kkt - 1.*kktm1^(alpha)*thetat, 
+nlt - thetat/cct,
+  thetat - ((N[E]^epsVal)*(thetatm1^(rho)))}/.paramSubs),"RuntimeOptions"->{"RuntimeErrorHandler"->Function[$Failed],"CatchMachineOverflow"->True,"CatchMachineUnderflow"->True}},
    True&}}
 
 

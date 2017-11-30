@@ -1097,8 +1097,20 @@ that was used in computing the error bound. The black dots show the interpolatio
 
 Figure \ref{fig:cntpltA} shows the results when $K=0$, with degree of approximation $(1,1,1)$, the standard approach
 for computing the decision rule.  The top panel provides a contour plot of the
-norm of the equation errors. The bottom plot shows the error in the decision rule for different values of $k_{t-1}, \theta_{t-1}$ with $\epsilon_t=0$.  The plots for different values of $\epsilon_t$ are not different. The error bound, \input{resDir/forBetterRBC--1,1,1-Iters20theK0numKern2errBnd.tex} is 25\% larger than the actual error \input{resDir/forBetterRBC--1,1,1-Iters20theK0numKern2actErr.tex}
-
+norm of the equation errors. The bottom plot shows the error in the decision rule for different values of $k_{t-1}, \theta_{t-1}$ with $\epsilon_t=0$.  The plots for different values of $\epsilon_t$ are not different. The error bound, 
+\ifmacosx
+\input{resDir/forBetterRBC--1,1,1-Iters20theK0numKern2errBnd.tex} 
+\fi
+\iflinux
+\input{resDir/forBetterRBC--1,1,1-Iters20theK0numKern0errBnd.tex} 
+\fi
+is 25\% larger than the actual error 
+\ifmacosx
+\input{resDir/forBetterRBC--1,1,1-Iters20theK0numKern2actErr.tex}
+\fi
+\iflinux
+\input{resDir/forBetterRBC--1,1,1-Iters20theK0numKern0actErr.tex}
+\fi
 \begin{figure}
   \centering
 \ifmacosx
@@ -1138,7 +1150,15 @@ while Figure
 
 Figure \ref{fig:cntpltC} shows the results when $K=10$, with degree of approximation $(1,1,1)$
 for computing the decision rule.  The top panel provides a contour plot of the
-norm of the equation errors. The bottom plot shows the error in the decision rule for different values of $k_{t-1}, \theta_{t-1}$ with $\epsilon_t=0$.  The plots for different values of $\epsilon_t$ are not different.  The error bound, \input{resDir/forBetterRBC--1,1,1-Iters20theK10numKern2errBnd.tex} is 25\% larger than the actual error \input{resDir/forBetterRBC--1,1,1-Iters20theK10numKern2actErr.tex}  Notice that even thought equation errors are comparable in magnitude, the error in the decision rule is significantly smaller for the series representation solution.  The additional constraints on the equation system provided by computing conditional expectations paths and incorporating them into the solution at time $t$ leads to better solutions.
+norm of the equation errors. The bottom plot shows the error in the decision rule for different values of $k_{t-1}, \theta_{t-1}$ with $\epsilon_t=0$.  The plots for different values of $\epsilon_t$ are not different.  The error bound, 
+\ifmacosx
+\input{resDir/forBetterRBC--1,1,1-Iters20theK10numKern2errBnd.tex} 
+\fi
+is 25\% larger than the actual error 
+\iflinux
+\input{resDir/forBetterRBC--1,1,1-Iters20theK10numKern0actErr.tex} 
+\fi
+ Notice that even thought equation errors are comparable in magnitude, the error in the decision rule is significantly smaller for the series representation solution.  The additional constraints on the equation system provided by computing conditional expectations paths and incorporating them into the solution at time $t$ leads to better solutions.
 
 
 

@@ -99,7 +99,7 @@ drerrName=Unique["drerr"];
 drName=Unique["dr"];
 drName[z1_?NumberQ,z2_?NumberQ]:=
 Module[{},
--Norm[actualErrs[theRes[[-1,1]],backZtoX[{{z1,z2,0}},betterRBCMean,betterRBCSD,betterRBCvv][[1]]]]];
+-Norm[actualErrs[forDR,backZtoX[{{z1,z2,0}},betterRBCMean,betterRBCSD,betterRBCvv][[1]]]]];
 drerrName[z1_?NumberQ,z2_?NumberQ]:=
 Module[{},
 With[{resNow=-Norm[approxErrs[forDR,forDRCE,
@@ -126,34 +126,39 @@ Print["here",{acterrStr,acterr,errBnd,bothErrStr,errBndVal}];
 zPts=backXtoZ[ptErg,betterRBCMean,betterRBCSD,betterRBCvv];Print["errBndLoc=",errBndLoc];
 Export[theName<>".pdf",acterrsCP=
 ContourPlot[
-Norm[actualErrs[theRes[[-1,1]],
+Norm[actualErrs[forDR,
 backZtoX[{{z1,z2,0}},betterRBCMean,betterRBCSD,betterRBCvv][[1]]]],
 {z1,betterRBCMinZ[[1]],betterRBCMaxZ[[1]]},{z2,betterRBCMinZ[[2]],betterRBCMaxZ[[2]]},PlotRange->All,PlotLegends->Automatic,PlotLabel->theName<>bothErrStr,
 Epilog->{PointSize[0.05],Green,Point[acterrLoc[[{1,2}]]],PointSize[0.025],Orange,Point[errBndLoc[[{1,2}]]],PointSize[0.0125],Black,Point[#]&/@zPts[[All,{1,2}]]},PlotRangeClipping->False]];
+Print["acterrsCP"];
 Export[theName<>"Minus.pdf",
 ContourPlot[
-Norm[actualErrs[theRes[[-1,1]],
+Norm[actualErrs[forDR,
 backZtoX[{{z1,z2,-.03}},betterRBCMean,betterRBCSD,betterRBCvv][[1]]]],
 {z1,betterRBCMinZ[[1]],betterRBCMaxZ[[1]]},{z2,betterRBCMinZ[[2]],betterRBCMaxZ[[2]]},PlotRange->All,PlotLegends->Automatic,PlotLabel->theName<>"Minus"<>bothErrStr,
 Epilog->{PointSize[0.05],Green,Point[acterrLoc[[{1,2}]]],PointSize[0.025],Orange,Point[errBndLoc[[{1,2}]]],PointSize[0.0125],Black,Point[#]&/@zPts[[All,{1,2}]]}]];
+Print["Minus"];
 Export[theName<>"Plus.pdf",
 ContourPlot[
-Norm[actualErrs[theRes[[-1,1]],
+Norm[actualErrs[forDR,
 backZtoX[{{z1,z2,.03}},betterRBCMean,betterRBCSD,betterRBCvv][[1]]]],
 {z1,betterRBCMinZ[[1]],betterRBCMaxZ[[1]]},{z2,betterRBCMinZ[[2]],betterRBCMaxZ[[2]]},PlotRange->All,PlotLegends->Automatic,PlotLabel->theName<>"Plus"<>bothErrStr,
 Epilog->{PointSize[0.05],Green,Point[acterrLoc[[{1,2}]]],PointSize[0.025],Orange,Point[errBndLoc[[{1,2}]]],PointSize[0.0125],Black,Point[#]&/@zPts[[All,{1,2}]]}]];
+Print["Plus"];
 Export[theName<>"Approx.pdf",
 ContourPlot[
-Norm[checkPt[theRes[[-1,1]],theRes[[-2,2]],theK,
+Norm[checkPt[forDR,forDRCE,theK,
 backZtoX[{{z1,z2,0}},betterRBCMean,betterRBCSD,betterRBCvv][[1]]]],
 {z1,betterRBCMinZ[[1]],betterRBCMaxZ[[1]]},{z2,betterRBCMinZ[[2]],betterRBCMaxZ[[2]]},PlotRange->All,PlotLegends->Automatic,PlotLabel->theName<>"Approx"<>bothErrStr,
 Epilog->{PointSize[0.05],Green,Point[acterrLoc[[{1,2}]]],PointSize[0.025],Orange,Point[errBndLoc[[{1,2}]]],PointSize[0.0125],Black,Point[#]&/@zPts[[All,{1,2}]]}]];
+Print["Approx"];
 Export[theName<>"truncApprox.pdf",
 ContourPlot[
-Norm[tErrMat.Transpose[{checkPt[theRes[[-1,1]],theRes[[-2,2]],theK,
+Norm[tErrMat.Transpose[{checkPt[forDR,forDRCE,theK,
 backZtoX[{{z1,z2,0}},betterRBCMean,betterRBCSD,betterRBCvv][[1]]]}]],
 {z1,betterRBCMinZ[[1]],betterRBCMaxZ[[1]]},{z2,betterRBCMinZ[[2]],betterRBCMaxZ[[2]]},PlotRange->All,PlotLegends->Automatic,PlotLabel->theName<>"TruncApprox"<>bothErrStr,
 Epilog->{PointSize[0.05],Green,Point[acterrLoc[[{1,2}]]],PointSize[0.025],Orange,Point[errBndLoc[[{1,2}]]],PointSize[0.0125],Black,Point[#]&/@zPts[[All,{1,2}]]}]];
+Print["TruncApprox"];
 Save[mthName,theRes,tm,numKern,condNum,
 errBndVal,errBndLoc,acterrVal,acterrLoc,acterrsCP];
 Print["doIt:saving done"];
@@ -176,7 +181,7 @@ sgSpecErg={toIg,smolRngErg,ptErg,tfErg,plyErg,iplyErg,1,approx,
 
 (*
 
-Plot3D[actualErrs[theRes[[-1,1]],{kk,tt,0}][[1]],{kk,rbnds[[1,1]],rbnds[[1,2]]},{tt,rbnds[[2,1]],rbnds[[2,2]]},RegionFunction->Function[{kk,tt,zz},RegionMember[bmr,{kk,tt}]],PlotRange->All]
+Plot3D[actualErrs[forDR,{kk,tt,0}][[1]],{kk,rbnds[[1,1]],rbnds[[1,2]]},{tt,rbnds[[2,1]],rbnds[[2,2]]},RegionFunction->Function[{kk,tt,zz},RegionMember[bmr,{kk,tt}]],PlotRange->All]
 
 
 msntoval=MSNTO[drerrName,
@@ -213,7 +218,7 @@ toIg=aGSpecBetter[[1]];
 sgSpecErg={toIg,smolRngErg,ptErg,tfErg,plyErg,iplyErg,1,approx,
 {betterRBCMean,betterRBCSD,betterRBCMinZ,betterRBCMaxZ,betterRBCvv}};
 
-
+smolyakGenInterpData[theFRExtGate,sgSpecErg]
 
 (* uses triples
 
@@ -234,6 +239,8 @@ theResPNestST=parallelNestIterREInterp[genFRExtFunc,linModBetter,
 X0Z0=genX0Z0Funcs[linModBetter];
 theResPNestG=parallelNestIterREInterp[genFRExtFunc,linModBetter,
 {X0Z0,2},eqnsCompiledBetter,aGSpecBetter,theDistBetterCSTrips,3,"xVarRanges"->{{0.01,2},{0.01,2},{0.01,20},{0.85,1.2}}];
+
+
 
 X0Z0=genX0Z0Funcs[linModBetter];
 theResNestGS=nestGenericIterREInterp[genFRExtFunc,linModBetter,

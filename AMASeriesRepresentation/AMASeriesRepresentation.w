@@ -919,7 +919,7 @@ ReplacePart[
 replaceEqnOrExp[thePair[[2]],Drop[longFuncArgs,-numEps],3,backLookingInfo]}
 	]
 ]]]]]]
-(*
+
 parallelMakeGenericInterpFuncs[aVecFunc:(_Function|_CompiledFunction|_Symbol),backLookingInfo:{{_Integer,_,_}...},@<smolGSpec@>,
 genericInterp:(smolyakInterpolation|svmRegressionLinear|svmRegressionPoly|svmRegressionRBF|svmRegressionSigmoid),svmArgs:{_?NumberQ...}]:=
 Module[{},(*Print["parallelMakeGenericInterpFuncs:",genericInterp];*)
@@ -956,7 +956,7 @@ ReplacePart[
 replaceEqnOrExp[thePair[[2]],Drop[longFuncArgs,-numEps],3,backLookingInfo]}
 	]
 ]]]]]]
-*)
+
 
 
 parallelMakeGenericInterpFuncs[triples:{{_Function,(_Function|_CompiledFunction|_Symbol),

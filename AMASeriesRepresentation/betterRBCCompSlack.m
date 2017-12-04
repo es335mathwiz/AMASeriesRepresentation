@@ -75,7 +75,7 @@ delta->.95,
 rho->.95,
 sigma->.01,
 dd->.1,
-upsilon->-0.975
+upsilon->0.975
 } ;
 
 
@@ -112,8 +112,8 @@ lam[t] -1/cc[t],
 cc[t] + kk[t]-((theta[t])*(kk[t-1]^alpha)),
 nlPart[t] -(nlPartRHS=lam[t]*theta[t]),
 theta[t]-E^(rho*Log[theta[t-1]] + eps[theta][t]),
-lam[t] +mu1[t] - (alpha*kk[t]^(-1+alpha)*delta*nlPart[t+1]+lam[t+1]*delta*(1-dd)*0+mu1[t+1]*delta*(1-dd)*0),
-II[t] -(kk[t]-(1-dd)*0*kk[t-1]),
+lam[t] +mu1[t] - (alpha*kk[t]^(-1+alpha)*delta*nlPart[t+1]+lam[t+1]*delta*(1-dd)+mu1[t+1]*delta*(1-dd)),
+II[t] -(kk[t]-(1-dd)*kk[t-1]),
 mu1[t]
 }
 boolNotBinding= And[(kk[t]-(1-dd)*kk[t-1]-upsilon*IIss)>0,mu1==0]
@@ -187,7 +187,7 @@ checkMin=Function @@ {{ct,kt,thetatp1},eigs01}
 
 
   rbcEqnsBetterCompSlack=eqnsCompiledBetterCompSlack={
-  {True&,
+ { {True&,
   Compile @@ {
 {
 {cctm1,_Real},{iitm1,_Real},{kktm1,_Real},{lamtm1,_Real},{mu1tm1,_Real},{nltm1,_Real},{thetatm1,_Real},
@@ -200,7 +200,7 @@ checkMin=Function @@ {{ct,kt,thetatp1},eigs01}
  lamt - 0.864*lamtp1 + mu1t - 0.864*betterRBCCompSlack`Private`mu1tp1 - 
   (0.3168*nltp1)/kkt^0.6699999999999999, iit - 1.*kkt + 0.9*kktm1, 
  (-0.01755721342611109 + kkt - 0.9*kktm1)}),"RuntimeOptions"->{"RuntimeErrorHandler"->Function[$Failed],"CatchMachineOverflow"->True,"CatchMachineUnderflow"->True}},
-   (*And[#13<0,Chop[#11- .9*#3-0.01755721342611109]==0]*)False &},
+   (*And[#13<0,Chop[#11- .9*#3-0.01755721342611109]==0]*)True &},
  {True&,
   Compile @@ {
 {
@@ -211,11 +211,14 @@ checkMin=Function @@ {{ct,kt,thetatp1},eigs01}
 },
 ({-1./cct + lamt, cct + kkt - 1.*kktm1^0.36*thetat, nlt - 1.*lamt*thetat, 
  thetat - 1.*2.718281828459045^epsVal*thetatm1^0.95, 
- lamt - 0*0.855*lamtp1 + mu1t - 0*0.855*mu1tp1 - 
-  (0.34199999999999997*nltp1)/kkt^0.64, iit - 1.*kkt + 0*0.9*kktm1, mu1t}
+ lamt - 0.855*lamtp1 + mu1t - 0.855*mu1tp1 - 
+  (0.34199999999999997*nltp1)/kkt^0.64, iit - 1.*kkt + 0.9*kktm1, mu1t}
 
 ),"RuntimeOptions"->{"RuntimeErrorHandler"->Function[$Failed],"CatchMachineOverflow"->True,"CatchMachineUnderflow"->True}},
-   (* And[Chop[#13]==0,#11 -.9*#3-.9755*0.0180074>0]*)True&}}
+   (* And[Chop[#13]==0,#11 -.9*#3-.9755*0.0180074>0]*)True&}},
+Function[{aPt,allRes},
+If[allRes[[1]]===$Failed,Flatten[allRes[[2]]],Flatten[allRes[[1]]]]]
+}
 
 
 (*

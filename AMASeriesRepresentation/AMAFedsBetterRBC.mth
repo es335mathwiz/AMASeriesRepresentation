@@ -5,7 +5,7 @@ Get["AMASeriesRepresentation`"]
 Print["preemscstomma"]
 Get["emscsToMma`"]
 Get["betterRBC`"]
-Get["betterRBCCSTrips`"]
+Get["betterRBCTrips`"]
 phiMat=getPhi[linModBetter]
 fMat=getF[linModBetter]
 tErrMat=truncErrorMat[fMat,phiMat,0]
@@ -207,9 +207,9 @@ errKBndLoc={z1,z2}/.errKBndSubs;
 
 *)
 (*
-theFRExtGate=genFRExtFunc[{4,1,4},linModBetterCSTrips,{genX0Z0Funcs[linModBetterCSTrips],2},eqnsCompiledBetterCSTrips,"xVarRanges"->{{0.01,2},{0.01,2},{0.01,20},{0.85,1.3}}]
+theFRExtGate=genFRExtFunc[{4,1,4},linModBetterTrips,{genX0Z0Funcs[linModBetterTrips],2},eqnsCompiledBetterTrips,"xVarRanges"->{{0.01,2},{0.01,2},{0.01,20},{0.85,1.3}}]
 
-theFRExtNoGate=genFRExtFunc[{4,1,4},linModBetterCSTrips,{genX0Z0Funcs[linModBetterCSTrips],2},eqnsCompiledBetterCSTrips[[1,2]],"xVarRanges"->{{0.01,2},{0.01,2},{0.01,20},{0.85,1.3}}]
+theFRExtNoGate=genFRExtFunc[{4,1,4},linModBetterTrips,{genX0Z0Funcs[linModBetterTrips],2},eqnsCompiledBetterTrips[[1,2]],"xVarRanges"->{{0.01,2},{0.01,2},{0.01,20},{0.85,1.3}}]
 
 theFRExtNoGate @@ anXEpsFlatBetter
 evaluateTriple[theFRExtGate[[1]],anXEpsFlatBetter]
@@ -227,11 +227,11 @@ smolyakGenInterpData[theFRExtGate,sgSpecErg]
 
 X0Z0=genX0Z0Funcs[linModBetter];
 theResPNestGT=parallelNestIterREInterp[genFRExtFunc,linModBetter,
-{X0Z0,2},eqnsCompiledBetter,aGSpecBetter,theDistBetterCSTrips,3,"xVarRanges"->{{0.01,2},{0.01,2},{0.01,20},{0.85,1.2}}];
+{X0Z0,2},eqnsCompiledBetter,aGSpecBetter,theDistBetterTrips,3,"xVarRanges"->{{0.01,2},{0.01,2},{0.01,20},{0.85,1.2}}];
 
 X0Z0=genX0Z0Funcs[linModBetter];
 theResPNestST=parallelNestIterREInterp[genFRExtFunc,linModBetter,
-{X0Z0,2},eqnsCompiledBetterCSTrips,sgSpecErg,3,"xVarRanges"->{{0.01,2},{0.01,2},{0.01,20},{0.85,1.2}}];
+{X0Z0,2},eqnsCompiledBetterTrips,sgSpecErg,3,"xVarRanges"->{{0.01,2},{0.01,2},{0.01,20},{0.85,1.2}}];
 
 
 
@@ -241,7 +241,7 @@ theResPNestST=parallelNestIterREInterp[genFRExtFunc,linModBetter,
 
 X0Z0=genX0Z0Funcs[linModBetter];
 theResPNestG=parallelNestIterREInterp[genFRExtFunc,linModBetter,
-{X0Z0,2},eqnsCompiledBetter,aGSpecBetter,theDistBetterCSTrips,3,"xVarRanges"->{{0.01,2},{0.01,2},{0.01,20},{0.85,1.2}}];
+{X0Z0,2},eqnsCompiledBetter,aGSpecBetter,theDistBetterTrips,3,"xVarRanges"->{{0.01,2},{0.01,2},{0.01,20},{0.85,1.2}}];
 
 
 

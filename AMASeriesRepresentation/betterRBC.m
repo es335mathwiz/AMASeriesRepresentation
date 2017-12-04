@@ -80,15 +80,28 @@ forSubs={alpha^(1 - alpha)^(-1)*delta^(1 - alpha)^(-1)};
 simpSubs=Thread[forSubs->nu];
 forParamSubs=Thread[nu->forSubs]//.paramSubs;
 simpParamSubs=Join[paramSubs,forParamSubs];
+(*
 
+rbcCompileGuts=(betterRBC`Private`rbcEqns/.{
+betterRBC`Private`cc[t-1]->cctm1,
+betterRBC`Private`kk[t-1]->kktm1,
+betterRBC`Private`nlPart[t-1]->nltm1,
+betterRBC`Private`theta[t-1]->thtm1,
+betterRBC`Private`cc[t]->cct,
+betterRBC`Private`kk[t]->kkt,
+betterRBC`Private`nlPart[t]->nlt,
+betterRBC`Private`theta[t]->tht,
+betterRBC`Private`cc[t+1]->cctp1,
+betterRBC`Private`kk[t+1]->kktp1,
+betterRBC`Private`nlPart[t+1]->nltp1,
+betterRBC`Private`theta[t+1]->thtp1,
+eps[betterRBC`Private`theta][t]->epsVal
+}//.betterRBC`Private`paramSubs)//N//InputForm
+{cct^(-1) - (0.34199999999999997*nltp1)/kkt^0.64, 
+ cct + kkt - 1.*kktm1^0.36*tht, nlt - (1.*tht)/cct, 
+ tht - 1.*2.718281828459045^epsVal*thtm1^0.95}
 
-rbcCompileGuts=(rbcEqns/.{
-cc[t-1]->cctm1,kk[t-1]->kktm1,nlPart[t-1]->nltm1,theta[t-1]->thtm1,
-cc[t]->cct,kk[t]->kkt,nlPart[t]->nlt,theta[t]->tht,
-cc[t+1]->cctp1,kk[t+1]->kktp1,nlPart[t+1]->nltp1,theta[t+1]->thtp1,
-eps[theta][t]->epsVal
-}//.paramSubs)//N
-
+*)
 
 rbcEqnsBetter=eqnsCompiledBetter=Compile @@ {
 {
@@ -108,6 +121,9 @@ causes error a
 CompiledFunction::cfn: 
    Numerical error encountered at instruction 2; proceeding with
      uncompiled evaluation.
+
+
+
 
 eqnsCompiledBetter  @@ Flatten[{{1}, {0.0187324}, {1}, {1.1}, {0.293437}, {-0.0351748},      {7.51431}, {1.08125}, {0.232894}, {0.120986}, {3.96721}, 
      {1.07709}, {-0.0124264}}]

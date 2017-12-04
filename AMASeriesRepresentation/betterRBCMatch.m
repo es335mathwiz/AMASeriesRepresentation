@@ -21,6 +21,7 @@ thePFDistBetterMatch::usage="theDist={{{ee,PerfectForesight]}}};"
 linModBetterMatch::usage="linear model matrices for approx"
 aGSpecBetterMatch::usage="aGSpec={{1},1,{{4,kLow,kHigh},{3,thLow,thHigh},{3,sigLow,3*sigHigh}}}";
 eqnsCompiledBetterMatch::usage="model equations function"
+rbcEqns::usage="model equations"
 rbcEqnsBetterMatch::usage="model equations"
 eqnsEulerCompiledBetterMatch::usage="eqnsEulerCompiledBetterMatch"
 

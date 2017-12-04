@@ -2,6 +2,9 @@
 
 BeginPackage["betterRBCCompSlack`", { "AMASeriesRepresentation`", "ProtectedSymbols`", "AMAModel`", "SymbolicAMA`", "NumericAMA`"}]
 (* Exported symbols added here with SymbolName::usage *)  
+rbcEqnsBetterCSTrips::usage="rbcEqnsBetterCSTrips"
+eqnsCompiledBetterCSTrips::usage="eqnsCompiledBetterCSTrips"
+
 anXBetterCompSlack::usage="for test input";
 anEpsBetterCompSlack::usage="for test input";
 anXEpsBetterCompSlack::usage="for test input";
@@ -48,21 +51,37 @@ chkcobb douglas production*)
 
 
 (*parameters page 21 using state 1*)
+
 (*
 paramSubs={
-alpha->.33,
+alpha->.36,
 beta->1,
+eta->1,
 delta->.95,
-rho->.9,
-sigma->.013,
+rho->.95,
+sigma->.01,
 dd->1,
-upsilon->0.975
+upsilon->-0.975
 } ;
-*)
 
+*)
 (*parameters page 28 guerrieri iacoviello*)
 
 paramSubs={
+alpha->.36,
+beta->1,
+eta->1,
+delta->.95,
+rho->.95,
+sigma->.01,
+dd->.1,
+upsilon->-0.975
+} ;
+
+
+(*
+from a paper?
+
 alpha->.33,
 beta->1,
 delta->.96,
@@ -70,9 +89,8 @@ rho->.90,
 sigma->.013,
 dd->.1,
 upsilon->0.975
-} ;
 
-
+*)
 forSubs={alpha^(1 - alpha)^(-1)*delta^(1 - alpha)^(-1)};
 simpSubs=Thread[forSubs->nu];
 forParamSubs=Thread[nu->forSubs]//.paramSubs;
@@ -85,18 +103,18 @@ lam[t] -1/cc[t],
 cc[t] + kk[t]-((theta[t])*(kk[t-1]^alpha)),
 nlPart[t] -(nlPartRHS=lam[t]*theta[t]),
 theta[t]-E^(rho*Log[theta[t-1]] + eps[theta][t]),
-lam[t] +mu1[t] - (alpha*kk[t]^(-1+alpha)*delta*nlPart[t+1]+lam[t+1]*delta*(1-dd)+mu1Sqrt[t+1]*delta*(1-dd)),
+lam[t] +mu1[t] - (alpha*kk[t]^(-1+alpha)*delta*nlPart[t+1]+lam[t+1]*delta*(1-dd)+mu1tp1*delta*(1-dd)),
 II[t] -(kk[t]-(1-dd)*kk[t-1]),
-mu1[t]*(kk[t]-(1-dd)*kk[t-1]-upsilon*IIss)
+(kk[t]-(1-dd)*kk[t-1]-upsilon*IIss)
 }
 rbcEqnsNotBinding={
 lam[t] -1/cc[t],
 cc[t] + kk[t]-((theta[t])*(kk[t-1]^alpha)),
 nlPart[t] -(nlPartRHS=lam[t]*theta[t]),
 theta[t]-E^(rho*Log[theta[t-1]] + eps[theta][t]),
-lam[t] +mu1[t] - (alpha*kk[t]^(-1+alpha)*delta*nlPart[t+1]+lam[t+1]*delta*(1-dd)+mu1[t+1]*delta*(1-dd)),
-II[t] -(kk[t]-(1-dd)*kk[t-1]),
-mu1[t]*(kk[t]-(1-dd)*kk[t-1]-upsilon*IIss)
+lam[t] +mu1[t] - (alpha*kk[t]^(-1+alpha)*delta*nlPart[t+1]+lam[t+1]*delta*(1-dd)*0+mu1[t+1]*delta*(1-dd)*0),
+II[t] -(kk[t]-(1-dd)*0*kk[t-1]),
+mu1[t]
 }
 boolNotBinding= And[(kk[t]-(1-dd)*kk[t-1]-upsilon*IIss)>0,mu1==0]
   boolBinding= And[(kk[t]-(1-dd)*kk[t-1]-upsilon*IIss)==0,mu1>=0]
@@ -137,7 +155,7 @@ genCompSlackEqns[alpha_?NumberQ,beta_?NumberQ,delta_?NumberQ,rho_?NumberQ,sigma_
 Module[{},
 With[{eqnsName=Unique["eqnsName"],eqnsBackLookingName=Unique["eqnsBLName"],eqnsBackLookingExpName=Unique["eqnsBLExpName"],
 theGuts=Flatten[
-({(rbcEqns/.paramSubs)/.argsSubs}/.ssSolnSubsRE)//N],
+({(rbcEqnsNotBinding/.paramSubs)/.argsSubs}/.ssSolnSubsRE)//N],
 theBLGuts=Flatten[
 ({(rbcBackLookingEqns/.paramSubs)/.argsSubs}/.ssSolnSubsRE)//N],
 theBLExpGuts=Flatten[
@@ -152,11 +170,70 @@ eqnsBackLookingExpName[Apply[Sequence,lagPatterns]],theBLExpGuts];DistributeDefi
 {eqnsName,eqnsBackLookingName,eqnsBackLookingExpName}]]
 
 
+fir={1,1};
+theSec={0,(1-dd)+thetatp1*alpha*kt^(alpha-1)}
+theGrad=
+{fir,-fir,delta*theSec,-delta*theSec};
+theHess={{-eta * ct^(-(eta+1)),0},{0,alpha*(alpha-1)*kt^(alpha-2)}}
 
+bordered01=(blockMatrix[{{blockMatrix[{{ConstantArray[0,{4,4}],theGrad}}]},
+{blockMatrix[{{Transpose[theGrad],theHess}}]}}]/.
+{alpha->betterRBCCompSlack`Private`alpha,
+eta->1,
+delta->betterRBCCompSlack`Private`delta,
+dd->betterRBCCompSlack`Private`dd})/.betterRBCCompSlack`Private`paramSubs
+eigs01=Eigenvalues[bordered01];
+checkMin=Function @@ {{ct,kt,thetatp1},eigs01}
+
+
+  rbcEqnsBetterCompSlack=eqnsCompiledBetterCompSlack={
+  {True&,
+  Compile @@ {
+{
+{cctm1,_Real},{iitm1,_Real},{kktm1,_Real},{lamtm1,_Real},{mu1tm1,_Real},{nltm1,_Real},{thetatm1,_Real},
+{cct,_Real},{iit,_Real},{kkt,_Real},{lamt,_Real},{mu1t,_Real},{nlt,_Real},{thetat,_Real},
+{cctp1,_Real},{iitp1,_Real},{kktp1,_Real},{lamtp1,_Real},{mu1tp1,_Real},{nltp1,_Real},{thetatp1,_Real},
+{epsVal,_Real}
+},
+({-1./cct + lamt, cct + kkt - 1.*kktm1^0.33*thetat, nlt - 1.*lamt*thetat, 
+ thetat - 1.*2.718281828459045^epsVal*thetatm1^0.9, 
+ lamt - 0.864*lamtp1 + mu1t - 0.864*betterRBCCompSlack`Private`mu1tp1 - 
+  (0.3168*nltp1)/kkt^0.6699999999999999, iit - 1.*kkt + 0.9*kktm1, 
+ (-0.01755721342611109 + kkt - 0.9*kktm1)}),"RuntimeOptions"->{"RuntimeErrorHandler"->Function[$Failed],"CatchMachineOverflow"->True,"CatchMachineUnderflow"->True}},
+   (*And[#13<0,Chop[#11- .9*#3-0.01755721342611109]==0]*)False &},
+ {True&,
+  Compile @@ {
+{
+{cctm1,_Real},{iitm1,_Real},{kktm1,_Real},{lamtm1,_Real},{mu1tm1,_Real},{nltm1,_Real},{thetatm1,_Real},
+{cct,_Real},{iit,_Real},{kkt,_Real},{lamt,_Real},{mu1t,_Real},{nlt,_Real},{thetat,_Real},
+{cctp1,_Real},{iitp1,_Real},{kktp1,_Real},{lamtp1,_Real},{mu1tp1,_Real},{nltp1,_Real},{thetatp1,_Real},
+{epsVal,_Real}
+},
+({-1./cct + lamt, cct + kkt - 1.*kktm1^0.36*thetat, nlt - 1.*lamt*thetat, 
+ thetat - 1.*2.718281828459045^epsVal*thetatm1^0.95, 
+ lamt - 0*0.855*lamtp1 + mu1t - 0*0.855*mu1tp1 - 
+  (0.34199999999999997*nltp1)/kkt^0.64, iit - 1.*kkt + 0*0.9*kktm1, mu1t}
+
+),"RuntimeOptions"->{"RuntimeErrorHandler"->Function[$Failed],"CatchMachineOverflow"->True,"CatchMachineUnderflow"->True}},
+   (* And[Chop[#13]==0,#11 -.9*#3-.9755*0.0180074>0]*)True&}}
 
 
 (*
-(((betterRBCCompSlack`Private`rbcEqns/.betterRBCCompSlack`Private`paramSubs)
+{-1./cct + lamt, cct + kkt - 1.*kktm1^0.33*thetat, nlt - 1.*lamt*thetat, 
+ thetat - 1.*2.718281828459045^epsVal*thetatm1^0.9, 
+ lamt - 0.864*lamtp1 + mu1t - 0.864*mu1tp1 - 
+  (0.3168*nltp1)/kkt^0.6699999999999999, iit - 1.*kkt + 0.9*kktm1, 
+ mu1t}
+
+
+*)
+
+
+(*
+
+
+
+(((betterRBCCompSlack`Private`rbcEqnsBinding/.betterRBCCompSlack`Private`paramSubs)
 /.{
 eps[betterRBCCompSlack`Private`theta][t]->epsVal,
 betterRBCCompSlack`Private`cc[t-1]->cctm1,
@@ -182,6 +259,63 @@ betterRBCCompSlack`Private`nlPart[t+1]->nltp1,
 betterRBCCompSlack`Private`theta[t+1]->thetat
 })/.
 betterRBCCompSlack`Private`ssSolnSubsRE)//N//InputForm
+{-1./cct + lamt, cct + kkt - 1.*kktm1^0.36*thetat, nlt - 1.*lamt*thetat, 
+ thetat - 1.*2.718281828459045^epsVal*thetatm1^0.95, 
+ 0. + lamt + mu1t - (0.34199999999999997*nltp1)/kkt^0.64, iit - 1.*kkt, 
+ 0.18264130077170979 + kkt}(*dd->1 to match*)
+
+
+
+(((betterRBCCompSlack`Private`rbcEqnsNotBinding/.betterRBCCompSlack`Private`paramSubs)
+/.{
+eps[betterRBCCompSlack`Private`theta][t]->epsVal,
+betterRBCCompSlack`Private`cc[t-1]->cctm1,
+betterRBCCompSlack`Private`II[t-1]->iitm1,
+betterRBCCompSlack`Private`kk[t-1]->kktm1,
+betterRBCCompSlack`Private`lam[t-1]->lamtm1,
+betterRBCCompSlack`Private`mu1[t-1]->mu1tm1,
+betterRBCCompSlack`Private`nlPart[t-1]->nltm1,
+betterRBCCompSlack`Private`theta[t-1]->thetatm1,
+betterRBCCompSlack`Private`cc[t]->cct,
+betterRBCCompSlack`Private`II[t]->iit,
+betterRBCCompSlack`Private`kk[t]->kkt,
+betterRBCCompSlack`Private`lam[t]->lamt,
+betterRBCCompSlack`Private`mu1[t]->mu1t,
+betterRBCCompSlack`Private`nlPart[t]->nlt,
+betterRBCCompSlack`Private`theta[t]->thetat,
+betterRBCCompSlack`Private`cc[t+1]->cctp1,
+betterRBCCompSlack`Private`II[t+1]->iitp1,
+betterRBCCompSlack`Private`kk[t+1]->kktp1,
+betterRBCCompSlack`Private`lam[t+1]->lamtp1,
+betterRBCCompSlack`Private`mu1[t+1]->mu1tp1,
+betterRBCCompSlack`Private`nlPart[t+1]->nltp1,
+betterRBCCompSlack`Private`theta[t+1]->thetat
+})/.
+betterRBCCompSlack`Private`ssSolnSubsRE)//N//InputForm
+{-1./cct + lamt, cct + kkt - 1.*kktm1^0.36*thetat, nlt - 1.*lamt*thetat, 
+ thetat - 1.*2.718281828459045^epsVal*thetatm1^0.95, 
+ lamt - 0.855*lamtp1 + mu1t - 0.855*mu1tp1 - 
+  (0.34199999999999997*nltp1)/kkt^0.64, iit - 1.*kkt + 0.9*kktm1, mu1t}
+
+
+
+{-1./cct + lamt, cct + kkt - 1.*kktm1^0.36*thetat, nlt - 1.*lamt*thetat, 
+ thetat - 1.*2.718281828459045^epsVal*thetatm1^0.95, 
+ 0. + lamt + mu1t - (0.34199999999999997*nltp1)/kkt^0.64, iit - 1.*kkt, 
+ mu1t}(*dd->1 to match*)
+
+
+(*dd->.1*)
+{-1./cct + lamt, cct + kkt - 1.*kktm1^0.36*thetat, nlt - 1.*lamt*thetat, 
+ thetat - 1.*2.718281828459045^epsVal*thetatm1^0.95, 
+ lamt - 0.855*lamtp1 + mu1t - 0.855*mu1tp1 - 
+  (0.34199999999999997*nltp1)/kkt^0.64, iit - 1.*kkt + 0.9*kktm1, mu1t}
+
+{-1./cct + lamt, cct + kkt - 1.*kktm1^0.33*thetat, nlt - 1.*lamt*thetat, 
+ thetat - 1.*2.718281828459045^epsVal*thetatm1^0.9, 
+ lamt - 0.864*lamtp1 + mu1t - 0.864*mu1tp1 - 
+  (0.3168*nltp1)/kkt^0.6699999999999999, iit - 1.*kkt + 0.9*kktm1, 
+ mu1t}
 
 *)
 
@@ -234,9 +368,9 @@ psiz=IdentityMatrix[7]
 
 (*Print["RE solutions"]*)
 hmatSymbRawRE=(((equationsToMatrix[
-rbcEqns/.simpParamSubs]//FullSimplify)/.{xxxx_[t+_.]->xxxx})//.ssSolnSubsRE)/.{eps[_]->0}//FullSimplify;
+rbcEqnsNotBinding/.simpParamSubs]//FullSimplify)/.{xxxx_[t+_.]->xxxx})//.ssSolnSubsRE)/.{eps[_]->0}//FullSimplify;
 
-psiepsSymbRE=-Transpose[{((D[#,eps[theta][t]]&/@ rbcEqns)/.{eps[_][_]->0,xxxx_[t+_.]->xxxx})//.ssSolnSubsRE}/.simpParamSubs]
+psiepsSymbRE=-Transpose[{((D[#,eps[theta][t]]&/@ rbcEqnsNotBinding)/.{eps[_][_]->0,xxxx_[t+_.]->xxxx})//.ssSolnSubsRE}/.simpParamSubs]
 
 
 
@@ -271,7 +405,7 @@ qmatSymbRE=Join[zfSymbRE,evcsSymbRE[[{1}]]];
 
 linModBetterCompSlack={hmatSymbRE//N,bmatSymbRE // N, phimatSymbRE // N, 
     fmatSymbRE // N, psiepsSymbRE // N, 
-    psicSymbRE // N, psiz // N,{{7,rbcEqnsBetterBackLookingCompSlack,rbcEqnsBetterBackLookingExpCompSlack}}};
+    psicSymbRE // N, psiz // N,(*{{7,rbcEqnsBetterBackLookingCompSlack,rbcEqnsBetterBackLookingExpCompSlack}}*){}};Print["took out back looking equations"];
 
 (*
 

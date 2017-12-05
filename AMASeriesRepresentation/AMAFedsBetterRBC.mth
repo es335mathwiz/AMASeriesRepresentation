@@ -43,7 +43,7 @@ Append[Join[{999,kk,999,tt},xt,xtp1],ee]]]]
 smolRng=#[[{2,3}]]&/@Drop[aGSpecBetter,2][[1]];
 aDir="resDir/"
 fNameString[approx_?VectorQ,iters_Integer,theK_Integer,numKern_Integer]:=
-StringReplace[aDir<>"forBetterRBC-"<>ToString[approx]<>"Iters"<>ToString[iters]<>"theK"<>ToString[theK]<>"numKern"<>ToString[numKern],{" "->"","{"->"-","}"->"-"}];
+StringReplace[aDir<>"forBetterRBC-"<>ToString[approx]<>"Iters"<>ToString[iters]<>"theK"<>ToString[theK]<>"host-"<>$MachineName<>"numKern"<>ToString[numKern],{" "->"","{"->"-","}"->"-"}];
 
 
 kl=betterRBC`Private`kLow 
@@ -209,7 +209,7 @@ errKBndLoc={z1,z2}/.errKBndSubs;
 (*
 theFRExtGate=genFRExtFunc[{4,1,4},linModBetterTrips,{genX0Z0Funcs[linModBetterTrips],2},eqnsCompiledBetterTrips,"xVarRanges"->{{0.01,2},{0.01,2},{0.01,20},{0.85,1.3}}]
 
-theFRExtNoGate=genFRExtFunc[{4,1,4},linModBetterTrips,{genX0Z0Funcs[linModBetterTrips],2},eqnsCompiledBetterTrips[[1,2]],"xVarRanges"->{{0.01,2},{0.01,2},{0.01,20},{0.85,1.3}}]
+theFRExtNoGate=genFRExtFunc[{4,1,4},linModBetterTrips,{genX0Z0Funcs[linModBetterTrips],2},eqnsCompiledBetterTrips[[1,1,2]],"xVarRanges"->{{0.01,2},{0.01,2},{0.01,20},{0.85,1.3}}]
 
 theFRExtNoGate @@ anXEpsFlatBetter
 evaluateTriple[theFRExtGate[[1]],anXEpsFlatBetter]

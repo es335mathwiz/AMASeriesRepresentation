@@ -1,5 +1,6 @@
 Get["pathSetup.mth"]
 Get["AMASeriesRepresentation`"]
+Get["emscsToMma`"]
 Get["betterRBC`"]
 Get["notBetterRBC`"]
 Get["betterRBCCompSlack`"]
@@ -22,6 +23,16 @@ sgSpecErg={toIg,smolRngErg,ptErg,tfErg,plyErg,iplyErg,1,approx,
 
 {evaluateTriple[theFRExtGateCS[[1,2]],anXEpsFlatBetterCompSlack],
 evaluateTriple[theFRExtGateCS[[1,1]],anXEpsFlatBetterCompSlack]}
+parallelSetup
 
 smolyakGenInterpData[theFRExtGateCS,sgSpecErg]
 parallelSmolyakGenInterpData[theFRExtGateCS,sgSpecErg]
+
+
+theRes=parallelNestIterREInterp[genFRExtFunc,linModBetterCompSlack,
+{genX0Z0Funcs[linModBetterCompSlack],2},eqnsCompiledBetterCompSlack,sgSpecErg,1];
+
+simulateDR[theRes[[-1,1]],7,aGSpecBetterCompSlack,theDistBetterCompSlack,anXEpsFlatBetterCompSlack,1]
+
+
+theFRExtGateCSNow=genFRExtFunc[{7,1,7},linModBetterCompSlack,{theRes[[-1,2]],2},eqnsCompiledBetterCompSlack]

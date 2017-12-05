@@ -52,7 +52,7 @@ chkcobb douglas production*)
 
 (*parameters page 21 using state 1*)
 
-(*
+
 paramSubs={
 alpha->.36,
 beta->1,
@@ -64,9 +64,9 @@ dd->1,
 upsilon->-0.975
 } ;
 
-*)
-(*parameters page 28 guerrieri iacoviello*)
 
+(*parameters page 28 guerrieri iacoviello*)
+(*
 paramSubs={
 alpha->.36,
 beta->1,
@@ -75,9 +75,9 @@ delta->.95,
 rho->.95,
 sigma->.01,
 dd->.1,
-upsilon->0.975
+upsilon->-10.975
 } ;
-
+*)
 
 (*
 from a paper?
@@ -122,6 +122,16 @@ rbcBackLookingEqns={E^(rho*Log[theta[t-1]] + eps[theta][t])}
 rbcBackLookingExpEqns={Expectation[rbcBackLookingEqns[[1]],eps[theta][t] \[Distributed] NormalDistribution[0,sigma]]}
 
 
+
+ssEqnSubs=
+{xx_Symbol[t+v_.]->xx}
+rbcEqnsNotBindingSubbed=((rbcEqnsNotBinding/.paramSubs)/.eps[theta][t]->0)
+
+Print[{forFR,theVars=Cases[Variables[forFR=(rbcEqnsNotBindingSubbed/.ssEqnSubs)],_Symbol]}]
+frArg=Transpose[{theVars,{.4,0,.3,0,0,5,1}}]
+Print[
+ssFRSolnSubs=FindRoot[forFR,frArg,MaxIterations->1000,WorkingPrecision->50]]
+
 argsSubs={
 cc[t-1]->cctm1,
 II[t-1]->iitm1,
@@ -144,7 +154,8 @@ lam[t+1]->lamtp1,
 mu1[t+1]->mu1tp1,
 nlPart[t+1]->nltp1,
 theta[t+1]->thetatp1,
-eps[theta][t]->epsVal
+eps[theta][t]->epsVal,
+Iss->II
 }
 
 thePatterns=makeBlankPatternArgs[Last/@argsSubs]
@@ -195,12 +206,11 @@ checkMin=Function @@ {{ct,kt,thetatp1},eigs01}
 {cctp1,_Real},{iitp1,_Real},{kktp1,_Real},{lamtp1,_Real},{mu1tp1,_Real},{nltp1,_Real},{thetatp1,_Real},
 {epsVal,_Real}
 },
-({-1./cct + lamt, cct + kkt - 1.*kktm1^0.33*thetat, nlt - 1.*lamt*thetat, 
- thetat - 1.*2.718281828459045^epsVal*thetatm1^0.9, 
- lamt - 0.864*lamtp1 + mu1t - 0.864*betterRBCCompSlack`Private`mu1tp1 - 
-  (0.3168*nltp1)/kkt^0.6699999999999999, iit - 1.*kkt + 0.9*kktm1, 
- (-0.01755721342611109 + kkt - 0.9*kktm1)}),"RuntimeOptions"->{"RuntimeErrorHandler"->Function[$Failed],"CatchMachineOverflow"->True,"CatchMachineUnderflow"->True}},
-   (*And[#13<0,Chop[#11- .9*#3-0.01755721342611109]==0]*)True &},
+({-1./cct + lamt, cct + kkt - 1.*kktm1^0.36*thetat, nlt - 1.*lamt*thetat, 
+ thetat - 1.*2.718281828459045^epsVal*thetatm1^0.95, 
+ 0. + lamt + mu1t - (0.34199999999999997*nltp1)/kkt^0.64, iit - 1.*kkt, 
+ 0.975*betterRBCCompSlack`Private`IIss + kkt}),"RuntimeOptions"->{"RuntimeErrorHandler"->Function[$Failed],"CatchMachineOverflow"->True,"CatchMachineUnderflow"->True}},
+ (*  And[#13<0,Chop[#11- .9*#3-0.01755721342611109]==0]*)False &},
  {True&,
   Compile @@ {
 {
@@ -211,13 +221,13 @@ checkMin=Function @@ {{ct,kt,thetatp1},eigs01}
 },
 ({-1./cct + lamt, cct + kkt - 1.*kktm1^0.36*thetat, nlt - 1.*lamt*thetat, 
  thetat - 1.*2.718281828459045^epsVal*thetatm1^0.95, 
- lamt - 0.855*lamtp1 + mu1t - 0.855*mu1tp1 - 
-  (0.34199999999999997*nltp1)/kkt^0.64, iit - 1.*kkt + 0.9*kktm1, mu1t}
+ 0. + lamt + mu1t - (0.34199999999999997*nltp1)/kkt^0.64, iit - 1.*kkt, 
+ mu1t}
 
 ),"RuntimeOptions"->{"RuntimeErrorHandler"->Function[$Failed],"CatchMachineOverflow"->True,"CatchMachineUnderflow"->True}},
-   (* And[Chop[#13]==0,#11 -.9*#3-.9755*0.0180074>0]*)True&}},
+   (*And[Chop[#13]==0,#11 -.9*#3+10.9755*0.0180074>0]*)True&}},
 Function[{aPt,allRes},
-If[allRes[[1]]===$Failed,Flatten[allRes[[2]]],Flatten[allRes[[1]]]]]
+If[allRes[[2]]===$Failed,Print["constraint violated"];Flatten[allRes[[1]]],Print["constraint not violated"];Flatten[allRes[[2]]]]]
 }
 
 
@@ -261,7 +271,7 @@ betterRBCCompSlack`Private`mu1[t+1]->mu1tp1,
 betterRBCCompSlack`Private`nlPart[t+1]->nltp1,
 betterRBCCompSlack`Private`theta[t+1]->thetat
 })/.
-betterRBCCompSlack`Private`ssSolnSubsRE)//N//InputForm
+betterRBCCompSlack`Private`ssFRSolnSubs)//N//InputForm
 {-1./cct + lamt, cct + kkt - 1.*kktm1^0.36*thetat, nlt - 1.*lamt*thetat, 
  thetat - 1.*2.718281828459045^epsVal*thetatm1^0.95, 
  0. + lamt + mu1t - (0.34199999999999997*nltp1)/kkt^0.64, iit - 1.*kkt, 
@@ -294,7 +304,7 @@ betterRBCCompSlack`Private`mu1[t+1]->mu1tp1,
 betterRBCCompSlack`Private`nlPart[t+1]->nltp1,
 betterRBCCompSlack`Private`theta[t+1]->thetat
 })/.
-betterRBCCompSlack`Private`ssSolnSubsRE)//N//InputForm
+betterRBCCompSlack`Private`ssFRSolnSubs)//N//InputForm
 {-1./cct + lamt, cct + kkt - 1.*kktm1^0.36*thetat, nlt - 1.*lamt*thetat, 
  thetat - 1.*2.718281828459045^epsVal*thetatm1^0.95, 
  lamt - 0.855*lamtp1 + mu1t - 0.855*mu1tp1 - 
@@ -326,32 +336,6 @@ betterRBCCompSlack`Private`ssSolnSubsRE)//N//InputForm
 
 
 
-(*If[Length[ssSolnSubsRE]===0,*)
-(*Print["computing steady state subs"];*)
-thNow[lastTh_,eps_]:=(E^eps)*lastTh^rho/.simpParamSubs;
-nxtK[lastK_,thNowVal_]:=((alpha*delta))*thNowVal*lastK^(alpha)/.simpParamSubs;
-yNow[kLag_,thNowVal_]:=thNowVal*kLag^(alpha)/.simpParamSubs;
-anExpRE=Expectation[E^ep,ep\[Distributed] NormalDistribution[0,sigma]/.simpParamSubs];
-anExpPF=1;
-Off[Solve::ifun]
-thSubsRE=Flatten[Solve[theta==anExpRE*thNow[theta,0],theta][[2]]];
-kSSSubRE=Flatten[Solve[nxtK[kk,theta/.thSubsRE]==kk,kk][[-1]]];
-cSSSubRE=cc->(yNow[kk/.kSSSubRE,theta/.thSubsRE]-kk/.kSSSubRE);
-lamSSSubRE=lam->(1/cc)/.cSSSubRE;
-nlPartSSSubRE=(nlPart->(nlPartRHS/.xxxx_[t]->xxxx))//.Join[thSubsRE,Append[kSSSubRE,cSSSubRE]];
-IISSubRE=({IIss->(dd*kk/.kSSSubRE),II->(dd*kk/.kSSSubRE)}/.simpParamSubs);
-mu1SSSubRE=mu1->0;
-pos1SSSubRE=pos1->0;
-ssSolnSubsRE=Flatten[{thSubsRE,kSSSubRE,cSSSubRE,nlPartSSSubRE,lamSSSubRE,IISSubRE,mu1SSSubRE,pos1SSSubRE}];
-(*Print["RE done now PF"];*)
-thSubsPF=Flatten[Solve[theta==theta^rho,theta]][[1]];
-kSSSubPF=Flatten[Solve[nxtK[kk,theta/.thSubsPF]==kk,kk]][[-1]];
-On[Solve::ifun]
-cSSSubPF=cc->(yNow[kk/.kSSSubPF,theta/.thSubsPF]-kk/.kSSSubPF);
-nlPartSSSubPF=(nlPart->(nlPartRHS/.xxxx_[t]->xxxx))//.{kSSSubPF,cSSSubPF,thSubsPF};
-ssSolnSubsPF=Flatten[{thSubsPF,kSSSubPF,cSSSubPF,nlPartSSSubPF}];
-
-
 
 
 
@@ -371,9 +355,9 @@ psiz=IdentityMatrix[7]
 
 (*Print["RE solutions"]*)
 hmatSymbRawRE=(((equationsToMatrix[
-rbcEqnsNotBinding/.simpParamSubs]//FullSimplify)/.{xxxx_[t+_.]->xxxx})//.ssSolnSubsRE)/.{eps[_]->0}//FullSimplify;
+rbcEqnsNotBinding/.simpParamSubs]//FullSimplify)/.{xxxx_[t+_.]->xxxx})//.ssFRSolnSubs)/.{eps[_]->0}//FullSimplify;
 
-psiepsSymbRE=-Transpose[{((D[#,eps[theta][t]]&/@ rbcEqnsNotBinding)/.{eps[_][_]->0,xxxx_[t+_.]->xxxx})//.ssSolnSubsRE}/.simpParamSubs]
+psiepsSymbRE=-Transpose[{((D[#,eps[theta][t]]&/@ rbcEqnsNotBinding)/.{eps[_][_]->0,xxxx_[t+_.]->xxxx})//.ssFRSolnSubs}/.simpParamSubs]
 
 
 
@@ -385,7 +369,7 @@ hSumRE=hmatSymbRE[[All,Range[7]]]+hmatSymbRE[[All,7+Range[7]]]+hmatSymbRE[[All,2
 
 
 
-ssSolnVecRE={{cc},{II},{kk},{lam},{mu1},{nlPart},{theta}}//.ssSolnSubsRE;
+ssSolnVecRE={{cc},{II},{kk},{lam},{mu1},{nlPart},{theta}}//.ssFRSolnSubs;
 psicSymbRE=hSumRE . ssSolnVecRE;
 
 
@@ -404,7 +388,9 @@ qmatSymbRE=Join[zfSymbRE,evcsSymbRE[[{1}]]];
 (*Print["computing and simplifying the symbolic b phi f etc"]*)
 {bmatSymbRE,phimatSymbRE,fmatSymbRE}=symbolicComputeBPhiF[hmatSymbRE,qmatSymbRE]//Simplify;
 
+(*
 {rbcEqnsBetterCompSlack,rbcEqnsBetterBackLookingCompSlack,rbcEqnsBetterBackLookingExpCompSlack}=genCompSlackEqns @@ {alpha,beta,delta,rho,sigma,dd,upsilon}/.simpParamSubs
+*)
 
 linModBetterCompSlack={hmatSymbRE//N,bmatSymbRE // N, phimatSymbRE // N, 
     fmatSymbRE // N, psiepsSymbRE // N, 
@@ -434,9 +420,9 @@ probDimsBetterCompSlack={7,1,7};
 
 
 
-thVal=(theta//.ssSolnSubsRE//.(simpParamSubs//N))//N;
-kVal = (kk //.kSSSubRE//.(simpParamSubs//N))//N;
-cVal = (cc //.cSSSubRE//.(simpParamSubs//N))//N ;
+thVal=(theta//.ssFRSolnSubs//.(simpParamSubs//N))//N;
+kVal = (kk //.ssFRSolnSubs//.(simpParamSubs//N))//N;
+cVal = (cc //.ssFRSolnSubs//.(simpParamSubs//N))//N ;
 (*following guerrieri and iacoviello Appendix A*)
 kLow = kVal*.95//N;
 kHigh = kVal*1.4//N;
@@ -455,6 +441,8 @@ aGSpecBetterCompSlack={{1,2,4,5,6},2,{{6,kLow,kHigh},{10,thLow,thHigh},{6,sigLow
 (*
 {alpha,beta,delta,rho,sigma,dd,upsilon}
 *)
+
+
 
 
 

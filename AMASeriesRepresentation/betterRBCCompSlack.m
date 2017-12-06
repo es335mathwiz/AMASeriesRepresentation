@@ -52,7 +52,7 @@ chkcobb douglas production*)
 
 (*parameters page 21 using state 1*)
 
-
+(*
 paramSubs={
 alpha->.36,
 beta->1,
@@ -64,9 +64,9 @@ dd->1,
 upsilon->-0.975
 } ;
 
-
+*)
 (*parameters page 28 guerrieri iacoviello*)
-(*
+
 paramSubs={
 alpha->.36,
 beta->1,
@@ -77,7 +77,7 @@ sigma->.01,
 dd->.1,
 upsilon->-10.975
 } ;
-*)
+
 
 (*
 from a paper?
@@ -122,15 +122,37 @@ rbcBackLookingEqns={E^(rho*Log[theta[t-1]] + eps[theta][t])}
 rbcBackLookingExpEqns={Expectation[rbcBackLookingEqns[[1]],eps[theta][t] \[Distributed] NormalDistribution[0,sigma]]}
 
 
+paramSubs={
+alpha->.36,
+beta->1,
+eta->1,
+delta->.95,
+rho->.95,
+sigma->.01,
+dd->1,
+upsilon->-10.975
+} ;
 
 ssEqnSubs=
 {xx_Symbol[t+v_.]->xx}
 rbcEqnsNotBindingSubbed=((rbcEqnsNotBinding/.paramSubs)/.eps[theta][t]->0)
 
+
 Print[{forFR,theVars=Cases[Variables[forFR=(rbcEqnsNotBindingSubbed/.ssEqnSubs)],_Symbol]}]
-frArg=Transpose[{theVars,{.4,0,.3,0,0,5,1}}]
+
+
+frArg=MapThread[Prepend[#1,#2]&,{{{.18,.9},{.18,.35},{.18,.9},{1.,5.},{-.01,0.1},{1.,5.},{.9,1.1}},theVars}]
+
+frArg=Transpose[{theVars,{.3599,.187,.187,0,0,4,1}}]
+
+
+
+
+
 Print[
 ssFRSolnSubs=FindRoot[forFR,frArg,MaxIterations->1000,WorkingPrecision->50]]
+Print["errs=",(forFR )//.ssFRSolnSubs]
+
 
 argsSubs={
 cc[t-1]->cctm1,
@@ -221,9 +243,8 @@ checkMin=Function @@ {{ct,kt,thetatp1},eigs01}
 },
 ({-1./cct + lamt, cct + kkt - 1.*kktm1^0.36*thetat, nlt - 1.*lamt*thetat, 
  thetat - 1.*2.718281828459045^epsVal*thetatm1^0.95, 
- 0. + lamt + mu1t - (0.34199999999999997*nltp1)/kkt^0.64, iit - 1.*kkt, 
- mu1t}
-
+ lamt - 0.855*lamtp1 + mu1t - 0.855*mu1tp1 - 
+  (0.34199999999999997*nltp1)/kkt^0.64, iit - 1.*kkt + 0.9*kktm1, mu1t}
 ),"RuntimeOptions"->{"RuntimeErrorHandler"->Function[$Failed],"CatchMachineOverflow"->True,"CatchMachineUnderflow"->True}},
    (*And[Chop[#13]==0,#11 -.9*#3+10.9755*0.0180074>0]*)True&}},
 Function[{aPt,allRes},

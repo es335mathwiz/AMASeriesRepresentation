@@ -1,5 +1,5 @@
 (* Wolfram Language Package *)
-
+Print["start reading betterRBC.m"]
 BeginPackage["betterRBC`", { "AMASeriesRepresentation`", "ProtectedSymbols`", "AMAModel`", "SymbolicAMA`", "NumericAMA`"}]
 (* Exported symbols added here with SymbolName::usage *)  
 anXBetter::usage="for test input";
@@ -32,7 +32,7 @@ betterRBCSD::usage="betterRBCSD"
 betterRBCvv::usage="betterRBCvv"
 betterRBCMinZ::usage="betterRBCMinZ"
 betterRBCMaxZ::usage="betterRBCMaxZ"
-
+Print["at Private"]
 Begin["`Private`"] (* Begin Private Context *) 
 
 
@@ -294,6 +294,7 @@ betterRBCMinZ=Append[betterRBCMinZ,-3]
 betterRBCMaxZ=Append[betterRBCMaxZ,3]
 betterRBCvv=ArrayFlatten[{{ArrayFlatten[{{vv,{{0},{0}}}}]},{{{0,0,1}}}}]
 
+Print["at first export"]
 Export["ergodicV.pdf", MatrixForm[betterRBCvv//N]];
 Export["ergodicMaxZ.pdf", MatrixForm[betterRBCMaxZ//N]];
 Export["ergodicMinZ.pdf", MatrixForm[betterRBCMinZ//N]];
@@ -307,6 +308,7 @@ Export["ergodicKTheta.pdf",ListPlot[Transpose[{theKs,theThetas}],PlotLabel->"Erg
 zPts=backXtoZ[Transpose[{theKs,theThetas,Table[0,{Length[theKs]}]}],betterRBCMean,betterRBCSD,betterRBCvv];Print["errBndLoc=",errBndLoc];
 
 	Export["ergodicZs.pdf",ListPlot[zPts[[All,{1,2}]],PlotLabel->"Ergodic Values for K and \[Theta]"]];
+Print["after last export"]
 
 End[] (* End Private Context *)
 

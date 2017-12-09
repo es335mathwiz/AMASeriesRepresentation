@@ -2854,7 +2854,7 @@ funcOfXtm1Eps
 With[{frRes=FindRoot[
 funcOfXtZt[Apply[Sequence,Join[xLagArgs,eArgs,
 xArgs,zArgs]]],
-Join[xArgsInit,zArgsInit](*,WorkingPrecision->50*),EvaluationMonitor:>Print["xz",{xArgs,zArgs,xLagArgs,eArgs,funcOfXtm1Eps,funcOfXtZt,funcOfXtZt[Apply[Sequence,Join[xLagArgs,eArgs,xArgs,zArgs]]]}//InputForm]]},
+Join[xArgsInit,zArgsInit](*,WorkingPrecision->50*)(*,EvaluationMonitor:>Print["xz",{xArgs,zArgs,xLagArgs,eArgs,funcOfXtm1Eps,funcOfXtZt,funcOfXtZt[Apply[Sequence,Join[xLagArgs,eArgs,xArgs,zArgs]]]}//InputForm]*)]},
 Transpose[{Flatten[Join[xArgs,zArgs]]/.frRes}]]];
 (**)
 DistributeDefinitions[funcOfXtZt,funcOfXtm1Eps]

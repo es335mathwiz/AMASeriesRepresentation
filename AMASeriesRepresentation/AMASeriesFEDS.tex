@@ -612,7 +612,7 @@ Consider adding constraints the constraints:
 \begin{tcolorbox}[ams gather]
 if(\mu>0 \land (k_t - (1-d)k_{t-1}-\upsilon I_{ss})=0)\\
   \lambda_t -\frac{1}{c_t}\\
-c_t+k_t-\theta_tk_{t-1}^\alpha\\
+c_t+I_t-\theta_tk_{t-1}^\alpha\\
 N_t-\lambda_t \theta_t\\
 \theta_t-e^{(\rho\ln(\theta_{t-1})+\epsilon)}\\
 \lambda_t + \mu_t - (\alpha k_t^{(\alpha-1)}\delta N_{t+1}+\lambda_{t+1} \delta (1-d)+\mu_{t+1}+\delta (1-d)\mu_{t+1}\\
@@ -622,7 +622,7 @@ I_t-(K_t-(1-d)k_{t-1})\\
 \begin{tcolorbox}[ams gather]
 if(\mu=0 \land (k_t - (1-d)k_{t-1}-\upsilon I_{ss})\ge 0)\\
   \lambda_t -\frac{1}{c_t}\\
-c_t+k_t-\theta_tk_{t-1}^\alpha\\
+c_t+I_t-\theta_tk_{t-1}^\alpha\\
 N_t-\lambda_t \theta_t\\
 \theta_t-e^{(\rho\ln(\theta_{t-1})+\epsilon)}\\
 \lambda_t + {\mu_t} - (\alpha k_t^{(\alpha-1)}\delta N_{t+1}+\lambda_{t+1} \delta (1-d)+{\mu_{t+1}}+\delta (1-d)\mu_{t+1}\\
@@ -635,6 +635,14 @@ I_t-(K_t-(1-d)k_{t-1})\\
 
 
 \label{sec:regime-switch-model}
+
+\begin{itemize}
+\item best to have a functional form for each regime.
+\item conditional expectation probability transition just weighted sums
+\item to make transition probability a function of state 
+can(should>) use same grid for $p_{ij}(x)$  will get a different conditional expectations polynomial at each x
+\item can use for heterogeneous agents
+\end{itemize}
 
 
 Consider two states $s_t \in {0,1}$ where the depreciation rates are different:  $d_0>d_1$
@@ -808,6 +816,13 @@ MSNTO selects a finite number of sample points uniformly scattered on D.  Next i
 \section{Improving Proposed  Solutions}
 \label{sec:algoforsoln}
 
+\begin{itemize}
+\item It's a good idea to compute easy approximation using just the linear model one ieration to get an approximation for the ergodic set
+\item them simulate and make the Maliar SVD transformation
+\item then iterate on the ergodic set till it settles down
+\item in this way can avoid solutions which are explosive when iterated 
+\item need to see if this works when honoring complimentary slackness
+\end{itemize}
 
 
 \subsection{Algorithm Overview}
@@ -1298,46 +1313,47 @@ the high degree of parallelism available in the algorithm.
 
   We consider a model described in \cite{Maliar2005}\footnote{Here, we set their $\beta=1$ do not discuss quasi-geometric discounting or time-inconsistency.}
  \begin{gather*}
-   \max\left \{  u(c_t) + E_t \sum_{t=0}^\infty  \delta^{t}u(c_{t+1})\right \}\\
-c_t + k_t=(1-d)k_t + \theta_t f(k_{t-1})\\
+   \max\left \{  u(c_t) + E_t \sum_{t=0}^\infty  \delta^{t+1}u(c_{t+1})\right \}\\
+c_t + k_t=(1-d)k_{t-1} + \theta_t f(k_{t-1})\\
 f(k_t)= k_t^\alpha\\
 u(c)=\frac{c^{1-\eta}-1}{1-\eta}\\
  \mathbb{L}= \left \{ 
  u(c_t)+E_t\sum_{t=0}^\infty \delta^{t}u(c_{t+1}) 
  \right \}+ \\
 \sum_{t=0}^\infty 
-\left \{ \lambda_t  (c_t + k_t-((1-d)k_{t-1} + \theta_t f(k_{t-1}))) + \right . \\ 
-\left . \mu_t( (k_t - (1-d)k_{t-1} ) - \upsilon I_{ss})  \right \} \intertext{ so that we can impose}
+\left \{ \delta^t \lambda_t  (c_t + k_t-((1-d)k_{t-1} + \theta_t f(k_{t-1}))) + \right . \\ 
+\left . \delta^t \mu_t( (k_t - (1-d)k_{t-1} ) - \upsilon I_{ss})  \right \} \intertext{ so that we can impose}
  I_t =(k_t - (1-d)k_{t-1} ) \ge  \upsilon I_{ss}\intertext{ The first order conditions become}
 \frac{1}{c_t^\eta} + \lambda_t\\
-\lambda_t + \lambda_{t+1}\theta_{t+1} \alpha k_t^{(\alpha-1)}+ \delta(1-d) \lambda_{t+1} + \mu_t + \delta (1-d)\mu_{t+1}\intertext{To computed the bordered Hessian we need}
-\nabla G_1=\nabla
-\begin{bmatrix}
-(c_t + k_t-((1-d)k_{t-1} + \theta_t f(k_{t-1})))\\
--(c_t + k_t-((1-d)k_{t-1} + \theta_t f(k_{t-1})))\\
-(c_{t+1} + k_{t+1}-((1-d)k_{t} + \theta_{t+1} f(k_{t})))\\
--(c_{t+1} + k_{t+1}-((1-d)k_{t} + \theta_{t+1} f(k_{t})))
-\end{bmatrix}=\\
-\begin{bmatrix}
-  1&1\\
-  -1&-1\\
-0&(1-d)+\theta_{t+1}\alpha k_t^{(\alpha-1)}\\
-0&-((1-d)+\theta_{t+1}\alpha k_t^{(\alpha-1)})
-\end{bmatrix}\\
-\nabla G_2=\nabla
-\begin{bmatrix}
-(c_t + k_t-((1-d)k_{t-1} + \theta_t f(k_{t-1})))\\
--(c_t + k_t-((1-d)k_{t-1} + \theta_t f(k_{t-1})))\\
-(c_{t+1} + k_{t+1}-((1-d)k_{t} + \theta_{t+1} f(k_{t})))\\
--(c_{t+1} + k_{t+1}-((1-d)k_{t} + \theta_{t+1} f(k_{t})))\\
-( (k_t - (1-d)k_{t-1} ) - \upsilon I_{ss})\\
-( (k_{t+1} - (1-d)k_{t} ) - \upsilon I_{ss})
-\end{bmatrix}
-\intertext{The second order conditions are}
-\begin{bmatrix}
--\eta c^{-(\eta+1)}&0\\
-0& \alpha(\alpha-1) k_t^{(\alpha-2)}
-\end{bmatrix}
+\lambda_t + \delta \lambda_{t+1}\theta_{t+1} \alpha k_t^{(\alpha-1)}+ \delta(1-d) \lambda_{t+1} + \mu_t + \delta (1-d)\mu_{t+1}
+% \intertext{To computed the bordered Hessian we need}
+% \nabla G_1=\nabla
+% \begin{bmatrix}
+% (c_t + k_t-((1-d)k_{t-1} + \theta_t f(k_{t-1})))\\
+% -(c_t + k_t-((1-d)k_{t-1} + \theta_t f(k_{t-1})))\\
+% (c_{t+1} + k_{t+1}-((1-d)k_{t} + \theta_{t+1} f(k_{t})))\\
+% -(c_{t+1} + k_{t+1}-((1-d)k_{t} + \theta_{t+1} f(k_{t})))
+% \end{bmatrix}=\\
+% \begin{bmatrix}
+%   1&1\\
+%   -1&-1\\
+% 0&(1-d)+\theta_{t+1}\alpha k_t^{(\alpha-1)}\\
+% 0&-((1-d)+\theta_{t+1}\alpha k_t^{(\alpha-1)})
+% \end{bmatrix}\\
+% \nabla G_2=\nabla
+% \begin{bmatrix}
+% (c_t + k_t-((1-d)k_{t-1} + \theta_t f(k_{t-1})))\\
+% -(c_t + k_t-((1-d)k_{t-1} + \theta_t f(k_{t-1})))\\
+% (c_{t+1} + k_{t+1}-((1-d)k_{t} + \theta_{t+1} f(k_{t})))\\
+% -(c_{t+1} + k_{t+1}-((1-d)k_{t} + \theta_{t+1} f(k_{t})))\\
+% ( (k_t - (1-d)k_{t-1} ) - \upsilon I_{ss})\\
+% ( (k_{t+1} - (1-d)k_{t} ) - \upsilon I_{ss})
+% \end{bmatrix}
+% \intertext{The second order conditions are}
+% \begin{bmatrix}
+% -\eta c^{-(\eta+1)}&0\\
+% 0& \alpha(\alpha-1) k_t^{(\alpha-2)}
+% \end{bmatrix}
 \end{gather*}
 
 

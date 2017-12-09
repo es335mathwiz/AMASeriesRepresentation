@@ -1,9 +1,13 @@
 Get["pathSetup.mth"]
 Get["AMASeriesRepresentation`"]
 Get["emscsToMma`"]
+Print["after emscsToMma"]
 Get["betterRBC`"]
+Print["after betterRBC"]
 Get["notBetterRBC`"]
+Print["after notBetterRBC"]
 Get["betterRBCCompSlack`"]
+Print["after betterRBCCompSlack"]
 
 
 theFRExtGateCS=genFRExtFunc[{7,1,7},linModBetterCompSlack,{genX0Z0Funcs[linModBetterCompSlack],2},eqnsCompiledBetterCompSlack]
@@ -12,29 +16,103 @@ theFRExt=genFRExtFunc[{4,1,4},linModBetter,{x0z0=genX0Z0Funcs[linModBetter],2},e
 
 theFRExtNot=genFRExtFunc[{6,1,6},linModNotBetter,{x0z0=genX0Z0Funcs[linModNotBetter],2},eqnsCompiledNotBetter]
 (*
-approx=2*{1,1,1};
+approx=1*{1,1,1};
 {ptErg,tfErg,plyErg,iplyErg,dplyErg}=smolyakInterpolationPrep[approx,{betterRBCMean,betterRBCSD,betterRBCMinZ,betterRBCMaxZ,betterRBCvv},theDistBetter];
 smolRngErg=Transpose[{betterRBCMinZ,betterRBCMaxZ}];
 toIg={1,2,4,5,6};
-sgSpecErg={toIg,smolRngErg,ptErg,tfErg,plyErg,iplyErg,1,approx,
+sgSpecErg01={toIg,smolRngErg,ptErg,tfErg,plyErg,iplyErg,1,approx,
 {betterRBCMean,betterRBCSD,betterRBCMinZ,betterRBCMaxZ,betterRBCvv}};
 *)
+(*totally
+find ergodic set and 
+
+
 
 approx=1*{1,1,1};
 smolRngErg={{.5,.55},{0.95,1.05},{-0.01,0.01}};
 
 {ptErg,tfErg,plyErg,iplyErg,dplyErg}=smolyakInterpolationPrep[approx,smolRngErg,theDistBetter];
 toIg={1,2,4,5,6};
-sgSpecErg={toIg,smolRngErg,ptErg,tfErg,plyErg,iplyErg,1,approx,{}};
-
+sgSpecErg01={toIg,smolRngErg,ptErg,tfErg,plyErg,iplyErg,1,approx,{}};
+DistributeDefinitions[betterRBCCompSlack`Private`theProduct]
 theRes01=parallelNestIterREInterp[genFRExtFunc,linModBetterCompSlack,
-{genX0Z0Funcs[linModBetterCompSlack],4},eqnsCompiledBetterCompSlack,sgSpecErg,3]
+{genX0Z0Funcs[linModBetterCompSlack],4},eqnsCompiledBetterCompSlack,sgSpecErg01,1]
 
-justKT=Drop[simulateDR[theRes01[[-1,1]],aGSpecBetterCompSlack,theDistBetterCompSlack,{.306,0.052,0.524,2.86,0,2.861,1},2000],200][[All,{3,7}]];
+justKT01=Drop[simulateDR[theRes01[[-1,1]],aGSpecBetterCompSlack,theDistBetterCompSlack,{.306,0.052,0.524,2.86,0,2.861,1},2000],200][[All,{3,7}]];
 
-betterRBCCompSlackMean=Mean[justKT];
-betterRBCCompSlackSD=StandardDeviation[justKT];
-normedRes=(#/betterRBCCompSlackSD)&/@((#-betterRBCCompSlackMean)&/@justKT)
+betterRBCCompSlackMean01=Mean[justKT01];
+(*for 02*)
+
+betterRBCCompSlackSD01=StandardDeviation[justKT01];
+normedRes=(#/betterRBCCompSlackSD01)&/@((#-betterRBCCompSlackMean01)&/@justKT01)
+{uu,ss,vv}=SingularValueDecomposition[normedRes];
+zz=normedRes .vv;
+betterRBCCompSlackMinZ01=Min/@Transpose[zz];
+betterRBCCompSlackMaxZ01=Max/@Transpose[zz];
+
+
+betterRBCCompSlackMean01=Append[betterRBCCompSlackMean01,0];
+betterRBCCompSlackSD01=Append[betterRBCCompSlackSD01,betterRBCCompSlack`Private`sigVal];
+betterRBCCompSlackMinZ01=Append[betterRBCCompSlackMinZ01,-3];
+betterRBCCompSlackMaxZ01=Append[betterRBCCompSlackMaxZ01,3];
+betterRBCCompSlackvv01=ArrayFlatten[{{ArrayFlatten[{{vv,{{0},{0}}}}]},{{{0,0,1}}}}]
+
+Export["ergodicCSV.pdf", MatrixForm[betterRBCCompSlackvv01//N]];
+Export["ergodicCSMaxZ.pdf", MatrixForm[betterRBCCompSlackMaxZ01//N]];
+Export["ergodicCSMinZ.pdf", MatrixForm[betterRBCCompSlackMinZ01//N]];
+Export["ergodicCSMean.pdf", MatrixForm[betterRBCCompSlackMean01//N]];
+Export["ergodicCSSD.pdf", MatrixForm[betterRBCCompSlackSD01//N]];
+
+
+
+approx=1*{1,1,1};
+{ptErg,tfErg,plyErg,iplyErg,dplyErg}=smolyakInterpolationPrep[approx,{betterRBCCompSlackMean01,betterRBCCompSlackSD01,betterRBCCompSlackMinZ01,betterRBCCompSlackMaxZ01,betterRBCCompSlackvv01},theDistBetter];
+smolRngErg=Transpose[{betterRBCCompSlackMinZ01,betterRBCCompSlackMaxZ01}];
+toIg={1,2,4,5,6};
+sgSpecErg02={toIg,smolRngErg,ptErg,tfErg,plyErg,iplyErg,1,approx,
+{betterRBCCompSlackMean01,betterRBCCompSlackSD01,betterRBCCompSlackMinZ01,betterRBCCompSlackMaxZ01,betterRBCCompSlackvv01}};
+
+
+theRes02=parallelNestIterREInterp[genFRExtFunc,linModBetterCompSlack,
+{theRes01[[-1,2]](*genX0Z0Funcs[linModBetterCompSlack]*),4},eqnsCompiledBetterCompSlack,sgSpecErg02,10];
+
+justKT02=Drop[simulateDR[theRes02[[-1,1]],aGSpecBetterCompSlack,theDistBetterCompSlack,{.306,0.052,betterRBCCompSlackMean01[[1]],2.86,0,2.861,1},3000],200][[All,{3,7}]];
+
+betterRBCCompSlackMean02=Mean[justKT02];
+(*for 03*)
+betterRBCCompSlackSD02=StandardDeviation[justKT02];
+normedRes=(#/betterRBCCompSlackSD02)&/@((#-betterRBCCompSlackMean02)&/@justKT02)
+{uu,ss,vv}=SingularValueDecomposition[normedRes];
+zz=normedRes .vv;
+betterRBCCompSlackMinZ02=Min/@Transpose[zz];
+betterRBCCompSlackMaxZ02=Max/@Transpose[zz];
+
+
+betterRBCCompSlackMean02=Append[betterRBCCompSlackMean02,0]
+betterRBCCompSlackSD02=Append[betterRBCCompSlackSD02,betterRBCCompSlack`Private`sigVal]
+betterRBCCompSlackMinZ02=Append[betterRBCCompSlackMinZ02,-3]
+betterRBCCompSlackMaxZ02=Append[betterRBCCompSlackMaxZ02,3]
+betterRBCCompSlackvv02=ArrayFlatten[{{ArrayFlatten[{{vv,{{0},{0}}}}]},{{{0,0,1}}}}]
+
+
+approx=1*{1,1,1};
+{ptErg,tfErg,plyErg,iplyErg,dplyErg}=smolyakInterpolationPrep[approx,{betterRBCCompSlackMean02,betterRBCCompSlackSD02,betterRBCCompSlackMinZ02,betterRBCCompSlackMaxZ02,betterRBCCompSlackvv02},theDistBetter];
+smolRngErg=Transpose[{betterRBCCompSlackMinZ02,betterRBCCompSlackMaxZ02}];
+toIg={1,2,4,5,6};
+sgSpecErg03={toIg,smolRngErg,ptErg,tfErg,plyErg,iplyErg,1,approx,
+{betterRBCCompSlackMean02,betterRBCCompSlackSD02,betterRBCCompSlackMinZ02,betterRBCCompSlackMaxZ02,betterRBCCompSlackvv02}};
+
+
+theRes03=parallelNestIterREInterp[genFRExtFunc,linModBetterCompSlack,
+{genX0Z0Funcs[linModBetterCompSlack],4},eqnsCompiledBetterCompSlack,sgSpecErg03,3];
+
+justKT03=Drop[simulateDR[theRes03[[-1,1]],aGSpecBetterCompSlack,theDistBetterCompSlack,{.306,0.052,betterRBCCompSlackMean02[[1]],2.86,0,2.861,1},3000],200][[All,{3,7}]];
+
+betterRBCCompSlackMean03=Mean[justKT03];
+
+(*for 04*)
+betterRBCCompSlackSD=StandardDeviation[justKT03];
+normedRes=(#/betterRBCCompSlackSD)&/@((#-betterRBCCompSlackMean)&/@justKT03)
 {uu,ss,vv}=SingularValueDecomposition[normedRes];
 zz=normedRes .vv;
 betterRBCCompSlackMinZ=Min/@Transpose[zz];
@@ -47,24 +125,122 @@ betterRBCCompSlackMinZ=Append[betterRBCCompSlackMinZ,-3]
 betterRBCCompSlackMaxZ=Append[betterRBCCompSlackMaxZ,3]
 betterRBCCompSlackvv=ArrayFlatten[{{ArrayFlatten[{{vv,{{0},{0}}}}]},{{{0,0,1}}}}]
 
-Export["ergodicCSV.pdf", MatrixForm[betterRBCCompSlackvv//N]];
-Export["ergodicCSMaxZ.pdf", MatrixForm[betterRBCCompSlackMaxZ//N]];
-Export["ergodicCSMinZ.pdf", MatrixForm[betterRBCCompSlackMinZ//N]];
-Export["ergodicCSMean.pdf", MatrixForm[betterRBCCompSlackMean//N]];
-Export["ergodicCSSD.pdf", MatrixForm[betterRBCCompSlackSD//N]];
-
-
 
 approx=1*{1,1,1};
 {ptErg,tfErg,plyErg,iplyErg,dplyErg}=smolyakInterpolationPrep[approx,{betterRBCCompSlackMean,betterRBCCompSlackSD,betterRBCCompSlackMinZ,betterRBCCompSlackMaxZ,betterRBCCompSlackvv},theDistBetter];
 smolRngErg=Transpose[{betterRBCCompSlackMinZ,betterRBCCompSlackMaxZ}];
 toIg={1,2,4,5,6};
-sgSpecErg={toIg,smolRngErg,ptErg,tfErg,plyErg,iplyErg,1,approx,
+sgSpecErg04={toIg,smolRngErg,ptErg,tfErg,plyErg,iplyErg,1,approx,
 {betterRBCCompSlackMean,betterRBCCompSlackSD,betterRBCCompSlackMinZ,betterRBCCompSlackMaxZ,betterRBCCompSlackvv}};
 
 
-theRes02=parallelNestIterREInterp[genFRExtFunc,linModBetterCompSlack,
-{theRes01,4},eqnsCompiledBetterCompSlack,sgSpecErg,3]
+theRes04=parallelNestIterREInterp[genFRExtFunc,linModBetterCompSlack,
+{genX0Z0Funcs[linModBetterCompSlack],4},eqnsCompiledBetterCompSlack,sgSpecErg04,3];
+
+allVars04=Drop[simulateDR[theRes04[[-1,1]],aGSpecBetterCompSlack,theDistBetterCompSlack,{.306,0.052,0.524,2.86,0,2.861,1},3000],200];
+justKT04=allVars04[[All,{3,7}]];
+justCI04=allVars04[[All,{1,2}]];
+
+betterRBCCompSlackMean=Mean[justKT04];
+
+(*for 05*)
+betterRBCCompSlackSD=StandardDeviation[justKT04];
+normedRes=(#/betterRBCCompSlackSD)&/@((#-betterRBCCompSlackMean)&/@justKT04)
+{uu,ss,vv}=SingularValueDecomposition[normedRes];
+zz=normedRes .vv;
+betterRBCCompSlackMinZ=Min/@Transpose[zz];
+betterRBCCompSlackMaxZ=Max/@Transpose[zz];
+
+
+betterRBCCompSlackMean=Append[betterRBCCompSlackMean,0];
+betterRBCCompSlackSD=Append[betterRBCCompSlackSD,betterRBCCompSlack`Private`sigVal]
+betterRBCCompSlackMinZ=Append[betterRBCCompSlackMinZ,-3];
+betterRBCCompSlackMaxZ=Append[betterRBCCompSlackMaxZ,3];
+betterRBCCompSlackvv=ArrayFlatten[{{ArrayFlatten[{{vv,{{0},{0}}}}]},{{{0,0,1}}}}];
+
+
+approx=2*{1,1,1};
+{ptErg,tfErg,plyErg,iplyErg,dplyErg}=smolyakInterpolationPrep[approx,{betterRBCCompSlackMean,betterRBCCompSlackSD,betterRBCCompSlackMinZ,betterRBCCompSlackMaxZ,betterRBCCompSlackvv},theDistBetter];
+smolRngErg=Transpose[{betterRBCCompSlackMinZ,betterRBCCompSlackMaxZ}];
+toIg={1,2,4,5,6};
+sgSpecErg05={toIg,smolRngErg,ptErg,tfErg,plyErg,iplyErg,1,approx,
+{betterRBCCompSlackMean,betterRBCCompSlackSD,betterRBCCompSlackMinZ,betterRBCCompSlackMaxZ,betterRBCCompSlackvv}};
+
+
+theRes05=parallelNestIterREInterp[genFRExtFunc,linModBetterCompSlack,
+{genX0Z0Funcs[linModBetterCompSlack],4},eqnsCompiledBetterCompSlack,sgSpecErg05,3];
+
+allVars05=Drop[simulateDR[theRes05[[-1,1]],aGSpecBetterCompSlack,theDistBetterCompSlack,{.306,0.052,0.524,2.86,0,2.861,1},3000],200];
+justKT05=allVars05[[All,{3,7}]];
+justCI05=allVars05[[All,{1,2}]];
+
+betterRBCCompSlackMean=Mean[justKT05];
+
+(*for 06*)
+betterRBCCompSlackSD=StandardDeviation[justKT05];
+normedRes=(#/betterRBCCompSlackSD)&/@((#-betterRBCCompSlackMean)&/@justKT05);
+{uu,ss,vv}=SingularValueDecomposition[normedRes];
+zz=normedRes .vv;
+betterRBCCompSlackMinZ=Min/@Transpose[zz];
+betterRBCCompSlackMaxZ=Max/@Transpose[zz];
+
+
+betterRBCCompSlackMean=Append[betterRBCCompSlackMean,0]
+betterRBCCompSlackSD=Append[betterRBCCompSlackSD,betterRBCCompSlack`Private`sigVal]
+betterRBCCompSlackMinZ=Append[betterRBCCompSlackMinZ,-3]
+betterRBCCompSlackMaxZ=Append[betterRBCCompSlackMaxZ,3]
+betterRBCCompSlackvv=ArrayFlatten[{{ArrayFlatten[{{vv,{{0},{0}}}}]},{{{0,0,1}}}}]
+
+
+approx=3*{1,1,1};
+{ptErg,tfErg,plyErg,iplyErg,dplyErg}=smolyakInterpolationPrep[approx,{betterRBCCompSlackMean,betterRBCCompSlackSD,betterRBCCompSlackMinZ,betterRBCCompSlackMaxZ,betterRBCCompSlackvv},theDistBetter];
+smolRngErg=Transpose[{betterRBCCompSlackMinZ,betterRBCCompSlackMaxZ}];
+toIg={1,2,4,5,6};
+sgSpecErg06={toIg,smolRngErg,ptErg,tfErg,plyErg,iplyErg,1,approx,
+{betterRBCCompSlackMean,betterRBCCompSlackSD,betterRBCCompSlackMinZ,betterRBCCompSlackMaxZ,betterRBCCompSlackvv}};
+
+
+theRes06=parallelNestIterREInterp[genFRExtFunc,linModBetterCompSlack,
+{theRes05[[-1,2]],4},eqnsCompiledBetterCompSlack,sgSpecErg06,3]
+
+allVars06=Drop[simulateDR[theRes06[[-1,1]],aGSpecBetterCompSlack,theDistBetterCompSlack,{.306,0.062,0.524,2.86,0,2.861,1},3000],200];
+justKT06=allVars06[[All,{3,7}]];
+justCI06=allVars06[[All,{1,2}]];
+
+betterRBCCompSlackMean=Mean[justKT06];
+
+(*for 07*)
+betterRBCCompSlackSD=StandardDeviation[justKT06];
+normedRes=(#/betterRBCCompSlackSD)&/@((#-betterRBCCompSlackMean)&/@justKT06);
+{uu,ss,vv}=SingularValueDecomposition[normedRes];
+zz=normedRes .vv;
+betterRBCCompSlackMinZ=Min/@Transpose[zz];
+betterRBCCompSlackMaxZ=Max/@Transpose[zz];
+
+
+betterRBCCompSlackMean=Append[betterRBCCompSlackMean,0];
+betterRBCCompSlackSD=Append[betterRBCCompSlackSD,betterRBCCompSlack`Private`sigVal];
+betterRBCCompSlackMinZ=Append[betterRBCCompSlackMinZ,-3];
+betterRBCCompSlackMaxZ=Append[betterRBCCompSlackMaxZ,3];
+betterRBCCompSlackvv=ArrayFlatten[{{ArrayFlatten[{{vv,{{0},{0}}}}]},{{{0,0,1}}}}];
+
+
+approx=4*{1,1,1};
+{ptErg,tfErg,plyErg,iplyErg,dplyErg}=smolyakInterpolationPrep[approx,{betterRBCCompSlackMean,betterRBCCompSlackSD,betterRBCCompSlackMinZ,betterRBCCompSlackMaxZ,betterRBCCompSlackvv},theDistBetter];
+smolRngErg=Transpose[{betterRBCCompSlackMinZ,betterRBCCompSlackMaxZ}];
+toIg={1,2,4,5,6};
+sgSpecErg07={toIg,smolRngErg,ptErg,tfErg,plyErg,iplyErg,1,approx,
+{betterRBCCompSlackMean,betterRBCCompSlackSD,betterRBCCompSlackMinZ,betterRBCCompSlackMaxZ,betterRBCCompSlackvv}};
+
+
+theRes07=parallelNestIterREInterp[genFRExtFunc,linModBetterCompSlack,
+{theRes06[[-1,2]],4},eqnsCompiledBetterCompSlack,sgSpecErg07,3];
+
+allVars07=Drop[simulateDR[theRes07[[-1,1]],aGSpecBetterCompSlack,theDistBetterCompSlack,{.307,0.072,0.524,2.86,0,2.861,1},3000],200];
+justKT07=allVars07[[All,{3,7}]];
+justCI07=allVars07[[All,{1,2}]];
+
+betterRBCCompSlackMean=Mean[justKT07];
 
 (*
 {evaluateTriple[theFRExtGateCS[[1,2]],anXEpsFlatBetterCompSlack],
@@ -83,3 +259,17 @@ simulateDR[theRes[[-1,1]],aGSpecBetterCompSlack,theDistBetterCompSlack,anXEpsFla
 
 theFRExtGateCSNow=genFRExtFunc[{7,1,7},linModBetterCompSlack,{theRes[[-1,2]],2},eqnsCompiledBetterCompSlack]
 *)
+seems to be about right as first cut or dd->.1 to get ergodic set
+approx=1*{1,1,1};
+smolRngErg={{.8,1.55},{0.95,1.05},{-0.01,0.01}};
+
+{ptErg,tfErg,plyErg,iplyErg,dplyErg}=smolyakInterpolationPrep[approx,smolRngErg,theDistBetter];
+toIg={1,2,4,5,6};
+sgSpecErg01={toIg,smolRngErg,ptErg,tfErg,plyErg,iplyErg,1,approx,{}};
+
+theRes01=parallelNestIterREInterp[genFRExtFunc,linModBetterCompSlack,
+{genX0Z0Funcs[linModBetterCompSlack],4},eqnsCompiledBetterCompSlack,sgSpecErg01,3]
+
+
+
+totally*)

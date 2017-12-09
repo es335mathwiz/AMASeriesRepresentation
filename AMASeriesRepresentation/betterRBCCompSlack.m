@@ -61,7 +61,7 @@ delta->.95,
 rho->.95,
 sigma->.01,
 dd->1,
-upsilon->-0.975
+upsilon->0.975
 } ;
 
 *)
@@ -74,23 +74,12 @@ eta->1,
 delta->.95,
 rho->.95,
 sigma->.01,
-dd->.1,
-upsilon->-10.975
+dd->1,
+upsilon->0.975
 } ;
 
 
-(*
-from a paper?
 
-alpha->.33,
-beta->1,
-delta->.96,
-rho->.90,
-sigma->.013,
-dd->.1,
-upsilon->0.975
-
-*)
 forSubs={alpha^(1 - alpha)^(-1)*delta^(1 - alpha)^(-1)};
 simpSubs=Thread[forSubs->nu];
 forParamSubs=Thread[nu->forSubs]//.paramSubs;
@@ -100,7 +89,7 @@ simpParamSubs=Join[paramSubs,forParamSubs,simpSubs];
 
 rbcEqnsBinding={
 lam[t] -1/cc[t],
-cc[t] + kk[t]-((theta[t])*(kk[t-1]^alpha)),
+cc[t] + II[t]-((theta[t])*(kk[t-1]^alpha)),
 nlPart[t] -(nlPartRHS=lam[t]*theta[t]),
 theta[t]-E^(rho*Log[theta[t-1]] + eps[theta][t]),
 lam[t] +mu1[t] - (alpha*kk[t]^(-1+alpha)*delta*nlPart[t+1]+lam[t+1]*delta*(1-dd)+mu1tp1*delta*(1-dd)),
@@ -109,7 +98,7 @@ II[t] -(kk[t]-(1-dd)*kk[t-1]),
 }
 rbcEqnsNotBinding={
 lam[t] -1/cc[t],
-cc[t] + kk[t]-((theta[t])*(kk[t-1]^alpha)),
+cc[t] + II[t]-((theta[t])*(kk[t-1]^alpha)),
 nlPart[t] -(nlPartRHS=lam[t]*theta[t]),
 theta[t]-E^(rho*Log[theta[t-1]] + eps[theta][t]),
 lam[t] +mu1[t] - (alpha*kk[t]^(-1+alpha)*delta*nlPart[t+1]+lam[t+1]*delta*(1-dd)+mu1[t+1]*delta*(1-dd)),
@@ -121,18 +110,6 @@ boolNotBinding= And[(kk[t]-(1-dd)*kk[t-1]-upsilon*IIss)>0,mu1==0]
 rbcBackLookingEqns={E^(rho*Log[theta[t-1]] + eps[theta][t])}
 rbcBackLookingExpEqns={Expectation[rbcBackLookingEqns[[1]],eps[theta][t] \[Distributed] NormalDistribution[0,sigma]]}
 
-
-paramSubs={
-alpha->.36,
-beta->1,
-eta->1,
-delta->.95,
-rho->.95,
-sigma->.01,
-dd->1,
-upsilon->-10.975
-} ;
-
 ssEqnSubs=
 {xx_Symbol[t+v_.]->xx}
 rbcEqnsNotBindingSubbed=((rbcEqnsNotBinding/.paramSubs)/.eps[theta][t]->0)
@@ -141,18 +118,33 @@ rbcEqnsNotBindingSubbed=((rbcEqnsNotBinding/.paramSubs)/.eps[theta][t]->0)
 Print[{forFR,theVars=Cases[Variables[forFR=(rbcEqnsNotBindingSubbed/.ssEqnSubs)],_Symbol]}]
 
 
-frArg=MapThread[Prepend[#1,#2]&,{{{.18,.9},{.18,.35},{.18,.9},{1.,5.},{-.01,0.1},{1.,5.},{.9,1.1}},theVars}]
+
 
 frArg=Transpose[{theVars,{.3599,.187,.187,0,0,4,1}}]
 
-
+frArg=MapThread[Prepend[#1,#2]&,{{{.3599,.9},{.187,.35},{.187,.9},{1.,9.},{-.01,0.1},{1.,9.},{.9,1.1}},theVars}]
 
 
 
 Print[
-ssFRSolnSubs=FindRoot[forFR,frArg,MaxIterations->1000,WorkingPrecision->50]]
+ssFRSolnSubs=Prepend[Chop[FindRoot[forFR,frArg,MaxIterations->1000(*,WorkingPrecision->50*)]],IIss->.372634]]
 Print["errs=",(forFR )//.ssFRSolnSubs]
 
+
+(*
+{-cc^(-1) + lam, cc + kk - kk^0.36*theta, nlPart - lam*theta, 
+ -theta^0.95 + theta, 0.9524999999999999*lam + 0.9524999999999999*mu1 - 
+  (0.34199999999999997*nlPart)/kk^0.64, II - 0.95*kk, mu1}
+
+
+.1
+{-cc^(-1) + lam, cc + kk - kk^0.36*theta, nlPart - lam*theta, 
+ -theta^0.95 + theta, 0.14500000000000002*lam + 
+  0.14500000000000002*mu1 - (0.34199999999999997*nlPart)/kk^0.64, 
+ II - 0.09999999999999998*kk, mu1}
+
+
+*)
 
 argsSubs={
 cc[t-1]->cctm1,
@@ -176,8 +168,7 @@ lam[t+1]->lamtp1,
 mu1[t+1]->mu1tp1,
 nlPart[t+1]->nltp1,
 theta[t+1]->thetatp1,
-eps[theta][t]->epsVal,
-Iss->II
+eps[theta][t]->epsVal
 }
 
 thePatterns=makeBlankPatternArgs[Last/@argsSubs]
@@ -203,22 +194,99 @@ eqnsBackLookingExpName[Apply[Sequence,lagPatterns]],theBLExpGuts];DistributeDefi
 {eqnsName,eqnsBackLookingName,eqnsBackLookingExpName}]]
 
 
-fir={1,1};
-theSec={0,(1-dd)+thetatp1*alpha*kt^(alpha-1)}
-theGrad=
-{fir,-fir,delta*theSec,-delta*theSec};
-theHess={{-eta * ct^(-(eta+1)),0},{0,alpha*(alpha-1)*kt^(alpha-2)}}
-
-bordered01=(blockMatrix[{{blockMatrix[{{ConstantArray[0,{4,4}],theGrad}}]},
-{blockMatrix[{{Transpose[theGrad],theHess}}]}}]/.
-{alpha->betterRBCCompSlack`Private`alpha,
-eta->1,
-delta->betterRBCCompSlack`Private`delta,
-dd->betterRBCCompSlack`Private`dd})/.betterRBCCompSlack`Private`paramSubs
-eigs01=Eigenvalues[bordered01];
-checkMin=Function @@ {{ct,kt,thetatp1},eigs01}
 
 
+(*
+{-1./cct + lamt, cct + kkt - 1.*kktm1^0.33*thetat, nlt - 1.*lamt*thetat, 
+ thetat - 1.*2.718281828459045^epsVal*thetatm1^0.9, 
+ lamt - 0.864*lamtp1 + mu1t - 0.864*mu1tp1 - 
+  (0.3168*nltp1)/kkt^0.6699999999999999, iit - 1.*kkt + 0.9*kktm1, 
+ mu1t}
+
+
+*)
+
+
+
+
+
+
+eqnsForBind=(((betterRBCCompSlack`Private`rbcEqnsBinding/.betterRBCCompSlack`Private`paramSubs)
+/.{
+eps[betterRBCCompSlack`Private`theta][t]->epsVal,
+betterRBCCompSlack`Private`cc[t-1]->Global`cctm1,
+betterRBCCompSlack`Private`II[t-1]->iitm1,
+betterRBCCompSlack`Private`kk[t-1]->kktm1,
+betterRBCCompSlack`Private`lam[t-1]->lamtm1,
+betterRBCCompSlack`Private`mu1[t-1]->mu1tm1,
+betterRBCCompSlack`Private`nlPart[t-1]->nltm1,
+betterRBCCompSlack`Private`theta[t-1]->thetatm1,
+betterRBCCompSlack`Private`cc[t]->cct,
+betterRBCCompSlack`Private`II[t]->iit,
+betterRBCCompSlack`Private`kk[t]->kkt,
+betterRBCCompSlack`Private`lam[t]->lamt,
+betterRBCCompSlack`Private`mu1[t]->mu1t,
+betterRBCCompSlack`Private`nlPart[t]->nlt,
+betterRBCCompSlack`Private`theta[t]->thetat,
+betterRBCCompSlack`Private`cc[t+1]->cctp1,
+betterRBCCompSlack`Private`II[t+1]->iitp1,
+betterRBCCompSlack`Private`kk[t+1]->kktp1,
+betterRBCCompSlack`Private`lam[t+1]->lamtp1,
+betterRBCCompSlack`Private`mu1[t+1]->mu1tp1,
+betterRBCCompSlack`Private`nlPart[t+1]->nltp1,
+betterRBCCompSlack`Private`theta[t+1]->thetat
+})//.
+betterRBCCompSlack`Private`ssFRSolnSubs)//N
+
+	
+(*
+dd->.1
+{-1./cct + lamt, cct + iit - 1.*kktm1^0.36*thetat, nlt - 1.*lamt*thetat, 
+ thetat - 1.*2.718281828459045^epsVal*thetatm1^0.95, 
+ lamt - 0.855*lamtp1 + mu1t - 0.855*betterRBCCompSlack`Private`mu1tp1 - 
+  (0.34199999999999997*nltp1)/kkt^0.64, iit - 1.*kkt + 0.9*kktm1, 
+ -0.37263436422602103 + kkt - 0.9*kktm1}
+
+*)
+
+eqnsForNotBind=(((betterRBCCompSlack`Private`rbcEqnsNotBinding/.betterRBCCompSlack`Private`paramSubs)
+/.{
+eps[betterRBCCompSlack`Private`theta][t]->epsVal,
+betterRBCCompSlack`Private`cc[t-1]->cctm1,
+betterRBCCompSlack`Private`II[t-1]->iitm1,
+betterRBCCompSlack`Private`kk[t-1]->kktm1,
+betterRBCCompSlack`Private`lam[t-1]->lamtm1,
+betterRBCCompSlack`Private`mu1[t-1]->mu1tm1,
+betterRBCCompSlack`Private`nlPart[t-1]->nltm1,
+betterRBCCompSlack`Private`theta[t-1]->thetatm1,
+betterRBCCompSlack`Private`cc[t]->cct,
+betterRBCCompSlack`Private`II[t]->iit,
+betterRBCCompSlack`Private`kk[t]->kkt,
+betterRBCCompSlack`Private`lam[t]->lamt,
+betterRBCCompSlack`Private`mu1[t]->mu1t,
+betterRBCCompSlack`Private`nlPart[t]->nlt,
+betterRBCCompSlack`Private`theta[t]->thetat,
+betterRBCCompSlack`Private`cc[t+1]->cctp1,
+betterRBCCompSlack`Private`II[t+1]->iitp1,
+betterRBCCompSlack`Private`kk[t+1]->kktp1,
+betterRBCCompSlack`Private`lam[t+1]->lamtp1,
+betterRBCCompSlack`Private`mu1[t+1]->mu1tp1,
+betterRBCCompSlack`Private`nlPart[t+1]->nltp1,
+betterRBCCompSlack`Private`theta[t+1]->thetat
+})//.
+betterRBCCompSlack`Private`ssFRSolnSubs)//N
+
+(*
+
+dd->.1
+{-1./cct + lamt, cct + iit - 1.*kktm1^0.36*thetat, nlt - 1.*lamt*thetat, 
+ thetat - 1.*2.718281828459045^epsVal*thetatm1^0.95, 
+ lamt - 0.855*lamtp1 + mu1t - 0.855*mu1tp1 - 
+  (0.34199999999999997*nltp1)/kkt^0.64, iit - 1.*kkt + 0.9*kktm1, mu1t}
+
+*)
+
+theProduct=0.9755*IIss//.ssFRSolnSubs;
   rbcEqnsBetterCompSlack=eqnsCompiledBetterCompSlack={
  { {True&,
   Compile @@ {
@@ -228,11 +296,8 @@ checkMin=Function @@ {{ct,kt,thetatp1},eigs01}
 {cctp1,_Real},{iitp1,_Real},{kktp1,_Real},{lamtp1,_Real},{mu1tp1,_Real},{nltp1,_Real},{thetatp1,_Real},
 {epsVal,_Real}
 },
-({-1./cct + lamt, cct + kkt - 1.*kktm1^0.36*thetat, nlt - 1.*lamt*thetat, 
- thetat - 1.*2.718281828459045^epsVal*thetatm1^0.95, 
- 0. + lamt + mu1t - (0.34199999999999997*nltp1)/kkt^0.64, iit - 1.*kkt, 
- 0.975*betterRBCCompSlack`Private`IIss + kkt}),"RuntimeOptions"->{"RuntimeErrorHandler"->Function[$Failed],"CatchMachineOverflow"->True,"CatchMachineUnderflow"->True}},
- (*  And[#13<0,Chop[#11- .9*#3-0.01755721342611109]==0]*)False &},
+(eqnsForNotBind),"RuntimeOptions"->{"RuntimeErrorHandler"->Function[$Failed],"CatchMachineOverflow"->True,"CatchMachineUnderflow"->True}},
+  True &},
  {True&,
   Compile @@ {
 {
@@ -241,118 +306,11 @@ checkMin=Function @@ {{ct,kt,thetatp1},eigs01}
 {cctp1,_Real},{iitp1,_Real},{kktp1,_Real},{lamtp1,_Real},{mu1tp1,_Real},{nltp1,_Real},{thetatp1,_Real},
 {epsVal,_Real}
 },
-({-1./cct + lamt, cct + kkt - 1.*kktm1^0.36*thetat, nlt - 1.*lamt*thetat, 
- thetat - 1.*2.718281828459045^epsVal*thetatm1^0.95, 
- lamt - 0.855*lamtp1 + mu1t - 0.855*mu1tp1 - 
-  (0.34199999999999997*nltp1)/kkt^0.64, iit - 1.*kkt + 0.9*kktm1, mu1t}
-),"RuntimeOptions"->{"RuntimeErrorHandler"->Function[$Failed],"CatchMachineOverflow"->True,"CatchMachineUnderflow"->True}},
-   (*And[Chop[#13]==0,#11 -.9*#3+10.9755*0.0180074>0]*)True&}},
+(eqnsForNotBind),"RuntimeOptions"->{"RuntimeErrorHandler"->Function[$Failed],"CatchMachineOverflow"->True,"CatchMachineUnderflow"->True}},
+  Function[Print["func:",{#10,#10 >(theProduct)}];#10>(theProduct);True]}},
 Function[{aPt,allRes},
 If[allRes[[2]]===$Failed,Print["constraint violated"];Flatten[allRes[[1]]],Print["constraint not violated"];Flatten[allRes[[2]]]]]
 }
-
-
-(*
-{-1./cct + lamt, cct + kkt - 1.*kktm1^0.33*thetat, nlt - 1.*lamt*thetat, 
- thetat - 1.*2.718281828459045^epsVal*thetatm1^0.9, 
- lamt - 0.864*lamtp1 + mu1t - 0.864*mu1tp1 - 
-  (0.3168*nltp1)/kkt^0.6699999999999999, iit - 1.*kkt + 0.9*kktm1, 
- mu1t}
-
-
-*)
-
-
-(*
-
-
-
-(((betterRBCCompSlack`Private`rbcEqnsBinding/.betterRBCCompSlack`Private`paramSubs)
-/.{
-eps[betterRBCCompSlack`Private`theta][t]->epsVal,
-betterRBCCompSlack`Private`cc[t-1]->cctm1,
-betterRBCCompSlack`Private`II[t-1]->iitm1,
-betterRBCCompSlack`Private`kk[t-1]->kktm1,
-betterRBCCompSlack`Private`lam[t-1]->lamtm1,
-betterRBCCompSlack`Private`mu1[t-1]->mu1tm1,
-betterRBCCompSlack`Private`nlPart[t-1]->nltm1,
-betterRBCCompSlack`Private`theta[t-1]->thetatm1,
-betterRBCCompSlack`Private`cc[t]->cct,
-betterRBCCompSlack`Private`II[t]->iit,
-betterRBCCompSlack`Private`kk[t]->kkt,
-betterRBCCompSlack`Private`lam[t]->lamt,
-betterRBCCompSlack`Private`mu1[t]->mu1t,
-betterRBCCompSlack`Private`nlPart[t]->nlt,
-betterRBCCompSlack`Private`theta[t]->thetat,
-betterRBCCompSlack`Private`cc[t+1]->cctp1,
-betterRBCCompSlack`Private`II[t+1]->iitp1,
-betterRBCCompSlack`Private`kk[t+1]->kktp1,
-betterRBCCompSlack`Private`lam[t+1]->lamtp1,
-betterRBCCompSlack`Private`mu1[t+1]->mu1tp1,
-betterRBCCompSlack`Private`nlPart[t+1]->nltp1,
-betterRBCCompSlack`Private`theta[t+1]->thetat
-})/.
-betterRBCCompSlack`Private`ssFRSolnSubs)//N//InputForm
-{-1./cct + lamt, cct + kkt - 1.*kktm1^0.36*thetat, nlt - 1.*lamt*thetat, 
- thetat - 1.*2.718281828459045^epsVal*thetatm1^0.95, 
- 0. + lamt + mu1t - (0.34199999999999997*nltp1)/kkt^0.64, iit - 1.*kkt, 
- 0.18264130077170979 + kkt}(*dd->1 to match*)
-
-
-
-(((betterRBCCompSlack`Private`rbcEqnsNotBinding/.betterRBCCompSlack`Private`paramSubs)
-/.{
-eps[betterRBCCompSlack`Private`theta][t]->epsVal,
-betterRBCCompSlack`Private`cc[t-1]->cctm1,
-betterRBCCompSlack`Private`II[t-1]->iitm1,
-betterRBCCompSlack`Private`kk[t-1]->kktm1,
-betterRBCCompSlack`Private`lam[t-1]->lamtm1,
-betterRBCCompSlack`Private`mu1[t-1]->mu1tm1,
-betterRBCCompSlack`Private`nlPart[t-1]->nltm1,
-betterRBCCompSlack`Private`theta[t-1]->thetatm1,
-betterRBCCompSlack`Private`cc[t]->cct,
-betterRBCCompSlack`Private`II[t]->iit,
-betterRBCCompSlack`Private`kk[t]->kkt,
-betterRBCCompSlack`Private`lam[t]->lamt,
-betterRBCCompSlack`Private`mu1[t]->mu1t,
-betterRBCCompSlack`Private`nlPart[t]->nlt,
-betterRBCCompSlack`Private`theta[t]->thetat,
-betterRBCCompSlack`Private`cc[t+1]->cctp1,
-betterRBCCompSlack`Private`II[t+1]->iitp1,
-betterRBCCompSlack`Private`kk[t+1]->kktp1,
-betterRBCCompSlack`Private`lam[t+1]->lamtp1,
-betterRBCCompSlack`Private`mu1[t+1]->mu1tp1,
-betterRBCCompSlack`Private`nlPart[t+1]->nltp1,
-betterRBCCompSlack`Private`theta[t+1]->thetat
-})/.
-betterRBCCompSlack`Private`ssFRSolnSubs)//N//InputForm
-{-1./cct + lamt, cct + kkt - 1.*kktm1^0.36*thetat, nlt - 1.*lamt*thetat, 
- thetat - 1.*2.718281828459045^epsVal*thetatm1^0.95, 
- lamt - 0.855*lamtp1 + mu1t - 0.855*mu1tp1 - 
-  (0.34199999999999997*nltp1)/kkt^0.64, iit - 1.*kkt + 0.9*kktm1, mu1t}
-
-
-
-{-1./cct + lamt, cct + kkt - 1.*kktm1^0.36*thetat, nlt - 1.*lamt*thetat, 
- thetat - 1.*2.718281828459045^epsVal*thetatm1^0.95, 
- 0. + lamt + mu1t - (0.34199999999999997*nltp1)/kkt^0.64, iit - 1.*kkt, 
- mu1t}(*dd->1 to match*)
-
-
-(*dd->.1*)
-{-1./cct + lamt, cct + kkt - 1.*kktm1^0.36*thetat, nlt - 1.*lamt*thetat, 
- thetat - 1.*2.718281828459045^epsVal*thetatm1^0.95, 
- lamt - 0.855*lamtp1 + mu1t - 0.855*mu1tp1 - 
-  (0.34199999999999997*nltp1)/kkt^0.64, iit - 1.*kkt + 0.9*kktm1, mu1t}
-
-{-1./cct + lamt, cct + kkt - 1.*kktm1^0.33*thetat, nlt - 1.*lamt*thetat, 
- thetat - 1.*2.718281828459045^epsVal*thetatm1^0.9, 
- lamt - 0.864*lamtp1 + mu1t - 0.864*mu1tp1 - 
-  (0.3168*nltp1)/kkt^0.6699999999999999, iit - 1.*kkt + 0.9*kktm1, 
- mu1t}
-
-*)
-
 
 
 

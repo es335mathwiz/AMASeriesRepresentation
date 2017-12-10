@@ -296,14 +296,20 @@ betterRBCvv=ArrayFlatten[{{ArrayFlatten[{{vv,{{0},{0}}}}]},{{{0,0,1}}}}]
 
 Print["at first export"]
 Export["ergodicV.pdf", MatrixForm[betterRBCvv//N]];
+Print["at second export"]
 Export["ergodicMaxZ.pdf", MatrixForm[betterRBCMaxZ//N]];
+Print["at next export"]
 Export["ergodicMinZ.pdf", MatrixForm[betterRBCMinZ//N]];
+Print["at next export"]
 Export["ergodicMean.pdf", MatrixForm[betterRBCMean//N]];
+Print["at next export"]
 Export["ergodicSD.pdf", MatrixForm[betterRBCSD//N]];
+Print["at next export"]
 
 
 
 Export["ergodicKTheta.pdf",ListPlot[Transpose[{theKs,theThetas}],PlotLabel->"Ergodic Values for K and \[Theta]"]];
+Print["at next export"]
 
 zPts=backXtoZ[Transpose[{theKs,theThetas,Table[0,{Length[theKs]}]}],betterRBCMean,betterRBCSD,betterRBCvv];Print["errBndLoc=",errBndLoc];
 

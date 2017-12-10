@@ -74,7 +74,7 @@ eta->1,
 delta->.95,
 rho->.95,
 sigma->.01,
-dd->1,
+dd->.1,
 upsilon->0.975
 } ;
 
@@ -288,7 +288,7 @@ dd->.1
 
 theProduct=0.9755*IIss//.ssFRSolnSubs;
   rbcEqnsBetterCompSlack=eqnsCompiledBetterCompSlack={
- { {True&,
+ { {False&,
   Compile @@ {
 {
 {cctm1,_Real},{iitm1,_Real},{kktm1,_Real},{lamtm1,_Real},{mu1tm1,_Real},{nltm1,_Real},{thetatm1,_Real},
@@ -297,7 +297,7 @@ theProduct=0.9755*IIss//.ssFRSolnSubs;
 {epsVal,_Real}
 },
 (eqnsForNotBind),"RuntimeOptions"->{"RuntimeErrorHandler"->Function[$Failed],"CatchMachineOverflow"->True,"CatchMachineUnderflow"->True}},
-  True &},
+  False &},
  {True&,
   Compile @@ {
 {
@@ -307,7 +307,7 @@ theProduct=0.9755*IIss//.ssFRSolnSubs;
 {epsVal,_Real}
 },
 (eqnsForNotBind),"RuntimeOptions"->{"RuntimeErrorHandler"->Function[$Failed],"CatchMachineOverflow"->True,"CatchMachineUnderflow"->True}},
-  Function[Print["func:",{#10,#10 >(theProduct)}];#10>(theProduct);True]}},
+  Function[Print["func:",{#10,#11,#10 >(theProduct)}];#10>(theProduct);True]}},
 Function[{aPt,allRes},
 If[allRes[[2]]===$Failed,Print["constraint violated"];Flatten[allRes[[1]]],Print["constraint not violated"];Flatten[allRes[[2]]]]]
 }

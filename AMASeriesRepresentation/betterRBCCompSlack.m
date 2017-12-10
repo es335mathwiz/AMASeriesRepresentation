@@ -288,7 +288,7 @@ dd->.1
 
 theProduct=0.9755*IIss//.ssFRSolnSubs;
   rbcEqnsBetterCompSlack=eqnsCompiledBetterCompSlack={
- { {False&,
+ { {True&,
   Compile @@ {
 {
 {cctm1,_Real},{iitm1,_Real},{kktm1,_Real},{lamtm1,_Real},{mu1tm1,_Real},{nltm1,_Real},{thetatm1,_Real},
@@ -297,7 +297,7 @@ theProduct=0.9755*IIss//.ssFRSolnSubs;
 {epsVal,_Real}
 },
 (eqnsForNotBind),"RuntimeOptions"->{"RuntimeErrorHandler"->Function[$Failed],"CatchMachineOverflow"->True,"CatchMachineUnderflow"->True}},
-  False &},
+  Function[Print["func:",{#10,#11,#3,#10 >(theProduct)}];#10>(theProduct)]},
  {True&,
   Compile @@ {
 {
@@ -306,10 +306,9 @@ theProduct=0.9755*IIss//.ssFRSolnSubs;
 {cctp1,_Real},{iitp1,_Real},{kktp1,_Real},{lamtp1,_Real},{mu1tp1,_Real},{nltp1,_Real},{thetatp1,_Real},
 {epsVal,_Real}
 },
-(eqnsForNotBind),"RuntimeOptions"->{"RuntimeErrorHandler"->Function[$Failed],"CatchMachineOverflow"->True,"CatchMachineUnderflow"->True}},
-  Function[Print["func:",{#10,#11,#10 >(theProduct)}];#10>(theProduct);True]}},
+(eqnsForBind),"RuntimeOptions"->{"RuntimeErrorHandler"->Function[$Failed],"CatchMachineOverflow"->True,"CatchMachineUnderflow"->True}},True&}},
 Function[{aPt,allRes},
-If[allRes[[2]]===$Failed,Print["constraint violated"];Flatten[allRes[[1]]],Print["constraint not violated"];Flatten[allRes[[2]]]]]
+If[allRes[[1]]===$Failed,Print["constraint violated"];Flatten[allRes[[2]]],Print["constraint not violated"];Flatten[allRes[[1]]]]]
 }
 
 

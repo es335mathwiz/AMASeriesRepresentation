@@ -17,6 +17,21 @@ theFRExtGateCS=genFRExtFunc[{7,1,7},linModBetterCompSlack,{genX0Z0Funcs[linModBe
 theFRExt=genFRExtFunc[{4,1,4},linModBetter,{x0z0=genX0Z0Funcs[linModBetter],2},eqnsCompiledBetter]
 
 theFRExtNot=genFRExtFunc[{6,1,6},linModNotBetter,{x0z0=genX0Z0Funcs[linModNotBetter],2},eqnsCompiledNotBetter]
+
+
+
+
+makeArgs[{adr_,adrce_},{kk_?NumberQ,tt_?NumberQ,ee_?NumberQ}]:=
+Module[{},
+With[{xt=Flatten[adr[ig,ig,kk,ig,ig,ig,tt,ee]][[Range[7]]]},
+With[{xtp1=Flatten[adrce@@xt][[Range[7]]]},
+Append[Join[{999,999,kk,999,999,999,tt},xt,xtp1],ee]]]]
+
+(*
+evaluateTriple[eqnsCompiledBetterCompSlack[[1,2]],makeArgs[{theRes04[[-1,1]],theRes04[[-2,2]]},ptErg[[7]]]]
+
+*)
+
 (*
 approx=1*{1,1,1};
 {ptErg,tfErg,plyErg,iplyErg,dplyErg}=smolyakInterpolationPrep[approx,{betterRBCMean,betterRBCSD,betterRBCMinZ,betterRBCMaxZ,betterRBCvv},theDistBetter];

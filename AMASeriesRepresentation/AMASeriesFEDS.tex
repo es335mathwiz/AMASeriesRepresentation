@@ -1114,23 +1114,26 @@ Figure \ref{fig:cntpltA} shows the results when $K=0$, with degree of approximat
 for computing the decision rule.  The top panel provides a contour plot of the
 norm of the equation errors. The bottom plot shows the error in the decision rule for different values of $k_{t-1}, \theta_{t-1}$ with $\epsilon_t=0$.  The plots for different values of $\epsilon_t$ are not different. The error bound, 
 \ifmacosx
-\input{resDir/forBetterRBC--1,1,1-Iters20theK0numKern2errBnd.tex} 
+\input{resDir/forBetterRBC--1,1,1-Iters20theK0numKern0errBnd.tex} 
 \fi
 \iflinux
 \input{resDir/forBetterRBC--1,1,1-Iters20theK0numKern0errBnd.tex} 
 \fi
 is 25\% larger than the actual error 
 \ifmacosx
-\input{resDir/forBetterRBC--1,1,1-Iters20theK0numKern2actErr.tex}
+\input{resDir/forBetterRBC--1,1,1-Iters20theK0numKern2acterr.tex}
 \fi
 \iflinux
-\input{resDir/forBetterRBC--1,1,1-Iters20theK0numKern0actErr.tex}
+\input{resDir/forBetterRBC--1,1,1-Iters20theK0numKern16acterr.tex}
 \fi
 \begin{figure}
   \centering
 \ifmacosx
   \includegraphics{resDir/forBetterRBC--1,1,1-Iters20theK0numKern2Approx.pdf}
   \includegraphics{resDir/forBetterRBC--1,1,1-Iters20theK0numKern2.pdf}
+\fi
+\iflinux
+\includegraphics{resDir/forBetterRBC--1,1,1-Iters20theK0numKern16Approx.pdf}
 \fi
   \caption{Contour Plot for approx=(1,1,1) K =0 (Standard Approach)}
   \label{fig:cntpltA}
@@ -1171,9 +1174,9 @@ norm of the equation errors. The bottom plot shows the error in the decision rul
 \fi
 is 25\% larger than the actual error 
 \iflinux
-\input{resDir/forBetterRBC--1,1,1-Iters20theK10numKern0actErr.tex} 
+\input{resDir/forBetterRBC--1,1,1-Iters20theK10numKern111acterr.tex} 
 \fi
- Notice that even thought equation errors are comparable in magnitude, the error in the decision rule is significantly smaller for the series representation solution.  The additional constraints on the equation system provided by computing conditional expectations paths and incorporating them into the solution at time $t$ leads to better solutions.
+ Notice that even though equation errors are comparable in magnitude, the error in the decision rule is significantly smaller for the series representation solution.  The additional constraints on the equation system provided by computing conditional expectations paths and incorporating them into the solution at time $t$ leads to better solutions.
 
 
 

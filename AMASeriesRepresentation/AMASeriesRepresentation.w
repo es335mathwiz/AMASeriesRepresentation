@@ -766,6 +766,7 @@ Get["pathSetup.mth"];
 ParallelEvaluate[Get["pathSetup.mth"]];
 ParallelNeeds["AMASeriesRepresentation`"];
 ParallelNeeds["betterRBC`"];
+ParallelNeeds["betterRBCCompSlack`"];
 SetSharedFunction[myAbortKernels];
 Get["AMASeriesRepresentation`"]]
 
@@ -1338,7 +1339,7 @@ With[{thePts=gridPts[gSpec]},
 With[{filledPts=Map[
 Function[xx,fillIn[{{},toIgnore,xx}]],thePts]},
 With[{theVals=ParallelTable[evaluateTriple[aTriple,Flatten[aPt]],
-{aTriple,triples[[1]]},{aPt,filledPts}]},
+{aPt,filledPts},{aTriple,triples[[1]]}]},
 With[{interpData={thePts,Map[Flatten,Flatten[Map[DeleteCases[#,$Failed]&,Transpose[theVals]],1]]}},
 MapThread[{#1,#2}&,{interpData[[1]],interpData[[2,1]]}]]]]]
 
@@ -1791,7 +1792,7 @@ parallelSetup[];
 DistributeDefinitions[XZFuncs[[1]]];
 DistributeDefinitions[eqnsFunc];
 DistributeDefinitions[linMod];
-Print["done distributing defs:"];
+Print["done distributing defs:",{$KernelID,Kernels[]}];
 With[{theFuncs=parallelMakeGenericInterpFuncs[genFRExtFunc[{numX,numEps,numZ},linMod,XZFuncs,triples,Apply[Sequence,FilterRules[{opts},Options[genFRExtFunc]]]],backLookingInfo,smolGSpec,smolyakInterpolation,{}]},
 Print["done parallelmakegenericinterpfunc:"];
 Print["parallelMakeInterpTime=",(tn2=AbsoluteTime[])-tn];

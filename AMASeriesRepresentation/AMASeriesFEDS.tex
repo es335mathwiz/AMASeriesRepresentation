@@ -25,11 +25,13 @@ Nonlinear Dynamic Stochastic Model Solutions: General Error Bounds and a New Sol
 
 \begin{abstract}
 This paper proposes a new series representation for bounded time series paths and uses this representation to construct error bounds for proposed solutions for a very broad class of dynamic stochastic models.
-This error bound calculation accounts for the impact of errors in any of the equations in the system.  They should prove useful for assessing the accuracy of any
+% This error bound calculation accounts for the impact of errors in any of the equations in the system.
+The bounds apply for assessing the accuracy of any
 proposed model solution regardless of the source.
+Consequently, the approach can provide information about the accuracy of perturbation solutions and how to apply global information to improve them.
 
 
-The paper also proposes a new algorithm for solving these models.
+The paper also proposes a new algorithm for solving models.
 The series representation makes it possible to reliably improve upon an initial
 guess for a stochastic model solution by solving a 
 potentially complicated, but deterministic problem in the initial time period.
@@ -1114,7 +1116,7 @@ Figure \ref{fig:cntpltA} shows the results when $K=0$, with degree of approximat
 for computing the decision rule.  The top panel provides a contour plot of the
 norm of the equation errors. The bottom plot shows the error in the decision rule for different values of $k_{t-1}, \theta_{t-1}$ with $\epsilon_t=0$.  The plots for different values of $\epsilon_t$ are not different. The error bound, 
 \ifmacosx
-\input{resDir/forBetterRBC--1,1,1-Iters20theK0numKern0errBnd.tex} 
+\input{resDir/forBetterRBC--1,1,1-Iters20theK0numKern2errBnd.tex} 
 \fi
 \iflinux
 \input{resDir/forBetterRBC--1,1,1-Iters20theK0numKern0errBnd.tex} 

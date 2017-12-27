@@ -297,7 +297,7 @@ theProduct=0.9755*IIss//.ssFRSolnSubs;
 {epsVal,_Real}
 },
 (eqnsForNotBind),"RuntimeOptions"->{"RuntimeErrorHandler"->Function[$Failed],"CatchMachineOverflow"->True,"CatchMachineUnderflow"->True}},
-  Function[Print["func:",{#10,#11,#3,#10 >(theProduct)}];#10>(theProduct)]},
+  Function[Print["func:",{#8,#9,#10,#11,#3,#9 >(theProduct)}];#9>(theProduct)]},
  {(Print["pre2"];True)&,
   Compile @@ {
 {

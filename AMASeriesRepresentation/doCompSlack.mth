@@ -49,11 +49,11 @@ approx=1*{1,1,1};
 kkSSNow=betterRBCCompSlack`Private`kk//.betterRBCCompSlack`Private`ssFRSolnSubs
 
 
-smolRngErg={{.9*kkSSNow,1.1*kkSSNow},{0.95,1.05},{-0.01,0.01}};
+smolRngErg01={{.9*kkSSNow,1.1*kkSSNow},{0.95,1.05},{-0.01,0.01}};
 
-{ptErg,tfErg,plyErg,iplyErg,dplyErg}=smolyakInterpolationPrep[approx,smolRngErg,theDistBetter];
+{ptErg01,tfErg01,plyErg01,iplyErg01,dplyErg01}=smolyakInterpolationPrep[approx,smolRngErg01,theDistBetter];
 toIg={1,2,4,5,6};
-sgSpecErg01={toIg,smolRngErg,ptErg,tfErg,plyErg,iplyErg,1,approx,{}};
+sgSpecErg01={toIg,smolRngErg01,ptErg01,tfErg01,plyErg01,iplyErg01,1,approx,{}};
 DistributeDefinitions[betterRBCCompSlack`Private`theProduct]
 theRes01=parallelNestIterREInterp[genFRExtFunc,linModBetterCompSlack,
 {genX0Z0Funcs[linModBetterCompSlack],4},eqnsCompiledBetterCompSlack,sgSpecErg01,1];
@@ -61,7 +61,14 @@ theRes01=parallelNestIterREInterp[genFRExtFunc,linModBetterCompSlack,
 justKT01=Drop[simulateDR[theRes01[[-1,1]],aGSpecBetterCompSlack,theDistBetterCompSlack,{.306,0.052,kkSSNow,2.86,0,2.861,1},3000],200][[All,{3,7}]];
 
 betterRBCCompSlackMean01=Mean[justKT01];
+
+(*
+evaluateTriple[eqnsCompiledBetterCompSlack[[1,2]],makeArgs[{theRes01[[-1,1]],theRes01[[-2,2]]},ptErg01[[1]]]]//Chop
+*)
+
+
 (*for 02*)
+
 
 betterRBCCompSlackSD01=StandardDeviation[justKT01];
 normedRes=(#/betterRBCCompSlackSD01)&/@((#-betterRBCCompSlackMean01)&/@justKT01);
@@ -86,15 +93,21 @@ Export["ergodicCSSD.pdf", MatrixForm[betterRBCCompSlackSD01//N]];
 
 
 approx=1*{1,1,1};
-{ptErg,tfErg,plyErg,iplyErg,dplyErg}=smolyakInterpolationPrep[approx,{betterRBCCompSlackMeanLong01,betterRBCCompSlackSDLong01,betterRBCCompSlackMinZLong01,betterRBCCompSlackMaxZLong01,betterRBCCompSlackvvLong01},theDistBetter];
-smolRngErg=Transpose[{betterRBCCompSlackMinZLong01,betterRBCCompSlackMaxZLong01}];
+{ptErg02,tfErg02,plyErg02,iplyErg02,dplyErg02}=smolyakInterpolationPrep[approx,{betterRBCCompSlackMeanLong01,betterRBCCompSlackSDLong01,betterRBCCompSlackMinZLong01,betterRBCCompSlackMaxZLong01,betterRBCCompSlackvvLong01},theDistBetter];
+smolRngErg02=Transpose[{betterRBCCompSlackMinZLong01,betterRBCCompSlackMaxZLong01}];
 toIg={1,2,4,5,6};
-sgSpecErg02={toIg,smolRngErg,ptErg,tfErg,plyErg,iplyErg,1,approx,
+sgSpecErg02={toIg,smolRngErg02,ptErg02,tfErg02,plyErg02,iplyErg02,1,approx,
 {betterRBCCompSlackMeanLong01,betterRBCCompSlackSDLong01,betterRBCCompSlackMinZLong01,betterRBCCompSlackMaxZLong01,betterRBCCompSlackvvLong01}};
 
 
 theRes02=parallelNestIterREInterp[genFRExtFunc,linModBetterCompSlack,
 {theRes01[[-1,2]](*genX0Z0Funcs[linModBetterCompSlack]*),4},eqnsCompiledBetterCompSlack,sgSpecErg02,10];
+
+(*
+evaluateTriple[eqnsCompiledBetterCompSlack[[1,2]],makeArgs[{theRes02[[-1,1]],theRes02[[-2,2]]},ptErg02[[1]]]]//Chop
+*)
+
+
 
 justKT02=Drop[simulateDR[theRes02[[-1,1]],aGSpecBetterCompSlack,theDistBetterCompSlack,{.306,0.052,betterRBCCompSlackMean01[[1]],2.86,0,2.861,1},3000],200][[All,{3,7}]];
 
@@ -116,10 +129,10 @@ betterRBCCompSlackvvLong02=ArrayFlatten[{{ArrayFlatten[{{vv,{{0},{0}}}}]},{{{0,0
 
 
 approx=1*{1,1,1};
-{ptErg,tfErg,plyErg,iplyErg,dplyErg}=smolyakInterpolationPrep[approx,{betterRBCCompSlackMeanLong02,betterRBCCompSlackSDLong02,betterRBCCompSlackMinZLong02,betterRBCCompSlackMaxZLong02,betterRBCCompSlackvvLong02},theDistBetter];
-smolRngErg=Transpose[{betterRBCCompSlackMinZLong02,betterRBCCompSlackMaxZLong02}];
+{ptErg03,tfErg03,plyErg03,iplyErg03,dplyErg03}=smolyakInterpolationPrep[approx,{betterRBCCompSlackMeanLong02,betterRBCCompSlackSDLong02,betterRBCCompSlackMinZLong02,betterRBCCompSlackMaxZLong02,betterRBCCompSlackvvLong02},theDistBetter];
+smolRngErg03=Transpose[{betterRBCCompSlackMinZLong02,betterRBCCompSlackMaxZLong02}];
 toIg={1,2,4,5,6};
-sgSpecErg03={toIg,smolRngErg,ptErg,tfErg,plyErg,iplyErg,1,approx,
+sgSpecErg03={toIg,smolRngErg03,ptErg03,tfErg03,plyErg03,iplyErg03,1,approx,
 {betterRBCCompSlackMeanLong02,betterRBCCompSlackSDLong02,betterRBCCompSlackMinZLong02,betterRBCCompSlackMaxZLong02,betterRBCCompSlackvvLong02}};
 
 
@@ -147,10 +160,10 @@ betterRBCCompSlackvvLong03=ArrayFlatten[{{ArrayFlatten[{{vv,{{0},{0}}}}]},{{{0,0
 
 
 approx=1*{1,1,1};
-{ptErg,tfErg,plyErg,iplyErg,dplyErg}=smolyakInterpolationPrep[approx,{betterRBCCompSlackMeanLong03,betterRBCCompSlackSDLong03,betterRBCCompSlackMinZLong03,betterRBCCompSlackMaxZLong03,betterRBCCompSlackvvLong03},theDistBetter];
-smolRngErg=Transpose[{betterRBCCompSlackMinZLong03,betterRBCCompSlackMaxZLong03}];
+{ptErg04,tfErg04,plyErg04,iplyErg04,dplyErg04}=smolyakInterpolationPrep[approx,{betterRBCCompSlackMeanLong03,betterRBCCompSlackSDLong03,betterRBCCompSlackMinZLong03,betterRBCCompSlackMaxZLong03,betterRBCCompSlackvvLong03},theDistBetter];
+smolRngErg04=Transpose[{betterRBCCompSlackMinZLong03,betterRBCCompSlackMaxZLong03}];
 toIg={1,2,4,5,6};
-sgSpecErg04={toIg,smolRngErg,ptErg,tfErg,plyErg,iplyErg,1,approx,
+sgSpecErg04={toIg,smolRngErg04,ptErg04,tfErg04,plyErg04,iplyErg04,1,approx,
 {betterRBCCompSlackMeanLong03,betterRBCCompSlackSDLong03,betterRBCCompSlackMinZLong03,betterRBCCompSlackMaxZLong03,betterRBCCompSlackvvLong03}};
 
 
@@ -180,10 +193,10 @@ betterRBCCompSlackvvLong04=ArrayFlatten[{{ArrayFlatten[{{vv,{{0},{0}}}}]},{{{0,0
 
 
 approx=2*{1,1,1};
-{ptErg,tfErg,plyErg,iplyErg,dplyErg}=smolyakInterpolationPrep[approx,{betterRBCCompSlackMeanLong04,betterRBCCompSlackSDLong04,betterRBCCompSlackMinZLong04,betterRBCCompSlackMaxZLong04,betterRBCCompSlackvvLong04},theDistBetter];
-smolRngErg=Transpose[{betterRBCCompSlackMinZLong04,betterRBCCompSlackMaxZLong04}];
+{ptErg05,tfErg05,plyErg05,iplyErg05,dplyErg05}=smolyakInterpolationPrep[approx,{betterRBCCompSlackMeanLong04,betterRBCCompSlackSDLong04,betterRBCCompSlackMinZLong04,betterRBCCompSlackMaxZLong04,betterRBCCompSlackvvLong04},theDistBetter];
+smolRngErg05=Transpose[{betterRBCCompSlackMinZLong04,betterRBCCompSlackMaxZLong04}];
 toIg={1,2,4,5,6};
-sgSpecErg05={toIg,smolRngErg,ptErg,tfErg,plyErg,iplyErg,1,approx,
+sgSpecErg05={toIg,smolRngErg05,ptErg05,tfErg05,plyErg05,iplyErg05,1,approx,
 {betterRBCCompSlackMeanLong04,betterRBCCompSlackSDLong04,betterRBCCompSlackMinZLong04,betterRBCCompSlackMaxZLong04,betterRBCCompSlackvvLong04}};
 
 
@@ -213,10 +226,10 @@ betterRBCCompSlackvvLong05=ArrayFlatten[{{ArrayFlatten[{{vv,{{0},{0}}}}]},{{{0,0
 
 
 approx=3*{1,1,1};
-{ptErg,tfErg,plyErg,iplyErg,dplyErg}=smolyakInterpolationPrep[approx,{betterRBCCompSlackMeanLong05,betterRBCCompSlackSDLong05,betterRBCCompSlackMinZLong05,betterRBCCompSlackMaxZLong05,betterRBCCompSlackvvLong05},theDistBetter];
-smolRngErg=Transpose[{betterRBCCompSlackMinZLong05,betterRBCCompSlackMaxZLong05}];
+{ptErg06,tfErg06,plyErg06,iplyErg06,dplyErg06}=smolyakInterpolationPrep[approx,{betterRBCCompSlackMeanLong05,betterRBCCompSlackSDLong05,betterRBCCompSlackMinZLong05,betterRBCCompSlackMaxZLong05,betterRBCCompSlackvvLong05},theDistBetter];
+smolRngErg06=Transpose[{betterRBCCompSlackMinZLong05,betterRBCCompSlackMaxZLong05}];
 toIg={1,2,4,5,6};
-sgSpecErg06={toIg,smolRngErg,ptErg,tfErg,plyErg,iplyErg,1,approx,
+sgSpecErg06={toIg,smolRngErg06,ptErg06,tfErg06,plyErg06,iplyErg06,1,approx,
 {betterRBCCompSlackMeanLong05,betterRBCCompSlackSDLong05,betterRBCCompSlackMinZLong05,betterRBCCompSlackMaxZLong05,betterRBCCompSlackvvLong05}};
 
 
@@ -246,10 +259,10 @@ betterRBCCompSlackvvLong06=ArrayFlatten[{{ArrayFlatten[{{vv,{{0},{0}}}}]},{{{0,0
 
 
 approx=4*{1,1,1};
-{ptErg,tfErg,plyErg,iplyErg,dplyErg}=smolyakInterpolationPrep[approx,{betterRBCCompSlackMeanLong06,betterRBCCompSlackSDLong06,betterRBCCompSlackMinZLong06,betterRBCCompSlackMaxZLong06,betterRBCCompSlackvvLong06},theDistBetter];
-smolRngErg=Transpose[{betterRBCCompSlackMinZLong06,betterRBCCompSlackMaxZLong06}];
+{ptErg07,tfErg07,plyErg07,iplyErg07,dplyErg07}=smolyakInterpolationPrep[approx,{betterRBCCompSlackMeanLong06,betterRBCCompSlackSDLong06,betterRBCCompSlackMinZLong06,betterRBCCompSlackMaxZLong06,betterRBCCompSlackvvLong06},theDistBetter];
+smolRngErg07=Transpose[{betterRBCCompSlackMinZLong06,betterRBCCompSlackMaxZLong06}];
 toIg={1,2,4,5,6};
-sgSpecErg07={toIg,smolRngErg,ptErg,tfErg,plyErg,iplyErg,1,approx,
+sgSpecErg07={toIg,smolRngErg07,ptErg07,tfErg07,plyErg07,iplyErg07,1,approx,
 {betterRBCCompSlackMeanLong06,betterRBCCompSlackSDLong06,betterRBCCompSlackMinZLong06,betterRBCCompSlackMaxZLong06,betterRBCCompSlackvvLong06}};
 
 

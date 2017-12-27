@@ -28,7 +28,7 @@ This paper proposes a new series representation for bounded time series paths an
 % This error bound calculation accounts for the impact of errors in any of the equations in the system.
 The bounds apply for assessing the accuracy of any
 proposed model solution regardless of the source.
-Consequently, the approach can provide information about the accuracy of perturbation solutions and along with global information to improve them.
+%Consequently, the approach can provide information about the accuracy of perturbation solutions and along with global information to improve them.
 
 
 The paper also proposes a new algorithm for solving models.
@@ -41,8 +41,7 @@ Like the error bound formula, the algorithm is appropriate for models with occas
 The  paper uses a particular implementation of the algorithm to
 demonstrate how to use the 
 series representation in conjunction with 
-Smolyak polynomial function approximation to avoid repeated numerical integration
-and to exploit the high degree of parallelism available in the algorithm.
+Smolyak polynomial function approximation  to exploit the high degree of parallelism available in the algorithm and to eliminate the need for numerical integration during the solution updates.
 
 
 

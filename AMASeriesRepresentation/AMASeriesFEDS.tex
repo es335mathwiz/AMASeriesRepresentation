@@ -91,6 +91,7 @@ of the algorithms components cab be computed in parallel.
 \item $\phi=0$ is standard
 \item Perturbation Occ bind zeroth order and $\phi=0$
 \item rank condition on $\psi_c$
+\item appendix derivations with all lagrangians
 \end{itemize}
 
 
@@ -386,7 +387,7 @@ c_t + k_t=(1-d)k_{t-1} + \theta_t f(k_t)\\
 f(k_t)= k_t^\alpha\\
 u(c)=\frac{c^{1-\eta}-1}{1-\eta}
  \end{gather*}
-The well known first order conditions for the model are
+The first order conditions for the model are
 
 \begin{tcolorbox}[ams gather]
 \frac{1}{c_t^{\eta}}=\alpha \delta k_{t}^{\alpha-1} E_t \left (\frac{\theta_{t+1}}{c_{t+1}^\eta} \right ) \\
@@ -398,53 +399,68 @@ c_t + k_t=\theta_{t-1}k_{t-1}^\alpha \\
 
 \label{sec:rbcexample}
 
-When $\eta=d=1$, we have
-
- \begin{gather}
-\frac{1}{c_t}=\alpha \delta k_{t}^{\alpha-1} E_t \left (\frac{\theta_{t}}{c_{t+1}} \right ) \\
-c_t + k_t=\theta_{t-1}k_{t-1}^\alpha \\
-\theta_t =\theta_{t-1}^\rho e^{\epsilon_t}\label{rbcSys}
-\intertext{and there is a closed form solution}
-c_t=  (1-\alpha \delta) \theta_{t} k_{t-1}^\alpha\\
-  k_{t}= \alpha \delta \theta_{t} k_{t-1}^\alpha.\label{soln}\\
-\theta_t =\theta_{t-1}^\rho e^{\epsilon_t}.
+When $\eta=d=1$, we have a closed form solution:
+\begin{gather}
+x_t(\xtmEpsArg)\equiv    \DR(\xtmEpsArg)\equiv
+   \begin{bmatrix}
+     c_t(\xtmEpsArg)\\k_t(\xtmEpsArg)\\ \theta_t(\xtmEpsArg)
+   \end{bmatrix}=
+   \begin{bmatrix}
+(1-\alpha \delta) \theta_{t} k_{t-1}^\alpha\\
+  \alpha \delta \theta_{t} k_{t-1}^\alpha.\label{soln}\\
+\theta_{t-1}^\rho e^{\epsilon_t}.
+   \end{bmatrix}
 \end{gather}
 For mean zero iid $\epsilon_t$ we can easily 
-compute the conditional expectation of the model variables for any given $\theta_{t-1},k_{t-1}$
+compute the conditional expectation of the model variables for any given $\theta_{t+k},k_{t+k}$
 \begin{gather*}
-  E_t(c_t|\theta_{t-1},k_{t-1})=(1-\alpha\delta)k_{t-1}^\alpha e^{\frac{\sigma^2}{2}}\theta_{t-1}^\rho\\
-  E_t(k_t|\theta_{t-1},k_{t-1})=\alpha\delta k_{t-1}^\alpha e^{\frac{\sigma^2}{2}}\theta_{t-1}^\rho\\
-  E_t(\theta_t|\theta_{t-1},k_{t-1})=e^{\frac{\sigma^2}{2}}\theta_{t-1}^\rho
+  \DRCE(x_{t+k+1})\equiv
+  \begin{bmatrix}
+  E_t(c_{t+k+1}|\theta_{t+k},k_{t+k})\\
+  E_t(k_{t+k+1}|\theta_{t+k},k_{t+k})\\
+  E_t(\theta_{t+k+1}|\theta_{t+k},k_{t+k})
+  \end{bmatrix}=
+  \begin{bmatrix}
+(1-\alpha\delta)k_{t+k}^\alpha e^{\frac{\sigma^2}{2}}\theta_{t+k}^\rho\\
+\alpha\delta k_{t+k}^\alpha e^{\frac{\sigma^2}{2}}\theta_{t+k}^\rho\\
+e^{\frac{\sigma^2}{2}}\theta_{t+k}^\rho
+  \end{bmatrix}
 \end{gather*}
-
-
-By applying the law of iterated expectations, we can compute conditional expected solution paths forward from any initial values $x_{t-1}$
-and realization of $\epsilon_t$.
-As a result, we can use the family of conditional expectations
-along with the contrived reference model to recover an 
+Consequently, by applying the law of iterated expectations, we can compute conditional expected solution paths forward from any initial value $x_{t-1}$
+and realization of $\epsilon_t$.\footnote{Mention relation to \cite{Potter2000,Koop1996a}.}
+Subsequently, we can use the family of conditional expectations paths 
+along with a contrived linear reference model to recover an 
 approximation for equation \refeq{soln} along with error bounds.
-The series representation provides a weighted sum of $z_t\tArg$ functions that give us
-an approximation for the known solution.
+The series representation will provide a weighted sum of $z_t\tArg$ functions that give us an approximation for the known model solution.
 Note that the reference model is deterministic and the $z_t\tArg$ functions account for the stochastic nature of the model.
 
-For any given values of $k_{t-1},\theta_{t-1}, \epsilon_t$ the model solution and conditional expectations path produces paths for $z_{1t}\tArg, z_{2t}\tArg, z_{3t}\tArg$
-
+For any given values of $k_{t-1},\theta_{t-1}, \epsilon_t$, the model solution and conditional expectations path:
 \begin{gather*}
-  \begin{bmatrix}
-c_t(k_{t-1},\theta_{t-1}, \epsilon_t)\\
-k_t(k_{t-1},\theta_{t-1}, \epsilon_t)\\
-\theta_t(k_{t-1},\theta_{t-1}, \epsilon_t)
-  \end{bmatrix} \rightarrow
-  \begin{bmatrix}
-  z_{1t}(k_{t-1},\theta_{t-1}, \epsilon_t)\\
-  z_{2t}(k_{t-1},\theta_{t-1}, \epsilon_t)\\
-  z_{3t}(k_{t-1},\theta_{t-1}, \epsilon_t) 
-  \end{bmatrix}\equiv z(k_{t-1},\theta_{t-1}, \epsilon_t)\intertext{where}
-  \begin{bmatrix}
-c_t(k_{t-1},\theta_{t-1}, \epsilon_t)\\
-k_t(k_{t-1},\theta_{t-1}, \epsilon_t)\\
-\theta_t(k_{t-1},\theta_{t-1}, \epsilon_t)
-  \end{bmatrix}  =
+  \xWOarg_t(\xtmEpsArg)=\DR(\xtmEpsArg)\\
+  \xWOarg_{t+k+1}(\xtmEpsArg)=\DRCE(\xWOarg_{t+k}(\xtmEpsArg))
+\end{gather*}
+produces paths for $\{(z_{1t}\tArg, z_{2t}\tArg, z_{3t}\tArg),\ldots\}$
+\begin{gather*}
+  z_{t+k} \equiv H_{-1} \xWOarg_{t+k-1} +  H_0 \xWOarg_{t+k} +  H_1 \xWOarg_{t+K+1} \label{defZ} 
+\end{gather*}
+Formula \refeq{theSeries} requires that
+\begin{gather*}
+%   \begin{bmatrix}
+% c_t(k_{t-1},\theta_{t-1}, \epsilon_t)\\
+% k_t(k_{t-1},\theta_{t-1}, \epsilon_t)\\
+% \theta_t(k_{t-1},\theta_{t-1}, \epsilon_t)
+%   \end{bmatrix} \rightarrow
+%   \begin{bmatrix}
+%   z_{1t}(k_{t-1},\theta_{t-1}, \epsilon_t)\\
+%   z_{2t}(k_{t-1},\theta_{t-1}, \epsilon_t)\\
+%   z_{3t}(k_{t-1},\theta_{t-1}, \epsilon_t) 
+%   \end{bmatrix}\equiv z(k_{t-1},\theta_{t-1}, \epsilon_t)\intertext{where}
+%   \begin{bmatrix}
+% c_t(k_{t-1},\theta_{t-1}, \epsilon_t)\\
+% k_t(k_{t-1},\theta_{t-1}, \epsilon_t)\\
+% \theta_t(k_{t-1},\theta_{t-1}, \epsilon_t)
+%   \end{bmatrix}  =
+\xWOarg(\xtmEpsArg)=
 B   \begin{bmatrix}
 c_{t-1}\\
 k_{t-1}\\
@@ -457,7 +473,7 @@ k_{t-1}\\
 % required for a given level of approximation
 % accuracy.}
 
-For example, using the following parameter values and using the arbitrary linear reference model we can generate a series representation for the model solutions.
+For example, using $d=1$ and the following parameter values and using the arbitrary linear reference model we can generate a series representation for the model solutions.
 
 \begin{gather}\label{rbcparams}
 \vcenter{\hbox{\includegraphics{../../paperProduction/occBind/docs/RBCParamSubs.pdf}}} \,\, \text{ we have } \,\,
@@ -484,24 +500,24 @@ With
   \label{rbcpaths}
 \end{figure}
 
-The left panel of Figure \refeq{rbcpaths} shows the paths, from top to bottom, of $\theta_t, c_t, \text{and} k_t$ from the initial values given in Equation \refeq{theInits}.  The right panel shows the paths for the $z_t$ variables associated with the linear reference model. The orange line corresponds to $z_{1t}\tArg$,
+The left panel of Figure \refeq{rbcpaths} shows the paths, from top to bottom, of $\theta_t, c_t, \text{ and } k_t$ from the initial values given in Equation \refeq{theInits}.  The right panel shows the paths for the $z_t$ variables associated with the linear reference model. The orange line corresponds to $z_{1t}\tArg$,
 the blue line corresponds to $z_{2t}\tArg$ and the green line corresponds to $z_{3t}\tArg$.
 
 Figure \ref{rbcTrunc} shows the impact that truncating the series has 
-on the initial value of the state variables.   The bound, $B_n$, shown in red 
-again is very pessimistic compared to the actual, $Z_n$, shown in blue.
- But even with an arbitrarily chosen linear model, ultimately the series approximation provides an accurate value for the initial state vector.  
+on the time t values of the state variables.   The bound for the error, $B_n$, shown in red 
+ is again very pessimistic compared to the actual error, $Z_n$, shown in blue.
+ But even with an ``almost'' arbitrarily chosen linear model, with enough terms, the series approximation provides a machine precision accurate value for the time t state vector.  
 
 \begin{figure}
   \centering
 \includegraphics[width=2.7in]{simpArbBoundsVActual.pdf}  
-  \caption{RBC Truncation Error Bound Versus Actual}
+  \caption{RBC Truncation Error Bound Versus Actual: Arbitrary Linear Reference Model}
   \label{rbcTrunc}
 \end{figure}
 \begin{figure}
   \centering
 \includegraphics[width=2.7in]{simpBoundsVActual.pdf}  
-  \caption{RBC Truncation Error Bound Versus Actual}
+  \caption{RBC Truncation Error Bound Versus Actual: Stochastic Steady State Linearization Linear Reference Model}
   \label{rbcTruncSimp}
 \end{figure}
 
@@ -515,6 +531,15 @@ The first few terms make most of the difference in approximating the value of th
 
 
 
+
+\section{Computing Model Solution Error Bounds}
+\label{sec:solnerrorbounds}
+
+
+\subsection{Model Specification}
+\label{sec:model-specification}
+
+We will consider time invariant maps that arise form solving a time t optimization problem codified in a collection of systems of equations.  
 
 For convenience of notation in what follows, 
 we will focus on models built up from components of the form
@@ -546,12 +571,13 @@ It is worth noting that since we will be working with models where expectations 
 
 
 
-We now construct our linear reference model by increasing its dimension by one , $\linMod$, to accommodate 
+We can reconstruct our linear reference model by increasing its dimension by one , $\linMod$, to accommodate 
  augmenting the RBC model with the equation
 \begin{tcolorbox}[ams gather]
   \rcpC_t=\frac{\eta}{c_t}
 \end{tcolorbox}
-substituting $\rcpC_{t+1}$ for $\frac{1}{c_{t+1}}$ in the first equation and 
+\noindent
+substituting $\rcpC_{t+1}$ for $\frac{\eta}{c_{t+1}}$ in the first equation and 
  linearizing the RBC model about the ergodic mean
 given in \refeq{rbcparams}
 {\small
@@ -567,7 +593,7 @@ H_{-1}&H_{0}&H_{1}
 \end{bmatrix}, \psi_z=I
 \end{gather}%(\footnote{generated by AMAPaperCalcs.mth {RBCHmatSymb.pdf}})
 }
-These coefficients  produce a unique stable linear solution.
+Of course, these coefficients again produce a unique stable linear solution.
 
 \begin{gather}
   B=
@@ -578,15 +604,112 @@ F=
 \vcenter{\hbox{\includegraphics{RBCFmatSymb.pdf}}}\\
 \psi_c=\vcenter{\hbox{\includegraphics{RBCPsissSymb.pdf}}}
 \end{gather}
-\section{Computing Model Solution Error Bounds}
-\label{sec:solnerrorbounds}
 
 
-\subsection{Model Specification}
-\label{sec:model-specification}
 
 
-We will consider time invariant maps that arise form solving a time t optimization problem codified in a collection of systems of equations.  We will assume that we have a countable collection of equations systems that are mutually exclusive and exhaustive.  Given $\epsilon_t, x_{t-1}$,  this collection of 
+\subsection{The Error Bound Formula}
+\label{sec:errorformula}
+
+
+In what follows, we construct an error bound for proposed model solutions.
+Consider a bounded region, $\bndRgn$, where all iterated conditional expectations paths remain bounded.
+ Given an exact solution $x^\star_t=g^\star(x_{t-1},\epsilon_t)$ define
+  \begin{gather}
+G^\star(x)\equiv\expct{g^\star(x,\epsilon)} \intertext{then with}
+E_tx^\star_{t+1}=G^\star(g^\star(x_{t-1},\epsilon_t))\\
+    \label{eq:2}
+\eqnFunc(x^\star_{t-1},x^\star_t,E_tx^\star_{t+1},\epsilon_t)=0  \,\, \forall  (x_{t-1},\epsilon_t)\\ \intertext{Using $G^\star$ and $\linMod$ construct the family of trajectories and corresponding $z^\star_t(x_{t-1},\epsilon)$ }
+   x^\star_t(x_{t-1},\epsilon_t) \in{R^L}\,\,\infNorm{x^\star_t(x_{t-1},\epsilon_t)}  \le \bar{\mathcal{X}}\,\,\forall t\ > 0
+  \end{gather}
+   \begin{align}
+   z^\star_{t}(x_{t-1},\epsilon_t) \equiv& H_{-1}  x^\star_{t-1}(x_{t-1},\epsilon_t) + \nonumber\\
+ & H_0  x^\star_{t}(x_{t-1},\epsilon_t) +  \label{defZ} \\
+ & H_1  x^\star_{t+1}(x_{t-1},\epsilon_t). \nonumber
+   \end{align}
+
+
+
+
+   Consequently, the exact solution has a representation given by
+	 \begin{gather}
+	 x^\star_{t}(x_{t-1},\epsilon) =B x_{t-1}+ \phi \psi_\epsilon\epsilon + (I - F)^{-1} \phi \psi_c +\\ \sum_{\sForSum=0}^\infty F^s \phi z^\star_{t+\sForSum}(x_{t-1},\epsilon) \intertext{and}
+	 \expct{x^\star_{t+1}(x_{t-1},\epsilon)} =B x^\star_{t+k} + \sum_{\sForSum =0}^\infty F^\sForSum \phi \expct{z^\star_{t+1+\sForSum}(x_{t-1},\epsilon)} + (I - F)^{-1} \phi \psi_c 
+ \intertext{with}
+ \eqnFunc(x_{t-1},x^\star_t,E_tx^\star_{t+1},\epsilon_t)=0  \,\, \forall  (x_{t-1},\epsilon_t)\\ 
+	 \end{gather}
+
+Now consider a proposed solution for the model,
+ $x^p_t=g^p(x_{t-1},\epsilon_t)$ define
+$G^p(x)\equiv\expct{g^p(x,\epsilon)}$  so that 
+  \begin{gather*}
+E_tx_{t+1}=G^p(g^p(x_{t-1},\epsilon_t))\\
+\mathbf{e}_t^p(x_{t-1},\epsilon)\equiv
+\eqnFunc(x_{t-1},x^p_t,E_tx^p_{t+1},\epsilon_t)
+\end{gather*}
+We will assume that, by construction, tha the conditional expectations paths are all bounded in the region $\bndRgn^p$. Using $G^p$ and $\linMod$ construct the family of trajectories and corresponding $z^p_t(x_{t-1},\epsilon)$\footnote{The algorithm presented below for finding solutions provides a mechanism for generating such proposed solutions.} 
+\begin{gather*}
+   x^p_t(x_{t-1},\epsilon_t) \in{R^L}\,\,\infNorm{x^p_t(x_{t-1},\epsilon_t)}  \le \bar{\mathcal{X}}\,\,\forall t\ > 0
+  \end{gather*}
+   \begin{align}
+   z^p_{t}(x_{t-1},\epsilon_t) \equiv& H_{-1}  x^p_{t-1}(x_{t-1},\epsilon_t) + \nonumber\\
+ & H_0  x^p_{t}(x_{t-1},\epsilon_t) +  \label{defZ} \\
+ & H_1  x^p_{t+1}(x_{t-1},\epsilon_t). \nonumber
+   \end{align}
+
+
+
+
+
+
+
+
+ The proposed solution has a representation given by 
+  \begin{gather}
+    \label{eq:4}
+	 x^p_{t}(x_{t-1},\epsilon) =B x_{t-1}+ \phi \psi_\epsilon\epsilon + (I - F)^{-1} \phi \psi_c +\\ \sum_{\sForSum=0}^\infty F^s \phi z^p_{t+\sForSum}(x_{t-1},\epsilon) 
+ \intertext{and}
+ 	 \expct{x^p_{t+1}(x_{t-1},\epsilon)} =B x^p_{t+k} + \sum_{\sForSum =0}^\infty F^\sForSum \phi z^p_{t+1+\sForSum}(x_{t-1},\epsilon) + (I - F)^{-1} \phi \psi_c \intertext{with}
+\mathbf{e}_t^p(x_{t-1},\epsilon)\equiv
+\eqnFunc(x_{t-1},x^p_t,E_tx^p_{t+1},\epsilon_t)
+  \end{gather}
+
+
+
+
+  \begin{gather}
+    \label{eq:3}
+	 x^\star_{t}(x_{t-1},\epsilon) -	 x^p_{t}(x_{t-1},\epsilon) =
+         \sum_{\sForSum=0}^\infty F^s \phi (z^\star_{t+\sForSum}(x_{t-1},\epsilon)-z^p_{t+\sForSum}(x_{t-1},\epsilon))     \\
+\Delta z_{t+\sForSum}^p(x_{t-1},\epsilon_t)         \equiv (z^\star_{t+\sForSum}(x_{t-1},\epsilon)-z^p_{t+\sForSum}(x_{t-1},\epsilon))\\
+	 x^\star_{t}(x_{t-1},\epsilon) -	 x^p_{t}(x_{t-1},\epsilon) =
+\sum_{\sForSum=0}^\infty F^s \phi \Delta z_{t+\sForSum}^p(x_{t-1},\epsilon_t)   \\ 
+	\infNorm{ x^\star_{t}(x_{t-1},\epsilon) -	 x^p_{t}(x_{t-1},\epsilon)} \le
+\sum_{\sForSum=0}^\infty F^s \phi \infNorm{\Delta z_{t+\sForSum}^p(x_{t-1},\epsilon_t)}    
+  \end{gather}
+
+  By bounding the largest deviation in the paths for the $\Delta z_t^p$ we can bound the largest different in $x_t$.\footnote{The largest error for $\Delta z_{t+k}^p$   are pessimistic bounds since the future values are probabality weighted averages of the $\Delta z_t^p$ values for the given initial conditions because the condition expectations paths remain in the region $\bndRgn^p$.} The exact solution satisfies the model equations exactly.  The error in the proposed solution provides a conservative bound on the largest change in $z$.
+
+
+  \begin{gather}
+  \Delta z_t \le  \label{eq:3}
+\max_{\{x_{-},\epsilon\}} \infNorm{ \phi \eqnFunc(x_{-},g^p(x_{-},\epsilon),G^p(g^p(x_{-},\epsilon)),\epsilon) }\\
+	\infNorm{ x^\star_{t}(x_{t-1},\epsilon) -	 x^p_{t}(x_{t-1},\epsilon)} \le
+\max_{\{x_{-},\epsilon\}} \infNorm{(I-F)^{-1} \phi \eqnFunc(x_{-},g^p(x_{-},\epsilon),G^p(g^p(x_{-},\epsilon)),\epsilon) }
+  \end{gather}
+
+
+
+
+
+
+\subsection{Generalization and Practical Considerations for Applying the Formula}
+\label{sec:practicalformula}
+
+
+
+We will assume that we have a countable collection of equations systems that are mutually exclusive and exhaustive.
+Given $\epsilon_t, x_{t-1}$,  this collection of 
 systems of equations produces a unique solution for $x_t$.  We will include 
 enough auxiliary variables so that we can correctly compute expected values
 for model variables by applying the law of iterated 
@@ -654,6 +777,8 @@ I_t-(K_t-(1-d)k_{t-1})\\
 \item to make transition probability a function of state 
 can(should>) use same grid for $p_{ij}(x)$  will get a different conditional expectations polynomial at each x
 \item can use for heterogeneous agents
+\item ignoring series constraint means poorer error bound as values of equation errors larger everywhere
+\item dynamical systems ``contraction'' algebraic, successors
 \end{itemize}
 
 
@@ -705,105 +830,6 @@ N_t-\lambda_t \theta_t\\
 I_t-(K_t-(1-d_1)k_{t-1})\\
 \mu_t(k_t - (1-d_1) k_{t-1}-\upsilon I_{ss})
 \end{tcolorbox}
-
-\subsection{The Formula}
-\label{sec:errorformula}
-
-
-In what follows, we construct an error bound for proposed model solutions.
-
-
-
- Given an exact solution $x^\star_t=g^\star(x_{t-1},\epsilon_t)$ define
-  \begin{gather}
-G^\star(x)\equiv\expct{g^\star(x,\epsilon)} \intertext{then with}
-E_tx^\star_{t+1}=G^\star(g^\star(x_{t-1},\epsilon_t))\\
-    \label{eq:2}
-\eqnFunc(x^\star_{t-1},x^\star_t,E_tx^\star_{t+1},\epsilon_t)=0  \,\, \forall  (x_{t-1},\epsilon_t)\\ \intertext{Using $G^\star$ and $\linMod$ construct the family of trajectories and corresponding $z^\star_t(x_{t-1},\epsilon)$ }
-   x^\star_t(x_{t-1},\epsilon_t) \in{R^L}\,\,\infNorm{x^\star_t(x_{t-1},\epsilon_t)}  \le \bar{\mathcal{X}}\,\,\forall t\ > 0
-  \end{gather}
-   \begin{align}
-   z^\star_{t}(x_{t-1},\epsilon_t) \equiv& H_{-1}  x^\star_{t-1}(x_{t-1},\epsilon_t) + \nonumber\\
- & H_0  x^\star_{t}(x_{t-1},\epsilon_t) +  \label{defZ} \\
- & H_1  x^\star_{t+1}(x_{t-1},\epsilon_t). \nonumber
-   \end{align}
-
-
-
-
-   The exact solution has a representation given by
-	 \begin{gather}
-	 x^\star_{t}(x_{t-1},\epsilon) =B x_{t-1}+ \phi \psi_\epsilon\epsilon + (I - F)^{-1} \phi \psi_c +\\ \sum_{\sForSum=0}^\infty F^s \phi z^\star_{t+\sForSum}(x_{t-1},\epsilon) \intertext{and}
-	 \expct{x^\star_{t+1}(x_{t-1},\epsilon)} =B x^\star_{t+k} + \sum_{\sForSum =0}^\infty F^\sForSum \phi \expct{z^\star_{t+1+\sForSum}(x_{t-1},\epsilon)} + (I - F)^{-1} \phi \psi_c 
- \intertext{with}
- \eqnFunc(x_{t-1},x^\star_t,E_tx^\star_{t+1},\epsilon_t)=0  \,\, \forall  (x_{t-1},\epsilon_t)\\ 
-	 \end{gather}
-
-Now consider a proposed solution for the model,
- $x^p_t=g^p(x_{t-1},\epsilon_t)$ define
-$G^p(x)\equiv\expct{g^p(x,\epsilon)}$  so that 
-  \begin{gather}
-E_tx_{t+1}=G^p(g^p(x_{t-1},\epsilon_t))\\
-\mathbf{e}_t(x_{t-1},\epsilon)\equiv
-\eqnFunc(x_{t-1},x^p_t,E_tx^p_{t+1},\epsilon_t)\\\intertext{Using $G^p$ and $\linMod$ construct the family of trajectories and corresponding $z^p_t(x_{t-1},\epsilon)$ }
-   x^p_t(x_{t-1},\epsilon_t) \in{R^L}\,\,\infNorm{x^p_t(x_{t-1},\epsilon_t)}  \le \bar{\mathcal{X}}\,\,\forall t\ > 0
-  \end{gather}
-   \begin{align}
-   z^p_{t}(x_{t-1},\epsilon_t) \equiv& H_{-1}  x^p_{t-1}(x_{t-1},\epsilon_t) + \nonumber\\
- & H_0  x^p_{t}(x_{t-1},\epsilon_t) +  \label{defZ} \\
- & H_1  x^p_{t+1}(x_{t-1},\epsilon_t). \nonumber
-   \end{align}
-
-
-
-
-
-
-
-
- The proposed solution has a representation given by 
-  \begin{gather}
-    \label{eq:4}
-	 x^p_{t}(x_{t-1},\epsilon) =B x_{t-1}+ \phi \psi_\epsilon\epsilon + (I - F)^{-1} \phi \psi_c +\\ \sum_{\sForSum=0}^\infty F^s \phi z^p_{t+\sForSum}(x_{t-1},\epsilon) 
- \intertext{and}
- 	 \expct{x^p_{t+1}(x_{t-1},\epsilon)} =B x^p_{t+k} + \sum_{\sForSum =0}^\infty F^\sForSum \phi z^p_{t+1+\sForSum}(x_{t-1},\epsilon) + (I - F)^{-1} \phi \psi_c \intertext{with}
-\mathbf{e}_t(x_{t-1},\epsilon)\equiv
-\eqnFunc(x_{t-1},x^p_t,E_tx^p_{t+1},\epsilon_t)
-  \end{gather}
-
-
-
-
-  \begin{gather}
-    \label{eq:3}
-	 x^\star_{t}(x_{t-1},\epsilon) -	 x^p_{t}(x_{t-1},\epsilon) =
-\sum_{\sForSum=0}^\infty F^s \phi (z^\star_{t+\sForSum}(x_{t-1},\epsilon)-z^p_{t+\sForSum}(x_{t-1},\epsilon))     \\
-	 x^\star_{t}(x_{t-1},\epsilon) -	 x^p_{t}(x_{t-1},\epsilon) =
-\sum_{\sForSum=0}^\infty F^s \phi \Delta z_{t+\sForSum}(x_{t-1},\epsilon_t)   \\ 
-	\infNorm{ x^\star_{t}(x_{t-1},\epsilon) -	 x^p_{t}(x_{t-1},\epsilon)} \le
-\sum_{\sForSum=0}^\infty F^s \phi \infNorm{\Delta z_{t+\sForSum}(x_{t-1},\epsilon_t)}    
-  \end{gather}
-
-By bounding the largest deviation in the paths for the $\Delta z_t$ we can bound the largest different in $x_t$.  The exact solution satisfies the model equations exactly.  The error in the proposed solution provides a conservative bound on the largest change in $z$.
-
-
-  \begin{gather}
-  \Delta z_t \le  \label{eq:3}
-\max_{\{x_{-},\epsilon\}} \infNorm{ \phi \eqnFunc(x_{-},g^p(x_{-},\epsilon),G^p(g^p(x_{-},\epsilon)),\epsilon) }\\
-	\infNorm{ x^\star_{t}(x_{t-1},\epsilon) -	 x^p_{t}(x_{t-1},\epsilon)} \le
-\max_{\{x_{-},\epsilon\}} \infNorm{(I-F)^{-1} \phi \eqnFunc(x_{-},g^p(x_{-},\epsilon),G^p(g^p(x_{-},\epsilon)),\epsilon) }
-  \end{gather}
-
-
-
-
-
-
-\subsection{Practical Considerations for Applying the Formula}
-\label{sec:practicalformula}
-
-
-
  
 This section describes a method for finding maxima in a closed bounded domain.
 Let $D=[a,b]$ in $R^s$ where $a_i \le x_i \le b_i$. We want to find  $M=f(x^\ast)= \max_{x \in D}f(x)$.
@@ -829,11 +855,14 @@ MSNTO selects a finite number of sample points uniformly scattered on D.  Next i
 \label{sec:algoforsoln}
 
 \begin{itemize}
+\item start linear.  check error bounds, if adequate done
+\item traditional iteration ignores the path constraints on initial solution leading to larger errors on $\bndRgn^p$
 \item It's a good idea to compute easy approximation using just the linear model one ieration to get an approximation for the ergodic set\cite{ergodicvisual}
 \item them simulate and make the Maliar SVD transformation
 \item then iterate on the ergodic set till it settles down
 \item in this way can avoid solutions which are explosive when iterated 
 \item need to see if this works when honoring complimentary slackness
+\item not related to z transform. probably should change z's
 \end{itemize}
 
 
@@ -860,7 +889,7 @@ x_{t-1}\\ \xpWarg\\ \XpWOarg(\xWarg)
 \ZpWOarg(x_{t-1})\equiv \expct{\zpWarg}
 \end{gather*}
  \begin{itemize}
-\item  define conditional expectations paths for $x_t, z_t$ -- {\color{green}Algorithm loop begins here.}
+\item  {\color{blue}Algorithm loop begins here.} Define conditional expectations paths for $x_t, z_t$ 
  \begin{gather*}
  x_{t+k+1}=\XWOarg(x_{t+k}),\,\,\,z_{t+k+1}=\ZWOarg(x_{t+k})\,\,\,\,  \forall k\ge 0      \end{gather*}
 % \item
@@ -880,7 +909,7 @@ x_{t-1}\\ \xpWarg\\ \XpWOarg(\xWarg)
 	\expct{ \mathcal{X}_{t+1}} =B \mathcal{X}_{t}  + (I - F)^{-1} \phi \psi_c+ \sum_{\sForSum =0}^\infty F^{\sForSum-1} \phi \ZWOarg(x_{t+\nu}) \,\,\,\,\,\forall t,k \ge  0
 \end{gather*}
 \item Use the model equations, $\eqnFuncSys$ and $x_t\tArg=\mathcal{X}_t\tArg$ to determine $\xppWarg, \zppWarg$
-\item $\xpWarg=\xppWarg, \zpWarg=\zppWarg$ -- {\color{green}Repeat loop.}
+\item $\xpWarg=\xppWarg, \zpWarg=\zppWarg$ -- {\color{blue}Repeat loop.}
   \end{itemize}
 }
 
@@ -902,6 +931,7 @@ x_{t-1}\\ \xpWarg\\ \XpWOarg(\xWarg)
 \item Uses the $\linMod$ linear decision rule as an initial guess for decision rule $\xpWarg$ to obtain conditional expectations function
 \item Linearities in series expressions exploited
 \item Highly parallelizable 
+\item magnitude or variablity or nonlinearity of z's measure of complexity or difficulty
 \end{enumerate}
 
 
@@ -1115,7 +1145,7 @@ V= \vcenter{\hbox{\includegraphics{ergodicV.pdf}}}
 \end{gather}
 
 
-In what follows I show the impact of increasing the number of terms in the 
+In what follows I show the impact of increasing the number of terms 
 employed in the series representation.  
 The figures  show contour plots for the norm of the error 
 $\sqrt{(c_t-c_t^\star)^2 +(k_t-k_t^\star)^2 +(\theta_t-\theta_t^\star)^2 +(N_t-N_t^\star)^2 }$ for the approximated decision rule. The green dot shows the values of $(y_1,y_2)$ associated with the largest actual error.  The orange dot shows $(y_1,y_2)$ associated with  the largest equation system discrepancy 
@@ -1299,7 +1329,9 @@ constraints.\footnote{See section \ref{sec:regime-switch-model} characterizing
 \label{sec:future}
 
 \begin{itemize}
+\item perturbation global information better than pruning max convergent region
 \item parallelMap don't need order, so ParallelTry  four args pretest posttest xvals keep all except failed  be sure to fail conflicts
+\item convex hull of points computable
 \end{itemize}
 
 \begin{description}
@@ -1311,6 +1343,9 @@ the high degree of parallelism available in the algorithm.
 \end{description}
 \section{Conclusions}
 \begin{description}
+\item[Series Unique] Provides mechanism for bounding solutions
+\item[augmenting traditional] provides basis for augmenting traditional techniques
+\item[important constraint] identifies important and useful constraint on solutions
 \item[\href{https://github.com/es335mathwiz/AMASeriesRepresentation.git}{github access}] 
 \end{description}
 \label{sec:conc}
@@ -1321,6 +1356,10 @@ the high degree of parallelism available in the algorithm.
 \bibliographystyle{plainnat}
 \bibliography{anderson,files}
 \appendix
+
+\section{First Order Conditioins Langrangian Derivations}
+\label{sec:folag}
+
 
 
 \section{RBC Example}

@@ -2848,6 +2848,7 @@ With[{xkFunc=genLilXkZkFunc[linMod,XZFuncs,Transpose[{xArgs}]]},
 With[{xkAppl=Apply[xkFunc,Join[xLagArgs,eArgs,zArgs]]},
 With[{eqnAppl=Apply[eqnsFunc,Flatten[xkAppl]](*,
 xDisc=xArgs-xkAppl[[numX+Range[numX]]]*)},
+Print["singular?",Flatten[Join[zArgs,eqnAppl]]];
 Flatten[Join[zArgs,eqnAppl]]]]]]],
 SetDelayed[
 funcOfXtZt[
@@ -2860,6 +2861,8 @@ With[{eqnAppl=Apply[eqnsFunc,Flatten[xkAppl]],
 xDisc=xArgs-xkAppl[[numX+Range[numX]]]},
 Flatten[Join[xDisc,eqnAppl]]]]]]]]
 (**)
+Print["baba",OptionValue["Traditional"]];
+If[OptionValue["Traditional"],
 SetDelayed[
 funcOfXtm1Eps
 [Apply[Sequence,xtm1epsArgPatterns]],
@@ -2868,7 +2871,16 @@ With[{frRes=FindRoot[
 funcOfXtZt[Apply[Sequence,Join[xLagArgs,eArgs,
 xArgs,zArgs]]],
 Join[xArgsInit,zArgsInit](*,WorkingPrecision->50*)(*,EvaluationMonitor:>Print["xz",{xArgs,zArgs,xLagArgs,eArgs,funcOfXtm1Eps,funcOfXtZt,funcOfXtZt[Apply[Sequence,Join[xLagArgs,eArgs,xArgs,zArgs]]]}//InputForm]*)]},
-Transpose[{Flatten[Join[xArgs,zArgs]]/.frRes}]]];
+Transpose[{Flatten[Join[xArgs,zArgs]]/.frRes}]]],
+SetDelayed[
+funcOfXtm1Eps
+[Apply[Sequence,xtm1epsArgPatterns]],
+(**)
+With[{frRes=FindRoot[
+funcOfXtZt[Apply[Sequence,Join[xLagArgs,eArgs,
+xArgs,zArgs]]],
+Join[xArgsInit,zArgsInit](*,WorkingPrecision->50*)(*,EvaluationMonitor:>Print["xz",{xArgs,zArgs,xLagArgs,eArgs,funcOfXtm1Eps,funcOfXtZt,funcOfXtZt[Apply[Sequence,Join[xLagArgs,eArgs,xArgs,zArgs]]]}//InputForm]*)]},
+Transpose[{Flatten[Join[xArgs,zArgs]]/.frRes}]]]];
 (**)
 DistributeDefinitions[funcOfXtZt,funcOfXtm1Eps]
 Off[FindRoot::srect];

@@ -2846,9 +2846,9 @@ Apply[Sequence,xtztArgPatterns]],
 Module[{},
 With[{xkFunc=genLilXkZkFunc[linMod,XZFuncs,Transpose[{xArgs}]]},
 With[{xkAppl=Apply[xkFunc,Join[xLagArgs,eArgs,zArgs]]},
-With[{eqnAppl=Apply[eqnsFunc,Flatten[xkAppl]],
-xDisc=xArgs-xkAppl[[numX+Range[numX]]]},
-Flatten[Join[xDisc,eqnAppl]]]]]]],
+With[{eqnAppl=Apply[eqnsFunc,Flatten[xkAppl]](*,
+xDisc=xArgs-xkAppl[[numX+Range[numX]]]*)},
+Flatten[Join[zArgs,eqnAppl]]]]]]],
 SetDelayed[
 funcOfXtZt[
 (**)

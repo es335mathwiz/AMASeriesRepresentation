@@ -1066,7 +1066,8 @@ doGenericIterREInterp::usage=
 (*begin code for doSmolyakIterREInterp*)
 
 
-Options[doGenericIterREInterp]="xVarRanges"->{}
+
+Options[doGenericIterREInterp]={"xVarRanges"->{},"Traditional"->False}
 doGenericIterREInterp[genFRExtFunc,
 	@<linMod@>,
 	@<XZFuncs@>,
@@ -1080,7 +1081,7 @@ genericInterp,svmArgs]},
 theFuncs]]
 
 
-Options[parallelDoGenericIterREInterp]="xVarRanges"->{}
+Options[parallelDoGenericIterREInterp]={"xVarRanges"->{},"Traditional"->False}
 parallelDoGenericIterREInterp[genFRExtFunc,
 	@<linMod@>,
 	@<XZFuncs@>,
@@ -1197,7 +1198,7 @@ nestGenericIterREInterp::usage=
 
 
 
-Options[nestGenericIterREInterp]="xVarRanges"->{}
+Options[nestGenericIterREInterp]={"xVarRanges"->{},"Traditional"->False}
 nestGenericIterREInterp[genFRExtFunc,@<linMod@>,
 @<XZFuncs@>,@<eqnsFunc@>,@<smolGSpec@>,
 genericInterp:(smolyakInterpolation|svmRegressionLinear|svmRegressionPoly|svmRegressionRBF|svmRegressionSigmoid),svmArgs:{_?NumberQ...},
@@ -1208,7 +1209,7 @@ NestList[Function[xx,doGenericIterREInterp[genFRExtFunc,linMod,
 
 
 
-Options[parallelNestGenericIterREInterp]="xVarRanges"->{}
+Options[parallelNestGenericIterREInterp]={"xVarRanges"->{},"Traditional"->False}
 parallelNestGenericIterREInterp[genFRExtFunc,@<linMod@>,
 @<XZFuncs@>,@<eqnsFunc@>,@<smolGSpec@>,
 genericInterp:(smolyakInterpolation|svmRegressionLinear|svmRegressionPoly|svmRegressionRBF|svmRegressionSigmoid),svmArgs:{_?NumberQ...},
@@ -1730,7 +1731,7 @@ Join[AMASeriesRepCallGraph,Map["doIterREInterp"->#&,{"makeInterpFunc","genFPFunc
 (*begin code for parallelDoIterREInterp*)
 
 
-Options[parallelDoIterREInterp]="xVarRanges"->{}
+Options[parallelDoIterREInterp]={"xVarRanges"->{},"Traditional"->False}
 parallelDoIterREInterp[genFRExtFunc,
 	@<linMod@>,
 	@<XZFuncs@>,
@@ -1767,7 +1768,7 @@ theFuncs]]]
 
 
 
-Options[parallelDoIterREInterp]="xVarRanges"->{}
+Options[parallelDoIterREInterp]={"xVarRanges"->{},"Traditional"->False}
 parallelDoIterREInterp[genFRExtFunc,
 	@<linMod@>,
 	@<XZFuncs@>,triples:{{{_Function,(_Function|_CompiledFunction|_Symbol),_Function}..},selectorFunc_Function},@<gSpec@>,@<distribSpec@>,opts:OptionsPattern[]]:=
@@ -2828,28 +2829,31 @@ funcOfXtm1Eps=Unique["fNameXtm1Eps"],
 funcOfXtZt=Unique["fNameXtZt"]
 },
 With[{xArgsInit=If[varRanges==={},
-MapThread[Function[{xx,yy},{xx,yy}],
+MapT
+hread[Function[{xx,yy},{xx,yy}],
 {xArgs,theXInit[[Range[numX]]]}],
 MapThread[{#1,#2,#3[[1]],#3[[2]]}&,{xArgs,theXInit[[Range[numX]]],varRanges}]],
 xtm1epsArgPatterns=Join[makePatternArgs[xLagArgs],
 makePatternArgs[eArgs]],
 xtztArgPatterns=Join[makePatternArgs[xLagArgs],
 makePatternArgs[eArgs],
-makePatternArgs[xArgs],makePatternArgs[zArgs]]},
+makePatternArgs[xArgs],makePatternArgs[zArgs]],
+xtNoZtArgPatterns=Join[makePatternArgs[xLagArgs],
+makePatternArgs[eArgs],
+makePatternArgs[xArgs]]},
 (**)
-Print["haha",OptionValue["Traditional"]];
 If[OptionValue["Traditional"],
 SetDelayed[
 funcOfXtZt[
 (**)
-Apply[Sequence,xtztArgPatterns]],
+Apply[Sequence,xtNoZtArgPatterns]],
 Module[{},
-With[{xkFunc=genLilXkZkFunc[linMod,XZFuncs,Transpose[{xArgs}]]},
-With[{xkAppl=Apply[xkFunc,Join[xLagArgs,eArgs,zArgs]]},
+With[{(*xkFunc=genLilXkZkFunc[linMod,XZFuncs,Transpose[{xArgs}]]*)},
+With[{(*xkAppl=Apply[xkFunc,Join[xLagArgs,eArgs,zArgs*0]]*)
+xkAppl=Flatten[Join[xLagArgs,xArgs,(Apply[XZFuncs[[1]],xArgs][[Range[numX]]]),eArgs]]},
 With[{eqnAppl=Apply[eqnsFunc,Flatten[xkAppl]](*,
 xDisc=xArgs-xkAppl[[numX+Range[numX]]]*)},
-Print["singular?",Flatten[Join[zArgs,eqnAppl]]];
-Flatten[Join[zArgs,eqnAppl]]]]]]],
+Flatten[Join[eqnAppl]]]]]]],
 SetDelayed[
 funcOfXtZt[
 (**)
@@ -2861,24 +2865,21 @@ With[{eqnAppl=Apply[eqnsFunc,Flatten[xkAppl]],
 xDisc=xArgs-xkAppl[[numX+Range[numX]]]},
 Flatten[Join[xDisc,eqnAppl]]]]]]]]
 (**)
-Print["baba",OptionValue["Traditional"]];
 If[OptionValue["Traditional"],
 SetDelayed[
 funcOfXtm1Eps
 [Apply[Sequence,xtm1epsArgPatterns]],
 (**)
 With[{frRes=FindRoot[
-funcOfXtZt[Apply[Sequence,Join[xLagArgs,eArgs,
-xArgs,zArgs]]],
-Join[xArgsInit,zArgsInit](*,WorkingPrecision->50*)(*,EvaluationMonitor:>Print["xz",{xArgs,zArgs,xLagArgs,eArgs,funcOfXtm1Eps,funcOfXtZt,funcOfXtZt[Apply[Sequence,Join[xLagArgs,eArgs,xArgs,zArgs]]]}//InputForm]*)]},
-Transpose[{Flatten[Join[xArgs,zArgs]]/.frRes}]]],
+funcOfXtZt[Apply[Sequence,Join[xLagArgs,eArgs,xArgs]]],
+Join[xArgsInit](*,WorkingPrecision->50*)(*,EvaluationMonitor:>Print["xz",{xArgs,zArgs,xLagArgs,eArgs,funcOfXtm1Eps,funcOfXtZt,funcOfXtZt[Apply[Sequence,Join[xLagArgs,eArgs,xArgs,zArgs]]]}//InputForm]*)]},
+Transpose[{Flatten[Join[xArgs,zArgs*0]]/.frRes}]]],
 SetDelayed[
 funcOfXtm1Eps
 [Apply[Sequence,xtm1epsArgPatterns]],
 (**)
 With[{frRes=FindRoot[
-funcOfXtZt[Apply[Sequence,Join[xLagArgs,eArgs,
-xArgs,zArgs]]],
+funcOfXtZt[Apply[Sequence,Join[xLagArgs,eArgs,xArgs,zArgs]]],
 Join[xArgsInit,zArgsInit](*,WorkingPrecision->50*)(*,EvaluationMonitor:>Print["xz",{xArgs,zArgs,xLagArgs,eArgs,funcOfXtm1Eps,funcOfXtZt,funcOfXtZt[Apply[Sequence,Join[xLagArgs,eArgs,xArgs,zArgs]]]}//InputForm]*)]},
 Transpose[{Flatten[Join[xArgs,zArgs]]/.frRes}]]]];
 (**)

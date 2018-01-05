@@ -88,12 +88,17 @@ Print["doIt:DistributeDefinitions done"];
 {tm,ig}=Timing[
 theRes=parallelNestIterREInterp[genFRExtFunc,linModBetter,
 {X0Z0,theK},eqnsCompiledBetter,sgSpecErg,iters,"xVarRanges"->{{0.01,2},{0.01,2},{0.01,20},{0.85,1.2}}]];
+{tmTrad,ig}=Timing[
+theResTrad=parallelNestIterREInterp[genFRExtFunc,linModBetter,
+{X0Z0,theK},eqnsCompiledBetter,sgSpecErg,iters,"xVarRanges"->{{0.01,2},{0.01,2},{0.01,20},{0.85,1.2}},"Traditional"->True]];
 Print["theRes=",theRes//InputForm];
 numKern=Length[Kernels[]];
 Print["doIt:parallelNestGeneric done"];
 theName=fNameString[approx,iters,theK,numKern];
 forDR=theRes[[-1,1]];DistributeDefinitions[forDR];
 forDRCE=theRes[[-1,2]];DistributeDefinitions[forDRCE];
+forDRTrad=theResTrad[[-1,1]];DistributeDefinitions[forDRTrad];
+forDRCETrad=theResTrad[[-1,2]];DistributeDefinitions[forDRCETrad];
 DistributeDefinitions[linModBetter];
 drerrName=Unique["drerr"];
 drName=Unique["dr"];
@@ -152,6 +157,14 @@ backZtoX[{{z1,z2,0}},betterRBCMean,betterRBCSD,betterRBCvv][[1]]]],
 {z1,betterRBCMinZ[[1]],betterRBCMaxZ[[1]]},{z2,betterRBCMinZ[[2]],betterRBCMaxZ[[2]]},PlotRange->All,PlotLegends->Automatic,PlotLabel->theName<>"Approx"<>bothErrStr,
 Epilog->{PointSize[0.05],Green,Point[acterrLoc[[{1,2}]]],PointSize[0.025],Orange,Point[errBndLoc[[{1,2}]]],PointSize[0.0125],Black,Point[#]&/@zPts[[All,{1,2}]]}]];
 Print["Approx"];
+Print["errorlocs wrong for trad"];
+Export[theName<>"Trad.pdf",
+ContourPlot[
+Norm[checkPt[forDRTrad,forDRCETrad,theK,
+backZtoX[{{z1,z2,0}},betterRBCMean,betterRBCSD,betterRBCvv][[1]]]],
+{z1,betterRBCMinZ[[1]],betterRBCMaxZ[[1]]},{z2,betterRBCMinZ[[2]],betterRBCMaxZ[[2]]},PlotRange->All,PlotLegends->Automatic,PlotLabel->theName<>"Trad"<>bothErrStr,
+Epilog->{PointSize[0.05],Green,Point[acterrLoc[[{1,2}]]],PointSize[0.025],Orange,Point[errBndLoc[[{1,2}]]],PointSize[0.0125],Black,Point[#]&/@zPts[[All,{1,2}]]}]];
+Print["Trad"];
 trucPtFunc[z1_?NumberQ,z2_?NumberQ]:=
 Module[{},
 Norm[tErrMat.Transpose[{checkPt[forDR,forDRCE,theK,
@@ -162,10 +175,10 @@ truncPtFunc[z1,z2],
 {z1,betterRBCMinZ[[1]],betterRBCMaxZ[[1]]},{z2,betterRBCMinZ[[2]],betterRBCMaxZ[[2]]},PlotRange->All,PlotLegends->Automatic,PlotLabel->theName<>"TruncApprox"<>bothErrStr,
 Epilog->{PointSize[0.05],Green,Point[acterrLoc[[{1,2}]]],PointSize[0.025],Orange,Point[errBndLoc[[{1,2}]]],PointSize[0.0125],Black,Point[#]&/@zPts[[All,{1,2}]]}]];
 Print["TruncApprox"];
-Save[mthName,theRes,tm,numKern,condNum,
+Save[mthName,theRes,theResTrad,tm,tmTrad,numKern,condNum,
 errBndVal,errBndLoc,acterrVal,acterrLoc,acterrsCP];
 Print["doIt:saving done"];
-theRes]
+{theRes,theResTrad}]
 
 
 getErrs[approx_?VectorQ,iters_Integer,theK_Integer,numKern_Integer]:=

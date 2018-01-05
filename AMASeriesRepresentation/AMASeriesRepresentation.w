@@ -2811,7 +2811,7 @@ simulateDR::usage="simulateDR[theDR:(_Symbol|_Function|_CompiledFunction),numVar
 @{
 
 (*begin code for genFRExtFunc*)
-Options[genFRExtFunc]={"xVarRanges"->{}} 
+Options[genFRExtFunc]={"xVarRanges"->{},"Traditional"->False} 
 genFRExtFunc[{numX_Integer,numEps_Integer,numZ_Integer},@<linMod@>,@<XZFuncs@>,
 @<eqnsFunc@>,opts:OptionsPattern[]]:=
 Module[{varRanges=OptionValue["xVarRanges"]},
@@ -2837,6 +2837,8 @@ xtztArgPatterns=Join[makePatternArgs[xLagArgs],
 makePatternArgs[eArgs],
 makePatternArgs[xArgs],makePatternArgs[zArgs]]},
 (**)
+Print["haha",OptionValue["Traditional"]];
+If[OptionValue["Traditional"],
 SetDelayed[
 funcOfXtZt[
 (**)
@@ -2846,7 +2848,17 @@ With[{xkFunc=genLilXkZkFunc[linMod,XZFuncs,Transpose[{xArgs}]]},
 With[{xkAppl=Apply[xkFunc,Join[xLagArgs,eArgs,zArgs]]},
 With[{eqnAppl=Apply[eqnsFunc,Flatten[xkAppl]],
 xDisc=xArgs-xkAppl[[numX+Range[numX]]]},
-Flatten[Join[xDisc,eqnAppl]]]]]]];
+Flatten[Join[xDisc,eqnAppl]]]]]]],
+SetDelayed[
+funcOfXtZt[
+(**)
+Apply[Sequence,xtztArgPatterns]],
+Module[{},
+With[{xkFunc=genLilXkZkFunc[linMod,XZFuncs,Transpose[{xArgs}]]},
+With[{xkAppl=Apply[xkFunc,Join[xLagArgs,eArgs,zArgs]]},
+With[{eqnAppl=Apply[eqnsFunc,Flatten[xkAppl]],
+xDisc=xArgs-xkAppl[[numX+Range[numX]]]},
+Flatten[Join[xDisc,eqnAppl]]]]]]]]
 (**)
 SetDelayed[
 funcOfXtm1Eps

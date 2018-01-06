@@ -16,7 +16,7 @@
 \author{Gary S. Anderson\thanks{The analysis and conclusions set forth are those of the author and do not indicate concurrence by other members of the research staff or the Board of Governors. I would like to thank Luca Guerrieri, Christopher Gust, Hess Chung, Benjamin Johannsen  and Robert Tetlow for their comments and suggestions.  And special thanks to Luca Guerrieri for first noticing that the series representation formulation could lead to an error bound for model solutions. Any remaining errors are mine alone.}}
 
 \title{A New Series Representation for 
-Nonlinear Dynamic Stochastic Model Solutions: Comprehensive(General) Error Bounds and a New Solution Algorithm}
+Nonlinear Dynamic Stochastic Model Solutions: (Better?, Coherent? Comprehensive? General? ) Error Bounds and a New Solution Algorithm}
 
 \date{\today: \currenttime}
 \begin{document}
@@ -24,24 +24,30 @@ Nonlinear Dynamic Stochastic Model Solutions: Comprehensive(General) Error Bound
 \maketitle
 
 \begin{abstract}
-  This paper proposes a new series representation for bounded discrete time series paths an uses it to construct   construct error bounds for proposed solutions for a very broad class of dynamic stochastic models.
+This paper investigates the solution of discrete time  dynamic stochastic
+infinite-horizon economies characterized by bounded-time-invariant solutions.
+The paper describes how to obtain decision rules satisfying a system of 
+first-order conditions and how to assess their accuracy.\citep{marcet.lorenzoni99,juddGSSA2011,maliarmovingbounds}
+
+A new series representation for bounded discrete time series paths provides a wayt to construct error bounds for proposed solutions for a very broad class of dynamic stochastic models.
 % This error bound calculation accounts for the impact of errors in any of the equations in the system.
 The bounds apply for assessing the accuracy of any
-proposed model solution, regardless of the source, for a wide class of dynamic models including models with occasionally binding constraints, and regime switching.
-%Consequently, the approach can provide information about the accuracy of perturbation solutions and along with global information to improve them.
+proposed decision rule,
+regardless of the source.
 
 
-The paper also proposes a new algorithm that augments traditional solution procedures
-with these additional solution constraints.
-%As in the traditional case, series representation algorithm improves upon an initial guess for a stochastic model solution by solving a potentially complicated, but deterministic problem in the initial time period.
-As a result, the solution procudure accomodates models with multiple invariant spaces and provides a framework for applying tools from dynamical systems theory for determining and maintaining boundaries for these invariant spaces.
-Like the error bound formula, the algorithm is appropriate for models with occasionally binding constraints and regime switching. 
+The paper also proposes an algorithm that
+augments traditional solution procedures with additional constraints enhancing algorithm robustness and improving accuracy.The technique can readily accomodate models with multiple invariant spaces.
+Like the error bound formula, the algorithm is appropriate
+for models with occasionally binding constraints and regime switching. 
 
 
 The  paper uses a particular implementation of the algorithm to
 demonstrate how to use the 
 series representation in conjunction with 
-Smolyak polynomial function approximation  to exploit the high degree of parallelism available in the algorithm and to eliminate the need for numerical integration during the solution updates.
+Smolyak polynomial function approximation  to eliminate the need for numerical integration during the solution updates and to exploit the high degree of
+parallelism available in the algorithm.
+.
 
 
 
@@ -57,22 +63,53 @@ Smolyak polynomial function approximation  to exploit the high degree of paralle
 
 \section{Introduction}
 
-The analysis develops a new series representation for bounded time series.  The author has found no comparable use of a linear reference dynamical system 
-used to generate a transformation of one infinite dimensional series into another.
+This paper investigates the solution of discrete time  dynamic stochastic
+infinite-horizon economies characterized by bounded-time-invariant solutions.
+It describes how to obtain decision rules satisfying a system of 
+first-order conditions and how to assess their accuracy.\citep{marcet.lorenzoni99,juddGSSA2011,maliarmovingbounds}\footnote{A future paper will 
+discuss  applications involving value function iteration.}
+It also treats issues other authors have discussed
+in handling dynamic economies with occasionally binding constraints.\cite{holden15:_exist_dsge,guerrieri15:_occbin} For an overview of solution techniques,
+see \cite{judd92,Christiano2000,doraszelskiy04,gaspar97,Judd2014}
 
-The paper exploits a formula developed in \citep{anderson10} to provide a
-series representation for any time invariant discrete map and its
-conditional expectation function:
-    \begin{gather*}
-      	 x\tArg =B x_{t-1}+ \phi \psi_\epsilon\epsilon + (I - F)^{-1} \phi \psi_c + \sum_{\sForSum=0}^\infty F^\sForSum \phi \ZWOarg(\expct{x_{t+\nu}})\\ \intertext{ so that}
-\expct{ x_{t+1}\tArg} =B x\tArg  + (I - F)^{-1} \phi \psi_c+ \sum_{\sForSum =1}^\infty F^{\sForSum-1} \phi \ZWOarg(\expct{x_{t+\nu}}) 
+
+
+The new series representation for bounded time series,
+\begin{gather*}
+      	 x\tArg =B x_{t-1}+ \phi \psi_\epsilon\epsilon + (I - F)^{-1} \phi \psi_c + \sum_{\sForSum=0}^\infty F^\sForSum \phi \ZWOarg_{t+\nu}\tArg%\\ \intertext{ so that}
+%\expct{ x_{t+1}\tArg} =B x\tArg  + (I - F)^{-1} \phi \psi_c+ \sum_{\sForSum =1}^\infty F^{\sForSum-1} \phi \ZWOarg_{t+\nu}\tArg.
     \end{gather*}
- If these functions satisfy the model equations they provide a solution to for the model. The paper shows how to use the model equation Euler errors to 
- improve the solution.
-The paper builds upon and complements the work of
-\cite{Judd2014,juddGSSA2011,holden15:_exist_dsge,guerrieri15:_occbin}
+ makes it possible to  construct a series
+    representation for any bounded time invariant discrete map.\citep{anderson10}\footnote{As yet, the author has found no comparable use of a
+{\bf linear reference dynamical system } used to conveniently transform
+one bounded infinite dimensional series into another.
+}
+    % and itsconditional expectation function:
+    It turns out that this representation provides a way to use
+    ``Euler equation errors'' to
+    bound the magnitude of the    approximation error in components of 
+    decision rules.
+    Others have also studied error bounds for dynamic stochastic models.\cite{judd2017lower,santos2005accuracy,Santos2000accuracy}, but the bound here
+    explicitly relates the magnitude of components of the
+    ``Euler equation errors'' to components of the magnitude of components of
+    errors in the decision rule.
+
+
+    In addition, the series representation provides exploitable
+    constraints on model solutions that enhance  
+    algorithm reliability and improve solution accuracy.
+    The series representation readily accomodates models with
+    multiple ergodic sets
+    thereby providing a robust solution method for a wide class of models.
+
+%    $\ZWOarg_{t+\nu}$ that satisfy the model equations thereby
+
+The numerical implementation of the algorithm 
+builds upon and complements the work of
+\cite{Judd2014,juddGSSA2011}
 In particular it uses
-the an-isotropic Smolyak Method and adaptive paralletope method\cite{Judd2014}
+the an-isotropic Smolyak Method and the adaptive
+paralletope method\cite{Judd2014}
 and precomputes all integrals required for the conditional expectations.
 The algorithm should scale well to large models as many 
 of the algorithms components cab be computed in parallel.
@@ -81,55 +118,8 @@ of the algorithms components cab be computed in parallel.
 
 
 
-\begin{itemize}
-\item Time series paths as components of dynamic models
-\item Potter impulse response functions
-\item $\phi=0$ is standard
-\item Perturbation Occ bind zeroth order and $\phi=0$
-\item rank condition on $\psi_c$
-\item appendix derivations with all lagrangians
-\end{itemize}
 
 
-Stochastic dynamic non linear economic
-models increasingly embody  occasionally binding constraints (OBC).
-Since \cite{Christiano2000} a host of
-authors have described a variety of approaches. \footnote{The algorithms described \cite{holden15:_exist_dsge} and \cite{guerrieri15:_occbin} also exploit the use of ``anticipated shocks'', but do not use the comprehensive formula employed here. }
-\cite{holden15:_exist_dsge,guerrieri15:_occbin,benigno09,hintermaier10,brumm10,nakov08,haefke98,nakata12,gordon11,billi11,Hintermaier2010,Guerrieri2015}
-
-
-The framework provides a new way to bound the error one can expect from
-employing a given proposed model solution and leads to an
-algorithm with  components similar to parameterized expectations that
-one can use to improve proposed solutions. The series representation makes
-it possible to organize the calculation around computing a deterministic
-problem at time t given a proposed solution.  The deterministic solution
-can accommodate inequality constraints or alternative regimes to produce a
-solution for each set of initial conditions.  One can typically arrange,
-perhaps by adding auxiliary variables, to produce a ``decision rule''
-that one can use to correctly precompute a deterministic conditional
-expectation function that can be iterated forward and serves to
-improve upon the original proposed solution.
-Time invariant stochastic functions 
-lead naturally to an associated family of deterministic maps
-which can be conveniently represented by the series representation.
-Others have also studied error bounds for dynamic stochastic models.\cite{judd2017lower,santos2005accuracy,Santos2000accuracy}
-
-
-The paper studies a very general class of models whose 
-solutions are characterized by $\eqnFuncSys$, a 
- exhaustive and mutually exclusive set of
-of   model equations, $\eqnFunc_i$,  and Boolean valued gates, $\gate_i$. 
-that together determine the solution  $x_t\tArg$
-%\begin{gather}
-%\intertext{ where, each }
-%\eqnFuncSysI{i}\equiv \eqnFuncSysIExpl{i} \label{eqnGates}
-%\end{gather}
-The paper shows how to write down a series representation for any proposed
-model solution and to characterize the series representation for a typically
-unknown solution in such a way that one can use the model equation errors,
-including, but not restricted to Euler errors,  to construct an error bound for the norm of the distance between the proposed and the exact solution.  This work complements the analysis provided in
-\cite{judd2017lower,peralta-alva14,santos2005accuracy,Santos2000accuracy}. 
 
 
 
@@ -159,41 +149,51 @@ system
   	 H_{-1} x_{t-1} + H_0 x_t + H_1 x_{t+1}=0\label{hSystem}
 \end{gather}
 that produces  a unique stable solution, 
-it is well known\ \citep{anderson10} that  inhomogeneous solutions 
+inhomogeneous solutions 
 \begin{gather}
 	 H_{-1} x_{t-1} + H_0 x_t + H_1 x_{t+1}=\psi_\epsilon \epsilon +\psi_{c}
 \intertext{ can be computed as}
 x_t=B x_{t-1} + \phi \psi_\epsilon \epsilon + (I - F)^{-1} \phi \psi_c
-\intertext{where}
-\phi= (H_0 +H_1 B)^{-1}  \text{ and } \,\,F=-\phi H_1 
+\intertext{where\citep{anderson10}}
+\phi= (H_0 +H_1 B)^{-1}  \text{ and } \,\,F=-\phi H_1.
 \end{gather}
-It will be useful to collect the components of this representation for use in
-subsequent sections of the paper.
+It will be useful to collect the components of this representation for use laterin the paper.
 Define $\linMod \equiv \linModMats$.
 
 
 
 
+
+ \newtcolorbox[auto counter,number within=section]{pabox}[2][]{%
+   colback=red!5!white,colframe=red!75!black,fonttitle=\bfseries, title=Examp.~\thetcbcounter: #2,#1}
+
+   \begin{pabox}[colback=yellow]{Hello there}
+This is my own box with a mandatory
+numbered title and options.
+\end{pabox}
+
+
+%\begin{tcolorbox}[ams gather]
 \begin{theorem}
 Consider an arbitrary, but bounded path
  \begin{gather}
    \xWOarg_t \in{R^L}\,\text{ with }\,\infNorm{\xWOarg_t}  \le \bar{\mathcal{X}}\,\,\,\,\,\forall t> 0 \label{aBPath}.
  \end{gather}
-
 Now, given the trajectories \refeq{aBPath}, define 
 $  z_{t}$ as  
 \begin{gather}
   z_{t} \equiv H_{-1} \xWOarg_{t-1} +  H_0 \xWOarg_{t} +  H_1 \xWOarg_{t+1} \label{defZ} 
 \end{gather}
-
 One can then express the $\xWOarg_t$ as 
-
 	 \begin{gather}
 	 \xWOarg_{t} =B x_{t-1}+ \phi \psi_\epsilon\epsilon + (I - F)^{-1} \phi \psi_c + \sum_{\sForSum=0}^\infty F^s \phi z_{t+\sForSum} \label{theSeries}
 \intertext{and}
 	 \xWOarg_{t+k+1} =B \xWOarg_{t+k}  + (I - F)^{-1} \phi \psi_c+ \sum_{\sForSum =0}^\infty F^\sForSum \phi z_{t+k+\sForSum+1} \,\,\,\,\,\forall t,k \ge  0.
 	 \end{gather}
 \end{theorem}
+%\end{tcolorbox}
+
+
 
 \begin{myProof}
 See \citep{anderson10},
@@ -201,7 +201,7 @@ See \citep{anderson10},
 
 	 Consequently, given a bounded time series \refeq{aBPath},
 and a stable linear homogeneous system like \refeq{hSystem},
-one can easily compute a corresponding series representation 
+one can easily compute a corresponding series representation like
 \refeq{theSeries} for $x_t$.
 Interestingly, the linear model, $H$, the  constant term $\psi_c$ and the
 impact of the stochastic shocks $\psi_\epsilon $ can  be 
@@ -209,9 +209,11 @@ chosen rather arbitrarily -- the only constraint being the existence of a saddle
 
 
 
-Under certain rank conditions, this transformation is one to one and onto.\footnote{$\psi_c$ full rank provides a sufficient condition, but not necessary condition.}  The
+Provided the z-values fall in the row space of $H_1$, this transformation is one to one.
+% \footnote{$\psi_c$ full rank provides a sufficient condition, but not necessary condition.}
+The
 transformation $ {\{ x_{t}, x_{t}, x_{t+1},x_{t+2}\ldots\}} \rightarrow \linMod(x_{t-1}) \rightarrow{\{ z_{t}, z_{t+1}, z_{t+2},\ldots\}} $ is invertible under
-certain rank conditions. $ {\{ z_{t}, z_{t+1}, z_{t+2},\ldots\}} \rightarrow \linMod(x_{t-1})^{-1} \rightarrow{\{ x_{t}, x_{t}, x_{t+1},x_{t+2}\ldots\}} $ and the inverse can be interpreted as giving the impact of ``fully anticipated future shocks'' on the path of $x_t$ obeying the solution of a linear rational expectations model.  
+certain rank conditions. $ {\{ z_{t}, z_{t+1}, z_{t+2},\ldots\}} \rightarrow \linMod(x_{t-1})^{-1} \rightarrow{\{ x_{t}, x_{t}, x_{t+1},x_{t+2}\ldots\}} $ and the inverse can be interpreted as giving the impact of ``fully anticipated future shocks'' on the path of $x_t$ obeying the solution of a linear perfect foresight model.  
 
 A key feature to note is that the series representation can accommodate arbitrarily complex time series trajectories, so long as these trajectories are bounded.
 Later, this observation will give us some confidence in the 
@@ -248,16 +250,16 @@ representation requires only that the state values along the
 paths remain bounded.  For example, consider the following three
 bounded families of time series paths:
 \begin{gather}
-  x_{1,t}=\alpha D_\pi(t) \intertext{where $D_\pi(t)$ gives the t-th digit of $\pi$}
-x_{2,t}=\beta (-1)^t\\
-x_{3,t}=\epsilon_t \intertext{ and the $\epsilon_t$ are a sequence of pseudo random draws from the uniform distributions $\mathcal{U}(-4,4)$}
+  x_{1,t}=\frac{\someNorm{x_{t-1}}}{{1+\someNorm{\epsilon_{t}}}}\alpha D_\pi(t) \intertext{where $D_\pi(t)$ gives the t-th digit of $\pi$}
+x_{2,t}=\frac{\someNorm{x_{t-1}}}{({1+\someNorm{\epsilon_{t}}})^2}\beta (-1)^t\\
+x_{3,t}=\epsilon_t \intertext{and the $\epsilon_t$ are a sequence of pseudo random draws from the uniform distributions $\mathcal{U}(-4,4)$} \,\, \text{ given $randomseed(\someNorm{x_{t-1}}+\someNorm{\epsilon_t})$}
 \end{gather} 
-Figure \ref{arbpaths} displays these three trajectories. In  the first set of trajectories characterizes 
+Figure \ref{arbpaths} displays these three trajectories. The first set of trajectories characterizes 
 a function of the digits in the decimal representation of $\pi$.  
 The second set of trajectories  oscillates between two values
 determined by  a nonlinear function of the initial conditions, $x_{t-1}$ and the shock.
 The third set of trajectories characterizes a sequence of uniformly distributed random numbers based on a seed determined by  a nonlinear function of  the initial conditions and the shock.
-These examples paths were chosen to emphasize that the trajectories
+These paths were chosen to emphasize that the trajectories
  need not converge to a fixed point, and 
 need not be produced by some linear rational expectations solution or bt the iteration of a discrete-time map.
 The boundedness of the paths is a sufficient condition for the existence 
@@ -280,11 +282,11 @@ unbounded trajectories.}
 
 
 
-Figure \ref{arbpaths} also shows, for a particular initial state vector and shock value,  the paths for the state vectors and the  z's that generate the path.
+Figure \ref{arbpaths} also shows, for a particular initial state vector and shock value,  the paths for the state vectors and the  z's that generate the corresponding $x_t$ path.
 One can repeat the calculations for any given initial condition to produce
-a z series exactly replicating the given set of trajectories.  Thus, the family
+a z series exactly replicating the new set of trajectories.  Thus, the family
 of z functions along with equation \ref{theSeries} provide a series 
-representation for the family of trajectories. 
+representation for the entire family of trajectories. 
 
 
 
@@ -293,13 +295,17 @@ representation for the family of trajectories.
 \subsection{Assessing $x_t$ Errors}
 \label{sec:truncationerr}
 The formula \ref{theSeries} was derived in \citep{anderson10}
-to compute the impact on the current state of fully anticipated future shocks.  The formula characterizes the impact exactly.  However one can contemplate the impact of at least two types of incorrect.  One could truncate a series of correct values of $z_t$.  One might have imprecise values of $z_t$ along the path.
-
+to compute the impact on the current state of fully anticipated future shocks.  The formula characterizes the impact exactly.  However one can contemplate the impact of at least two deviations from the exact calculation:
+\begin{enumerate}
+\item One could truncate a series of correct values of $z_t$.  
+\item One might have imprecise values of $z_t$ along the path.
+\end{enumerate}
 \subsubsection{Truncation Error}
 
 
 The series representation can compute the entire series to machine precision
-if all the terms are included, but the terms for state vectors closer 
+if all the terms are included, but, note that
+the terms for state vectors closer 
 to the initial time have the most important impact.
 One could consider approximating  $\mathcal{X}_t$ by 
 truncating the series \ref{theSeries} at a finite number of terms.
@@ -361,9 +367,9 @@ Since
 In this paper we will be interested in computing with 
 Many dynamic stochastic models have solutions that 
 fall in this class of bounded time invariant maps.
-For an overview see \cite{judd92,Christiano2000,doraszelskiy04,gaspar97,Judd2014}
 In general, economist are interested in bounded time invariant maps generate  bounded time series paths which can
 be represented using the framework from section \ref{sec:newseries}.
+
 These time invariant maps impose additional structure on the time 
 series they generate that allows us to use the series formula to
 develop bounds for the error in the solution.
@@ -371,7 +377,11 @@ In this section, to keep things simple, we will begin with a simple single equat
 Later, in order to handle models with regime switching and occasionally binding constraints, will need to consider more complicated collections of 
 of equation systems with  Boolean gates. We will show how to apply the 
 series formulation to get error bounds for these models as well.}
+\begin{itemize}
+ \item Time series paths as components of dynamic models
+\item Potter impulse response functions
 
+\end{itemize}
 
 
 \subsection{An RBC Example}
@@ -390,9 +400,6 @@ The first order conditions for the model are
 c_t + k_t=\theta_{t-1}k_{t-1}^\alpha \\
  \theta_t =\theta_{t-1}^\rho e^{\epsilon_t}\label{rbcSys}
  \end{tcolorbox}
-
-
-
 \label{sec:rbcexample}
 
 When $\eta=d=1$, we have a closed form solution:
@@ -530,6 +537,13 @@ The first few terms make most of the difference in approximating the value of th
 
 \section{Computing Model Solution Error Bounds}
 \label{sec:solnerrorbounds}
+
+
+The paper shows how to write down a series representation for any proposed
+model solution and to characterize the series representation for a typically
+unknown solution in such a way that one can use the model equation errors,
+including, but not restricted to Euler errors,  to construct an error bound for the norm of the distance between the proposed and the exact solution.  This work complements the analysis provided in
+\cite{judd2017lower,peralta-alva14,santos2005accuracy,Santos2000accuracy}. 
 
 
 \subsection{Model Specification}
@@ -702,6 +716,34 @@ We will assume that, by construction, tha the conditional expectations paths are
 \subsection{Generalization and Practical Considerations for Applying the Formula}
 \label{sec:practicalformula}
 
+The framework provides a new way to bound the error one can expect from
+employing a given proposed model solution and leads to an
+algorithm with  components similar to parameterized expectations that
+one can use to improve proposed solutions. The series representation makes
+it possible to organize the calculation around computing a deterministic
+problem at time t given a proposed solution.  The deterministic solution
+can accommodate inequality constraints or alternative regimes to produce a
+solution for each set of initial conditions.  One can typically arrange,
+perhaps by adding auxiliary variables, to produce a ``decision rule''
+that one can use to correctly precompute a deterministic conditional
+expectation function that can be iterated forward and serves to
+improve upon the original proposed solution.
+Time invariant stochastic functions 
+lead naturally to an associated family of deterministic maps
+which can be conveniently represented by the series representation.
+
+
+The paper studies a very general class of models whose 
+solutions are characterized by $\eqnFuncSys$, a 
+ exhaustive and mutually exclusive set of
+of   model equations, $\eqnFunc_i$,  and Boolean valued gates, $\gate_i$. 
+that together determine the solution  $x_t\tArg$
+%\begin{gather}
+%\intertext{ where, each }
+%\eqnFuncSysI{i}\equiv \eqnFuncSysIExpl{i} \label{eqnGates}
+%\end{gather}
+
+
 
 
 We will assume that we have a countable collection of equations systems that are mutually exclusive and exhaustive.
@@ -730,6 +772,12 @@ It will be convenient for describing the algorithms to
 
 \subsubsection{Occasionally Binding Constraints}
 \label{sec:obc-solut}
+
+Stochastic dynamic non linear economic
+models increasingly embody  occasionally binding constraints (OBC).
+Since \cite{Christiano2000} a host of
+authors have described a variety of approaches. \footnote{The algorithms described \cite{holden15:_exist_dsge} and \cite{guerrieri15:_occbin} also exploit the use of ``anticipated shocks'', but do not use the comprehensive formula employed here. }
+\cite{holden15:_exist_dsge,guerrieri15:_occbin,benigno09,hintermaier10,brumm10,nakov08,haefke98,nakata12,gordon11,billi11,Hintermaier2010,Guerrieri2015}
 
 
 
@@ -854,6 +902,7 @@ MSNTO selects a finite number of sample points uniformly scattered on D.  Next i
 \item start linear.  check error bounds, if adequate done
 \item traditional iteration ignores the path constraints on initial solution leading to larger errors on $\bndRgn^p$
 \item It's a good idea to compute easy approximation using just the linear model one ieration to get an approximation for the ergodic set\cite{ergodicvisual}
+\item PEA moving bounds \cite{maliarmovingbounds}
 \item them simulate and make the Maliar SVD transformation
 \item then iterate on the ergodic set till it settles down
 \item in this way can avoid solutions which are explosive when iterated 
@@ -1148,6 +1197,10 @@ $\sqrt{(c_t-c_t^\star)^2 +(k_t-k_t^\star)^2 +(\theta_t-\theta_t^\star)^2 +(N_t-N
 that was used in computing the error bound. The black dots show the interpolation points. The label of the figure provides the predicted error bound along with the largest error.
 
 
+\begin{itemize}
+\item $\phi=0$ is not standard
+\end{itemize}
+
 Figure \ref{fig:cntpltA} shows the results when $K=0$, with degree of approximation $(1,1,1)$, the standard approach
 for computing the decision rule.  The top panel provides a contour plot of the
 norm of the equation errors. The bottom plot shows the error in the decision rule for different values of $k_{t-1}, \theta_{t-1}$ with $\epsilon_t=0$.  The plots for different values of $\epsilon_t$ are not different. The error bound, 
@@ -1339,6 +1392,7 @@ constraints.\footnote{See section \ref{sec:regime-switch-model} characterizing
 \label{sec:future}
 
 \begin{itemize}
+ \item Perturbation Occ bind zeroth order and $\phi=0$
 \item perturbation global information better than pruning max convergent region
 \item parallelMap don't need order, so ParallelTry  four args pretest posttest xvals keep all except failed  be sure to fail conflicts
 \item convex hull of points computable
@@ -1366,6 +1420,13 @@ the high degree of parallelism available in the algorithm.
 \bibliographystyle{plainnat}
 \bibliography{anderson,files}
 \appendix
+
+
+\begin{itemize}
+\item rank condition on $\psi_c$
+\item appendix derivations with all lagrangians
+\end{itemize}
+
 
 \section{First Order Conditioins Langrangian Derivations}
 \label{sec:folag}

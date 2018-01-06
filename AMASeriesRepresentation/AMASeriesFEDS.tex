@@ -6,6 +6,7 @@
 % \usepackage{hyperref}
 % \usepackage{hyperref}
 % \usepackage{geometry}
+\usepackage[margin=1.0in]{geometry}
 % \usepackage{graphicx}
 % \usepackage{amsfonts}
 
@@ -377,11 +378,6 @@ In this section, to keep things simple, we will begin with a simple single equat
 Later, in order to handle models with regime switching and occasionally binding constraints, will need to consider more complicated collections of 
 of equation systems with  Boolean gates. We will show how to apply the 
 series formulation to get error bounds for these models as well.}
-\begin{itemize}
- \item Time series paths as components of dynamic models
-\item Potter impulse response functions
-
-\end{itemize}
 
 
 \subsection{An RBC Example}
@@ -434,6 +430,10 @@ and realization of $\epsilon_t$.\footnote{Mention relation to \cite{Potter2000,K
 Subsequently, we can use the family of conditional expectations paths 
 along with a contrived linear reference model to recover an 
 approximation for equation \refeq{soln} along with error bounds.
+Economists have long used the manipulation of
+time series paths as components of dynamic models. 
+Indeed, Potter constructs his generalized impulse response functions using
+differences in conditional expectations paths.\cite{Potter2000,Koop1996a}
 The series representation will provide a weighted sum of $z_t\tArg$ functions that give us an approximation for the known model solution.
 Note that the reference model is deterministic and the $z_t\tArg$ functions account for the stochastic nature of the model.
 
@@ -497,14 +497,15 @@ With
 
 \begin{figure}
   \centering
-\includegraphics[width=2.5in]{simprbcvals.pdf}  
+\includegraphics[width=2.5in]{simprbcvals.pdf}  \hspace{.75in}
 \includegraphics[width=2.5in]{simprbczvals.pdf}  
   \caption{model variable values and z values}
   \label{rbcpaths}
 \end{figure}
 
 The left panel of Figure \refeq{rbcpaths} shows the paths, from top to bottom, of $\theta_t, c_t, \text{ and } k_t$ from the initial values given in Equation \refeq{theInits}.  The right panel shows the paths for the $z_t$ variables associated with the linear reference model. The orange line corresponds to $z_{1t}\tArg$,
-the blue line corresponds to $z_{2t}\tArg$ and the green line corresponds to $z_{3t}\tArg$.
+the blue line corresponds to $z_{2t}\tArg$ and the green line corresponds to $z_{3t}\tArg$.\footnote{For now we focus on the times series paths, $z_t(x_{t-1},\epsilon_t)$ for given $(x_{t-1},\epsilon_t)$.  Later we will exploit the information available from explicit investigation of the variation in
+  $z_t(x_{t-1},\epsilon_t)$ with $(x_{t-1},\epsilon_t)$ to improve solution accuracy and robustness.}
 
 Figure \ref{rbcTrunc} shows the impact that truncating the series has 
 on the time t values of the state variables.   The bound for the error, $B_n$, shown in red 
@@ -514,13 +515,13 @@ on the time t values of the state variables.   The bound for the error, $B_n$, s
 \begin{figure}
   \centering
 \includegraphics[width=2.7in]{simpArbBoundsVActual.pdf}  
-  \caption{RBC Truncation Error Bound Versus Actual: Arbitrary Linear Reference Model}
+  \caption{RBC Known Solution Truncation Error Bound Versus Actual: ``Almost Arbitrary'' Linear Reference Model}
   \label{rbcTrunc}
 \end{figure}
 \begin{figure}
   \centering
 \includegraphics[width=2.7in]{simpBoundsVActual.pdf}  
-  \caption{RBC Truncation Error Bound Versus Actual: Stochastic Steady State Linearization Linear Reference Model}
+  \caption{RBC Known Solution Truncation Error Bound Versus Actual: Stochastic Steady State Linearization Linear Reference Model}
   \label{rbcTruncSimp}
 \end{figure}
 
@@ -533,23 +534,10 @@ Using the linearization of the RBC model produces a tighter but still pessimisti
 The first few terms make most of the difference in approximating the value of the state variables.
 
 
+\subsection{A Convenient Model Specification Constraint}
+\label{sec:convenient}
 
 
-\section{Computing Model Solution Error Bounds}
-\label{sec:solnerrorbounds}
-
-
-The paper shows how to write down a series representation for any proposed
-model solution and to characterize the series representation for a typically
-unknown solution in such a way that one can use the model equation errors,
-including, but not restricted to Euler errors,  to construct an error bound for the norm of the distance between the proposed and the exact solution.  This work complements the analysis provided in
-\cite{judd2017lower,peralta-alva14,santos2005accuracy,Santos2000accuracy}. 
-
-
-\subsection{Model Specification}
-\label{sec:model-specification}
-
-We will consider time invariant maps that arise form solving a time t optimization problem codified in a collection of systems of equations.  
 
 For convenience of notation in what follows, 
 we will focus on models built up from components of the form
@@ -615,6 +603,26 @@ F=
 \psi_c=\vcenter{\hbox{\includegraphics{RBCPsissSymb.pdf}}}
 \end{gather}
 
+
+
+\section{Computing Model Solution Error Bounds}
+\label{sec:solnerrorbounds}
+
+
+The paper shows how to write down a series representation for any proposed
+model solution and to characterize the series representation for a typically
+unknown solution in such a way that one can use the model equation errors,
+including, but not restricted to Euler errors,  to construct an error bound for the norm of the distance between the proposed and the exact solution.
+
+This work contrast with the analysis provided in
+\cite{judd2017lower,peralta-alva14,santos2005accuracy,Santos2000accuracy}. 
+Their approaches identify Euler Equation Errors, but use statistical techniques to estimate the impact of these errors on solution accuracy.  Here we compute
+and equation for the bound that does not require statistical inference.
+
+\subsection{Model Specification}
+\label{sec:model-specification}
+
+We will consider time invariant maps that arise form solving a time t optimization problem codified in a collection of systems of equations.  
 
 
 
@@ -700,13 +708,12 @@ We will assume that, by construction, tha the conditional expectations paths are
 
   By bounding the largest deviation in the paths for the $\Delta z_t^p$ we can bound the largest different in $x_t$.\footnote{The largest error for $\Delta z_{t+k}^p$   are pessimistic bounds since the future values are probabality weighted averages of the $\Delta z_t^p$ values for the given initial conditions because the condition expectations paths remain in the region $\bndRgn^p$.} The exact solution satisfies the model equations exactly.  The error in the proposed solution provides a conservative bound on the largest change in $z$.
 
-
-  \begin{gather}
+  \begin{tcolorbox}[ams gather]
   \Delta z_t \le  \label{eq:3}
 \max_{\{x_{-},\epsilon\}} \infNorm{ \phi \eqnFunc(x_{-},g^p(x_{-},\epsilon),G^p(g^p(x_{-},\epsilon)),\epsilon) }\\
 	\infNorm{ x^\star_{t}(x_{t-1},\epsilon) -	 x^p_{t}(x_{t-1},\epsilon)} \le
 \max_{\{x_{-},\epsilon\}} \infNorm{(I-F)^{-1} \phi \eqnFunc(x_{-},g^p(x_{-},\epsilon),G^p(g^p(x_{-},\epsilon)),\epsilon) }
-  \end{gather}
+  \end{tcolorbox}
 
 
 
@@ -875,30 +882,15 @@ I_t-(K_t-(1-d_1)k_{t-1})\\
 \mu_t(k_t - (1-d_1) k_{t-1}-\upsilon I_{ss})
 \end{tcolorbox}
  
-This section describes a method for finding maxima in a closed bounded domain.
-Let $D=[a,b]$ in $R^s$ where $a_i \le x_i \le b_i$. We want to find  $M=f(x^\ast)= \max_{x \in D}f(x)$.
-Th number theoretic (Quasi-Monte Carlo) approached is designed for finding optima with many local optima.  It is based on the used of space filling points.\cite{Xu2005}
-The number theoretic method of optimization includes two basic steps.
-\begin{enumerate}
-\item Choose a set $p=x_i, i=1,\dots,n$ of potential optima that are uniformly scattered.
-\item Find $M_n\text{ and } x^\ast \in p =\max_{1\le i \le n}f(x_i)$
-\end{enumerate}
-
-Even when choosing $p$ wisely convergence slow until \cite{Niederreiter1983}.  They speed up the convergence by contracting the domain.
-Their algorithm discards all but the best in the domain. Must have very many points to guarantee choosing a point close to the optimum.
-
-
-MSNTO selects a finite number of sample points uniformly scattered on D.  Next it discard inferior points retaining small sample of potential maxima.  These form the clusters for the next step.  The algorithm performs a domain contraction on each of the clusters.
-
-
-
 
 
 
 \section{Improving Proposed  Solutions}
 \label{sec:algoforsoln}
 
+
 \begin{itemize}
+\item show describe $z_t(x_{t-1},\epsilon_t)$ for RBC
 \item start linear.  check error bounds, if adequate done
 \item traditional iteration ignores the path constraints on initial solution leading to larger errors on $\bndRgn^p$
 \item It's a good idea to compute easy approximation using just the linear model one ieration to get an approximation for the ergodic set\cite{ergodicvisual}
@@ -948,7 +940,7 @@ x_{t-1}\\ \xpWarg\\ \XpWOarg(\xWarg)
 {Using the $\zpWarg$ Series}
 {\small
   \begin{itemize}
-  \item We get expressions for $x_t, \expct x_{t+1}$ consistent with $\linMod$ and the conditional expectations path
+  \item We get expressions for $x_t,\,\, \expct x_{t+1}$ consistent with $\linMod$ and the conditional expectations path
    \begin{gather*}
      \mathcal{X}_{t} =B x_{t-1}+ \phi \psi_\epsilon\epsilon + (I - F)^{-1} \phi \psi_c + \sum_{\sForSum=0}^\infty F^s \phi \ZWOarg(x_{t+\nu})\\
 	\expct{ \mathcal{X}_{t+1}} =B \mathcal{X}_{t}  + (I - F)^{-1} \phi \psi_c+ \sum_{\sForSum =0}^\infty F^{\sForSum-1} \phi \ZWOarg(x_{t+\nu}) \,\,\,\,\,\forall t,k \ge  0
@@ -1095,37 +1087,6 @@ $\xguss=x_t(x_{t-1},\epsilon)$\;
 \end{algorithm}
 
 
-\subsection{Function Approximation Representation}
-\label{sec:funcApproxRep}
-
-\subsubsection{General Issues}
-\label{sec:generalissues}
-
-
-
-
-
-
-
-
-
-
-\subsubsection{Smolyak Interpolation}
-\label{sec:smolyakinterp}
-
-\paragraph{An-isotropic}
-It is possible to precompute each of the integrals. Since the solution will be linear combination of the polynomials, precomputing the polynomials means the weighted sum of the precomputed integrals will provide the integrals.
-\paragraph{Precomputing Integrals}
-\begin{algorithm}
-  \SetKwInOut{Input}{input}
- \SetKwInOut{Output}{output}
-\Input{$\aSmolPoly$, $\smolRngs$, $\distribSpec$} 
-\Output{$\int \aSmolPoly \Pi (f_i(\epsilon_i)) d\epsilon_1 \ldots d\epsilon_k$}
-\end{algorithm}
-
-
-
-
 
 \subsection{RBC Example}
 \label{sec:rbc-example}
@@ -1134,30 +1095,6 @@ It is possible to precompute each of the integrals. Since the solution will be l
 \subsubsection{Approximating the Known Solution: $U(c) = Log(c)$ }
 \label{sec:recov-known-solut}
 
-\begin{itemize}
-\item for linear init iters =1 varying bigK has no effect
-\item for linear init iters =2 varying bigK has some effect
-\item msnto predicted and actual err added to graphs
-\item 3D to 2D since epsilon doesn't matter much
-\item big change from linear to nonliner iter >1
-\item should use tErrMat * checkPt for ``closer error bound''
-\item need \LaTeX conditional for mac runs instead of linux
-\begin{verbatim}
-In[14]:= !grep -l chooseLower resDir/*
-resDir/forBetterRBC${1,1,4}Iters10theK1numKern0.mth
-resDir/forBetterRBC${1,1,4}Iters10theK1numKern48.mth
-resDir/forBetterRBC${1,1,4}Iters10theK5numKern48.mth
-resDir/forBetterRBC${1,1,4}Iters20theK1numKern48.mth
-resDir/forBetterRBC${1,1,4}Iters20theK20numKern48.mth
-resDir/forBetterRBC${1,1,5}Iters10theK1numKern48.mth
-resDir/forBetterRBC${1,1,5}Iters1theK10numKern48.mth
-resDir/forBetterRBC${1,1,5}Iters1theK1numKern48.mth
-resDir/forBetterRBC${1,1,5}Iters1theK20numKern48.mth
-resDir/forBetterRBC${1,1,5}Iters1theK5numKern48.mth
-resDir/forBetterRBC${1,1,5}Iters20theK10numKern48.mth
-
-\end{verbatim}
-\end{itemize}
 Figure \ref{fig:erg}  characterizes the use of the parallelotope
 transformation described in \cite{Judd2013}. The left panel shows the 200 values of $k_t$ and $\theta_t$ resulting from a stochastic simulation of the the known decision rule. The right panel shows the transformed variables the constitute
 an improved set of variables for constructing function approximation values.
@@ -1189,34 +1126,64 @@ V= \vcenter{\hbox{\includegraphics{ergodicV.pdf}}}
 \min Z= \vcenter{\hbox{\includegraphics{ergodicMinZ.pdf}}}
 \end{gather}
 
+\subsection{An Informal Walk Through of the Algorithm}
+\label{sec:walkthrough}
 
-In what follows I show the impact of increasing the number of terms 
-employed in the series representation.  
+
+Before presenting the pseudocode for the detailed algorithm, this section
+describes in broad detail  how the approach proposed here differs from 
+what is typically done for solving dynamic stochastic models.
+In what follows, both the traditional and the new  approach use anisotropic
+Smolyak polynomial with precomputed expectations.
+This section
+computes the solution for the case when the exact solution is known and
+compares the approximation to the known actual solution.
+As with the standard approach it is important to iterate on the proposed solution until consistency between
+the decision rule used for setting t and the expectations function for setting
+$\expct{x_{t+1}}$ in the model equations.  Typically  20 iteratation are more than enough for the standard or the new approach.
+
+
+
+
+Figure \ref{fig:tradOne} shows the approximation error obtained by the standard
+practice of selecting a number of approximation points, solving the collocation problem for the model equations at these points.
 The figures  show contour plots for the norm of the error 
-$\sqrt{(c_t-c_t^\star)^2 +(k_t-k_t^\star)^2 +(\theta_t-\theta_t^\star)^2 +(N_t-N_t^\star)^2 }$ for the approximated decision rule. The green dot shows the values of $(y_1,y_2)$ associated with the largest actual error.  The orange dot shows $(y_1,y_2)$ associated with  the largest equation system discrepancy 
+
+$\sqrt{(c_t-c_t^\star)^2 +(k_t-k_t^\star)^2 +(\theta_t-\theta_t^\star)^2 +(N_t-N_t^\star)^2 }$
+
+for the approximated decision rule. The green dot shows the values of $(y_1,y_2)$ associated with the largest actual error.  The orange dot shows $(y_1,y_2)$ associated with  the largest equation system discrepancy 
 that was used in computing the error bound. The black dots show the interpolation points. The label of the figure provides the predicted error bound along with the largest error.
+The top panel provides a contour plot of the
+norm of the equation errors. The bottom plot shows the error in the decision rule for different values of $k_{t-1}, \theta_{t-1}$ with $\epsilon_t=0$.
 
 
-\begin{itemize}
-\item $\phi=0$ is not standard
-\end{itemize}
 
-Figure \ref{fig:cntpltA} shows the results when $K=0$, with degree of approximation $(1,1,1)$, the standard approach
-for computing the decision rule.  The top panel provides a contour plot of the
-norm of the equation errors. The bottom plot shows the error in the decision rule for different values of $k_{t-1}, \theta_{t-1}$ with $\epsilon_t=0$.  The plots for different values of $\epsilon_t$ are not different. The error bound, 
+
+The following shows characteristics for the standard approach
+ what follows I show the impact of increasing the number of terms 
+employed in the series representation.  
+Notice that  setting $K=0$ is not equivalent to the standard approach as
+the series formula has a correction term for $z_t(x_{t-1},\epsilon_t)$
+
+
+
+
+\begin{figure}
+  \centering
 \ifmacosx
-\input{resDir/forBetterRBC--1,1,1-Iters20theK0numKern2errBnd.tex} 
+
+Add equation error
+
+  \includegraphics{resDir/forBetterRBC--1,1,1-Iters1theK1host-MacBook-Pro-2numKern2Trad.pdf}
 \fi
 \iflinux
-\input{resDir/forBetterRBC--1,1,1-Iters20theK0numKern0errBnd.tex} 
+%\includegraphics{resDir/forBetterRBC--1,1,1-Iters20theK0numKern16Approx.pdf}
 \fi
-is 25\% larger than the actual error 
-\ifmacosx
-\input{resDir/forBetterRBC--1,1,1-Iters20theK0numKern2acterr.tex}
-\fi
-\iflinux
-\input{resDir/forBetterRBC--1,1,1-Iters20theK0numKern16acterr.tex}
-\fi
+  \caption{Contour Plot for traditional approx=(1,1,1) (Standard Approach)}
+  \label{fig:tradOne}
+\end{figure}
+
+
 \begin{figure}
   \centering
 \ifmacosx
@@ -1232,20 +1199,6 @@ is 25\% larger than the actual error
 
 The panels in Figure \ref{fig:cntpltB} shows the results when $K=1,2,3,4,5$
 while Figure
-
-
-\begin{figure}
-  \centering
-\ifmacosx
-  \includegraphics{resDir/forBetterRBC--1,1,1-Iters1theK1host-MacBook-Pro-2numKern2Trad.pdf}
-\fi
-\iflinux
-\includegraphics{resDir/forBetterRBC--1,1,1-Iters20theK0numKern16Approx.pdf}
-\fi
-  \caption{Contour Plot for traditional approx=(1,1,1) K =0 (Standard Approach)}
-  \label{fig:cntpltA}
-\end{figure}
-
 
 
 
@@ -1285,6 +1238,29 @@ is 25\% larger than the actual error
 
 
 
+In what follows I show the impact of increasing the number of terms 
+employed in the series representation.  
+
+
+
+Figure \ref{fig:cntpltA} shows the results when $K=0$, with degree of approximation $(1,1,1)$.  The top panel provides a contour plot of the
+norm of the equation errors. The bottom plot shows the error in the decision rule for different values of $k_{t-1}, \theta_{t-1}$ with $\epsilon_t=0$.  The plots for different values of $\epsilon_t$ are not appreciably different. The error bound, 
+\ifmacosx
+\input{resDir/forBetterRBC--1,1,1-Iters20theK0numKern2errBnd.tex} 
+\fi
+\iflinux
+\input{resDir/forBetterRBC--1,1,1-Iters20theK0numKern0errBnd.tex} 
+\fi
+is 25\% larger than the actual error 
+\ifmacosx
+\input{resDir/forBetterRBC--1,1,1-Iters20theK0numKern2acterr.tex}
+\fi
+\iflinux
+\input{resDir/forBetterRBC--1,1,1-Iters20theK0numKern16acterr.tex}
+\fi
+
+
+
 \begin{figure}
   \centering
 \iflinux
@@ -1299,38 +1275,38 @@ is 25\% larger than the actual error
   \label{fig:cntpltC}
 \end{figure}
 
-\begin{figure}
-  \centering
-\iflinux  
-\includegraphics{resDir/forBetterRBC--2,2,2-Iters20theK0numKern5.pdf}
-\fi
-\ifmacosx  
-\includegraphics{resDir/forBetterRBC--2,2,2-Iters20theK0numKern2.pdf}
-\fi
-  \caption{Contour Plot for approx=(2,2,2) 20 iterations and K =0}
-  \label{fig:cntpltD}
-\end{figure}
+% \begin{figure}
+%   \centering
+% \iflinux  
+% \includegraphics{resDir/forBetterRBC--2,2,2-Iters20theK0numKern5.pdf}
+% \fi
+% \ifmacosx  
+% \includegraphics{resDir/forBetterRBC--2,2,2-Iters20theK0numKern2.pdf}
+% \fi
+%   \caption{Contour Plot for approx=(2,2,2) 20 iterations and K =0}
+%   \label{fig:cntpltD}
+% \end{figure}
 
-\begin{figure}
-  \centering
-\iflinux
-  \includegraphics{resDir/forBetterRBC--2,2,2-Iters20theK5numKern5.pdf}
-\fi
-\ifmacosx  
-\includegraphics{resDir/forBetterRBC--2,2,2-Iters20theK5numKern2.pdf}
-\fi
-  \caption{Contour Plot for approx=(2,2,2) 20 iterations and K =5}
-  \label{fig:cntpltE}
-\end{figure}
+% \begin{figure}
+%   \centering
+% \iflinux
+%   \includegraphics{resDir/forBetterRBC--2,2,2-Iters20theK5numKern5.pdf}
+% \fi
+% \ifmacosx  
+% \includegraphics{resDir/forBetterRBC--2,2,2-Iters20theK5numKern2.pdf}
+% \fi
+%   \caption{Contour Plot for approx=(2,2,2) 20 iterations and K =5}
+%   \label{fig:cntpltE}
+% \end{figure}
 
-\begin{figure}
-  \centering
-\ifmacosx
-  \includegraphics{resDir/forBetterRBC--2,2,2-Iters20theK10numKern2.pdf}
-\fi
-  \caption{Contour Plot for approx=(2,2,2) 20 iterations and K =10}
-  \label{fig:cntpltF}
-\end{figure}
+% \begin{figure}
+%   \centering
+% \ifmacosx
+%   \includegraphics{resDir/forBetterRBC--2,2,2-Iters20theK10numKern2.pdf}
+% \fi
+%   \caption{Contour Plot for approx=(2,2,2) 20 iterations and K =10}
+%   \label{fig:cntpltF}
+% \end{figure}
 
 \begin{figure}
   \centering
@@ -1341,23 +1317,23 @@ is 25\% larger than the actual error
   \label{fig:cntpltG}
 \end{figure}
 
-\begin{figure}
-  \centering
-\ifmacosx
-  \includegraphics{resDir/forBetterRBC--3,3,3-Iters20theK0numKern2.pdf}
-\fi
-  \caption{Contour Plot for approx=(3,3,3) 20 iterations and K =0}
-  \label{fig:cntpltH}
-\end{figure}
+% \begin{figure}
+%   \centering
+% \ifmacosx
+%   \includegraphics{resDir/forBetterRBC--3,3,3-Iters20theK0numKern2.pdf}
+% \fi
+%   \caption{Contour Plot for approx=(3,3,3) 20 iterations and K =0}
+%   \label{fig:cntpltH}
+% \end{figure}
 
-\begin{figure}
-  \centering
-\ifmacosx
-  \includegraphics{resDir/forBetterRBC--3,3,3-Iters20theK10numKern2.pdf}
-  \fi
-  \caption{Contour Plot for approx=(3,3,3) 20 iterations and K =10}
-  \label{fig:cntpltI}
-\end{figure}
+% \begin{figure}
+%   \centering
+% \ifmacosx
+%   \includegraphics{resDir/forBetterRBC--3,3,3-Iters20theK10numKern2.pdf}
+%   \fi
+%   \caption{Contour Plot for approx=(3,3,3) 20 iterations and K =10}
+%   \label{fig:cntpltI}
+% \end{figure}
 
 \begin{figure}
   \centering
@@ -1405,6 +1381,34 @@ the high degree of parallelism available in the algorithm.
 \item[Dynare Interface] 
 \item[Improve Error Bounds] 
 \end{description}
+
+\begin{itemize}
+\item for linear init iters =1 varying bigK has no effect
+\item for linear init iters =2 varying bigK has some effect
+\item msnto predicted and actual err added to graphs
+\item 3D to 2D since epsilon doesn't matter much
+\item big change from linear to nonliner iter >1
+\item should use tErrMat * checkPt for ``closer error bound''
+\item need \LaTeX conditional for mac runs instead of linux
+\begin{verbatim}
+In[14]:= !grep -l chooseLower resDir/*
+resDir/forBetterRBC${1,1,4}Iters10theK1numKern0.mth
+resDir/forBetterRBC${1,1,4}Iters10theK1numKern48.mth
+resDir/forBetterRBC${1,1,4}Iters10theK5numKern48.mth
+resDir/forBetterRBC${1,1,4}Iters20theK1numKern48.mth
+resDir/forBetterRBC${1,1,4}Iters20theK20numKern48.mth
+resDir/forBetterRBC${1,1,5}Iters10theK1numKern48.mth
+resDir/forBetterRBC${1,1,5}Iters1theK10numKern48.mth
+resDir/forBetterRBC${1,1,5}Iters1theK1numKern48.mth
+resDir/forBetterRBC${1,1,5}Iters1theK20numKern48.mth
+resDir/forBetterRBC${1,1,5}Iters1theK5numKern48.mth
+resDir/forBetterRBC${1,1,5}Iters20theK10numKern48.mth
+
+\end{verbatim}
+\end{itemize}
+
+
+
 \section{Conclusions}
 \begin{description}
 \item[Series Unique] Provides mechanism for bounding solutions
@@ -1426,6 +1430,60 @@ the high degree of parallelism available in the algorithm.
 \item rank condition on $\psi_c$
 \item appendix derivations with all lagrangians
 \end{itemize}
+
+\section{Function Approximation Representation}
+\label{sec:funcApproxRep}
+
+\subsection{General Issues}
+\label{sec:generalissues}
+
+
+
+
+
+
+
+
+
+
+\subsection{Smolyak Interpolation}
+\label{sec:smolyakinterp}
+
+\paragraph{An-isotropic}
+It is possible to precompute each of the integrals. Since the solution will be linear combination of the polynomials, precomputing the polynomials means the weighted sum of the precomputed integrals will provide the integrals.
+\paragraph{Precomputing Integrals}
+\begin{algorithm}
+  \SetKwInOut{Input}{input}
+ \SetKwInOut{Output}{output}
+\Input{$\aSmolPoly$, $\smolRngs$, $\distribSpec$} 
+\Output{$\int \aSmolPoly \Pi (f_i(\epsilon_i)) d\epsilon_1 \ldots d\epsilon_k$}
+\end{algorithm}
+
+
+
+
+
+
+
+\section{Multicluster Sequential Number Theoretic Optimization (MSNTO)}
+\label{sec:MSNTO}
+
+This section describes a method for finding maxima in a closed bounded domain.
+Let $D=[a,b]$ in $R^s$ where $a_i \le x_i \le b_i$. We want to find  $M=f(x^\ast)= \max_{x \in D}f(x)$.
+Th number theoretic (Quasi-Monte Carlo) approached is designed for finding optima with many local optima.  It is based on the used of space filling points.\cite{Xu2005}
+The number theoretic method of optimization includes two basic steps.
+\begin{enumerate}
+\item Choose a set $p=x_i, i=1,\dots,n$ of potential optima that are uniformly scattered.
+\item Find $M_n\text{ and } x^\ast \in p =\max_{1\le i \le n}f(x_i)$
+\end{enumerate}
+
+Even when choosing $p$ wisely convergence slow until \cite{Niederreiter1983}.  They speed up the convergence by contracting the domain.
+Their algorithm discards all but the best in the domain. Must have very many points to guarantee choosing a point close to the optimum.
+
+
+MSNTO selects a finite number of sample points uniformly scattered on D.  Next it discard inferior points retaining small sample of potential maxima.  These form the clusters for the next step.  The algorithm performs a domain contraction on each of the clusters.
+
+
 
 
 \section{First Order Conditioins Langrangian Derivations}

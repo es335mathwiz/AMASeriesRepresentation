@@ -795,28 +795,6 @@ Consider adding constraints the constraints:
 \end{gather*}
 
 
-\begin{tcolorbox}[ams gather]
-if(\mu>0 \land (k_t - (1-d)k_{t-1}-\upsilon I_{ss})=0)\\
-  \lambda_t -\frac{1}{c_t}\\
-c_t+I_t-\theta_tk_{t-1}^\alpha\\
-N_t-\lambda_t \theta_t\\
-\theta_t-e^{(\rho\ln(\theta_{t-1})+\epsilon)}\\
-\lambda_t + \mu_t - (\alpha k_t^{(\alpha-1)}\delta N_{t+1}+\lambda_{t+1} \delta (1-d)+\mu_{t+1}+\delta (1-d)\mu_{t+1}\\
-I_t-(K_t-(1-d)k_{t-1})\\
-\mu_t(k_t - (1-d) k_{t-1}-\upsilon I_{ss})\\
-\end{tcolorbox}
-\begin{tcolorbox}[ams gather]
-if(\mu=0 \land (k_t - (1-d)k_{t-1}-\upsilon I_{ss})\ge 0)\\
-  \lambda_t -\frac{1}{c_t}\\
-c_t+I_t-\theta_tk_{t-1}^\alpha\\
-N_t-\lambda_t \theta_t\\
-\theta_t-e^{(\rho\ln(\theta_{t-1})+\epsilon)}\\
-\lambda_t + {\mu_t} - (\alpha k_t^{(\alpha-1)}\delta N_{t+1}+\lambda_{t+1} \delta (1-d)+{\mu_{t+1}}+\delta (1-d)\mu_{t+1}\\
-I_t-(K_t-(1-d)k_{t-1})\\
-\mu_t(k_t - (1-d) k_{t-1}-\upsilon I_{ss})
-\end{tcolorbox}
-
-
 \subsubsection{Regime Switching}
 
 
@@ -841,46 +819,6 @@ Consider two states $s_t \in {0,1}$ where the depreciation rates are different: 
 
 For example, the Euler equations for the  neoclassical growth  model 
 \label{sec:simple-rbc-model-ext} can be written as
-\begin{tcolorbox}[ams gather]
-if(s_t=0\land \mu>0 \land (k_t - (1-d_0)k_{t-1}-\upsilon I_{ss})=0)\\
-  \lambda_t -\frac{1}{c_t}\\
-c_t+k_t-\theta_tk_{t-1}^\alpha\\
-N_t-\lambda_t \theta_t\\
-\theta_t-e^{(\rho\ln(\theta_{t-1})+\epsilon)}\\
-\lambda_t + {\mu_t} - (\alpha k_t^{(\alpha-1)}\delta N_{t+1}+\lambda_{t+1} \delta (1-d_0)+{\mu_{t+1}}+\delta (1-d_0)\\
-I_t-(K_t-(1-d_0)k_{t-1})\\
-\mu_t(k_t - (1-d_0) k_{t-1}-\upsilon I_{ss})\\
-\end{tcolorbox}
-\begin{tcolorbox}[ams gather]
-if(s_t=0\land\mu=0 \land (k_t - (1-d_0)k_{t-1}-\upsilon I_{ss})\ge 0)\\
-  \lambda_t -\frac{1}{c_t}\\
-c_t+k_t-\theta_tk_{t-1}^\alpha\\
-N_t-\lambda_t \theta_t\\
-\theta_t-e^{(\rho\ln(\theta_{t-1})+\epsilon)}\\
-\lambda_t + {\mu_t} - (\alpha k_t^{(\alpha-1)}\delta N_{t+1}+\lambda_{t+1} \delta (1-d_0)+{\mu_{t+1}}+\delta (1-d_0)\\
-I_t-(K_t-(1-d_0)k_{t-1})\\
-\mu_t(k_t - (1-d_0) k_{t-1}-\upsilon I_{ss})
-\end{tcolorbox}
-\begin{tcolorbox}[ams gather]
-if(s_t=1\land \mu>0 \land (k_t - (1-d_1)k_{t-1}-\upsilon I_{ss})=0)\\
-  \lambda_t -\frac{1}{c_t}\\
-c_t+k_t-\theta_tk_{t-1}^\alpha\\
-N_t-\lambda_t \theta_t\\
-\theta_t-e^{(\rho\ln(\theta_{t-1})+\epsilon)}\\
-\lambda_t + {\mu_t} - (\alpha k_t^{(\alpha-1)}\delta N_{t+1}+\lambda_{t+1} \delta (1-d_1)+{\mu_{t+1}}+\delta (1-d_1)\\
-I_t-(K_t-(1-d_1)k_{t-1})\\
-\mu_t(k_t - (1-d_1) k_{t-1}-\upsilon I_{ss})\\
-\end{tcolorbox}
-\begin{tcolorbox}[ams gather]
-if(s_t=1\land\mu=0 \land (k_t - (1-d_1)k_{t-1}-\upsilon I_{ss})\ge 0)\\
-  \lambda_t -\frac{1}{c_t}\\
-c_t+k_t-\theta_tk_{t-1}^\alpha\\
-N_t-\lambda_t \theta_t\\
-\theta_t-e^{(\rho\ln(\theta_{t-1})+\epsilon)}\\
-\lambda_t + {\mu_t} - (\alpha k_t^{(\alpha-1)}\delta N_{t+1}+\lambda_{t+1} \delta (1-d_1)+{\mu_{t+1}}+\delta (1-d_1)\\
-I_t-(K_t-(1-d_1)k_{t-1})\\
-\mu_t(k_t - (1-d_1) k_{t-1}-\upsilon I_{ss})
-\end{tcolorbox}
  
 
 
@@ -888,6 +826,223 @@ I_t-(K_t-(1-d_1)k_{t-1})\\
 \section{Improving Proposed  Solutions}
 \label{sec:algoforsoln}
 
+\subsection{An Informal Walk Through of the Algorithm}
+\label{sec:walkthrough}
+
+
+Before presenting the pseudocode for the detailed algorithm, this section
+describes in broad detail  how the approach proposed here differs from 
+what is typically done for solving dynamic stochastic models.
+In what follows, both the traditional and the new  approach use anisotropic
+Smolyak polynomial with precomputed expectations.
+This section
+computes the solution for the case when the exact solution is known and
+compares the approximation to the known actual solution.
+As with the standard approach it is important to iterate on the proposed solution until consistency between
+the decision rule used for setting t and the expectations function for setting
+$\expct{x_{t+1}}$ in the model equations.  Typically  20 iteratation are more than enough for the standard or the new approach.
+
+
+
+
+Figure \ref{fig:tradOne} shows the approximation error obtained by the standard
+practice of selecting a number of approximation points, solving the collocation problem for the model equations at these points.
+The figures  show contour plots for the norm of the error 
+
+$\sqrt{(c_t-c_t^\star)^2 +(k_t-k_t^\star)^2 +(\theta_t-\theta_t^\star)^2 +(N_t-N_t^\star)^2 }$
+
+for the approximated decision rule. The green dot shows the values of $(y_1,y_2)$ associated with the largest actual error.  The orange dot shows $(y_1,y_2)$ associated with  the largest equation system discrepancy 
+that was used in computing the error bound. The black dots show the interpolation points. The label of the figure provides the predicted error bound along with the largest error.
+The top panel provides a contour plot of the
+norm of the equation errors. The bottom plot shows the error in the decision rule for different values of $k_{t-1}, \theta_{t-1}$ with $\epsilon_t=0$.
+
+
+
+
+The following shows characteristics for the standard approach
+ what follows I show the impact of increasing the number of terms 
+employed in the series representation.  
+Notice that  setting $K=0$ is not equivalent to the standard approach as
+the series formula has a correction term for $z_t(x_{t-1},\epsilon_t)$
+
+
+
+
+\begin{figure}
+  \centering
+\ifmacosx
+
+Add equation error
+
+  \includegraphics{resDir/forBetterRBC--1,1,1-Iters1theK1host-MacBook-Pro-2numKern2Trad.pdf}
+\fi
+\iflinux
+%\includegraphics{resDir/forBetterRBC--1,1,1-Iters20theK0numKern16Approx.pdf}
+\fi
+  \caption{Contour Plot for traditional approx=(1,1,1) (Standard Approach)}
+  \label{fig:tradOne}
+\end{figure}
+
+
+\begin{figure}
+  \centering
+\ifmacosx
+  \includegraphics{resDir/forBetterRBC--1,1,1-Iters20theK0numKern2Approx.pdf}
+  \includegraphics{resDir/forBetterRBC--1,1,1-Iters20theK0numKern2.pdf}
+\fi
+\iflinux
+\includegraphics{resDir/forBetterRBC--1,1,1-Iters20theK0numKern16Approx.pdf}
+\fi
+  \caption{Contour Plot for approx=(1,1,1) K =0 }
+  \label{fig:cntpltA}
+\end{figure}
+
+The panels in Figure \ref{fig:cntpltB} shows the results when $K=1,2,3,4,5$
+while Figure
+
+
+
+\begin{figure}
+  \centering
+\iflinux
+\includegraphics[width=1.0in]{resDir/forBetterRBC--1,1,1-Iters30theK1numKern16.pdf}
+\includegraphics[width=1.0in]{resDir/forBetterRBC--1,1,1-Iters30theK2numKern16.pdf}
+\includegraphics[width=1.0in]{resDir/forBetterRBC--1,1,1-Iters30theK3numKern16.pdf}
+\includegraphics[width=1.0in]{resDir/forBetterRBC--1,1,1-Iters30theK4numKern16.pdf}
+\includegraphics[width=1.0in]{resDir/forBetterRBC--1,1,1-Iters30theK5numKern16.pdf}
+\fi
+\ifmacosx
+\includegraphics[width=1.0in]{resDir/forBetterRBC--1,1,1-Iters20theK1numKern2.pdf}
+\includegraphics[width=1.0in]{resDir/forBetterRBC--1,1,1-Iters20theK2numKern2.pdf}
+\includegraphics[width=1.0in]{resDir/forBetterRBC--1,1,1-Iters20theK3numKern2.pdf}
+\includegraphics[width=1.0in]{resDir/forBetterRBC--1,1,1-Iters20theK4numKern2.pdf}
+\includegraphics[width=1.0in]{resDir/forBetterRBC--1,1,1-Iters20theK5numKern2.pdf}
+\fi
+  \caption{Contour Plot for approx=(1,1,1)  K =1,2,3,4,5}
+  \label{fig:cntpltB}
+\end{figure}
+
+
+
+Figure \ref{fig:cntpltC} shows the results when $K=10$, with degree of approximation $(1,1,1)$
+for computing the decision rule.  The top panel provides a contour plot of the
+norm of the equation errors. The bottom plot shows the error in the decision rule for different values of $k_{t-1}, \theta_{t-1}$ with $\epsilon_t=0$.  The plots for different values of $\epsilon_t$ are not different.  The error bound, 
+\ifmacosx
+\input{resDir/forBetterRBC--1,1,1-Iters20theK10numKern2errBnd.tex} 
+\fi
+is 25\% larger than the actual error 
+\iflinux
+\input{resDir/forBetterRBC--1,1,1-Iters20theK10numKern111acterr.tex} 
+\fi
+ Notice that even though equation errors are comparable in magnitude, the error in the decision rule is significantly smaller for the series representation solution.  The additional constraints on the equation system provided by computing conditional expectations paths and incorporating them into the solution at time $t$ leads to better solutions.
+
+
+
+In what follows I show the impact of increasing the number of terms 
+employed in the series representation.  
+
+
+
+Figure \ref{fig:cntpltA} shows the results when $K=0$, with degree of approximation $(1,1,1)$.  The top panel provides a contour plot of the
+norm of the equation errors. The bottom plot shows the error in the decision rule for different values of $k_{t-1}, \theta_{t-1}$ with $\epsilon_t=0$.  The plots for different values of $\epsilon_t$ are not appreciably different. The error bound, 
+\ifmacosx
+\input{resDir/forBetterRBC--1,1,1-Iters20theK0numKern2errBnd.tex} 
+\fi
+\iflinux
+\input{resDir/forBetterRBC--1,1,1-Iters20theK0numKern0errBnd.tex} 
+\fi
+is 25\% larger than the actual error 
+\ifmacosx
+\input{resDir/forBetterRBC--1,1,1-Iters20theK0numKern2acterr.tex}
+\fi
+\iflinux
+\input{resDir/forBetterRBC--1,1,1-Iters20theK0numKern16acterr.tex}
+\fi
+
+
+
+\begin{figure}
+  \centering
+\iflinux
+  \includegraphics{resDir/forBetterRBC--1,1,1-Iters20theK10numKern16Approx.pdf}
+  \includegraphics{resDir/forBetterRBC--1,1,1-Iters20theK10numKern16.pdf}
+\fi
+\ifmacosx
+  \includegraphics{resDir/forBetterRBC--1,1,1-Iters20theK10numKern2Approx.pdf}
+  \includegraphics{resDir/forBetterRBC--1,1,1-Iters20theK10numKern2.pdf}
+\fi
+  \caption{Contour Plot for approx=(1,1,1) iters 20 K =10}
+  \label{fig:cntpltC}
+\end{figure}
+
+% \begin{figure}
+%   \centering
+% \iflinux  
+% \includegraphics{resDir/forBetterRBC--2,2,2-Iters20theK0numKern5.pdf}
+% \fi
+% \ifmacosx  
+% \includegraphics{resDir/forBetterRBC--2,2,2-Iters20theK0numKern2.pdf}
+% \fi
+%   \caption{Contour Plot for approx=(2,2,2) 20 iterations and K =0}
+%   \label{fig:cntpltD}
+% \end{figure}
+
+% \begin{figure}
+%   \centering
+% \iflinux
+%   \includegraphics{resDir/forBetterRBC--2,2,2-Iters20theK5numKern5.pdf}
+% \fi
+% \ifmacosx  
+% \includegraphics{resDir/forBetterRBC--2,2,2-Iters20theK5numKern2.pdf}
+% \fi
+%   \caption{Contour Plot for approx=(2,2,2) 20 iterations and K =5}
+%   \label{fig:cntpltE}
+% \end{figure}
+
+% \begin{figure}
+%   \centering
+% \ifmacosx
+%   \includegraphics{resDir/forBetterRBC--2,2,2-Iters20theK10numKern2.pdf}
+% \fi
+%   \caption{Contour Plot for approx=(2,2,2) 20 iterations and K =10}
+%   \label{fig:cntpltF}
+% \end{figure}
+
+\begin{figure}
+  \centering
+\ifmacosx
+  \includegraphics{resDir/forBetterRBC--2,2,2-Iters20theK20numKern2.pdf}
+\fi
+  \caption{Contour Plot for approx=(2,2,2) 20 iterations and K =20}
+  \label{fig:cntpltG}
+\end{figure}
+
+% \begin{figure}
+%   \centering
+% \ifmacosx
+%   \includegraphics{resDir/forBetterRBC--3,3,3-Iters20theK0numKern2.pdf}
+% \fi
+%   \caption{Contour Plot for approx=(3,3,3) 20 iterations and K =0}
+%   \label{fig:cntpltH}
+% \end{figure}
+
+% \begin{figure}
+%   \centering
+% \ifmacosx
+%   \includegraphics{resDir/forBetterRBC--3,3,3-Iters20theK10numKern2.pdf}
+%   \fi
+%   \caption{Contour Plot for approx=(3,3,3) 20 iterations and K =10}
+%   \label{fig:cntpltI}
+% \end{figure}
+
+\begin{figure}
+  \centering
+\ifmacosx
+  \includegraphics{resDir/forBetterRBC--3,3,3-Iters20theK20numKern2.pdf}
+  \fi
+  \caption{Contour Plot for approx=(3,3,3) 20 iterations and K =20}
+  \label{fig:cntpltI}
+\end{figure}
 
 \begin{itemize}
 \item show describe $z_t(x_{t-1},\epsilon_t)$ for RBC
@@ -1126,223 +1281,6 @@ V= \vcenter{\hbox{\includegraphics{ergodicV.pdf}}}
 \min Z= \vcenter{\hbox{\includegraphics{ergodicMinZ.pdf}}}
 \end{gather}
 
-\subsection{An Informal Walk Through of the Algorithm}
-\label{sec:walkthrough}
-
-
-Before presenting the pseudocode for the detailed algorithm, this section
-describes in broad detail  how the approach proposed here differs from 
-what is typically done for solving dynamic stochastic models.
-In what follows, both the traditional and the new  approach use anisotropic
-Smolyak polynomial with precomputed expectations.
-This section
-computes the solution for the case when the exact solution is known and
-compares the approximation to the known actual solution.
-As with the standard approach it is important to iterate on the proposed solution until consistency between
-the decision rule used for setting t and the expectations function for setting
-$\expct{x_{t+1}}$ in the model equations.  Typically  20 iteratation are more than enough for the standard or the new approach.
-
-
-
-
-Figure \ref{fig:tradOne} shows the approximation error obtained by the standard
-practice of selecting a number of approximation points, solving the collocation problem for the model equations at these points.
-The figures  show contour plots for the norm of the error 
-
-$\sqrt{(c_t-c_t^\star)^2 +(k_t-k_t^\star)^2 +(\theta_t-\theta_t^\star)^2 +(N_t-N_t^\star)^2 }$
-
-for the approximated decision rule. The green dot shows the values of $(y_1,y_2)$ associated with the largest actual error.  The orange dot shows $(y_1,y_2)$ associated with  the largest equation system discrepancy 
-that was used in computing the error bound. The black dots show the interpolation points. The label of the figure provides the predicted error bound along with the largest error.
-The top panel provides a contour plot of the
-norm of the equation errors. The bottom plot shows the error in the decision rule for different values of $k_{t-1}, \theta_{t-1}$ with $\epsilon_t=0$.
-
-
-
-
-The following shows characteristics for the standard approach
- what follows I show the impact of increasing the number of terms 
-employed in the series representation.  
-Notice that  setting $K=0$ is not equivalent to the standard approach as
-the series formula has a correction term for $z_t(x_{t-1},\epsilon_t)$
-
-
-
-
-\begin{figure}
-  \centering
-\ifmacosx
-
-Add equation error
-
-  \includegraphics{resDir/forBetterRBC--1,1,1-Iters1theK1host-MacBook-Pro-2numKern2Trad.pdf}
-\fi
-\iflinux
-%\includegraphics{resDir/forBetterRBC--1,1,1-Iters20theK0numKern16Approx.pdf}
-\fi
-  \caption{Contour Plot for traditional approx=(1,1,1) (Standard Approach)}
-  \label{fig:tradOne}
-\end{figure}
-
-
-\begin{figure}
-  \centering
-\ifmacosx
-  \includegraphics{resDir/forBetterRBC--1,1,1-Iters20theK0numKern2Approx.pdf}
-  \includegraphics{resDir/forBetterRBC--1,1,1-Iters20theK0numKern2.pdf}
-\fi
-\iflinux
-\includegraphics{resDir/forBetterRBC--1,1,1-Iters20theK0numKern16Approx.pdf}
-\fi
-  \caption{Contour Plot for approx=(1,1,1) K =0 }
-  \label{fig:cntpltA}
-\end{figure}
-
-The panels in Figure \ref{fig:cntpltB} shows the results when $K=1,2,3,4,5$
-while Figure
-
-
-
-\begin{figure}
-  \centering
-\iflinux
-\includegraphics[width=1.0in]{resDir/forBetterRBC--1,1,1-Iters30theK1numKern16.pdf}
-\includegraphics[width=1.0in]{resDir/forBetterRBC--1,1,1-Iters30theK2numKern16.pdf}
-\includegraphics[width=1.0in]{resDir/forBetterRBC--1,1,1-Iters30theK3numKern16.pdf}
-\includegraphics[width=1.0in]{resDir/forBetterRBC--1,1,1-Iters30theK4numKern16.pdf}
-\includegraphics[width=1.0in]{resDir/forBetterRBC--1,1,1-Iters30theK5numKern16.pdf}
-\fi
-\ifmacosx
-\includegraphics[width=1.0in]{resDir/forBetterRBC--1,1,1-Iters20theK1numKern2.pdf}
-\includegraphics[width=1.0in]{resDir/forBetterRBC--1,1,1-Iters20theK2numKern2.pdf}
-\includegraphics[width=1.0in]{resDir/forBetterRBC--1,1,1-Iters20theK3numKern2.pdf}
-\includegraphics[width=1.0in]{resDir/forBetterRBC--1,1,1-Iters20theK4numKern2.pdf}
-\includegraphics[width=1.0in]{resDir/forBetterRBC--1,1,1-Iters20theK5numKern2.pdf}
-\fi
-  \caption{Contour Plot for approx=(1,1,1)  K =1,2,3,4,5}
-  \label{fig:cntpltB}
-\end{figure}
-
-
-
-Figure \ref{fig:cntpltC} shows the results when $K=10$, with degree of approximation $(1,1,1)$
-for computing the decision rule.  The top panel provides a contour plot of the
-norm of the equation errors. The bottom plot shows the error in the decision rule for different values of $k_{t-1}, \theta_{t-1}$ with $\epsilon_t=0$.  The plots for different values of $\epsilon_t$ are not different.  The error bound, 
-\ifmacosx
-\input{resDir/forBetterRBC--1,1,1-Iters20theK10numKern2errBnd.tex} 
-\fi
-is 25\% larger than the actual error 
-\iflinux
-\input{resDir/forBetterRBC--1,1,1-Iters20theK10numKern111acterr.tex} 
-\fi
- Notice that even though equation errors are comparable in magnitude, the error in the decision rule is significantly smaller for the series representation solution.  The additional constraints on the equation system provided by computing conditional expectations paths and incorporating them into the solution at time $t$ leads to better solutions.
-
-
-
-In what follows I show the impact of increasing the number of terms 
-employed in the series representation.  
-
-
-
-Figure \ref{fig:cntpltA} shows the results when $K=0$, with degree of approximation $(1,1,1)$.  The top panel provides a contour plot of the
-norm of the equation errors. The bottom plot shows the error in the decision rule for different values of $k_{t-1}, \theta_{t-1}$ with $\epsilon_t=0$.  The plots for different values of $\epsilon_t$ are not appreciably different. The error bound, 
-\ifmacosx
-\input{resDir/forBetterRBC--1,1,1-Iters20theK0numKern2errBnd.tex} 
-\fi
-\iflinux
-\input{resDir/forBetterRBC--1,1,1-Iters20theK0numKern0errBnd.tex} 
-\fi
-is 25\% larger than the actual error 
-\ifmacosx
-\input{resDir/forBetterRBC--1,1,1-Iters20theK0numKern2acterr.tex}
-\fi
-\iflinux
-\input{resDir/forBetterRBC--1,1,1-Iters20theK0numKern16acterr.tex}
-\fi
-
-
-
-\begin{figure}
-  \centering
-\iflinux
-  \includegraphics{resDir/forBetterRBC--1,1,1-Iters20theK10numKern16Approx.pdf}
-  \includegraphics{resDir/forBetterRBC--1,1,1-Iters20theK10numKern16.pdf}
-\fi
-\ifmacosx
-  \includegraphics{resDir/forBetterRBC--1,1,1-Iters20theK10numKern2Approx.pdf}
-  \includegraphics{resDir/forBetterRBC--1,1,1-Iters20theK10numKern2.pdf}
-\fi
-  \caption{Contour Plot for approx=(1,1,1) iters 20 K =10}
-  \label{fig:cntpltC}
-\end{figure}
-
-% \begin{figure}
-%   \centering
-% \iflinux  
-% \includegraphics{resDir/forBetterRBC--2,2,2-Iters20theK0numKern5.pdf}
-% \fi
-% \ifmacosx  
-% \includegraphics{resDir/forBetterRBC--2,2,2-Iters20theK0numKern2.pdf}
-% \fi
-%   \caption{Contour Plot for approx=(2,2,2) 20 iterations and K =0}
-%   \label{fig:cntpltD}
-% \end{figure}
-
-% \begin{figure}
-%   \centering
-% \iflinux
-%   \includegraphics{resDir/forBetterRBC--2,2,2-Iters20theK5numKern5.pdf}
-% \fi
-% \ifmacosx  
-% \includegraphics{resDir/forBetterRBC--2,2,2-Iters20theK5numKern2.pdf}
-% \fi
-%   \caption{Contour Plot for approx=(2,2,2) 20 iterations and K =5}
-%   \label{fig:cntpltE}
-% \end{figure}
-
-% \begin{figure}
-%   \centering
-% \ifmacosx
-%   \includegraphics{resDir/forBetterRBC--2,2,2-Iters20theK10numKern2.pdf}
-% \fi
-%   \caption{Contour Plot for approx=(2,2,2) 20 iterations and K =10}
-%   \label{fig:cntpltF}
-% \end{figure}
-
-\begin{figure}
-  \centering
-\ifmacosx
-  \includegraphics{resDir/forBetterRBC--2,2,2-Iters20theK20numKern2.pdf}
-\fi
-  \caption{Contour Plot for approx=(2,2,2) 20 iterations and K =20}
-  \label{fig:cntpltG}
-\end{figure}
-
-% \begin{figure}
-%   \centering
-% \ifmacosx
-%   \includegraphics{resDir/forBetterRBC--3,3,3-Iters20theK0numKern2.pdf}
-% \fi
-%   \caption{Contour Plot for approx=(3,3,3) 20 iterations and K =0}
-%   \label{fig:cntpltH}
-% \end{figure}
-
-% \begin{figure}
-%   \centering
-% \ifmacosx
-%   \includegraphics{resDir/forBetterRBC--3,3,3-Iters20theK10numKern2.pdf}
-%   \fi
-%   \caption{Contour Plot for approx=(3,3,3) 20 iterations and K =10}
-%   \label{fig:cntpltI}
-% \end{figure}
-
-\begin{figure}
-  \centering
-\ifmacosx
-  \includegraphics{resDir/forBetterRBC--3,3,3-Iters20theK20numKern2.pdf}
-  \fi
-  \caption{Contour Plot for approx=(3,3,3) 20 iterations and K =20}
-  \label{fig:cntpltI}
-\end{figure}
 \subsubsection{Approximating an Unknown Solution: $U(c) \ne Log(c)$ }
 \label{sec:unknown-solutions}
 
@@ -1441,8 +1379,79 @@ resDir/forBetterRBC${1,1,5}Iters20theK10numKern48.mth
 
 
 
+\section{Extension Examples}
+\label{sec:extension}
 
 
+
+\subsection{Ocasionally Binding Constraints}
+\label{sec:occbind}
+
+
+\begin{tcolorbox}[ams gather]
+if(\mu>0 \land (k_t - (1-d)k_{t-1}-\upsilon I_{ss})=0)\\
+  \lambda_t -\frac{1}{c_t}\\
+c_t+I_t-\theta_tk_{t-1}^\alpha\\
+N_t-\lambda_t \theta_t\\
+\theta_t-e^{(\rho\ln(\theta_{t-1})+\epsilon)}\\
+\lambda_t + \mu_t - (\alpha k_t^{(\alpha-1)}\delta N_{t+1}+\lambda_{t+1} \delta (1-d)+\mu_{t+1}+\delta (1-d)\mu_{t+1}\\
+I_t-(K_t-(1-d)k_{t-1})\\
+\mu_t(k_t - (1-d) k_{t-1}-\upsilon I_{ss})\\
+\end{tcolorbox}
+\begin{tcolorbox}[ams gather]
+if(\mu=0 \land (k_t - (1-d)k_{t-1}-\upsilon I_{ss})\ge 0)\\
+  \lambda_t -\frac{1}{c_t}\\
+c_t+I_t-\theta_tk_{t-1}^\alpha\\
+N_t-\lambda_t \theta_t\\
+\theta_t-e^{(\rho\ln(\theta_{t-1})+\epsilon)}\\
+\lambda_t + {\mu_t} - (\alpha k_t^{(\alpha-1)}\delta N_{t+1}+\lambda_{t+1} \delta (1-d)+{\mu_{t+1}}+\delta (1-d)\mu_{t+1}\\
+I_t-(K_t-(1-d)k_{t-1})\\
+\mu_t(k_t - (1-d) k_{t-1}-\upsilon I_{ss})
+\end{tcolorbox}
+
+\subsection{Regime Switching}
+\label{sec:ressw}
+
+\begin{tcolorbox}[ams gather]
+if(s_t=0\land \mu>0 \land (k_t - (1-d_0)k_{t-1}-\upsilon I_{ss})=0)\\
+  \lambda_t -\frac{1}{c_t}\\
+c_t+k_t-\theta_tk_{t-1}^\alpha\\
+N_t-\lambda_t \theta_t\\
+\theta_t-e^{(\rho\ln(\theta_{t-1})+\epsilon)}\\
+\lambda_t + {\mu_t} - (\alpha k_t^{(\alpha-1)}\delta N_{t+1}+\lambda_{t+1} \delta (1-d_0)+{\mu_{t+1}}+\delta (1-d_0)\\
+I_t-(K_t-(1-d_0)k_{t-1})\\
+\mu_t(k_t - (1-d_0) k_{t-1}-\upsilon I_{ss})\\
+\end{tcolorbox}
+\begin{tcolorbox}[ams gather]
+if(s_t=0\land\mu=0 \land (k_t - (1-d_0)k_{t-1}-\upsilon I_{ss})\ge 0)\\
+  \lambda_t -\frac{1}{c_t}\\
+c_t+k_t-\theta_tk_{t-1}^\alpha\\
+N_t-\lambda_t \theta_t\\
+\theta_t-e^{(\rho\ln(\theta_{t-1})+\epsilon)}\\
+\lambda_t + {\mu_t} - (\alpha k_t^{(\alpha-1)}\delta N_{t+1}+\lambda_{t+1} \delta (1-d_0)+{\mu_{t+1}}+\delta (1-d_0)\\
+I_t-(K_t-(1-d_0)k_{t-1})\\
+\mu_t(k_t - (1-d_0) k_{t-1}-\upsilon I_{ss})
+\end{tcolorbox}
+\begin{tcolorbox}[ams gather]
+if(s_t=1\land \mu>0 \land (k_t - (1-d_1)k_{t-1}-\upsilon I_{ss})=0)\\
+  \lambda_t -\frac{1}{c_t}\\
+c_t+k_t-\theta_tk_{t-1}^\alpha\\
+N_t-\lambda_t \theta_t\\
+\theta_t-e^{(\rho\ln(\theta_{t-1})+\epsilon)}\\
+\lambda_t + {\mu_t} - (\alpha k_t^{(\alpha-1)}\delta N_{t+1}+\lambda_{t+1} \delta (1-d_1)+{\mu_{t+1}}+\delta (1-d_1)\\
+I_t-(K_t-(1-d_1)k_{t-1})\\
+\mu_t(k_t - (1-d_1) k_{t-1}-\upsilon I_{ss})\\
+\end{tcolorbox}
+\begin{tcolorbox}[ams gather]
+if(s_t=1\land\mu=0 \land (k_t - (1-d_1)k_{t-1}-\upsilon I_{ss})\ge 0)\\
+  \lambda_t -\frac{1}{c_t}\\
+c_t+k_t-\theta_tk_{t-1}^\alpha\\
+N_t-\lambda_t \theta_t\\
+\theta_t-e^{(\rho\ln(\theta_{t-1})+\epsilon)}\\
+\lambda_t + {\mu_t} - (\alpha k_t^{(\alpha-1)}\delta N_{t+1}+\lambda_{t+1} \delta (1-d_1)+{\mu_{t+1}}+\delta (1-d_1)\\
+I_t-(K_t-(1-d_1)k_{t-1})\\
+\mu_t(k_t - (1-d_1) k_{t-1}-\upsilon I_{ss})
+\end{tcolorbox}
 
 
 

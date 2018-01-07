@@ -54,15 +54,24 @@ sl=betterRBC`Private`sigLow
 sh=betterRBC`Private`sigHigh
 
 
-
-checkPt[adr_,adrce_,theK_Integer,aPt:{kk_?NumberQ,tt_?NumberQ,eps_?NumberQ}]:=
+Options[checkPt]={"Traditional"->False}
+checkPt[adr_,adrce_,theK_Integer,aPt:{kk_?NumberQ,tt_?NumberQ,eps_?NumberQ},
+opts:OptionsPattern[]]:=
 Module[{},
+If[OptionValue["Traditional"],
+xtm1eps=Flatten[fillIn[{{},{1,3},aPt}]];
+xzt=adr @@ xtm1eps;
+xztp1=(adrce @@ Flatten[xzt])[[Range[4]]];
+tradArg=Flatten[
+Join[Drop[xtm1eps,-1],xzt[[Range[4]]],xztp1[[Range[4]]],{eps}]];
+Print["tradArg:",tradArg];
+eqnsCompiledBetter @@ tradArg,
 xtm1eps=Flatten[fillIn[{{},{1,3},aPt}]];
 xzt=adr @@ xtm1eps;
 xkzkFunc=
 genLilXkZkFunc[linModBetter,{adrce,theK},xzt[[Range[4]]]];
 xkApply=Flatten[xkzkFunc @@ Join[xtm1eps,Flatten[xzt[[4+Range[4]]]]]];
-eqnsCompiledBetter @@ xkApply]
+eqnsCompiledBetter @@ xkApply]]
 
 
 
@@ -165,11 +174,11 @@ backZtoX[{{z1,z2,0}},betterRBCMean,betterRBCSD,betterRBCvv][[1]]]],
 Epilog->{PointSize[0.05],Green,Point[acterrLoc[[{1,2}]]],PointSize[0.025],Orange,Point[errBndLoc[[{1,2}]]],PointSize[0.0125],Black,Point[#]&/@zPts[[All,{1,2}]]}]];
 Print["Approx"];
 Print["errorlocs wrong for trad"];
-Export[theName<>"Trad.pdf",
+Export[theName<>"ApproxTrad.pdf",
 ContourPlot[
 Norm[checkPt[forDRTrad,forDRCETrad,theK,
-backZtoX[{{z1,z2,0}},betterRBCMean,betterRBCSD,betterRBCvv][[1]]]],
-{z1,betterRBCMinZ[[1]],betterRBCMaxZ[[1]]},{z2,betterRBCMinZ[[2]],betterRBCMaxZ[[2]]},PlotRange->All,PlotLegends->Automatic,PlotLabel->theName<>"Trad"<>bothErrStr,
+backZtoX[{{z1,z2,0}},betterRBCMean,betterRBCSD,betterRBCvv][[1]],"Traditional"->True]],
+{z1,betterRBCMinZ[[1]],betterRBCMaxZ[[1]]},{z2,betterRBCMinZ[[2]],betterRBCMaxZ[[2]]},PlotRange->All,PlotLegends->Automatic,PlotLabel->theName<>"ApproxTrad"<>bothErrStr,
 Epilog->{PointSize[0.05],Green,Point[acterrLoc[[{1,2}]]],PointSize[0.025],Orange,Point[errBndLoc[[{1,2}]]],PointSize[0.0125],Black,Point[#]&/@zPts[[All,{1,2}]]}]];
 Print["Trad"];
 trucPtFunc[z1_?NumberQ,z2_?NumberQ]:=
@@ -277,5 +286,11 @@ theResPNestS=parallelNestIterREInterp[genFRExtFunc,linModBetter,
 X0Z0=genX0Z0Funcs[linModBetter];
 theResPNestGenS=parallelNestGenericIterREInterp[genFRExtFunc,linModBetter,
 {X0Z0,2},eqnsCompiledBetter,sgSpecErg,smolyakInterpolation,{},3,"xVarRanges"->{{0.01,2},{0.01,2},{0.01,20},{0.85,1.2}}];
+
+Get["AMAFedsBetterRBC.mth"]
+X0Z0=genX0Z0Funcs[linModBetter];ba=genFRExtFunc[{4,1,4},linModBetter,{X0Z0,2},eqnsCompiledBetter,"xVarRanges"->{{0.01,2},{0.01,2},{0.01,20},{0.85,1.2}},"Traditional"->True];
+
+
+
 
 *)

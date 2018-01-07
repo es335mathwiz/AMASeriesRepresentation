@@ -26,28 +26,32 @@ Nonlinear Dynamic Stochastic Model Solutions: (Better?, Coherent? Comprehensive?
 
 \begin{abstract}
 This paper investigates the solution of discrete time  dynamic stochastic
-infinite-horizon economies characterized by bounded-time-invariant solutions.
-The paper describes how to obtain decision rules satisfying a system of 
-first-order conditions and how to assess their accuracy.\citep{marcet.lorenzoni99,juddGSSA2011,maliarmovingbounds}
+infinite-horizon economies that have bounded-time-invariant solutions.
+The paper provides formulae for evaluating the accuracy of decision rules
+approximately satisfying the system of first-order conditions and presents
+an algorithm that robustly improves the accuracy of proposed solutions.
+The error bounds apply for assessing the accuracy of any proposed decision rule, regardless of the source.
 
-A new series representation for bounded discrete time series paths provides a wayt to construct error bounds for proposed solutions for a very broad class of dynamic stochastic models.
+The results are straightforward applications of a  new series representation
+for bounded discrete time series applicable for
+a very broad class of dynamic stochastic models.
 % This error bound calculation accounts for the impact of errors in any of the equations in the system.
-The bounds apply for assessing the accuracy of any
-proposed decision rule,
-regardless of the source.
-
-
-The paper also proposes an algorithm that
-augments traditional solution procedures with additional constraints enhancing algorithm robustness and improving accuracy.The technique can readily accomodate models with multiple invariant spaces.
-Like the error bound formula, the algorithm is appropriate
+Using the series representation, the paper 
+augments traditional solution procedures with additional constraints thereby
+enhancing algorithm robustness and improving accuracy.
+The technique can readily accomodate models with multiple invariant spaces.
+and, like the error bound formula,  is appropriate
 for models with occasionally binding constraints and regime switching. 
+
+
+
 
 
 The  paper uses a particular implementation of the algorithm to
 demonstrate how to use the 
 series representation in conjunction with 
-Smolyak polynomial function approximation  to eliminate the need for numerical integration during the solution updates and to exploit the high degree of
-parallelism available in the algorithm.
+Smolyak polynomial function approximation  
+to eliminate the need for numerical integration during the solution updates and to exploit the high degree of parallelism available in the algorithm.
 .
 
 
@@ -844,6 +848,61 @@ $\expct{x_{t+1}}$ in the model equations.  Typically  20 iteratation are more th
 
 
 
+\subsubsection{Approximating the Known Solution: $U(c) = Log(c)$ }
+\label{sec:recov-known-solut}
+
+Figure \ref{fig:erg}  characterizes the use of the parallelotope
+transformation described in \cite{Judd2013}. The left panel shows the 200 values of $k_t$ and $\theta_t$ resulting from a stochastic simulation of the the known decision rule. The right panel shows the transformed variables the constitute
+an improved set of variables for constructing function approximation values.
+\begin{figure}
+  \centering
+  \includegraphics[width=2.5in]{ergodicKTheta.pdf}
+  \includegraphics[width=2.5in]{ergodicZs.pdf}
+  \caption{The Ergodic Values for $k_t, \theta_t$ }
+  \label{fig:erg}
+\end{figure}
+
+
+\begin{gather}
+\bar{X}= \vcenter{\hbox{\includegraphics{ergodicMean.pdf}}}
+\end{gather}
+\begin{gather}
+\sigma_{X}= \vcenter{\hbox{\includegraphics{ergodicSD.pdf}}}
+\end{gather}
+
+
+\begin{gather}
+V= \vcenter{\hbox{\includegraphics{ergodicV.pdf}}}
+\end{gather}
+
+\begin{gather}
+\max Z= \vcenter{\hbox{\includegraphics{ergodicMaxZ.pdf}}}
+\end{gather}
+\begin{gather}
+\min Z= \vcenter{\hbox{\includegraphics{ergodicMinZ.pdf}}}
+\end{gather}
+
+\subsubsection{Approximating an Unknown Solution: $U(c) \ne Log(c)$ }
+\label{sec:unknown-solutions}
+
+The algorithm we have described,
+uses a proposed deterministic map
+characterizing the evolution of expected values for
+the dynamic system going forward. It then solves
+a deterministic problem at time t to improve the proposed solution.
+There is nothing in the algorithm that precludes accommodating  inequality
+constraints.\footnote{See section \ref{sec:regime-switch-model} characterizing
+  models with regime switching.} 
+The algorithm we have described,
+uses a proposed deterministic map
+characterizing the evolution of expected values for
+the dynamic system going forward. It then solves
+a deterministic problem at time t to improve the proposed solution.
+There is nothing in the algorithm that precludes accommodating  inequality
+constraints.\footnote{See section \ref{sec:regime-switch-model} characterizing
+  models with regime switching.}
+
+
 
 Figure \ref{fig:tradOne} shows the approximation error obtained by the standard
 practice of selecting a number of approximation points, solving the collocation problem for the model equations at these points.
@@ -1245,61 +1304,6 @@ $\xguss=x_t(x_{t-1},\epsilon)$\;
 
 \subsection{RBC Example}
 \label{sec:rbc-example}
-
-
-\subsubsection{Approximating the Known Solution: $U(c) = Log(c)$ }
-\label{sec:recov-known-solut}
-
-Figure \ref{fig:erg}  characterizes the use of the parallelotope
-transformation described in \cite{Judd2013}. The left panel shows the 200 values of $k_t$ and $\theta_t$ resulting from a stochastic simulation of the the known decision rule. The right panel shows the transformed variables the constitute
-an improved set of variables for constructing function approximation values.
-\begin{figure}
-  \centering
-  \includegraphics[width=2.5in]{ergodicKTheta.pdf}
-  \includegraphics[width=2.5in]{ergodicZs.pdf}
-  \caption{The Ergodic Values for $k_t, \theta_t$ }
-  \label{fig:erg}
-\end{figure}
-
-
-\begin{gather}
-\bar{X}= \vcenter{\hbox{\includegraphics{ergodicMean.pdf}}}
-\end{gather}
-\begin{gather}
-\sigma_{X}= \vcenter{\hbox{\includegraphics{ergodicSD.pdf}}}
-\end{gather}
-
-
-\begin{gather}
-V= \vcenter{\hbox{\includegraphics{ergodicV.pdf}}}
-\end{gather}
-
-\begin{gather}
-\max Z= \vcenter{\hbox{\includegraphics{ergodicMaxZ.pdf}}}
-\end{gather}
-\begin{gather}
-\min Z= \vcenter{\hbox{\includegraphics{ergodicMinZ.pdf}}}
-\end{gather}
-
-\subsubsection{Approximating an Unknown Solution: $U(c) \ne Log(c)$ }
-\label{sec:unknown-solutions}
-
-The algorithm we have described,
-uses a proposed deterministic map
-characterizing the evolution of expected values for
-the dynamic system going forward. It then solves
-a deterministic problem at time t to improve the proposed solution.
-There is nothing in the algorithm that precludes accommodating  inequality
-constraints.\footnote{See section \ref{sec:regime-switch-model} characterizing
-  models with regime switching.} 
-The algorithm we have described,
-uses a proposed deterministic map
-characterizing the evolution of expected values for
-the dynamic system going forward. It then solves
-a deterministic problem at time t to improve the proposed solution.
-There is nothing in the algorithm that precludes accommodating  inequality
-constraints.\footnote{See section \ref{sec:regime-switch-model} characterizing
-  models with regime switching.}
 
 
 \section{Future Work}

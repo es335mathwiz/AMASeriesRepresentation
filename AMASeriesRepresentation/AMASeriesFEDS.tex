@@ -570,7 +570,7 @@ It is worth noting that since we will be working with models where expectations 
 
 
 
-We can reconstruct our linear reference model by increasing its dimension by one , $\linMod$, to accommodate 
+We can reconstruct our linear reference model by increasing its dimension by one  to accommodate 
  augmenting the RBC model with the equation
 \begin{tcolorbox}[ams gather]
   \rcpC_t=\frac{\eta}{c_t}
@@ -578,7 +578,7 @@ We can reconstruct our linear reference model by increasing its dimension by one
 \noindent
 substituting $\rcpC_{t+1}$ for $\frac{\eta}{c_{t+1}}$ in the first equation and 
  linearizing the RBC model about the ergodic mean
-given in \refeq{rbcparams}
+given in \refeq{rbcparams} leads to:
 {\small
 \begin{gather}
   \begin{bmatrix}
@@ -604,6 +604,7 @@ F=
 \psi_c=\vcenter{\hbox{\includegraphics{RBCPsissSymb.pdf}}}
 \end{gather}
 
+Recomputing the truncation errors with the expanded model produces identical results for the original variables.
 
 
 \section{Computing Model Solution Error Bounds}
@@ -620,10 +621,7 @@ This work contrast with the analysis provided in
 Their approaches identify Euler Equation Errors, but use statistical techniques to estimate the impact of these errors on solution accuracy.  Here we compute
 and equation for the bound that does not require statistical inference.
 
-\subsection{Model Specification}
-\label{sec:model-specification}
 
-We will consider time invariant maps that arise form solving equation a time t optimization problem codified in a collection of systems of equations.  
 
 
 
@@ -631,14 +629,15 @@ We will consider time invariant maps that arise form solving equation a time t o
 \label{sec:errorformula}
 
 
+We consider time invariant maps such as often arise from solving equation a time t optimization problem codified in a collection of systems of equations.  
 In what follows, we construct an error bound for proposed model solutions.
 Consider a bounded region, $\bndRgn$, where all iterated conditional expectations paths remain bounded.
- Given an exact solution $x^\star_t=g^\star(x_{t-1},\epsilon_t)$ define
+ Given an exact solution $x^\star_t=g^\star(x_{t-1},\epsilon_t)$ define te conditional expectations function,
   \begin{gather}
 G^\star(x)\equiv\expct{g^\star(x,\epsilon)} \intertext{then with}
-E_tx^\star_{t+1}=G^\star(g^\star(x_{t-1},\epsilon_t))\\
+E_tx^\star_{t+1}=G^\star(g^\star(x_{t-1},\epsilon_t)) \intertext{we have}
     \label{eq:2}
-\eqnFunc(x^\star_{t-1},x^\star_t,E_tx^\star_{t+1},\epsilon_t)=0  \,\, \forall  (x_{t-1},\epsilon_t)\\ \intertext{Using $G^\star$ and $\linMod$ construct the family of trajectories and corresponding $z^\star_t(x_{t-1},\epsilon)$ }
+\eqnFunc(x^\star_{t-1},x^\star_t,E_tx^\star_{t+1},\epsilon_t)=0  \,\, \forall  (x_{t-1},\epsilon_t)\\ \intertext{In words, the exact solution satisfies the model equations exactly.  Using $G^\star$ and $\linMod$ construct the family of trajectories and corresponding $z^\star_t(x_{t-1},\epsilon)$ }
    x^\star_t(x_{t-1},\epsilon_t) \in{R^L}\,\,\infNorm{x^\star_t(x_{t-1},\epsilon_t)}  \le \bar{\mathcal{X}}\,\,\forall t\ > 0
   \end{gather}
    \begin{align}
@@ -666,7 +665,8 @@ E_tx_{t+1}=G^p(g^p(x_{t-1},\epsilon_t))\\
 \mathbf{e}_t^p(x_{t-1},\epsilon)\equiv
 \eqnFunc(x_{t-1},x^p_t,E_tx^p_{t+1},\epsilon_t)
 \end{gather*}
-We will assume that, by construction, tha the conditional expectations paths are all bounded in the region $\bndRgn^p$. Using $G^p$ and $\linMod$ construct the family of trajectories and corresponding $z^p_t(x_{t-1},\epsilon)$\footnote{The algorithm presented below for finding solutions provides a mechanism for generating such proposed solutions.} 
+By construction,  the conditional expectations paths will all be bounded
+in the region $\bndRgn^p$. Using $G^p$ and $\linMod$ construct the family of trajectories and corresponding $z^p_t(x_{t-1},\epsilon)$\footnote{The algorithm presented below for finding solutions provides a mechanism for generating such proposed solutions.} 
 \begin{gather*}
    x^p_t(x_{t-1},\epsilon_t) \in{R^L}\,\,\infNorm{x^p_t(x_{t-1},\epsilon_t)}  \le \bar{\mathcal{X}}\,\,\forall t\ > 0
   \end{gather*}
@@ -707,7 +707,8 @@ We will assume that, by construction, tha the conditional expectations paths are
 \sum_{\sForSum=0}^\infty F^s \phi \infNorm{\Delta z_{t+\sForSum}^p(x_{t-1},\epsilon_t)}    
   \end{gather}
 
-  By bounding the largest deviation in the paths for the $\Delta z_t^p$ we can bound the largest different in $x_t$.\footnote{The largest error for $\Delta z_{t+k}^p$   are pessimistic bounds since the future values are probabality weighted averages of the $\Delta z_t^p$ values for the given initial conditions because the condition expectations paths remain in the region $\bndRgn^p$.} The exact solution satisfies the model equations exactly.  The error in the proposed solution provides a conservative bound on the largest change in $z$.
+  By bounding the largest deviation in the paths for the $\Delta z_t^p$ we can bound the largest difference in $x_t$.\footnote{Since the future values are probabality weighted averages of the $\Delta z_t^p$ values for the given initial conditions and the condition expectations paths remain in the region $\bndRgn^p$,
+the largest error for $\Delta z_{t+k}^p$   are pessimistic bounds for the errors from the conditional expectations path. } The exact solution satisfies the model equations exactly.  The error associated with the proposed solution leads to a conservative bound on the largest change in $z$ needed to match the exact solution.
 
   \begin{tcolorbox}[ams gather]
   \Delta z_t \le  \label{eq:3}
@@ -1068,10 +1069,10 @@ is 25\% larger than the actual error
 \begin{figure}
   \centering
 \ifmacosx
-  \includegraphics{resDir/forBetterRBC--2,2,2-Iters30theK30host-MacBook-Pro-2numKern2ApproxTrad.pdf}
+  \includegraphics{resDir/forBetterRBC--2,2,2-Iters20theK20host-MacBook-Pro-2numKern2ApproxTrad.pdf}
 
 
-  \includegraphics{resDir/forBetterRBC--2,2,2-Iters30theK30host-MacBook-Pro-2numKern2.pdf}
+  \includegraphics{resDir/forBetterRBC--2,2,2-Iters20theK20host-MacBook-Pro-2numKern2.pdf}
 \fi
   \caption{Contour Plot for approx=(2,2,2) 20 iterations and K =20}
   \label{fig:cntpltG}

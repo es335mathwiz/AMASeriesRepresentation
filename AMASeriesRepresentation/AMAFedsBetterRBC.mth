@@ -64,7 +64,7 @@ xzt=adr @@ xtm1eps;
 xztp1=(adrce @@ Flatten[xzt])[[Range[4]]];
 tradArg=Flatten[
 Join[Drop[xtm1eps,-1],xzt[[Range[4]]],xztp1[[Range[4]]],{eps}]];
-Print["tradArg:",tradArg];
+(*Print["tradArg:",tradArg];*)
 eqnsCompiledBetter @@ tradArg,
 xtm1eps=Flatten[fillIn[{{},{1,3},aPt}]];
 xzt=adr @@ xtm1eps;
@@ -94,64 +94,113 @@ theFRExt=genFRExtFunc[{4,1,4},linModBetter,{X0Z0,2},eqnsCompiledBetter,
 Print["doIt:theFRExt done"];
 DistributeDefinitions[X0Z0,theFRExt,checkPt];
 Print["doIt:DistributeDefinitions done"];
+(**)
 {tm,ig}=Timing[
 theRes=parallelNestIterREInterp[genFRExtFunc,linModBetter,
 {X0Z0,theK},eqnsCompiledBetter,sgSpecErg,iters,"xVarRanges"->{{0.01,2},{0.01,2},{0.01,20},{0.85,1.2}}]];
+(*Print["theRes=",theRes//InputForm];*)
 {tmTrad,ig}=Timing[
 theResTrad=parallelNestIterREInterp[genFRExtFunc,linModBetter,
 {X0Z0,theK},eqnsCompiledBetter,sgSpecErg,iters,"xVarRanges"->{{0.01,2},{0.01,2},{0.01,20},{0.85,1.2}},"Traditional"->True]];
-Print["theRes=",theRes//InputForm];
-numKern=Length[Kernels[]];
-Print["doIt:parallelNestGeneric done"];
-theName=fNameString[approx,iters,theK,numKern];
+(*Print["theResTrad=",theResTrad//InputForm];*)
+(**)
 forDR=theRes[[-1,1]];DistributeDefinitions[forDR];
 forDRCE=theRes[[-1,2]];DistributeDefinitions[forDRCE];
 forDRTrad=theResTrad[[-1,1]];DistributeDefinitions[forDRTrad];
 forDRCETrad=theResTrad[[-1,2]];DistributeDefinitions[forDRCETrad];
+(**)
+numKern=Length[Kernels[]];
+Print["doIt:parallelNestGeneric done"];
+theName=fNameString[approx,iters,theK,numKern];
 DistributeDefinitions[linModBetter];
+(**)
 drerrName=Unique["drerr"];
+drerrNameTrad=Unique["drerrTrad"];
+(**)
 drName=Unique["dr"];
-drName[z1_?NumberQ,z2_?NumberQ]:=
+drNameTrad=Unique["drTrad"];
+(**)
+drName[z1_?NumberQ,z2_?NumberQ,z3_?NumberQ]:=
 Module[{},
--Norm[actualErrs[forDR,backZtoX[{{z1,z2,0}},betterRBCMean,betterRBCSD,betterRBCvv][[1]]]]];
-drerrName[z1_?NumberQ,z2_?NumberQ]:=
+-Norm[actualErrs[forDR,backZtoX[{{z1,z2,z3}},betterRBCMean,betterRBCSD,betterRBCvv][[1]]]]];
+drNameTrad[z1_?NumberQ,z2_?NumberQ,z3_?NumberQ]:=
+Module[{},
+-Norm[actualErrs[forDRTrad,backZtoX[{{z1,z2,z3}},betterRBCMean,betterRBCSD,betterRBCvv][[1]]]]];
+(**)
+drerrName[z1_?NumberQ,z2_?NumberQ,z3_?NumberQ]:=
 Module[{},
 With[{resNow=-Norm[approxErrs[forDR,forDRCE,
-backZtoX[{{z1,z2,0}},betterRBCMean,betterRBCSD,betterRBCvv][[1]]]]},
+backZtoX[{{z1,z2,z3}},betterRBCMean,betterRBCSD,betterRBCvv][[1]]]]},
+resNow]];
+drerrNameTrad[z1_?NumberQ,z2_?NumberQ,z3_?NumberQ]:=
+Module[{},
+With[{resNow=-Norm[approxErrs[forDRTrad,forDRCETrad,
+backZtoX[{{z1,z2,z3}},betterRBCMean,betterRBCSD,betterRBCvv][[1]]]]},
 resNow]];
 DistributeDefinitions[drerrName,drName];
-acterr={acterrVal,acterrSubs}=NMinimize[drName[z1,z2],
+DistributeDefinitions[drerrNameTrad,drNameTrad];
+(**)tryEps=.03;
+acterr={acterrVal,acterrSubs}=NMinimize[drName[z1,z2,z3],
 And[betterRBCMinZ[[1]] <=z1<=betterRBCMaxZ[[1]],
-betterRBCMinZ[[2]]<=z2<=betterRBCMaxZ[[2]]],{z1,z2},Method->"NelderMead"];Print["acterr:",acterr];
-errBnd={errBndVal,errBndSubs}=NMinimize[drerrName[z1,z2],
+betterRBCMinZ[[2]]<=z2<=betterRBCMaxZ[[2]],
+betterRBCMinZ[[3]]<=z3<=betterRBCMaxZ[[3]]],{z1,z2,z3},Method->"NelderMead"];
+Print["acterr:",acterr];
+errBnd={errBndVal,errBndSubs}=NMinimize[drerrName[z1,z2,z3],
 And[betterRBCMinZ[[1]] <=z1<=betterRBCMaxZ[[1]],
-betterRBCMinZ[[2]]<=z2<=betterRBCMaxZ[[2]]],{z1,z2},Method->"NelderMead"];Print["errBnd:",errBnd];
+betterRBCMinZ[[2]]<=z2<=betterRBCMaxZ[[2]],
+betterRBCMinZ[[3]]<=z3<=betterRBCMaxZ[[3]]],{z1,z2,z3},Method->"NelderMead"];
+Print["errBnd:",errBnd];
+acterrTrad={acterrValTrad,acterrSubsTrad}=NMinimize[drNameTrad[z1,z2,z3],
+And[betterRBCMinZ[[1]] <=z1<=betterRBCMaxZ[[1]],
+betterRBCMinZ[[2]]<=z2<=betterRBCMaxZ[[2]],
+betterRBCMinZ[[3]]<=z3<=betterRBCMaxZ[[3]]],{z1,z2,z3},Method->"NelderMead"];
+Print["acterrTrad:",acterrTrad];
+errBndTrad={errBndValTrad,errBndSubsTrad}=NMinimize[drerrNameTrad[z1,z2,z3],
+And[betterRBCMinZ[[1]] <=z1<=betterRBCMaxZ[[1]],
+betterRBCMinZ[[2]]<=z2<=betterRBCMaxZ[[2]],
+betterRBCMinZ[[3]]<=z3<=betterRBCMaxZ[[3]]],{z1,z2,z3},Method->"NelderMead"];
+Print["errBndTrad:",errBndTrad];
+(**)
 errBndLoc={z1,z2}/.errBndSubs;
 acterrLoc={z1,z2}/.acterrSubs;
+errBndLocTrad={z1,z2}/.errBndSubsTrad;
+acterrLocTrad={z1,z2}/.acterrSubsTrad;
+(**)
 mthName=theName<>".mth";
 If[FileExistsQ[mthName],DeleteFile[mthName]];
+(**)
 bothErrStr=
 "\nerrBnd="<>
 (errBndStr=ToString[NumberForm[-errBndVal,NumberFormat->(Row[{#1,"e",#3}]&)]])<>","<>
 "actualErr="<>(acterrStr=ToString[NumberForm[-acterrVal,NumberFormat->(Row[{#1,"e",#3}]&)]]);
+bothErrStrTrad=
+"\nerrBndTrad="<>
+(errBndStrTrad=ToString[NumberForm[-errBndValTrad,NumberFormat->(Row[{#1,"e",#3}]&)]])<>","<>
+"actualErrTrad="<>(acterrStrTrad=ToString[NumberForm[-acterrValTrad,NumberFormat->(Row[{#1,"e",#3}]&)]]);
+(**)
 WriteString[theName<>"acterr.tex",acterrStr];
 WriteString[theName<>"errBnd.tex",errBndStr];
 Print["here",{acterrStr,acterr,errBnd,bothErrStr,errBndVal}];
-zPts=backXtoZ[ptErg,betterRBCMean,betterRBCSD,betterRBCvv];Print["errBndLoc=",errBndLoc];
+Print["hereTrad",{acterrStrTrad,acterrTrad,errBndTrad,bothErrStrTrad,errBndValTrad}];
+zPts=backXtoZ[ptErg,betterRBCMean,betterRBCSD,betterRBCvv];
+Print["errBndLoc=",errBndLoc];
+iterPts=
+(**)
 Export[theName<>".pdf",acterrsCP=
 ContourPlot[
 Norm[actualErrs[forDR,
-backZtoX[{{z1,z2,0}},betterRBCMean,betterRBCSD,betterRBCvv][[1]]]],
+backZtoX[{{z1,z2,tryEps}},betterRBCMean,betterRBCSD,betterRBCvv][[1]]]],
 {z1,betterRBCMinZ[[1]],betterRBCMaxZ[[1]]},{z2,betterRBCMinZ[[2]],betterRBCMaxZ[[2]]},PlotRange->All,PlotLegends->Automatic,PlotLabel->theName<>bothErrStr,
 Epilog->{PointSize[0.05],Green,Point[acterrLoc[[{1,2}]]],PointSize[0.025],Orange,Point[errBndLoc[[{1,2}]]],PointSize[0.0125],Black,Point[#]&/@zPts[[All,{1,2}]]},PlotRangeClipping->False]];
 Print["acterrsCP"];
 Export[theName<>"Trad"<>".pdf",acterrsTradCP=
 ContourPlot[
 Norm[actualErrs[forDRTrad,
-backZtoX[{{z1,z2,0}},betterRBCMean,betterRBCSD,betterRBCvv][[1]]]],
-{z1,betterRBCMinZ[[1]],betterRBCMaxZ[[1]]},{z2,betterRBCMinZ[[2]],betterRBCMaxZ[[2]]},PlotRange->All,PlotLegends->Automatic,PlotLabel->theName<>"Trad"<>bothErrStr,
-Epilog->{PointSize[0.05],Green,Point[acterrLoc[[{1,2}]]],PointSize[0.025],Orange,Point[errBndLoc[[{1,2}]]],PointSize[0.0125],Black,Point[#]&/@zPts[[All,{1,2}]]},PlotRangeClipping->False]];
+backZtoX[{{z1,z2,tryEps}},betterRBCMean,betterRBCSD,betterRBCvv][[1]]]],
+{z1,betterRBCMinZ[[1]],betterRBCMaxZ[[1]]},{z2,betterRBCMinZ[[2]],betterRBCMaxZ[[2]]},PlotRange->All,PlotLegends->Automatic,PlotLabel->theName<>"Trad"<>bothErrStrTrad,
+Epilog->{PointSize[0.05],Green,Point[acterrLocTrad[[{1,2}]]],PointSize[0.025],Orange,Point[errBndLoc[[{1,2}]]],PointSize[0.0125],Black,Point[#]&/@zPts[[All,{1,2}]]},PlotRangeClipping->False]];
 Print["acterrsTradCP"];
+(**)
 Export[theName<>"Minus.pdf",
 ContourPlot[
 Norm[actualErrs[forDR,
@@ -167,32 +216,34 @@ backZtoX[{{z1,z2,.03}},betterRBCMean,betterRBCSD,betterRBCvv][[1]]]],
 Epilog->{PointSize[0.05],Green,Point[acterrLoc[[{1,2}]]],PointSize[0.025],Orange,Point[errBndLoc[[{1,2}]]],PointSize[0.0125],Black,Point[#]&/@zPts[[All,{1,2}]]}]];
 Print["Plus"];
 Export[theName<>"Approx.pdf",
+(**)
 ContourPlot[
 Norm[checkPt[forDR,forDRCE,theK,
-backZtoX[{{z1,z2,0}},betterRBCMean,betterRBCSD,betterRBCvv][[1]]]],
+backZtoX[{{z1,z2,tryEps}},betterRBCMean,betterRBCSD,betterRBCvv][[1]]]],
 {z1,betterRBCMinZ[[1]],betterRBCMaxZ[[1]]},{z2,betterRBCMinZ[[2]],betterRBCMaxZ[[2]]},PlotRange->All,PlotLegends->Automatic,PlotLabel->theName<>"Approx"<>bothErrStr,
 Epilog->{PointSize[0.05],Green,Point[acterrLoc[[{1,2}]]],PointSize[0.025],Orange,Point[errBndLoc[[{1,2}]]],PointSize[0.0125],Black,Point[#]&/@zPts[[All,{1,2}]]}]];
 Print["Approx"];
-Print["errorlocs wrong for trad"];
 Export[theName<>"ApproxTrad.pdf",
 ContourPlot[
 Norm[checkPt[forDRTrad,forDRCETrad,theK,
-backZtoX[{{z1,z2,0}},betterRBCMean,betterRBCSD,betterRBCvv][[1]],"Traditional"->True]],
+backZtoX[{{z1,z2,tryEps}},betterRBCMean,betterRBCSD,betterRBCvv][[1]],"Traditional"->True]],
 {z1,betterRBCMinZ[[1]],betterRBCMaxZ[[1]]},{z2,betterRBCMinZ[[2]],betterRBCMaxZ[[2]]},PlotRange->All,PlotLegends->Automatic,PlotLabel->theName<>"ApproxTrad"<>bothErrStr,
-Epilog->{PointSize[0.05],Green,Point[acterrLoc[[{1,2}]]],PointSize[0.025],Orange,Point[errBndLoc[[{1,2}]]],PointSize[0.0125],Black,Point[#]&/@zPts[[All,{1,2}]]}]];
+Epilog->{PointSize[0.05],Green,Point[acterrLocTrad[[{1,2}]]],PointSize[0.025],Orange,Point[errBndLocTrad[[{1,2}]]],PointSize[0.0125],Black,Point[#]&/@zPts[[All,{1,2}]]}]];
 Print["Trad"];
-trucPtFunc[z1_?NumberQ,z2_?NumberQ]:=
+(**)
+truncPtFunc[z1_?NumberQ,z2_?NumberQ,z3_?NumberQ]:=
 Module[{},
 Norm[tErrMat.Transpose[{checkPt[forDR,forDRCE,theK,
-backZtoX[{{z1,z2,0}},betterRBCMean,betterRBCSD,betterRBCvv][[1]]]}]]];
+backZtoX[{{z1,z2,tryEps}},betterRBCMean,betterRBCSD,betterRBCvv][[1]]]}]]];
 Export[theName<>"truncApprox.pdf",
 ContourPlot[
-truncPtFunc[z1,z2],
+truncPtFunc[z1,z2,tryEps],
 {z1,betterRBCMinZ[[1]],betterRBCMaxZ[[1]]},{z2,betterRBCMinZ[[2]],betterRBCMaxZ[[2]]},PlotRange->All,PlotLegends->Automatic,PlotLabel->theName<>"TruncApprox"<>bothErrStr,
 Epilog->{PointSize[0.05],Green,Point[acterrLoc[[{1,2}]]],PointSize[0.025],Orange,Point[errBndLoc[[{1,2}]]],PointSize[0.0125],Black,Point[#]&/@zPts[[All,{1,2}]]}]];
 Print["TruncApprox"];
 Save[mthName,theRes,theResTrad,tm,tmTrad,numKern,condNum,
-errBndVal,errBndLoc,acterrVal,acterrLoc,acterrsCP];
+errBndVal,errBndLoc,acterrVal,acterrLoc,
+errBndValTrad,errBndLocTrad,acterrValTrad,acterrLocTrad,acterrsCP];
 Print["doIt:saving done"];
 {theRes,theResTrad}]
 
@@ -290,7 +341,8 @@ theResPNestGenS=parallelNestGenericIterREInterp[genFRExtFunc,linModBetter,
 Get["AMAFedsBetterRBC.mth"]
 X0Z0=genX0Z0Funcs[linModBetter];ba=genFRExtFunc[{4,1,4},linModBetter,{X0Z0,2},eqnsCompiledBetter,"xVarRanges"->{{0.01,2},{0.01,2},{0.01,20},{0.85,1.2}},"Traditional"->True];
 
-
+doIt[{1, 1, 1}, 10, 0];
+doIt[{1, 1, 1}, 10, 20];
 
 
 *)

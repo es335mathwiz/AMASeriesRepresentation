@@ -726,9 +726,10 @@ the largest error for $\Delta z_{t+k}^p$   are pessimistic bounds for the errors
 \label{sec:practicalformula}
 
 The framework provides a new way to bound the error one can expect from
-employing a given proposed model solution and leads to an
+employing a given proposed model solution and leads, in Section \ref{sec:algoforsoln},, to an
 algorithm with  components similar to parameterized expectations that
-one can use to improve proposed solutions. The series representation makes
+one can use to improve proposed solutions. In that section, the
+series representation makes
 it possible to organize the calculation around computing a deterministic
 problem at time t given a proposed solution.  The deterministic solution
 can accommodate inequality constraints or alternative regimes to produce a
@@ -755,17 +756,18 @@ that together determine the solution  $x_t\tArg$
 
 
 
-We will assume that we have a countable collection of equations systems that are mutually exclusive and exhaustive.
-Given $\epsilon_t, x_{t-1}$,  this collection of 
+To fix notation,  assume that we have a countable collection of equations systems that are mutually exclusive and exhaustive.
+Given $(x_{t-1},\epsilon_t$,  this collection of 
 systems of equations produces a unique solution for $x_t$.  We will include 
 enough auxiliary variables so that we can correctly compute expected values
 for model variables by applying the law of iterated 
 expectations to individual variables.
-The $x_t$ satisfies one and only one of the 
+To simplify the algorithm specification and implementation, assume that the
+$x_t$ satisfies one and only one of the 
 collection of equations and $x_t$ is (locally) the unique solution 
 for the collection of
 equations.  Examples of such systems include typical DSGE models that have one
-system of equations, occasionally binding constraints with solutions demonstrating complementary slackness, regime switching models with systems corresponding to the status in each given regime or combinations of the above.
+system of equations, occasionally binding constraints with solutions demonstrating complementary slackness, regime switching models with systems corresponding to the status in each given regime or combinations of the above.  See the appendix for an example of a specification for occasionally binding constraints(\ref{sec:occbind}) and for regime swithching)(\ref{sec:ressw}).
 
 It will be convenient for describing the algorithms to
  augment the model equations to include auxiliary variables so that we can write the model in the form
@@ -779,70 +781,31 @@ It will be convenient for describing the algorithms to
 
 
 
-\subsubsection{Occasionally Binding Constraints}
-\label{sec:obc-solut}
-
-Stochastic dynamic non linear economic
-models increasingly embody  occasionally binding constraints (OBC).
-Since \cite{Christiano2000} a host of
-authors have described a variety of approaches. \footnote{The algorithms described \cite{holden15:_exist_dsge} and \cite{guerrieri15:_occbin} also exploit the use of ``anticipated shocks'', but do not use the comprehensive formula employed here. }
-\cite{holden15:_exist_dsge,guerrieri15:_occbin,benigno09,hintermaier10,brumm10,nakov08,haefke98,nakata12,gordon11,billi11,Hintermaier2010,Guerrieri2015}
-
-
-
-Consider adding constraints the constraints:
-
-\begin{gather*}
-  I_t \ge \upsilon I_{ss}
-\end{gather*}
-
-
-\subsubsection{Regime Switching}
-
-
-\label{sec:regime-switch-model}
-
-\begin{itemize}
-\item best to have a functional form for each regime.
-\item conditional expectation probability transition just weighted sums
-\item to make transition probability a function of state 
-can(should>) use same grid for $p_{ij}(x)$  will get a different conditional expectations polynomial at each x
-\item can use for heterogeneous agents
-\item ignoring series constraint means poorer error bound as values of equation errors larger everywhere
-\item dynamical systems ``contraction'' algebraic, successors
-\end{itemize}
-
-
-Consider two states $s_t \in {0,1}$ where the depreciation rates are different:  $d_0>d_1$
-
-\begin{gather}
-    Prob(s_t=j|s_{t-1}=i)=p_{ij}
-\end{gather}
-
-For example, the Euler equations for the  neoclassical growth  model 
-\label{sec:simple-rbc-model-ext} can be written as
- 
-
-
 
 \section{Improving Proposed  Solutions}
 \label{sec:algoforsoln}
 
-\subsection{An Informal Walk Through of the Algorithm}
+\subsection{An Informal Characterization  of the Algorithm}
 \label{sec:walkthrough}
 
 
 Before presenting the pseudocode for the detailed algorithm, this section
-describes in broad detail  how the approach proposed here differs from 
+describes in how the proposed approach differs from 
 what is typically done for solving dynamic stochastic models.
 In what follows, both the traditional and the new  approach use anisotropic
-Smolyak polynomial with precomputed expectations.
+Smolyak polynomial function approximation with precomputed expectations.
 This section
 computes the solution for the case when the exact solution is known and
-compares the approximation to the known actual solution.
+compares the various approximations to the known actual solution.
+
 As with the standard approach it is important to iterate on the proposed solution until consistency between
-the decision rule used for setting t and the expectations function for setting
-$\expct{x_{t+1}}$ in the model equations.  Typically  20 iteratation are more than enough for the standard or the new approach.
+the decision rule used for setting time t values and the expectations function for setting
+$\expct{x_{t+1}}$ in the model equations.  Typically  20 iteratation are more than enough for the standard and the new approach.
+
+the new approach entails adding constraints on the time t state variables that
+come from the series representation for the proposed solution.  The series
+expression relates the time t values to the values along the anticipated
+conditional expectations path.
 
 
 
@@ -874,40 +837,27 @@ V= \vcenter{\hbox{\includegraphics{ergodicV.pdf}}}
 \end{gather}
 
 \begin{gather}
-\max Z= \vcenter{\hbox{\includegraphics{ergodicMaxZ.pdf}}}
+\max U= \vcenter{\hbox{\includegraphics{ergodicMaxZ.pdf}}}
 \end{gather}
 \begin{gather}
-\min Z= \vcenter{\hbox{\includegraphics{ergodicMinZ.pdf}}}
+\min U= \vcenter{\hbox{\includegraphics{ergodicMinZ.pdf}}}
 \end{gather}
 
-\subsubsection{Approximating an Unknown Solution: $U(c) \ne Log(c)$ }
-\label{sec:unknown-solutions}
 
-The algorithm we have described,
-uses a proposed deterministic map
-characterizing the evolution of expected values for
-the dynamic system going forward. It then solves
-a deterministic problem at time t to improve the proposed solution.
-There is nothing in the algorithm that precludes accommodating  inequality
-constraints.\footnote{See section \ref{sec:regime-switch-model} characterizing
-  models with regime switching.} 
-The algorithm we have described,
-uses a proposed deterministic map
-characterizing the evolution of expected values for
-the dynamic system going forward. It then solves
-a deterministic problem at time t to improve the proposed solution.
-There is nothing in the algorithm that precludes accommodating  inequality
-constraints.\footnote{See section \ref{sec:regime-switch-model} characterizing
-  models with regime switching.}
+The following graphs have present key characterics of the solutions.  
+The panels labelled approximation error show contour plots of $\mathbb{E}(z_{1,t-1},z_{2,t-1})$:
+\begin{gather*}
+\mathbb{E}(z_{1,t-1},z_{2,t-1})\equiv \sqrt{(c_t()-c_t^\star())^2 +(k_t()-k_t^\star())^2 +(\theta_t()-\theta_t^\star())^2 +(N_t()-N_t^\star())^2 }  
+\end{gather*}
+The panels labelled equation error show  contour plots for
+\begin{gather*}
+  \mathbb{D}(z_{1,t-1},z_{2,t-1})\equiv \eqnFunc(x_{-},g^p(x_{-},\epsilon),G^p(g^p(x_{-},\epsilon)),\epsilon).
+\end{gather*}
+The values of $U_t$ range over the ergodic set described above.
 
-
-
+The bottom panel of
 Figure \ref{fig:tradOne} shows the approximation error obtained by the standard
 practice of selecting a number of approximation points, solving the collocation problem for the model equations at these points.
-The figures  show contour plots for the norm of the error 
-
-$\sqrt{(c_t-c_t^\star)^2 +(k_t-k_t^\star)^2 +(\theta_t-\theta_t^\star)^2 +(N_t-N_t^\star)^2 }$
-
 for the approximated decision rule. The green dot shows the values of $(y_1,y_2)$ associated with the largest actual error.  The orange dot shows $(y_1,y_2)$ associated with  the largest equation system discrepancy 
 that was used in computing the error bound. The black dots show the interpolation points. The label of the figure provides the predicted error bound along with the largest error.
 The top panel provides a contour plot of the
@@ -929,10 +879,10 @@ the series formula has a correction term for $z_t(x_{t-1},\epsilon_t)$
   \centering
 \ifmacosx
 
-  \includegraphics{resDir/forBetterRBC--1,1,1-Iters20theK1host-MacBook-Pro-2numKern2Trad.pdf}
+  \includegraphics{resDir/forBetterRBC--1,1,1-Iters20theK0host-MacBook-Pro-2numKern2Trad.pdf}
 
 
-  \includegraphics{resDir/forBetterRBC--1,1,1-Iters20theK1host-MacBook-Pro-2numKern2ApproxTrad.pdf}
+  \includegraphics{resDir/forBetterRBC--1,1,1-Iters20theK0host-MacBook-Pro-2numKern2ApproxTrad.pdf}
 \fi
 \iflinux
 %\includegraphics{resDir/forBetterRBC--1,1,1-Iters20theK0numKern16Approx.pdf}
@@ -1121,6 +1071,18 @@ is 25\% larger than the actual error
 
 \subsection{Algorithm Overview}
 \label{sec:pseudocode}
+\subsubsection{Approximating an Unknown Solution: $U(c) \ne Log(c)$ }
+\label{sec:unknown-solutions}
+The algorithm we have described,
+uses a proposed deterministic map
+characterizing the evolution of expected values for
+the dynamic system going forward. It then solves
+a deterministic problem at time t to improve the proposed solution.
+There is nothing in the algorithm that precludes accommodating  inequality
+constraints.\footnote{See section \ref{sec:regime-switch-model} characterizing
+  models with regime switching.}
+
+
 {
   \begin{itemize}
   \item Consider the single model case $  \eqnFunc(x_{t-1},x_t,\expct{x_{t+1}},\epsilon)=0$.  
@@ -1304,8 +1266,6 @@ $\xguss=x_t(x_{t-1},\epsilon)$\;
 
 
 
-\subsection{RBC Example}
-\label{sec:rbc-example}
 
 
 \section{Future Work}
@@ -1394,6 +1354,46 @@ resDir/forBetterRBC${1,1,5}Iters20theK10numKern48.mth
 \label{sec:occbind}
 
 
+
+\label{sec:obc-solut}
+
+Stochastic dynamic non linear economic
+models increasingly embody  occasionally binding constraints (OBC).
+Since \cite{Christiano2000} a host of
+authors have described a variety of approaches.\footnote{The algorithms described \cite{holden15:_exist_dsge} and \cite{guerrieri15:_occbin} also exploit the use of ``anticipated shocks'', but do not use the comprehensive formula employed here. }
+\cite{holden15:_exist_dsge,guerrieri15:_occbin,benigno09,hintermaier10,brumm10,nakov08,haefke98,nakata12,gordon11,billi11,Hintermaier2010,Guerrieri2015}
+
+
+
+Consider adding constraints the constraints:
+
+\begin{gather*}
+  I_t \ge \upsilon I_{ss}
+\end{gather*}
+
+
+\subsection{Regime Switching}
+\label{sec:ressw}
+
+
+\subsubsection{Regime Switching}
+
+
+\label{sec:regime-switch-model}
+
+
+
+Consider two states $s_t \in {0,1}$ where the depreciation rates are different:  $d_0>d_1$
+
+\begin{gather}
+    Prob(s_t=j|s_{t-1}=i)=p_{ij}
+\end{gather}
+
+For example, the Euler equations for the  neoclassical growth  model 
+\label{sec:simple-rbc-model-ext} can be written as
+ 
+
+
 \begin{tcolorbox}[ams gather]
 if(\mu>0 \land (k_t - (1-d)k_{t-1}-\upsilon I_{ss})=0)\\
   \lambda_t -\frac{1}{c_t}\\
@@ -1415,8 +1415,7 @@ I_t-(K_t-(1-d)k_{t-1})\\
 \mu_t(k_t - (1-d) k_{t-1}-\upsilon I_{ss})
 \end{tcolorbox}
 
-\subsection{Regime Switching}
-\label{sec:ressw}
+
 
 \begin{tcolorbox}[ams gather]
 if(s_t=0\land \mu>0 \land (k_t - (1-d_0)k_{t-1}-\upsilon I_{ss})=0)\\

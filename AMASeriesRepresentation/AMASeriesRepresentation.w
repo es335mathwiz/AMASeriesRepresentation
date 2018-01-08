@@ -1852,6 +1852,7 @@ Join[AMASeriesRepCallGraph,Map["nestIterREInterp"->#&,{"doIterREInterp"}]];
 
 
 
+Options[parallelNestIterREInterp]={"xVarRanges"->{},"Traditional"->False}
 parallelNestIterREInterp[genFRExtFunc,@<linMod@>,
 @<XZFuncs@>,triples:{{{_Function,(_Function|_CompiledFunction|_Symbol),_Function}..},selectorFunc_Function},
 @<gSpec@>,
@@ -2842,7 +2843,7 @@ xtNoZtArgPatterns=Join[makePatternArgs[xLagArgs],
 makePatternArgs[eArgs],
 makePatternArgs[xArgs]]},
 (**)
-If[OptionValue["Traditional"],
+If[OptionValue["Traditional"],Print["genFRExtFunc:got traditional"];
 SetDelayed[
 funcOfXtZt[
 (**)
@@ -2865,12 +2866,12 @@ With[{eqnAppl=Apply[eqnsFunc,Flatten[xkAppl]],
 xDisc=xArgs-xkAppl[[numX+Range[numX]]]},
 Flatten[Join[xDisc,eqnAppl]]]]]]]]
 (**)
-If[OptionValue["Traditional"],
+If[OptionValue["Traditional"],Print["genFRExtFunc(xtzt):got traditional"];
 SetDelayed[
 funcOfXtm1Eps
 [Apply[Sequence,xtm1epsArgPatterns]],
 (**)
-With[{frRes=FindRoot[
+With[{frRes=FindRoot[Print["doingFindRootTraditional"];
 funcOfXtZt[Apply[Sequence,Join[xLagArgs,eArgs,xArgs]]],
 Join[xArgsInit](*,WorkingPrecision->50*)(*,EvaluationMonitor:>Print["xz",{xArgs,zArgs,xLagArgs,eArgs,funcOfXtm1Eps,funcOfXtZt,funcOfXtZt[Apply[Sequence,Join[xLagArgs,eArgs,xArgs,zArgs]]]}//InputForm]*)]},
 Transpose[{Flatten[Join[xArgs,zArgs*0]]/.frRes}]]],
@@ -2878,7 +2879,7 @@ SetDelayed[
 funcOfXtm1Eps
 [Apply[Sequence,xtm1epsArgPatterns]],
 (**)
-With[{frRes=FindRoot[
+With[{frRes=FindRoot[Print["doingFindRootNotTraditional"];
 funcOfXtZt[Apply[Sequence,Join[xLagArgs,eArgs,xArgs,zArgs]]],
 Join[xArgsInit,zArgsInit](*,WorkingPrecision->50*)(*,EvaluationMonitor:>Print["xz",{xArgs,zArgs,xLagArgs,eArgs,funcOfXtm1Eps,funcOfXtZt,funcOfXtZt[Apply[Sequence,Join[xLagArgs,eArgs,xArgs,zArgs]]]}//InputForm]*)]},
 Transpose[{Flatten[Join[xArgs,zArgs]]/.frRes}]]]];

@@ -92,7 +92,7 @@ X0Z0=genX0Z0Funcs[linModBetter];
 theFRExt=genFRExtFunc[{4,1,4},linModBetter,{X0Z0,2},eqnsCompiledBetter,
 "xVarRanges"->{{0.01,2},{0.01,2},{0.01,20},{0.85,1.2}}];
 Print["doIt:theFRExt done"];
-DistributeDefinitions[X0Z0,theFRExt,checkPt];
+DistributeDefinitions[X0Z0,theFRExt,checkPt,getH];
 Print["doIt:DistributeDefinitions done"];
 (**)
 {tm,ig}=Timing[
@@ -103,15 +103,41 @@ theRes=parallelNestIterREInterp[genFRExtFunc,linModBetter,
 theResTrad=parallelNestIterREInterp[genFRExtFunc,linModBetter,
 {X0Z0,theK},eqnsCompiledBetter,sgSpecErg,iters,"xVarRanges"->{{0.01,2},{0.01,2},{0.01,20},{0.85,1.2}},"Traditional"->True]];
 (*Print["theResTrad=",theResTrad//InputForm];*)
+numKern=Length[Kernels[]];
+theName=fNameString[approx,iters,theK,numKern];
+(**)
+{tmExactTrad,ig}=Timing[
+theResExactTrad=parallelNestIterREInterp[genFRExtFunc,linModBetter,
+{simpRBCExactX0Z0CEBetter,theK},eqnsCompiledBetter,sgSpecErg,iters,"xVarRanges"->{{0.01,2},{0.01,2},{0.01,20},{0.85,1.2}},"Traditional"->True]];
+Print["theResExtractTrad:"];
+Export[theName<>"ExactTrad.pdf",
+forDRExactTrad=theResExactTrad[[-1,1]];DistributeDefinitions[forDR];
+forDRCEExactTrad=theResExactTrad[[-1,2]];DistributeDefinitions[forDRCE];
+ContourPlot[
+Norm[actualErrs[forDRExactTrad,
+backZtoX[{{z1,z2,0}},betterRBCMean,betterRBCSD,betterRBCvv][[1]]]],
+{z1,betterRBCMinZ[[1]],betterRBCMaxZ[[1]]},{z2,betterRBCMinZ[[2]],betterRBCMaxZ[[2]]},PlotRange->All,PlotLegends->Automatic,PlotLabel->theName<>"ExactTrad"]];
+Print["ExactTrad"];
+(**)
+{tmExact,ig}=Timing[
+theResExact=parallelNestIterREInterp[genFRExtFunc,linModBetter,
+{simpRBCExactX0Z0CEBetter,theK},eqnsCompiledBetter,sgSpecErg,iters,"xVarRanges"->{{0.01,2},{0.01,2},{0.01,20},{0.85,1.2}}]];
+Print["theResExtract:"];
+Export[theName<>"Exact.pdf",
+forDRExact=theResExact[[-1,1]];DistributeDefinitions[forDR];
+forDRCEExact=theResExact[[-1,2]];DistributeDefinitions[forDRCE];
+ContourPlot[
+Norm[actualErrs[forDRExact,
+backZtoX[{{z1,z2,0}},betterRBCMean,betterRBCSD,betterRBCvv][[1]]]],
+{z1,betterRBCMinZ[[1]],betterRBCMaxZ[[1]]},{z2,betterRBCMinZ[[2]],betterRBCMaxZ[[2]]},PlotRange->All,PlotLegends->Automatic,PlotLabel->theName<>"Exact"]];
+Print["Exact"];
 (**)
 forDR=theRes[[-1,1]];DistributeDefinitions[forDR];
 forDRCE=theRes[[-1,2]];DistributeDefinitions[forDRCE];
 forDRTrad=theResTrad[[-1,1]];DistributeDefinitions[forDRTrad];
 forDRCETrad=theResTrad[[-1,2]];DistributeDefinitions[forDRCETrad];
 (**)
-numKern=Length[Kernels[]];
 Print["doIt:parallelNestGeneric done"];
-theName=fNameString[approx,iters,theK,numKern];
 DistributeDefinitions[linModBetter];
 (**)
 drerrName=Unique["drerr"];
@@ -339,10 +365,81 @@ theResPNestGenS=parallelNestGenericIterREInterp[genFRExtFunc,linModBetter,
 {X0Z0,2},eqnsCompiledBetter,sgSpecErg,smolyakInterpolation,{},3,"xVarRanges"->{{0.01,2},{0.01,2},{0.01,20},{0.85,1.2}}];
 
 Get["AMAFedsBetterRBC.mth"]
-X0Z0=genX0Z0Funcs[linModBetter];ba=genFRExtFunc[{4,1,4},linModBetter,{X0Z0,2},eqnsCompiledBetter,"xVarRanges"->{{0.01,2},{0.01,2},{0.01,20},{0.85,1.2}},"Traditional"->True];
+ha=genFRExtFunc[{4,1,4},linModBetter,{simpRBCExactX0Z0CEBetter,,2},eqnsCompiledBetter,"xVarRanges"->{{0.01,2},{0.01,2},{0.01,20},{0.85,1.2}},"Traditional"->True];
+
+Get["AMAFedsBetterRBC.mth"]
+ba=genFRExtFunc[{4,1,4},linModBetter,{simpRBCExactX0Z0CEBetter,2},eqnsCompiledBetter,"xVarRanges"->{{0.01,2},{0.01,2},{0.01,20},{0.85,1.2}},"Traditional"->True];
+
+
+ba=genFRExtFunc[{4,1,4},linModBetter,{simpRBCExactX0Z0CEBetter,2},eqnsCompiledBetter,"xVarRanges"->{{0.01,2},{0.01,2},{0.01,20},{0.85,1.2}},"Traditional"->True];
+ba @@ anXEpsFlatBetter
+
+simpRBCExactDRBetter @@ anXEpsFlatBetter
+
+Following has zeros everywhere as it should
+ContourPlot[
+Norm[simpRBCExactDRBetter[99,z1,99,z2,0]-ba[99,z1,99,z2,0][[Range[4]]]],{z1,.1,.3},{z2,.9,1.1},PlotRange->All,PlotLegends->Automatic]
+
+
+
+ba=genFRExtFunc[{4,1,4},linModBetter,{simpRBCExactX0Z0CEBetter,2},eqnsCompiledBetter,"xVarRanges"->{{0.01,2},{0.01,2},{0.01,20},{0.85,1.2}}];
+ba @@ anXEpsFlatBetter
+simpRBCExactDRBetter @@ anXEpsFlatBetter
+Following far from zeros everywhere 
+ContourPlot[
+Norm[simpRBCExactDRBetter[99,z1,99,z2,0]-ba[99,z1,99,z2,0][[Range[4]]]],{z1,.1,.3},{z2,.9,1.1},PlotRange->All,PlotLegends->Automatic]
+
+
+
+ba=genFRExtFunc[{4,1,4},linModBetter,{simpRBCExactX0Z0CEBetter,5},eqnsCompiledBetter,"xVarRanges"->{{0.01,2},{0.01,2},{0.01,20},{0.85,1.2}}];
+ba @@ anXEpsFlatBetter
+simpRBCExactDRBetter @@ anXEpsFlatBetter
+Following closer to  zeros everywhere still away
+ContourPlot[
+Norm[simpRBCExactDRBetter[99,z1,99,z2,0]-ba[99,z1,99,z2,0][[Range[4]]]],{z1,.1,.3},{z2,.9,1.1},PlotRange->All,PlotLegends->Automatic]
+
+
+Still differ 50 terms out
+ba=genFRExtFunc[{4,1,4},linModBetter,{simpRBCExactX0Z0CEBetter,50},eqnsCompiledBetter,"xVarRanges"->{{0.01,2},{0.01,2},{0.01,20},{0.85,1.2}}];
+ba @@ anXEpsFlatBetter
+simpRBCExactDRBetter @@ anXEpsFlatBetter
+
+ba=genFRExtFunc[{4,1,4},
+linModBetter,
+{simpRBCExactX0Z0CEBetter,5},eqnsCompiledBetter,"xVarRanges"->{{0.01,2},{0.01,2},{0.01,20},{0.85,1.2}}];
+ba @@ anXEpsFlatBetter
+simpRBCExactDRBetter @@ anXEpsFlatBetter
+Following closer to  zeros everywhere still away
+ContourPlot[
+Norm[simpRBCExactDRBetter[99,z1,99,z2,0]-ba[99,z1,99,z2,0][[Range[4]]]],{z1,.1,.3},{z2,.9,1.1},PlotRange->All,PlotLegends->Automatic]
+
+
+Still differ 50 terms out
+SetOptions[FindRoot,WorkingPrecision->50]
+ba=genFRExtFunc[{4,1,4},linModBetter,{simpRBCExactX0Z0CEBetter,50},eqnsCompiledBetter,"xVarRanges"->{{0.01,2},{0.01,2},{0.01,20},{0.85,1.2}}];
+ba @@ anXEpsFlatBetter
+simpRBCExactDRBetter @@ anXEpsFlatBetter
+
 
 doIt[{1, 1, 1}, 10, 0];
-doIt[{1, 1, 1}, 10, 20];
+doIt[{1, 1, 1}, 30, 30];
+doIt[2*{1, 1, 1}, 30, 30];
+doIt[3*{1, 1, 1}, 30, 30];
+doIt[4*{1, 1, 1}, 30, 30];
+doIt[{1, 1, 1}, 10, 1];
+doIt[{1, 1, 1}, 10, 2];
+doIt[{1, 1, 1}, 10, 3];
+doIt[{1, 1, 1}, 10, 4];
+doIt[{1, 1, 1}, 10, 5];
+
+Following produces zeroes everywhere as it should
+ContourPlot[
+Norm[approxErrs[simpRBCExactDRBetter,simpRBCExactDRCEBetter,
+backZtoX[{{z1,z2,0}},betterRBCMean,betterRBCSD,betterRBCvv][[1]]]],
+{z1,betterRBCMinZ[[1]],betterRBCMaxZ[[1]]},{z2,betterRBCMinZ[[2]],betterRBCMaxZ[[2]]},PlotRange->All,PlotRangeClipping->False,PlotLegends->Automatic]
+
+series robust way to get close then use traditional to avoid inaccuracy
+caused by summation
 
 
 *)

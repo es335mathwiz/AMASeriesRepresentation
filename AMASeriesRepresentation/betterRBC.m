@@ -15,6 +15,11 @@ aZFlatBetter::usage="for test input";
 anXEpsZsFlatBetter::usage="for test input";
 
 probDimsBetter::usage="for test input";
+simpRBCExactX0Z0CEBetter::usage="simpRBCExactX0Z0CEBetter"
+simpRBCExactZCEBetter::usage="simpRBCExactZCEBetter"
+simpRBCExactZBetter::usage="simpRBCExactZBetter"
+simpRBCExactX0Z0Better::usage = "simpRBCExactX0Z0Better"
+simpRBCExactDRCEBetter::usage="simpRBCExactDRCEBetter";
 simpRBCExactDRBetter::usage="simpRBCExactDR"
 betterRBCExactCondExp::usage="betterRBCExactCondExp"
 theDistBetter::usage="theDist={{{ee,NormalDistribution[0,sigVal]}}};"
@@ -66,14 +71,14 @@ discMapEqns01=Append[zfEqns/.t->t+1,discMapEqns00[[1]]]//PowerExpand
 (*soln=Solve[Thread[discMapEqns01==0],{cc[t+1],kk[t+1],nlPart[t+1],lnTheta[t+1]}]*)
 
 (*parameters page 21 using state 1*)
-paramSubs={
+paramSubs=Rationalize[{
 alpha->.36,
 beta->1,
 eta->1,
 delta->.95,
 rho->.95,
 sigma->.01
-} ;
+  } ];
 
 
 forSubs={alpha^(1 - alpha)^(-1)*delta^(1 - alpha)^(-1)};
@@ -115,6 +120,15 @@ cct + kkt - 1.*kktm1^(alpha)*thetat,
 nlt - thetat/cct,
 thetat - ((N[E]^epsVal)*(thetatm1^(rho)))}/.paramSubs),"RuntimeOptions"->{"RuntimeErrorHandler"->Function[$Failed],"CatchMachineOverflow"->True,"CatchMachineUnderflow"->True}}
 
+rbcEqnsBetterSymb[
+cctm1_,kktm1_,nltm1_,thetatm1_,
+cct_,kkt_,nlt_,thetat_,
+cctp1_,kktp1_,nltp1_,thetatp1_,
+epsVal_]:=
+({cct^(-1) - (alpha*delta*nltp1)/kkt^(1-alpha),
+cct + kkt - 1.*kktm1^(alpha)*thetat, 
+nlt - thetat/cct,
+thetat - ((N[E]^epsVal)*(thetatm1^(rho)))}/.paramSubs)
 
 (*
 causes error a
@@ -180,6 +194,80 @@ With[{kkt=(tht*alpha*delta*kk^alpha)//.simpParamSubs//N},
 With[{cct=((tht*kk^alpha)*(1-alpha*delta))//.simpParamSubs//N},
 Transpose[{{cct,kkt,tht/cct,tht}}]]]]]
 
+thExp=Expectation[(tht^rho)*E^eps,eps \[Distributed] NormalDistribution[0,sigma]]
+kkExp=Expectation[(((tht^rho)*E^eps)*alpha*delta*kkt^alpha),eps \[Distributed] NormalDistribution[0,sigma]]
+
+ccExp=Expectation[(((((tht^rho)*E^eps)*kkt^alpha)*(1-alpha*delta))),eps \[Distributed] NormalDistribution[0,sigma]]
+
+nnExp=Expectation[((tht^rho)*E^eps)/((((((tht^rho)*E^eps)*kkt^alpha)*(1-alpha*delta)))),eps \[Distributed] NormalDistribution[0,sigma]]
+ 
+simpRBCExactDRCEBetter = 
+  Function @@ {{cct, kkt, nlt, tht}, Flatten[
+	       {ccExp,kkExp,nnExp,thExp}//.paramSubs]}
+
+makeExactArgs[kk_,tt_,ee_]:=
+    With[{xt = Flatten[simpRBCExactDRBetter[ig, kk, ig, tt, ee]]}, 
+     With[{xtp1 = Flatten[simpRBCExactDRCEBetter @@ xt]}, 
+      Append[Join[{999, kk, 999, tt}, xt, xtp1], ee]]]
+
+
+
+
+(*Print["RE solutions"]*)
+hmatSymbSlowRawRE00=(((equationsToMatrix[
+rbcEqns]//FullSimplify)));
+hmatSymbSlowRawRE01=(((equationsToMatrix[
+rbcEqns/.simpParamSubs]//FullSimplify)))//FullSimplify;
+hmatSymbRawRE=(((equationsToMatrix[
+rbcEqns/.simpParamSubs]//FullSimplify)/.{xxxx_[t+_.]->xxxx})//.ssSolnSubsRE)/.{eps[_]->0}//FullSimplify;
+psiepsSymbRE=-Transpose[{((D[#,eps[theta][t]]&/@ rbcEqns)/.{eps[_][_]->0,xxxx_[t+_.]->xxxx})//.ssSolnSubsRE}/.simpParamSubs]
+
+hmatSymbRE=hmatSymbRawRE//.simpSubs
+hSumRE=hmatSymbRE[[All,Range[4]]]+hmatSymbRE[[All,4+Range[4]]]+hmatSymbRE[[All,8+Range[4]]];
+
+ssSolnVecRE={{cc},{kk},{nlPart},{theta}}//.ssSolnSubsRE;
+psicSymbRE=hSumRE . ssSolnVecRE;
+
+
+{zfSymbRE,hfSymbRE}=symbolicAR[hmatSymbRE//.simpParamSubs];
+amatSymbRE=symbolicTransitionMatrix[hfSymbRE];
+{evlsSymbRE,evcsSymbRE}=Eigensystem[Transpose[amatSymbRE]];
+qmatSymbRE=Join[zfSymbRE,evcsSymbRE[[{1}]]];
+
+(*Print["computing and simplifying the symbolic b phi f etc"]*)
+{bmatSymbRE,phimatSymbRE,fmatSymbRE}=symbolicComputeBPhiF[hmatSymbRE,qmatSymbRE]//Simplify;
+
+psiz=IdentityMatrix[4]
+
+linModBetter={hmatSymbRE//N,bmatSymbRE // N, phimatSymbRE // N, 
+    fmatSymbRE // N, psiepsSymbRE // N, 
+    psicSymbRE // N, psiz // N,{}};
+
+linModBetter=Map[Rationalize[#,1/100000000]&,linModBetter,{-1}]
+
+
+
+
+simpRBCExactZBetter = 
+ Function @@ {{cct, kkt, nlt, tht,ee},
+   With[{args=makeExactArgs[kkt,tht,ee],
+     pc=getPsiC[linModBetter],pe=getPsiEps[linModBetter]},
+With[{zt=Flatten[
+(getH[linModBetter] . Transpose[{ Drop[Flatten[args],-1]}])-pc-pe*ee]},zt]]}
+
+simpRBCExactZCEBetter = 
+ Function @@ {{cct, kkt, nlt, tht},
+   With[{args=makeExactArgs[kkt,tht,ee],
+     pc=getPsiC[linModBetter],pe=getPsiEps[linModBetter]},
+With[{zt=Flatten[
+(getH[linModBetter] . Transpose[{ Drop[Flatten[args],-1]}])-pc-pe*ee]},
+  Expectation[zt,ee \[Distributed]NormalDistribution[0,sigma//.paramSubs]]]]}
+
+simpRBCExactX0Z0CEBetter = 
+ Function @@ {{cct, kkt, nlt, tht},
+	      Transpose[{Flatten[
+	 Join[simpRBCExactDRCEBetter[cct,kkt,nlt,tht],
+	      simpRBCExactZCEBetter[cct,kkt,nlt,tht]]]}]}
 
 
 
@@ -209,38 +297,6 @@ Function[{cc, kk, nl, th, eps},
 With[{xval=simpRBCExactDRBetter[cc,kk,nl,th,eps],
 zval=betterExactZ[cc,kk,nl,th,eps]},
 Join[xval,zval]]]
-
-psiz=IdentityMatrix[4]
-
-(*Print["RE solutions"]*)
-hmatSymbSlowRawRE00=(((equationsToMatrix[
-rbcEqns]//FullSimplify)));
-hmatSymbSlowRawRE01=(((equationsToMatrix[
-rbcEqns/.simpParamSubs]//FullSimplify)))//FullSimplify;
-hmatSymbRawRE=(((equationsToMatrix[
-rbcEqns/.simpParamSubs]//FullSimplify)/.{xxxx_[t+_.]->xxxx})//.ssSolnSubsRE)/.{eps[_]->0}//FullSimplify;
-psiepsSymbRE=-Transpose[{((D[#,eps[theta][t]]&/@ rbcEqns)/.{eps[_][_]->0,xxxx_[t+_.]->xxxx})//.ssSolnSubsRE}/.simpParamSubs]
-
-hmatSymbRE=hmatSymbRawRE//.simpSubs
-hSumRE=hmatSymbRE[[All,Range[4]]]+hmatSymbRE[[All,4+Range[4]]]+hmatSymbRE[[All,8+Range[4]]];
-
-ssSolnVecRE={{cc},{kk},{nlPart},{theta}}//.ssSolnSubsRE;
-psicSymbRE=hSumRE . ssSolnVecRE;
-
-
-{zfSymbRE,hfSymbRE}=symbolicAR[hmatSymbRE//.simpParamSubs];
-amatSymbRE=symbolicTransitionMatrix[hfSymbRE];
-{evlsSymbRE,evcsSymbRE}=Eigensystem[Transpose[amatSymbRE]];
-qmatSymbRE=Join[zfSymbRE,evcsSymbRE[[{1}]]];
-
-(*Print["computing and simplifying the symbolic b phi f etc"]*)
-{bmatSymbRE,phimatSymbRE,fmatSymbRE}=symbolicComputeBPhiF[hmatSymbRE,qmatSymbRE]//Simplify;
-
-linModBetter={hmatSymbRE//N,bmatSymbRE // N, phimatSymbRE // N, 
-    fmatSymbRE // N, psiepsSymbRE // N, 
-    psicSymbRE // N, psiz // N,{}};
-
-
 
 
 

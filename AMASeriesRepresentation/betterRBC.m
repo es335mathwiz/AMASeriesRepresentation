@@ -301,7 +301,7 @@ Join[xval,zval]]]
 
 
     
-anXBetter=Transpose[{{.2,.18,1.0,1.01}}];
+anXBetter=Transpose[{{.2,.18,1.0,1.1}}];
 anEpsBetter={{0.01}};
 anXEpsBetter=Join[anXBetter,anEpsBetter]
 aZBetter=Transpose[{{.1,.2,.3,.4}}]

@@ -13,7 +13,7 @@
 \author{Gary S. Anderson\thanks{The analysis and conclusions set forth are those of the author and do not indicate concurrence by other members of the research staff or the Board of Governors.}}
 
 \title{A New Series Representation for 
-Nonlinear Dynamic Stochastic Model Solutions: General Error Bounds and a New Solution Algorithm}
+Nonlinear Dynamic Stochastic Model Solutions:  Error Bounds and a New Solution Algorithm}
 
 \date{\today: \currenttime}
 \begin{document}
@@ -48,7 +48,7 @@ Nonlinear Dynamic Stochastic Model Solutions: General Error Bounds and a New Sol
 \begin{gather}
 \eqnFuncSysI{i}\equiv \eqnFuncSysIExpl{i} \label{eqnGates}
 \end{gather}
-\item Boolean valued gate, $\gate_i$. 
+\item Boolean valued gates, $\preGate_i$ $\postGate_i$. 
 \item Model equations, $\eqnFunc_i$,  
 \item ``Auxiliary variables'' if necessary
 \item Exhaustive and mutually exclusive determining the solution  $x_t\tArg$
@@ -532,7 +532,7 @@ F=
 \eqnFuncSysI{i}\equiv \eqnFuncSysIExpl{i} 
 \end{gather*}
 \item a set of model equations, $\eqnFunc_i$, 
-\item  a Boolean valued gate, $\gate_i$. 
+\item  a Boolean valued gate, $\preGate_i$, $\postGate_i$. 
 \item exhaustive and mutually exclusive equation systems 
   \begin{itemize}
   \item complementary slackness conditions 
@@ -871,7 +871,26 @@ x_{t-1}\\ \xpWarg\\ \XpWOarg(\xWarg)
 }
 \end{frame}
 
+\begin{frame}
+  \includegraphics[width=2in]{resDir/forBetterRBC--1,1,1-Iters30theK0host-MacBook-Pro-2numKern2Trad.pdf}  
+  \includegraphics[width=2in]{resDir/forBetterRBC--1,1,1-Iters30theK0host-MacBook-Pro-2numKern2ApproxTrad.pdf}
+\end{frame}
 
+\begin{frame}
+    \includegraphics[width=2in]{resDir/forBetterRBC--1,1,1-Iters30theK0host-MacBook-Pro-2numKern2Approx.pdf}
+  \includegraphics[width=2in]{resDir/forBetterRBC--1,1,1-Iters30theK0host-MacBook-Pro-2numKern2.pdf}
+
+\end{frame}
+\begin{frame}
+  \includegraphics[width=2in]{resDir/forBetterRBC--1,1,1-Iters30theK30host-MacBook-Pro-2numKern2Approx.pdf}
+  \includegraphics[width=2in]{resDir/forBetterRBC--1,1,1-Iters30theK30host-MacBook-Pro-2numKern2.pdf}
+
+\end{frame}
+
+\begin{frame}
+    \includegraphics[width=2in]{resDir/forBetterRBC--3,3,3-Iters20theK20numKern2.pdf}
+
+\end{frame}
 \subsection{{Some Algorithmic Details}}
 
 
@@ -909,10 +928,11 @@ x_{t-1}\\ \xpWarg\\ \XpWOarg(\xWarg)
 \begin{frame}
   \frametitle{Next Steps}
 \begin{itemize}
+\item Exploit parallelism
 \item Support Vector Machine Regression (SVMR)
 \item Large Model Implementation
 \item Improve Error Bounds
-\item Application to \cite{feng14:_num}
+%\item Application to \cite{feng14:_num}
 \item Dynare Interface
 \end{itemize}
 

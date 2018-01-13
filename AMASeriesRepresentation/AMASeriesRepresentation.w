@@ -2843,8 +2843,8 @@ xtNoZtArgPatterns=Join[makePatternArgs[xLagArgs],
 makePatternArgs[eArgs],
 makePatternArgs[xArgs]]},
 (**)
-If[OptionValue["Traditional"],Print["genFRExtFunc:got traditional"];
-SetDelayed[
+Switch[OptionValue["Traditional"],
+True,SetDelayed[
 funcOfXtZt[
 (**)
 Apply[Sequence,xtNoZtArgPatterns]],
@@ -2855,7 +2855,17 @@ xkAppl=Flatten[Join[xLagArgs,xArgs,(Apply[XZFuncs[[1]],xArgs][[Range[numX]]]),eA
 With[{eqnAppl=Apply[eqnsFunc,Flatten[xkAppl]](*,
 xDisc=xArgs-xkAppl[[numX+Range[numX]]]*)},
 Flatten[Join[eqnAppl]]]]]]],
-SetDelayed[
+False,SetDelayed[
+funcOfXtZt[
+(**)
+Apply[Sequence,xtztArgPatterns]],
+Module[{},
+With[{xkFunc=genLilXkZkFunc[linMod,XZFuncs,Transpose[{xArgs}]]},
+With[{xkAppl=Apply[xkFunc,Join[xLagArgs,eArgs,zArgs]]},
+With[{eqnAppl=Apply[eqnsFunc,Flatten[xkAppl]],
+xDisc=xArgs-xkAppl[[numX+Range[numX]]]},
+Flatten[Join[xDisc,eqnAppl]]]]]]],
+"Both",Print["both01:"];SetDelayed[
 funcOfXtZt[
 (**)
 Apply[Sequence,xtztArgPatterns]],
@@ -2866,8 +2876,8 @@ With[{eqnAppl=Apply[eqnsFunc,Flatten[xkAppl]],
 xDisc=xArgs-xkAppl[[numX+Range[numX]]]},
 Flatten[Join[xDisc,eqnAppl]]]]]]]]
 (**)
-If[OptionValue["Traditional"],Print["genFRExtFunc(xtzt):got traditional"];
-SetDelayed[
+Switch[OptionValue["Traditional"],
+True,SetDelayed[
 funcOfXtm1Eps
 [Apply[Sequence,xtm1epsArgPatterns]],
 (**)
@@ -2875,7 +2885,15 @@ With[{frRes=FindRoot[Print["doingFindRootTraditional"];
 funcOfXtZt[Apply[Sequence,Join[xLagArgs,eArgs,xArgs]]],
 Join[xArgsInit](*,WorkingPrecision->50*)(*,EvaluationMonitor:>Print["xz",{xArgs,zArgs,xLagArgs,eArgs,funcOfXtm1Eps,funcOfXtZt,funcOfXtZt[Apply[Sequence,Join[xLagArgs,eArgs,xArgs,zArgs]]]}//InputForm]*)]},
 Transpose[{Flatten[Join[xArgs,zArgs*0]]/.frRes}]]],
-SetDelayed[
+False,SetDelayed[
+funcOfXtm1Eps
+[Apply[Sequence,xtm1epsArgPatterns]],
+(**)
+With[{frRes=FindRoot[Print["doingFindRootNotTraditional"];
+funcOfXtZt[Apply[Sequence,Join[xLagArgs,eArgs,xArgs,zArgs]]],
+Join[xArgsInit,zArgsInit](*,WorkingPrecision->50*)(*,EvaluationMonitor:>Print["xz",{xArgs,zArgs,xLagArgs,eArgs,funcOfXtm1Eps,funcOfXtZt,funcOfXtZt[Apply[Sequence,Join[xLagArgs,eArgs,xArgs,zArgs]]]}//InputForm]*)]},
+Transpose[{Flatten[Join[xArgs,zArgs]]/.frRes}]]],
+"Both",Print["both02:"];SetDelayed[
 funcOfXtm1Eps
 [Apply[Sequence,xtm1epsArgPatterns]],
 (**)

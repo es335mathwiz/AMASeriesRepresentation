@@ -749,7 +749,7 @@ which can be conveniently represented by the series representation.
 The paper studies a very general class of models whose 
 solutions are characterized by $\eqnFuncSys$, a 
  exhaustive and mutually exclusive set of
-of   model equations, $\eqnFunc_i$,  and Boolean valued gates, $\gate_i$. 
+of   model equations, $\eqnFunc_i$,  and Boolean valued gates, $\preGate_i$, $\postGate_i$. 
 that together determine the solution  $x_t\tArg$
 %\begin{gather}
 %\intertext{ where, each }
@@ -779,7 +779,7 @@ It will be convenient for describing the algorithms to
 \eqnFuncSys \intertext{ where, each }
 \eqnFuncSysI{i}\equiv \eqnFuncSysIExpl{i} \label{eqnGates}
 \end{gather}
- represents a set of model equations, $\eqnFunc_i$,  with a Boolean valued gate, $\gate_i$. Consequently, will will have an equation system and a gatekeeper logical expression indicating which equation system is in force for a given solution for a give $x_{t-1}, \epsilon_t$  They represent exhaustive and mutually exclusive equation systems determining the solution at time t for the model.  They could be complementary slackness conditions or could represent a model with different regimes. We will consider time invariant model solutions $x_t=\xWarg$.  Given $\xWarg$, $\XWOarg(x_{t-1})\equiv \expct{\xWarg}$. 
+ represents a set of model equations, $\eqnFunc_i$,  with a Boolean valued gate, $\preGate_i, \postGate_i$. Consequently, will will have an equation system and a gatekeeper logical expression indicating which equation system is in force for a given solution for a give $x_{t-1}, \epsilon_t$  They represent exhaustive and mutually exclusive equation systems determining the solution at time t for the model.  They could be complementary slackness conditions or could represent a model with different regimes. We will consider time invariant model solutions $x_t=\xWarg$.  Given $\xWarg$, $\XWOarg(x_{t-1})\equiv \expct{\xWarg}$. 
 
 
 
@@ -1303,7 +1303,12 @@ $\xguss=x_t(x_{t-1},\epsilon)$\;
 % \item[Improve Error Bounds] 
 % \end{description}
 
-
+\begin{itemize}
+\item still questions about why adding series equation should help.
+\item why useful Levine suspects only good for large 
+\item perturbation global worth mentioning
+\item error bound needs bound on first derivative since search not exhaustive
+\end{itemize}
 
 \section{Conclusions}
 This paper introduces a new series representation for bounded time series and

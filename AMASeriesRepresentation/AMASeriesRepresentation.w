@@ -2818,12 +2818,7 @@ genFRExtFunc[{numX_Integer,numEps_Integer,numZ_Integer},@<linMod@>,@<XZFuncs@>,
 @<eqnsFunc@>,opts:OptionsPattern[]]:=
 Module[{varRanges=OptionValue["xVarRanges"]},
 With[{@<findRootArgNames@>},
-With[{theXInit=Flatten[Apply[XZFuncs[[1]],Join[xLagArgs,eArgs]]],
-xkFunc=genLilXkZkFunc[linMod,XZFuncs,Transpose[{xArgs}]],
-zArgsInit=Map[Function[xx,{xx,0}],zArgs],
-funcOfXtm1Eps=Unique["fNameXtm1Eps"],
-funcOfXtZt=Unique["fNameXtZt"]
-},
+With[{@<prepFindRootXInit@>},
 With[{xArgsInit=If[varRanges==={},
 MapT
 hread[Function[{xx,yy},{xx,yy}],
@@ -2924,7 +2919,14 @@ FoldList[Flatten[Apply[theDR, Append[Flatten[#1][[Range[numVars]]],#2]]]&,initVe
 
 (*end code for genFRExtFunc*)
 @}
-
+@d prepFindRootXInit
+@{
+theXInit=Flatten[Apply[XZFuncs[[1]],Join[xLagArgs,eArgs]]],
+xkFunc=genLilXkZkFunc[linMod,XZFuncs,Transpose[{xArgs}]],
+zArgsInit=Map[Function[xx,{xx,0}],zArgs],
+funcOfXtm1Eps=Unique["fNameXtm1Eps"],
+funcOfXtZt=Unique["fNameXtZt"]
+@}
 @d findRootArgNames
 @{
 funcArgs=Flatten[genSlots[numX+numEps]],

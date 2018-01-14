@@ -2819,11 +2819,7 @@ genFRExtFunc[{numX_Integer,numEps_Integer,numZ_Integer},@<linMod@>,@<XZFuncs@>,
 Module[{varRanges=OptionValue["xVarRanges"]},
 With[{@<findRootArgNames@>},
 With[{@<prepFindRootXInit@>},
-With[{xArgsInit=If[varRanges==={},
-MapT
-hread[Function[{xx,yy},{xx,yy}],
-{xArgs,theXInit[[Range[numX]]]}],
-MapThread[{#1,#2,#3[[1]],#3[[2]]}&,{xArgs,theXInit[[Range[numX]]],varRanges}]],
+With[{@<cmptXArgsInit@>,
 xtm1epsArgPatterns=Join[makePatternArgs[xLagArgs],
 makePatternArgs[eArgs]],
 xtztArgPatterns=Join[makePatternArgs[xLagArgs],
@@ -2918,6 +2914,14 @@ FoldList[Flatten[Apply[theDR, Append[Flatten[#1][[Range[numVars]]],#2]]]&,initVe
 
 
 (*end code for genFRExtFunc*)
+@}
+@d cmptXArgsInit
+@{
+xArgsInit=If[varRanges==={},
+MapT
+hread[Function[{xx,yy},{xx,yy}],
+{xArgs,theXInit[[Range[numX]]]}],
+MapThread[{#1,#2,#3[[1]],#3[[2]]}&,{xArgs,theXInit[[Range[numX]]],varRanges}]]
 @}
 @d prepFindRootXInit
 @{

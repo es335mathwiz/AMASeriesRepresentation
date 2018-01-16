@@ -647,7 +647,31 @@ Flatten[ha @@ anXEpsFlatBetter][[Range[4]]]-Flatten[(simpRBCExactDRBetter @@ anX
 Flatten[ba @@ anXEpsFlatBetter][[Range[4]]]-Flatten[(simpRBCExactDRBetter @@ anXEpsFlatBetter)](*worse than 10^-5 for nl*)
 
 
+Get["genRBC.mth"]
 
+iterateDRCE[drExpFunc:(_Function|_CompiledFunction|_Symbol),
+initVec_?MatrixQ,numPers_Integer]:=
+	With[{numX=Length[initVec]},
+With[{iterated=
+NestList[Function[xx,((Transpose[{Flatten[Apply[drExpFunc,Flatten[xx]]]}]))],
+Flatten[initVec],numPers]},
+Apply[Join,
+(Map[Function[xx,Identity[xx[[Range[numX]]]]],iterated])]]]/;
+And[numPers>0]
+
+genZsForFindRoot[linMod:{theHMat_?MatrixQ,BB_?MatrixQ,phi_?MatrixQ,FF_?MatrixQ,psiEps_?MatrixQ,psiC_?MatrixQ,psiZ_?MatrixQ,
+backLookingInfo:{{_Integer,backLooking_,backLookingExp_}...}},
+	initVec_?MatrixQ,theCondExp:(_Function|_CompiledFunction),iters_Integer]:=
+Module[{},
+With[{numX=Length[initVec],
+ 	thePath=Flatten[iterateDRCE[theCondExp,initVec,iters+1]]},
+ 		With[{restVals=
+      (theHMat .thePath[[Range[3*numX]+numX*#]] -psiC)&/@Range[(Length[thePath]/numX)-3]},
+      Join[{firstVal},restVals]
+]]]
+
+try=iterateDRREIntegrate[simpRBCExactDRBetter,simpRBCExactDRCEBetter,anXEpsBetter,1,5];
+tryNow=iterateDRCE[simpRBCExactDRCEBetter,simpRBCExactDRBetter @@ anXEpsFlatBetter,5];
 
 theZs=genZsREExact[linModBetter,anXEpsBetter,1,simpRBCExactDRBetter,simpRBCExactDRCEBetter,50];
 (*

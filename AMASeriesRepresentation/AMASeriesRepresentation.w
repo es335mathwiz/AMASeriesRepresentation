@@ -2820,26 +2820,13 @@ Module[{varRanges=OptionValue["xVarRanges"]},
 With[{@<findRootArgNames@>},
 With[{@<prepFindRootXInit@>},
 With[{@<cmptXArgsInit@>,
-xtm1epsArgPatterns=Join[makePatternArgs[xLagArgs],
-makePatternArgs[eArgs]],
-xtztArgPatterns=Join[makePatternArgs[xLagArgs],
-makePatternArgs[eArgs],
-makePatternArgs[xArgs],makePatternArgs[zArgs]],
-xtNoZtArgPatterns=Join[makePatternArgs[xLagArgs],
-makePatternArgs[eArgs],
-makePatternArgs[xArgs]]},
+@<makeArgPatterns@>},
 (**)
 Switch[OptionValue["Traditional"],
-True,@<setDelayedTradFXtZt@>,
-False,@<setDelayedSeriesFXtZt@>,
-"Both",Print["both01:"];
-@<setDelayedSeriesFXtZt@>]
+True,@<setDelayedTradFXtZt@>;@<setDelayedTradFXtm1Eps@>,
+False,@<setDelayedSeriesFXtZt@>;@<setDelayedSeriesFXtm1Eps@>,
+"Both",@<setDelayedSeriesFXtZt@>;@<setDelayedSeriesFXtm1Eps@>]
 (**)
-Switch[OptionValue["Traditional"],
-True,@<setDelayedTradFXtm1Eps@>,
-False,@<setDelayedSeriesFXtm1Eps@>,
-"Both",Print["both02:"];
-@<setDelayedSeriesFXtm1Eps@>];
 (**)
 DistributeDefinitions[funcOfXtZt,funcOfXtm1Eps]
 Off[FindRoot::srect];
@@ -2849,15 +2836,99 @@ funcOfXtm1Eps
 
 
 
+@}
+
+
+@d makeArgPatterns
+@{xtm1epsArgPatterns=Join[makePatternArgs[xLagArgs],
+makePatternArgs[eArgs]],
+xtztArgPatterns=Join[makePatternArgs[xLagArgs],
+makePatternArgs[eArgs],
+makePatternArgs[xArgs],makePatternArgs[zArgs]],
+xtNoZtArgPatterns=Join[makePatternArgs[xLagArgs],
+makePatternArgs[eArgs],
+makePatternArgs[xArgs]]@}
+@d cmptXArgsInit
+@{xArgsInit=If[varRanges==={},
+MapT
+hread[Function[{xx,yy},{xx,yy}],
+{xArgs,theXInit[[Range[numX]]]}],
+MapThread[{#1,#2,#3[[1]],#3[[2]]}&,{xArgs,theXInit[[Range[numX]]],varRanges}]]@}
+@d prepFindRootXInit
+@{theXInit=Flatten[Apply[XZFuncs[[1]],Join[xLagArgs,eArgs]]],
+zArgsInit=Map[Function[xx,{xx,0}],zArgs],
+funcOfXtm1Eps=Unique["fNameXtm1Eps"],
+funcOfXtZt=Unique["fNameXtZt"]@}
+@d findRootArgNames
+@{funcArgs=Flatten[genSlots[numX+numEps]],
+zArgs=Table[Unique["theFRZArgs"],{numZ}],
+xArgs=Table[Unique["theFRXArgs"],{numX}],
+xLagArgs=Table[Unique["theFRXLagArgs"],{numX}],
+eArgs=Table[Unique["theFREArgs"],{numEps}]@}
+
+@d setDelayedTradFXtZt
+@{SetDelayed[
+funcOfXtZt[
+(**)
+Apply[Sequence,xtNoZtArgPatterns]],
+Module[{},
+With[{
+xkAppl=Flatten[Join[xLagArgs,xArgs,(Apply[XZFuncs[[1]],xArgs][[Range[numX]]]),eArgs]]},
+With[{eqnAppl=Apply[eqnsFunc,Flatten[xkAppl]](*,
+xDisc=xArgs-xkAppl[[numX+Range[numX]]]*)},
+Flatten[Join[eqnAppl]]]]]]@}
+
+
+@d setDelayedTradFXtm1Eps
+@{SetDelayed[
+funcOfXtm1Eps
+[Apply[Sequence,xtm1epsArgPatterns]],
+(**)
+With[{frRes=FindRoot[Print["doingFindRootTraditional"];
+funcOfXtZt[Apply[Sequence,Join[xLagArgs,eArgs,xArgs]]],
+Join[xArgsInit](*,WorkingPrecision->50*)(*,EvaluationMonitor:>Print["xz",{xArgs,zArgs,xLagArgs,eArgs,funcOfXtm1Eps,funcOfXtZt,funcOfXtZt[Apply[Sequence,Join[xLagArgs,eArgs,xArgs,zArgs]]]}//InputForm]*)]},
+Transpose[{Flatten[Join[xArgs,zArgs*0]]/.frRes}]]]@}
+
+@d setDelayedSeriesFXtZt
+@{SetDelayed[
+funcOfXtZt[
+(**)
+Apply[Sequence,xtztArgPatterns]],
+Module[{},
+With[{xkFunc=genLilXkZkFunc[linMod,XZFuncs,Transpose[{xArgs}]]},
+With[{xkAppl=Apply[xkFunc,Join[xLagArgs,eArgs,zArgs]]},
+With[{eqnAppl=Apply[eqnsFunc,Flatten[xkAppl]],
+xDisc=xArgs-xkAppl[[numX+Range[numX]]]},
+Print["series:",{xArgs,xkAppl[[numX+Range[numX]]]}//InputForm];
+Flatten[Join[xDisc,eqnAppl]]]]]]]@}
+
+@d setDelayedSeriesFXtm1Eps
+@{SetDelayed[
+funcOfXtm1Eps
+[Apply[Sequence,xtm1epsArgPatterns]],
+(**)
+With[{frRes=FindRoot[Print["doingFindRootNotTraditional"];
+funcOfXtZt[Apply[Sequence,Join[xLagArgs,eArgs,xArgs,zArgs]]],
+Join[xArgsInit,zArgsInit](*,WorkingPrecision->50*)(*,EvaluationMonitor:>Print["xz",{xArgs,zArgs,xLagArgs,eArgs,funcOfXtm1Eps,funcOfXtZt,funcOfXtZt[Apply[Sequence,Join[xLagArgs,eArgs,xArgs,zArgs]]]}//InputForm]*)]},
+Transpose[{Flatten[Join[xArgs,zArgs]]/.frRes}]]]@}
+
+
+
+
+@d genFRExtFunc
+@{
+
 
 
 genFRExtFunc[{numX_Integer,numEps_Integer,numZ_Integer},@<linMod@>,@<XZFuncs@>,
-triples:{{{_Function,(_Function|_CompiledFunction|_Symbol),_Function}..},selectorFunc_Function},
+triples:{{{_Function,(_Function|_CompiledFunction|_Symbol),_Function}..},
+selectorFunc_Function},
 opts:OptionsPattern[]]:=
 Module[{varRanges=OptionValue["xVarRanges"]},
 With[{funcTrips=
 Map[{#[[1]],genFRExtFunc[{numX,numEps,numZ},linMod,XZFuncs,#[[2]],
-Apply[Sequence,FilterRules[{opts},Options[genFRExtFunc]]]],#[[3]]}&,triples[[1]]]},
+Apply[Sequence,
+FilterRules[{opts},Options[genFRExtFunc]]]],#[[3]]}&,triples[[1]]]},
 {funcTrips,selectorFunc}
 ]]
 
@@ -2868,6 +2939,10 @@ thePt_?VectorQ]:=
 If[Apply[preFunc,thePt],
 With[{theRes=Apply[theFunc,thePt]},
 If[Apply[postFunc,Flatten[Join[thePt,theRes]]],theRes,$Failed]],$Failed]
+
+@}
+@d genFRExtFunc
+@{
 
 
 makePatternArgs[theNames_List]:=
@@ -2887,6 +2962,11 @@ Normal[Series[Apply[thePolyFunc,newArgs],{newVar,0,theOrd}]]/.newVar->1]]
 
 delayEvalEqnsFunc[numX_Integer,eqnsFunc_,xArgs_List,theApp_?MatrixQ]:=
 Join[Apply[eqnsFunc,Flatten[theApp]],Flatten[xArgs-(Part[theApp,Range[numX]])]];
+
+
+@}
+@d genFRExtFunc
+@{
 
 
 delayEvalXkRes[xkFunc:(_Function|_CompiledFunction|_Symbol),funcArgs:{_?NumberQ..},
@@ -2914,83 +2994,6 @@ FoldList[Flatten[Apply[theDR, Append[Flatten[#1][[Range[numVars]]],#2]]]&,initVe
 
 
 (*end code for genFRExtFunc*)
-@}
-@d cmptXArgsInit
-@{
-xArgsInit=If[varRanges==={},
-MapT
-hread[Function[{xx,yy},{xx,yy}],
-{xArgs,theXInit[[Range[numX]]]}],
-MapThread[{#1,#2,#3[[1]],#3[[2]]}&,{xArgs,theXInit[[Range[numX]]],varRanges}]]
-@}
-@d prepFindRootXInit
-@{
-theXInit=Flatten[Apply[XZFuncs[[1]],Join[xLagArgs,eArgs]]],
-xkFunc=genLilXkZkFunc[linMod,XZFuncs,Transpose[{xArgs}]],
-zArgsInit=Map[Function[xx,{xx,0}],zArgs],
-funcOfXtm1Eps=Unique["fNameXtm1Eps"],
-funcOfXtZt=Unique["fNameXtZt"]
-@}
-@d findRootArgNames
-@{
-funcArgs=Flatten[genSlots[numX+numEps]],
-zArgs=Table[Unique["theFRZArgs"],{numZ}],
-xArgs=Table[Unique["theFRXArgs"],{numX}],
-xLagArgs=Table[Unique["theFRXLagArgs"],{numX}],
-eArgs=Table[Unique["theFREArgs"],{numEps}]
-@}
-
-@d setDelayedTradFXtZt
-@{
-SetDelayed[
-funcOfXtZt[
-(**)
-Apply[Sequence,xtNoZtArgPatterns]],
-Module[{},
-With[{
-xkAppl=Flatten[Join[xLagArgs,xArgs,(Apply[XZFuncs[[1]],xArgs][[Range[numX]]]),eArgs]]},
-With[{eqnAppl=Apply[eqnsFunc,Flatten[xkAppl]](*,
-xDisc=xArgs-xkAppl[[numX+Range[numX]]]*)},
-Flatten[Join[eqnAppl]]]]]]
-@}
-
-
-@d setDelayedTradFXtm1Eps
-@{
-SetDelayed[
-funcOfXtm1Eps
-[Apply[Sequence,xtm1epsArgPatterns]],
-(**)
-With[{frRes=FindRoot[Print["doingFindRootTraditional"];
-funcOfXtZt[Apply[Sequence,Join[xLagArgs,eArgs,xArgs]]],
-Join[xArgsInit](*,WorkingPrecision->50*)(*,EvaluationMonitor:>Print["xz",{xArgs,zArgs,xLagArgs,eArgs,funcOfXtm1Eps,funcOfXtZt,funcOfXtZt[Apply[Sequence,Join[xLagArgs,eArgs,xArgs,zArgs]]]}//InputForm]*)]},
-Transpose[{Flatten[Join[xArgs,zArgs*0]]/.frRes}]]]
-@}
-
-@d setDelayedSeriesFXtZt
-@{
-SetDelayed[
-funcOfXtZt[
-(**)
-Apply[Sequence,xtztArgPatterns]],
-Module[{},
-With[{xkFunc=genLilXkZkFunc[linMod,XZFuncs,Transpose[{xArgs}]]},
-With[{xkAppl=Apply[xkFunc,Join[xLagArgs,eArgs,zArgs]]},
-With[{eqnAppl=Apply[eqnsFunc,Flatten[xkAppl]],
-xDisc=xArgs-xkAppl[[numX+Range[numX]]]},
-Flatten[Join[xDisc,eqnAppl]]]]]]]
-@}
-
-@d setDelayedSeriesFXtm1Eps
-@{
-SetDelayed[
-funcOfXtm1Eps
-[Apply[Sequence,xtm1epsArgPatterns]],
-(**)
-With[{frRes=FindRoot[Print["doingFindRootNotTraditional"];
-funcOfXtZt[Apply[Sequence,Join[xLagArgs,eArgs,xArgs,zArgs]]],
-Join[xArgsInit,zArgsInit](*,WorkingPrecision->50*)(*,EvaluationMonitor:>Print["xz",{xArgs,zArgs,xLagArgs,eArgs,funcOfXtm1Eps,funcOfXtZt,funcOfXtZt[Apply[Sequence,Join[xLagArgs,eArgs,xArgs,zArgs]]]}//InputForm]*)]},
-Transpose[{Flatten[Join[xArgs,zArgs]]/.frRes}]]]
 @}
 
 

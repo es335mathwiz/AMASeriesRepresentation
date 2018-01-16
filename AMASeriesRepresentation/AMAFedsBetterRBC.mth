@@ -631,4 +631,32 @@ sa=genFRExtFunc[{4,1,4},linModBetter,{simpRBCExactX0Z0CEBetter,50},eqnsCompiledB
 {ba @@ anXEpsFlatBetter,ha @@ anXEpsFlatBetter,sa @@ anXEpsFlatBetter}
 
 
+Get["genRBC.mth"]
+
+theZs=genZsREExact[linModBetter,anXEpsFlat,1,simpRBCExactDRBetter,simpRBCExactDRCEBetter,10]
+huh=genSeriesReps[linModBetter,anXEpsFlat,1,simpRBCExactDRBetter,simpRBCExactDRCEBetter,10]
+
+
+
+
+huh=genSeriesReps[linModBetter,anXEpsBetter,1,simpRBCExactDRBetter,simpRBCExactDRCEBetter,50];
+Flatten[(simpRBCExactDRBetter @@ anXEpsFlatBetter)]- Flatten[huh[[-1,4+Range[4]]]](*like 10-8*)
+Flatten[ha @@ anXEpsFlatBetter][[Range[4]]]-Flatten[(simpRBCExactDRBetter @@ anXEpsFlatBetter)]
+
+
+Flatten[ba @@ anXEpsFlatBetter][[Range[4]]]-Flatten[(simpRBCExactDRBetter @@ anXEpsFlatBetter)](*worse than 10^-5 for nl*)
+
+
+
+
+theZs=genZsREExact[linModBetter,anXEpsBetter,1,simpRBCExactDRBetter,simpRBCExactDRCEBetter,50];
+(*
+xkFunc=genLilXkZkFunc[linModBetter,{simpRBCExactX0Z0CEBetter,50},(simpRBCExactDRBetter @@ anXEpsFlatBetter)[[Range[4]]]];
+*)
+xkFunc=genLilXkZkFunc[linModBetter,Drop[theZs,1]];
+
+xkAppl=Apply[xkFunc,Join[anXEpsFlatBetter,Flatten[theZs[[1]]]]]
+
+
+
 *)

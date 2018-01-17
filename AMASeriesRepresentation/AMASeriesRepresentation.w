@@ -2806,6 +2806,10 @@ evaluateTriple::usage=
 makePatternArgs::usage="makePatternArgs"
 makeBlankPatternArgs::usage="makePatternArgs"
 simulateDR::usage="simulateDR[theDR:(_Symbol|_Function|_CompiledFunction),numVars_Integer,@<gSpec@>,@<distribSpec@>,initVec:{_?NumberQ..},numPers_Integer]"
+iterateDRCE::usage="iterateDRCE[drExpFunc:(_Function|_CompiledFunction|_Symbol),initVec_?MatrixQ,numPers_Integer]"
+genZsForFindRoot::usage="genZsForFindRoot[linMod:{theHMat_?MatrixQ,BB_?MatrixQ,phi_?MatrixQ,FF_?MatrixQ,psiEps_?MatrixQ,psiC_?MatrixQ,psiZ_?MatrixQ,backLookingInfo:{{_Integer,backLooking_,backLookingExp_}...}},	initVec_?MatrixQ,theCondExp:(_Function|_CompiledFunction),iters_Integer]"
+
+
 
 @}
 
@@ -2824,8 +2828,8 @@ With[{@<cmptXArgsInit@>,
 (**)
 Switch[OptionValue["Traditional"],
 True,@<setDelayedTradFXtZt@>;@<setDelayedTradFXtm1Eps@>,
-False,@<setDelayedSeriesFXtZt@>;@<setDelayedSeriesFXtm1Eps@>,
-"Both",@<setDelayedSeriesFXtZt@>;@<setDelayedSeriesFXtm1Eps@>]
+False,@<setDelayedFixFXtZt@>;@<setDelayedSeriesFXtm1Eps@>,
+"Fix",@<setDelayedFixFXtZt@>;@<setDelayedSeriesFXtm1Eps@>]
 (**)
 (**)
 DistributeDefinitions[funcOfXtZt,funcOfXtm1Eps]
@@ -2899,7 +2903,20 @@ With[{xkFunc=genLilXkZkFunc[linMod,XZFuncs,Transpose[{xArgs}]]},
 With[{xkAppl=Apply[xkFunc,Join[xLagArgs,eArgs,zArgs]]},
 With[{eqnAppl=Apply[eqnsFunc,Flatten[xkAppl]],
 xDisc=xArgs-xkAppl[[numX+Range[numX]]]},
-Print["series:",{xArgs,xkAppl[[numX+Range[numX]]]}//InputForm];
+Flatten[Join[xDisc,eqnAppl]]]]]]]@}
+
+@d setDelayedFixFXtZt
+@{SetDelayed[
+funcOfXtZt[
+(**)
+Apply[Sequence,xtztArgPatterns]],
+Module[{theZsNow=genZsForFindRoot[linMod,
+Transpose[{xArgs}],XZFuncs[[1]],XZFuncs[[2]]]
+},
+With[{xkFunc=genLilXkZkFunc[linMod,theZsNow]},
+With[{xkAppl=Apply[xkFunc,Join[xLagArgs,eArgs,zArgs]]},
+With[{eqnAppl=Apply[eqnsFunc,Flatten[xkAppl]],
+xDisc=xArgs-xkAppl[[numX+Range[numX]]]},
 Flatten[Join[xDisc,eqnAppl]]]]]]]@}
 
 @d setDelayedSeriesFXtm1Eps
@@ -2962,6 +2979,39 @@ Normal[Series[Apply[thePolyFunc,newArgs],{newVar,0,theOrd}]]/.newVar->1]]
 
 delayEvalEqnsFunc[numX_Integer,eqnsFunc_,xArgs_List,theApp_?MatrixQ]:=
 Join[Apply[eqnsFunc,Flatten[theApp]],Flatten[xArgs-(Part[theApp,Range[numX]])]];
+
+@}
+@d genFRExtFunc
+@{
+
+
+iterateDRCE[drExpFunc:(_Function|_CompiledFunction|_Symbol),
+initVec_?MatrixQ,numPers_Integer]:=
+	With[{numX=Length[initVec]},
+With[{iterated=
+NestList[Function[xx,((Transpose[{Flatten[Apply[drExpFunc,Flatten[xx]]]}]))],
+Identity[initVec],numPers]},
+Apply[Join,
+(Map[Function[xx,Identity[xx[[Range[numX]]]]],iterated])]]]/;
+And[numPers>0]
+
+@}
+@d genFRExtFunc
+@{
+
+genZsForFindRoot[linMod:{theHMat_?MatrixQ,BB_?MatrixQ,phi_?MatrixQ,FF_?MatrixQ,psiEps_?MatrixQ,psiC_?MatrixQ,psiZ_?MatrixQ,
+backLookingInfo:{{_Integer,backLooking_,backLookingExp_}...}},
+	initVec_?MatrixQ,theCondExp:(_Function|_CompiledFunction),iters_Integer]:=
+Module[{},
+With[{numX=Length[initVec],
+ 	thePath=Flatten[iterateDRCE[theCondExp,initVec,iters+1]]},
+ 		With[{restVals=
+      Map[(theHMat .thePath[[Range[3*numX]+numX*(#-1)]] -psiC)&,Range[(Length[thePath]/numX)-3]]},
+      restVals
+]]]
+
+
+
 
 
 @}

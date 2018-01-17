@@ -106,19 +106,6 @@ theResTrad=parallelNestIterREInterp[genFRExtFunc,linModBetter,
 numKern=Length[Kernels[]];
 theName=fNameString[approx,iters,theK,numKern];
 (**)
-{tmExactTrad,ig}=Timing[
-theResExactTrad=parallelNestIterREInterp[genFRExtFunc,linModBetter,
-{simpRBCExactX0Z0CEBetter,theK},eqnsCompiledBetter,sgSpecErg,iters,"xVarRanges"->{{0.01,2},{0.01,2},{0.01,20},{0.85,1.2}},"Traditional"->True]];
-Print["theResExtractTrad:"];
-Export[theName<>"ExactTrad.pdf",
-forDRExactTrad=theResExactTrad[[-1,1]];DistributeDefinitions[forDR];
-forDRCEExactTrad=theResExactTrad[[-1,2]];DistributeDefinitions[forDRCE];
-ContourPlot[
-Norm[actualErrs[forDRExactTrad,
-backZtoX[{{z1,z2,0}},betterRBCMean,betterRBCSD,betterRBCvv][[1]]]],
-{z1,betterRBCMinZ[[1]],betterRBCMaxZ[[1]]},{z2,betterRBCMinZ[[2]],betterRBCMaxZ[[2]]},PlotRange->All,PlotLegends->Automatic,PlotLabel->theName<>"ExactTrad"]];
-Print["ExactTrad"];
-(**)
 {tmExact,ig}=Timing[
 theResExact=parallelNestIterREInterp[genFRExtFunc,linModBetter,
 {simpRBCExactX0Z0CEBetter,theK},eqnsCompiledBetter,sgSpecErg,iters,"xVarRanges"->{{0.01,2},{0.01,2},{0.01,20},{0.85,1.2}}]];
@@ -274,6 +261,29 @@ errBndVal,errBndLoc,acterrVal,acterrLoc,
 errBndValTrad,errBndLocTrad,acterrValTrad,acterrLocTrad,acterrsCP];
 Print["doIt:saving done"];
 {theRes,theResTrad}]
+
+
+doItExactTrad[approx_?VectorQ,iters_Integer,theK_Integer]:=
+Module[{},
+zPts=backXtoZ[ptErg,betterRBCMean,betterRBCSD,betterRBCvv];
+numKern=Length[Kernels[]];
+theName=fNameString[approx,iters,theK,numKern];
+{tmExactTrad,ig}=Timing[
+theResExactTrad=parallelNestIterREInterp[genFRExtFunc,linModBetter,
+{simpRBCExactX0Z0CEBetter,theK},eqnsCompiledBetter,sgSpecErg,iters,"xVarRanges"->{{0.01,2},{0.01,2},{0.01,20},{0.85,1.2}},"Traditional"->True]];
+Print["theResExtractTrad:"];
+Export[theName<>"ExactTrad.pdf",
+forDRExactTrad=theResExactTrad[[-1,1]];DistributeDefinitions[forDR];
+forDRCEExactTrad=theResExactTrad[[-1,2]];DistributeDefinitions[forDRCE];
+ContourPlot[
+Norm[actualErrs[forDRExactTrad,
+backZtoX[{{z1,z2,0}},betterRBCMean,betterRBCSD,betterRBCvv][[1]]]],
+{z1,betterRBCMinZ[[1]],betterRBCMaxZ[[1]]},{z2,betterRBCMinZ[[2]],betterRBCMaxZ[[2]]},PlotRange->All,PlotLegends->Automatic,PlotLabel->StringReplace[theName,"Iters"->"\nIters"
+]<>"ExactTrad"(*<>bothErrStr*),
+Epilog->{(*PointSize[0.05],Green,Point[acterrLoc[[{1,2}]]],PointSize[0.025],Orange,Point[errBndLoc[[{1,2}]]],*)PointSize[0.0125],Black,Point[#]&/@zPts[[All,{1,2}]]}]];
+Print["ExactTrad"];
+]
+
 
 
 getErrs[approx_?VectorQ,iters_Integer,theK_Integer,numKern_Integer]:=

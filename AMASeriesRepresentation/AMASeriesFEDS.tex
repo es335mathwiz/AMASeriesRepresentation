@@ -32,15 +32,15 @@
 
 \begin{abstract}
 This paper investigates the solution of discrete time  dynamic stochastic
-infinite-horizon economies that have bounded-time-invariant solutions.
+infinite-horizon economies with bounded-time-invariant solutions.
 The paper provides formulae for evaluating the accuracy of decision rules
 approximately satisfying the system of first-order conditions and presents
 an algorithm that robustly improves the accuracy of proposed solutions.
-The error bounds apply for assessing the accuracy of any proposed decision rule, regardless of the source.
+The error bounds apply for assessing the accuracy of any proposed bounded time invariant decision rule, regardless of the source.
 
-The results are straightforward applications of a  new series representation
-for bounded discrete time series useful for
-a very broad class of dynamic stochastic models.
+A straightforward applications of a  new series representation
+for bounded discrete time series, appropriate for
+a very broad class of dynamic stochastic models, delivers these results.
 % This error bound calculation accounts for the impact of errors in any of the equations in the system.
 Using the series representation, the paper 
 augments a traditional solution strategty with an additional set of
@@ -54,12 +54,14 @@ for models with occasionally binding constraints and regime switching.
 
 
 
-The  paper uses a particular implementation of the algorithm to
-demonstrate how to use the 
-series representation in conjunction with 
+The  paper uses 
+%a particular implementation of the algorithm to
+%demonstrate how to use the 
+%series representation in conjunction with 
 Smolyak polynomial function approximation  
-to eliminate the need for numerical integration during the solution updates and to exploit the high degree of parallelism available in the algorithm.
-.
+to eliminate the need for numerical integration during the solution updates 
+and to exploit the high degree of parallelism available in the algorithm.
+
 
 
 
@@ -76,12 +78,12 @@ to eliminate the need for numerical integration during the solution updates and 
 \section{Introduction}
 
 This paper investigates the solution of discrete time  dynamic stochastic
-infinite-horizon economies that have bounded-time-invariant solutions.
+infinite-horizon economies with bounded-time-invariant solutions.
 It describes how to obtain decision rules satisfying a system of 
-first-order conditions, ``Euler Equations'',  and how to assess their accuracy.\citep{juddGSSA2011,maliarmovingbounds}\footnote{A future paper will 
+first-order conditions, ``Euler Equations'',  and how to assess their accuracy.\footnote{A future paper will 
 discuss  applications involving value function iteration.}
  For an overview of solution techniques,
-see \cite{judd92,Christiano2000,doraszelskiy04,gaspar97,Judd2014,marcet.lorenzoni99}.
+see \citep{judd92,Christiano2000,doraszelskiy04,gaspar97,Judd2014,marcet.lorenzoni99,juddGSSA2011,maliarmovingbounds}.
 
 
 This new series representation for bounded time series, adapted from \citep{anderson10},
@@ -99,8 +101,8 @@ one bounded infinite dimensional series into another.
     ``Euler equation errors'' to
     bound the magnitude of the    approximation error in components of 
     decision rules.
-    Others have also studied error bounds for dynamic stochastic models.\cite{judd2017lower,santos2005accuracy,Santos2000accuracy}, but the bound here
-    explicitly relates the magnitude of components of the
+    Others have also studied error bounds for dynamic stochastic models.\cite{judd2017lower,santos2005accuracy,Santos2000accuracy}, this paper provides a more precise bound 
+    explicitly relating the magnitude of components of the
     ``Euler equation errors'' to components of the magnitude of components of
     errors in the decision rule without resort to statistical inference or ancillary simulations.
 
@@ -114,7 +116,7 @@ one bounded infinite dimensional series into another.
 %    $\ZWOarg_{t+\nu}$ that satisfy the model equations thereby
 
 The numerical implementation of the algorithm 
-builds upon and complements the work of
+builds upon the work of
 \citep{juddGSSA2011}.
 In particular it uses
 the an-isotropic Smolyak Method and the adaptive
@@ -189,7 +191,7 @@ Consider an arbitrary, but bounded path
 Now, given the trajectories \refeq{aBPath}, define 
 $  z_{t}$ as  
 \begin{gather}
-  \zWOarg_{t} \equiv H_{-1} \xWOarg_{t-1} +  H_0 \xWOarg_{t} +  H_1 \xWOarg_{t+1} \label{defZ} 
+  \zWOarg_{t} \equiv H_{-1} \xWOarg_{t-1} +  H_0 \xWOarg_{t} +  H_1 \xWOarg_{t+1} -\psi_c - \psi_\epsilon \epsilon_t \label{defZ} 
 \end{gather}
 One can then express the $\xWOarg_t$ as solving \ref{hSystem} along with the anticipated shocks $\zWOarg_t$
 	 \begin{gather}
@@ -614,15 +616,14 @@ Recomputing the truncation errors with the expanded model produces identical res
 \label{sec:solnerrorbounds}
 
 
-The paper shows how to write down a series representation for any proposed
+The paper shows how to write a series representation for any proposed
 model solution and to characterize the series representation for a typically
-unknown solution in such a way that one can use the model equation errors,
-including, but not restricted to Euler errors,  to construct an error bound for the norm of the distance between the proposed and the exact solution.
+unknown solution in such a way that one can use the model equation errors  to construct an error bound for the norm of the distance between the proposed and the exact solution.
 
 This work contrast with the analysis provided in
 \cite{judd2017lower,peralta-alva14,santos2005accuracy,Santos2000accuracy}. 
 Their approaches identify Euler Equation Errors, but use statistical techniques to estimate the impact of these errors on solution accuracy.  Here we compute
-and equation for the bound that does not require statistical inference.
+an equation for the bound that does not require statistical inference.
 
 
 
@@ -632,7 +633,8 @@ and equation for the bound that does not require statistical inference.
 \label{sec:errorformula}
 
 
-We consider time invariant maps such as often arise from solving equation a time t optimization problem codified in a collection of systems of equations.  
+We consider time invariant maps such as often arise from solving an
+ optimization problem codified in a systems of equations.  
 In what follows, we construct an error bound for proposed model solutions.
 Consider a bounded region, $\bndRgn$, where all iterated conditional expectations paths remain bounded.
  Given an exact solution $x^\star_t=g^\star(x_{t-1},\epsilon_t)$ define the conditional expectations function,
@@ -640,7 +642,7 @@ Consider a bounded region, $\bndRgn$, where all iterated conditional expectation
 G^\star(x)\equiv\expct{g^\star(x,\epsilon)} \intertext{then with}
 E_tx^\star_{t+1}=G^\star(g^\star(x_{t-1},\epsilon_t)) \intertext{we have}
     \label{eq:2}
-\eqnFunc(x^\star_{t-1},x^\star_t,E_tx^\star_{t+1},\epsilon_t)=0  \,\, \forall  (x_{t-1},\epsilon_t)\\ \intertext{In words, the exact solution satisfies the model equations exactly.  Using $G^\star$ and $\linMod$ construct the family of trajectories and corresponding $z^\star_t(x_{t-1},\epsilon)$ }
+\eqnFunc(x^\star_{t-1},x^\star_t,E_tx^\star_{t+1},\epsilon_t)=0  \,\, \forall  (x_{t-1},\epsilon_t)\\ \intertext{In words, the exact solution  exactly satisfies the model equations.  Using $G^\star$ and $\linMod$, construct the family of trajectories and corresponding $z^\star_t(x_{t-1},\epsilon)$ }
    x^\star_t(x_{t-1},\epsilon_t) \in{R^L}\,\,\infNorm{x^\star_t(x_{t-1},\epsilon_t)}  \le \bar{\mathcal{X}}\,\,\forall t\ > 0
   \end{gather}
    \begin{align}
@@ -721,8 +723,18 @@ the largest error for $\Delta z_{t+k}^p$   are pessimistic bounds for the errors
   \end{tcolorbox}
 
 
+\newcommand{\hApp}[1]{{H_-{#1}_{t-1} +H_0{#1}_t +H_+{#1}_{t+1}}}
 
-
+  \begin{gather*}
+z^\star_t=\hApp{x^\star}\\
+z^p_t=\hApp{x^p}\\
+0=\eqnFunc(x^\star_{t-1},x^\star_{t},x^\star_{t+1},\epsilon_t)\\
+\mathbf{e}_t^p(x_{t-1},\epsilon)=\eqnFunc(x^p_{t-1},x^p_{t},x^p_{t+1},\epsilon_t)\\
+\max \Delta z_t =\infNorm{H_0(x^p_t-x^\star_t)+H_+(x^p_{t+1}-x^\star_{t+1})}
+\intertext{with}
+\eqnFunc(x^p_{t-1},x^p_{t},x^p_{t+1},\epsilon_t) \le 
+\mathbf{e}_t^p(x_{t-1},\epsilon)
+  \end{gather*}
 
 
 \subsection{Generalization and Practical Considerations for Applying the Formula}
@@ -874,14 +886,15 @@ the series formula has a correction term for $z_t(x_{t-1},\epsilon_t)$
   \centering
 \ifmacosx
 
-  \includegraphics{resDir/forBetterRBC--1,1,1-Iters30theK0host-MacBook-Pro-2numKern2Trad.pdf}
-
 
   \includegraphics{resDir/forBetterRBC--1,1,1-Iters30theK0host-MacBook-Pro-2numKern2ApproxTrad.pdf}
+
+  \includegraphics{resDir/forBetterRBC--1,1,1-Iters30theK0host-MacBook-Pro-2numKern2Trad.pdf}
+
 \fi
 \iflinux
-\includegraphics{resDir/forBetterRBC--1,1,1-Iters30theK0host-node015dnumKern16ExactTrad.pdf}
 \includegraphics{resDir/forBetterRBC--1,1,1-Iters30theK0host-node015dnumKern16ApproxTrad.pdf}
+\includegraphics{resDir/forBetterRBC--1,1,1-Iters30theK0host-node015dnumKern16ExactTrad.pdf}
 \fi
   \caption{Contour Plot for traditional approx=(1,1,1) (Standard Approach)}
   \label{fig:tradOne}
@@ -895,8 +908,8 @@ the series formula has a correction term for $z_t(x_{t-1},\epsilon_t)$
   \includegraphics{resDir/forBetterRBC--1,1,1-Iters30theK0host-MacBook-Pro-2numKern2.pdf}
 \fi
 \iflinux
-\includegraphics{resDir/forBetterRBC--1,1,1-Iters30theK0host-node015dnumKern16.pdf}
 \includegraphics{resDir/forBetterRBC--1,1,1-Iters30theK0host-node015dnumKern16Approx.pdf}
+\includegraphics{resDir/forBetterRBC--1,1,1-Iters30theK0host-node015dnumKern16.pdf}
 \fi
   \caption{Contour Plot for approx=(1,1,1) K =0 }
   \label{fig:cntpltA}
@@ -908,11 +921,11 @@ the series formula has a correction term for $z_t(x_{t-1},\epsilon_t)$
 \begin{figure}
   \centering
 \iflinux
-\includegraphics[width=1.0in]{resDir/forBetterRBC--1,1,1-Iters30theK1numKern16.pdf}
-\includegraphics[width=1.0in]{resDir/forBetterRBC--1,1,1-Iters30theK2numKern16.pdf}
-\includegraphics[width=1.0in]{resDir/forBetterRBC--1,1,1-Iters30theK3numKern16.pdf}
-\includegraphics[width=1.0in]{resDir/forBetterRBC--1,1,1-Iters30theK4numKern16.pdf}
-\includegraphics[width=1.0in]{resDir/forBetterRBC--1,1,1-Iters30theK5numKern16.pdf}
+\includegraphics[width=1.0in]{resDir/forBetterRBC--1,1,1-Iters30theK1host-node015dnumKern16.pdf}
+\includegraphics[width=1.0in]{resDir/forBetterRBC--1,1,1-Iters30theK2host-node015dnumKern16.pdf}
+\includegraphics[width=1.0in]{resDir/forBetterRBC--1,1,1-Iters30theK3host-node015dnumKern16.pdf}
+\includegraphics[width=1.0in]{resDir/forBetterRBC--1,1,1-Iters30theK4host-node015dnumKern16.pdf}
+\includegraphics[width=1.0in]{resDir/forBetterRBC--1,1,1-Iters30theK5host-node015dnumKern16.pdf}
 \fi
 \ifmacosx
 \includegraphics[width=1.0in]{resDir/forBetterRBC--1,1,1-Iters30theK1host-node015dnumKern2.pdf}
@@ -977,6 +990,36 @@ is 25\% larger than the actual error
   \includegraphics{resDir/forBetterRBC--1,1,1-Iters30theK10host-node015dnumKern16.pdf}
 \fi
   \caption{Contour Plot for approx=(1,1,1) iters 20 K =10}
+  \label{fig:cntpltC}
+\end{figure}
+
+
+\begin{figure}
+  \centering
+\ifmacosx
+  \includegraphics{resDir/forBetterRBC--1,1,1-Iters30theK30host-MacBook-Pro-2numKern2Approx.pdf}
+  \includegraphics{resDir/forBetterRBC--1,1,1-Iters30theK30host-MacBook-Pro-2numKern2.pdf}
+\fi
+\iflinux
+  \includegraphics{resDir/forBetterRBC--1,1,1-Iters30theK20host-node015dnumKern16Approx.pdf}
+  \includegraphics{resDir/forBetterRBC--1,1,1-Iters30theK20host-node015dnumKern16.pdf}
+\fi
+  \caption{Contour Plot for approx=(1,1,1) iters 20 K =20}
+  \label{fig:cntpltC}
+\end{figure}
+
+
+\begin{figure}
+  \centering
+\ifmacosx
+  \includegraphics{resDir/forBetterRBC--1,1,1-Iters30theK30host-MacBook-Pro-2numKern2Approx.pdf}
+  \includegraphics{resDir/forBetterRBC--1,1,1-Iters30theK30host-MacBook-Pro-2numKern2.pdf}
+\fi
+\iflinux
+  \includegraphics{resDir/forBetterRBC--1,1,1-Iters30theK50host-node015dnumKern16Approx.pdf}
+  \includegraphics{resDir/forBetterRBC--1,1,1-Iters30theK50host-node015dnumKern16.pdf}
+\fi
+  \caption{Contour Plot for approx=(1,1,1) iters 20 K =50}
   \label{fig:cntpltC}
 \end{figure}
 
@@ -1072,8 +1115,8 @@ is 25\% larger than the actual error
   \includegraphics{resDir/forBetterRBC--3,3,3-Iters20theK20numKern2.pdf}
   \fi
 \iflinux
-  \includegraphics{resDir/forBetterRBC--3,3,3-Iters30theK20host-node015dnumKern16ApproxTrad.pdf}
-  \includegraphics{resDir/forBetterRBC--3,3,3-Iters30theK20host-node015dnumKern16ExactTrad.pdf}
+  \includegraphics{resDir/forBetterRBC--3,3,3-Iters30theK0host-node015dnumKern16ApproxTrad.pdf}
+  \includegraphics{resDir/forBetterRBC--3,3,3-Iters30theK0host-node015dnumKern16Trad.pdf}
 \fi
   \caption{Contour Plot for approx=(3,3,3) 30 iterations Traditional}
   \label{fig:cntpltI}
@@ -1099,7 +1142,7 @@ is 25\% larger than the actual error
 % \item show describe $z_t(x_{t-1},\epsilon_t)$ for RBC
 % \item start linear.  check error bounds, if adequate done
 % \item traditional iteration ignores the path constraints on initial solution leading to larger errors on $\bndRgn^p$
-% \item It's a good idea to compute easy approximation using just the linear model one ieration to get an approximation for the ergodic set\cite{ergodicvisual}
+% \item It's a good idea to compute easy approximation using just the linear model one ieration to get an approximation for the ergodic set
 % \item PEA moving bounds \cite{maliarmovingbounds}
 % \item them simulate and make the Maliar SVD transformation
 % \item then iterate on the ergodic set till it settles down
@@ -1107,6 +1150,73 @@ is 25\% larger than the actual error
 % \item need to see if this works when honoring complimentary slackness
 % \item not related to z transform. probably should change z's
 % \end{itemize}
+
+\subsection{Ergodic Partition of Invariant Sets}
+\label{sec:ergod-part-invar}
+
+Following \citep{ergodicvisual}, consider a map $T$ on a compact metric space $\mathcal{A}$ endowed with a measure $\mu$ preserved under $T$. We wish to 
+visualize invariant sets $\mathcal{B} \subseteq \mathcal{A}$.
+
+\begin{gather*}
+  x_{t+1} =T x_t,\in A\,\,\forall t \in Z
+\end{gather*}
+
+\begin{gather*}
+  x_0 \in B \implies T^t x_0 \in B \,\,\forall t \in Z
+\end{gather*}
+
+For ergodic invariant sets, consider $L^1$ real valued functions on A
+\begin{gather*}
+ f:A \rightarrow \mathbb{R}\in L^1(A) \iff \int_A |f(x)|dx <\infty
+\end{gather*}
+
+Define time average $f^\ast(x_0)$ of a function $f\in L^1(A)$ corresponding to a phase point $x_0\in A$
+\begin{gather*}
+  f^\ast(x_0)\equiv \lim_{t\rightarrow\infty} \frac{1}{t}\sum_{k=0}^{t-1}f(T^kx_0)
+\end{gather*}
+
+By the Ergodic Theorem, this limit exists almost everywhere ( a. e. ).
+Call map T ergodic over $B \subset A$ if for a. . point  $x_0 \in B$ time average equals the space average for every function $f \in L^1(B)$ so that there exists an
+ergodic measure.
+\begin{gather*}
+f^\ast(x_0) =\frac{1}{\mu_B(B)}\int_B f d\mu_B  
+\end{gather*}
+a.e. $B \subset A$
+
+This implies $f^\ast$ is a constant a. e. in $B \subset A$  almost every orbit starting in B covers B densey at the limit.  Each $f^\ast$ is an invariant function $f^\ast(x_0)= f^\ast(T^tx_0) \, \forall t$  
+The set of real numbers induces a partition of A called $\zeta_f\equiv \{B_a\}_{a\in\mathbb{R}}$ through a function $f\in L^1(A)$
+
+\begin{gather*}
+  B_a=(f^\ast)^{-1}(a), \,\,\forall a \in \mathbb{R}
+\end{gather*}
+Some of $B_a$ may be empty.
+
+\begin{gather*}
+  \mu\left (\bigcup_aB_a \right )=\mu(A),B_a\cap B_{a^\prime} = \emptyset ,\,\,\forall a \ne a^\prime
+\end{gather*}
+Denote set of points with no time average of $f$ by $\Sigma(f,T)$
+
+\begin{gather*}
+  A=(\cup_aB_a)\bigcup \Sigma(f,T)
+\end{gather*}
+To guarantee we don't lump what should be independent invariant sets together just because averages match, define using a collection of functions.
+Final ergodic partation $\zeta_e$ product of all $zeta_f$ belonging to $S \subset L^1(A)$  Chose S as a basis for $L^1(A)$
+
+\begin{gather*}
+  \zeta_e= \bigvee_{f\in S} \zeta_f
+\end{gather*}
+
+Ergodic partition divides phase space into non-decomposable invariant sewts.  Can visualize using approximate ergodic partitions.
+
+\begin{enumerate}
+\item Set up a grid of initial grid-points
+\item Pick N function $\{f_1,\ldots,f_N\}$ from $L^1(A)$ and compute partial time averages for $t_{final}$ iterations for each grid point.  These serve as approximations for $\{f_1^\ast,\ldots,f_N^\ast\}$
+\item To every initial grid point associate the corresponding time average vector
+  \begin{gather*}
+    x \rightarrow \bar{f}(x),\,\, \bar{f}(x)\equiv \{f_1^\ast(x),\ldots,f_N^\ast(x)\}\in \mathbb{R}^N
+  \end{gather*}
+\item Observe the distribution of ime average vectors $\bar{f}$ and group them into clusters
+\end{enumerate}
 
 
 \subsection{Algorithm Overview}

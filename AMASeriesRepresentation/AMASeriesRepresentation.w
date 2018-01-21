@@ -2828,8 +2828,7 @@ With[{@<cmptXArgsInit@>,
 (**)
 Switch[OptionValue["Traditional"],
 True,@<setDelayedTradFXtZt@>;@<setDelayedTradFXtm1Eps@>,
-False,@<setDelayedFixFXtZt@>;@<setDelayedSeriesFXtm1Eps@>,
-"Fix",@<setDelayedFixFXtZt@>;@<setDelayedSeriesFXtm1Eps@>]
+False,@<setDelayedSeriesFXtZt@>;@<setDelayedSeriesFXtm1Eps@>]
 (**)
 (**)
 DistributeDefinitions[funcOfXtZt,funcOfXtm1Eps]
@@ -2893,19 +2892,8 @@ funcOfXtZt[Apply[Sequence,Join[xLagArgs,eArgs,xArgs]]],
 Join[xArgsInit](*,WorkingPrecision->50*)(*,EvaluationMonitor:>Print["xz",{xArgs,zArgs,xLagArgs,eArgs,funcOfXtm1Eps,funcOfXtZt,funcOfXtZt[Apply[Sequence,Join[xLagArgs,eArgs,xArgs,zArgs]]]}//InputForm]*)]},
 Transpose[{Flatten[Join[xArgs,zArgs*0]]/.frRes}]]]@}
 
-@d setDelayedSeriesFXtZt
-@{SetDelayed[
-funcOfXtZt[
-(**)
-Apply[Sequence,xtztArgPatterns]],
-Module[{},
-With[{xkFunc=genLilXkZkFunc[linMod,XZFuncs,Transpose[{xArgs}]]},
-With[{xkAppl=Apply[xkFunc,Join[xLagArgs,eArgs,zArgs]]},
-With[{eqnAppl=Apply[eqnsFunc,Flatten[xkAppl]],
-xDisc=xArgs-xkAppl[[numX+Range[numX]]]},
-Flatten[Join[xDisc,eqnAppl]]]]]]]@}
 
-@d setDelayedFixFXtZt
+@d setDelayedSeriesFXtZt
 @{SetDelayed[
 funcOfXtZt[
 (**)

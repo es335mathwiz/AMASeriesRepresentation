@@ -44,55 +44,55 @@ xeps:{kk_?NumberQ,tt_?NumberQ,ee_?NumberQ}]:=
 Module[{xtVals=Flatten[approxDR[99,kk,99,tt,ee][[Range[4]]]],
 theH=getH[linModBetter],theF=getF[linModBetter],thePsiC=getPsiC[linModBetter],thePsiEps=getPsiEps[linModBetter]},
 With[{xtp1Vals=approxDRCE @@ xtVals},
-With[{lil=.1,errNow=
+With[{errNow=
+Norm[
 eqnsCompiledBetter @@ 
-Join[{99,kk,99,tt},xtVals,xtp1Vals,{ee}],errDelay=
+Join[{99,kk,99,tt},xtVals,xtp1Vals,{ee}]],errDelay=
 delayEvalEqns @@ 
 Join[{99,kk,99,tt},xtVals,xtp1Vals,{ee},{approxDR,approxDRCE}],
 theZsNow=genZsREExact[linModBetter,Transpose[{{99,kk,99,tt,ee}}],1,
 simpRBCExactDRBetter,simpRBCExactDRCEBetter,1][[1]]
-},Print["progress"];
+},
+With[{lil=1.5*errNow,lilLil=.0001},
 With[{theZs=
 theH . Transpose[{
 Join[{99,kk,99,tt},xtVals,xtp1Vals]}] - thePsiC -thePsiEps*ee},
+With[{theRes=
 NMaximize[{delayEvalNrmBnd @@ 
 Join[{99,kk,99,tt},{cct,kkt,nnt,tht},{cctp1,kktp1,nntp1,thtp1},{ee},{approxDR,approxDRCE}],
 And[Norm[delayEvalEqns @@ 
-Join[{99,kk,99,tt},{cct,kkt,nnt,tht},{cctp1,kktp1,nntp1,thtp1},{ee},{approxDR,approxDRCE}]]<.02,
-xtVals[[1]]-lil<=cct<=xtVals[[1]]+lil,
-xtVals[[2]]-lil<=kkt<=xtVals[[2]]+lil,
-xtVals[[3]]-lil<=nnt<=xtVals[[3]]+lil,
-xtVals[[4]]-lil<=tht<=xtVals[[4]]+lil,
-xtp1Vals[[1]]-lil<=cctp1<=xtp1Vals[[1]]+lil,
-xtp1Vals[[2]]-lil<=kktp1<=xtp1Vals[[2]]+lil,
-xtp1Vals[[3]]-lil<=nntp1<=xtp1Vals[[3]]+lil,
-xtp1Vals[[4]]-lil<=thtp1<=xtp1Vals[[4]]+lil]},
-{cct,kkt,nnt,tht,cctp1,kktp1,nntp1,thtp1}]]]]]
+Join[{99,kk,99,tt},{cct,kkt,nnt,tht},{cctp1,kktp1,nntp1,thtp1},{ee},{approxDR,approxDRCE}]]<errNow+lil]},{
+{cct,xtVals[[1]]-lilLil,xtVals[[1]]+lilLil},
+{kkt,xtVals[[2]]-lilLil,xtVals[[2]]+lilLil},
+{nnt,xtVals[[3]]-lilLil,xtVals[[3]]+lilLil},
+{tht,xtVals[[4]]-lilLil,xtVals[[4]]+lilLil},
+{cctp1,xtp1Vals[[1]]-lilLil,xtp1Vals[[1]]+lilLil},
+{kktp1,xtp1Vals[[2]]-lilLil,xtp1Vals[[2]]+lilLil},
+{nntp1,xtp1Vals[[3]]-lilLil,xtp1Vals[[3]]+lilLil},
+{thtp1,xtp1Vals[[4]]-lilLil,xtp1Vals[[4]]+lilLil}
+},Method->{"NelderMead","Tolerance"->errNow/10}
+]},
+With[{errPost=
+Norm[
+eqnsCompiledBetter @@ 
+(Join[{99,kk,99,tt},{cct,kkt,nnt,tht,cctp1,kktp1,nntp1,thtp1},{ee}]/.theRes[[2]])]},
+{errPost,theRes}
+]]]]]]]
+
+
 
 delayEvalEqns[
 cctm1_?NumberQ,kktm1_?NumberQ,nltm1_?NumberQ,thetatm1_?NumberQ,
 cct_?NumberQ,kkt_?NumberQ,nlt_?NumberQ,thetat_?NumberQ,
 cctp1_?NumberQ,kktp1_?NumberQ,nltp1_?NumberQ,thetatp1_?NumberQ,
 epsVal_?NumberQ,approxDR_Function,approxDRCE_Function]:=
-Module[{theH=getH[linModBetter],theF=getF[linModBetter],thePsiC=getPsiC[linModBetter],thePsiEps=getPsiEps[linModBetter],
-eqnVals=Transpose[{
-eqnsCompiledBetter @@ {
+Module[{eqnVals=eqnsCompiledBetter @@ {
 cctm1,kktm1,nltm1,thetatm1,
 cct,kkt,nlt,thetat,
 cctp1,kktp1,nltp1,thetatp1,
 epsVal
-}}],
-theZsNow=genZsREExact[linModBetter,Transpose[{{99,kktm1,99,thetatm1,epsVal}}],1,
-simpRBCExactDRBetter,simpRBCExactDRCEBetter,1][[1]]
-},
-With[{theZs=
-theH . Transpose[{{
-cctm1,kktm1,nltm1,thetatm1,
-cct,kkt,nlt,thetat,
-cctp1,kktp1,nltp1,thetatp1}}] - thePsiC -thePsiEps*epsVal},
-(*Norm[tErrMat. (theZsNow-theZs)]*)
-Norm[eqnVals]
-]]
+}},Print["delayEqn:",Norm[eqnVals]];
+Norm[eqnVals]]
 
 delayEvalNrmBnd[
 cctm1_?NumberQ,kktm1_?NumberQ,nltm1_?NumberQ,thetatm1_?NumberQ,
@@ -108,7 +108,7 @@ cctp1,kktp1,nltp1,thetatp1,
 epsVal
 }}],
 theZsNow=genZsREExact[linModBetter,Transpose[{{99,kktm1,99,thetatm1,epsVal}}],1,
-simpRBCExactDRBetter,simpRBCExactDRCEBetter,1][[1]]
+approxDR,approxDRCE,1][[1]]
 },
 With[{theZs=
 theH . Transpose[{{
@@ -168,64 +168,9 @@ eqnsCompiledBetter @@ xkApply]]
 
 
 
-
-doIt[approx_?VectorQ,iters_Integer,theK_Integer]:=
-Module[{ptErg,tfErg,plyErg,iplyErg,dplyErg},
-Print["doIt:"];
-{ptErg,tfErg,plyErg,iplyErg,dplyErg}=smolyakInterpolationPrep[approx,{betterRBCMean,betterRBCSD,betterRBCMinZ,betterRBCMaxZ,betterRBCvv},theDistBetter];
-smolRngErg=Transpose[{betterRBCMinZ,betterRBCMaxZ}];
-sgSpecErg={toIg,smolRngErg,ptErg,tfErg,plyErg,iplyErg,1,approx,
-{betterRBCMean,betterRBCSD,betterRBCMinZ,betterRBCMaxZ,betterRBCvv}};
-bmr=ConvexHullMesh[ptErg[[All,{1,2}]]];
-rbnds=RegionBounds[bmr];
-Print["doIt:sgSpecErg done"];
-evs=Eigenvalues[tfErg//N];condNum=evs[[1]]/evs[[-1]];
-toIg=aGSpecBetter[[1]];
-X0Z0=genX0Z0Funcs[linModBetter];
-theFRExt=genFRExtFunc[{4,1,4},linModBetter,{X0Z0,2},eqnsCompiledBetter,
-"xVarRanges"->{{0.01,2},{0.01,2},{0.01,20},{0.85,1.2}}];
-Print["doIt:theFRExt done"];
-DistributeDefinitions[X0Z0,theFRExt,checkPt,getH];
-Print["doIt:DistributeDefinitions done"];
-(**)
-(*
-Export[theName<>"Minus.pdf",
-ContourPlot[
-Norm[actualErrs[forDR,
-backZtoX[{{z1,z2,-.03}},betterRBCMean,betterRBCSD,betterRBCvv][[1]]]],
-{z1,betterRBCMinZ[[1]],betterRBCMaxZ[[1]]},{z2,betterRBCMinZ[[2]],betterRBCMaxZ[[2]]},PlotRange->All,PlotLegends->Automatic,PlotLabel->StringReplace[theName,"Iters"->"\nIters"
-]<>"Minus"<>bothErrStr,
-Epilog->{PointSize[0.05],Green,Point[acterrLoc[[{1,2}]]],PointSize[0.025],Orange,Point[errBndLoc[[{1,2}]]],PointSize[0.0125],Black,Point[#]&/@zPts[[All,{1,2}]]}]];
-Print["Minus"];
-Export[theName<>"Plus.pdf",
-ContourPlot[
-Norm[actualErrs[forDR,
-backZtoX[{{z1,z2,.03}},betterRBCMean,betterRBCSD,betterRBCvv][[1]]]],
-{z1,betterRBCMinZ[[1]],betterRBCMaxZ[[1]]},{z2,betterRBCMinZ[[2]],betterRBCMaxZ[[2]]},PlotRange->All,PlotLegends->Automatic,PlotLabel->StringReplace[theName,"Iters"->"\nIters"
-]<>"Plus"<>bothErrStr,
-Epilog->{PointSize[0.05],Green,Point[acterrLoc[[{1,2}]]],PointSize[0.025],Orange,Point[errBndLoc[[{1,2}]]],PointSize[0.0125],Black,Point[#]&/@zPts[[All,{1,2}]]}]];
-Print["Plus"];
-*)
-truncPtFunc[z1_?NumberQ,z2_?NumberQ,z3_?NumberQ]:=
-Module[{},
-Norm[tErrMat.Transpose[{checkPt[forDR,forDRCE,theK,
-backZtoX[{{z1,z2,tryEps}},betterRBCMean,betterRBCSD,betterRBCvv][[1]]]}]]];
-Export[theName<>"truncApprox.pdf",
-ContourPlot[
-truncPtFunc[z1,z2,tryEps],
-{z1,betterRBCMinZ[[1]],betterRBCMaxZ[[1]]},{z2,betterRBCMinZ[[2]],betterRBCMaxZ[[2]]},PlotRange->All,PlotLegends->Automatic,PlotLabel->StringReplace[theName,"Iters"->"\nIters"
-]<>"TruncApprox"<>bothErrStr,
-Epilog->{PointSize[0.05],Green,Point[acterrLoc[[{1,2}]]],PointSize[0.025],Orange,Point[errBndLoc[[{1,2}]]],PointSize[0.0125],Black,Point[#]&/@zPts[[All,{1,2}]]}]];
-Print["TruncApprox"];
-Save[mthName,theRes,theResTrad,tm,tmTrad,numKern,condNum,
-errBndVal,errBndLoc,acterrVal,acterrLoc,
-errBndValTrad,errBndLocTrad,acterrValTrad,acterrLocTrad,acterrsCP];
-Print["doIt:saving done"];
-theRes]
-
 doItApproxSeries[approx_?VectorQ,iters_Integer,theK_Integer]:=
 Module[{},
-(**)tryEps=.03;
+(**)tryEps=0;
 numKern=Length[Kernels[]];
 theName=fNameString[approx,iters,theK,numKern];
 mthName=theName<>".mth";
@@ -256,7 +201,7 @@ Module[{},
 -Norm[actualErrs[forDR,backZtoX[{{z1,z2,z3}},betterRBCMean,betterRBCSD,betterRBCvv][[1]]]]];
 (**)
 drerrName[z1_?NumberQ,z2_?NumberQ,z3_?NumberQ]:=
-Module[{bndMat=Inverse[IdentityMatrix[4]-getF[linModBetter]]. getPhi[linModBetter]},
+Module[{},
 With[{resNow=-Norm[approxErrs[forDR,forDRCE,
 backZtoX[{{z1,z2,z3}},betterRBCMean,betterRBCSD,betterRBCvv][[1]]]]},
 resNow]];
@@ -267,10 +212,8 @@ And[betterRBCMinZ[[1]] <=z1<=betterRBCMaxZ[[1]],
 betterRBCMinZ[[2]]<=z2<=betterRBCMaxZ[[2]],
 betterRBCMinZ[[3]]<=z3<=betterRBCMaxZ[[3]]],{z1,z2,z3},Method->"NelderMead"];
 Print["acterr:",acterr];
-errBnd={errBndVal,errBndSubs}=NMinimize[drerrName[z1,z2,z3],
-And[betterRBCMinZ[[1]] <=z1<=betterRBCMaxZ[[1]],
-betterRBCMinZ[[2]]<=z2<=betterRBCMaxZ[[2]],
-betterRBCMinZ[[3]]<=z3<=betterRBCMaxZ[[3]]],{z1,z2,z3},Method->"NelderMead"];
+errBnd={errBndVal,errBndSubs}=
+betterBounds[forDR,forDRCE,{.1,.9,.01}];
 Print["errBnd:",errBnd];
 errBndLoc={z1,z2}/.errBndSubs;
 acterrLoc={z1,z2}/.acterrSubs;
@@ -310,7 +253,7 @@ Print["Approx"];
 
 doItApproxSeriesBound[approx_?VectorQ,iters_Integer,theK_Integer]:=
 Module[{},
-(**)tryEps=.03;
+(**)tryEps=0;
 numKern=Length[Kernels[]];
 theName=fNameString[approx,iters,theK,numKern];
 mthName=theName<>".mth";

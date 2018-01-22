@@ -1,0 +1,156 @@
+\documentclass[hyperref]{labbook}
+\usepackage{moreverb}
+\usepackage{natbib}
+\usepackage{hyperref}
+\usepackage{graphicx}
+
+\begin{document}
+
+\frontmatter
+\title{AMA Series}
+\author{Gary Anderson }
+\maketitle
+
+\printindex
+\tableofcontents
+
+
+
+
+\mainmatter
+\labday{Monday Januaryt 22, 2018}
+
+
+\begin{itemize}
+\item \href{https://github.com/JuliaInterop/Mathematica.jl}{Julia call Mathematica}
+\end{itemize}
+
+\labday{Sunday December 10, 2017}
+
+\begin{itemize}
+\item 01 no errors
+\item Xlib:  extension "MIT-SHM" missing on display "localhost:10.0" repeatedly
+Think related to quitting with control backslash  I tried  control C then exit to linkread didn't work, but backout of linkread worked  ps -aef had many fewer mathematica related process after backout than exit
+  \begin{itemize}
+  \item using kkSSNow to sett initial guess for 01 no errors 01 and mean 3.78,.99
+  \item seems to work for notbinding alone up to 4*{1,1,1}
+  \item not distributing work broadly all on kernel 15 or 10 
+  \end{itemize}
+
+\end{itemize}
+
+
+\labday{Saturday December 9, 2017}
+
+\begin{itemize}
+\item code seems to switch back and forth between using multiple kernels and a single kernel 15
+\end{itemize}
+
+
+\labday{Thursday December 8, 2017}
+
+\begin{itemize}
+\item betterRBCCompSlack
+  \begin{itemize}
+  \item try notbinding always true
+  \item then try binding always true
+  \item compare with occ bind online solutions
+  \end{itemize}
+\end{itemize}
+
+\labday{Thursday December 7, 2017}
+
+\begin{itemize}
+\item betterRBCCompSlack
+  \begin{itemize}
+  \item try notbinding always true
+  \end{itemize}
+\end{itemize}
+
+\labday{Saturday November 21, 2017}
+\begin{itemize}
+\item problems with MSNTO  functions differ accross kernels when evaluating
+\end{itemize}
+
+
+
+\labday{Saturday November 4, 2017}
+
+\begin{itemize}
+\item VAR expectations in FRBUS
+\item feedback from Chris after Tuesday November 7
+\item paper notes post seminar
+  \begin{itemize}
+  \item event monitors 
+``probability of hitting lower bound staying two periods''
+  \item Smets model
+  \item FRBUS
+  \item measure parallel speedup
+  \item fix broken code solve RBC examples and provide error boounds
+  \item verify using ergodic works
+  \item polynomial composition Fa Di Bruno
+  \item example random series with inequality constraint
+  \end{itemize}
+
+\end{itemize}
+
+
+
+\begin{itemize}
+\item do linearsolve in parallel
+\item xkzk func chose negative capital compiled function failed perhaps just need to make sure number of series terms adequate. happened with only two terms but high accuracy for anisotropic
+\item still need progress monitor
+\item does ergodic work?
+\item should compute error bounds actual error versus series length and number of recursions (new conditional expectations) exploit an-isotropic
+\item increase Mma precisoion to try higher degree approximation 
+\item some files
+\begin{verbatim}
+-rw-r--r-- 1 m1gsa00 msu   1180 Oct 30 16:51 someParallel.mth
+for sbatch
+
+-rw-r--r-- 1 m1gsa00 msu   1926 Oct 30 17:03 AMAFedsBetterRBC.mth
+defines doIt
+
+-rw-r--r-- 1 m1gsa00 msu    827 Oct 31 11:11 basicRBC.mth
+for debugging code with betterRBC.m
+
+-rw-r--r-- 1 m1gsa00 msu    343 Oct 31 13:52 interParallel.mth
+interactive parallel slow initialization runs [{4,4,2},6,3]
+fails with huge numbers 
+
+-rw-r--r-- 1 m1gsa00 msu  10261 Oct 31 13:52 cleanTrans.mth
+fails cmpXValsfails to evaluate
+
+-rw-r--r-- 1 m1gsa00 msu    687 Nov  4 14:05 arbGenPath.mth
+-rw-r--r-- 1 m1gsa00 msu   4723 Nov  4 14:07 genArbLin.mth 
+generate graphs for paper
+\end{verbatim}
+  \item Chris suggests focus on describing context in literature
+\item VAR expectations in FRBUS
+\item feedback from Chris after Tuesday November 7
+\item paper notes post seminar
+  \begin{itemize}
+  \item event monitors 
+``probability of hitting lower bound staying two periods''
+  \item Smets model
+  \item FRBUS
+  \item measure parallel speedup
+  \item fix broken code solve RBC examples and provide error boounds
+  \item verify using ergodic works
+  \item polynomial composition Fa Di Bruno
+  \item example random series with inequality constraint
+  \item presentation notes
+    \begin{itemize}
+    \item my models with boolean gates somewhat confusing unintuitive.
+neokeynesian NK model no lagrangian
+\item what happens for models with no solution or multiple solutions
+\item perhaps better not to emphasize new solution but that useful in any soluton algorithm  just better parameterized expectations
+\item Ben would like to recode and solve NK model with finite elements interested in E-Stability 
+    \end{itemize}
+  \end{itemize}
+
+\end{itemize}
+
+\bibliographystyle{plainnat}
+\bibliography{emds.bib}
+\end{document}

@@ -43,7 +43,7 @@ betterBounds[approxDR_Function,approxDRCE_Function,
 xeps:{kk_?NumberQ,tt_?NumberQ,ee_?NumberQ}]:=
 Module[{xtVals=Flatten[approxDR[99,kk,99,tt,ee][[Range[4]]]],
 theH=getH[linModBetter],theF=getF[linModBetter],thePsiC=getPsiC[linModBetter],thePsiEps=getPsiEps[linModBetter]},
-With[{xtp1Vals=approxDRCE @@ xtVals},
+With[{xtp1Vals=(approxDRCE @@ xtVals)[[Range[4]]]},
 With[{errNow=
 Norm[
 eqnsCompiledBetter @@ 
@@ -61,7 +61,30 @@ With[{theRes=
 NMaximize[{delayEvalNrmBnd @@ 
 Join[{99,kk,99,tt},{cct,kkt,nnt,tht},{cctp1,kktp1,nntp1,thtp1},{ee},{approxDR,approxDRCE}],
 And[Norm[delayEvalEqns @@ 
-Join[{99,kk,99,tt},{cct,kkt,nnt,tht},{cctp1,kktp1,nntp1,thtp1},{ee},{approxDR,approxDRCE}]]<errNow+lil]},{
+Join[{99,kk,99,tt},{cct,kkt,nnt,tht},{cctp1,kktp1,nntp1,thtp1},{ee},{approxDR,approxDRCE}]]<errNow+lil]},{cct,kkt,nnt,tht,cctp1,kktp1,nntp1,thtp1},
+Method->{"NelderMead","Tolerance"->0,
+"InitialPoints"->Table[(1+(Random[]-.5)/10000000)*{
+xtVals[[1]],
+xtVals[[2]],
+xtVals[[3]],
+xtVals[[4]],
+xtp1Vals[[1]],
+xtp1Vals[[2]],
+xtp1Vals[[3]],
+xtp1Vals[[4]]
+},{9}]
+}
+]},
+With[{errPost=
+Norm[
+eqnsCompiledBetter @@ 
+(Join[{99,kk,99,tt},{cct,kkt,nnt,tht,cctp1,kktp1,nntp1,thtp1},{ee}]/.theRes[[2]])]},
+{errNow,errPost,theRes}
+]]]]]]]
+
+
+(*
+{
 {cct,xtVals[[1]]-lilLil,xtVals[[1]]+lilLil},
 {kkt,xtVals[[2]]-lilLil,xtVals[[2]]+lilLil},
 {nnt,xtVals[[3]]-lilLil,xtVals[[3]]+lilLil},
@@ -70,17 +93,8 @@ Join[{99,kk,99,tt},{cct,kkt,nnt,tht},{cctp1,kktp1,nntp1,thtp1},{ee},{approxDR,ap
 {kktp1,xtp1Vals[[2]]-lilLil,xtp1Vals[[2]]+lilLil},
 {nntp1,xtp1Vals[[3]]-lilLil,xtp1Vals[[3]]+lilLil},
 {thtp1,xtp1Vals[[4]]-lilLil,xtp1Vals[[4]]+lilLil}
-},Method->{"NelderMead","Tolerance"->errNow/10}
-]},
-With[{errPost=
-Norm[
-eqnsCompiledBetter @@ 
-(Join[{99,kk,99,tt},{cct,kkt,nnt,tht,cctp1,kktp1,nntp1,thtp1},{ee}]/.theRes[[2]])]},
-{errPost,theRes}
-]]]]]]]
-
-
-
+}
+*)
 delayEvalEqns[
 cctm1_?NumberQ,kktm1_?NumberQ,nltm1_?NumberQ,thetatm1_?NumberQ,
 cct_?NumberQ,kkt_?NumberQ,nlt_?NumberQ,thetat_?NumberQ,
@@ -91,7 +105,7 @@ cctm1,kktm1,nltm1,thetatm1,
 cct,kkt,nlt,thetat,
 cctp1,kktp1,nltp1,thetatp1,
 epsVal
-}},Print["delayEqn:",Norm[eqnVals]];
+}},(*Print["delayEqn:",Norm[eqnVals]];*)
 Norm[eqnVals]]
 
 delayEvalNrmBnd[
@@ -466,3 +480,10 @@ smolRngErg=Transpose[{betterRBCMinZ,betterRBCMaxZ}];
 toIg=aGSpecBetter[[1]];
 sgSpecErg={toIg,smolRngErg,ptErg,tfErg,plyErg,iplyErg,1,approx,
 {betterRBCMean,betterRBCSD,betterRBCMinZ,betterRBCMaxZ,betterRBCvv}};
+
+
+(*
+betterBounds[simpRBCExactDRBetter,simpRBCExactDRCEBetter,{.2,1,.01}]
+
+
+*)

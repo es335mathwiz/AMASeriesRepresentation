@@ -42,8 +42,9 @@ Transpose[{eqnsCompiledBetter @@ makeArgs[{approxDR,approxDRCE},xeps]}])]]]
 betterBounds[approxDR_Function,approxDRCE_Function,
 xeps:{kk_?NumberQ,tt_?NumberQ,ee_?NumberQ}]:=
 Module[{xtVals=Flatten[approxDR[99,kk,99,tt,ee][[Range[4]]]],
+exactXtVals=Flatten[simpRBCExactDRBetter[99,kk,99,tt,ee][[Range[4]]]],
 theH=getH[linModBetter],theF=getF[linModBetter],thePsiC=getPsiC[linModBetter],thePsiEps=getPsiEps[linModBetter]},
-With[{xtp1Vals=(approxDRCE @@ xtVals)[[Range[4]]]},
+With[{xtp1Vals=Flatten[(approxDRCE @@ xtVals)[[Range[4]]]]},
 With[{errNow=
 Norm[
 eqnsCompiledBetter @@ 
@@ -52,12 +53,126 @@ delayEvalEqns @@
 Join[{99,kk,99,tt},xtVals,xtp1Vals,{ee},{approxDR,approxDRCE}],
 theZsNow=genZsREExact[linModBetter,Transpose[{{99,kk,99,tt,ee}}],1,
 simpRBCExactDRBetter,simpRBCExactDRCEBetter,1][[1]]
-},
-With[{lil=1.5*errNow,lilLil=.0001},
+},(*Print["betterBounds:",{xtVals,xtp1Vals,ee,xeps}];*)
+With[{lil=errNow,lilLil=.0001},
 With[{theZs=
 theH . Transpose[{
 Join[{99,kk,99,tt},xtVals,xtp1Vals]}] - thePsiC -thePsiEps*ee},
 With[{theRes=
+FindMaximum[{delayEvalNrmBnd @@ 
+Join[{99,kk,99,tt},{cct,kkt,nnt,tht},{cctp1,kktp1,nntp1,thtp1},{ee},{approxDR,approxDRCE}],
+And[Norm[delayEvalEqns @@ 
+Join[{99,kk,99,tt},{cct,kkt,nnt,tht},{cctp1,kktp1,nntp1,thtp1},{ee},{approxDR,approxDRCE}]]<errNow]},
+{
+{cct,xtVals[[1]]},
+{kkt,xtVals[[2]]},
+{nnt,xtVals[[3]]},
+{tht,xtVals[[4]]},
+{cctp1,xtp1Vals[[1]]},
+{kktp1,xtp1Vals[[2]]},
+{nntp1,xtp1Vals[[3]]},
+{thtp1,xtp1Vals[[4]]}
+},
+Method->"InteriorPoint"
+]},
+With[{errPost=
+Norm[
+eqnsCompiledBetter @@ 
+(Join[{99,kk,99,tt},{cct,kkt,nnt,tht,cctp1,kktp1,nntp1,thtp1},{ee}]/.theRes[[2]])]},
+{errNow,errPost,{Norm[xtVals-exactXtVals],xtVals,exactXtVals},theRes}
+]]]]]]]
+
+xtXtp1Vals[approxDR_Function,approxDRCE_Function,
+xeps:{kk_?NumberQ,tt_?NumberQ,ee_?NumberQ}]:=
+With[{xtVals=Flatten[approxDR[99,kk,99,tt,ee][[Range[4]]]]},
+With[{xtp1Vals=Flatten[(approxDRCE @@ xtVals)[[Range[4]]]]},
+Join[xtVals,xtp1Vals]]]
+
+
+evenBetterBounds[approxDR_Function,approxDRCE_Function,ergSetFunc_Function]:=
+Module[{theH=getH[linModBetter],theF=getF[linModBetter],thePsiC=getPsiC[linModBetter],thePsiEps=getPsiEps[linModBetter]},
+With[{},
+With[{},(*Print["betterBounds:",{xtVals,xtp1Vals,ee,xeps}];*)
+With[{},
+With[{},
+With[{theRes=
+FindMaximum[{delayEvalNrmBnd @@ 
+Join[{99,kk,99,tt},{cct,kkt,nnt,tht},{cctp1,kktp1,nntp1,thtp1},{ee},{approxDR,approxDRCE}],
+And[Norm[delayEvalEqns @@ 
+Join[{99,kk,99,tt},{cct,kkt,nnt,tht},{cctp1,kktp1,nntp1,thtp1},{ee},{approxDR,approxDRCE}]]<Norm[
+eqnsCompiledBetter @@ 
+Join[{99,kk,99,tt},xtVals=xtXtp1Vals[approxDR,approxDRCE,{kk,tt,ee}],{ee}]]]},
+{
+{kk,.1},
+{tt,1},
+{ee,0},
+{tht,xtVals[[4]]},
+{cctp1,xtp1Vals[[1]]},
+{kktp1,xtp1Vals[[2]]},
+{nntp1,xtp1Vals[[3]]},
+{thtp1,xtp1Vals[[4]]}
+},
+Method->"InteriorPoint"
+]},
+With[{errPost=
+Norm[
+eqnsCompiledBetter @@ 
+(Join[{99,kk,99,tt},{cct,kkt,nnt,tht,cctp1,kktp1,nntp1,thtp1},{ee}]/.theRes[[2]])]},
+{errPost,{Norm[({cct,kkt,nnt,tht}/.theRes[[2]])-Flatten[simpRBCExactDRBetter[99,kk,99,tt,ee][[Range[4]]]]],xtVals,exactXtVals},theRes}
+]]]]]]]
+
+
+(*
+
+NMaximize[{delayEvalNrmBnd @@ 
+Join[{99,kk,99,tt},{cct,kkt,nnt,tht},{cctp1,kktp1,nntp1,thtp1},{ee},{approxDR,approxDRCE}],
+And[Norm[delayEvalEqns @@ 
+Join[{99,kk,99,tt},{cct,kkt,nnt,tht},{cctp1,kktp1,nntp1,thtp1},{ee},{approxDR,approxDRCE}]]<errNow]},{cct,kkt,nnt,tht,cctp1,kktp1,nntp1,thtp1},
+Method->{"RandomSearch","Method"->"InteriorPoint","SearchPoints"->5,"Tolerance"->0,
+"InitialPoints"->Table[(1+(Random[]-.5)/10000)*{
+xtVals[[1]],
+xtVals[[2]],
+xtVals[[3]],
+xtVals[[4]],
+xtp1Vals[[1]],
+xtp1Vals[[2]],
+xtp1Vals[[3]],
+xtp1Vals[[4]]
+},{9}]
+}
+]
+
+
+Method->{"NelderMead","ShrinkRatio"->.95,"ContractRatio"->.95,"ReflectRatio"->2,
+"Tolerance"->0,
+"InitialPoints"->Table[(1+(Random[]-.5)/100000)*{
+xtVals[[1]],
+xtVals[[2]],
+xtVals[[3]],
+xtVals[[4]],
+xtp1Vals[[1]],
+xtp1Vals[[2]],
+xtp1Vals[[3]],
+xtp1Vals[[4]]
+},{9}]
+}
+
+Method->{"RandomSearch","SearchPoints"->5,"Tolerance"->0,
+"InitialPoints"->Table[(1+(Random[]-.5)/100)*{
+xtVals[[1]],
+xtVals[[2]],
+xtVals[[3]],
+xtVals[[4]],
+xtp1Vals[[1]],
+xtp1Vals[[2]],
+xtp1Vals[[3]],
+xtp1Vals[[4]]
+},{9}]
+}
+
+
+
+
 NMaximize[{delayEvalNrmBnd @@ 
 Join[{99,kk,99,tt},{cct,kkt,nnt,tht},{cctp1,kktp1,nntp1,thtp1},{ee},{approxDR,approxDRCE}],
 And[Norm[delayEvalEqns @@ 
@@ -74,16 +189,20 @@ xtp1Vals[[3]],
 xtp1Vals[[4]]
 },{9}]
 }
-]},
-With[{errPost=
-Norm[
-eqnsCompiledBetter @@ 
-(Join[{99,kk,99,tt},{cct,kkt,nnt,tht,cctp1,kktp1,nntp1,thtp1},{ee}]/.theRes[[2]])]},
-{errNow,errPost,theRes}
-]]]]]]]
+]
+
+{
+{cct,xtVals[[1]]},
+{kkt,xtVals[[2]]},
+{nnt,xtVals[[3]]},
+{tht,xtVals[[4]]},
+{cctp1,xtp1Vals[[1]]},
+{kktp1,xtp1Vals[[2]]},
+{nntp1,xtp1Vals[[3]]},
+{thtp1,xtp1Vals[[4]]}
+}
 
 
-(*
 {
 {cct,xtVals[[1]]-lilLil,xtVals[[1]]+lilLil},
 {kkt,xtVals[[2]]-lilLil,xtVals[[2]]+lilLil},
@@ -122,7 +241,7 @@ cctp1,kktp1,nltp1,thetatp1,
 epsVal
 }}],
 theZsNow=genZsREExact[linModBetter,Transpose[{{99,kktm1,99,thetatm1,epsVal}}],1,
-approxDR,approxDRCE,1][[1]]
+approxDR,approxDRCE,10][[1]]
 },
 With[{theZs=
 theH . Transpose[{{
@@ -480,10 +599,61 @@ smolRngErg=Transpose[{betterRBCMinZ,betterRBCMaxZ}];
 toIg=aGSpecBetter[[1]];
 sgSpecErg={toIg,smolRngErg,ptErg,tfErg,plyErg,iplyErg,1,approx,
 {betterRBCMean,betterRBCSD,betterRBCMinZ,betterRBCMaxZ,betterRBCvv}};
+(*
+approx=1*{1,1,1};
+Out[73]= {0.00114046, 0.00114046, 
+ 
+>    {0.000877403, {0.372342, 0.193542, 2.71184, 1.01013}, 
+ 
+>     {0.37234, 0.193526, 2.71271, 1.01005}}, 
+ 
+>    {0.00740513, {cct -> 0.373007, kkt -> 0.19398, nnt -> 2.70766, 
+ 
+>      tht -> 1.01006, cctp1 -> 0.367596, kktp1 -> 0.19106, 
+ 
+>      nntp1 -> 2.74431, thtp1 -> 1.00901}}}
 
+
+approx=2*{1,1,1};
+
+
+Out[9]= {0.0000193865, 0.0000605986, 
+ 
+>    {0.00002207, {0.372341, 0.193525, 2.71269, 1.01005}, 
+ 
+>     {0.37234, 0.193526, 2.71271, 1.01005}}, 
+ 
+>    {0.000430056, {cct -> 0.372368, kkt -> 0.193553, nnt -> 2.71248, 
+ 
+>      tht -> 1.01004, cctp1 -> 0.367768, kktp1 -> 0.191148, 
+ 
+>      nntp1 -> 2.74508, thtp1 -> 1.00953}}}
+
+                                  -6
+approx=3*{1,1,1};
+Out[12]= {0.0000182821, 9.58796 10  , 
+ 
+                -6
+>    {8.66928 10  , {0.372341, 0.193525, 2.7127, 1.01005}, 
+ 
+>     {0.37234, 0.193526, 2.71271, 1.01005}}, 
+ 
+>    {0.0000470247, {cct -> 0.372344, kkt -> 0.19353, nnt -> 2.71268, 
+ 
+>      tht -> 1.01005, cctp1 -> 0.367772, kktp1 -> 0.19115, 
+ 
+>      nntp1 -> 2.74503, thtp1 -> 1.00955}}}
+
+
+approx=4*{1,1,1};
+
+*)
 
 (*
 betterBounds[simpRBCExactDRBetter,simpRBCExactDRCEBetter,{.2,1,.01}]
-
+X0Z0=genX0Z0Funcs[linModBetter];
+theRes=parallelNestIterREInterp[genFRExtFunc,linModBetter,
+{X0Z0,3},eqnsCompiledBetter,sgSpecErg,5,"xVarRanges"->{{0.01,2},{0.01,2},{0.01,20},{0.85,1.2}}];
+betterBounds[theRes[[-1,1]],theRes[[-1,2]],{.2,1,.01}]
 
 *)

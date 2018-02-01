@@ -20,7 +20,7 @@ actualVals=simpRBCExactDRBetter@@ {ig,kk,ig,tt,ee}},
 
 
 
-genZsREExact[linMod:{theHMat_?MatrixQ,BB_?MatrixQ,phi_?MatrixQ,FF_?MatrixQ,psiEps_?MatrixQ,psiC_?MatrixQ,psiZ_?MatrixQ,
+genZsFromDRCE[linMod:{theHMat_?MatrixQ,BB_?MatrixQ,phi_?MatrixQ,FF_?MatrixQ,psiEps_?MatrixQ,psiC_?MatrixQ,psiZ_?MatrixQ,
 backLookingInfo:{{_Integer,backLooking_,backLookingExp_}...}},
 	initVec_?MatrixQ,numEps_Integer,theExactDR:(_Function|_CompiledFunction),theCondExp:(_Function|_CompiledFunction),iters_Integer]:=
 Module[{},
@@ -51,7 +51,7 @@ eqnsCompiledBetter @@
 Join[{99,kk,99,tt},xtVals,xtp1Vals,{ee}]],errDelay=
 delayEvalEqns @@ 
 Join[{99,kk,99,tt},xtVals,xtp1Vals,{ee},{approxDR,approxDRCE}],
-theZsNow=genZsREExact[linModBetter,Transpose[{{99,kk,99,tt,ee}}],1,
+theZsNow=genZsFromDRCE[linModBetter,Transpose[{{99,kk,99,tt,ee}}],1,
 simpRBCExactDRBetter,simpRBCExactDRCEBetter,1][[1]]
 },(*Print["betterBounds:",{xtVals,xtp1Vals,ee,xeps}];*)
 With[{lil=errNow,lilLil=.0001},
@@ -233,14 +233,8 @@ cct_?NumberQ,kkt_?NumberQ,nlt_?NumberQ,thetat_?NumberQ,
 cctp1_?NumberQ,kktp1_?NumberQ,nltp1_?NumberQ,thetatp1_?NumberQ,
 epsVal_?NumberQ,approxDR_Function,approxDRCE_Function]:=
 Module[{theH=getH[linModBetter],theF=getF[linModBetter],thePsiC=getPsiC[linModBetter],thePsiEps=getPsiEps[linModBetter],
-eqnVals=Transpose[{
-eqnsCompiledBetter @@ {
-cctm1,kktm1,nltm1,thetatm1,
-cct,kkt,nlt,thetat,
-cctp1,kktp1,nltp1,thetatp1,
-epsVal
-}}],
-theZsNow=genZsREExact[linModBetter,Transpose[{{99,kktm1,99,thetatm1,epsVal}}],1,
+theZsNow=
+genZsFromDRCE[linModBetter,Transpose[{{99,kktm1,99,thetatm1,epsVal}}],1,
 approxDR,approxDRCE,10][[1]]
 },
 With[{theZs=
@@ -655,5 +649,30 @@ X0Z0=genX0Z0Funcs[linModBetter];
 theRes=parallelNestIterREInterp[genFRExtFunc,linModBetter,
 {X0Z0,3},eqnsCompiledBetter,sgSpecErg,5,"xVarRanges"->{{0.01,2},{0.01,2},{0.01,20},{0.85,1.2}}];
 betterBounds[theRes[[-1,1]],theRes[[-1,2]],{.2,1,.01}]
+
+
+
+*)
+
+
+(*
+workout using msnto
+
+
+delayEvalNrmBnd @@Join[Range[13],{simpRBCExactDRBetter,simpRBCExactDRCEBetter}]
+delayEvalNrmBnd @@Join[Table[Random[],{13}],{simpRBCExactDRBetter,simpRBCExactDRCEBetter}]
+
+ff[xx1_?NumberQ,xx2_?NumberQ]:=
+Sin[xx1]*Cos[xx2]
+theRes=MSNTO[ff,{{{{-2,2},{3,5}},{}},{{},Infinity}},30,Nied,.1,1.2,.5];
+
+
+pickBestMSNTO[theRes]
+MSNTOMinimizer[theRes]
+itSimpExamp=iterMSNTOFunc[ff,20,Nied,.1,1.2,.5];
+Timing[theRes=NestList[itSimpExamp[#[[5]]]&,{ig,ig,ig,ig,{{{{1,100},{0.001,0.1}},{}},{{},Infinity}}},10]];
+Save["tryit.mth",theRes]
+
+
 
 *)

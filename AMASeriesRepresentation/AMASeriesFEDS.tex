@@ -643,7 +643,7 @@ G^\star(x)\equiv\expct{g^\star(x,\epsilon)} \intertext{then with}
 E_tx^\star_{t+1}=G^\star(g^\star(x_{t-1},\epsilon_t)) \intertext{we have}
     \label{eq:2}
 \eqnFunc(x^\star_{t-1},x^\star_t,E_tx^\star_{t+1},\epsilon_t)=0  \,\, \forall  (x_{t-1},\epsilon_t)\\ \intertext{In words, the exact solution  exactly satisfies the model equations.  Using $G^\star$ and $\linMod$, construct the family of trajectories and corresponding $z^\star_t(x_{t-1},\epsilon)$ }
-   x^\star_t(x_{t-1},\epsilon_t) \in{R^L}\,\,\infNorm{x^\star_t(x_{t-1},\epsilon_t)}  \le \bar{\mathcal{X}}\,\,\forall t\ > 0
+   x^\star_t(x_{t-1},\epsilon_t) \in{R^L}\,\,\twoNorm{x^\star_t(x_{t-1},\epsilon_t)}  \le \bar{\mathcal{X}}\,\,\forall t\ > 0
   \end{gather}
    \begin{align}
    z^\star_{t}(x_{t-1},\epsilon_t) \equiv& H_{-1}  x^\star_{t-1}(x_{t-1},\epsilon_t) + \nonumber\\
@@ -673,7 +673,7 @@ E_tx_{t+1}=G^p(g^p(x_{t-1},\epsilon_t))\\
 By construction,  the conditional expectations paths will all be bounded
 in the region $\bndRgn^p$. Using $G^p$ and $\linMod$ construct the family of trajectories and corresponding $z^p_t(x_{t-1},\epsilon)$\footnote{The algorithm presented below for finding solutions provides a mechanism for generating such proposed solutions.} 
 \begin{gather*}
-   x^p_t(x_{t-1},\epsilon_t) \in{R^L}\,\,\infNorm{x^p_t(x_{t-1},\epsilon_t)}  \le \bar{\mathcal{X}}\,\,\forall t\ > 0
+   x^p_t(x_{t-1},\epsilon_t) \in{R^L}\,\,\twoNorm{x^p_t(x_{t-1},\epsilon_t)}  \le \bar{\mathcal{X}}\,\,\forall t\ > 0
   \end{gather*}
    \begin{align}
    z^p_{t}(x_{t-1},\epsilon_t) \equiv& H_{-1}  x^p_{t-1}(x_{t-1},\epsilon_t) + \nonumber\\
@@ -715,12 +715,13 @@ in the region $\bndRgn^p$. Using $G^p$ and $\linMod$ construct the family of tra
   By bounding the largest deviation in the paths for the $\Delta z_t^p$ we can bound the largest difference in $x_t$.\footnote{Since the future values are probability weighted averages of the $\Delta z_t^p$ values for the given initial conditions and the condition expectations paths remain in the region $\bndRgn^p$,
 the largest error for $\Delta z_{t+k}^p$   are pessimistic bounds for the errors from the conditional expectations path. } The exact solution satisfies the model equations exactly.  The error associated with the proposed solution leads to a conservative bound on the largest change in $z$ needed to match the exact solution.
 
-  \begin{tcolorbox}[ams gather]
-  \Delta z_t \le  
-\max_{\{x_{-},\epsilon\}} \infNorm{ \phi \eqnFunc(x_{-},g^p(x_{-},\epsilon),G^p(g^p(x_{-},\epsilon)),\epsilon) }\\
-	\infNorm{ x^\star_{t}(x_{t-1},\epsilon) -	 x^p_{t}(x_{t-1},\epsilon)} \le
-\max_{\{x_{-},\epsilon\}} \infNorm{(I-F)^{-1} \phi \eqnFunc(x_{-},g^p(x_{-},\epsilon),G^p(g^p(x_{-},\epsilon)),\epsilon) }
-  \end{tcolorbox}
+%error  in formula phi should multiply delta z's
+%   \begin{tcolorbox}[ams gather]
+%   \Delta z_t \le  
+% \max_{\{x_{-},\epsilon\}} \twoNorm{ \phi \eqnFunc(x_{-},g^p(x_{-},\epsilon),G^p(g^p(x_{-},\epsilon)),\epsilon) }\\
+% 	\infNorm{ x^\star_{t}(x_{t-1},\epsilon) -	 x^p_{t}(x_{t-1},\epsilon)} \le
+% \max_{\{x_{-},\epsilon\}} \twoNorm{(I-F)^{-1} \phi \eqnFunc(x_{-},g^p(x_{-},\epsilon),G^p(g^p(x_{-},\epsilon)),\epsilon) }
+%   \end{tcolorbox}
 
 
 \newcommand{\hApp}[1]{{H_-{#1}_{t-1} +H_0{#1}_t +H_+{#1}_{t+1}}}
@@ -730,13 +731,40 @@ z^\star_t=\hApp{x^\star}\\
 z^p_t=\hApp{x^p}\\
 0=\eqnFunc(x^\star_{t-1},x^\star_{t},x^\star_{t+1},\epsilon_t)\\
 \mathbf{e}_t^p(x_{t-1},\epsilon)=\eqnFunc(x^p_{t-1},x^p_{t},x^p_{t+1},\epsilon_t)\\
-\max \Delta z_t =\infNorm{H_0(x^p_t-x^\star_t)+H_+(x^p_{t+1}-x^\star_{t+1})}
+\max_{x_{t-1},\epsilon_t} (\twoNorm{\phi \Delta z_t})^2 =\max_{x_{t-1},\epsilon_t} (\phi(H_0(x^p_t-x^\star_t)+H_+(x^p_{t+1}-x^\star_{t+1})))^2
 \intertext{with}
-\eqnFunc(x^p_{t-1},x^p_{t},x^p_{t+1},\epsilon_t) \le 
-\mathbf{e}_t^p(x_{t-1},\epsilon)
+\eqnFunc(x^\star_{t-1},x^\star_{t},x^\star_{t+1},\epsilon_t) =0\\
+%\le \mathbf{e}_t^p(x_{t-1},\epsilon)\\
+\Delta \mathbf{e}_t^p(x_{t-1},\epsilon)\approx \pdrv{\eqnFunc(x_{t-1},x_{t},x_{t+1},\epsilon_t)}{x_t} (x^\star_t-x^p_t) +\pdrv{\eqnFunc(x_{t-1},x_{t},x_{t+1},\epsilon_t)}{x_{t+1}} (x^\star_{t+1}-x^p_{t+1}) \intertext{ when $\pdrv{\eqnFunc(x_{t-1},x_{t},x_{t+1},\epsilon_t)}{x_t}$ is nonsingular, we can write}
+ (x^\star_t-x^p_t) \approx \left ( \pdrv{\eqnFunc(x_{t-1},x_{t},x_{t+1},\epsilon_t)}{x_t}\right )^{-1} \left ( \Delta \mathbf{e}_t^p(x_{t-1},\epsilon) -\pdrv{\eqnFunc(x_{t-1},x_{t},x_{t+1},\epsilon_t)}{x_{t+1}} (x^\star_{t+1}-x^p_{t+1}) \right )
+\intertext{ collecting results}
+\max_{x_{t-1},\epsilon_t} (\twoNorm{\phi \Delta z_t})^2 =\\ 
+\max_{x_{t-1},\epsilon_t} (\phi(
+H_0\left ( \pdrv{\eqnFunc(x_{t-1},x_{t},x_{t+1},\epsilon_t)}{x_t}\right )^{-1} \\
+\left ( \Delta \mathbf{e}_t^p(x_{t-1},\epsilon) -
+\pdrv{\eqnFunc(x_{t-1},x_{t},x_{t+1},\epsilon_t)}{x_{t+1}} (x^\star_{t+1}-x^p_{t+1}) \right )+
+H_+(x^p_{t+1}-x^\star_{t+1})))^2
+\\
+\max_{x_{t-1},\epsilon_t} (\phi(
+H_0\left ( \pdrv{\eqnFunc(x_{t-1},x_{t},x_{t+1},\epsilon_t)}{x_t}\right )^{-1} 
+( \Delta \mathbf{e}_t^p(x_{t-1},\epsilon) )
+-\\
+\left ( H_0\left ( \pdrv{\eqnFunc(x_{t-1},x_{t},x_{t+1},\epsilon_t)}{x_t}\right )^{-1} 
+\pdrv{\eqnFunc(x_{t-1},x_{t},x_{t+1},\epsilon_t)}{x_{t+1}} (x^\star_{t+1}-x^p_{t+1}) \right )+
+H_+(x^p_{t+1}-x^\star_{t+1})))^2\\
+\max_{x_{t-1},\epsilon_t} (\phi(
+H_0\left ( \pdrv{\eqnFunc(x_{t-1},x_{t},x_{t+1},\epsilon_t)}{x_t}\right )^{-1} 
+( \Delta \mathbf{e}_t^p(x_{t-1},\epsilon) )
+-\\
+\left ( H_0\left ( \pdrv{\eqnFunc(x_{t-1},x_{t},x_{t+1},\epsilon_t)}{x_t}\right )^{-1} 
+\pdrv{\eqnFunc(x_{t-1},x_{t},x_{t+1},\epsilon_t)}{x_{t+1}}  +H_+\right ) (x^\star_{t+1}-x^p_{t+1})
+))^2
   \end{gather*}
 
-Use MSNTO to find constrained max.
+
+
+
+Use Cluster MSNTO to find constrained max.  Should parallelize well.
 
 
 \begin{verbatim}

@@ -670,9 +670,64 @@ theRes=MSNTO[ff,{{{{-2,2},{3,5}},{}},{{},Infinity}},30,Nied,.1,1.2,.5];
 pickBestMSNTO[theRes]
 MSNTOMinimizer[theRes]
 itSimpExamp=iterMSNTOFunc[ff,20,Nied,.1,1.2,.5];
-Timing[theRes=NestList[itSimpExamp[#[[5]]]&,{ig,ig,ig,ig,{{{{1,100},{0.001,0.1}},{}},{{},Infinity}}},10]];
+Timing[theRes=NestList[itSimpExamp[#[[5]]]&,{ig,ig,ig,ig,
+{{{{1,100},{0.001,0.1}},{}},{{},Infinity}}
+},1]];
 Save["tryit.mth",theRes]
+(*
+delayFunc= Function @@
+{
+{cctm1, kktm1, nltm1, 
+    thetatm1, cct, kkt, nlt, 
+    thetat, cctp1, kktp1, 
+    nltp1, thetatp1, epsVal}, 
+delayEvalNrmBnd[cctm1, kktm1, nltm1, 
+    thetatm1, cct, kkt, nlt, 
+    thetat, cctp1, kktp1, 
+    nltp1, thetatp1, epsVal,
+simpRBCExactDRBetter,simpRBCExactDRCEBetter]}
+*)
+delayShortEvalNrmBnd[
+cctm1_?NumberQ,kktm1_?NumberQ,nltm1_?NumberQ,thetatm1_?NumberQ,
+cct_?NumberQ,kkt_?NumberQ,nlt_?NumberQ,thetat_?NumberQ,
+cctp1_?NumberQ,kktp1_?NumberQ,nltp1_?NumberQ,thetatp1_?NumberQ,
+epsVal_?NumberQ]:=
+Module[{theH=getH[linModBetter],theF=getF[linModBetter],thePsiC=getPsiC[linModBetter],thePsiEps=getPsiEps[linModBetter],
+theZsNow=
+genZsFromDRCE[linModBetter,Transpose[{{99,kktm1,99,thetatm1,epsVal}}],1,
+simpRBCExactDRBetter,simpRBCExactDRCEBetter,10][[1]]
+},
+With[{theZs=
+theH . Transpose[{{
+cctm1,kktm1,nltm1,thetatm1,
+cct,kkt,nlt,thetat,
+cctp1,kktp1,nltp1,thetatp1}}] - thePsiC -thePsiEps*epsVal},
+Print["delay:",{theZs,theZsNow,theH,thePsiC,thePsiEps,tErrMat}];
+Norm[tErrMat. (theZsNow-theZs)]
+]]
 
+
+ParallelEvaluate[$HistoryLength=1];
+ParallelEvaluate[Get["pathSetup.mth"]]
+ParallelNeeds["AMASeriesRepresentation`"]
+Print["preemscstomma"]
+ParallelNeeds["emscsToMma`"]
+ParallelNeeds["betterRBC`"]
+
+phiMat=getPhi[linModBetter]
+fMat=getF[linModBetter]
+tErrMat=truncErrorMat[fMat,phiMat,0]
+DistributeDefinitions[tErrMat]
+
+luFour={{.1,.9},{.1,.9},{.1,10},{.9,1.1}}
+theArgs={{Join[luFour,luFour,luFour,{{-.01,.01}}],{}},{{},Infinity}};
+theRes=MSNTO[delayShortEvalNrmBnd,theArgs,30,Nied,.1,1.2,.5];
+
+itSimpExamp=iterMSNTOFunc[delayShortEvalNrmBnd,20,Nied,.1,1.2,.5];
+Timing[theRes=NestList[itSimpExamp[#[[5]]]&,{ig,ig,ig,ig,
+theArgs
+},1]];
+Save["tryit.mth",theRes]
 
 
 *)

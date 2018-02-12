@@ -284,7 +284,6 @@ xzt=adr @@ xtm1eps;
 xztp1=(adrce @@ Flatten[xzt])[[Range[4]]];
 tradArg=Flatten[
 Join[Drop[xtm1eps,-1],xzt[[Range[4]]],xztp1[[Range[4]]],{eps}]];
-(*Print["tradArg:",tradArg];*)
 eqnsCompiledBetter @@ tradArg,
 xtm1eps=Flatten[fillIn[{{},{1,3},aPt}]];
 xzt=adr @@ xtm1eps;
@@ -293,30 +292,27 @@ genLilXkZkFunc[linModBetter,{adrce,theK},xzt[[Range[4]]]];
 xkApply=Flatten[xkzkFunc @@ Join[xtm1eps,Flatten[xzt[[4+Range[4]]]]]];
 eqnsCompiledBetter @@ xkApply]]
 
-
-
-doItApproxSeries[approx_?VectorQ,iters_Integer,theK_Integer]:=
+prepSmol[approx_?VectorQ,iters_Integer,theK_Integer]:=
 Module[{},
 (**)tryEps=0;
 numKern=Length[Kernels[]];
 theName=fNameString[approx,iters,theK,numKern];
 mthName=theName<>".mth";
 X0Z0=genX0Z0Funcs[linModBetter];
+smolStuff=
 {ptErg,tfErg,plyErg,iplyErg,dplyErg}=smolyakInterpolationPrep[approx,{betterRBCMean,betterRBCSD,betterRBCMinZ,betterRBCMaxZ,betterRBCvv},theDistBetter];
 smolRngErg=Transpose[{betterRBCMinZ,betterRBCMaxZ}];
 sgSpecErg={toIg,smolRngErg,ptErg,tfErg,plyErg,iplyErg,1,approx,
 {betterRBCMean,betterRBCSD,betterRBCMinZ,betterRBCMaxZ,betterRBCvv}};
 zPts=backXtoZ[ptErg,betterRBCMean,betterRBCSD,betterRBCvv];
-{tm,ig}=Timing[
-theRes=parallelNestIterREInterp[genFRExtFunc,linModBetter,
-{X0Z0,theK},eqnsCompiledBetter,sgSpecErg,iters,"xVarRanges"->{{0.01,2},{0.01,2},{0.01,20},{0.85,1.2}}]];
-(*Print["theRes=",theRes//InputForm];*)
-numKern=Length[Kernels[]];
-theName=fNameString[approx,iters,theK,numKern];
-(**)
+{tryEps,numKern,theName,mthName,X0Z0,sgSpecErg,zPts}
+]
+
+
+prepDRDRCE[theRes_List]:=
+Module[{},
 forDR=theRes[[-1,1]];DistributeDefinitions[forDR];
 forDRCE=theRes[[-2,2]];DistributeDefinitions[forDRCE];
-Print["doIt:parallelNestGeneric done"];
 DistributeDefinitions[linModBetter];
 (**)
 drerrName=Unique["drerr"];
@@ -333,18 +329,32 @@ With[{resNow=-Norm[approxErrs[forDR,forDRCE,
 backZtoX[{{z1,z2,z3}},betterRBCMean,betterRBCSD,betterRBCvv][[1]]]]},
 resNow]];
 DistributeDefinitions[drerrName,drName];
-(**)tryEps=0;
-acterr={acterrVal,acterrSubs}=NMinimize[drName[z1,z2,z3],
+{{forDR,forDRCE},{drName,drerrName}}
+]
+
+
+minActualErr[drName_Symbol]:=
+NMinimize[drName[z1,z2,z3],
 And[betterRBCMinZ[[1]] <=z1<=betterRBCMaxZ[[1]],
 betterRBCMinZ[[2]]<=z2<=betterRBCMaxZ[[2]],
 betterRBCMinZ[[3]]<=z3<=betterRBCMaxZ[[3]]],{z1,z2,z3},Method->"NelderMead"];
-Print["acterr:",acterr];
-errBnd={errBndVal,errBndSubs}=
-betterBounds[forDR,forDRCE,{.1,.9,.01}];
-Print["errBnd:",errBnd];
+
+minPredErr[drerrName_Symbol]:=
+Module[{},
+errBnd={errBndVal,errBndSubs}=NMinimize[drerrName[z1,z2,z3],
+And[betterRBCMinZ[[1]] <=z1<=betterRBCMaxZ[[1]],
+betterRBCMinZ[[2]]<=z2<=betterRBCMaxZ[[2]],
+betterRBCMinZ[[3]]<=z3<=betterRBCMaxZ[[3]]],{z1,z2,z3},Method->"NelderMead"];
+{errBndVal,errBndSubs}
+]
+
+
+findMinLocs[drName_Symbol,drerrName_Symbol]:=
+Module[{},
+acterr={acterrVal,acterrSubs}=minActualErr[drName];
+errBnd={errBndVal,errBndSubs}=minPredErr[drerrName];
 errBndLoc={z1,z2}/.errBndSubs;
 acterrLoc={z1,z2}/.acterrSubs;
-mthName=theName<>".mth";
 If[FileExistsQ[mthName],DeleteFile[mthName]];
 (**)
 bothErrStr=
@@ -353,53 +363,58 @@ bothErrStr=
 "actualErr="<>(acterrStr=ToString[NumberForm[-acterrVal,NumberFormat->(Row[{#1,"e",#3}]&)]]);
 WriteString[theName<>"acterr.tex",acterrStr];
 WriteString[theName<>"errBnd.tex",errBndStr];
-Print["here",{acterrStr,acterr,errBnd,bothErrStr,errBndVal}];
-zPts=backXtoZ[ptErg,betterRBCMean,betterRBCSD,betterRBCvv];
-Print["errBndLoc=",errBndLoc];
-iterPts=
-(**)
-Export[theName<>".pdf",acterrsCP=
+{bothErrStr,acterrLoc,errBndLoc}]
+
+actErrCP[forDR_Function,{bothErrStr_String,acterrLoc_List,errBndloc_List},
+zPts_List]:=
+Module[{},
 ContourPlot[
 Norm[actualErrs[forDR,
 backZtoX[{{z1,z2,tryEps}},betterRBCMean,betterRBCSD,betterRBCvv][[1]]]],
 {z1,betterRBCMinZ[[1]],betterRBCMaxZ[[1]]},{z2,betterRBCMinZ[[2]],betterRBCMaxZ[[2]]},PlotRange->All,PlotLegends->Automatic,PlotLabel->StringReplace[theName,"Iters"->"\nIters"
 ]<>bothErrStr,
-Epilog->{PointSize[0.05],Green,Point[acterrLoc[[{1,2}]]],PointSize[0.025],Orange,Point[errBndLoc[[{1,2}]]],PointSize[0.0125],Black,Point[#]&/@zPts[[All,{1,2}]]},PlotRangeClipping->False]];
-Print["acterrsCP"];
-Export[theName<>"Approx.pdf",
-(**)
+Epilog->{PointSize[0.05],Green,Point[acterrLoc[[{1,2}]]],PointSize[0.025],Orange,Point[errBndLoc[[{1,2}]]],PointSize[0.0125],Black,Point[#]&/@zPts[[All,{1,2}]]},PlotRangeClipping->False]]
+
+approxErrCP[forDR_Function,forDRCE_Function,theK_Integer,tryEps_?NumberQ,
+{bothErrStr_String,acterrLoc_List,errBndloc_List},
+zPts_List]:=
+Module[{},
 ContourPlot[
 Norm[checkPt[forDR,forDRCE,theK,
 backZtoX[{{z1,z2,tryEps}},betterRBCMean,betterRBCSD,betterRBCvv][[1]]]],
 {z1,betterRBCMinZ[[1]],betterRBCMaxZ[[1]]},{z2,betterRBCMinZ[[2]],betterRBCMaxZ[[2]]},PlotRange->All,PlotLegends->Automatic,PlotLabel->StringReplace[theName,"Iters"->"\nIters"
 ]<>"Approx"<>bothErrStr,
-Epilog->{PointSize[0.05],Green,Point[acterrLoc[[{1,2}]]],PointSize[0.025],Orange,Point[errBndLoc[[{1,2}]]],PointSize[0.0125],Black,Point[#]&/@zPts[[All,{1,2}]]}]];
-Print["Approx"];
+Epilog->{PointSize[0.05],Green,Point[acterrLoc[[{1,2}]]],PointSize[0.025],Orange,Point[errBndLoc[[{1,2}]]],PointSize[0.0125],Black,Point[#]&/@zPts[[All,{1,2}]]}]]
+
+
+
+doItApproxSeries[approx_?VectorQ,iters_Integer,theK_Integer]:=
+Module[{},
+{tryEps,numKern,theName,mthName,X0Z0,sgSpecErg,zPts}=
+prepSmol[approx,iters,theK];
+{tm,ig}=Timing[
+theRes=parallelNestIterREInterp[genFRExtFunc,linModBetter,
+{X0Z0,theK},eqnsCompiledBetter,sgSpecErg,iters,"xVarRanges"->{{0.01,2},{0.01,2},{0.01,20},{0.85,1.2}}]];
+{{forDR,forDRCE},{drName,drerrName}}=prepDRDRCE[theRes];
+{bothErrStr,acterrLoc,errBndloc}=findMinLocs[drName,drerrName];
+Export[theName<>".pdf",actErrCP[forDR,{bothErrStr,acterrLoc,errBndloc},zPts]];
+Export[theName<>"Approx.pdf",
+approxErrCP[forDR,forDRCE,theK,tryEps,{bothErrStr,acterrLoc,errBndloc},zPts]]
 ]
 
 
 doItApproxSeriesBound[approx_?VectorQ,iters_Integer,theK_Integer]:=
 Module[{},
-(**)tryEps=0;
-numKern=Length[Kernels[]];
-theName=fNameString[approx,iters,theK,numKern];
-mthName=theName<>".mth";
-X0Z0=genX0Z0Funcs[linModBetter];
-{ptErg,tfErg,plyErg,iplyErg,dplyErg}=smolyakInterpolationPrep[approx,{betterRBCMean,betterRBCSD,betterRBCMinZ,betterRBCMaxZ,betterRBCvv},theDistBetter];
-smolRngErg=Transpose[{betterRBCMinZ,betterRBCMaxZ}];
-sgSpecErg={toIg,smolRngErg,ptErg,tfErg,plyErg,iplyErg,1,approx,
-{betterRBCMean,betterRBCSD,betterRBCMinZ,betterRBCMaxZ,betterRBCvv}};
-zPts=backXtoZ[ptErg,betterRBCMean,betterRBCSD,betterRBCvv];
+{tryEps,numKern,theName,mthName,X0Z0,sgSpecErg,zPts}=
+prepSmol[approx,iters,theK];
 {tm,ig}=Timing[
 theRes=parallelNestIterREInterp[genFRExtFunc,linModBetter,
 {X0Z0,theK},eqnsCompiledBetter,sgSpecErg,iters,"xVarRanges"->{{0.01,2},{0.01,2},{0.01,20},{0.85,1.2}}]];
-(*Print["theRes=",theRes//InputForm];*)
 numKern=Length[Kernels[]];
 theName=fNameString[approx,iters,theK,numKern];
 (**)
 forDR=theRes[[-1,1]];DistributeDefinitions[forDR];
 forDRCE=theRes[[-2,2]];DistributeDefinitions[forDRCE];
-Print["doIt:parallelNestGeneric done"];
 DistributeDefinitions[linModBetter];
 (**)
 drerrName=Unique["drerr"];
@@ -416,17 +431,14 @@ With[{resNow=-Norm[approxErrs[forDR,forDRCE,
 backZtoX[{{z1,z2,z3}},betterRBCMean,betterRBCSD,betterRBCvv][[1]]]]},
 resNow]];
 DistributeDefinitions[drerrName,drName];
-(**)tryEps=0;
 acterr={acterrVal,acterrSubs}=NMinimize[drName[z1,z2,z3],
 And[betterRBCMinZ[[1]] <=z1<=betterRBCMaxZ[[1]],
 betterRBCMinZ[[2]]<=z2<=betterRBCMaxZ[[2]],
 betterRBCMinZ[[3]]<=z3<=betterRBCMaxZ[[3]]],{z1,z2,z3},Method->"NelderMead"];
-Print["acterr:",acterr];
 errBnd={errBndVal,errBndSubs}=NMinimize[drerrName[z1,z2,z3],
 And[betterRBCMinZ[[1]] <=z1<=betterRBCMaxZ[[1]],
 betterRBCMinZ[[2]]<=z2<=betterRBCMaxZ[[2]],
 betterRBCMinZ[[3]]<=z3<=betterRBCMaxZ[[3]]],{z1,z2,z3},Method->"NelderMead"];
-Print["errBnd:",errBnd];
 errBndLoc={z1,z2}/.errBndSubs;
 acterrLoc={z1,z2}/.acterrSubs;
 mthName=theName<>".mth";
@@ -440,25 +452,14 @@ WriteString[theName<>"acterr.tex",acterrStr];
 WriteString[theName<>"errBnd.tex",errBndStr];
 Print["here",{acterrStr,acterr,errBnd,bothErrStr,errBndVal}];
 zPts=backXtoZ[ptErg,betterRBCMean,betterRBCSD,betterRBCvv];
-Print["errBndLoc=",errBndLoc];
-iterPts=
-Print["Approx"];
 ]
 
 
 
 doItExactSeries[approx_?VectorQ,iters_Integer,theK_Integer]:=
 Module[{},
-(**)tryEps=0;
-numKern=Length[Kernels[]];
-theName=fNameString[approx,iters,theK,numKern];
-mthName=theName<>".mth";
-X0Z0=genX0Z0Funcs[linModBetter];
-{ptErg,tfErg,plyErg,iplyErg,dplyErg}=smolyakInterpolationPrep[approx,{betterRBCMean,betterRBCSD,betterRBCMinZ,betterRBCMaxZ,betterRBCvv},theDistBetter];
-smolRngErg=Transpose[{betterRBCMinZ,betterRBCMaxZ}];
-sgSpecErg={toIg,smolRngErg,ptErg,tfErg,plyErg,iplyErg,1,approx,
-{betterRBCMean,betterRBCSD,betterRBCMinZ,betterRBCMaxZ,betterRBCvv}};
-zPts=backXtoZ[ptErg,betterRBCMean,betterRBCSD,betterRBCvv];
+{tryEps,numKern,theName,mthName,X0Z0,sgSpecErg,zPts}=
+prepSmol[approx,iters,theK];
 {tmExact,ig}=Timing[
 theResExact=parallelNestIterREInterp[genFRExtFunc,linModBetter,
 {simpRBCExactX0Z0CEBetter,theK},eqnsCompiledBetter,sgSpecErg,iters,"xVarRanges"->{{0.01,2},{0.01,2},{0.01,20},{0.85,1.2}}]];
@@ -471,7 +472,7 @@ Norm[actualErrs[forDRExact,
 backZtoX[{{z1,z2,0}},betterRBCMean,betterRBCSD,betterRBCvv][[1]]]],
 {z1,betterRBCMinZ[[1]],betterRBCMaxZ[[1]]},{z2,betterRBCMinZ[[2]],betterRBCMaxZ[[2]]},PlotRange->All,PlotLegends->Automatic,PlotLabel->StringReplace[theName,"Iters"->"\nIters"
 ]<>"Exact",
-Epilog->{PointSize[0.05],Green,Point[acterrLocTrad[[{1,2}]]],PointSize[0.025],Orange,Point[errBndLocTrad[[{1,2}]]],PointSize[0.0125],Black,Point[#]&/@zPts[[All,{1,2}]]},PlotRangeClipping->False]];
+Epilog->{PointSize[0.05],Green(*,Point[acterrLocTrad[[{1,2}]]]*),PointSize[0.025],Orange(*,Point[errBndLocTrad[[{1,2}]]]*),PointSize[0.0125],Black,Point[#]&/@zPts[[All,{1,2}]]},PlotRangeClipping->False]];
 Print["Exact"]];
 
 
@@ -482,16 +483,8 @@ Print["Exact"]];
 
 doItApproxTrad[approx_?VectorQ,iters_Integer,theK_Integer]:=
 Module[{},
-(**)tryEps=0;
-numKern=Length[Kernels[]];
-theName=fNameString[approx,iters,theK,numKern];
-mthName=theName<>".mth";
-X0Z0=genX0Z0Funcs[linModBetter];
-{ptErg,tfErg,plyErg,iplyErg,dplyErg}=smolyakInterpolationPrep[approx,{betterRBCMean,betterRBCSD,betterRBCMinZ,betterRBCMaxZ,betterRBCvv},theDistBetter];
-smolRngErg=Transpose[{betterRBCMinZ,betterRBCMaxZ}];
-sgSpecErg={toIg,smolRngErg,ptErg,tfErg,plyErg,iplyErg,1,approx,
-{betterRBCMean,betterRBCSD,betterRBCMinZ,betterRBCMaxZ,betterRBCvv}};
-zPts=backXtoZ[ptErg,betterRBCMean,betterRBCSD,betterRBCvv];
+{tryEps,numKern,theName,mthName,X0Z0,sgSpecErg,zPts}=
+prepSmol[approx,iters,theK];
 {tmTrad,ig}=Timing[
 theResTrad=parallelNestIterREInterp[genFRExtFunc,linModBetter,
 {X0Z0,theK},eqnsCompiledBetter,sgSpecErg,iters,"xVarRanges"->{{0.01,2},{0.01,2},{0.01,20},{0.85,1.2}},"Traditional"->True]];
@@ -555,13 +548,8 @@ theResTrad
 
 doItExactTrad[approx_?VectorQ,iters_Integer,theK_Integer]:=
 Module[{},
-{ptErg,tfErg,plyErg,iplyErg,dplyErg}=smolyakInterpolationPrep[approx,{betterRBCMean,betterRBCSD,betterRBCMinZ,betterRBCMaxZ,betterRBCvv},theDistBetter];
-smolRngErg=Transpose[{betterRBCMinZ,betterRBCMaxZ}];
-sgSpecErg={toIg,smolRngErg,ptErg,tfErg,plyErg,iplyErg,1,approx,
-{betterRBCMean,betterRBCSD,betterRBCMinZ,betterRBCMaxZ,betterRBCvv}};
-zPts=backXtoZ[ptErg,betterRBCMean,betterRBCSD,betterRBCvv];
-numKern=Length[Kernels[]];
-theName=fNameString[approx,iters,theK,numKern];
+{tryEps,numKern,theName,mthName,X0Z0,sgSpecErg,zPts}=
+prepSmol[approx,iters,theK];
 {tmExactTrad,ig}=Timing[
 theResExactTrad=parallelNestIterREInterp[genFRExtFunc,linModBetter,
 {simpRBCExactX0Z0CEBetter,theK},eqnsCompiledBetter,sgSpecErg,iters,"xVarRanges"->{{0.01,2},{0.01,2},{0.01,20},{0.85,1.2}},"Traditional"->True]];

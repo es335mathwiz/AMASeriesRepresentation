@@ -260,10 +260,14 @@ Append[Join[{999,kk,999,tt},xt,xtp1],ee]]]]
 
 
 
-smolRng=#[[{2,3}]]&/@Drop[aGSpecBetter,2][[1]];
-aDir="resDir/"
+dirNameString[]:=
+Module[{},
+aDir="resDir"<>"-host-"<>$MachineName<>"numKern"<>ToString[numKern]<>"-"<>ToString[Round[AbsoluteTime[]]]<>"/";
+CreateDirectory[aDir]]
+
 fNameString[approx_?VectorQ,iters_Integer,theK_Integer,numKern_Integer]:=
-StringReplace[aDir<>"forBetterRBC-"<>ToString[approx]<>"Iters"<>ToString[iters]<>"theK"<>ToString[theK]<>"host-"<>$MachineName<>"numKern"<>ToString[numKern],{" "->"","{"->"-","}"->"-"}];
+Module[{},
+StringReplace[dirNameString[]<>"forBetterRBC-"<>ToString[approx]<>"Iters"<>ToString[iters]<>"theK"<>ToString[theK],{" "->"","{"->"-","}"->"-"}]];
 
 
 kl=betterRBC`Private`kLow 
@@ -338,33 +342,54 @@ minActualErr[drName_Symbol]:=
 NMinimize[drName[z1,z2,z3],
 And[betterRBCMinZ[[1]] <=z1<=betterRBCMaxZ[[1]],
 betterRBCMinZ[[2]]<=z2<=betterRBCMaxZ[[2]],
-betterRBCMinZ[[3]]<=z3<=betterRBCMaxZ[[3]]],{z1,z2,z3},Method->"NelderMead"];
+betterRBCMinZ[[3]]<=z3<=betterRBCMaxZ[[3]]],{z1,z2,z3},
+{Method->"NelderMead","RandomSeed"->Round[AbsoluteTime[]]}
+];
 
 minPredErr[drerrName_Symbol]:=
 Module[{errBnd,errBndVal,errBndSubs},
 errBnd={errBndVal,errBndSubs}=NMinimize[drerrName[z1,z2,z3],
 And[betterRBCMinZ[[1]] <=z1<=betterRBCMaxZ[[1]],
 betterRBCMinZ[[2]]<=z2<=betterRBCMaxZ[[2]],
-betterRBCMinZ[[3]]<=z3<=betterRBCMaxZ[[3]]],{z1,z2,z3},Method->"NelderMead"];
+betterRBCMinZ[[3]]<=z3<=betterRBCMaxZ[[3]]],{z1,z2,z3},
+{Method->"NelderMead","RandomSeed"->Round[AbsoluteTime[]]}];
 {errBndVal,errBndSubs}
 ]
 
 
-findMinLocs[drName_Symbol,drerrName_Symbol]:=
-Module[{bothErrStr,acterrLoc,errBndLoc,acterr,errBnd,actewrrLoc},
+Options[findMinLocs]={"Traditional"->False}
+findMinLocs[theName_String,
+drName_Symbol,drerrName_Symbol,opts:OptionsPattern[]]:=
+Module[{texModStr,bothErrStr,acterrLoc,errBndLoc,acterr,errBnd,actewrrLoc},
 acterr={acterrVal,acterrSubs}=minActualErr[drName];
 errBnd={errBndVal,errBndSubs}=minPredErr[drerrName];
-errBndLoc={z1,z2}/.errBndSubs;
-acterrLoc={z1,z2}/.acterrSubs;
-If[FileExistsQ[mthName],DeleteFile[mthName]];
+errBndLoc={z1,z2,z3}/.errBndSubs;
+acterrLoc={z1,z2,z3}/.acterrSubs;
 (**)
 bothErrStr=
 "\nerrBnd="<>
 (errBndStr=ToString[NumberForm[-errBndVal,NumberFormat->(Row[{#1,"e",#3}]&)]])<>","<>
 "actualErr="<>(acterrStr=ToString[NumberForm[-acterrVal,NumberFormat->(Row[{#1,"e",#3}]&)]]);
-WriteString[theName<>"acterr.tex",acterrStr];
-WriteString[theName<>"errBnd.tex",errBndStr];
-{bothErrStr,acterrLoc,errBndLoc}]
+texModStr=If[OptionValue["Traditional"],"Trad","Series"];
+WriteString[theName<>texModStr<>"acterr.tex",acterrStr];
+WriteString[theName<>texModStr<>"errBnd.tex",errBndStr];
+{bothErrStr,acterrLoc,errBndLoc,acterr,errBnd}]
+
+
+
+Options[errTableRowStr]={"Traditional"->False}
+errTableRowStr[approx_?VectorQ,theK_Integer,
+{acterr_?NumberQ,_List},{errBnd_?NumberQ,_List},opts:OptionsPattern[]]:=
+Module[{
+colorQStr=If[(-acterr)>(-errBnd),"\\rowcolor{LightCyan}\n",""]},
+colorQStr<>
+ToString[approx]<>"&"<>
+If[OptionValue["Traditional"],"NA",ToString[theK]]<>"&"<>
+ToString[NumberForm[-errBndVal,NumberFormat->(Row[{#1,"e",#3}]&)]]<>"&"<>
+ToString[NumberForm[-acterrVal,NumberFormat->(Row[{#1,"e",#3}]&)]]<>"\\\\\n\\hline\n"]
+
+
+
 
 Options[actErrCP]={"Traditional"->False}
 actErrCP[forDR_Function,{bothErrStr_String,acterrLoc_List,errBndLoc_List},
@@ -393,7 +418,7 @@ Epilog->{PointSize[0.05],Green,Point[acterrLoc[[{1,2}]]],PointSize[0.025],Orange
 
 Options[doItApproxSeries]={"Traditional"->False}
 doItApproxSeries[approx_?VectorQ,iters_Integer,theK_Integer,opts:OptionsPattern[]]:=
-Module[{lclName,tryEps,numKern,theName,mthName,X0Z0,sgSpecErg,zPts,tm,ig,theRes,
+Module[{lclMthName,lclName,tryEps,numKern,theName,mthName,X0Z0,sgSpecErg,zPts,tm,ig,theRes,
 forDR,forDRCE,drName,drerrName,bothErrStr,acterrLoc,errBndLoc},
 {tryEps,numKern,theName,mthName,X0Z0,sgSpecErg,zPts}=
 prepSmol[approx,iters,theK];
@@ -402,36 +427,26 @@ Print["indo:",{Options[parallelNestIterREInterp],FilterRules[{opts},Options[para
 theRes=parallelNestIterREInterp[genFRExtFunc,linModBetter,
 {X0Z0,theK},eqnsCompiledBetter,sgSpecErg,iters,"xVarRanges"->{{0.01,2},{0.01,2},{0.01,20},{0.85,1.2}},FilterRules[{opts},Options[parallelNestIterREInterp]]]];
 {{forDR,forDRCE},{drName,drerrName}}=prepDRDRCE[theRes];
-{bothErrStr,acterrLoc,errBndLoc}=findMinLocs[drName,drerrName];
+{bothErrStr,acterrLoc,errBndLoc,acterr,errBnd}=findMinLocs[theName,drName,drerrName,FilterRules[{opts},Options[parallelNestIterREInterp]]];
 lclName=If[OptionValue["Traditional"],
 theName<>"Trad",
 theName<>"Series"
 ];
+lclMthName=If[OptionValue["Traditional"],
+StringReplace[mthName,".mth"->"Trad.mth"],
+StringReplace[mthName,".mth"->"Series.mth"]
+];
+WriteString[lclName<>"errTableRow.tex",
+errTableRowStr[approx,theK,acterr,errBnd,FilterRules[{opts},Options[checkPt]]]];
 Export[lclName<>".pdf",actErrCP[forDR,{bothErrStr,acterrLoc,errBndLoc},zPts,lclName,FilterRules[{opts},Options[actErrCP]]]];
 Export[lclName<>"Approx.pdf",
-approxErrCP[forDR,forDRCE,theK,tryEps,{bothErrStr,acterrLoc,errBndLoc},zPts,lclName,FilterRules[{opts},Options[approxErrCP]]]]
+approxErrCP[forDR,forDRCE,theK,tryEps,{bothErrStr,acterrLoc,errBndLoc},zPts,lclName,FilterRules[{opts},Options[approxErrCP]]]];
+If[FileExistsQ[mthName],DeleteFile[mthName]];
+Save[lclMthName,{lclName,tryEps,numKern,theName,mthName,X0Z0,sgSpecErg,zPts,tm,
+theRes,forDR,forDRCE,drName,drerrName,bothErrStr,acterrLoc,errBndLoc}]
 ]
 
 
-
-
-
-
-doItApproxTrad[approx_?VectorQ,iters_Integer,theK_Integer]:=
-Module[{lclName,tryEps,numKern,theName,mthName,X0Z0,sgSpecErg,zPts,tm,ig,theRes,
-forDR,forDRCE,drName,drerrName,bothErrStr,acterrLoc,errBndLoc},
-{tryEps,numKern,theName,mthName,X0Z0,sgSpecErg,zPts}=
-prepSmol[approx,iters,theK];
-{tm,ig}=Timing[
-theRes=parallelNestIterREInterp[genFRExtFunc,linModBetter,
-{X0Z0,theK},eqnsCompiledBetter,sgSpecErg,iters,"xVarRanges"->{{0.01,2},{0.01,2},{0.01,20},{0.85,1.2}},"Traditional"->True]];
-{{forDR,forDRCE},{drName,drerrName}}=prepDRDRCE[theRes];
-{bothErrStr,acterrLoc,errBndLoc}=findMinLocs[drName,drerrName];
-lclName=theName<>"Trad";
-Export[lclName<>".pdf",actErrCP[forDR,{bothErrStr,acterrLoc,errBndLoc},zPts,lclName]];
-Export[lclName<>"Approx.pdf",
-approxErrCP[forDR,forDRCE,theK,tryEps,{bothErrStr,acterrLoc,errBndLoc},zPts,lclName]]
-]
 
 
 getErrs[approx_?VectorQ,iters_Integer,theK_Integer,numKern_Integer]:=
@@ -583,5 +598,20 @@ theArgs
 },1]];
 Save["tryit.mth",theRes]
 
+
+*)
+(*
+Get["AMAFedsBetterRBC.mth"];
+doItApproxSeries[1*{1,1,1},70,#,"Traditional"->True]& /@{0}
+doItApproxSeries[2*{1,1,1},70,#,"Traditional"->True]& /@{0}
+doItApproxSeries[3*{1,1,1},70,#,"Traditional"->True]& /@{0}
+
+doItApproxSeries[1*{1,1,1},1,1,"Traditional"->False]
+
+
+
+doItApproxSeries[1*{1,1,1},70,#,"Traditional"->False]& /@Join[Range[0,5],Range[10,50,10]]
+doItApproxSeries[2*{1,1,1},70,#,"Traditional"->False]& /@Join[Range[0,5],Range[10,50,10]]
+doItApproxSeries[3*{1,1,1},70,#,"Traditional"->False]& /@Join[Range[0,5],Range[10,50,10]]
 
 *)

@@ -92,7 +92,7 @@ lam[t] -1/cc[t],
 cc[t] + II[t]-((theta[t])*(kk[t-1]^alpha)),
 nlPart[t] -(nlPartRHS=lam[t]*theta[t]),
 theta[t]-E^(rho*Log[theta[t-1]] + eps[theta][t]),
-lam[t] +mu1[t] - (alpha*kk[t]^(-1+alpha)*delta*nlPart[t+1]+lam[t+1]*delta*(1-dd)+mu1tp1*delta*(1-dd)),
+lam[t] +mu1[t] - (alpha*kk[t]^(-1+alpha)*delta*nlPart[t+1]+lam[t+1]*delta*(1-dd)+mu1[t+1]*delta*(1-dd)),
 II[t] -(kk[t]-(1-dd)*kk[t-1]),
 (kk[t]-(1-dd)*kk[t-1]-upsilon*IIss)
 }
@@ -286,7 +286,7 @@ dd->.1
 
 *)
 
-theProduct=0.9755*IIss//.ssFRSolnSubs;
+theProduct=upsilon*IIss//.ssFRSolnSubs/.betterRBCCompSlack`Private`paramSubs;
   rbcEqnsBetterCompSlack=eqnsCompiledBetterCompSlack={
  { {(Print["pre1"];True)&,
   Compile @@ {
@@ -297,7 +297,8 @@ theProduct=0.9755*IIss//.ssFRSolnSubs;
 {epsVal,_Real}
 },
 (eqnsForNotBind),"RuntimeOptions"->{"RuntimeErrorHandler"->Function[$Failed],"CatchMachineOverflow"->True,"CatchMachineUnderflow"->True}},
-  Function[Print["func:",{#8,#9,#10,#11,#3,#9 >(theProduct)}];#9>(theProduct)]},
+  Function[{aPt,aRes},Print["flunc:",
+{theProduct,aPt,aRes,aRes[[2,1]] >(theProduct)}];aRes[[2,1]]>(theProduct)]},
  {(Print["pre2"];True)&,
   Compile @@ {
 {
@@ -306,8 +307,8 @@ theProduct=0.9755*IIss//.ssFRSolnSubs;
 {cctp1,_Real},{iitp1,_Real},{kktp1,_Real},{lamtp1,_Real},{mu1tp1,_Real},{nltp1,_Real},{thetatp1,_Real},
 {epsVal,_Real}
 },
-(eqnsForNotBind),"RuntimeOptions"->{"RuntimeErrorHandler"->Function[$Failed],"CatchMachineOverflow"->True,"CatchMachineUnderflow"->True}},(Print["post2"];True)&}},
-Function[{aPt,allRes},
+(eqnsForBind),"RuntimeOptions"->{"RuntimeErrorHandler"->Function[$Failed],"CatchMachineOverflow"->True,"CatchMachineUnderflow"->True}},(Print["post2"];True)&}},
+Function[{aPt,allRes},Print["postPost:",{aPt,allRes}];
 If[allRes[[1]]===$Failed,Print["constraint violated"];Flatten[allRes[[2]]],Print["constraint not violated"];Flatten[allRes[[1]]]]]
 }
 
@@ -374,6 +375,9 @@ linModBetterCompSlack={hmatSymbRE//N,bmatSymbRE // N, phimatSymbRE // N,
     fmatSymbRE // N, psiepsSymbRE // N, 
     psicSymbRE // N, psiz // N,(*{{7,rbcEqnsBetterBackLookingCompSlack,rbcEqnsBetterBackLookingExpCompSlack}}*){}};Print["took out back looking equations"];
 
+
+
+
 (*
 
 *)
@@ -422,6 +426,33 @@ aGSpecBetterCompSlack={{1,2,4,5,6},2,{{6,kLow,kHigh},{10,thLow,thHigh},{6,sigLow
 
 
 
+
+simulateBetterRBCCS[numPers_Integer]:=
+With[{draws=RandomVariate[theDistBetterCompSlack[[1,1,2]],numPers],
+initVec={99,99,kVal,99,99,99,thVal},
+fMul=Inverse[IdentityMatrix[7]-fmatSymbRE]},
+With[{mats=FoldList[(bmatSymbRE . #1+ (phimatSymbRE .psiepsSymbRE .{{#2}})+
+fMul.phimatSymbRE.psicSymbRE)&,initVec,draws]},
+Flatten/@mats]]
+
+
+theRes=simulateBetterRBCCS[200];
+justKT=theRes[[All,{3,7}]];
+betterRBCCSMean=Mean[justKT]
+betterRBCCSSD=StandardDeviation[justKT]
+
+normedRes=(#/betterRBCCSSD)&/@((#-betterRBCCSMean)&/@justKT)
+{uu,ss,vv}=SingularValueDecomposition[normedRes];
+zz=normedRes .vv;
+betterRBCCSMinZ=Min/@Transpose[zz];
+betterRBCCSMaxZ=Max/@Transpose[zz];
+{ig,ig,theKs,ig,ig,ig,theThetas}=Transpose[theRes];
+
+betterRBCCSMean=Append[betterRBCCSMean,0]
+betterRBCCSSD=Append[betterRBCCSSD,sigVal]
+betterRBCCSMinZ=Append[betterRBCCSMinZ,-3]
+betterRBCCSMaxZ=Append[betterRBCCSMaxZ,3]
+betterRBCCSvv=ArrayFlatten[{{ArrayFlatten[{{vv,{{0},{0}}}}]},{{{0,0,1}}}}]
 
 
 End[] (* End Private Context *)

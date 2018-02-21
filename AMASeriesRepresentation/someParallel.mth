@@ -1,0 +1,54 @@
+(*Limits Mathematica to requested resources*)
+Unprotect[$ProcessorCount];$ProcessorCount = 20;
+
+hosts=Counts[StringSplit[Environment["SLURM_JOB_NODELIST"],","]]
+local=First[StringSplit[Environment["HOSTNAME"],"."]]
+hosts[local]--
+Needs["SubKernels`RemoteKernels`"]
+
+math = "/opt/mathematica/11.0/Executables/MathKernel" <> 
+   " -wstp -linkmode Connect `4` -linkname `2` -subkernel -noinit >&  \
+/dev/null &";
+
+
+ssh = "source ~/.bashrc;export LD_LIBRARY_PATH=;ssh"
+user="m1gsa00"
+remote = (SubKernels`RemoteKernels`RemoteMachine[#, 
+  ssh <> " " <> user <> "@" <> # <>
+    " \"" <> math <> "\"", 28])&/@
+(Keys[hosts])
+
+
+Print["hosts=",hosts];
+Print[remote // InputForm]
+kerns = LaunchKernels[remote]
+Print["pre eval"]
+ParallelEvaluate[$MachineName]
+Print["post eval"]
+
+
+Get["pathSetup.mth"]
+ParallelEvaluate[$HistoryLength=1];
+ParallelEvaluate[SetDirectory["/msu/scratch2/m1gsa00/git/AMASeriesRepresentation/AMASeriesRepresentation"]]
+Needs["AMASeriesRepresentation`"]
+Needs["betterRBC`"]
+ParallelEvaluate[Get["pathSetup.mth"]]
+ParallelNeeds["AMASeriesRepresentation`"]
+ParallelNeeds["betterRBC`"]
+Get["AMAFedsBetterRBC.mth"]
+
+
+Table[doIt[{ii,jj,kk},its,bigK],{ii,5,1,-1},{jj,5,3,-1},{kk,1,5},{its,{1,5,10,20}},
+{bigK,{1,5,10,20}}]
+
+(*
+
+doIt[5*{1,1,1},4,5]
+doIt[{4,4,4},10,5]
+
+doIt[4*{1,1,1},4,5]
+doIt[3*{1,1,1},4,5]
+doIt[2*{1,1,1},4,5]
+*)
+
+Quit

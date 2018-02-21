@@ -606,7 +606,7 @@ Options[smolyakInterpolationPrep]={"Derivatives"->False,"ptGenerator"->chebyshev
 smolyakInterpolationPrep[approxLevels_?listOfIntegersQ,smolRngs_?MatrixQ,
 @<distribSpec@>,opts:OptionsPattern[]]:=
 Module[{smolRes=
-sparseGridEvalPolysAtPts[approxLevels,OptionValue["ptGenerator"],
+  sparseGridEvalPolysAtPts[approxLevels,OptionValue["ptGenerator"],
 chebyshevPolyGenerator],
 numVars=Length[approxLevels],numEps=Length[distribSpec[[1]]]},
 With[{thePts=smolRes[[1]],smolPolys=smolRes[[2]],smolMat=smolRes[[3]]},
@@ -1096,6 +1096,21 @@ genFRExtFunc[{numX,numEps,numZ},linMod,XZFuncs,eqnsFunc,Apply[Sequence,FilterRul
 genericInterp,svmArgs]},
 theFuncs]]
 
+parallelDoGenericIterREInterp[genFRExtFunc,
+	@<linMod@>,
+	@<XZFuncs@>,
+triples:{{{_Function,(_Function|_CompiledFunction|_Symbol),_Function}..},
+selectorFunc_Function},@<smolGSpec@>,
+genericInterp:(smolyakInterpolation|svmRegressionLinear|svmRegressionPoly|svmRegressionRBF|svmRegressionSigmoid),svmArgs:{_?NumberQ...},opts:OptionsPattern[]]:=
+With[{numX=Length[BB],numZ=Length[psiZ[[1]]]},
+tn=AbsoluteTime[];
+parallelSetup[];
+With[{theFuncs=
+parallelMakeGenericInterpFuncs[
+genFRExtFunc[{numX,numEps,numZ},linMod,XZFuncs,triples,Apply[Sequence,FilterRules[{opts},Options[genFRExtFunc]]]],backLookingInfo,smolGSpec,
+genericInterp,svmArgs]},
+theFuncs]]
+
 AMASeriesRepCallGraph=
 Join[AMASeriesRepCallGraph,
 Map["doSmolyakIterREInterp"->#&,
@@ -1218,6 +1233,17 @@ Module[{},
 parallelSetup[];
 NestList[Function[xx,parallelDoGenericIterREInterp[genFRExtFunc,linMod,
 {xx[[2]],numSteps},eqnsFunc,smolGSpec,genericInterp,svmArgs,Apply[Sequence,FilterRules[{opts},Options[parallelDoGenericIterREInterp]]]]],{99,XZFuncs[[1]]},numIters]]
+
+parallelNestGenericIterREInterp[genFRExtFunc,@<linMod@>,
+@<XZFuncs@>,
+triples:{{{_Function,(_Function|_CompiledFunction|_Symbol),_Function}..},
+selectorFunc_Function},@<smolGSpec@>,
+genericInterp:(smolyakInterpolation|svmRegressionLinear|svmRegressionPoly|svmRegressionRBF|svmRegressionSigmoid),svmArgs:{_?NumberQ...},
+numIters_Integer,opts:OptionsPattern[]]:=
+Module[{},
+parallelSetup[];
+NestList[Function[xx,parallelDoGenericIterREInterp[genFRExtFunc,linMod,
+{xx[[2]],numSteps},triples,smolGSpec,genericInterp,svmArgs,Apply[Sequence,FilterRules[{opts},Options[parallelDoGenericIterREInterp]]]]],{99,XZFuncs[[1]]},numIters]]
 
 AMASeriesRepCallGraph=
 Join[AMASeriesRepCallGraph,Map["nestIterREInterp"->#&,{"doGenericIterREInterp"}]];
@@ -2853,8 +2879,7 @@ makePatternArgs[eArgs],
 makePatternArgs[xArgs]]@}
 @d cmptXArgsInit
 @{xArgsInit=If[varRanges==={},
-MapT
-hread[Function[{xx,yy},{xx,yy}],
+MapThread[Function[{xx,yy},{xx,yy}],
 {xArgs,theXInit[[Range[numX]]]}],
 MapThread[{#1,#2,#3[[1]],#3[[2]]}&,{xArgs,theXInit[[Range[numX]]],varRanges}]]@}
 @d prepFindRootXInit
@@ -2942,8 +2967,8 @@ triple:{preFunc_Function,theFunc:(_Function|_CompiledFunction|_Symbol),
 postFunc_Function},
 thePt_?VectorQ]:=
 If[Apply[preFunc,thePt],
-With[{theRes=Apply[theFunc,thePt]},
-If[Apply[postFunc,Flatten[Join[thePt,theRes]]],theRes,$Failed]],$Failed]
+With[{theRes=Apply[theFunc,thePt]},Print["eTrip:",{theRes,thePt,Apply[postFunc,{thePt,theRes}]}];
+If[Apply[postFunc,{thePt,theRes}],theRes,$Failed]],$Failed]
 
 @}
 @d genFRExtFunc

@@ -29,6 +29,19 @@ rbcEqnsBetterCompSlack::usage="model equations"
 eqnsEulerCompiledBetterCompSlack::usage="eqnsEulerCompiledBetterCompSlack"
 
 genCompSlackEqns::usage="genCompSlackEqns[alpha_?NumberQ,beta_?NumberQ,delta_?NumberQ,rho_?NumberQ,sigma_?NumberQ,dd_?NumberQ,upsilon_?NumberQ]"
+simulateBetterRBCCS::usage="simulateBetterRBCExact[numPers_Integer]"
+betterRBCCSMean::usage="betterRBCCSMean"
+betterRBCCSSD::usage="betterRBCCSSD"
+betterRBCCSvv::usage="betterRBCCSvv"
+betterRBCCSMinZ::usage="betterRBCCSMinZ"
+betterRBCCSMaxZ::usage="betterRBCCSMaxZ"
+
+chkBounded::usage="chkBounded[anAugDRCE_Function,numPers_Integer,aPt_?MatrixQ,lim_?NumberQ]"
+
+
+iterateRBCCSDRCE::usage="iterateRBCCSDRCE[anAugDRCE_Function,numPers_Integer,aPt_?MatrixQ]"
+
+
 Begin["`Private`"] (* Begin Private Context *) 
 
 
@@ -298,7 +311,7 @@ theProduct=upsilon*IIss//.ssFRSolnSubs/.betterRBCCompSlack`Private`paramSubs;
 },
 (eqnsForNotBind),"RuntimeOptions"->{"RuntimeErrorHandler"->Function[$Failed],"CatchMachineOverflow"->True,"CatchMachineUnderflow"->True}},
   Function[{aPt,aRes},Print["flunc:",
-{theProduct,aPt,aRes,aRes[[2,1]] >(theProduct)}];aRes[[2,1]]>(theProduct)]},
+{theProduct,aPt,aRes,aRes[[2,1]] >(theProduct)}];And[aRes[[1,1]]>0,aRes[[2,1]]>(theProduct)]]},
  {(Print["pre2"];True)&,
   Compile @@ {
 {
@@ -429,30 +442,50 @@ aGSpecBetterCompSlack={{1,2,4,5,6},2,{{6,kLow,kHigh},{10,thLow,thHigh},{6,sigLow
 
 simulateBetterRBCCS[numPers_Integer]:=
 With[{draws=RandomVariate[theDistBetterCompSlack[[1,1,2]],numPers],
-initVec={99,99,kVal,99,99,99,thVal},
+initVec=Transpose[{{99,99,kVal,99,99,99,thVal}}],
 fMul=Inverse[IdentityMatrix[7]-fmatSymbRE]},
 With[{mats=FoldList[(bmatSymbRE . #1+ (phimatSymbRE .psiepsSymbRE .{{#2}})+
 fMul.phimatSymbRE.psicSymbRE)&,initVec,draws]},
 Flatten/@mats]]
 
+simulateBetterRBCCS[anAugDR_Function,numPers_Integer]:=
+With[{draws=RandomVariate[theDistBetterCompSlack[[1,1,2]],numPers],
+initVec=Transpose[{{99,99,kVal,99,99,99,thVal}}]},
+With[{mats=FoldList[((anAugDR @@ Flatten[{#1[[Range[7]]],#2}]))&,initVec,draws]},
+Flatten/@mats]]
 
+iterateRBCCSDRCE[anAugDRCE_Function,numPers_Integer,aPt_?MatrixQ]:=
+With[{mats=
+NestList[((anAugDR @@ Flatten[{#1[[Range[7]]],#2}]))&,initVec,draws]},
+Flatten/@mats]
+
+chkBounded[anAugDRCE_Function,numPers_Integer,aPt_?MatrixQ,lim_?NumberQ]:=
+Module[{},
+If[
+Catch[
+Nest[With[{val=Apply[anAugDRCE,Flatten[#]][[Range[7]]]},
+If[Norm[val]>lim,Throw[False,"chkBounded"],val]]&,aPt,numPers],
+"chkBounded"]===False,False,True]]
+
+Print["about to simulate"];
 theRes=simulateBetterRBCCS[200];
+Print["done simulate"];
 justKT=theRes[[All,{3,7}]];
-betterRBCCSMean=Mean[justKT]
-betterRBCCSSD=StandardDeviation[justKT]
+betterRBCCSMean=Mean[justKT];
+betterRBCCSSD=StandardDeviation[justKT];
 
-normedRes=(#/betterRBCCSSD)&/@((#-betterRBCCSMean)&/@justKT)
+normedRes=(#/betterRBCCSSD)&/@((#-betterRBCCSMean)&/@justKT);
 {uu,ss,vv}=SingularValueDecomposition[normedRes];
 zz=normedRes .vv;
 betterRBCCSMinZ=Min/@Transpose[zz];
 betterRBCCSMaxZ=Max/@Transpose[zz];
 {ig,ig,theKs,ig,ig,ig,theThetas}=Transpose[theRes];
 
-betterRBCCSMean=Append[betterRBCCSMean,0]
-betterRBCCSSD=Append[betterRBCCSSD,sigVal]
-betterRBCCSMinZ=Append[betterRBCCSMinZ,-3]
-betterRBCCSMaxZ=Append[betterRBCCSMaxZ,3]
-betterRBCCSvv=ArrayFlatten[{{ArrayFlatten[{{vv,{{0},{0}}}}]},{{{0,0,1}}}}]
+betterRBCCSMean=Append[betterRBCCSMean,0];
+betterRBCCSSD=Append[betterRBCCSSD,sigVal];
+betterRBCCSMinZ=Append[betterRBCCSMinZ,-3];
+betterRBCCSMaxZ=Append[betterRBCCSMaxZ,3];
+betterRBCCSvv=ArrayFlatten[{{ArrayFlatten[{{vv,{{0},{0}}}}]},{{{0,0,1}}}}];
 
 
 End[] (* End Private Context *)

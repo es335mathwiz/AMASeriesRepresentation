@@ -108,6 +108,7 @@ Module[{},
 With[{filledPts=Map[Function[xx,fillIn[{{},smolToIgnore,xx}]],N[smolPts]]},
 With[{theVals=Table[evaluateTriple[aTriple,Flatten[aPt]],
 {aTriple,triples[[1]]},{aPt,filledPts}]},
+Print["smolyakGenInterpData:",{theVals,filledPts}//InputForm];
 With[{interpData=Map[Apply[selectorFunc,#]&,{filledPts,Transpose[theVals]}//Transpose]},
 interpData]]]]
 
@@ -121,6 +122,8 @@ Module[{},
 With[{filledPts=Map[Function[xx,fillIn[{{},smolToIgnore,xx}]],N[smolPts]]},
 With[{theVals=ParallelTable[evaluateTriple[aTriple,Flatten[aPt]],
 {aTriple,triples[[1]]},{aPt,filledPts}]},
+Print["parallelSmolyakGenInterpData:",
+{theVals,filledPts}//InputForm];
 With[{interpData=ParallelMap[Apply[selectorFunc,#]&,{filledPts,Transpose[theVals]}//Transpose]},
 interpData]]]]
 
@@ -2364,7 +2367,8 @@ Module[{},
 @}
 
 @d Z Matrices Given
-@{With[{fCon=Check[fSumC[phi,FF,psiZ,theZs],Print["trying to throw low"];Throw["low"]]},
+@{With[{fCon=Check[fSumC[phi,FF,psiZ,theZs],Print["trying to throw low"];
+Throw[$Failed,"low"]]},
 With[{theRes=genLilXkZkFunc[linMod,fCon]},
 theRes]]
 
@@ -2926,7 +2930,8 @@ Apply[Sequence,xtztArgPatterns]],
 Module[{theZsNow=genZsForFindRoot[linMod,
 Transpose[{xArgs}],XZFuncs[[1]],XZFuncs[[2]]]
 },
-With[{xkFunc=genLilXkZkFunc[linMod,theZsNow]},
+With[{xkFunc=Catch[(Print["usingZsNow"];genLilXkZkFunc[linMod,theZsNow]),_,Function[{val,tag},Print[{xArgs,val,tag}//InputForm];$Failed]]},
+Print["progress usingZsNow"];
 With[{xkAppl=Apply[xkFunc,Join[xLagArgs,eArgs,zArgs]]},
 With[{eqnAppl=Apply[eqnsFunc,Flatten[xkAppl]],
 xDisc=xArgs-xkAppl[[numX+Range[numX]]]},

@@ -109,7 +109,14 @@ With[{filledPts=Map[Function[xx,fillIn[{{},smolToIgnore,xx}]],N[smolPts]]},
 With[{theVals=Table[evaluateTriple[aTriple,Flatten[aPt]],
 {aTriple,triples[[1]]},{aPt,filledPts}]},
 Print["smolyakGenInterpData:",{theVals,filledPts}//InputForm];
-With[{interpData=Map[Apply[selectorFunc,#]&,{filledPts,Transpose[theVals]}//Transpose]},
+With[{interpData=
+Catch[
+Map[Apply[selectorFunc,#]&,{filledPts,Transpose[theVals]}//Transpose],
+_,Function[{val,tag},Print["catchsmolGenInterp:saving aborting",
+{val,tag,triples,filledPts}//InputForm];
+Save["theProblem.mth",{triples,smolPts,filledPts}];
+Abort[]]]
+},
 interpData]]]]
 
 defaultSelectorFunc=Function[{aPt,allRes},Print["default:",{aPt,allRes}];Flatten[DeleteCases[allRes,$Failed]]]
@@ -120,11 +127,18 @@ triples:{{{_Function,(_Function|_CompiledFunction|_Symbol),
 _Function}..},selectorFunc_Function},@<smolGSpec@>]:=
 Module[{},
 With[{filledPts=Map[Function[xx,fillIn[{{},smolToIgnore,xx}]],N[smolPts]]},
-With[{theVals=ParallelTable[evaluateTriple[aTriple,Flatten[aPt]],
+With[{theVals=
+ParallelTable[evaluateTriple[aTriple,Flatten[aPt]],
 {aTriple,triples[[1]]},{aPt,filledPts}]},
 Print["parallelSmolyakGenInterpData:",
 {theVals,filledPts}//InputForm];
-With[{interpData=ParallelMap[Apply[selectorFunc,#]&,{filledPts,Transpose[theVals]}//Transpose]},
+With[{interpData=
+ParallelMap[With[{baddy=#},Catch[
+Apply[selectorFunc,#],
+_,Function[{val,tag},Print["catchsmolGenInterp:saving aborting",
+{val,tag,baddy,triples,filledPts}//InputForm];
+Save["theProblem"<>ToString[$KernelID]<>".mth",{triples,smolPts,filledPts}];
+Abort[]]]]&,{filledPts,Transpose[theVals]}//Transpose]},
 interpData]]]]
 
 
@@ -2930,8 +2944,7 @@ Apply[Sequence,xtztArgPatterns]],
 Module[{theZsNow=genZsForFindRoot[linMod,
 Transpose[{xArgs}],XZFuncs[[1]],XZFuncs[[2]]]
 },
-With[{xkFunc=Catch[(Print["usingZsNow"];genLilXkZkFunc[linMod,theZsNow]),_,Function[{val,tag},Print[{xArgs,val,tag}//InputForm];$Failed]]},
-Print["progress usingZsNow"];
+With[{xkFunc=Catch[(Check[genLilXkZkFunc[linMod,theZsNow],Print["trying higher throw"];Throw[$Failed,"higher"]]),_,Function[{val,tag},Print["catchfxtzt:",{xArgs,val,tag}//InputForm];Throw[$Failed,"fromGenLil"]]]},
 With[{xkAppl=Apply[xkFunc,Join[xLagArgs,eArgs,zArgs]]},
 With[{eqnAppl=Apply[eqnsFunc,Flatten[xkAppl]],
 xDisc=xArgs-xkAppl[[numX+Range[numX]]]},
@@ -2944,7 +2957,7 @@ funcOfXtm1Eps
 (**)
 With[{frRes=FindRoot[Print["doingFindRootNotTraditional"];
 funcOfXtZt[Apply[Sequence,Join[xLagArgs,eArgs,xArgs,zArgs]]],
-Join[xArgsInit,zArgsInit](*,WorkingPrecision->50*)(*,EvaluationMonitor:>Print["xz",{xArgs,zArgs,xLagArgs,eArgs,funcOfXtm1Eps,funcOfXtZt,funcOfXtZt[Apply[Sequence,Join[xLagArgs,eArgs,xArgs,zArgs]]]}//InputForm]*)]},
+Join[xArgsInit,zArgsInit](*,WorkingPrecision->50*),EvaluationMonitor:>Print["xz",{xArgs,zArgs,xLagArgs,eArgs,funcOfXtm1Eps,funcOfXtZt,funcOfXtZt[Apply[Sequence,Join[xLagArgs,eArgs,xArgs,zArgs]]]}//InputForm]]},
 Transpose[{Flatten[Join[xArgs,zArgs]]/.frRes}]]]@}
 
 
@@ -2971,9 +2984,13 @@ evaluateTriple[
 triple:{preFunc_Function,theFunc:(_Function|_CompiledFunction|_Symbol),
 postFunc_Function},
 thePt_?VectorQ]:=
-If[Apply[preFunc,thePt],
-With[{theRes=Apply[theFunc,thePt]},Print["eTrip:",{theRes,thePt,Apply[postFunc,{thePt,theRes}]}];
-If[Apply[postFunc,{thePt,theRes}],theRes,$Failed]],$Failed]
+Catch[
+If[
+Apply[preFunc,thePt],
+With[{theRes=
+Apply[theFunc,thePt]},
+Print["eTrip:",{theRes,thePt,Apply[postFunc,{thePt,theRes}]}];
+If[Apply[postFunc,{thePt,theRes}],theRes,$Failed]],$Failed],_,Function[{val,tag},Print["catchinevaluateTriple:",{xArgs,val,tag}//InputForm];$Failed]]
 
 @}
 @d genFRExtFunc

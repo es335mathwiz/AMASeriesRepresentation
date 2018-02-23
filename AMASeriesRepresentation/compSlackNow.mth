@@ -138,18 +138,23 @@ backZtoX[{{z1,z2,tryEps}},betterRBCCSMean,betterRBCCSSD,betterRBCCSvv][[1]],Filt
 Epilog->{PointSize[0.05],Green,Point[acterrLoc[[{1,2}]]],PointSize[0.025],Orange,Point[errBndLoc[[{1,2}]]],PointSize[0.0125],Black,Point[#]&/@zPts[[All,{1,2}]]}]]
 
 *)
+(*
+
+boo=doItApproxSeriesCS[4*{1,1,1},12,20,"xVarRanges"->{{1.,2},{.3,.6},{3,6},{0.4,1},{-5.5,5.5},{0.2,2},{0.85,1.2}},"Traditional"->False];
+
+*)
 
 
-Options[doItApproxSeriesCS]={"Traditional"->False}
+Options[doItApproxSeriesCS]={"xVarRanges"->{{1.,2},{.3,.6},{3,6},{0.4,1},{-5.5,5.5},{0.2,2},{0.85,1.2}},"Traditional"->False}
 doItApproxSeriesCS[approx_?VectorQ,iters_Integer,theK_Integer,opts:OptionsPattern[]]:=
 Module[{lclMthName,lclName,tryEps,numKern,theName,mthName,X0Z0,sgSpecErg,zPts,tm,ig,theRes,
 forDR,forDRCE,drName,drerrName,bothErrStr,acterrLoc,errBndLoc},
 {tryEps,numKern,theName,mthName,X0Z0,sgSpecErg,zPts}=
 prepSmolCS[approx,iters,theK];
-Print["indo:",{Options[parallelNestGenericIterREInterp],FilterRules[{opts},Options[parallelNestGenericIterREInterp]]}];
+Print["indo:",{OptionValue["xVarRanges"],OptionValue["Traditional"]}];
 {tm,ig}=Timing[
 theRes=parallelNestGenericIterREInterp[genFRExtFunc,linModBetterCompSlack,
-{X0Z0,theK},rbcEqnsBetterCompSlack,sgSpecErg,smolyakInterpolation,{},iters,"xVarRanges"->{{0.01,2},{0.1,4},{0.01,6},{0.01,20},{-5.5,5.5},{0.1,5.5},{0.85,1.2}}(*,FilterRules[{opts},Options[parallelNestGenericIterREInterp]]*)]];
+{X0Z0,theK},rbcEqnsBetterCompSlack,sgSpecErg,smolyakInterpolation,{},iters,FilterRules[{opts},Options[parallelNestGenericIterREInterp]]]];
 (*
 {{forDR,forDRCE},{drName,drerrName}}=prepDRDRCE[theRes];
 {bothErrStr,acterrLoc,errBndLoc,acterr,errBnd}=findMinLocs[theName,drName,drerrName,FilterRules[{opts},Options[parallelNestGenericIterREInterp]]];
@@ -213,18 +218,19 @@ parallelMakeGenericInterpFuncs[theFRTrips,{},sgSpecTry,smolyakInterpolation,{}]
 
 
 
-ap=3*{1,1,1};
-smolRng=#[[{2,3}]]&/@Drop[aGSpecBetterTry,2][[1]];
-{pt,tf,ply,iply,dply}=smolyakInterpolationPrep[ap,smolRng,theDistBetterTry];
-toIg=aGSpecBetterTry[[1]];
+ap=4*{1,1,1};
+smolRng=#[[{2,3}]]&/@Drop[aGSpecBetterCompSlack,2][[1]];
+{pt,tf,ply,iply,dply}=smolyakInterpolationPrep[ap,smolRng,theDistBetterCompSlack];
+toIg=aGSpecBetterCompSlack[[1]];
 sgSpecTry={toIg,smolRng,pt,tf,ply,iply,1,ap,{}};
 
 
-
+boo=doItApproxSeriesCS[4*{1,1,1},1,20,"Traditional"->False];
 parallelDoGenericIterREInterp[genFRExtFunc,
-linModBetterTry,{X0Z0Try,5},
-rbcEqnsBetterTry,sgSpecTry,
+linModBetterCompSlack,{boo[[2,-1,2]],20},
+rbcEqnsBetterCompSlack,sgSpecTry,
 smolyakInterpolation,{}]
+
 
 (*
 

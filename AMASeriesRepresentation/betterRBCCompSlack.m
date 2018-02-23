@@ -311,7 +311,8 @@ theProduct=upsilon*IIss//.ssFRSolnSubs/.betterRBCCompSlack`Private`paramSubs;
 },
 (eqnsForNotBind),"RuntimeOptions"->{"RuntimeErrorHandler"->Function[$Failed],"CatchMachineOverflow"->True,"CatchMachineUnderflow"->True}},
   Function[{aPt,aRes},Print["flunc:",
-{theProduct,aPt,aRes,aRes[[2,1]] >(theProduct)}];And[aRes[[1,1]]>0,aRes[[2,1]]>(theProduct)]]},
+{theProduct,aPt,aRes,aRes[[2,1]] >(theProduct)}];
+If[aRes===$Failed,False,And[aRes[[1,1]]>0,aRes[[2,1]]>(theProduct)]]]},
  {(Print["pre2"];True)&,
   Compile @@ {
 {
@@ -322,6 +323,7 @@ theProduct=upsilon*IIss//.ssFRSolnSubs/.betterRBCCompSlack`Private`paramSubs;
 },
 (eqnsForBind),"RuntimeOptions"->{"RuntimeErrorHandler"->Function[$Failed],"CatchMachineOverflow"->True,"CatchMachineUnderflow"->True}},(Print["post2"];True)&}},
 Function[{aPt,allRes},Print["postPost:",{aPt,allRes}];
+If[And[allRes[[1]]===$Failed,allRes[[2]]===$Failed],Throw[$Failed,"noSolutionFound"]];
 If[allRes[[1]]===$Failed,Print["constraint violated"];Flatten[allRes[[2]]],Print["constraint not violated"];Flatten[allRes[[1]]]]]
 }
 

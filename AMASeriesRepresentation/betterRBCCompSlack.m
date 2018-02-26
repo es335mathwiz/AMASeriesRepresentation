@@ -88,7 +88,7 @@ delta->.95,
 rho->.95,
 sigma->.01,
 dd->.1,
-upsilon->0.975
+upsilon->-0.975
 } ;
 
 

@@ -138,9 +138,23 @@ backZtoX[{{z1,z2,tryEps}},betterRBCCSMean,betterRBCCSSD,betterRBCCSvv][[1]],Filt
 Epilog->{PointSize[0.05],Green,Point[acterrLoc[[{1,2}]]],PointSize[0.025],Orange,Point[errBndLoc[[{1,2}]]],PointSize[0.0125],Black,Point[#]&/@zPts[[All,{1,2}]]}]]
 
 *)
+
 (*
 
-boo=doItApproxSeriesCS[4*{1,1,1},12,20,"xVarRanges"->{{1.,2},{.3,.6},{3,6},{0.4,1},{-5.5,5.5},{0.2,2},{0.85,1.2}},"Traditional"->False];
+"xVarRanges"->{{1.,2},{.3,.6},{3,6},{0.4,1},{-5.5,5.5},{0.2,2},{0.85,1.2}}
+
+boo=doItApproxSeriesCS[4*{1,1,1},12,20,"Traditional"->False];
+
+
+<<JavaGraphics`
+hey2[kk_?NumberQ,tt_?NumberQ]:=
+(boo[[2,-1,2]][99,99,kk,99,99,99,tt])[[2]]
+hey1[kk_?NumberQ,tt_?NumberQ]:=
+(boo[[2,-1,2]][99,99,kk,99,99,99,tt])[[1]]
+
+Plot3D[{hey[kk,tt]},{kk,betterRBCCompSlack`Private`kLow,betterRBCCompSlack`Private`kHigh},{tt,0.9,1.1},PlotRange->All]
+
+
 
 *)
 
@@ -218,6 +232,9 @@ parallelMakeGenericInterpFuncs[theFRTrips,{},sgSpecTry,smolyakInterpolation,{}]
 
 
 
+boo=doItApproxSeriesCS[4*{1,1,1},1,20,"Traditional"->False];
+
+
 ap=4*{1,1,1};
 smolRng=#[[{2,3}]]&/@Drop[aGSpecBetterCompSlack,2][[1]];
 {pt,tf,ply,iply,dply}=smolyakInterpolationPrep[ap,smolRng,theDistBetterCompSlack];
@@ -225,7 +242,7 @@ toIg=aGSpecBetterCompSlack[[1]];
 sgSpecTry={toIg,smolRng,pt,tf,ply,iply,1,ap,{}};
 
 
-boo=doItApproxSeriesCS[4*{1,1,1},1,20,"Traditional"->False];
+
 parallelDoGenericIterREInterp[genFRExtFunc,
 linModBetterCompSlack,{boo[[2,-1,2]],20},
 rbcEqnsBetterCompSlack,sgSpecTry,

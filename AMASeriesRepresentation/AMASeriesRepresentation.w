@@ -2115,6 +2115,7 @@ PerfectForesight::usage="degenerate distribution implementing perfect foresight"
 @<genSmolyakXZREInterpFuncUsage@>
 @<genXZREInterpFuncUsage@>
 @<genX0Z0FuncsUsage@>
+@<genBothX0Z0FuncsUsage@>
 @<genX0Z0DrvFuncsUsage@>
 @<checkModUsage@>
 @<genFRFuncUsage@>
@@ -2234,6 +2235,7 @@ PerfectForesight::usage="degenerate distribution implementing perfect foresight"
 @<genXtp1OfXt@>
 @<genX0Z0DrvFuncs@>
 @<genX0Z0Funcs@>
+@<genBothX0Z0Funcs@>
 @<multiStep@>
 @}
 @d package code
@@ -2491,12 +2493,18 @@ ConstantArray[0,{Length[psiZ],1}]
 fSum[@<linMod@>,
 	@<XZFuncs@>,xtGuess:{{_?NumberQ..}..}]:=
 With[{numXVars=getNumX[linMod],numZVars=getNumZ[linMod]},
+Print["fSum:modified"];
 If[numSteps===0,{Table[{0},{numZVars}]},
-With[{xzRes=Apply[multiStepZ[XZFuncs,numXVars,numZVars,numSteps], 
-Flatten[xtGuess]]},
+With[{xzRes=
+Check[
+Apply[multiStepZ[XZFuncs,numXVars,numZVars,numSteps], 
+Flatten[xtGuess]],
+Print["problems with current DRCE in multistep,using at",initVec,"linMod!!!!!"];
+Apply[multiStepZ[{genX0Z0Funcs[linMod],XZFuncs[[2]]},numXVars,numZVars,numSteps]
+Flatten[xtGuess]]]
+},
 Check[fSumC[phi,FF,psiZ,xzRes],Print["trying to throw high"];Throw[xtGuess]]
 ]]]
-
 (*
 fSum[@<linMod@>,
 	@<XZFuncs@>,xtGuess_?MatrixQ]:=
@@ -2613,6 +2621,42 @@ AMASeriesRepCallGraph=
 Join[AMASeriesRepCallGraph,Map["genX0Z0Funcs"->#&,{"getNumX","getNumZ","genSlots"}]];
 
 (*end code for genX0Z0Funcs*)
+@}
+\subsection{genBothX0Z0Funcs}
+\label{sec:genx0z0funcs}
+
+
+@d genBothX0Z0FuncsUsage
+@{genBothX0Z0Funcs::usage=
+"place holder for genBothX0Z0Funcs"
+@}
+
+@d genBothX0Z0Funcs
+@{
+(*begin code for genBothX0Z0Funcs*)
+genBothX0Z0Funcs[@<linMod@>]:=
+With[{numXVars=getNumX[linMod],numEpsVars=getNumEps[linMod],numZVars=getNumZ[linMod]},
+With[{xtm1Vars=genSlots[numXVars],
+epsVars=Drop[genSlots[numXVars+numEpsVars],numXVars]},
+With[{fromLinMod=Join[BB.xtm1Vars+
+Inverse[IdentityMatrix[Length[xtm1Vars]]-FF] . phi . psiC,ConstantArray[0,{numZVars,1}]]+Join[psiEps.epsVars,ConstantArray[0,{numZVars,1}]],
+fromLinModCE=Join[BB.xtm1Vars+
+Inverse[IdentityMatrix[Length[xtm1Vars]]-FF] . phi . psiC,ConstantArray[0,{numZVars,1}]]},
+{
+Apply[Function,{fromLinMod}],
+Apply[Function,{fromLinModCE}]
+}
+]]]
+
+replaceLinPart[flm_List,xtm1Vars_List,ble:{{_Integer,_,_}...}]:=
+With[{theRes=Map[Function[uu,{uu[[1]],Apply[uu[[3]],Flatten[xtm1Vars]]}],ble]},
+Fold[ReplacePart[#1,#2[[1]]->#2[[2]]]&,flm,theRes]]
+
+
+AMASeriesRepCallGraph=
+Join[AMASeriesRepCallGraph,Map["genBothX0Z0Funcs"->#&,{"getNumX","getNumZ","genSlots"}]];
+
+(*end code for genBothX0Z0Funcs*)
 @}
 \subsection{genX0Z0DrvFuncs}
 \label{sec:genx0z0funcs}
@@ -2957,7 +3001,7 @@ funcOfXtm1Eps
 (**)
 With[{frRes=FindRoot[Print["doingFindRootNotTraditional"];
 funcOfXtZt[Apply[Sequence,Join[xLagArgs,eArgs,xArgs,zArgs]]],
-Join[xArgsInit,zArgsInit](*,WorkingPrecision->50*),EvaluationMonitor:>Print["xz",{xArgs,zArgs,xLagArgs,eArgs,funcOfXtm1Eps,funcOfXtZt,funcOfXtZt[Apply[Sequence,Join[xLagArgs,eArgs,xArgs,zArgs]]]}//InputForm]]},
+Join[xArgsInit,zArgsInit](*,WorkingPrecision->50*)(*,EvaluationMonitor:>Print["xz",{xArgs,zArgs,xLagArgs,eArgs,funcOfXtm1Eps,funcOfXtZt,funcOfXtZt[Apply[Sequence,Join[xLagArgs,eArgs,xArgs,zArgs]]]}//InputForm]*)]},
 Transpose[{Flatten[Join[xArgs,zArgs]]/.frRes}]]]@}
 
 
@@ -3037,9 +3081,12 @@ And[numPers>0]
 genZsForFindRoot[linMod:{theHMat_?MatrixQ,BB_?MatrixQ,phi_?MatrixQ,FF_?MatrixQ,psiEps_?MatrixQ,psiC_?MatrixQ,psiZ_?MatrixQ,
 backLookingInfo:{{_Integer,backLooking_,backLookingExp_}...}},
 	initVec_?MatrixQ,theCondExp:(_Function|_CompiledFunction),iters_Integer]:=
-Module[{},
+Module[{},Print["genZsForFindRoot:modified"];
 With[{numX=Length[initVec],
- 	thePath=Flatten[iterateDRCE[theCondExp,initVec,iters+1]]},
+ 	thePath=Flatten[
+Check[iterateDRCE[theCondExp,initVec,iters+1],
+Print["problems with current DRCE,using at",initVec,"linMod!!!!!"];
+iterateDRCE[genX0Z0Funcs[linMod],initVec,iters+1]]]},Print["after iter"];
  		With[{restVals=
       Map[(theHMat .thePath[[Range[3*numX]+numX*(#-1)]] -psiC)&,Range[(Length[thePath]/numX)-3]]},
       restVals

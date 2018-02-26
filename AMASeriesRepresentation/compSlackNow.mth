@@ -152,7 +152,7 @@ hey2[kk_?NumberQ,tt_?NumberQ]:=
 hey1[kk_?NumberQ,tt_?NumberQ]:=
 (boo[[2,-1,2]][99,99,kk,99,99,99,tt])[[1]]
 
-Plot3D[{hey[kk,tt]},{kk,betterRBCCompSlack`Private`kLow,betterRBCCompSlack`Private`kHigh},{tt,0.9,1.1},PlotRange->All]
+Plot3D[{hey1[kk,tt]},{kk,betterRBCCompSlack`Private`kLow,betterRBCCompSlack`Private`kHigh},{tt,0.9,1.1},PlotRange->All]
 
 
 
@@ -202,7 +202,7 @@ theRes,forDR,forDRCE,drName,drerrName,bothErrStr,acterrLoc,errBndLoc}]
 
 (*
 
-X0Z0CompSlack=genX0Z0Funcs[linModBetterCompSlack];
+
 
 
 {tryEpsTry,numKernTry,theNameTry,mthNameTry,X0Z0Try,sgSpecErgTry,zPtsTry}=
@@ -212,14 +212,25 @@ filledPts=Map[
 Function[xx,Print["parallelSmolyakGenInterpData: parallel maps smolPts",xx];
 fillIn[{{},{1,2,4,5,6},xx}]],N[sgSpecErgTry[[3]]]]
 
+X0Z0CompSlack=genX0Z0Funcs[linModBetterCompSlack];
+
 theFRTrips=genFRExtFunc[{7,1,7},linModBetterCompSlack,{X0Z0Try,2},
 rbcEqnsBetterCompSlack];
 
+{evaluateTriple[theFRTrips[[1,1]],#1],
+evaluateTriple[theFRTrips[[1,2]],#1]}&/@ filledPts
 
+bothX0Z0CompSlack=genBothX0Z0Funcs[linModBetterCompSlack];
 
+theFRTrips=genFRExtFunc[{7,1,7},linModBetterCompSlack,{X0Z0Try,2},
+rbcEqnsBetterCompSlack];
 
 {evaluateTriple[theFRTrips[[1,1]],#1],
 evaluateTriple[theFRTrips[[1,2]],#1]}&/@ filledPts
+
+
+
+
 
 iDat=smolyakGenInterpData[theFRTrips,sgSpecErgTry];
 
@@ -235,7 +246,7 @@ parallelMakeGenericInterpFuncs[theFRTrips,{},sgSpecTry,smolyakInterpolation,{}]
 boo=doItApproxSeriesCS[4*{1,1,1},1,20,"Traditional"->False];
 
 
-ap=4*{1,1,1};
+ap=1*{1,1,1};
 smolRng=#[[{2,3}]]&/@Drop[aGSpecBetterCompSlack,2][[1]];
 {pt,tf,ply,iply,dply}=smolyakInterpolationPrep[ap,smolRng,theDistBetterCompSlack];
 toIg=aGSpecBetterCompSlack[[1]];

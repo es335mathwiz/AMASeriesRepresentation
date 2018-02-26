@@ -2291,6 +2291,8 @@ psiC
 
 @d XZFuncs
 @{XZFuncs:{(_Function|_InterpolatingFunction|_CompiledFunction|_Symbol),numSteps_Integer}@}
+@d bothXZFuncs
+@{{{xzFuncs:(_Function|_InterpolatingFunction|_CompiledFunction|_Symbol),XZFuncs:(_Function|_InterpolatingFunction|_CompiledFunction|_Symbol)},numSteps_Integer}@}
 
 @d theZs
 @{theZs:{_?MatrixQ..}@}
@@ -2906,6 +2908,7 @@ genZsForFindRoot::usage="genZsForFindRoot[linMod:{theHMat_?MatrixQ,BB_?MatrixQ,p
 
 (*begin code for genFRExtFunc*)
 Options[genFRExtFunc]={"xVarRanges"->{},"Traditional"->False} 
+
 genFRExtFunc[{numX_Integer,numEps_Integer,numZ_Integer},@<linMod@>,@<XZFuncs@>,
 @<eqnsFunc@>,opts:OptionsPattern[]]:=
 Module[{varRanges=OptionValue["xVarRanges"]},
@@ -2917,6 +2920,25 @@ With[{@<cmptXArgsInit@>,
 Switch[OptionValue["Traditional"],
 True,@<setDelayedTradFXtZt@>;@<setDelayedTradFXtm1Eps@>,
 False,@<setDelayedSeriesFXtZt@>;@<setDelayedSeriesFXtm1Eps@>]
+(**)
+(**)
+DistributeDefinitions[funcOfXtZt,funcOfXtm1Eps]
+Off[FindRoot::srect];
+Off[FindRoot::nlnum];
+funcOfXtm1Eps
+]]]]
+
+genFRExtFunc[{numX_Integer,numEps_Integer,numZ_Integer},@<linMod@>,@<bothXZFuncs@>,
+@<eqnsFunc@>,opts:OptionsPattern[]]:=
+Module[{varRanges=OptionValue["xVarRanges"]},
+With[{@<findRootArgNames@>},
+With[{@<prepFindRootXInit@>},
+With[{@<cmptXArgsInit@>,
+@<makeArgPatternsBoth@>},
+(**)
+Switch[OptionValue["Traditional"],
+True,@<setDelayedTradFXtZtBoth@>;@<setDelayedTradFXtm1Eps@>,
+False,@<setDelayedSeriesFXtZtBoth@>;@<setDelayedSeriesFXtm1Eps@>]
 (**)
 (**)
 DistributeDefinitions[funcOfXtZt,funcOfXtm1Eps]
@@ -2956,6 +2978,18 @@ xArgs=Table[Unique["theFRXArgs"],{numX}],
 xLagArgs=Table[Unique["theFRXLagArgs"],{numX}],
 eArgs=Table[Unique["theFREArgs"],{numEps}]@}
 
+@d makeArgPatternsBoth
+@{xtm1epsArgPatterns=Join[makePatternArgs[xLagArgs],
+makePatternArgs[eArgs]],
+xtztArgPatterns=Join[makePatternArgs[xLagArgs],
+makePatternArgs[eArgs],
+makePatternArgs[xArgs],makePatternArgs[zArgs]],
+xtNoZtArgPatterns=Join[makePatternArgs[xLagArgs],
+makePatternArgs[eArgs],
+makePatternArgs[xArgs]]@}
+
+
+
 @d setDelayedTradFXtZt
 @{SetDelayed[
 funcOfXtZt[
@@ -2964,6 +2998,18 @@ Apply[Sequence,xtNoZtArgPatterns]],
 Module[{},
 With[{
 xkAppl=Flatten[Join[xLagArgs,xArgs,(Apply[XZFuncs[[1]],xArgs][[Range[numX]]]),eArgs]]},
+With[{eqnAppl=Apply[eqnsFunc,Flatten[xkAppl]](*,
+xDisc=xArgs-xkAppl[[numX+Range[numX]]]*)},
+Flatten[Join[eqnAppl]]]]]]@}
+
+@d setDelayedTradFXtZtBoth
+@{SetDelayed[
+funcOfXtZt[
+(**)
+Apply[Sequence,xtNoZtArgPatterns]],
+Module[{},
+With[{
+xkAppl=Flatten[Join[xLagArgs,xArgs,(Apply[bothXZFuncs[[1,2]],xArgs][[Range[numX]]]),eArgs]]},
 With[{eqnAppl=Apply[eqnsFunc,Flatten[xkAppl]](*,
 xDisc=xArgs-xkAppl[[numX+Range[numX]]]*)},
 Flatten[Join[eqnAppl]]]]]]@}
@@ -2987,6 +3033,20 @@ funcOfXtZt[
 Apply[Sequence,xtztArgPatterns]],
 Module[{theZsNow=genZsForFindRoot[linMod,
 Transpose[{xArgs}],XZFuncs[[1]],XZFuncs[[2]]]
+},
+With[{xkFunc=Catch[(Check[genLilXkZkFunc[linMod,theZsNow],Print["trying higher throw"];Throw[$Failed,"higher"]]),_,Function[{val,tag},Print["catchfxtzt:",{xArgs,val,tag}//InputForm];Throw[$Failed,"fromGenLil"]]]},
+With[{xkAppl=Apply[xkFunc,Join[xLagArgs,eArgs,zArgs]]},
+With[{eqnAppl=Apply[eqnsFunc,Flatten[xkAppl]],
+xDisc=xArgs-xkAppl[[numX+Range[numX]]]},
+Flatten[Join[xDisc,eqnAppl]]]]]]]@}
+
+@d setDelayedSeriesFXtZtBoth
+@{SetDelayed[
+funcOfXtZt[
+(**)
+Apply[Sequence,xtztArgPatterns]],
+Module[{theZsNow=genZsForFindRoot[linMod,
+Transpose[{xArgs}],bothXZFuncs[[1,2]],bothXZFuncs[[2]]]
 },
 With[{xkFunc=Catch[(Check[genLilXkZkFunc[linMod,theZsNow],Print["trying higher throw"];Throw[$Failed,"higher"]]),_,Function[{val,tag},Print["catchfxtzt:",{xArgs,val,tag}//InputForm];Throw[$Failed,"fromGenLil"]]]},
 With[{xkAppl=Apply[xkFunc,Join[xLagArgs,eArgs,zArgs]]},
@@ -3024,6 +3084,21 @@ FilterRules[{opts},Options[genFRExtFunc]]]],#[[3]]}&,triples[[1]]]},
 {funcTrips,selectorFunc}
 ]]
 
+
+
+genFRExtFunc[{numX_Integer,numEps_Integer,numZ_Integer},@<linMod@>,@<bothXZFuncs@>,
+triples:{{{_Function,(_Function|_CompiledFunction|_Symbol),_Function}..},
+selectorFunc_Function},
+opts:OptionsPattern[]]:=
+Module[{varRanges=OptionValue["xVarRanges"]},
+With[{funcTrips=
+Map[{#[[1]],genFRExtFunc[{numX,numEps,numZ},linMod,bothXZFuncs,#[[2]],
+Apply[Sequence,
+FilterRules[{opts},Options[genFRExtFunc]]]],#[[3]]}&,triples[[1]]]},
+{funcTrips,selectorFunc}
+]]
+
+
 evaluateTriple[
 triple:{preFunc_Function,theFunc:(_Function|_CompiledFunction|_Symbol),
 postFunc_Function},
@@ -3037,6 +3112,8 @@ Print["eTrip:",{theRes,thePt,Apply[postFunc,{thePt,theRes}]}];
 If[Apply[postFunc,{thePt,theRes}],theRes,$Failed]],$Failed],_,Function[{val,tag},Print["catchinevaluateTriple:",{xArgs,val,tag}//InputForm];$Failed]]
 
 @}
+
+
 @d genFRExtFunc
 @{
 

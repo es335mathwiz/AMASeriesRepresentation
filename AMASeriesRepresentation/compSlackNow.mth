@@ -25,7 +25,7 @@ Module[{zPts},
 LaunchKernels[];numKern=Length[Kernels[]];
 theName=fNameStringCS[approx,iters,theK,numKern];
 mthName=theName<>".mth";
-X0Z0=genX0Z0Funcs[linModBetterCompSlack];
+bothX0Z0=genBothX0Z0Funcs[linModBetterCompSlack];
 smolStuff=
 {ptErg,tfErg,plyErg,iplyErg,dplyErg}=smolyakInterpolationPrep[approx,{betterRBCCSMean,betterRBCCSSD,betterRBCCSMinZ,betterRBCCSMaxZ,betterRBCCSvv},theDistBetterCompSlack];
 smolRngErg=Transpose[{betterRBCCSMinZ,betterRBCCSMaxZ}];
@@ -33,7 +33,7 @@ toIg=aGSpecBetterCompSlack[[1]];
 sgSpecErg={toIg,smolRngErg,ptErg,tfErg,plyErg,iplyErg,1,approx,
 {betterRBCCSMean,betterRBCCSSD,betterRBCCSMinZ,betterRBCCSMaxZ,betterRBCCSvv}};
 zPts=backXtoZ[ptErg,betterRBCCSMean,betterRBCCSSD,betterRBCCSvv];
-{tryEps,numKern,theName,mthName,X0Z0,sgSpecErg,zPts}
+{tryEps,numKern,theName,mthName,bothX0Z0,sgSpecErg,zPts}
 ]
 
 (*
@@ -161,14 +161,14 @@ Plot3D[{hey1[kk,tt]},{kk,betterRBCCompSlack`Private`kLow,betterRBCCompSlack`Priv
 
 Options[doItApproxSeriesCS]={"xVarRanges"->{{1.,2},{.3,.6},{3,6},{0.4,1},{-5.5,5.5},{0.2,2},{0.85,1.2}},"Traditional"->False}
 doItApproxSeriesCS[approx_?VectorQ,iters_Integer,theK_Integer,opts:OptionsPattern[]]:=
-Module[{lclMthName,lclName,tryEps,numKern,theName,mthName,X0Z0,sgSpecErg,zPts,tm,ig,theRes,
+Module[{lclMthName,lclName,tryEps,numKern,theName,mthName,bothX0Z0,sgSpecErg,zPts,tm,ig,theRes,
 forDR,forDRCE,drName,drerrName,bothErrStr,acterrLoc,errBndLoc},
-{tryEps,numKern,theName,mthName,X0Z0,sgSpecErg,zPts}=
+{tryEps,numKern,theName,mthName,bothX0Z0,sgSpecErg,zPts}=
 prepSmolCS[approx,iters,theK];
 Print["indo:",{OptionValue["xVarRanges"],OptionValue["Traditional"]}];
 {tm,ig}=Timing[
 theRes=parallelNestGenericIterREInterp[genFRExtFunc,linModBetterCompSlack,
-{X0Z0,theK},rbcEqnsBetterCompSlack,sgSpecErg,smolyakInterpolation,{},iters,FilterRules[{opts},Options[parallelNestGenericIterREInterp]]]];
+{bothX0Z0,theK},rbcEqnsBetterCompSlack,sgSpecErg,smolyakInterpolation,{},iters,FilterRules[{opts},Options[parallelNestGenericIterREInterp]]]];
 (*
 {{forDR,forDRCE},{drName,drerrName}}=prepDRDRCE[theRes];
 {bothErrStr,acterrLoc,errBndLoc,acterr,errBnd}=findMinLocs[theName,drName,drerrName,FilterRules[{opts},Options[parallelNestGenericIterREInterp]]];
@@ -186,7 +186,7 @@ Export[lclName<>".pdf",actErrCP[forDR,{bothErrStr,acterrLoc,errBndLoc},zPts,lclN
 Export[lclName<>"Approx.pdf",
 approxErrCP[forDR,forDRCE,theK,tryEps,{bothErrStr,acterrLoc,errBndLoc},zPts,lclName,FilterRules[{opts},Options[approxErrCP]]]];
 If[FileExistsQ[mthName],DeleteFile[mthName]];
-Save[lclMthName,{lclName,tryEps,numKern,theName,mthName,X0Z0,sgSpecErg,zPts,tm,
+Save[lclMthName,{lclName,tryEps,numKern,theName,mthName,bothX0Z0,sgSpecErg,zPts,tm,
 theRes,forDR,forDRCE,drName,drerrName,bothErrStr,acterrLoc,errBndLoc}]
 *)
 {zPts,theRes}
@@ -202,19 +202,19 @@ theRes,forDR,forDRCE,drName,drerrName,bothErrStr,acterrLoc,errBndLoc}]
 
 (*
 
+here
 
 
-
-{tryEpsTry,numKernTry,theNameTry,mthNameTry,X0Z0Try,sgSpecErgTry,zPtsTry}=
+{tryEpsTry,numKernTry,theNameTry,mthNameTry,bothX0Z0Try,sgSpecErgTry,zPtsTry}=
 prepSmolCS[1*{1,1,1},1,2];
 
 filledPts=Map[
 Function[xx,Print["parallelSmolyakGenInterpData: parallel maps smolPts",xx];
 fillIn[{{},{1,2,4,5,6},xx}]],N[sgSpecErgTry[[3]]]]
 
-X0Z0CompSlack=genX0Z0Funcs[linModBetterCompSlack];
+bothX0Z0CompSlack=genBothX0Z0Funcs[linModBetterCompSlack];
 
-theFRTrips=genFRExtFunc[{7,1,7},linModBetterCompSlack,{X0Z0Try,2},
+theFRTrips=genFRExtFunc[{7,1,7},linModBetterCompSlack,{bothX0Z0CompSlack,2},
 rbcEqnsBetterCompSlack];
 
 {evaluateTriple[theFRTrips[[1,1]],#1],
@@ -222,16 +222,17 @@ evaluateTriple[theFRTrips[[1,2]],#1]}&/@ filledPts
 
 bothX0Z0CompSlack=genBothX0Z0Funcs[linModBetterCompSlack];
 
-theFRTrips=genFRExtFunc[{7,1,7},linModBetterCompSlack,{X0Z0Try,2},
+theFRTrips=genFRExtFunc[{7,1,7},linModBetterCompSlack,{bothX0Z0CompSlack,2},
 rbcEqnsBetterCompSlack];
 
 {evaluateTriple[theFRTrips[[1,1]],#1],
 evaluateTriple[theFRTrips[[1,2]],#1]}&/@ filledPts
 
 
+parallelDoGenericIterREInterp[genFRExtFunc,linModBetterCompSlack,
+{bothX0Z0CompSlack,2},rbcEqnsBetterCompSlack,sgSpecErgTry,smolyakInterpolation,{},"Traditional"->False]
 
-
-
+hit=parallelDoGenericIterREInterp[genFRExtFunc,linModBetterCompSlack,{hit,2},rbcEqnsBetterCompSlack,sgSpecErgTry,smolyakInterpolation,{},"Traditional"->False]
 iDat=smolyakGenInterpData[theFRTrips,sgSpecErgTry];
 
 smolyakGenInterpData[theFRTrips,sgSpecTry]
@@ -267,7 +268,7 @@ smolyakInterpolation,{}]
 *)
 
 hey=parallelNestGenericIterREInterp[genFRExtFunc,
-linModBetterCompSlack,{X0Z0CompSlack,20},
+linModBetterCompSlack,{bothX0Z0CompSlack,20},
 rbcEqnsBetterCompSlack,sgSpecCompSlack,
 smolyakInterpolation,{},15];
 

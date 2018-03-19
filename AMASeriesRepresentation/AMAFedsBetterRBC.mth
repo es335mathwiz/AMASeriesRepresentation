@@ -361,8 +361,11 @@ Options[findMinLocs]={"Traditional"->False}
 findMinLocs[theName_String,
 drName_Symbol,drerrName_Symbol,opts:OptionsPattern[]]:=
 Module[{texModStr,bothErrStr,acterrLoc,errBndLoc,acterr,errBnd,actewrrLoc},
+Print["preminact"];
 acterr={acterrVal,acterrSubs}=minActualErr[drName];
+Print["preminpred"];
 errBnd={errBndVal,errBndSubs}=minPredErr[drerrName];
+Print["post"];
 errBndLoc={z1,z2,z3}/.errBndSubs;
 acterrLoc={z1,z2,z3}/.acterrSubs;
 (**)
@@ -419,14 +422,16 @@ Epilog->{PointSize[0.05],Green,Point[acterrLoc[[{1,2}]]],PointSize[0.025],Orange
 Options[doItApproxSeries]={"Traditional"->False}
 doItApproxSeries[approx_?VectorQ,iters_Integer,theK_Integer,opts:OptionsPattern[]]:=
 Module[{lclMthName,lclName,tryEps,numKern,theName,mthName,bothX0Z0,sgSpecErg,zPts,tm,ig,theRes,
-forDR,forDRCE,drName,drerrName,bothErrStr,acterrLoc,errBndLoc},
+forDR,forDRCE,drName=Unique["drName"],drerrName=Unique["drerrName"],bothErrStr,acterrLoc,errBndLoc},
 {tryEps,numKern,theName,mthName,bothX0Z0,sgSpecErg,zPts}=
 prepSmol[approx,iters,theK];
 Print["indo:",{Options[parallelNestIterREInterp],FilterRules[{opts},Options[parallelNestIterREInterp]]}];
 {tm,ig}=Timing[
 theRes=parallelNestIterREInterp[genFRExtFunc,linModBetter,
 {bothX0Z0,theK},eqnsCompiledBetter,sgSpecErg,iters,"xVarRanges"->{{0.01,2},{0.01,2},{0.01,20},{0.85,1.2}},FilterRules[{opts},Options[parallelNestIterREInterp]]]];
+Print["about to prepDRDRCE"];
 {{forDR,forDRCE},{drName,drerrName}}=prepDRDRCE[theRes];
+Print["about to findMinLocs",{drName,drerrName}];
 {bothErrStr,acterrLoc,errBndLoc,acterr,errBnd}=findMinLocs[theName,drName,drerrName,FilterRules[{opts},Options[parallelNestIterREInterp]]];
 lclName=If[OptionValue["Traditional"],
 theName<>"Trad",
@@ -436,14 +441,19 @@ lclMthName=If[OptionValue["Traditional"],
 StringReplace[mthName,".mth"->"Trad.mth"],
 StringReplace[mthName,".mth"->"Series.mth"]
 ];
+Print["about to writeerrtablerow"];
 WriteString[lclName<>"errTableRow.tex",
 errTableRowStr[approx,theK,acterr,errBnd,FilterRules[{opts},Options[checkPt]]]];
+Print["about to export1"];
 Export[lclName<>".pdf",actErrCP[forDR,{bothErrStr,acterrLoc,errBndLoc},zPts,lclName,FilterRules[{opts},Options[actErrCP]]]];
+Print["about to export2"];
 Export[lclName<>"Approx.pdf",
 approxErrCP[forDR,forDRCE,theK,tryEps,{bothErrStr,acterrLoc,errBndLoc},zPts,lclName,FilterRules[{opts},Options[approxErrCP]]]];
+Print["about to save"];
 If[FileExistsQ[mthName],DeleteFile[mthName]];
 Save[lclMthName,{lclName,tryEps,numKern,theName,mthName,bothX0Z0,sgSpecErg,zPts,tm,
-theRes,forDR,forDRCE,drName,drerrName,bothErrStr,acterrLoc,errBndLoc}]
+theRes,forDR,forDRCE,drName,drerrName,bothErrStr,acterrLoc,errBndLoc}];
+{zPts,theRes}
 ]
 
 

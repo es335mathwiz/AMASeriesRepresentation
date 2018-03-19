@@ -88,7 +88,7 @@ delta->.95,
 rho->.95,
 sigma->.01,
 dd->.1,
-upsilon->-0.975
+upsilon->0.975
 } ;
 
 
@@ -301,7 +301,7 @@ dd->.1
 
 theProduct=upsilon*IIss//.ssFRSolnSubs/.betterRBCCompSlack`Private`paramSubs;
   rbcEqnsBetterCompSlack=eqnsCompiledBetterCompSlack={
- { {(Print["pre1"];True)&,
+ { {(True)&,
   Compile @@ {
 {
 {cctm1,_Real},{iitm1,_Real},{kktm1,_Real},{lamtm1,_Real},{mu1tm1,_Real},{nltm1,_Real},{thetatm1,_Real},
@@ -310,10 +310,9 @@ theProduct=upsilon*IIss//.ssFRSolnSubs/.betterRBCCompSlack`Private`paramSubs;
 {epsVal,_Real}
 },
 (eqnsForNotBind),"RuntimeOptions"->{"RuntimeErrorHandler"->Function[$Failed],"CatchMachineOverflow"->True,"CatchMachineUnderflow"->True}},
-  Function[{aPt,aRes},Print["flunc:",
-{theProduct,aPt,aRes,aRes[[2,1]] >(theProduct)}];
+  Function[{aPt,aRes},
 If[aRes===$Failed,False,And[aRes[[1,1]]>0,aRes[[2,1]]>(theProduct)]]]},
- {(Print["pre2"];True)&,
+ {(True)&,
   Compile @@ {
 {
 {cctm1,_Real},{iitm1,_Real},{kktm1,_Real},{lamtm1,_Real},{mu1tm1,_Real},{nltm1,_Real},{thetatm1,_Real},
@@ -321,7 +320,7 @@ If[aRes===$Failed,False,And[aRes[[1,1]]>0,aRes[[2,1]]>(theProduct)]]]},
 {cctp1,_Real},{iitp1,_Real},{kktp1,_Real},{lamtp1,_Real},{mu1tp1,_Real},{nltp1,_Real},{thetatp1,_Real},
 {epsVal,_Real}
 },
-(eqnsForBind),"RuntimeOptions"->{"RuntimeErrorHandler"->Function[$Failed],"CatchMachineOverflow"->True,"CatchMachineUnderflow"->True}},(Print["post2"];True)&}},
+(eqnsForBind),"RuntimeOptions"->{"RuntimeErrorHandler"->Function[$Failed],"CatchMachineOverflow"->True,"CatchMachineUnderflow"->True}},(True)&}},
 Function[{aPt,allRes},Print["postPost:",{aPt,allRes}];
 If[And[allRes[[1]]===$Failed,allRes[[2]]===$Failed],Throw[$Failed,"noSolutionFound"]];
 If[allRes[[1]]===$Failed,Print["constraint violated"];Flatten[allRes[[2]]],Print["constraint not violated"];Flatten[allRes[[1]]]]]

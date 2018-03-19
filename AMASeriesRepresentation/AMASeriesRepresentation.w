@@ -1300,7 +1300,7 @@ numIters_Integer,opts:OptionsPattern[]]:=
 Module[{},
 parallelSetup[];
 NestList[Function[xx,parallelDoGenericIterREInterp[genFRExtFunc,linMod,
-{xx,numSteps},eqnsFunc,smolGSpec,genericInterp,svmArgs,Apply[Sequence,FilterRules[{opts},Options[parallelDoGenericIterREInterp]]]]],bothXZFuncs,numIters]]
+{xx,numSteps},eqnsFunc,smolGSpec,genericInterp,svmArgs,Apply[Sequence,FilterRules[{opts},Options[parallelDoGenericIterREInterp]]]]],justBothXZFuncs,numIters]]
 
 parallelNestGenericIterREInterp[genFRExtFunc,@<linMod@>,
 @<bothXZFuncs@>,
@@ -2061,7 +2061,7 @@ parallelNestIterREInterp[genFRExtFunc,@<linMod@>,
 Module[{},Print["preparallelsetup",{Directory[],$Path}];
 parallelSetup[];Print["postparallelsetup"];
 NestList[Function[xx,parallelDoIterREInterp[genFRExtFunc,linMod,
-{xx[[2]],numSteps},triples,gSpec,distribSpec,Apply[Sequence,FilterRules[{opts},Options[parallelDoIterREInterp]]]]],bothXZFuncs,numIters]]
+{xx,numSteps},triples,gSpec,distribSpec,Apply[Sequence,FilterRules[{opts},Options[parallelDoIterREInterp]]]]],justBothXZFuncs,numIters]]
 
 parallelNestIterREInterp[genFRExtFunc,@<linMod@>,
 @<bothXZFuncs@>,triples:{{{_Function,(_Function|_CompiledFunction|_Symbol),_Function}..},selectorFunc_Function},
@@ -2070,7 +2070,7 @@ numIters_Integer,opts:OptionsPattern[]]:=
 Module[{},Print["preparallelsetup",{Directory[],$Path}];
 parallelSetup[];Print["postparallelsetup"];
 NestList[Function[xx,parallelDoIterREInterp[genFRExtFunc,linMod,
-{xx[[2]],numSteps},triples,smolGSpec,Apply[Sequence,FilterRules[{opts},Options[parallelDoIterREInterp]]]]],bothXZFuncs,numIters]]
+{xx,numSteps},triples,smolGSpec,Apply[Sequence,FilterRules[{opts},Options[parallelDoIterREInterp]]]]],justBothXZFuncs,numIters]]
 
 
 parallelNestIterREInterp[genFRExtFunc,@<linMod@>,
@@ -2079,7 +2079,7 @@ parallelNestIterREInterp[genFRExtFunc,@<linMod@>,
 @<distribSpec@>,numIters_Integer,opts:OptionsPattern[]]:=
 Module[{},parallelSetup[];
 NestList[Function[xx,parallelDoIterREInterp[genFRExtFunc,linMod,
-{xx[[2]],numSteps},eqnsFunc,gSpec,distribSpec,Apply[Sequence,FilterRules[{opts},Options[parallelDoIterREInterp]]]]],bothXZFuncs,numIters]]
+{xx,numSteps},eqnsFunc,gSpec,distribSpec,Apply[Sequence,FilterRules[{opts},Options[parallelDoIterREInterp]]]]],justBothXZFuncs,numIters]]
 
 
 parallelNestIterREInterp[genFRExtFunc,@<linMod@>,
@@ -2088,7 +2088,7 @@ parallelNestIterREInterp[genFRExtFunc,@<linMod@>,
 numIters_Integer,opts:OptionsPattern[]]:=
 Module[{},parallelSetup[];
 NestList[Function[xx,parallelDoIterREInterp[genFRExtFunc,linMod,
-{xx[[2]],numSteps},eqnsFunc,smolGSpec,Apply[Sequence,FilterRules[{opts},Options[parallelDoIterREInterp]]]]],bothXZFuncs,numIters]]
+{xx,numSteps},eqnsFunc,smolGSpec,Apply[Sequence,FilterRules[{opts},Options[parallelDoIterREInterp]]]]],justBothXZFuncs,numIters]]
 
 
 AMASeriesRepCallGraph=
@@ -3196,7 +3196,7 @@ Flatten[Join[eqnAppl]]]]]]@}
 funcOfXtm1Eps
 [Apply[Sequence,xtm1epsArgPatterns]],
 (**)
-With[{frRes=FindRoot[Print["doingFindRootTraditional"];
+With[{frRes=FindRoot[
 funcOfXtZt[Apply[Sequence,Join[xLagArgs,eArgs,xArgs]]],
 Join[xArgsInit](*,WorkingPrecision->50*)(*,EvaluationMonitor:>Print["xz",{xArgs,zArgs,xLagArgs,eArgs,funcOfXtm1Eps,funcOfXtZt,funcOfXtZt[Apply[Sequence,Join[xLagArgs,eArgs,xArgs,zArgs]]]}//InputForm]*)]},
 Transpose[{Flatten[Join[xArgs,zArgs*0]]/.frRes}]]]@}
@@ -3235,7 +3235,7 @@ Flatten[Join[xDisc,eqnAppl]]]]]]]@}
 funcOfXtm1Eps
 [Apply[Sequence,xtm1epsArgPatterns]],
 (**)
-With[{frRes=FindRoot[Print["doingFindRootNotTraditional"];
+With[{frRes=FindRoot[
 funcOfXtZt[Apply[Sequence,Join[xLagArgs,eArgs,xArgs,zArgs]]],
 Join[xArgsInit,zArgsInit](*,WorkingPrecision->50*)(*,EvaluationMonitor:>Print["xz",{xArgs,zArgs,xLagArgs,eArgs,funcOfXtm1Eps,funcOfXtZt,funcOfXtZt[Apply[Sequence,Join[xLagArgs,eArgs,xArgs,zArgs]]]}//InputForm]*)]},
 Transpose[{Flatten[Join[xArgs,zArgs]]/.frRes}]]]@}
@@ -3284,7 +3284,6 @@ If[
 Apply[preFunc,thePt],
 With[{theRes=
 Apply[theFunc,thePt]},
-Print["eTrip:",{theRes,thePt,Apply[postFunc,{thePt,theRes}]}];
 If[Apply[postFunc,{thePt,theRes}],theRes,$Failed]],$Failed],_,Function[{val,tag},Print["catchinevaluateTriple:",{xArgs,val,tag}//InputForm];$Failed]]
 
 @}
@@ -3334,12 +3333,12 @@ And[numPers>0]
 genZsForFindRoot[linMod:{theHMat_?MatrixQ,BB_?MatrixQ,phi_?MatrixQ,FF_?MatrixQ,psiEps_?MatrixQ,psiC_?MatrixQ,psiZ_?MatrixQ,
 backLookingInfo:{{_Integer,backLooking_,backLookingExp_}...}},
 	initVec_?MatrixQ,theCondExp:(_Function|_CompiledFunction),iters_Integer]:=
-Module[{},Print["genZsForFindRoot:modified"];
+Module[{},
 With[{numX=Length[initVec],
  	thePath=Flatten[
 Check[iterateDRCE[theCondExp,initVec,iters+1],
 Print["problems with current DRCE,using at",initVec,"linMod!!!!!"];
-iterateDRCE[genX0Z0Funcs[linMod],initVec,iters+1]]]},Print["after iter"];
+iterateDRCE[genX0Z0Funcs[linMod],initVec,iters+1]]]},
  		With[{restVals=
       Map[(theHMat .thePath[[Range[3*numX]+numX*(#-1)]] -psiC)&,Range[(Length[thePath]/numX)-3]]},
       restVals

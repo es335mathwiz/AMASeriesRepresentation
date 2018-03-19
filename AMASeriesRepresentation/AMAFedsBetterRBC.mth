@@ -298,7 +298,7 @@ xkApply=Flatten[xkzkFunc @@ Join[xtm1eps,Flatten[xzt[[4+Range[4]]]]]];
 eqnsCompiledBetter @@ xkApply]]
 
 prepSmol[approx_?VectorQ,iters_Integer,theK_Integer]:=
-Module[{zPts},
+Module[{toIg,zPts,ptErg,tfErg,plyErg,iplyErg,dplyErg,bothX0Z0,smolStuff,smolRngErg,sgSpecErg},
 (**)tryEps=0;
 LaunchKernels[];numKern=Length[Kernels[]];
 theName=fNameString[approx,iters,theK,numKern];
@@ -307,6 +307,7 @@ bothX0Z0=genBothX0Z0Funcs[linModBetter];
 smolStuff=
 {ptErg,tfErg,plyErg,iplyErg,dplyErg}=smolyakInterpolationPrep[approx,{betterRBCMean,betterRBCSD,betterRBCMinZ,betterRBCMaxZ,betterRBCvv},theDistBetter];
 smolRngErg=Transpose[{betterRBCMinZ,betterRBCMaxZ}];
+toIg=aGSpecBetter[[1]];
 sgSpecErg={toIg,smolRngErg,ptErg,tfErg,plyErg,iplyErg,1,approx,
 {betterRBCMean,betterRBCSD,betterRBCMinZ,betterRBCMaxZ,betterRBCvv}};
 zPts=backXtoZ[ptErg,betterRBCMean,betterRBCSD,betterRBCvv];
@@ -429,6 +430,7 @@ Print["indo:",{Options[parallelNestIterREInterp],FilterRules[{opts},Options[para
 {tm,ig}=Timing[
 theRes=parallelNestIterREInterp[genFRExtFunc,linModBetter,
 {bothX0Z0,theK},eqnsCompiledBetter,sgSpecErg,iters,"xVarRanges"->{{0.01,2},{0.01,2},{0.01,20},{0.85,1.2}},FilterRules[{opts},Options[parallelNestIterREInterp]]]];
+(*
 Print["about to prepDRDRCE"];
 {{forDR,forDRCE},{drName,drerrName}}=prepDRDRCE[theRes];
 Print["about to findMinLocs",{drName,drerrName}];
@@ -453,6 +455,7 @@ Print["about to save"];
 If[FileExistsQ[mthName],DeleteFile[mthName]];
 Save[lclMthName,{lclName,tryEps,numKern,theName,mthName,bothX0Z0,sgSpecErg,zPts,tm,
 theRes,forDR,forDRCE,drName,drerrName,bothErrStr,acterrLoc,errBndLoc}];
+*)
 {zPts,theRes}
 ]
 
@@ -466,13 +469,16 @@ theSave=Get[mthName];
 Show[acterrsCP];
 {errBnd,errBndLoc,acterr,acterrLoc}]]
 
+(*
 approx=1*{1,1,1};
 {ptErg,tfErg,plyErg,iplyErg,dplyErg}=smolyakInterpolationPrep[approx,{betterRBCMean,betterRBCSD,betterRBCMinZ,betterRBCMaxZ,betterRBCvv},theDistBetter];
 smolRngErg=Transpose[{betterRBCMinZ,betterRBCMaxZ}];
 toIg=aGSpecBetter[[1]];
 sgSpecErg={toIg,smolRngErg,ptErg,tfErg,plyErg,iplyErg,1,approx,
 {betterRBCMean,betterRBCSD,betterRBCMinZ,betterRBCMaxZ,betterRBCvv}};
-(*
+
+
+
 approx=1*{1,1,1};
 Out[73]= {0.00114046, 0.00114046, 
  

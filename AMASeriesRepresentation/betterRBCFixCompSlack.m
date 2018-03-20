@@ -111,7 +111,7 @@ lam[t] +1/cc[t],
 cc[t] + II[t]-((theta[t])*(kk[t-1]^alpha)),
 nlPart[t] -((lam[t])*theta[t]),
 theta[t]-(N[E]^(eps[theta][t]))*(theta[t-1]^rho) ,
-(lam[t]) -(alpha*delta*nlPart[t+1]/(kk[t]^(1-alpha))),
+(lam[t]) -(alpha*delta*nlPart[t+1]/(kk[t]^(1-alpha)))-lam[t+1]*delta*(1-dd),
 II[t] -(kk[t]-(1-dd)*kk[t-1]),
 mu1[t]
 }
@@ -121,7 +121,7 @@ lam[t] +1/cc[t],
 cc[t] + II[t]-((theta[t])*(kk[t-1]^alpha)),
 nlPart[t] -((lam[t])*theta[t]),
 theta[t]-(N[E]^(eps[theta][t]))*(theta[t-1]^rho) ,
-(lam[t]) -(alpha*delta*nlPart[t+1]/(kk[t]^(1-alpha))),
+(lam[t]) -(alpha*delta*nlPart[t+1]/(kk[t]^(1-alpha))) -lam[t+1]*delta*(1-dd),
 II[t] -(kk[t]-(1-dd)*kk[t-1]),
 mu1[t]
 }

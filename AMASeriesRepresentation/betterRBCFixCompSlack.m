@@ -106,12 +106,12 @@ simpParamSubs=Join[paramSubs,forParamSubs,simpSubs];
 
 
 
-rbcEqnsBinding={
+preRbcEqnsBinding={
 lam[t] +1/cc[t],
 cc[t] + II[t]-((theta[t])*(kk[t-1]^alpha)),
 nlPart[t] -((lam[t])*theta[t]),
 theta[t]-(N[E]^(eps[theta][t]))*(theta[t-1]^rho) ,
-(lam[t]) -(alpha*delta*nlPart[t+1]/(kk[t]^(1-alpha)))-lam[t+1]*delta*(1-dd),
+(lam[t]) -(alpha*delta*nlPart[t+1]/(kk[t]^(1-alpha)))-lam[t+1]*delta*(1-dd)+mu1[t]-mu1[t+1]*delta*(1-dd),
 II[t] -(kk[t]-(1-dd)*kk[t-1]),
 mu1[t]
 }
@@ -122,7 +122,7 @@ cc[t] + II[t]-((theta[t])*(kk[t-1]^alpha)),
 nlPart[t] -((lam[t])*theta[t]),
 theta[t]-(N[E]^(eps[theta][t]))*(theta[t-1]^rho) ,
 (lam[t]) -(alpha*delta*nlPart[t+1]/(kk[t]^(1-alpha))) -lam[t+1]*delta*(1-dd),
-II[t] -(kk[t]-(1-dd)*kk[t-1]),
+II[t] -(kk[t]-(1-dd)*kk[t-1])+mu1[t]-mu1[t+1]*delta*(1-dd),
 mu1[t]
 }
 boolNotBinding= And[(kk[t]-(1-dd)*kk[t-1]-upsilon*IIss)>0,mu1==0]
@@ -153,7 +153,7 @@ Print[
 ssFRSolnSubs=Prepend[Chop[FindRoot[forFR,frArg,MaxIterations->1000(*,WorkingPrecision->50*)]],IIss->0]]
 Print["errs=",(forFR )//.ssFRSolnSubs]
 
-theProduct=upsilon*IIss//.ssFRSolnSubs/.betterRBCFixCompSlack`Private`paramSubs;
+theProduct=upsilon*II//.ssFRSolnSubs/.betterRBCFixCompSlack`Private`paramSubs;
 
 
 
@@ -251,6 +251,18 @@ eqnsBackLookingExpName[Apply[Sequence,lagPatterns]],theBLExpGuts];DistributeDefi
 Print["here01"]
 
 
+preRbcEqnsBinding={
+lam[t] +1/cc[t],
+cc[t] + II[t]-((theta[t])*(kk[t-1]^alpha)),
+nlPart[t] -((lam[t])*theta[t]),
+theta[t]-(N[E]^(eps[theta][t]))*(theta[t-1]^rho) ,
+(lam[t]) -(alpha*delta*nlPart[t+1]/(kk[t]^(1-alpha)))-lam[t+1]*delta*(1-dd)+mu1[t]-mu1[t+1]*delta*(1-dd),
+II[t] -(kk[t]-(1-dd)*kk[t-1]),
+mu1[t]
+}
+
+
+
 eqnsForBind=(((betterRBCFixCompSlack`Private`rbcEqnsBinding/.betterRBCFixCompSlack`Private`paramSubs)
 /.{
 eps[betterRBCFixCompSlack`Private`theta][t]->epsVal,
@@ -288,6 +300,18 @@ dd->.1
  -0.37263436422602103 + kkt - 0.9*kktm1}
 
 *)
+
+rbcEqnsBinding={
+lam[t] +1/cc[t],
+cc[t] + II[t]-((theta[t])*(kk[t-1]^alpha)),
+nlPart[t] -((lam[t])*theta[t]),
+theta[t]-(N[E]^(eps[theta][t]))*(theta[t-1]^rho) ,
+(lam[t]) -(alpha*delta*nlPart[t+1]/(kk[t]^(1-alpha)))-lam[t+1]*delta*(1-dd)+mu1[t]-mu1[t+1]*delta*(1-dd),
+II[t] -(kk[t]-(1-dd)*kk[t-1]),
+II[t] -theProduct
+}
+
+
 
 Print["here02"]
 
@@ -330,7 +354,7 @@ dd->.1
 
 
   rbcEqnsBetterFixCompSlack=eqnsCompiledBetterFixCompSlack={
- { {Function[{cc,ii,kk,lam,mu1,nl,th},Print["from FixCStriple",kk];kk>=.3],
+ { {True&,
   Compile @@ {
 {
 {cctm1,_Real},{iitm1,_Real},{kktm1,_Real},{lamtm1,_Real},{mu1tm1,_Real},{nltm1,_Real},{thetatm1,_Real},
@@ -341,7 +365,7 @@ dd->.1
 (eqnsForNotBind),"RuntimeOptions"->{"RuntimeErrorHandler"->Function[$Failed],"CatchMachineOverflow"->True,"CatchMachineUnderflow"->True}},
   Function[{aPt,aRes},
 If[aRes===$Failed,False,And[aRes[[1,1]]>0,aRes[[2,1]]>(theProduct)]]]},
- {Function[{cc,ii,kk,lam,mu1,nl,th},Print["from FixCStriple",kk];kk<.3],
+ {True&,
   Compile @@ {
 {
 {cctm1,_Real},{iitm1,_Real},{kktm1,_Real},{lamtm1,_Real},{mu1tm1,_Real},{nltm1,_Real},{thetatm1,_Real},

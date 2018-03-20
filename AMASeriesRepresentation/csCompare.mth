@@ -50,8 +50,20 @@ heyc[kk_?NumberQ,tt_?NumberQ]:=
 booCS=doItApproxSeriesCS[3*{1,1,1},1,1,"Traditional"->False];
 heyCSk[kk_?NumberQ,tt_?NumberQ]:=
 (booCS[[2,-1,2]][99,99,kk,99,99,99,tt])[[3,1]]
+heyCSi[kk_?NumberQ,tt_?NumberQ]:=
+(booCS[[2,-1,2]][99,99,kk,99,99,99,tt])[[2,1]]
 heyCSc[kk_?NumberQ,tt_?NumberQ]:=
 (booCS[[2,-1,2]][99,99,kk,99,99,99,tt])[[1,1]]
+
+
+
+
+{tryEps,numKern,theName,mthName,bothX0Z0,sgSpecErg,zPts}=prepSmolCS[{2,2,2},8,15];
+heyCSiL[(kk_)?NumberQ, (tt_)?NumberQ,ee_?NumberQ] := 
+   booCS[[2,-1,1]][99, 99, kk, 99, 99, 99, tt,ee][[2,1]]
+
+
+atPts=Flatten/@({#,(heyCSi @@ #)}&/@(Drop[#,-1]&/@Select[sgSpecErg[[3]],#[[3]]==0.&]))
 
 *)
 

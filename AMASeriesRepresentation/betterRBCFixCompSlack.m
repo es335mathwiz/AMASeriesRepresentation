@@ -108,7 +108,7 @@ simpParamSubs=Join[paramSubs,forParamSubs,simpSubs];
 
 rbcEqnsBinding={
 lam[t] +1/cc[t],
-cc[t] + kk[t]-((theta[t])*(kk[t-1]^alpha)),
+cc[t] + II[t]-((theta[t])*(kk[t-1]^alpha)),
 nlPart[t] -((lam[t])*theta[t]),
 theta[t]-(N[E]^(eps[theta][t]))*(theta[t-1]^rho) ,
 (lam[t]) -(alpha*delta*nlPart[t+1]/(kk[t]^(1-alpha))),
@@ -118,7 +118,7 @@ mu1[t]
 
 rbcEqnsNotBinding={
 lam[t] +1/cc[t],
-cc[t] + kk[t]-((theta[t])*(kk[t-1]^alpha)),
+cc[t] + II[t]-((theta[t])*(kk[t-1]^alpha)),
 nlPart[t] -((lam[t])*theta[t]),
 theta[t]-(N[E]^(eps[theta][t]))*(theta[t-1]^rho) ,
 (lam[t]) -(alpha*delta*nlPart[t+1]/(kk[t]^(1-alpha))),

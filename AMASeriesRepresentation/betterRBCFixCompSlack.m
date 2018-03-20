@@ -87,7 +87,7 @@ eta->1,
 delta->.95,
 rho->.95,
 sigma->.01,
-dd->.1,
+dd->1,
 upsilon->0.975
 } ;
 
@@ -99,8 +99,39 @@ forParamSubs=Thread[nu->forSubs]//.paramSubs;
 simpParamSubs=Join[paramSubs,forParamSubs,simpSubs];
 
 
-(*+lam[t+1]*delta*(1-dd)+mu1[t+1]*delta*(1-dd)*)
+(*+mu1[t+1]*delta*(1-dd)*)
 (*lam[t] +mu1[t] - (alpha*kk[t]^(-1+alpha)*delta*nlPart[t+1]+lam[t+1]*delta*(1-dd)+mu1[t+1]*delta*(1-dd))*)
+(* +lam[t+1]*delta*(1-dd)*)
+
+
+
+
+rbcEqnsBinding={
+lam[t] -1/cc[t],
+cc[t] + kk[t]-((theta[t])*(kk[t-1]^alpha)),
+nlPart[t] -((lam[t])*theta[t]),
+theta[t]-(N[E]^(eps[theta][t]))*(theta[t-1]^rho) ,
+(lam[t]) -(alpha*delta*nlPart[t+1]/(kk[t]^(1-alpha))),
+II[t] -(kk[t]-(1-dd)*kk[t-1]),
+mu1[t]
+}
+
+rbcEqnsNotBinding={
+lam[t] -1/cc[t],
+cc[t] + kk[t]-((theta[t])*(kk[t-1]^alpha)),
+nlPart[t] -((lam[t])*theta[t]),
+theta[t]-(N[E]^(eps[theta][t]))*(theta[t-1]^rho) ,
+(lam[t]) - (alpha*delta*nlPart[t+1]/(kk[t]^(1-alpha))),
+II[t] -(kk[t]-(1-dd)*kk[t-1]),
+mu1[t]
+}
+boolNotBinding= And[(kk[t]-(1-dd)*kk[t-1]-upsilon*IIss)>0,mu1==0]
+  boolBinding= And[(kk[t]-(1-dd)*kk[t-1]-upsilon*IIss)==0,mu1>=0]
+rbcBackLookingEqns={E^(rho*Log[theta[t-1]] + eps[theta][t])}
+rbcBackLookingExpEqns={Expectation[rbcBackLookingEqns[[1]],eps[theta][t] \[Distributed] NormalDistribution[0,sigma]]}
+
+
+
 
 ssEqnSubs=
 {xx_Symbol[t+v_.]->xx}
@@ -124,32 +155,6 @@ Print["errs=",(forFR )//.ssFRSolnSubs]
 
 theProduct=upsilon*IIss//.ssFRSolnSubs/.betterRBCFixCompSlack`Private`paramSubs;
 
-
-
-
-rbcEqnsBinding={
-lam[t] -1/cc[t],
-cc[t] + kk[t]-((theta[t])*(kk[t-1]^alpha)),
-nlPart[t] -((lam[t])*theta[t]),
-theta[t]-(N[E]^(eps[theta][t]))*(theta[t-1]^rho) ,
-(lam[t]) - (alpha*delta*nlPart[t+1]/(kk[t]^(1-alpha))),
-II[t] -(kk[t]-(1-dd)*kk[t-1]),
-mu1[t]
-}
-
-rbcEqnsNotBinding={
-lam[t] -1/cc[t],
-cc[t] + kk[t]-((theta[t])*(kk[t-1]^alpha)),
-nlPart[t] -((lam[t])*theta[t]),
-theta[t]-(N[E]^(eps[theta][t]))*(theta[t-1]^rho) ,
-(lam[t]) - (alpha*delta*nlPart[t+1]/(kk[t]^(1-alpha))),
-II[t] -(kk[t]-(1-dd)*kk[t-1]),
-mu1[t]
-}
-boolNotBinding= And[(kk[t]-(1-dd)*kk[t-1]-upsilon*IIss)>0,mu1==0]
-  boolBinding= And[(kk[t]-(1-dd)*kk[t-1]-upsilon*IIss)==0,mu1>=0]
-rbcBackLookingEqns={E^(rho*Log[theta[t-1]] + eps[theta][t])}
-rbcBackLookingExpEqns={Expectation[rbcBackLookingEqns[[1]],eps[theta][t] \[Distributed] NormalDistribution[0,sigma]]}
 
 
 

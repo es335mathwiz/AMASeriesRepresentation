@@ -87,7 +87,7 @@ eta->1,
 delta->.95,
 rho->.95,
 sigma->.01,
-dd->1,
+dd->.1,
 upsilon->0.975
 } ;
 
@@ -145,7 +145,7 @@ Print[{forFR,theVars=Cases[Variables[forFR=(rbcEqnsNotBindingSubbed/.ssEqnSubs)]
 
 frArg=Transpose[{theVars,{.3599,.187,.187,0,0,4,1}}]
 
-frArg=MapThread[Prepend[#1,#2]&,{{{.3599,.9},{.187,.35},{.187,.9},{-9.,9.},{-.01,0.1},{-9.,9.},{.9,1.1}},theVars}]
+frArg=MapThread[Prepend[#1,#2]&,{{{.3599,2},{0,.35},{.187,.9},{-9.,9.},{-.01,0.1},{-9.,9.},{.9,1.1}},theVars}]
 
 
 

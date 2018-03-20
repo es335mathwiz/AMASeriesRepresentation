@@ -107,7 +107,7 @@ simpParamSubs=Join[paramSubs,forParamSubs,simpSubs];
 
 
 rbcEqnsBinding={
-lam[t] -1/cc[t],
+lam[t] +1/cc[t],
 cc[t] + kk[t]-((theta[t])*(kk[t-1]^alpha)),
 nlPart[t] -((lam[t])*theta[t]),
 theta[t]-(N[E]^(eps[theta][t]))*(theta[t-1]^rho) ,
@@ -117,11 +117,11 @@ mu1[t]
 }
 
 rbcEqnsNotBinding={
-lam[t] -1/cc[t],
+lam[t] +1/cc[t],
 cc[t] + kk[t]-((theta[t])*(kk[t-1]^alpha)),
 nlPart[t] -((lam[t])*theta[t]),
 theta[t]-(N[E]^(eps[theta][t]))*(theta[t-1]^rho) ,
-(lam[t]) - (alpha*delta*nlPart[t+1]/(kk[t]^(1-alpha))),
+(lam[t]) -(alpha*delta*nlPart[t+1]/(kk[t]^(1-alpha))),
 II[t] -(kk[t]-(1-dd)*kk[t-1]),
 mu1[t]
 }
@@ -145,7 +145,7 @@ Print[{forFR,theVars=Cases[Variables[forFR=(rbcEqnsNotBindingSubbed/.ssEqnSubs)]
 
 frArg=Transpose[{theVars,{.3599,.187,.187,0,0,4,1}}]
 
-frArg=MapThread[Prepend[#1,#2]&,{{{.3599,.9},{.187,.35},{.187,.9},{1.,9.},{-.01,0.1},{1.,9.},{.9,1.1}},theVars}]
+frArg=MapThread[Prepend[#1,#2]&,{{{.3599,.9},{.187,.35},{.187,.9},{-9.,9.},{-.01,0.1},{-9.,9.},{.9,1.1}},theVars}]
 
 
 

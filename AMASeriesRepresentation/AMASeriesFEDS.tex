@@ -2218,8 +2218,26 @@ u(c)=\frac{c^{1-\eta}-1}{1-\eta}\\
 %   \includegraphics{resDir/forBetterRBC--4,4,4-Iters70theK5host-node014bnumKern16SeriesApprox.pdf}
 
 
+\section{Regime Switching}
+\label{sec:regime-switching}
 
 
+\begin{gather*}
+  x_t(x_{t-1},\epsilon_t,s_t)=\sum \kappa_{j} \psi_{j}(x_{t-1},\epsilon_t,s_t)
+\end{gather*}
 
+\begin{gather*}
+  \epsilon_t \rightarrow p_{ij}(\epsilon_t) \intertext{ iid, but the following is not}
+s_t \rightarrow f_{s_t}(\epsilon_t)
+\end{gather*}
+
+For each state compute the integrals weighted by transition matrix to subsequent states
+
+If abstract from $p_{ij}(\epsilon_t)$
+\begin{gather*}
+  \sum \kappa_{1j} p_{11}\psi_j(x_{t-1}) +  \sum \kappa_{2j} p_{12} \psi_j(x_{t-1}) + \ldots  +  \sum \kappa_{2j} p_{1n} \psi_j(x_{t-1})\intertext{ already computed just need to carfully update}
+\end{gather*}
+Each state computes weights for polynomials.  The conditional expectation function for computing the future path 
+has the $\epsilon_t$ and $s_t$ ``integrated out''. Use these for formula.  Conditional expectation of $E_{t+1}$ should depend on current state.  Conditional expectations path with regime switching
 \end{document}
 

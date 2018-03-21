@@ -219,6 +219,24 @@ Apply[Function,{Drop[moreXs,-numEps],Apply[
 Apply[Function,postIntTaylor],Drop[xformed,-numEps]]}]}]]]]]]]]
 
 
+
+smolyakInterpolation[fVals:{{_?NumberQ..}..},@<smolGSpec@>,pMat_?MatrixQ]:=
+With[{wtsProbs=applyWtsProbs[wts,thePolys,theIntPolys,pMat]},
+
+applyWtsProbs[wts_?MatrixQ,thePolys_?VectorQ,theIntPolys_?VectorQ,
+pMat_?MatrixQ]:=
+With[{allStates=Map[#.thePolys&,thePolys],
+allStatesInt=Flatten[pMat .Transpose[{Map[#.thePolys&,theIntPolys]}]]},
+{allStates,allStatesInt}]
+
+polySubs[numVars_?NumberQ,numEps_?NumberQ]:=
+With[{origXs=Table[xx[ii],{ii,numVars}],
+theXs=Table[Unique["xx"],{ii,numVars}]},
+With[{shortOrigXs=Drop[origXs,-numEps],
+shortXs=Drop[theXs,-numEps]},
+{Thread[origXs->theXs],Thread[shortOrigXs->shortXs]}]]
+
+
 AMASeriesRepCallGraph=
 Join[AMASeriesRepCallGraph,
 Map["smolyakInterpolation"->#&,{"xformXValToCheb"}]];
@@ -701,6 +719,9 @@ With[{polyEps=Drop[polyVars,numX],intEps=Drop[intVarRes[[2]],numX]},
 With[{epsSubs=MapThread[#1->#2&,{polyEps,intEps}]},
 With[{funcGuts=((aSmolPoly/.theChebValSubs)/.epsSubs)},
 myExpectation[funcGuts,intVarRes[[3]]]]]]]]]]
+
+
+
 
 
 AMASeriesRepCallGraph=

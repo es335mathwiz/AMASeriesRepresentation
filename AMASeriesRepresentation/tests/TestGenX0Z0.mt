@@ -1,5 +1,5 @@
 (*taken from linModBetter Definition 3/21/2018*)
-Get["tests/pathSetup.mth"]
+Get["pathSetup.mth"]
 linModBetter=
 {{{0, 0, 0, 0, -43397/5637, 12333/1301, 0, 0, 0, 0, -1999/2001, 0}, 
   {0, -20/19, 0, 0, 1, 1, 0, -10379/18968, 0, 0, 0, 0}, 

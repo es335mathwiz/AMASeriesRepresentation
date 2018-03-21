@@ -1,0 +1,4 @@
+(*assumes running with pwd two dirs below git*)
+PrependTo[$Path,"../../mathSmolyak/mathSmolyak"];
+PrependTo[$Path,"../../ProtectedSymbols"];
+PrependTo[$Path,"../../CStochSims/"]

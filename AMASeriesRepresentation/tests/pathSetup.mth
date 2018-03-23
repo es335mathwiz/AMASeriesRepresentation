@@ -6,3 +6,4 @@ PrependTo[$Path,"../../paperProduction/FormatOptimize"];
 PrependTo[$Path,"../../mathAMA/SymbolicAMA/SymbolicAMA"];
 PrependTo[$Path,"../../mathAMA/AMAModel"];
 PrependTo[$Path,"../../mathAMA/NumericAMA/NumericAMA"];
+

@@ -221,7 +221,7 @@ Apply[Function,postIntTaylor],Drop[xformed,-numEps]]}]}]]]]]]]]
 
 
 smolyakInterpolation[fVals:{{_?NumberQ..}..},@<smolGSpec@>,pMat_?MatrixQ]:=
-With[{wtsProbs=applyWtsProbs[wts,thePolys,theIntPolys,pMat]},wtsProb]
+With[{wtsProbs=applyWtsProbs[wts,thePolys,theIntPolys,pMat]},wtsProbs]
 
 applyWtsProbs[wts_?MatrixQ,thePolys_?VectorQ,theIntPolys_?VectorQ,
 pMat_?MatrixQ]:=

@@ -262,9 +262,8 @@ mu1[t]
 }
 
 
-
-eqnsForBind=(((betterRBCFixCompSlack`Private`rbcEqnsBinding/.betterRBCFixCompSlack`Private`paramSubs)
-/.{
+Print["got here"]
+eqnsForBind=(((betterRBCFixCompSlack`Private`rbcEqnsBinding/.betterRBCFixCompSlack`Private`paramSubs)/.{
 eps[betterRBCFixCompSlack`Private`theta][t]->epsVal,
 betterRBCFixCompSlack`Private`cc[t-1]->Global`cctm1,
 betterRBCFixCompSlack`Private`II[t-1]->iitm1,
@@ -289,7 +288,7 @@ betterRBCFixCompSlack`Private`nlPart[t+1]->nltp1,
 betterRBCFixCompSlack`Private`theta[t+1]->thetat
 })//.
 betterRBCFixCompSlack`Private`ssFRSolnSubs)//N
-
+Print[eqnsForBind]
 	
 (*
 dd->.1

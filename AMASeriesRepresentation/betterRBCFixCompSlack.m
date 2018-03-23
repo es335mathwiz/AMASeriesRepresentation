@@ -262,9 +262,8 @@ mu1[t]
 }
 
 
-
-eqnsForBind=(((betterRBCFixCompSlack`Private`rbcEqnsBinding/.betterRBCFixCompSlack`Private`paramSubs)
-/.{
+Print["here now"]
+eqnsForBind=(((betterRBCFixCompSlack`Private`preRbcEqnsBinding/.betterRBCFixCompSlack`Private`paramSubs)/.{
 eps[betterRBCFixCompSlack`Private`theta][t]->epsVal,
 betterRBCFixCompSlack`Private`cc[t-1]->Global`cctm1,
 betterRBCFixCompSlack`Private`II[t-1]->iitm1,
@@ -289,7 +288,7 @@ betterRBCFixCompSlack`Private`nlPart[t+1]->nltp1,
 betterRBCFixCompSlack`Private`theta[t+1]->thetat
 })//.
 betterRBCFixCompSlack`Private`ssFRSolnSubs)//N
-
+Print[eqnsForBind]
 	
 (*
 dd->.1
@@ -374,7 +373,7 @@ If[aRes===$Failed,False,And[aRes[[1,1]]>0,aRes[[2,1]]>(theProduct)]]]},
 {epsVal,_Real}
 },
 (eqnsForBind),"RuntimeOptions"->{"RuntimeErrorHandler"->Function[$Failed],"CatchMachineOverflow"->True,"CatchMachineUnderflow"->True}},(True)&}},
-Function[{aPt,allRes},Print["postPost:",{aPt,allRes}];
+Function[{aPt,allRes},
 If[And[allRes[[1]]===$Failed,allRes[[2]]===$Failed],Throw[$Failed,"noSolutionFound"]];
 If[allRes[[1]]===$Failed,Print["constraint violated"];Flatten[allRes[[2]]],Print["constraint not violated"];Flatten[allRes[[1]]]]]
 }

@@ -71,6 +71,7 @@ discMapEqns01=Append[zfEqns/.t->t+1,discMapEqns00[[1]]]//PowerExpand
 (*soln=Solve[Thread[discMapEqns01==0],{cc[t+1],kk[t+1],nlPart[t+1],lnTheta[t+1]}]*)
 
 (*parameters page 21 using state 1*)
+(*
 paramSubs=Rationalize[{
 alpha->.36,
 beta->1,
@@ -79,7 +80,15 @@ delta->.95,
 rho->.95,
 sigma->.01
   } ];
-
+*)
+paramSubs={
+alpha->.36,
+beta->1,
+eta->1,
+delta->.95,
+rho->.95,
+sigma->.01
+  };
 
 forSubs={alpha^(1 - alpha)^(-1)*delta^(1 - alpha)^(-1)};
 simpSubs=Thread[forSubs->nu];
@@ -243,7 +252,7 @@ linModBetter={hmatSymbRE//N,bmatSymbRE // N, phimatSymbRE // N,
     fmatSymbRE // N, psiepsSymbRE // N, 
     psicSymbRE // N, psiz // N,{}};
 
-linModBetter=Map[Rationalize[#,1/100000000]&,linModBetter,{-1}]
+(*linModBetter=Map[Rationalize[#,1/100000000]&,linModBetter,{-1}]*)
 
 
 

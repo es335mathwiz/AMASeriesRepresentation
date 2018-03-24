@@ -1113,8 +1113,10 @@ doGenericIterREInterp[genFRExtFunc,
 genericInterp:(smolyakInterpolation|svmRegressionLinear|svmRegressionPoly|svmRegressionRBF|svmRegressionSigmoid),svmArgs:{_?NumberQ...},opts:OptionsPattern[]]:=
 With[{numX=Length[BB],numZ=Length[psiZ[[1]]]},
 tn=AbsoluteTime[];
+If[Length[Kernels[]]===0,LaunchKernels[]];reapRes=Reap[
+genFRExtFunc[{numX,numEps,numZ},linMod,XZFuncs,eqnsFunc,Apply[Sequence,FilterRules[{opts},Options[genFRExtFunc]]]],"theFuncs"];Apply[DistributeDefinitions,Flatten[reapRes[[2]]]];
 With[{theFuncs=
-makeGenericInterpFuncs[genFRExtFunc[{numX,numEps,numZ},linMod,XZFuncs,eqnsFunc,Apply[Sequence,FilterRules[{opts},Options[genFRExtFunc]]]],{},smolGSpec,
+makeGenericInterpFuncs[reapRes[[1]],{},smolGSpec,
 genericInterp,svmArgs]},
 theFuncs]]
 
@@ -1128,9 +1130,10 @@ genericInterp:(smolyakInterpolation|svmRegressionLinear|svmRegressionPoly|svmReg
 With[{numX=Length[BB],numZ=Length[psiZ[[1]]]},
 tn=AbsoluteTime[];
 parallelSetup[];
+If[Length[Kernels[]]===0,LaunchKernels[]];reapRes=Reap[
+genFRExtFunc[{numX,numEps,numZ},linMod,XZFuncs,eqnsFunc,Apply[Sequence,FilterRules[{opts},Options[genFRExtFunc]]]],"theFuncs"];Apply[DistributeDefinitions,Flatten[reapRes[[2]]]];
 With[{theFuncs=
-parallelMakeGenericInterpFuncs[
-genFRExtFunc[{numX,numEps,numZ},linMod,XZFuncs,eqnsFunc,Apply[Sequence,FilterRules[{opts},Options[genFRExtFunc]]]],backLookingInfo,smolGSpec,
+parallelMakeGenericInterpFuncs[reapRes[[1]],backLookingInfo,smolGSpec,
 genericInterp,svmArgs]},
 theFuncs]]
 
@@ -1143,9 +1146,10 @@ genericInterp:(smolyakInterpolation|svmRegressionLinear|svmRegressionPoly|svmReg
 With[{numX=Length[BB],numZ=Length[psiZ[[1]]]},
 tn=AbsoluteTime[];
 parallelSetup[];
+If[Length[Kernels[]]===0,LaunchKernels[]];reapRes=Reap[
+genFRExtFunc[{numX,numEps,numZ},linMod,XZFuncs,eqnsFunc,Apply[Sequence,FilterRules[{opts},Options[genFRExtFunc]]]],"theFuncs"];Apply[DistributeDefinitions,Flatten[reapRes[[2]]]];
 With[{theFuncs=
-parallelMakeGenericInterpFuncs[
-genFRExtFunc[{numX,numEps,numZ},linMod,XZFuncs,triples,Apply[Sequence,FilterRules[{opts},Options[genFRExtFunc]]]],backLookingInfo,smolGSpec,
+parallelMakeGenericInterpFuncs[reapRes[[1]],backLookingInfo,smolGSpec,
 genericInterp,svmArgs]},
 theFuncs]]
 
@@ -1157,9 +1161,10 @@ genericInterp:(smolyakInterpolation|svmRegressionLinear|svmRegressionPoly|svmReg
 With[{numX=Length[BB],numZ=Length[psiZ[[1]]]},
 tn=AbsoluteTime[];
 parallelSetup[];
+If[Length[Kernels[]]===0,LaunchKernels[]];reapRes=Reap[
+genFRExtFunc[{numX,numEps,numZ},linMod,XZFuncs,eqnsFunc,Apply[Sequence,FilterRules[{opts},Options[genFRExtFunc]]]],"theFuncs"];Apply[DistributeDefinitions,Flatten[reapRes[[2]]]];
 With[{theFuncs=
-parallelMakeGenericInterpFuncs[
-genFRExtFunc[{numX,numEps,numZ},linMod,bothXZFuncs,eqnsFunc,Apply[Sequence,FilterRules[{opts},Options[genFRExtFunc]]]],backLookingInfo,smolGSpec,
+parallelMakeGenericInterpFuncs[reapRes[[1]],backLookingInfo,smolGSpec,
 genericInterp,svmArgs]},
 theFuncs]]
 
@@ -1172,9 +1177,10 @@ genericInterp:(smolyakInterpolation|svmRegressionLinear|svmRegressionPoly|svmReg
 With[{numX=Length[BB],numZ=Length[psiZ[[1]]]},
 tn=AbsoluteTime[];
 parallelSetup[];
+If[Length[Kernels[]]===0,LaunchKernels[]];reapRes=Reap[
+genFRExtFunc[{numX,numEps,numZ},linMod,XZFuncs,eqnsFunc,Apply[Sequence,FilterRules[{opts},Options[genFRExtFunc]]]],"theFuncs"];Apply[DistributeDefinitions,Flatten[reapRes[[2]]]];
 With[{theFuncs=
-parallelMakeGenericInterpFuncs[
-genFRExtFunc[{numX,numEps,numZ},linMod,bothXZFuncs,triples,Apply[Sequence,FilterRules[{opts},Options[genFRExtFunc]]]],backLookingInfo,smolGSpec,
+parallelMakeGenericInterpFuncs[reapRes[[1]],backLookingInfo,smolGSpec,
 genericInterp,svmArgs]},
 theFuncs]]
 
@@ -1858,7 +1864,9 @@ parallelSetup[];
 DistributeDefinitions[XZFuncs[[1]]];
 DistributeDefinitions[eqnsFunc];
 DistributeDefinitions[linMod];
-With[{theDRFuncs=parallelMakeInterpFunc[genFRExtFunc[{numX,numEps,numZ},linMod,XZFuncs,eqnsFunc,Apply[Sequence,FilterRules[{opts},Options[genFRExtFunc]]]],gSpec]},
+If[Length[Kernels[]]===0,LaunchKernels[]];reapRes=Reap[
+genFRExtFunc[{numX,numEps,numZ},linMod,XZFuncs,eqnsFunc,Apply[Sequence,FilterRules[{opts},Options[genFRExtFunc]]]],"theFuncs"];Apply[DistributeDefinitions,Flatten[reapRes[[2]]]];
+With[{theDRFuncs=parallelMakeInterpFunc[reapRes[[1]],gSpec]},
 Print["parallelMakeInterpTime=",(tn2=AbsoluteTime[])-tn];
 With[{XZRE=parallelGenXZREInterpFunc[{numX,numEps,numZ},theDRFuncs,gSpec,distribSpec]},
 Print["parallelgenXZREInterpTime=",(AbsoluteTime[])-tn2];
@@ -1875,7 +1883,9 @@ DistributeDefinitions[XZFuncs[[1]]];
 DistributeDefinitions[eqnsFunc];
 DistributeDefinitions[linMod];
 Print["done distributing defs:"];
-With[{theFuncs=parallelMakeGenericInterpFuncs[genFRExtFunc[{numX,numEps,numZ},linMod,XZFuncs,eqnsFunc,Apply[Sequence,FilterRules[{opts},Options[genFRExtFunc]]]],backLookingInfo,smolGSpec,smolyakInterpolation,{}]},
+If[Length[Kernels[]]===0,LaunchKernels[]];reapRes=Reap[
+genFRExtFunc[{numX,numEps,numZ},linMod,XZFuncs,eqnsFunc,Apply[Sequence,FilterRules[{opts},Options[genFRExtFunc]]]],"theFuncs"];Apply[DistributeDefinitions,Flatten[reapRes[[2]]]];
+With[{theFuncs=parallelMakeGenericInterpFuncs[reapRes[[1]],backLookingInfo,smolGSpec,smolyakInterpolation,{}]},
 Print["done parallelmakegenericinterpfunc:"];
 Print["parallelMakeInterpTime=",(tn2=AbsoluteTime[])-tn];
 With[{},
@@ -1894,7 +1904,9 @@ parallelSetup[];
 DistributeDefinitions[XZFuncs[[1]]];
 DistributeDefinitions[eqnsFunc];
 DistributeDefinitions[linMod];Print["parallelDoIterREInterp:"];
-With[{theDRFuncs=parallelMakeInterpFunc[genFRExtFunc[{numX,numEps,numZ},linMod,XZFuncs,triples,Apply[Sequence,FilterRules[{opts},Options[genFRExtFunc]]]],gSpec]},
+If[Length[Kernels[]]===0,LaunchKernels[]];reapRes=Reap[
+genFRExtFunc[{numX,numEps,numZ},linMod,XZFuncs,triples,Apply[Sequence,FilterRules[{opts},Options[genFRExtFunc]]]],"theFuncs"];Apply[DistributeDefinitions,Flatten[reapRes[[2]]]];
+With[{theDRFuncs=parallelMakeInterpFunc[reapRes[[1]],gSpec]},
 Print["parallelMakeInterpTime=",(tn2=AbsoluteTime[])-tn];
 With[{XZRE=parallelGenXZREInterpFunc[{numX,numEps,numZ},theDRFuncs,gSpec,distribSpec]},
 Print["parallelgenXZREInterpTime=",(AbsoluteTime[])-tn2];
@@ -1909,8 +1921,9 @@ parallelSetup[];
 DistributeDefinitions[XZFuncs[[1]]];
 DistributeDefinitions[eqnsFunc];
 DistributeDefinitions[linMod];
-Print["done distributing defs:",{$KernelID,Kernels[]}];
-With[{theFuncs=parallelMakeGenericInterpFuncs[genFRExtFunc[{numX,numEps,numZ},linMod,XZFuncs,triples,Apply[Sequence,FilterRules[{opts},Options[genFRExtFunc]]]],backLookingInfo,smolGSpec,smolyakInterpolation,{}]},
+If[Length[Kernels[]]===0,LaunchKernels[]];reapRes=Reap[
+genFRExtFunc[{numX,numEps,numZ},linMod,XZFuncs,triples,Apply[Sequence,FilterRules[{opts},Options[genFRExtFunc]]]],"theFuncs"];Apply[DistributeDefinitions,Flatten[reapRes[[2]]]];
+With[{theFuncs=parallelMakeGenericInterpFuncs[reapRes[[1]],backLookingInfo,smolGSpec,smolyakInterpolation,{}]},
 Print["done parallelmakegenericinterpfunc:"];
 Print["parallelMakeInterpTime=",(tn2=AbsoluteTime[])-tn];
 With[{},
@@ -1927,7 +1940,9 @@ parallelSetup[];
 DistributeDefinitions[justBothXZFuncs];
 DistributeDefinitions[eqnsFunc];
 DistributeDefinitions[linMod];
-With[{theDRFuncs=parallelMakeInterpFunc[genFRExtFunc[{numX,numEps,numZ},linMod,bothXZFuncs,eqnsFunc,Apply[Sequence,FilterRules[{opts},Options[genFRExtFunc]]]],gSpec]},
+If[Length[Kernels[]]===0,LaunchKernels[]];reapRes=Reap[
+genFRExtFunc[{numX,numEps,numZ},linMod,bothXZFuncs,eqnsFunc,Apply[Sequence,FilterRules[{opts},Options[genFRExtFunc]]]],"theFuncs"];Apply[DistributeDefinitions,Flatten[reapRes[[2]]]];
+With[{theDRFuncs=parallelMakeInterpFunc[reapRes[[1]],gSpec]},
 Print["parallelMakeInterpTime=",(tn2=AbsoluteTime[])-tn];
 With[{XZRE=parallelGenXZREInterpFunc[{numX,numEps,numZ},theDRFuncs,gSpec,distribSpec]},
 Print["parallelgenXZREInterpTime=",(AbsoluteTime[])-tn2];
@@ -1944,7 +1959,9 @@ DistributeDefinitions[justBothXZFuncs];
 DistributeDefinitions[eqnsFunc];
 DistributeDefinitions[linMod];
 Print["done distributing defs:"];
-With[{theFuncs=parallelMakeGenericInterpFuncs[genFRExtFunc[{numX,numEps,numZ},linMod,bothXZFuncs,eqnsFunc,Apply[Sequence,FilterRules[{opts},Options[genFRExtFunc]]]],backLookingInfo,smolGSpec,smolyakInterpolation,{}]},
+If[Length[Kernels[]]===0,LaunchKernels[]];reapRes=Reap[
+genFRExtFunc[{numX,numEps,numZ},linMod,bothXZFuncs,eqnsFunc,Apply[Sequence,FilterRules[{opts},Options[genFRExtFunc]]]],"theFuncs"];Apply[DistributeDefinitions,Flatten[reapRes[[2]]]];
+With[{theFuncs=parallelMakeGenericInterpFuncs[reapRes[[1]],backLookingInfo,smolGSpec,smolyakInterpolation,{}]},
 Print["done parallelmakegenericinterpfunc:"];
 Print["parallelMakeInterpTime=",(tn2=AbsoluteTime[])-tn];
 With[{},
@@ -1963,7 +1980,9 @@ parallelSetup[];
 DistributeDefinitions[justBothXZFuncs];
 DistributeDefinitions[eqnsFunc];
 DistributeDefinitions[linMod];Print["parallelDoIterREInterp:"];
-With[{theDRFuncs=parallelMakeInterpFunc[genFRExtFunc[{numX,numEps,numZ},linMod,bothXZFuncs,triples,Apply[Sequence,FilterRules[{opts},Options[genFRExtFunc]]]],gSpec]},
+If[Length[Kernels[]]===0,LaunchKernels[]];reapRes=Reap[
+genFRExtFunc[{numX,numEps,numZ},linMod,bothXZFuncs,triples,Apply[Sequence,FilterRules[{opts},Options[genFRExtFunc]]]],"theFuncs"];Apply[DistributeDefinitions,Flatten[reapRes[[2]]]];
+With[{theDRFuncs=parallelMakeInterpFunc[reapRes[[1]],gSpec]},
 Print["parallelMakeInterpTime=",(tn2=AbsoluteTime[])-tn];
 With[{XZRE=parallelGenXZREInterpFunc[{numX,numEps,numZ},theDRFuncs,gSpec,distribSpec]},
 Print["parallelgenXZREInterpTime=",(AbsoluteTime[])-tn2];
@@ -1978,8 +1997,9 @@ parallelSetup[];
 DistributeDefinitions[justBothXZFuncs];
 DistributeDefinitions[eqnsFunc];
 DistributeDefinitions[linMod];
-Print["done distributing defs:",{$KernelID,Kernels[]}];
-With[{theFuncs=parallelMakeGenericInterpFuncs[genFRExtFunc[{numX,numEps,numZ},linMod,bothXZFuncs,triples,Apply[Sequence,FilterRules[{opts},Options[genFRExtFunc]]]],backLookingInfo,smolGSpec,smolyakInterpolation,{}]},
+If[Length[Kernels[]]===0,LaunchKernels[]];reapRes=Reap[
+genFRExtFunc[{numX,numEps,numZ},linMod,bothXZFuncs,triples,Apply[Sequence,FilterRules[{opts},Options[genFRExtFunc]]]],"theFuncs"];Apply[DistributeDefinitions,Flatten[reapRes[[2]]]];
+With[{theFuncs=parallelMakeGenericInterpFuncs[reapRes[[1]],backLookingInfo,smolGSpec,smolyakInterpolation,{}]},
 Print["done parallelmakegenericinterpfunc:"];
 Print["parallelMakeInterpTime=",(tn2=AbsoluteTime[])-tn];
 With[{},
@@ -3103,7 +3123,7 @@ False,@<setDelayedSeriesFXtZt@>;@<setDelayedSeriesFXtm1Eps@>]
 (**)
 DistributeDefinitions[funcOfXtZt,funcOfXtm1Eps]
 Off[FindRoot::srect];
-Off[FindRoot::nlnum];
+Off[FindRoot::nlnum];Sow[{funcOfXtm1Eps,funcOfXtZt},"theFuncs"];
 funcOfXtm1Eps
 ]]]]
 
@@ -3122,7 +3142,7 @@ False,@<setDelayedSeriesFXtZtBoth@>;@<setDelayedSeriesFXtm1Eps@>]
 (**)
 DistributeDefinitions[funcOfXtZt,funcOfXtm1Eps]
 Off[FindRoot::srect];
-Off[FindRoot::nlnum];
+Off[FindRoot::nlnum];Sow[{funcOfXtm1Eps,funcOfXtZt},"theFuncs"];
 funcOfXtm1Eps
 ]]]]
 
@@ -3194,7 +3214,7 @@ funcOfXtZt[
 Apply[Sequence,xtNoZtArgPatterns]],
 Module[{},
 With[{
-xkAppl=Flatten[Join[xLagArgs,xArgs,(Apply[XZFuncs[[1]],xArgs][[Range[numX]]]),eArgs]]},
+xkAppl=Flatten[Join[xLagArgs,xArgs,(Apply[XZFuncs[[1]],xArgs][[Range[numX]]]),eArgs]]},Print["funcXtZt:xkAppl=",InputForm[xkAppl]];
 With[{eqnAppl=Apply[eqnsFunc,Flatten[xkAppl]](*,
 xDisc=xArgs-xkAppl[[numX+Range[numX]]]*)},
 Flatten[Join[eqnAppl]]]]]]@}
@@ -3206,7 +3226,7 @@ funcOfXtZt[
 Apply[Sequence,xtNoZtArgPatterns]],
 Module[{},
 With[{
-xkAppl=Flatten[Join[xLagArgs,xArgs,(Apply[bothXZFuncs[[1,2]],xArgs][[Range[numX]]]),eArgs]]},
+xkAppl=Flatten[Join[xLagArgs,xArgs,(Apply[bothXZFuncs[[1,2]],xArgs][[Range[numX]]]),eArgs]]},Print["funcXtZtBoth:xkAppl=",InputForm[xkAppl]];
 With[{eqnAppl=Apply[eqnsFunc,Flatten[xkAppl]](*,
 xDisc=xArgs-xkAppl[[numX+Range[numX]]]*)},
 Flatten[Join[eqnAppl]]]]]]@}
@@ -3232,7 +3252,7 @@ Module[{theZsNow=genZsForFindRoot[linMod,
 Transpose[{xArgs}],XZFuncs[[1]],XZFuncs[[2]]]
 },
 With[{xkFunc=Catch[(Check[genLilXkZkFunc[linMod,theZsNow],Print["trying higher throw"];Throw[$Failed,"higher"]]),_,Function[{val,tag},Print["catchfxtzt:",{xArgs,val,tag}//InputForm];Throw[$Failed,"fromGenLil"]]]},
-With[{xkAppl=Apply[xkFunc,Join[xLagArgs,eArgs,zArgs]]},
+With[{xkAppl=Apply[xkFunc,Join[xLagArgs,eArgs,zArgs]]},Print["funcXtZt2:xkAppl=",InputForm[xkAppl]];
 With[{eqnAppl=Apply[eqnsFunc,Flatten[xkAppl]],
 xDisc=xArgs-xkAppl[[numX+Range[numX]]]},
 Flatten[Join[xDisc,eqnAppl]]]]]]]@}
@@ -3246,7 +3266,7 @@ Module[{theZsNow=genZsForFindRoot[linMod,
 Transpose[{xArgs}],bothXZFuncs[[1,2]],bothXZFuncs[[2]]]
 },
 With[{xkFunc=Catch[(Check[genLilXkZkFunc[linMod,theZsNow],Print["trying higher throw"];Throw[$Failed,"higher"]]),_,Function[{val,tag},Print["catchfxtzt:",{xArgs,val,tag}//InputForm];Throw[$Failed,"fromGenLil"]]]},
-With[{xkAppl=Apply[xkFunc,Join[xLagArgs,eArgs,zArgs]]},
+With[{xkAppl=Apply[xkFunc,Join[xLagArgs,eArgs,zArgs]]},Print["funcXtZtBoth2:xkAppl=",InputForm[xkAppl]];
 With[{eqnAppl=Apply[eqnsFunc,Flatten[xkAppl]],
 xDisc=xArgs-xkAppl[[numX+Range[numX]]]},
 Flatten[Join[xDisc,eqnAppl]]]]]]]@}

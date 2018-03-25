@@ -130,8 +130,6 @@ With[{filledPts=Map[Function[xx,fillIn[{{},smolToIgnore,xx}]],N[smolPts]]},
 With[{theVals=
 ParallelTable[evaluateTriple[aTriple,Flatten[aPt]],
 {aTriple,triples[[1]]},{aPt,filledPts}]},
-Print["parallelSmolyakGenInterpData:",
-{theVals,filledPts}//InputForm];
 With[{interpData=
 ParallelMap[With[{baddy=#},Catch[
 Apply[selectorFunc,#],
@@ -3049,7 +3047,7 @@ funcOfXtZt[
 Apply[Sequence,xtNoZtArgPatterns]],
 Module[{},
 With[{
-xkAppl=Flatten[Join[xLagArgs,xArgs,(Apply[XZFuncs[[1]],xArgs][[Range[numX]]]),eArgs]]},Print["funcXtZt:xkAppl=",InputForm[xkAppl]];
+xkAppl=Flatten[Join[xLagArgs,xArgs,(Apply[XZFuncs[[1]],xArgs][[Range[numX]]]),eArgs]]},
 With[{eqnAppl=Apply[eqnsFunc,Flatten[xkAppl]]},
 Flatten[Join[eqnAppl]]]]]]@}
 
@@ -3060,7 +3058,7 @@ funcOfXtZt[
 Apply[Sequence,xtNoZtArgPatterns]],
 Module[{},
 With[{
-xkAppl=Flatten[Join[xLagArgs,xArgs,(Apply[bothXZFuncs[[1,2]],xArgs][[Range[numX]]]),eArgs]]},Print["funcXtZtBoth:xkAppl=",InputForm[xkAppl]];
+xkAppl=Flatten[Join[xLagArgs,xArgs,(Apply[bothXZFuncs[[1,2]],xArgs][[Range[numX]]]),eArgs]]},
 With[{eqnAppl=Apply[eqnsFunc,Flatten[xkAppl]]},
 Flatten[Join[eqnAppl]]]]]]@}
 
@@ -3085,7 +3083,7 @@ Module[{theZsNow=genZsForFindRoot[linMod,
 Transpose[{xArgs}],XZFuncs[[1]],XZFuncs[[2]]]
 },
 With[{xkFunc=Catch[(Check[genLilXkZkFunc[linMod,theZsNow],Print["trying higher throw"];Throw[$Failed,"higher"]]),_,Function[{val,tag},Print["catchfxtzt:",{xArgs,val,tag}//InputForm];Throw[$Failed,"fromGenLil"]]]},
-With[{xkAppl=Apply[xkFunc,Join[xLagArgs,eArgs,zArgs]]},Print["funcXtZt2:xkAppl=",InputForm[xkAppl]];
+With[{xkAppl=Apply[xkFunc,Join[xLagArgs,eArgs,zArgs]]},
 With[{eqnAppl=Apply[eqnsFunc,Flatten[xkAppl]],
 xDisc=xArgs-xkAppl[[numX+Range[numX]]]},
 Flatten[Join[xDisc,eqnAppl]]]]]]]@}
@@ -3099,7 +3097,7 @@ Module[{theZsNow=genZsForFindRoot[linMod,
 Transpose[{xArgs}],bothXZFuncs[[1,2]],bothXZFuncs[[2]]]
 },
 With[{xkFunc=Catch[(Check[genLilXkZkFunc[linMod,theZsNow],Print["trying higher throw"];Throw[$Failed,"higher"]]),_,Function[{val,tag},Print["catchfxtzt:",{xArgs,val,tag}//InputForm];Throw[$Failed,"fromGenLil"]]]},
-With[{xkAppl=Apply[xkFunc,Join[xLagArgs,eArgs,zArgs]]},Print["funcXtZtBoth2:xkAppl=",InputForm[xkAppl]];
+With[{xkAppl=Apply[xkFunc,Join[xLagArgs,eArgs,zArgs]]},
 With[{eqnAppl=Apply[eqnsFunc,Flatten[xkAppl]],
 xDisc=xArgs-xkAppl[[numX+Range[numX]]]},
 Flatten[Join[xDisc,eqnAppl]]]]]]]@}

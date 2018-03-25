@@ -59,24 +59,6 @@ chkcobb douglas production*)
 
 
 
-
-
-
-(*parameters page 21 using state 1*)
-
-(*
-paramSubs={
-alpha->.36,
-beta->1,
-eta->1,
-delta->.95,
-rho->.95,
-sigma->.01,
-dd->1,
-upsilon->0.975
-} ;
-
-*)
 (*parameters page 28 guerrieri iacoviello*)
 
 paramSubs={
@@ -98,22 +80,6 @@ forParamSubs=Thread[nu->forSubs]//.paramSubs;
 simpParamSubs=Join[paramSubs,forParamSubs,simpSubs];
 
 
-(*+mu1[t+1]*delta*(1-dd)*)
-(*lam[t] +mu1[t] - (alpha*kk[t]^(-1+alpha)*delta*nlPart[t+1]+lam[t+1]*delta*(1-dd)+mu1[t+1]*delta*(1-dd))*)
-(* +lam[t+1]*delta*(1-dd)*)
-
-
-
-
-preRbcEqnsBinding={
-lam[t] +1/cc[t],
-cc[t] + II[t]-((theta[t])*(kk[t-1]^alpha)),
-nlPart[t] -((lam[t])*theta[t]),
-theta[t]-(N[E]^(eps[theta][t]))*(theta[t-1]^rho) ,
-(lam[t]) -(alpha*delta*nlPart[t+1]/(kk[t]^(1-alpha)))-lam[t+1]*delta*(1-dd)+mu1[t]-mu1[t+1]*delta*(1-dd),
-II[t] -(kk[t]-(1-dd)*kk[t-1]),
-mu1[t]
-}
 
 rbcEqnsNotBinding={
 lam[t] +1/cc[t],
@@ -124,8 +90,8 @@ theta[t]-(N[E]^(eps[theta][t]))*(theta[t-1]^rho) ,
 II[t] -(kk[t]-(1-dd)*kk[t-1])+mu1[t]-mu1[t+1]*delta*(1-dd),
 mu1[t]
 }
-boolNotBinding= And[(kk[t]-(1-dd)*kk[t-1]-upsilon*IIss)>0,mu1==0]
-  boolBinding= And[(kk[t]-(1-dd)*kk[t-1]-upsilon*IIss)==0,mu1>=0]
+
+
 rbcBackLookingEqns={E^(rho*Log[theta[t-1]] + eps[theta][t])}
 rbcBackLookingExpEqns={Expectation[rbcBackLookingEqns[[1]],eps[theta][t] \[Distributed] NormalDistribution[0,sigma]]}
 
@@ -144,9 +110,6 @@ theVars=Cases[Variables[forFR=(rbcEqnsNotBindingSubbed/.ssEqnSubs)],_Symbol]
 
 
 
-
-frArg=Transpose[{theVars,{.3599,.187,.187,0,0,4,1}}]
-
 frArg=MapThread[Prepend[#1,#2]&,{{{.3599,2},{0,.35},{.187,.9},{-9.,9.},{-.01,0.1},{-9.,9.},{.9,1.1}},theVars}]
 
 
@@ -156,15 +119,6 @@ ssFRSolnSubs=Prepend[Chop[FindRoot[forFR,frArg,MaxIterations->1000(*,WorkingPrec
 
 
 theProduct=upsilon*II//.ssFRSolnSubs/.betterRBCFixCompSlack`Private`paramSubs;
-
-
-
-
-
-
-
-
-
 
 
 
@@ -257,25 +211,7 @@ betterRBCFixCompSlack`Private`theta[t+1]->thetat
 betterRBCFixCompSlack`Private`ssFRSolnSubs)//N
 
 	
-(*
-dd->.1
-{-1./cct + lamt, cct + iit - 1.*kktm1^0.36*thetat, nlt - 1.*lamt*thetat, 
- thetat - 1.*2.718281828459045^epsVal*thetatm1^0.95, 
- lamt - 0.855*lamtp1 + mu1t - 0.855*betterRBCFixCompSlack`Private`mu1tp1 - 
-  (0.34199999999999997*nltp1)/kkt^0.64, iit - 1.*kkt + 0.9*kktm1, 
- -0.37263436422602103 + kkt - 0.9*kktm1}
 
-*)
-
-rbcEqnsBinding={
-lam[t] +1/cc[t],
-cc[t] + II[t]-((theta[t])*(kk[t-1]^alpha)),
-nlPart[t] -((lam[t])*theta[t]),
-theta[t]-(N[E]^(eps[theta][t]))*(theta[t-1]^rho) ,
-(lam[t]) -(alpha*delta*nlPart[t+1]/(kk[t]^(1-alpha)))-lam[t+1]*delta*(1-dd)+mu1[t]-mu1[t+1]*delta*(1-dd),
-II[t] -(kk[t]-(1-dd)*kk[t-1]),
-II[t] -theProduct
-}
 
 
 

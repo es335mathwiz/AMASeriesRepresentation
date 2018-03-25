@@ -108,7 +108,6 @@ Module[{},
 With[{filledPts=Map[Function[xx,fillIn[{{},smolToIgnore,xx}]],N[smolPts]]},
 With[{theVals=Table[evaluateTriple[aTriple,Flatten[aPt]],
 {aTriple,triples[[1]]},{aPt,filledPts}]},
-Print["smolyakGenInterpData:",{theVals,filledPts}//InputForm];
 With[{interpData=
 Catch[
 Map[Apply[selectorFunc,#]&,{filledPts,Transpose[theVals]}//Transpose],
@@ -152,7 +151,7 @@ Module[{},
 DistributeDefinitions[aVecFunc];
 With[{filledPts=ParallelMap[
 Check[Function[xx,fillIn[{{},smolToIgnore,xx}]],Print["aborting"];AbortKernels[];Throw["parallelSmolyakGenInterpData"]],N[smolPts]]},
-With[{theVals=ParallelMap[Function[xx,(Print["parallelSmolyakGenInterpData:",xx];Apply[aVecFunc,xx])],filledPts]},
+With[{theVals=ParallelMap[Function[xx,(Apply[aVecFunc,xx])],filledPts]},
 With[{interpData=Map[Flatten,theVals]},
 interpData]]]]
 
@@ -1756,7 +1755,6 @@ genFRExtFunc[{numX,numEps,numZ},linMod,XZFuncs,eqnsFunc,Apply[Sequence,FilterRul
 With[{theDRFuncs=parallelMakeInterpFunc[reapRes[[1]],gSpec]},
 Print["parallelMakeInterpTime=",(tn2=AbsoluteTime[])-tn];
 With[{XZRE=parallelGenXZREInterpFunc[{numX,numEps,numZ},theDRFuncs,gSpec,distribSpec]},
-Print["parallelgenXZREInterpTime=",(AbsoluteTime[])-tn2];
 {theDRFuncs,XZRE}]]]
 
 parallelDoIterREInterp[genFRExtFunc,

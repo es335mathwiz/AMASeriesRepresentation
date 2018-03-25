@@ -3,7 +3,6 @@
 BeginPackage["betterRBCFixCompSlack`", { "AMASeriesRepresentation`", "ProtectedSymbols`", "AMAModel`", "SymbolicAMA`", "NumericAMA`"}]
 (* Exported symbols added here with SymbolName::usage *)  
 rbcEqnsBetterCSTrips::usage="rbcEqnsBetterCSTrips"
-eqnsCompiledBetterCSTrips::usage="eqnsCompiledBetterCSTrips"
 
 anXBetterFixCompSlack::usage="for test input";
 anEpsBetterFixCompSlack::usage="for test input";
@@ -24,7 +23,6 @@ linModBetterFixCompSlack::usage="linear model matrices for approx"
 aGSpecBetterFixCompSlack::usage="aGSpec={{1},1,{{4,kLow,kHigh},{3,thLow,thHigh},{3,sigLow,3*sigHigh}}}";
 rbcEqnsBetterBackLookingFixCompSlack::usage="rbcEqnsBetterBackLookingFixCompSlack"
 rbcEqnsBetterBackLookingExpFixCompSlack::usage="rbcEqnsBetterBackLookingFixCompSlack"
-eqnsCompiledBetterFixCompSlack::usage="model equations function"
 rbcEqnsBetterFixCompSlack::usage="model equations"
 eqnsEulerCompiledBetterFixCompSlack::usage="eqnsEulerCompiledBetterFixCompSlack"
 
@@ -115,16 +113,10 @@ frArg=MapThread[Prepend[#1,#2]&,{{{.3599,2},{0,.35},{.187,.9},{-9.,9.},{-.01,0.1
 
 
 
-ssFRSolnSubs=Prepend[Chop[FindRoot[forFR,frArg,MaxIterations->1000(*,WorkingPrecision->50*)]],IIss->0];
+ssFRSolnSubs=Prepend[Chop[FindRoot[forFR,frArg,MaxIterations->1000]],IIss->0];
 
 
 theProduct=upsilon*II//.ssFRSolnSubs/.betterRBCFixCompSlack`Private`paramSubs;
-
-
-
-
-
-
 
 
 
@@ -153,9 +145,6 @@ theta[t+1]->thetatp1,
 eps[theta][t]->epsVal
 }
 
-thePatterns=makeBlankPatternArgs[Last/@argsSubs]
-lagEpsPatterns=makeBlankPatternArgs[Last/@(Append[argsSubs[[Range[7]]],argsSubs[[-1]]])]
-lagPatterns=makeBlankPatternArgs[Last/@(argsSubs[[Range[7]]])]
 
 
 theArgs={cctm1,iitm1,kktm1,lamtm1,mutm1,nltm1,thetatm1,epsVal};
@@ -167,11 +156,6 @@ Function @@ ({theArgs,rbcBackLookingEqns/.argsSubs}/.paramSubs)
 rbcEqnsBetterBackLookingExpFixCompSlack=
 Function @@ ({Drop[theArgs,-1],rbcBackLookingExpEqns/.argsSubs}/.paramSubs)
 
-
-
-
-
-
 preRbcEqnsBinding={
 lam[t] +1/cc[t],
 cc[t] + II[t]-((theta[t])*(kk[t-1]^alpha)),
@@ -181,7 +165,6 @@ theta[t]-(N[E]^(eps[theta][t]))*(theta[t-1]^rho) ,
 II[t] -(kk[t]-(1-dd)*kk[t-1]),
 mu1[t]
 }
-
 
 
 eqnsForBind=(((betterRBCFixCompSlack`Private`preRbcEqnsBinding/.betterRBCFixCompSlack`Private`paramSubs)/.{
@@ -209,11 +192,6 @@ betterRBCFixCompSlack`Private`nlPart[t+1]->nltp1,
 betterRBCFixCompSlack`Private`theta[t+1]->thetat
 })//.
 betterRBCFixCompSlack`Private`ssFRSolnSubs)//N
-
-	
-
-
-
 
 
 eqnsForNotBind=(((betterRBCFixCompSlack`Private`rbcEqnsNotBinding/.betterRBCFixCompSlack`Private`paramSubs)
@@ -243,20 +221,11 @@ betterRBCFixCompSlack`Private`theta[t+1]->thetat
 })//.
 betterRBCFixCompSlack`Private`ssFRSolnSubs)//N
 
-(*
 
-dd->.1
-{-1./cct + lamt, cct + iit - 1.*kktm1^0.36*thetat, nlt - 1.*lamt*thetat, 
- thetat - 1.*2.718281828459045^epsVal*thetatm1^0.95, 
- lamt - 0.855*lamtp1 + mu1t - 0.855*mu1tp1 - 
-  (0.34199999999999997*nltp1)/kkt^0.64, iit - 1.*kkt + 0.9*kktm1, mu1t}
-
-*)
-
-
-  rbcEqnsBetterFixCompSlack=eqnsCompiledBetterFixCompSlack={
- { {True&,
-  Compile @@ {
+  rbcEqnsBetterFixCompSlack={
+ { 
+{True&,
+Compile @@ {
 {
 {cctm1,_Real},{iitm1,_Real},{kktm1,_Real},{lamtm1,_Real},{mu1tm1,_Real},{nltm1,_Real},{thetatm1,_Real},
 {cct,_Real},{iit,_Real},{kkt,_Real},{lamt,_Real},{mu1t,_Real},{nlt,_Real},{thetat,_Real},
@@ -264,10 +233,10 @@ dd->.1
 {epsVal,_Real}
 },
 (eqnsForNotBind),"RuntimeOptions"->{"RuntimeErrorHandler"->Function[$Failed],"CatchMachineOverflow"->True,"CatchMachineUnderflow"->True}},
-  Function[{aPt,aRes},
+Function[{aPt,aRes},
 If[aRes===$Failed,False,And[aRes[[1,1]]>0,aRes[[2,1]]>(theProduct)]]]},
- {True&,
-  Compile @@ {
+{True&,
+Compile @@ {
 {
 {cctm1,_Real},{iitm1,_Real},{kktm1,_Real},{lamtm1,_Real},{mu1tm1,_Real},{nltm1,_Real},{thetatm1,_Real},
 {cct,_Real},{iit,_Real},{kkt,_Real},{lamt,_Real},{mu1t,_Real},{nlt,_Real},{thetat,_Real},
@@ -281,19 +250,8 @@ If[allRes[[1]]===$Failed,Flatten[allRes[[2]]],Flatten[allRes[[1]]]]]
 }
 
 
-
-
-
-
-
 theDistBetterFixCompSlack={{{ee,NormalDistribution[0,sigma]}}}//.paramSubs;
 thePFDistBetterFixCompSlack={{{ee,PerfectForesight}}};
-
-
-
-
-
-
 
 
 
@@ -306,13 +264,8 @@ rbcEqnsNotBinding/.simpParamSubs]//FullSimplify)/.{xxxx_[t+_.]->xxxx})//.ssFRSol
 psiepsSymbRE=-Transpose[{((D[#,eps[theta][t]]&/@ rbcEqnsNotBinding)/.{eps[_][_]->0,xxxx_[t+_.]->xxxx})//.ssFRSolnSubs}/.simpParamSubs]
 
 
-
-
 hmatSymbRE=hmatSymbRawRE//.simpParamSubs
 hSumRE=hmatSymbRE[[All,Range[7]]]+hmatSymbRE[[All,7+Range[7]]]+hmatSymbRE[[All,2*7+Range[7]]];
-
-
-
 
 
 ssSolnVecRE={{cc},{II},{kk},{lam},{mu1},{nlPart},{theta}}//.ssFRSolnSubs;
@@ -331,20 +284,11 @@ amatSymbRE=symbolicTransitionMatrix[hfSymbRE];
 qmatSymbRE=Join[zfSymbRE,evcsSymbRE[[{1}]]];
 
 
-
-
 {bmatSymbRE,phimatSymbRE,fmatSymbRE}=symbolicComputeBPhiF[hmatSymbRE,qmatSymbRE]//Simplify;
 
 linModBetterFixCompSlack={hmatSymbRE//N,bmatSymbRE // N, phimatSymbRE // N, 
     fmatSymbRE // N, psiepsSymbRE // N, 
-    psicSymbRE // N, psiz // N,{{4,rbcEqnsBetterBackLookingFixCompSlack,rbcEqnsBetterBackLookingExpFixCompSlack}}};Print["took out back looking equations"];
-
-(*
-    psicSymbRE // N, psiz // N,{}};Print["took out back looking equations"];
-
-*)
-
-
+    psicSymbRE // N, psiz // N,{{4,rbcEqnsBetterBackLookingFixCompSlack,rbcEqnsBetterBackLookingExpFixCompSlack}}}
 
 
 
@@ -364,7 +308,6 @@ anXEpsZsFlatBetterFixCompSlack=anXEpsZsBetterFixCompSlack//Flatten;
 probDimsBetterFixCompSlack={7,1,7};
 
 
-
 thVal=(theta//.ssFRSolnSubs//.(simpParamSubs//N))//N;
 kVal = (kk //.ssFRSolnSubs//.(simpParamSubs//N))//N;
 cVal = (cc //.ssFRSolnSubs//.(simpParamSubs//N))//N ;
@@ -377,15 +320,9 @@ sigHigh = 3*sigVal;
 thLow = 9/10;
 thHigh = 11/10;
 
-	(*
-aGSpecBetterFixCompSlack={{1,2,4,5,6},2,{{6,kLow,kHigh},{10,thLow,thHigh},{6,sigLow,3*sigHigh}}};
-	 aGSpecBetterFixCompSlack={{1,2,4,5,6},1,{{4,kLow,kHigh},{3,thLow,thHigh},{3,sigLow,3*sigHigh}}};*)
 
-	 aGSpecBetterFixCompSlack={{1,2,4,5,6},1,{{4,kLow,kHigh},{3,thLow,thHigh},{3,sigLow,3*sigHigh}}};
+aGSpecBetterFixCompSlack={{1,2,4,5,6},1,{{4,kLow,kHigh},{3,thLow,thHigh},{3,sigLow,3*sigHigh}}};
 
-(*
-{alpha,beta,delta,rho,sigma,dd,upsilon}
-*)
 
 
 
@@ -400,8 +337,7 @@ Flatten/@mats]]
 simulateBetterRBCCS[anAugDR_Function,numPers_Integer]:=
 With[{draws=RandomVariate[theDistBetterFixCompSlack[[1,1,2]],numPers],
 initVec=Transpose[{{99,99,kVal,99,99,99,thVal}}]},
-With[{mats=FoldList[((anAugDR @@ Flatten[{#1[[Range[7]]],#2}]))&,initVec,draws]},
-Flatten/@mats]]
+With[{mats=FoldList[((anAugDR @@ Flatten[{#1[[Range[7]]],#2}]))&,initVec,draws]},Flatten/@mats]]
 
 
 iterateRBCCSDRCE[anAugDRCE_Function,numPers_Integer,aPt_?MatrixQ]:=

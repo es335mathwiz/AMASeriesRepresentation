@@ -801,11 +801,12 @@ Map["xformToXVec"->#&,
 parallelSetup[]:=
 Module[{},
 Get["pathSetup.mth"];
-ParallelEvaluate[Get["pathSetup.mth"]];
+ParallelEvaluate[Get["tests/pathSetup.mth"]];
 ParallelNeeds["AMASeriesRepresentation`"];
+(*
 ParallelNeeds["betterRBC`"];
 ParallelNeeds["betterRBCCompSlack`"];
-SetSharedFunction[myAbortKernels];
+*)SetSharedFunction[myAbortKernels];
 Get["AMASeriesRepresentation`"]]
 
 

@@ -1179,7 +1179,7 @@ With[{numX=Length[BB],numZ=Length[psiZ[[1]]]},
 tn=AbsoluteTime[];
 parallelSetup[];
 If[Length[Kernels[]]===0,LaunchKernels[]];reapRes=Reap[
-genFRExtFunc[{numX,numEps,numZ},linMod,XZFuncs,triples,Apply[Sequence,FilterRules[{opts},Options[genFRExtFunc]]]],"theFuncs"];Apply[DistributeDefinitions,Flatten[reapRes[[2]]]];
+genFRExtFunc[{numX,numEps,numZ},linMod,bothXZFuncs,triples,Apply[Sequence,FilterRules[{opts},Options[genFRExtFunc]]]],"theFuncs"];Apply[DistributeDefinitions,Flatten[reapRes[[2]]]];
 With[{theFuncs=
 parallelMakeGenericInterpFuncs[reapRes[[1]],backLookingInfo,smolGSpec,
 genericInterp,svmArgs]},

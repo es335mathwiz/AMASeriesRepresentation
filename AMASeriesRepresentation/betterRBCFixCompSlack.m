@@ -498,7 +498,6 @@ aGSpecBetterFixCompSlack={{1,2,4,5,6},2,{{6,kLow,kHigh},{10,thLow,thHigh},{6,sig
 
 
 
-
 simulateBetterRBCCS[numPers_Integer]:=
 With[{draws=RandomVariate[theDistBetterFixCompSlack[[1,1,2]],numPers],
 initVec=Transpose[{{99,99,kVal,99,99,99,thVal}}],
@@ -528,7 +527,8 @@ Nest[With[{val=Apply[anAugDRCE,Flatten[#]][[Range[7]]]},
 If[Norm[val]>lim,Throw[False,"chkBounded"],val]]&,aPt,numPers],
 "chkBounded"]===False,False,True]]
 
-Print["about to simulate"];
+Print["about to simulate fixed seed"];
+SeedRandom[1234]
 theRes=simulateBetterRBCCS[200];
 Print["done simulate"];
 justKT=theRes[[All,{3,7}]];

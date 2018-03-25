@@ -341,7 +341,8 @@ aGSpecBetter={{1,3},2,{{6,kLow,kHigh},{10,thLow,thHigh},{6,sigLow,3*sigHigh}}};
 	 aGSpecBetter={{1,3},1,{{4,kLow,kHigh},{3,thLow,thHigh},{3,sigLow,3*sigHigh}}};*)
 
 	 aGSpecBetter={{1,3},1,{{4,kLow,kHigh},{3,thLow,thHigh},{3,sigLow,sigHigh}}};
-
+Print["about to simulate fixed seed"];
+SeedRandom[1234]
 theRes=simulateBetterRBCExact[200];
 justKT=theRes[[All,{2,4}]];
 betterRBCMean=Mean[justKT]

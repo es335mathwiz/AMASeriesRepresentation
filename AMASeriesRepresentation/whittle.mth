@@ -33,7 +33,7 @@ smolRngErg =
     nkZLB`nkNKCSMaxZ}];
 toIg = nkZLB`aGSpecnkZLB[[1]];
 sgSpecErg = {toIg, smolRngErg, ptErg, tfErg, plyErg, iplyErg, 
-   1, {1, 1, 1}, {nkZLB`nkNKCSMean, 
+   1, {1,  1}, {nkZLB`nkNKCSMean, 
     nkZLB`nkNKCSSD, 
     nkZLB`nkNKCSMinZ, 
     nkZLB`nkNKCSMaxZ, 
@@ -41,14 +41,14 @@ sgSpecErg = {toIg, smolRngErg, ptErg, tfErg, plyErg, iplyErg,
 AMASeriesRepresentation`parallelSmolyakGenInterpData[frFunc, \
 sgSpecErg]
 *)
-
+(*
 X0Z0 = AMASeriesRepresentation`genBothX0Z0Funcs[
    nkZLB`linModnkZLB];
 frFunc = AMASeriesRepresentation`genFRExtFunc[{8, 1, 8}, 
    nkZLB`linModnkZLB, {X0Z0, 2}, 
    nkZLB`nkEqnsnkZLB];
 smolStuff = {ptErg, tfErg, plyErg, iplyErg, dplyErg} = 
-   AMASeriesRepresentation`smolyakInterpolationPrep[{1, 1, 
+   AMASeriesRepresentation`smolyakInterpolationPrep[{1, 
      1}, {nkZLB`nkNKCSMean, 
      nkZLB`nkNKCSSD, 
      nkZLB`nkNKCSMinZ, 
@@ -60,7 +60,7 @@ smolRngErg =
     nkZLB`nkNKCSMaxZ}];
 toIg = nkZLB`aGSpecnkZLB[[1]];
 sgSpecErg = {toIg, smolRngErg, ptErg, tfErg, plyErg, iplyErg, 
-   1, {1, 1, 1}, {nkZLB`nkNKCSMean, 
+   1, {1, 1}, {nkZLB`nkNKCSMean, 
     nkZLB`nkNKCSSD, 
     nkZLB`nkNKCSMinZ, 
     nkZLB`nkNKCSMaxZ, 
@@ -78,7 +78,7 @@ frFunc = AMASeriesRepresentation`genFRExtFunc[{8, 1, 8},
    nkZLB`linModnkZLB, {X0Z0, 2}, 
    nkZLB`nkEqnsnkZLB];
 smolStuff = {ptErg, tfErg, plyErg, iplyErg, dplyErg} = 
-   AMASeriesRepresentation`smolyakInterpolationPrep[{1, 1, 
+   AMASeriesRepresentation`smolyakInterpolationPrep[{1, 
      1}, {nkZLB`nkNKCSMean, 
      nkZLB`nkNKCSSD, 
      nkZLB`nkNKCSMinZ, 
@@ -90,7 +90,7 @@ smolRngErg =
     nkZLB`nkNKCSMaxZ}];
 toIg = nkZLB`aGSpecnkZLB[[1]];
 sgSpecErg = {toIg, smolRngErg, ptErg, tfErg, plyErg, iplyErg, 
-   1, {1, 1, 1}, {nkZLB`nkNKCSMean, 
+   1, {1,  1}, {nkZLB`nkNKCSMean, 
     nkZLB`nkNKCSSD, 
     nkZLB`nkNKCSMinZ, 
     nkZLB`nkNKCSMaxZ, 
@@ -99,20 +99,18 @@ theRes = AMASeriesRepresentation`parallelDoGenericIterREInterp[
    AMASeriesRepresentation`genFRExtFunc, 
    nkZLB`linModnkZLB, {X0Z0, 2}, 
    nkZLB`nkEqnsnkZLB, sgSpecErg, 
-   AMASeriesRepresentation`smolyakInterpolation, {}];
+   AMASeriesRepresentation`smolyakInterpolation, {},
+"xVarRanges"->{{0,1.2},{.9,1.3},{0.01,4},{-4,4},{0.01,5.5},{0.8,1.1},{0.8,1.1},{0.2,1.3}}];
 Through[theRes @@ # &[
   nkZLB`anXEpsFlatnkZLB]]
-
 *)
-(*
+
+
 X0Z0 = AMASeriesRepresentation`genBothX0Z0Funcs[
    nkZLB`linModnkZLB];
-frFunc = AMASeriesRepresentation`genFRExtFunc[{8, 1, 8}, 
-   nkZLB`linModnkZLB, {X0Z0, 2}, 
-   nkZLB`nkEqnsnkZLB];
+approx=3*{1,1};
 smolStuff = {ptErg, tfErg, plyErg, iplyErg, dplyErg} = 
-   AMASeriesRepresentation`smolyakInterpolationPrep[{1, 1, 
-     1}, {nkZLB`nkNKCSMean, 
+   AMASeriesRepresentation`smolyakInterpolationPrep[approx, {nkZLB`nkNKCSMean, 
      nkZLB`nkNKCSSD, 
      nkZLB`nkNKCSMinZ, 
      nkZLB`nkNKCSMaxZ, 
@@ -123,18 +121,41 @@ smolRngErg =
     nkZLB`nkNKCSMaxZ}];
 toIg = nkZLB`aGSpecnkZLB[[1]];
 sgSpecErg = {toIg, smolRngErg, ptErg, tfErg, plyErg, iplyErg, 
-   1, {1, 1, 1}, {nkZLB`nkNKCSMean, 
+   1, approx, {nkZLB`nkNKCSMean, 
     nkZLB`nkNKCSSD, 
     nkZLB`nkNKCSMinZ, 
     nkZLB`nkNKCSMaxZ, 
     nkZLB`nkNKCSvv}};
 theRes = AMASeriesRepresentation`parallelNestGenericIterREInterp[
    AMASeriesRepresentation`genFRExtFunc, 
-   nkZLB`linModnkZLB, {X0Z0, 2}, 
+   nkZLB`linModnkZLB, {X0Z0, 20}, 
    nkZLB`nkEqnsnkZLB, sgSpecErg, 
-   AMASeriesRepresentation`smolyakInterpolation, {}, 3];
+   AMASeriesRepresentation`smolyakInterpolation, {}, 10,
+"xVarRanges"->{{0,1.2},{.9,1.3},{0.01,100},{-4,4},{0.01,5.5},{0.8,1.1},{0.8,1.1},{0.0001,1.5}},"Traditional"->False];
 Through[theRes[[-1]] @@ # &[
   nkZLB`anXEpsFlatnkZLB]]
 
 
-*)
+
+
+
+Options[checkPt]={"Traditional"->False}
+checkPt[adr_,adrce_,theK_Integer,aPt:{eta_?NumberQ,eps_?NumberQ},
+opts:OptionsPattern[]]:=
+Module[{},
+If[OptionValue["Traditional"],
+xtm1eps=Flatten[fillIn[{{},{1,3,4,5,6,7,8},aPt}]];
+xzt=adr @@ xtm1eps;
+xztp1=(adrce @@ Flatten[xzt])[[Range[8]]];
+tradArg=Flatten[
+Join[Drop[xtm1eps,-1],xzt[[Range[8]]],xztp1[[Range[8]]],{eps}]];
+{nkEqnsnkZLB[[1,1,2]] @@ tradArg,nkEqnsnkZLB[[1,2,2]] @@ tradArg},
+xtm1eps=Flatten[fillIn[{{},{1,3,4,5,6,7,8},aPt}]];
+xzt=adr @@ xtm1eps;
+theZsNow=genZsForFindRoot[linModnkZLB,
+xzt[[Range[8]]],adrce,theK];
+xkzkFunc=genLilXkZkFunc[linModnkZLB,theZsNow];
+xkApply=Flatten[xkzkFunc @@ Join[xtm1eps,Flatten[xzt[[8+Range[8]]]]]];
+{nkEqnsnkZLB[[1,1,2]] @@ xkApply,nkEqnsnkZLB[[1,2,2]] @@ xkApply}]]
+
+

@@ -117,11 +117,10 @@ ssEqnSubs=
 {xx_Symbol[t+v_.]->xx}
 nkEqnsNotBindingSubbed=(((nkEqnsNotBinding/.ssEqnSubs)/.paramSubs)/.eps[eta][t]->0)
 
-Print[nkEqnsNotBindingSubbed]
+
 
 theVars=Cases[Variables[forFR=(nkEqnsNotBindingSubbed/.ssEqnSubs)],_Symbol]
 
-Print[theVars]
 (*
 {CC, eta, nl1, nl2, nl3, pi, RR, YY}
 *)
@@ -131,7 +130,6 @@ startVals={{.1,2},{.99,1.01},{0,11},{0.1,9.},{.01,11},{1.004,1.006},{0.8,2},{.1,
 frArg=MapThread[Prepend[#1,#2]&,
 {startVals,theVars}]
 
-Print[frArg]
 
 (*
 ssFRSolnSubs=Chop[FindRoot[forFR,frArg,MaxIterations->1000]];
@@ -139,7 +137,6 @@ ssFRSolnSubs=Chop[FindRoot[forFR,frArg,MaxIterations->1000]];
 ssFRSolnSubs=Flatten[Chop[NSolve[forFR,theVars(*,MaxIterations->1000*)]]];
 
 
-Print[ssFRSolnSubs]
 
 
 
@@ -185,8 +182,8 @@ qmatSymbRE=Join[zfSymbRE,evcsSymbRE[[{1,2}]]];
 
 linModnkZLB=Chop[{hmatSymbRE//N,bmatSymbRE // N, phimatSymbRE // N, 
     fmatSymbRE // N, psiepsSymbRE // N, 
-    psicSymbRE // N, psiz // N,{{4,nkEqnsNkBackLookingFixCompSlack,nkEqnsNkBackLookingExpFixCompSlack}}}]
-
+    psicSymbRE // N, psiz // N,{(*{4,nkEqnsNkBackLookingFixCompSlack,nkEqnsNkBackLookingExpFixCompSlack}*)}}]
+Print["took out backlooking"]
 
 
 
@@ -255,9 +252,9 @@ Compile @@ {
 {epsVal,_Real}
 },
 (eqnsForNotBind),"RuntimeOptions"->{"RuntimeErrorHandler"->Function[$Failed],"CatchMachineOverflow"->True,"CatchMachineUnderflow"->True}},
-Function[{aPt,aRes},Print[{aPt,aRes,And[aRes[[1,1]]>0,aRes[[7,1]]>=1]}];
+Function[{aPt,aRes},
 If[aRes===$Failed,False,And[aRes[[1,1]]>0,aRes[[7,1]]>=1]]]},
-{(Print["in"];True)&,
+{(True)&,
 Compile @@ {
 {
 {CCtm1,_Real},{etatm1,_Real},{nl1tm1,_Real},{nl2tm1,_Real},{nl3tm1,_Real},{pitm1,_Real},{RRtm1,_Real},{YYtm1,_Real},
@@ -265,8 +262,8 @@ Compile @@ {
 {CCtp1,_Real},{etatp1,_Real},{nl1tp1,_Real},{nl2tp1,_Real},{nl3tp1,_Real},{pitp1,_Real},{RRtp1,_Real},{YYtp1,_Real},
 {epsVal,_Real}
 },
-(eqnsForBind),"RuntimeOptions"->{"RuntimeErrorHandler"->Function[$Failed],"CatchMachineOverflow"->True,"CatchMachineUnderflow"->True}},(Print["out"];True)&}},
-Function[{aPt,allRes},Print["last",{aPt,aRes}];
+(eqnsForBind),"RuntimeOptions"->{"RuntimeErrorHandler"->Function[$Failed],"CatchMachineOverflow"->True,"CatchMachineUnderflow"->True}},(True)&}},
+Function[{aPt,allRes},
 If[And[allRes[[1]]===$Failed,allRes[[2]]===$Failed],Throw[$Failed,"noSolutionFound"]];
 If[allRes[[1]]===$Failed,Flatten[allRes[[2]]],Flatten[allRes[[1]]]]]
 }

@@ -1,0 +1,140 @@
+Get["tests/pathSetup.mth"]
+
+Get["AMASeriesRepresentation`"];
+Get["nkZLB`"];
+(*
+Needs["AMASeriesRepresentation`"];
+Needs["nkZLB`"];
+X0Z0 = AMASeriesRepresentation`genBothX0Z0Funcs[
+   nkZLB`linModnkZLB];
+frFunc = AMASeriesRepresentation`genFRExtFunc[{8, 1, 8}, 
+   nkZLB`linModnkZLB, {X0Z0, 2}, 
+   nkZLB`nkEqnsnkZLB];
+AMASeriesRepresentation`evaluateTriple[frFunc[[1, 2]], 
+ Flatten[{99, 0.9, 99, 99, 99, 99, 99, 99,0.01}]]
+
+*)
+(*
+X0Z0 = AMASeriesRepresentation`genBothX0Z0Funcs[
+   nkZLB`linModnkZLB];
+frFunc = AMASeriesRepresentation`genFRExtFunc[{8, 1, 8}, 
+   nkZLB`linModnkZLB, {X0Z0, 2}, 
+   nkZLB`nkEqnsnkZLB];
+smolStuff = {ptErg, tfErg, plyErg, iplyErg, dplyErg} = 
+   AMASeriesRepresentation`smolyakInterpolationPrep[{ 1, 
+     1}, {nkZLB`nkNKCSMean, 
+     nkZLB`nkNKCSSD, 
+     nkZLB`nkNKCSMinZ, 
+     nkZLB`nkNKCSMaxZ, 
+     nkZLB`nkNKCSvv}, 
+    nkZLB`theistnkZLB];
+smolRngErg = 
+  Transpose[{nkZLB`nkNKCSMinZ, 
+    nkZLB`nkNKCSMaxZ}];
+toIg = nkZLB`aGSpecnkZLB[[1]];
+sgSpecErg = {toIg, smolRngErg, ptErg, tfErg, plyErg, iplyErg, 
+   1, {1, 1, 1}, {nkZLB`nkNKCSMean, 
+    nkZLB`nkNKCSSD, 
+    nkZLB`nkNKCSMinZ, 
+    nkZLB`nkNKCSMaxZ, 
+    nkZLB`nkNKCSvv}};
+AMASeriesRepresentation`parallelSmolyakGenInterpData[frFunc, \
+sgSpecErg]
+*)
+
+X0Z0 = AMASeriesRepresentation`genBothX0Z0Funcs[
+   nkZLB`linModnkZLB];
+frFunc = AMASeriesRepresentation`genFRExtFunc[{8, 1, 8}, 
+   nkZLB`linModnkZLB, {X0Z0, 2}, 
+   nkZLB`nkEqnsnkZLB];
+smolStuff = {ptErg, tfErg, plyErg, iplyErg, dplyErg} = 
+   AMASeriesRepresentation`smolyakInterpolationPrep[{1, 1, 
+     1}, {nkZLB`nkNKCSMean, 
+     nkZLB`nkNKCSSD, 
+     nkZLB`nkNKCSMinZ, 
+     nkZLB`nkNKCSMaxZ, 
+     nkZLB`nkNKCSvv}, 
+    nkZLB`theDistnkZLB];
+smolRngErg = 
+  Transpose[{nkZLB`nkNKCSMinZ, 
+    nkZLB`nkNKCSMaxZ}];
+toIg = nkZLB`aGSpecnkZLB[[1]];
+sgSpecErg = {toIg, smolRngErg, ptErg, tfErg, plyErg, iplyErg, 
+   1, {1, 1, 1}, {nkZLB`nkNKCSMean, 
+    nkZLB`nkNKCSSD, 
+    nkZLB`nkNKCSMinZ, 
+    nkZLB`nkNKCSMaxZ, 
+    nkZLB`nkNKCSvv}};
+theRes = AMASeriesRepresentation`parallelMakeGenericInterpFuncs[
+   frFunc, {}, sgSpecErg, 
+   AMASeriesRepresentation`smolyakInterpolation, {}];
+Through[theRes @@ # &[
+  nkZLB`anXEpsFlatnkZLB]]
+*)
+(*
+X0Z0 = AMASeriesRepresentation`genBothX0Z0Funcs[
+   nkZLB`linModnkZLB];
+frFunc = AMASeriesRepresentation`genFRExtFunc[{8, 1, 8}, 
+   nkZLB`linModnkZLB, {X0Z0, 2}, 
+   nkZLB`nkEqnsnkZLB];
+smolStuff = {ptErg, tfErg, plyErg, iplyErg, dplyErg} = 
+   AMASeriesRepresentation`smolyakInterpolationPrep[{1, 1, 
+     1}, {nkZLB`nkNKCSMean, 
+     nkZLB`nkNKCSSD, 
+     nkZLB`nkNKCSMinZ, 
+     nkZLB`nkNKCSMaxZ, 
+     nkZLB`nkNKCSvv}, 
+    nkZLB`theDistnkZLB];
+smolRngErg = 
+  Transpose[{nkZLB`nkNKCSMinZ, 
+    nkZLB`nkNKCSMaxZ}];
+toIg = nkZLB`aGSpecnkZLB[[1]];
+sgSpecErg = {toIg, smolRngErg, ptErg, tfErg, plyErg, iplyErg, 
+   1, {1, 1, 1}, {nkZLB`nkNKCSMean, 
+    nkZLB`nkNKCSSD, 
+    nkZLB`nkNKCSMinZ, 
+    nkZLB`nkNKCSMaxZ, 
+    nkZLB`nkNKCSvv}};
+theRes = AMASeriesRepresentation`parallelDoGenericIterREInterp[
+   AMASeriesRepresentation`genFRExtFunc, 
+   nkZLB`linModnkZLB, {X0Z0, 2}, 
+   nkZLB`nkEqnsnkZLB, sgSpecErg, 
+   AMASeriesRepresentation`smolyakInterpolation, {}];
+Through[theRes @@ # &[
+  nkZLB`anXEpsFlatnkZLB]]
+
+*)
+(*
+X0Z0 = AMASeriesRepresentation`genBothX0Z0Funcs[
+   nkZLB`linModnkZLB];
+frFunc = AMASeriesRepresentation`genFRExtFunc[{8, 1, 8}, 
+   nkZLB`linModnkZLB, {X0Z0, 2}, 
+   nkZLB`nkEqnsnkZLB];
+smolStuff = {ptErg, tfErg, plyErg, iplyErg, dplyErg} = 
+   AMASeriesRepresentation`smolyakInterpolationPrep[{1, 1, 
+     1}, {nkZLB`nkNKCSMean, 
+     nkZLB`nkNKCSSD, 
+     nkZLB`nkNKCSMinZ, 
+     nkZLB`nkNKCSMaxZ, 
+     nkZLB`nkNKCSvv}, 
+    nkZLB`theDistnkZLB];
+smolRngErg = 
+  Transpose[{nkZLB`nkNKCSMinZ, 
+    nkZLB`nkNKCSMaxZ}];
+toIg = nkZLB`aGSpecnkZLB[[1]];
+sgSpecErg = {toIg, smolRngErg, ptErg, tfErg, plyErg, iplyErg, 
+   1, {1, 1, 1}, {nkZLB`nkNKCSMean, 
+    nkZLB`nkNKCSSD, 
+    nkZLB`nkNKCSMinZ, 
+    nkZLB`nkNKCSMaxZ, 
+    nkZLB`nkNKCSvv}};
+theRes = AMASeriesRepresentation`parallelNestGenericIterREInterp[
+   AMASeriesRepresentation`genFRExtFunc, 
+   nkZLB`linModnkZLB, {X0Z0, 2}, 
+   nkZLB`nkEqnsnkZLB, sgSpecErg, 
+   AMASeriesRepresentation`smolyakInterpolation, {}, 3];
+Through[theRes[[-1]] @@ # &[
+  nkZLB`anXEpsFlatnkZLB]]
+
+
+*)

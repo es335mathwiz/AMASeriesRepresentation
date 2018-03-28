@@ -17,6 +17,41 @@
 \section{Introduction and Summary}
 \label{sec:introduction-summary}
 
+\section{nestGenericIterREInterp}
+
+
+
+@d nestGenericIterREInterpUsage
+@{
+nestGenericIterREInterp::usage=
+"place holder for info"
+@}
+
+
+@d nestGenericIterREInterp
+@{
+(*begin code for nestGenericIterREInterp*)
+
+
+
+
+Options[nestGenericIterREInterp]={"xVarRanges"->{},"Traditional"->False}
+nestGenericIterREInterp[genFRExtFunc,@<linMod@>,
+@<XZFuncs@>,@<eqnsFunc@>,@<smolGSpec@>,
+genericInterp:(smolyakInterpolation|svmRegressionLinear|svmRegressionPoly|svmRegressionRBF|svmRegressionSigmoid),svmArgs:{_?NumberQ...},
+numIters_Integer,opts:OptionsPattern[]]:=
+NestList[Function[xx,doGenericIterREInterp[genFRExtFunc,linMod,
+{xx[[2]],numSteps},eqnsFunc,smolGSpec,genericInterp,svmArgs]],{99,XZFuncs[[1]]},numIters]
+
+
+
+
+(*end code for nestGenericIterREInterp*)
+@}
+
+\section{doGenericIterREInterp}
+
+
 \section{Smolyak Code}
 \label{sec:smolyak-code}
 This code implements anisotropic smolyak as described in \cite{Judd2014}.
@@ -1050,9 +1085,12 @@ Map["doSmolyakIterREInterp"->#&,
 
 @d doGenericIterREInterpUsage
 @{
-parallelDoGenericIterREInterp::usage=
-"place holder for info";
 doGenericIterREInterp::usage=
+"place holder for info";
+@}
+@d parallelDoGenericIterREInterpUsage
+@{
+parallelDoGenericIterREInterp::usage=
 "place holder for info";
 @}
 
@@ -1077,6 +1115,23 @@ With[{theFuncs=
 makeGenericInterpFuncs[reapRes[[1]],{},smolGSpec,
 genericInterp,svmArgs]},
 theFuncs]]
+
+
+AMASeriesRepCallGraph=
+Join[AMASeriesRepCallGraph,
+Map["doSmolyakIterREInterp"->#&,
+{"makeSmolyakInterpFuncs","genFPFunc","getNumX",
+"getNumEps","getNumZ","genXZREInterpFunc"}]];
+
+
+
+(*end code for doSmolyakIterREInterp*)
+@}
+
+@d parallelDoGenericIterREInterp
+@{
+(*begin code for doSmolyakIterREInterp*)
+
 
 
 Options[parallelDoGenericIterREInterp]={"xVarRanges"->{},"Traditional"->False}
@@ -1224,29 +1279,20 @@ Join[AMASeriesRepCallGraph,Map["nestIterREInterp"->#&,{"doSmolyakIterREInterp"}]
 
 
 
-@d nestGenericIterREInterpUsage
+\section{parallelNestGenericIterREInterp}
+
+
+@d parallelNestGenericIterREInterpUsage
 @{
 parallelNestGenericIterREInterp::usage=
 "place holder for info";
-nestGenericIterREInterp::usage=
-"place holder for info"
 @}
 
 
-@d nestGenericIterREInterp
+@d parallelNestGenericIterREInterp
 @{
 (*begin code for nestGenericIterREInterp*)
 
-
-
-
-Options[nestGenericIterREInterp]={"xVarRanges"->{},"Traditional"->False}
-nestGenericIterREInterp[genFRExtFunc,@<linMod@>,
-@<XZFuncs@>,@<eqnsFunc@>,@<smolGSpec@>,
-genericInterp:(smolyakInterpolation|svmRegressionLinear|svmRegressionPoly|svmRegressionRBF|svmRegressionSigmoid),svmArgs:{_?NumberQ...},
-numIters_Integer,opts:OptionsPattern[]]:=
-NestList[Function[xx,doGenericIterREInterp[genFRExtFunc,linMod,
-{xx[[2]],numSteps},eqnsFunc,smolGSpec,genericInterp,svmArgs]],{99,XZFuncs[[1]]},numIters]
 
 
 
@@ -2235,6 +2281,8 @@ PerfectForesight::usage="degenerate distribution implementing perfect foresight"
 @<getNumInterpVarsUsage@>
 @<writeExpKernUsage@>
 @<doGenericIterREInterpUsage@>
+@<parallelDoGenericIterREInterpUsage@>
+@<parallelNestGenericIterREInterpUsage@>
 @<nestGenericIterREInterpUsage@>
 @}
 
@@ -2245,7 +2293,9 @@ PerfectForesight::usage="degenerate distribution implementing perfect foresight"
 @{
 @<truncErrorMat@>
 @<nestGenericIterREInterp@>
+@<parallelNestGenericIterREInterp@>
 @<doGenericIterREInterp@>
+@<parallelDoGenericIterREInterp@>
 @<ExpKernCode@>
 @<writeExpKern@>
 @<makeGenericInterpFuncs@>

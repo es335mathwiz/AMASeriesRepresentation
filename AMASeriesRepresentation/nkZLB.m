@@ -278,7 +278,7 @@ Compile @@ {
 {CCtp1,_Real},{etatp1,_Real},{nl1tp1,_Real},{nl2tp1,_Real},{nl3tp1,_Real},{pitp1,_Real},{RRtp1,_Real},{YYtp1,_Real},
 {epsVal,_Real}
 },
-(eqnsForBind),"RuntimeOptions"->{"RuntimeErrorHandler"->Function[$Failed],"CatchMachineOverflow"->True,"CatchMachineUnderflow"->True}},(True)&}},
+(eqnsForNotBind),"RuntimeOptions"->{"RuntimeErrorHandler"->Function[$Failed],"CatchMachineOverflow"->True,"CatchMachineUnderflow"->True}},(True)&}},
 Function[{aPt,allRes},Print["nkZLB:",{aPt,allRes}];
 If[And[allRes[[1]]===$Failed,allRes[[2]]===$Failed],Throw[$Failed,"noSolutionFound"]];
 If[allRes[[1]]===$Failed,Flatten[allRes[[2]]],

@@ -1,142 +1,45 @@
-Get["JavaGraphics`"]
+(*Limits Mathematica to requested resources*)
+Unprotect[$ProcessorCount];(*$ProcessorCount = 20;*)
+Print["pcount="$ProcessorCount]
+
+hosts=Counts[StringSplit[Environment["SLURM_JOB_NODELIST"],","]]
+local=First[StringSplit[Environment["HOSTNAME"],"."]]
+hosts[local]--
+Needs["SubKernels`RemoteKernels`"]
+
+math = "/opt/mathematica/11.0/Executables/MathKernel" <> 
+   " -wstp -linkmode Connect `4` -linkname `2` -subkernel -noinit >&  \
+/dev/null &";
+
+
+ssh = "source ~/.bashrc;export LD_LIBRARY_PATH=;ssh"
+user="m1gsa00"
+remote = (SubKernels`RemoteKernels`RemoteMachine[#, 
+  ssh <> " " <> user <> "@" <> # <>
+    " \"" <> math <> "\"", 28])&/@
+(Keys[hosts])
+
+
+Print["hosts=",hosts];
+Print[remote // InputForm]
+kerns = LaunchKernels[remote]
+Print["pre eval"]
+ParallelEvaluate[$MachineName]
+Print["post eval"]
+(*Get["JavaGraphics`"]*)
+ParallelEvaluate[SetDirectory["/msu/scratch2/m1gsa00/git/AMASeriesRepresentation/AMASeriesRepresentation"]]
 Get["tests/pathSetup.mth"]
-
-Get["AMASeriesRepresentation`"];
+ParallelEvaluate[Get["tests/pathSetup.mth"]]
+ParallelEvaluate[Get["AMASeriesRepresentation`"]];
 Get["nkZLB`"];
-(*
-Needs["AMASeriesRepresentation`"];
-Needs["nkZLB`"];
-X0Z0 = AMASeriesRepresentation`genBothX0Z0Funcs[
-   nkZLB`linModnkZLB];
-frFunc = AMASeriesRepresentation`genFRExtFunc[{8, 1, 8}, 
-   nkZLB`linModnkZLB, {X0Z0, 2}, 
-   nkZLB`nkEqnsnkZLB];
-AMASeriesRepresentation`evaluateTriple[frFunc[[1, 2]], 
- Flatten[{99, 0.9, 99, 99, 99, 99, 99, 99,0.01}]]
-
-*)
-(*
-X0Z0 = AMASeriesRepresentation`genBothX0Z0Funcs[
-   nkZLB`linModnkZLB];
-frFunc = AMASeriesRepresentation`genFRExtFunc[{8, 1, 8}, 
-   nkZLB`linModnkZLB, {X0Z0, 2}, 
-   nkZLB`nkEqnsnkZLB];
-smolStuff = {ptErg, tfErg, plyErg, iplyErg, dplyErg} = 
-   AMASeriesRepresentation`smolyakInterpolationPrep[{ 1, 
-     1}, {nkZLB`nkNKCSMean, 
-     nkZLB`nkNKCSSD, 
-     nkZLB`nkNKCSMinZ, 
-     nkZLB`nkNKCSMaxZ, 
-     nkZLB`nkNKCSvv}, 
-    nkZLB`theistnkZLB];
-smolRngErg = 
-  Transpose[{nkZLB`nkNKCSMinZ, 
-    nkZLB`nkNKCSMaxZ}];
-toIg = nkZLB`aGSpecnkZLB[[1]];
-sgSpecErg = {toIg, smolRngErg, ptErg, tfErg, plyErg, iplyErg, 
-   1, {1,  1}, {nkZLB`nkNKCSMean, 
-    nkZLB`nkNKCSSD, 
-    nkZLB`nkNKCSMinZ, 
-    nkZLB`nkNKCSMaxZ, 
-    nkZLB`nkNKCSvv}};
-AMASeriesRepresentation`parallelSmolyakGenInterpData[frFunc, \
-sgSpecErg]
-*)
-(*
-X0Z0 = AMASeriesRepresentation`genBothX0Z0Funcs[
-   nkZLB`linModnkZLB];
-frFunc = AMASeriesRepresentation`genFRExtFunc[{8, 1, 8}, 
-   nkZLB`linModnkZLB, {X0Z0, 2}, 
-   nkZLB`nkEqnsnkZLB];
-smolStuff = {ptErg, tfErg, plyErg, iplyErg, dplyErg} = 
-   AMASeriesRepresentation`smolyakInterpolationPrep[{1, 
-     1}, {nkZLB`nkNKCSMean, 
-     nkZLB`nkNKCSSD, 
-     nkZLB`nkNKCSMinZ, 
-     nkZLB`nkNKCSMaxZ, 
-     nkZLB`nkNKCSvv}, 
-    nkZLB`theDistnkZLB];
-smolRngErg = 
-  Transpose[{nkZLB`nkNKCSMinZ, 
-    nkZLB`nkNKCSMaxZ}];
-toIg = nkZLB`aGSpecnkZLB[[1]];
-sgSpecErg = {toIg, smolRngErg, ptErg, tfErg, plyErg, iplyErg, 
-   1, {1, 1}, {nkZLB`nkNKCSMean, 
-    nkZLB`nkNKCSSD, 
-    nkZLB`nkNKCSMinZ, 
-    nkZLB`nkNKCSMaxZ, 
-    nkZLB`nkNKCSvv}};
-theRes = AMASeriesRepresentation`parallelMakeGenericInterpFuncs[
-   frFunc, {}, sgSpecErg, 
-   AMASeriesRepresentation`smolyakInterpolation, {}];
-Through[theRes @@ # &[
-  nkZLB`anXEpsFlatnkZLB]]
-*)
-(*
-X0Z0 = AMASeriesRepresentation`genBothX0Z0Funcs[
-   nkZLB`linModnkZLB];
-frFunc = AMASeriesRepresentation`genFRExtFunc[{8, 1, 8}, 
-   nkZLB`linModnkZLB, {X0Z0, 2}, 
-   nkZLB`nkEqnsnkZLB];
-smolStuff = {ptErg, tfErg, plyErg, iplyErg, dplyErg} = 
-   AMASeriesRepresentation`smolyakInterpolationPrep[{1, 
-     1}, {nkZLB`nkNKCSMean, 
-     nkZLB`nkNKCSSD, 
-     nkZLB`nkNKCSMinZ, 
-     nkZLB`nkNKCSMaxZ, 
-     nkZLB`nkNKCSvv}, 
-    nkZLB`theDistnkZLB];
-smolRngErg = 
-  Transpose[{nkZLB`nkNKCSMinZ, 
-    nkZLB`nkNKCSMaxZ}];
-toIg = nkZLB`aGSpecnkZLB[[1]];
-sgSpecErg = {toIg, smolRngErg, ptErg, tfErg, plyErg, iplyErg, 
-   1, {1,  1}, {nkZLB`nkNKCSMean, 
-    nkZLB`nkNKCSSD, 
-    nkZLB`nkNKCSMinZ, 
-    nkZLB`nkNKCSMaxZ, 
-    nkZLB`nkNKCSvv}};
-theRes = AMASeriesRepresentation`parallelDoGenericIterREInterp[
-   AMASeriesRepresentation`genFRExtFunc, 
-   nkZLB`linModnkZLB, {X0Z0, 2}, 
-   nkZLB`nkEqnsnkZLB, sgSpecErg, 
-   AMASeriesRepresentation`smolyakInterpolation, {},
-"xVarRanges"->{{0,1.2},{.9,1.3},{0.01,4},{-4,4},{0.01,5.5},{0.8,1.1},{0.8,1.1},{0.2,1.3}}];
-Through[theRes @@ # &[
-  nkZLB`anXEpsFlatnkZLB]]
-*)
-(*
-theRanges={{0.0026883, 1.07901}, {0.765095, 1.24209}, {0.89756, 3.08088}, 
-    {0.790657, 1.32995}, {0.80013, 1.59132}, {0.754716, 1.23652}, 
-    {0.8, 1.27983}, {0.0036563, 1.12448}};
-theRanges={{0.00006883, 10.07901}, {0.00000001, 100.}, {0.0000000001, 50.08088}, 
-    {0.00000000001,131.32995}, {0.00000000013, 111.59132}, {0.00000016, 188.23652},{0.0000000008, 122.27983}, {0.00000003, 121.12448}};
-*)
-
-
-
-(*
-seems to converge for unconstrained but slow?
-*)
+ParallelEvaluate[Get["nkZLB`"]];
+Needs["AMASeriesRepresentation`"]
+ParallelNeeds["AMASeriesRepresentation`"]
 theRanges=Flatten[nkZLB`Private`ssSolnVecRE];
 
-
-
-
-
-
-(*
-theRanges={{0.0026883, 1.07901}, {0.765095, 1.24209}, {0.89756, 3.08088}, 
-    {0.790657, 1.32995}, {0.80013, 1.59132}, {0.754716, 1.23652}, 
-    {0.8, 1.27983}, {0.0036563, 1.12448}};
-*)
-(*
-{{0.0000026883, 3.07901}, {0.765095, 1.24209}, {0.09756, 5.08088},     {0.790657, 4.32995}, {0.80013, 4.59132}, {0.754716, 4.23652},     {0.8, 1.27983}, {0.0000036563, 5.12448}};
-*)
-(**)
 X0Z0 = AMASeriesRepresentation`genBothX0Z0Funcs[
    nkZLB`linModnkZLB];
-approx=1*{1,1};theK=10;theIter=10
+approx=1*{1,1};theK=20;theIter=50
 Print["{approx,theK,theIter}=",{approx,theK,theIter}];
 smolStuff = {ptErg, tfErg, plyErg, iplyErg, dplyErg} = 
    AMASeriesRepresentation`smolyakInterpolationPrep[approx, {nkZLB`nkNKCSMean, 
@@ -155,12 +58,17 @@ sgSpecErg = {toIg, smolRngErg, ptErg, tfErg, plyErg, iplyErg,
     nkZLB`nkNKCSMinZ, 
     nkZLB`nkNKCSMaxZ, 
     nkZLB`nkNKCSvv}};
+wTime=AbsoluteTiming[
 theRes01 = AMASeriesRepresentation`parallelNestGenericIterREInterp[
    AMASeriesRepresentation`genFRExtFunc, 
    nkZLB`linModnkZLB, {X0Z0, theK}, 
    nkZLB`nkEqnsnkZLBNot, sgSpecErg, 
    AMASeriesRepresentation`smolyakInterpolation, {}, theIter,
-"xVarRanges"->theRanges,"Traditional"->False];
+"xVarRanges"->theRanges,"Traditional"->False]];
+
+Print["wTime=",wTime[[1]]]
+Print["numhosts=",Length[hosts]]
+Print["kernels=",Length[Kernels[]]]
 Through[theRes01[[-1]] @@ # &[
   nkZLB`anXEpsFlatnkZLB]]
 
@@ -172,11 +80,13 @@ lpp3d=ListPointPlot3D[pts,PlotStyle->{PointSize[Large],Red}]
 
 p3d=Plot3D[{1,(theRes01[[-1,1]][99,ee,99,99,99,99,99,99,eps])[[7]]},{ee,minE,maxE},{eps,minEps,maxEps}]
 
-Show[lpp3d,p3d]
+Export["really.pdf",Show[lpp3d,p3d]]
 
 
-(**)
-(**)
+
+
+
+
 approx=2*{1,1};
 smolStuff = {ptErg, tfErg, plyErg, iplyErg, dplyErg} = 
    AMASeriesRepresentation`smolyakInterpolationPrep[approx, {nkZLB`nkNKCSMean, 
@@ -195,22 +105,26 @@ sgSpecErg = {toIg, smolRngErg, ptErg, tfErg, plyErg, iplyErg,
     nkZLB`nkNKCSMinZ, 
     nkZLB`nkNKCSMaxZ, 
     nkZLB`nkNKCSvv}};
+wTime=AbsoluteTiming[
 theRes02 = AMASeriesRepresentation`parallelNestGenericIterREInterp[
    AMASeriesRepresentation`genFRExtFunc, 
    nkZLB`linModnkZLB, {theRes01[[-1]], theK}, 
    nkZLB`nkEqnsnkZLBNot, sgSpecErg, 
    AMASeriesRepresentation`smolyakInterpolation, {}, theIter,
-"xVarRanges"->theRanges,"Traditional"->False];
+"xVarRanges"->theRanges,"Traditional"->False]];
 Through[theRes02[[-1]] @@ # &[
   nkZLB`anXEpsFlatnkZLB]]
 
+Print["wTime=",wTime[[1]]]
+Print["numhosts=",Length[hosts]]
+Print["kernels=",Length[Kernels[]]]
 
 pts=Join[#,(theRes02[[-1,1]]@@Flatten[fillIn[{{},{1,3,4,5,6,7,8},#}]])[[7]]] & /@ ptErg;
 
 lpp3d=ListPointPlot3D[pts,PlotStyle->{PointSize[Large],Red}]
 p3d=Plot3D[{1,(theRes02[[-1,1]][99,ee,99,99,99,99,99,99,eps])[[7]]},{ee,minE,maxE},{eps,minEps,maxEps}]
 
-Show[lpp3d,p3d]
+Export["plf02.pdf",Show[lpp3d,p3d]]
 
 approx=2*{1,1};
 smolStuff = {ptErg, tfErg, plyErg, iplyErg, dplyErg} = 
@@ -240,16 +154,20 @@ Through[theRes02OBC[[-1]] @@ # &[
   nkZLB`anXEpsFlatnkZLB]]
 
 
+Print["wTime=",wTime[[1]]]
+Print["numhosts=",Length[hosts]]
+Print["kernels=",Length[Kernels[]]]
+
 pts=Join[#,(theRes02OBC[[-1,1]]@@Flatten[fillIn[{{},{1,3,4,5,6,7,8},#}]])[[7]]] & /@ ptErg;
 
 lpp3d=ListPointPlot3D[pts,PlotStyle->{PointSize[Large],Red}]
 p3d=Plot3D[{1,(theRes02OBC[[-1,1]][99,ee,99,99,99,99,99,99,eps])[[7]]},{ee,minE,maxE},{eps,minEps,maxEps}]
 
-Show[lpp3d,p3d]
+Export["plt02OBC.pdf",Show[lpp3d,p3d]]
 
 (**)
 (**)
-(*
+
 approx=3*{1,1};
 smolStuff = {ptErg, tfErg, plyErg, iplyErg, dplyErg} = 
    AMASeriesRepresentation`smolyakInterpolationPrep[approx, {nkZLB`nkNKCSMean, 
@@ -268,23 +186,29 @@ sgSpecErg = {toIg, smolRngErg, ptErg, tfErg, plyErg, iplyErg,
     nkZLB`nkNKCSMinZ, 
     nkZLB`nkNKCSMaxZ, 
     nkZLB`nkNKCSvv}};
+
+
+wTime=AbsoluteTiming[
 theRes03 = AMASeriesRepresentation`parallelNestGenericIterREInterp[
    AMASeriesRepresentation`genFRExtFunc, 
    nkZLB`linModnkZLB, {theRes02[[-1]], theK}, 
    nkZLB`nkEqnsnkZLBNot, sgSpecErg, 
    AMASeriesRepresentation`smolyakInterpolation, {}, theIter,
-"xVarRanges"->theRanges,"Traditional"->False];
+"xVarRanges"->theRanges,"Traditional"->False]];
 Through[theRes03[[-1]] @@ # &[
   nkZLB`anXEpsFlatnkZLB]]
 
 
 
+Print["wTime=",wTime[[1]]]
+Print["numhosts=",Length[hosts]]
+Print["kernels=",Length[Kernels[]]]
 pts=Join[#,(theRes03[[-1,1]]@@Flatten[fillIn[{{},{1,3,4,5,6,7,8},#}]])[[7]]] & /@ ptErg;
 
 lpp3d=ListPointPlot3D[pts,PlotStyle->{PointSize[Large],Red}]
 p3d=Plot3D[{1,(theRes03[[-1,1]][99,ee,99,99,99,99,99,99,eps])[[7]]},{ee,minE,maxE},{eps,minEps,maxEps}]
 
-Show[lpp3d,p3d]
+Export["plt03.pdf",Show[lpp3d,p3d]]
 
 
 
@@ -306,40 +230,45 @@ sgSpecErg = {toIg, smolRngErg, ptErg, tfErg, plyErg, iplyErg,
     nkZLB`nkNKCSMinZ, 
     nkZLB`nkNKCSMaxZ, 
     nkZLB`nkNKCSvv}};
+wTime=AbsoluteTiming[
 theRes04 = AMASeriesRepresentation`parallelNestGenericIterREInterp[
    AMASeriesRepresentation`genFRExtFunc, 
    nkZLB`linModnkZLB, {theRes03[[-1]], theK}, 
    nkZLB`nkEqnsnkZLBNot, sgSpecErg, 
    AMASeriesRepresentation`smolyakInterpolation, {}, theIter,
-"xVarRanges"->theRanges,"Traditional"->False];
+"xVarRanges"->theRanges,"Traditional"->False]];
 Through[theRes04[[-1]] @@ # &[
   nkZLB`anXEpsFlatnkZLB]]
 
 
 (*R*)
+Print["wTime=",wTime[[1]]]
+Print["numhosts=",Length[hosts]]
+Print["kernels=",Length[Kernels[]]]
+
 pts=Join[#,(theRes04[[-1,1]]@@Flatten[fillIn[{{},{1,3,4,5,6,7,8},#}]])[[7]]] & /@ ptErg;
 lpp3d=ListPointPlot3D[pts,PlotStyle->{PointSize[Large],Red},AxesLabel->{Framed["\[Eta](t-1)",FrameStyle->None,FrameMargins->{{0,0},{0,80}}],Framed["e(t)",FrameStyle->None,FrameMargins->20],Framed["R(t)",FrameStyle->None,FrameMargins->20]}]
 p3d=Plot3D[{1,(theRes04[[-1,1]][99,ee,99,99,99,99,99,99,eps])[[7]]},{ee,minE,maxE},{eps,minEps,maxEps}]
-Export["RPlot.pdf",Show[lpp3d,p3d]]
+Export["RPlot04.pdf",Show[lpp3d,p3d]]
 
 (*C*)
 pts=Join[#,(theRes04[[-1,1]]@@Flatten[fillIn[{{},{1,3,4,5,6,7,8},#}]])[[1]]] & /@ ptErg;
 lpp3d=ListPointPlot3D[pts,PlotStyle->{PointSize[Large],Red},AxesLabel->{Framed["\[Eta](t-1)",FrameStyle->None,FrameMargins->{{0,0},{0,80}}],Framed["e(t)",FrameStyle->None,FrameMargins->20],Framed["C(t)",FrameStyle->None,FrameMargins->20]}]
 p3d=Plot3D[{(theRes04[[-1,1]][99,ee,99,99,99,99,99,99,eps])[[1]]},{ee,minE,maxE},{eps,minEps,maxEps}]
-Export["CPlot.pdf",Show[lpp3d,p3d]]
+Export["CPlot04.pdf",Show[lpp3d,p3d]]
 
 (*Y*)
 pts=Join[#,(theRes04[[-1,1]]@@Flatten[fillIn[{{},{1,3,4,5,6,7,8},#}]])[[8]]] & /@ ptErg;
 lpp3d=ListPointPlot3D[pts,PlotStyle->{PointSize[Large],Red},AxesLabel->{Framed["\[Eta](t-1)",FrameStyle->None,FrameMargins->{{0,0},{0,80}}],Framed["e(t)",FrameStyle->None,FrameMargins->20],Framed["Y(t)",FrameStyle->None,FrameMargins->20]}]
 p3d=Plot3D[{(theRes04[[-1,1]][99,ee,99,99,99,99,99,99,eps])[[8]]},{ee,minE,maxE},{eps,minEps,maxEps}]
-Export["YPlot.pdf",Show[lpp3d,p3d]]
+Export["YPlot04.pdf",Show[lpp3d,p3d]]
 
 
 (*pi*)
 pts=Join[#,(theRes04[[-1,1]]@@Flatten[fillIn[{{},{1,3,4,5,6,7,8},#}]])[[6]]] & /@ ptErg;
 lpp3d=ListPointPlot3D[pts,PlotStyle->{PointSize[Large],Red},AxesLabel->{Framed["\[Eta](t-1)",FrameStyle->None,FrameMargins->{{0,0},{0,80}}],Framed["e(t)",FrameStyle->None,FrameMargins->20],Framed["\[Pi](t)",FrameStyle->None,FrameMargins->{{0,80},{0,0}}]}]
 p3d=Plot3D[{(theRes04[[-1,1]][99,ee,99,99,99,99,99,99,eps])[[6]]},{ee,minE,maxE},{eps,minEps,maxEps}]
-Export["PiPlot.pdf",Show[lpp3d,p3d]]
+Export["PiPlot04.pdf",Show[lpp3d,p3d]]
 
 approx=5*{1,1};
 smolStuff = {ptErg, tfErg, plyErg, iplyErg, dplyErg} = 
@@ -359,12 +288,13 @@ sgSpecErg = {toIg, smolRngErg, ptErg, tfErg, plyErg, iplyErg,
     nkZLB`nkNKCSMinZ, 
     nkZLB`nkNKCSMaxZ, 
     nkZLB`nkNKCSvv}};
+wTime=AbsoluteTiming[
 theRes05 = AMASeriesRepresentation`parallelNestGenericIterREInterp[
    AMASeriesRepresentation`genFRExtFunc, 
    nkZLB`linModnkZLB, {theRes04[[-1]], theK}, 
    nkZLB`nkEqnsnkZLBNot, sgSpecErg, 
    AMASeriesRepresentation`smolyakInterpolation, {},theIter,
-"xVarRanges"->theRanges,"Traditional"->False];
+"xVarRanges"->theRanges,"Traditional"->False]];
 Through[theRes05[[-1]] @@ # &[
   nkZLB`anXEpsFlatnkZLB]]
 
@@ -373,26 +303,26 @@ Through[theRes05[[-1]] @@ # &[
 pts=Join[#,(theRes05[[-1,1]]@@Flatten[fillIn[{{},{1,3,4,5,6,7,8},#}]])[[7]]] & /@ ptErg;
 lpp3d=ListPointPlot3D[pts,PlotStyle->{PointSize[Large],Red},AxesLabel->{Framed["\[Eta](t-1)",FrameStyle->None,FrameMargins->{{0,0},{0,80}}],Framed["e(t)",FrameStyle->None,FrameMargins->20],Framed["R(t)",FrameStyle->None,FrameMargins->20]}]
 p3d=Plot3D[{1,(theRes05[[-1,1]][99,ee,99,99,99,99,99,99,eps])[[7]]},{ee,minE,maxE},{eps,minEps,maxEps}]
-Export["RPlot.pdf",Show[lpp3d,p3d]]
+Export["RPlot05.pdf",Show[lpp3d,p3d]]
 
 (*C*)
 pts=Join[#,(theRes05[[-1,1]]@@Flatten[fillIn[{{},{1,3,4,5,6,7,8},#}]])[[1]]] & /@ ptErg;
 lpp3d=ListPointPlot3D[pts,PlotStyle->{PointSize[Large],Red},AxesLabel->{Framed["\[Eta](t-1)",FrameStyle->None,FrameMargins->{{0,0},{0,80}}],Framed["e(t)",FrameStyle->None,FrameMargins->20],Framed["C(t)",FrameStyle->None,FrameMargins->20]}]
 p3d=Plot3D[{(theRes05[[-1,1]][99,ee,99,99,99,99,99,99,eps])[[1]]},{ee,minE,maxE},{eps,minEps,maxEps}]
-Export["CPlot.pdf",Show[lpp3d,p3d]]
+Export["CPlot05.pdf",Show[lpp3d,p3d]]
 
 (*Y*)
 pts=Join[#,(theRes05[[-1,1]]@@Flatten[fillIn[{{},{1,3,4,5,6,7,8},#}]])[[8]]] & /@ ptErg;
 lpp3d=ListPointPlot3D[pts,PlotStyle->{PointSize[Large],Red},AxesLabel->{Framed["\[Eta](t-1)",FrameStyle->None,FrameMargins->{{0,0},{0,80}}],Framed["e(t)",FrameStyle->None,FrameMargins->20],Framed["Y(t)",FrameStyle->None,FrameMargins->20]}]
 p3d=Plot3D[{(theRes05[[-1,1]][99,ee,99,99,99,99,99,99,eps])[[8]]},{ee,minE,maxE},{eps,minEps,maxEps}]
-Export["YPlot.pdf",Show[lpp3d,p3d]]
+Export["YPlot05.pdf",Show[lpp3d,p3d]]
 
 
 (*pi*)
 pts=Join[#,(theRes05[[-1,1]]@@Flatten[fillIn[{{},{1,3,4,5,6,7,8},#}]])[[6]]] & /@ ptErg;
 lpp3d=ListPointPlot3D[pts,PlotStyle->{PointSize[Large],Red},AxesLabel->{Framed["\[Eta](t-1)",FrameStyle->None,FrameMargins->{{0,0},{0,80}}],Framed["e(t)",FrameStyle->None,FrameMargins->20],Framed["\[Pi](t)",FrameStyle->None,FrameMargins->{{0,80},{0,0}}]}]
 p3d=Plot3D[{(theRes05[[-1,1]][99,ee,99,99,99,99,99,99,eps])[[6]]},{ee,minE,maxE},{eps,minEps,maxEps}]
-Export["PiPlot.pdf",Show[lpp3d,p3d]]
+Export["PiPlot05.pdf",Show[lpp3d,p3d]]
 
 
 approx=5*{1,1};
@@ -413,15 +343,19 @@ sgSpecErg = {toIg, smolRngErg, ptErg, tfErg, plyErg, iplyErg,
     nkZLB`nkNKCSMinZ, 
     nkZLB`nkNKCSMaxZ, 
     nkZLB`nkNKCSvv}};
+wTime=AbsoluteTiming[
 theRes05Bind = AMASeriesRepresentation`parallelNestGenericIterREInterp[
    AMASeriesRepresentation`genFRExtFunc, 
    nkZLB`linModnkZLB, {theRes05[[-1]], theK}, 
    nkZLB`nkEqnsnkZLB, sgSpecErg, 
    AMASeriesRepresentation`smolyakInterpolation, {},theIter,
-"xVarRanges"->theRanges,"Traditional"->False];
+"xVarRanges"->theRanges,"Traditional"->False]];
 Through[theRes05Bind[[-1]] @@ # &[
   nkZLB`anXEpsFlatnkZLB]]
 
+Print["wTime=",wTime[[1]]]
+Print["numhosts=",Length[hosts]]
+Print["kernels=",Length[Kernels[]]]
 
 (*R*)
 pts=Join[#,(theRes05Bind[[-1,1]]@@Flatten[fillIn[{{},{1,3,4,5,6,7,8},#}]])[[7]]] & /@ ptErg;
@@ -448,110 +382,7 @@ lpp3d=ListPointPlot3D[pts,PlotStyle->{PointSize[Large],Red},AxesLabel->{Framed["
 p3d=Plot3D[{(theRes05Bind[[-1,1]][99,ee,99,99,99,99,99,99,eps])[[6]]},{ee,minE,maxE},{eps,minEps,maxEps}]
 Export["PiPlotBind.pdf",Show[lpp3d,p3d]]
 
-*)
-
-(**)
-
-
-Options[checkPt]={"Traditional"->False}
-checkPt[adr_,adrce_,theK_Integer,aPt:{eta_?NumberQ,eps_?NumberQ},
-opts:OptionsPattern[]]:=
-Module[{},
-If[OptionValue["Traditional"],
-xtm1eps=Flatten[fillIn[{{},{1,3,4,5,6,7,8},aPt}]];
-xzt=adr @@ xtm1eps;
-xztp1=(adrce @@ Flatten[xzt])[[Range[8]]];
-tradArg=Flatten[
-Join[Drop[xtm1eps,-1],xzt[[Range[8]]],xztp1[[Range[8]]],{eps}]];
-{nkEqnsnkZLB[[1,1,2]] @@ tradArg,nkEqnsnkZLB[[1,2,2]] @@ tradArg},
-xtm1eps=Flatten[fillIn[{{},{1,3,4,5,6,7,8},aPt}]];
-xzt=adr @@ xtm1eps;
-theZsNow=genZsForFindRoot[linModnkZLB,
-xzt[[Range[8]]],adrce,theK];
-xkzkFunc=genLilXkZkFunc[linModnkZLB,theZsNow];
-xkApply=Flatten[xkzkFunc @@ Join[xtm1eps,Flatten[xzt[[8+Range[8]]]]]];
-{nkEqnsnkZLB[[1,1,2]] @@ xkApply,nkEqnsnkZLB[[1,2,2]] @@ xkApply}]]
-
-Options[showPt]={"Traditional"->False}
-showPt[adr_,adrce_,theK_Integer,aPt:{eta_?NumberQ,eps_?NumberQ},
-opts:OptionsPattern[]]:=
-Module[{},
-If[OptionValue["Traditional"],
-xtm1eps=Flatten[fillIn[{{},{1,3,4,5,6,7,8},aPt}]];
-xzt=adr @@ xtm1eps;
-xztp1=(adrce @@ Flatten[xzt])[[Range[8]]];
-tradArg=Flatten[
-Join[Drop[xtm1eps,-1],xzt[[Range[8]]],xztp1[[Range[8]]],{eps}]];
-{nkEqnsnkZLB[[1,1,2]] @@ tradArg,nkEqnsnkZLB[[1,2,2]] @@ tradArg},
-xtm1eps=Flatten[fillIn[{{},{1,3,4,5,6,7,8},aPt}]];
-xzt=adr @@ xtm1eps;
-theZsNow=genZsForFindRoot[linModnkZLB,
-xzt[[Range[8]]],adrce,theK];
-xkzkFunc=genLilXkZkFunc[linModnkZLB,theZsNow];
-xkApply=Flatten[xkzkFunc @@ Join[xtm1eps,Flatten[xzt[[8+Range[8]]]]]];
-frFunc = AMASeriesRepresentation`genFRExtFunc[{8, 1, 8}, 
-   nkZLB`linModnkZLB, {X0Z0, 2}, 
-   nkZLB`nkEqnsnkZLB];
-xzt1=AMASeriesRepresentation`evaluateTriple[frFunc[[1, 1]],xtm1eps];
-xzt2=AMASeriesRepresentation`evaluateTriple[frFunc[[1, 2]],xtm1eps];
-(*{nkEqnsnkZLB[[1,1,2]] @@ xkApply,nkEqnsnkZLB[[1,2,2]] @@ xkApply}*)
-{xzt1,xzt2}]]
 
 
 
-
-
-(*
-
-checkPt[theRes[[-1,1]],theRes[[-2,2]],10,#,"Traditional"->False]& /@  
-ptErg//Chop
-
-showPt[theRes[[-1,1]],theRes[[-2,2]],10,#,"Traditional"->False]& /@  
-ptErg//Chop
-
-frFunc = AMASeriesRepresentation`genFRExtFunc[{8, 1, 8}, 
-   nkZLB`linModnkZLB, {theRes[[-2,2]], 2}, 
-   nkZLB`nkEqnsnkZLB,
-"xVarRanges"->theRanges];
-AMASeriesRepresentation`evaluateTriple[frFunc[[1, 2]], 
- Flatten[{99,ptErg[[8,1]] 0.9, 99, 99, 99, 99, 99, 99,ptErg[[8,2]]}]]
-
-
-
-gip=showPt[theRes03[[-1,1]],theRes[[-2,2]],theK,#,"Traditional"->False]& /@  
-ptErg//Chop;
-
-ArrayFlatten[{{Transpose[{Range[Length[pts]]}],Transpose[{Flatten[(gip/.$Failed->Table[$ffff,{7}])[[All,1,7]]],Flatten[(gip/.$Failed->Table[$ffff,{7}])[[All,2,7]]]}]}}]
-
-hip=showPt[theRes03[[-1,1]],theRes[[-1,2]],theK,#,"Traditional"->False]& /@  
-ptErg//Chop;
-
-ArrayFlatten[{{Transpose[{Range[Length[pts]]}],Transpose[{Flatten[(hip/.$Failed->Table[$ffff,{7}])[[All,1,7]]],Flatten[(hip/.$Failed->Table[$ffff,{7}])[[All,2,7]]]}]}}]
-
-
-curious={Flatten/@((hip/.$Failed->Table[$ffff,{7}])[[All,1,{1,7}]]),Flatten/@((hip/.$Failed->Table[$ffff,{7}])[[All,2,{1,7}]])}
-
-curious={Flatten/@((hip/.$Failed->Table[$ffff,{7}])[[All,1,{1,7}]]),Flatten/@((hip/.$Failed->Table[$ffff,{7}])[[All,2,{1,7}]])}
-
-MapThread[And[#1[[2]]=!=$ffff,#2[[1]]>=#1[[1]]]&,curious]
-
-frFunc = AMASeriesRepresentation`genFRExtFunc[{8, 1, 8}, 
-   nkZLB`linModnkZLB, {theRes03[[-1]], theK}, 
-   nkZLB`nkEqnsnkZLB];
-nsFunc = AMASeriesRepresentation`genNSExtFunc[{8, 1, 8}, 
-   nkZLB`linModnkZLB, {theRes03[[-1]], theK}, 
-   nkZLB`nkEqnsnkZLB];
-AMASeriesRepresentation`evaluateTriple[frFunc[[1, 2]], 
- Flatten[{99, ptErg[[2,1]], 99, 99, 99, 99, 99, 99,ptErg[[2,2]]}]]
-
-AMASeriesRepresentation`evaluateTriple[nsFunc[[1, 2]], 
- Flatten[{99, ptErg[[2,1]], 99, 99, 99, 99, 99, 99,ptErg[[2,2]]}]]
-
-difficult={4,22,26}
-{2,4,8,12,14,18,19,22,26}  produce R<1
-
-
-*)
-
-
-
+Quit

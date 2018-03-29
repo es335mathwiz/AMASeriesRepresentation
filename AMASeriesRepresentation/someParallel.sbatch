@@ -1,4 +1,4 @@
-#!/bin/bashsome
+#!/bin/bash
 
 #SBATCH --job-name=math-simple
 #SBATCH --output=someParallel-%N.%jsimple.out

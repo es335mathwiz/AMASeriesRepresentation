@@ -23,6 +23,7 @@ aGSpecnkZLB::usage="aGSpec={{1},1,{{4,kLow,kHigh},{3,thLow,thHigh},{3,sigLow,3*s
 nkEqnsNkBackLookingFixCompSlack::usage="nkEqnsNkBackLookingFixCompSlack"
 nkEqnsNkBackLookingExpFixCompSlack::usage="nkEqnsNkBackLookingFixCompSlack"
 nkEqnsnkZLB::usage="model equations"
+nkEqnsnkZLBNot::usage="model equations"
 eqnsEulerCompilednkZLB::usage="eqnsEulerCompilednkZLB"
 
 simulateNkNKCS::usage="simulateNkNKExact[numPers_Integer]"
@@ -65,7 +66,8 @@ piBar->1.005,
 epsi->6.,
 gammaPi->2.,
 rho->.95,
-sigma->.5/100
+sigma->.5/100,
+theBound->1
 } ;
 
 
@@ -93,13 +95,13 @@ phiP*(pi[t]/piBar -1)*pi[t]/piBar -
 ),
 nl2[t]-((pi[t]*pi[t]*YY[t])/CC[t]),
 nl3[t]-(pi[t]*YY[t]/CC[t]),
-YY[t]-(CC[t]+(phiP/2)*(((pi[t]/piBar)-1)^2)(**YY[t]*))
+YY[t]-(CC[t]+(phiP/2)*(((pi[t]/piBar)-1)^2)*YY[t])
 }
 
 nkEqnsNotBinding=Append[nkEqnsCommon,
 RR[t]-((piBar/beta)*((pi[t]/piBar)^gammaPi))]
 
-nkEqnsBinding=Append[nkEqnsCommon,RR[t]-1]
+nkEqnsBinding=Append[nkEqnsCommon,RR[t]-theBound]/.paramSubs
 
 
 
@@ -278,6 +280,34 @@ Compile @@ {
 {CCtp1,_Real},{etatp1,_Real},{nl1tp1,_Real},{nl2tp1,_Real},{nl3tp1,_Real},{pitp1,_Real},{RRtp1,_Real},{YYtp1,_Real},
 {epsVal,_Real}
 },
+(eqnsForBind),"RuntimeOptions"->{"RuntimeErrorHandler"->Function[$Failed],"CatchMachineOverflow"->True,"CatchMachineUnderflow"->True}},(True)&}},
+Function[{aPt,allRes},Print["nkZLB:",{aPt,allRes}];
+If[And[allRes[[1]]===$Failed,allRes[[2]]===$Failed],Throw[$Failed,"noSolutionFound"]];
+If[allRes[[1]]===$Failed,Flatten[allRes[[2]]],
+If[True(*allRes[[1,1,1]]>=allRes[[2,1,1]]*),Flatten[allRes[[1]]],Flatten[allRes[[2]]]]]]
+}
+
+nkEqnsnkZLBNot={
+ { 
+{True&,
+Compile @@ {
+{
+{CCtm1,_Real},{etatm1,_Real},{nl1tm1,_Real},{nl2tm1,_Real},{nl3tm1,_Real},{pitm1,_Real},{RRtm1,_Real},{YYtm1,_Real},
+{CCt,_Real},{etat,_Real},{nl1t,_Real},{nl2t,_Real},{nl3t,_Real},{pit,_Real},{RRt,_Real},{YYt,_Real},
+{CCtp1,_Real},{etatp1,_Real},{nl1tp1,_Real},{nl2tp1,_Real},{nl3tp1,_Real},{pitp1,_Real},{RRtp1,_Real},{YYtp1,_Real},
+{epsVal,_Real}
+},
+(eqnsForNotBind),"RuntimeOptions"->{"RuntimeErrorHandler"->Function[$Failed],"CatchMachineOverflow"->True,"CatchMachineUnderflow"->True}},
+Function[{aPt,aRes},
+If[aRes===$Failed,False,And[aRes[[1,1]]>0,aRes[[7,1]]>=1]]]},
+{(True)&,
+Compile @@ {
+{
+{CCtm1,_Real},{etatm1,_Real},{nl1tm1,_Real},{nl2tm1,_Real},{nl3tm1,_Real},{pitm1,_Real},{RRtm1,_Real},{YYtm1,_Real},
+{CCt,_Real},{etat,_Real},{nl1t,_Real},{nl2t,_Real},{nl3t,_Real},{pit,_Real},{RRt,_Real},{YYt,_Real},
+{CCtp1,_Real},{etatp1,_Real},{nl1tp1,_Real},{nl2tp1,_Real},{nl3tp1,_Real},{pitp1,_Real},{RRtp1,_Real},{YYtp1,_Real},
+{epsVal,_Real}
+},
 (eqnsForNotBind),"RuntimeOptions"->{"RuntimeErrorHandler"->Function[$Failed],"CatchMachineOverflow"->True,"CatchMachineUnderflow"->True}},(True)&}},
 Function[{aPt,allRes},Print["nkZLB:",{aPt,allRes}];
 If[And[allRes[[1]]===$Failed,allRes[[2]]===$Failed],Throw[$Failed,"noSolutionFound"]];
@@ -362,7 +392,7 @@ nkNKCSMinZ=Min/@Transpose[zz];
 nkNKCSMaxZ=Max/@Transpose[zz];
 {ig,theEtas,ig,ig,ig,ig,ig,ig}=Transpose[theRes];
 
-Print["try 3 time SD for eta range"];
+Print["try 4 time SD for eta range"];
 nkNKCSMean=Append[nkNKCSMean,0];
 nkNKCSSD=Append[4*nkNKCSSD,sigVal];
 nkNKCSMinZ=Append[nkNKCSMinZ,-3];

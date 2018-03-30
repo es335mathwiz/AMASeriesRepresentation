@@ -17,6 +17,41 @@
 \section{Introduction and Summary}
 \label{sec:introduction-summary}
 
+\section{nestGenericIterREInterp}
+
+
+
+@d nestGenericIterREInterpUsage
+@{
+nestGenericIterREInterp::usage=
+"place holder for info"
+@}
+
+
+@d nestGenericIterREInterp
+@{
+(*begin code for nestGenericIterREInterp*)
+
+
+
+
+Options[nestGenericIterREInterp]={"xVarRanges"->{},"Traditional"->False}
+nestGenericIterREInterp[genFRExtFunc,@<linMod@>,
+@<XZFuncs@>,@<eqnsFunc@>,@<smolGSpec@>,
+genericInterp:(smolyakInterpolation|svmRegressionLinear|svmRegressionPoly|svmRegressionRBF|svmRegressionSigmoid),svmArgs:{_?NumberQ...},
+numIters_Integer,opts:OptionsPattern[]]:=
+NestList[Function[xx,doGenericIterREInterp[genFRExtFunc,linMod,
+{xx[[2]],numSteps},eqnsFunc,smolGSpec,genericInterp,svmArgs]],{99,XZFuncs[[1]]},numIters]
+
+
+
+
+(*end code for nestGenericIterREInterp*)
+@}
+
+\section{doGenericIterREInterp}
+
+
 \section{Smolyak Code}
 \label{sec:smolyak-code}
 This code implements anisotropic smolyak as described in \cite{Judd2014}.
@@ -106,14 +141,13 @@ triples:{{{_Function,(_Function|_CompiledFunction|_Symbol),
 _Function}..},selectorFunc_Function},@<smolGSpec@>]:=
 Module[{},
 With[{filledPts=Map[Function[xx,fillIn[{{},smolToIgnore,xx}]],N[smolPts]]},
-With[{theVals=Table[evaluateTriple[aTriple,Flatten[aPt]],
-{aTriple,triples[[1]]},{aPt,filledPts}]},
+With[{theVals=Table[evaluateTriple[aTriple,Flatten[aPt]],{aPt,filledPts},
+{aTriple,triples[[1]]}]},
 With[{interpData=
 Catch[
-Map[Apply[selectorFunc,#]&,{filledPts,Transpose[theVals]}//Transpose],
-_,Function[{val,tag},Print["catchsmolGenInterp:saving aborting",
+Map[Apply[selectorFunc,#]&,{filledPts,theVals}//Transpose],
+_,Function[{val,tag},Print["catchsmolGenInterp: aborting",
 {val,tag,triples,filledPts}//InputForm];
-Save["theProblem.mth",{triples,smolPts,filledPts}];
 Abort[]]]
 },
 interpData]]]]
@@ -128,14 +162,13 @@ Module[{},
 With[{filledPts=Map[Function[xx,fillIn[{{},smolToIgnore,xx}]],N[smolPts]]},
 With[{theVals=
 ParallelTable[evaluateTriple[aTriple,Flatten[aPt]],
-{aTriple,triples[[1]]},{aPt,filledPts}]},
+{aPt,filledPts},{aTriple,triples[[1]]}]},
 With[{interpData=
 ParallelMap[With[{baddy=#},Catch[
 Apply[selectorFunc,#],
-_,Function[{val,tag},Print["catchsmolGenInterp:saving aborting",
+_,Function[{val,tag},Print["catchsmolGenInterp: aborting",
 {val,tag,baddy,triples,filledPts}//InputForm];
-Save["theProblem"<>ToString[$KernelID]<>".mth",{triples,smolPts,filledPts}];
-Abort[]]]]&,{filledPts,Transpose[theVals]}//Transpose]},
+Abort[]]]]&,{filledPts,theVals}//Transpose]},
 interpData]]]]
 
 
@@ -1052,9 +1085,12 @@ Map["doSmolyakIterREInterp"->#&,
 
 @d doGenericIterREInterpUsage
 @{
-parallelDoGenericIterREInterp::usage=
-"place holder for info";
 doGenericIterREInterp::usage=
+"place holder for info";
+@}
+@d parallelDoGenericIterREInterpUsage
+@{
+parallelDoGenericIterREInterp::usage=
 "place holder for info";
 @}
 
@@ -1079,6 +1115,23 @@ With[{theFuncs=
 makeGenericInterpFuncs[reapRes[[1]],{},smolGSpec,
 genericInterp,svmArgs]},
 theFuncs]]
+
+
+AMASeriesRepCallGraph=
+Join[AMASeriesRepCallGraph,
+Map["doSmolyakIterREInterp"->#&,
+{"makeSmolyakInterpFuncs","genFPFunc","getNumX",
+"getNumEps","getNumZ","genXZREInterpFunc"}]];
+
+
+
+(*end code for doSmolyakIterREInterp*)
+@}
+
+@d parallelDoGenericIterREInterp
+@{
+(*begin code for doSmolyakIterREInterp*)
+
 
 
 Options[parallelDoGenericIterREInterp]={"xVarRanges"->{},"Traditional"->False}
@@ -1226,29 +1279,20 @@ Join[AMASeriesRepCallGraph,Map["nestIterREInterp"->#&,{"doSmolyakIterREInterp"}]
 
 
 
-@d nestGenericIterREInterpUsage
+\section{parallelNestGenericIterREInterp}
+
+
+@d parallelNestGenericIterREInterpUsage
 @{
 parallelNestGenericIterREInterp::usage=
 "place holder for info";
-nestGenericIterREInterp::usage=
-"place holder for info"
 @}
 
 
-@d nestGenericIterREInterp
+@d parallelNestGenericIterREInterp
 @{
 (*begin code for nestGenericIterREInterp*)
 
-
-
-
-Options[nestGenericIterREInterp]={"xVarRanges"->{},"Traditional"->False}
-nestGenericIterREInterp[genFRExtFunc,@<linMod@>,
-@<XZFuncs@>,@<eqnsFunc@>,@<smolGSpec@>,
-genericInterp:(smolyakInterpolation|svmRegressionLinear|svmRegressionPoly|svmRegressionRBF|svmRegressionSigmoid),svmArgs:{_?NumberQ...},
-numIters_Integer,opts:OptionsPattern[]]:=
-NestList[Function[xx,doGenericIterREInterp[genFRExtFunc,linMod,
-{xx[[2]],numSteps},eqnsFunc,smolGSpec,genericInterp,svmArgs]],{99,XZFuncs[[1]]},numIters]
 
 
 
@@ -1400,8 +1444,8 @@ _Function}..},selectorFunc_Function},@<gSpec@>]:=
 With[{thePts=gridPts[gSpec]},
 With[{filledPts=Map[
 Function[xx,fillIn[{{},toIgnore,xx}]],thePts]},
-With[{theVals=Table[evaluateTriple[aTriple,Flatten[aPt]],
-{aTriple,triples[[1]]},{aPt,filledPts}]},
+With[{theVals=Table[evaluateTriple[aTriple,Flatten[aPt]],{aPt,filledPts},
+{aTriple,triples[[1]]}]},
 With[{interpData={thePts,theVals}},
 MapThread[{#1,#2}&,{interpData[[1]],interpData[[2,1]]}]]]]]
 
@@ -2237,6 +2281,8 @@ PerfectForesight::usage="degenerate distribution implementing perfect foresight"
 @<getNumInterpVarsUsage@>
 @<writeExpKernUsage@>
 @<doGenericIterREInterpUsage@>
+@<parallelDoGenericIterREInterpUsage@>
+@<parallelNestGenericIterREInterpUsage@>
 @<nestGenericIterREInterpUsage@>
 @}
 
@@ -2247,7 +2293,9 @@ PerfectForesight::usage="degenerate distribution implementing perfect foresight"
 @{
 @<truncErrorMat@>
 @<nestGenericIterREInterp@>
+@<parallelNestGenericIterREInterp@>
 @<doGenericIterREInterp@>
+@<parallelDoGenericIterREInterp@>
 @<ExpKernCode@>
 @<writeExpKern@>
 @<makeGenericInterpFuncs@>
@@ -3007,7 +3055,9 @@ makePatternArgs[xArgs]]@}
 @{xArgsInit=If[varRanges==={},
 MapThread[Function[{xx,yy},{xx,yy}],
 {xArgs,theXInit[[Range[numX]]]}],
-MapThread[{#1,#2,#3[[1]],#3[[2]]}&,{xArgs,theXInit[[Range[numX]]],varRanges}]]@}
+If[VectorQ[varRanges],
+MapThread[{#1,#2}&,{xArgs(*,theXInit[[Range[numX]]]*),varRanges}],
+MapThread[{#1,#2,#3[[1]],#3[[2]]}&,{xArgs,theXInit[[Range[numX]]],varRanges}]]]@}
 
 
 
@@ -3068,7 +3118,8 @@ funcOfXtm1Eps
 (**)
 With[{frRes=FindRoot[
 funcOfXtZt[Apply[Sequence,Join[xLagArgs,eArgs,xArgs]]],
-Join[xArgsInit]]},
+Join[xArgsInit]]},If[Not[FreeQ[frRes,FindRoot]],
+Throw[$Failed,"genFRExtFunc:FindRoot"]];
 Transpose[{Flatten[Join[xArgs,zArgs*0]]/.frRes}]]]@}
 
 
@@ -3107,7 +3158,8 @@ funcOfXtm1Eps
 (**)
 With[{frRes=FindRoot[
 funcOfXtZt[Apply[Sequence,Join[xLagArgs,eArgs,xArgs,zArgs]]],
-Join[xArgsInit,zArgsInit]]},
+Join[xArgsInit,zArgsInit]]},If[Not[FreeQ[frRes,FindRoot]],
+Throw[$Failed,"genFRExtFunc:FindRoot"]];
 Transpose[{Flatten[Join[xArgs,zArgs]]/.frRes}]]]@}
 
 
@@ -3557,6 +3609,25 @@ Flatten[Join[xArgs,zArgs]]/.frRes]];
 DistributeDefinitions[funcOfXtZt,funcOfXtm1Eps]
 funcOfXtm1Eps
 ]]]]
+
+
+
+
+Options[genNSExtFunc]={"xVarRanges"->{},"Traditional"->False} 
+genNSExtFunc[{numX_Integer,numEps_Integer,numZ_Integer},@<linMod@>,@<bothXZFuncs@>,
+triples:{{{_Function,(_Function|_CompiledFunction|_Symbol),_Function}..},
+selectorFunc_Function},
+opts:OptionsPattern[]]:=
+Module[{varRanges=OptionValue["xVarRanges"]},
+With[{funcTrips=
+Map[{#[[1]],genNSExtFunc[{numX,numEps,numZ},linMod,bothXZFuncs,#[[2]],
+Apply[Sequence,
+FilterRules[{opts},Options[genFRExtFunc]]]],#[[3]]}&,triples[[1]]]},
+{funcTrips,selectorFunc}
+]]
+
+
+
 
 (*end code for genNSExtFunc*)
 @}

@@ -2,7 +2,6 @@
 
 BeginPackage["nkZLB`", { "AMASeriesRepresentation`", "ProtectedSymbols`", "AMAModel`", "SymbolicAMA`", "NumericAMA`"}]
 (* Exported symbols added here with SymbolName::usage *)  
-nkEqnsNkCSTrips::usage="nkEqnsNkCSTrips"
 
 anXnkZLB::usage="for test input";
 anEpsnkZLB::usage="for test input";
@@ -94,7 +93,7 @@ phiP*(pi[t]/piBar -1)*pi[t]/piBar -
 ),
 nl2[t]-((pi[t]*pi[t]*YY[t])/CC[t]),
 nl3[t]-(pi[t]*YY[t]/CC[t]),
-YY[t]-(CC[t]+(phiP/2)*(((pi[t]/piBar)-1)^2)*YY[t])
+YY[t]-(CC[t]+(phiP/2)*(((pi[t]/piBar)-1)^2)(**YY[t]*))
 }
 
 nkEqnsNotBinding=Append[nkEqnsCommon,
@@ -119,7 +118,13 @@ nkEqnsNotBindingSubbed=(((nkEqnsNotBinding/.ssEqnSubs)/.paramSubs)/.eps[eta][t]-
 
 
 
+nkEqnsBindingSubbed=(((nkEqnsBinding/.ssEqnSubs)/.paramSubs)/.eps[eta][t]->0)
+
+
+
 theVars=Cases[Variables[forFR=(nkEqnsNotBindingSubbed/.ssEqnSubs)],_Symbol]
+
+forFRBind=(nkEqnsBindingSubbed/.ssEqnSubs)
 
 (*
 {CC, eta, nl1, nl2, nl3, pi, RR, YY}
@@ -135,9 +140,20 @@ frArg=MapThread[Prepend[#1,#2]&,
 ssFRSolnSubs=Chop[FindRoot[forFR,frArg,MaxIterations->1000]];
 *)
 ssFRSolnSubs=Flatten[Chop[NSolve[forFR,theVars(*,MaxIterations->1000*)]]];
+ssFRBindSolnSubs=Flatten[Chop[NSolve[forFRBind,theVars(*,MaxIterations->1000*)]]];
 
-
-
+(*
+{nkZLB`Private`CC -> 0.8333333333333334, nkZLB`Private`eta -> 1., 
+ nkZLB`Private`nl1 -> 1.1940298507462686, nkZLB`Private`nl2 -> 1.010025, 
+ nkZLB`Private`nl3 -> 1.005, nkZLB`Private`pi -> 1.005, 
+ nkZLB`Private`RR -> 1.0151515151515151, 
+ nkZLB`Private`YY -> 0.8333333333333334}
+*)
+{nkZLB`Private`CC -> 0.9333333333333334, nkZLB`Private`eta -> 1., 
+ nkZLB`Private`nl1 -> 1.1940298507462686, nkZLB`Private`nl2 -> 1.010025, 
+ nkZLB`Private`nl3 -> 1.005, nkZLB`Private`pi -> 1.005, 
+ nkZLB`Private`RR -> 1.0151515151515151, 
+ nkZLB`Private`YY -> 0.8333333333333334}
 
 
 
@@ -262,10 +278,11 @@ Compile @@ {
 {CCtp1,_Real},{etatp1,_Real},{nl1tp1,_Real},{nl2tp1,_Real},{nl3tp1,_Real},{pitp1,_Real},{RRtp1,_Real},{YYtp1,_Real},
 {epsVal,_Real}
 },
-(eqnsForBind),"RuntimeOptions"->{"RuntimeErrorHandler"->Function[$Failed],"CatchMachineOverflow"->True,"CatchMachineUnderflow"->True}},(True)&}},
-Function[{aPt,allRes},
+(eqnsForNotBind),"RuntimeOptions"->{"RuntimeErrorHandler"->Function[$Failed],"CatchMachineOverflow"->True,"CatchMachineUnderflow"->True}},(True)&}},
+Function[{aPt,allRes},Print["nkZLB:",{aPt,allRes}];
 If[And[allRes[[1]]===$Failed,allRes[[2]]===$Failed],Throw[$Failed,"noSolutionFound"]];
-If[allRes[[1]]===$Failed,Flatten[allRes[[2]]],Flatten[allRes[[1]]]]]
+If[allRes[[1]]===$Failed,Flatten[allRes[[2]]],
+If[True(*allRes[[1,1,1]]>=allRes[[2,1,1]]*),Flatten[allRes[[1]]],Flatten[allRes[[2]]]]]]
 }
 
 
@@ -345,8 +362,9 @@ nkNKCSMinZ=Min/@Transpose[zz];
 nkNKCSMaxZ=Max/@Transpose[zz];
 {ig,theEtas,ig,ig,ig,ig,ig,ig}=Transpose[theRes];
 
+Print["try 3 time SD for eta range"];
 nkNKCSMean=Append[nkNKCSMean,0];
-nkNKCSSD=Append[nkNKCSSD,sigVal];
+nkNKCSSD=Append[4*nkNKCSSD,sigVal];
 nkNKCSMinZ=Append[nkNKCSMinZ,-3];
 nkNKCSMaxZ=Append[nkNKCSMaxZ,3];
 nkNKCSvv=ArrayFlatten[{{ArrayFlatten[{{vv,{{0}}}}]},{{{0,1}}}}];

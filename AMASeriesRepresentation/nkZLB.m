@@ -392,9 +392,9 @@ nkNKCSMinZ=Min/@Transpose[zz];
 nkNKCSMaxZ=Max/@Transpose[zz];
 {ig,theEtas,ig,ig,ig,ig,ig,ig}=Transpose[theRes];
 
-Print["try 4 time SD for eta range"];
+Print["try 10 time SD for eta range"];
 nkNKCSMean=Append[nkNKCSMean,0];
-nkNKCSSD=Append[4*nkNKCSSD,sigVal];
+nkNKCSSD=Append[10*nkNKCSSD,sigVal];
 nkNKCSMinZ=Append[nkNKCSMinZ,-3];
 nkNKCSMaxZ=Append[nkNKCSMaxZ,3];
 nkNKCSvv=ArrayFlatten[{{ArrayFlatten[{{vv,{{0}}}}]},{{{0,1}}}}];

@@ -199,7 +199,7 @@ genericInterp:(smolyakInterpolation|svmRegressionLinear|svmRegressionPoly|svmReg
 With[{numX=Length[BB],numZ=Length[psiZ[[1]]]},
 tn=AbsoluteTime[];
 If[Length[Kernels[]]===0,LaunchKernels[]];reapRes=Reap[
-genFRExtFunc[{numX,numEps,numZ},linMod,XZFuncs,triples,Apply[Sequence,FilterRules[{opts},Options[genFRExtFunc]]]],"theFuncs"];Apply[DistributeDefinitions,Flatten[reapRes[[2]]]];
+genFRExtFunc[{numX,numEps,numZ},linMod,XZFuncs,triples,Apply[Sequence,FilterRules[{opts},Options[genFRExtFunc]]]],"theFuncs"];Print["timing distributedefinitionsin parallelDoGenericIter:",AbsoluteTiming[Apply[DistributeDefinitions,Flatten[reapRes[[2]]]]]];
 With[{theFuncs=
 parallelMakeGenericInterpFuncs[reapRes[[1]],backLookingInfo,smolGSpec,
 genericInterp,svmArgs]},
@@ -2187,28 +2187,15 @@ EndPackage[]
 PerfectForesight::usage="degenerate distribution implementing perfect foresight"
 @<truncErrorMatUsage@>
 @<makeGenericInterpFuncsUsage@>
-@<svmRegressionSigmoidUsage@>
-@<svmRegressionRBFUsage@>
 @<cnstrctFUsage@>
 @<xNowUsage@>
 @<theExpValsUsage@>
-@<makeRBFKernelUsage@>
-@<makePolynomialKernelUsage@>
-@<makeSymbolicKernelUsage@>
-@<dotProdKernelUsage@>
-@<cnstrctExpKernUsage@>
-@<svmRegressionLinearUsage@>
-@<svmRegressionPolyUsage@>
 @<getterSetterTestsUsage@>
 @<callGraphUsage@>
 @<smolyakInterpolationUsage@>
 @<smolyakInterpolationPrepUsage@>
 @<genLilXkZkFuncUsage@>
 @<gettersSettersUsage@>
-@<worstPathForErrDRREIntegrateUsage@>
-@<evalBadEulerErrDRREIntegrateUsage@>
-@<evalBadPathErrDRREIntegrateUsage@>
-@<evalPathErrDRREIntegrateUsage@>
 @<doFuncArgUsage@>
 @<pathErrsDRPFUsage@>
 @<pathErrsDRREIntegrateUsage@>
@@ -2221,9 +2208,29 @@ PerfectForesight::usage="degenerate distribution implementing perfect foresight"
 @<genXZFuncREUsage@>
 @<genIntVarsUsage@>
 @}
+
+
 @d dispose
 @{
+@<svmRegressionSigmoidUsage@>
+@<svmRegressionRBFUsage@>
+@<makeRBFKernelUsage@>
+@<makePolynomialKernelUsage@>
+@<makeSymbolicKernelUsage@>
+@<dotProdKernelUsage@>
+@<cnstrctExpKernUsage@>
+@<svmRegressionLinearUsage@>
+@<svmRegressionPolyUsage@>
 
+
+@<worstPathForErrDRREIntegrate@>
+@<evalBadPathErrDRREIntegrate@>
+@<evalPathErrDRREIntegrate@>
+
+@<worstPathForErrDRREIntegrateUsage@>
+@<evalBadEulerErrDRREIntegrateUsage@>
+@<evalBadPathErrDRREIntegrateUsage@>
+@<evalPathErrDRREIntegrateUsage@>
 
 @}
 
@@ -2319,9 +2326,6 @@ PerfectForesight::usage="degenerate distribution implementing perfect foresight"
 @<gettersSetters@>
 @<getNumIgnored@>
 @<getNumInterpVars@>
-@<worstPathForErrDRREIntegrate@>
-@<evalBadPathErrDRREIntegrate@>
-@<evalPathErrDRREIntegrate@>
 @<doFuncArg@>
 @<genPath@>
 @<pathErrsDRPF@>

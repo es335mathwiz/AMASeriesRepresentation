@@ -451,6 +451,56 @@ defaultSelectorFunc::usage="defaultSelectorFunc"
 @}
 
 
+@d smolyakGenInterpData
+@{
+(*begin code for smolyakGenInterpData*)
+
+
+checkEval[aVecFunc_]:=
+Catch[Function[xx,(Print["checkEval:",xx];Apply[aVecFunc,xx])],{$Failed,xx}]
+ 
+
+
+ 
+smolyakGenInterpData[
+aVecFunc:(_Function|_CompiledFunction|_Symbol),@<smolGSpec@>]:=
+Module[{},Print["smolyakGenInterpData"];
+With[{filledPts=Map[
+Function[xx,fillIn[{{},smolToIgnore,xx}]],N[smolPts]]},
+With[{theVals=Map[checkEval[aVecFunc],filledPts]},
+With[{interpData=Map[Flatten,theVals]},
+interpData]]]]
+ 
+@}
+
+\subsection{fillIn}
+\label{sec:fillin}
+
+
+
+@d fillInUsage
+@{fillIn::usage=
+"place holder for fillIn"
+@}
+
+@d fillIn
+@{
+(*begin code for fillIn*)
+
+fillIn[args___]:=Print["wrong args for fillIn",{args}];
+fillIn[{theRes:{_?NumberQ...},toIgnore:{_Integer...},shortVec:{_?NumberQ...}}]:=
+Module[{},
+If[toIgnore=={}==shortVec,theRes,
+If[MemberQ[toIgnore,
+Length[theRes]+1],fillIn[{Append[theRes,1],Drop[toIgnore,1],shortVec}],
+fillIn[{Append[theRes,shortVec[[1]]],toIgnore,Drop[shortVec,1]}]]]]/;OrderedQ[toIgnore]
+
+
+(*end code for fillIn*)
+@}
+
+
+
 \subsection{smolyakInterpolationPrep}
 \label{sec:smoly}
 
@@ -782,6 +832,20 @@ theHMat
 
 \label{sec:argum-spec}
 
+
+@d smolGSpec
+@{smolGSpec:{smolToIgnore:{_Integer...},
+smolRngs:{{_?NumberQ,_?NumberQ}..},
+smolPts_?MatrixQ,
+smolMat_?MatrixQ,
+smolPolys_?VectorQ,
+smolIntPolys_?VectorQ,
+numEps_Integer,
+approxLevels_?listOfIntegersQ,ergodic:{}|
+{means_?VectorQ,stds_?VectorQ,minZs_?VectorQ,maxZs_?VectorQ,vv_?MatrixQ}}@}
+
+
+
 @d distribSpec
 @{distribSpec:{expctSpec:{{_Symbol,_}..}}@}
 
@@ -849,6 +913,7 @@ psiC
 @<genIntVarsUsage@>
 @<getNumEpsVarsUsage@>
 @<getDistribsUsage@>
+@<fillInUsage@>
 @}
 
 \subsection{Package Code}
@@ -875,6 +940,8 @@ psiC
 @<genIntVars@>
 @<getNumEpsVars@>
 @<getDistribs@>
+@<smolyakGenInterpData@>
+@<fillIn@>
 @}
 
 \subsection{m-File Definition}

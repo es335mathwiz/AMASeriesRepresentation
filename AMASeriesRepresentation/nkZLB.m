@@ -258,6 +258,7 @@ eqnsForBind=((nkEqnsBinding/.nkZLB`Private`paramSubs)/.argsSubs)
 
 eqnsForNotBind=((nkZLB`Private`nkEqnsNotBinding/.nkZLB`Private`paramSubs)/.argsSubs)
 
+dollarFailed=$Failed
 
   nkEqnsnkZLB={
  { 
@@ -269,9 +270,9 @@ Compile @@ {
 {CCtp1,_Real},{etatp1,_Real},{nl1tp1,_Real},{nl2tp1,_Real},{nl3tp1,_Real},{pitp1,_Real},{RRtp1,_Real},{YYtp1,_Real},
 {epsVal,_Real}
 },
-(eqnsForNotBind),"RuntimeOptions"->{"RuntimeErrorHandler"->Function[$Failed],"CatchMachineOverflow"->True,"CatchMachineUnderflow"->True}},
+(eqnsForNotBind),"RuntimeOptions"->{"RuntimeErrorHandler"->Function[dollarFailed],"CatchMachineOverflow"->True,"CatchMachineUnderflow"->True}},
 Function[{aPt,aRes},
-If[aRes===$Failed,False,And[aRes[[1,1]]>0,aRes[[7,1]]>=1]]]},
+If[aRes===Failed,False,And[aRes[[1,1]]>0,aRes[[7,1]]>=1,Not[And[aRes[[2,1]]<1.0,aRes[[7,1]]>=1.1]]]]]},
 {(True)&,
 Compile @@ {
 {
@@ -280,10 +281,10 @@ Compile @@ {
 {CCtp1,_Real},{etatp1,_Real},{nl1tp1,_Real},{nl2tp1,_Real},{nl3tp1,_Real},{pitp1,_Real},{RRtp1,_Real},{YYtp1,_Real},
 {epsVal,_Real}
 },
-(eqnsForBind),"RuntimeOptions"->{"RuntimeErrorHandler"->Function[$Failed],"CatchMachineOverflow"->True,"CatchMachineUnderflow"->True}},(True)&}},
+(eqnsForBind),"RuntimeOptions"->{"RuntimeErrorHandler"->Function[dollarFailed],"CatchMachineOverflow"->True,"CatchMachineUnderflow"->True}},(True)&}},
 Function[{aPt,allRes},Print["nkZLB:",{aPt,allRes}];
-If[And[allRes[[1]]===$Failed,allRes[[2]]===$Failed],Throw[$Failed,"noSolutionFound"]];
-If[allRes[[1]]===$Failed,Flatten[allRes[[2]]],
+If[And[allRes[[1]]===dollarFailed,allRes[[2]]===dollarFailed],Throw[dollarFailed,"noSolutionFound"]];
+If[allRes[[1]]===dollarFailed,Flatten[allRes[[2]]],
 If[True(*allRes[[1,1,1]]>=allRes[[2,1,1]]*),Flatten[allRes[[1]]],Flatten[allRes[[2]]]]]]
 }
 
@@ -297,9 +298,9 @@ Compile @@ {
 {CCtp1,_Real},{etatp1,_Real},{nl1tp1,_Real},{nl2tp1,_Real},{nl3tp1,_Real},{pitp1,_Real},{RRtp1,_Real},{YYtp1,_Real},
 {epsVal,_Real}
 },
-(eqnsForNotBind),"RuntimeOptions"->{"RuntimeErrorHandler"->Function[$Failed],"CatchMachineOverflow"->True,"CatchMachineUnderflow"->True}},
+(eqnsForNotBind),"RuntimeOptions"->{"RuntimeErrorHandler"->Function[dollarFailed],"CatchMachineOverflow"->True,"CatchMachineUnderflow"->True}},
 Function[{aPt,aRes},
-If[aRes===$Failed,False,And[aRes[[1,1]]>0,aRes[[7,1]]>=1]]]},
+If[aRes===dollarFailed,False,And[aRes[[1,1]]>0,aRes[[7,1]]>=1]]]},
 {(True)&,
 Compile @@ {
 {
@@ -308,10 +309,10 @@ Compile @@ {
 {CCtp1,_Real},{etatp1,_Real},{nl1tp1,_Real},{nl2tp1,_Real},{nl3tp1,_Real},{pitp1,_Real},{RRtp1,_Real},{YYtp1,_Real},
 {epsVal,_Real}
 },
-(eqnsForNotBind),"RuntimeOptions"->{"RuntimeErrorHandler"->Function[$Failed],"CatchMachineOverflow"->True,"CatchMachineUnderflow"->True}},(True)&}},
+(eqnsForNotBind),"RuntimeOptions"->{"RuntimeErrorHandler"->Function[dollarFailed],"CatchMachineOverflow"->True,"CatchMachineUnderflow"->True}},(True)&}},
 Function[{aPt,allRes},Print["nkZLB:",{aPt,allRes}];
-If[And[allRes[[1]]===$Failed,allRes[[2]]===$Failed],Throw[$Failed,"noSolutionFound"]];
-If[allRes[[1]]===$Failed,Flatten[allRes[[2]]],
+If[And[allRes[[1]]===dollarFailed,allRes[[2]]===dollarFailed],Throw[dollarFailed,"noSolutionFound"]];
+If[allRes[[1]]===dollarFailed,Flatten[allRes[[2]]],
 If[True(*allRes[[1,1,1]]>=allRes[[2,1,1]]*),Flatten[allRes[[1]]],Flatten[allRes[[2]]]]]]
 }
 
@@ -379,7 +380,7 @@ If[Norm[val]>lim,Throw[False,"chkBounded"],val]]&,aPt,numPers],
 
 Print["about to simulate fixed seed"];
 SeedRandom[1234]
-theRes=simulateNkNKCS[200];
+theRes=Drop[simulateNkNKCS[2000],200];
 Print["done simulate"];
 justEta=theRes[[All,{2}]];
 nkNKCSMean=Mean[justEta];

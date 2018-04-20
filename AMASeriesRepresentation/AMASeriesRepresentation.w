@@ -434,11 +434,243 @@ With[{eqnAppl=Apply[eqnsFunc,Flatten[xkAppl]],
 xDisc=xArgs-xkAppl[[numX+Range[numX]]]},
 Flatten[Join[xDisc,eqnAppl]]]]]]]@}
 
+\subsection{smolyakGenInterpData}
+\label{sec:geninterpdata}
+
+This code takes a function and a Smolyak ``grid'' specification and 
+generates the data:  application of function at the Smolyak points.
+
+
+
+@d smolyakGenInterpDataUsage
+@{smolyakGenInterpData::usage=
+"place holder for smolyakGenInterpData"
+
+defaultSelectorFunc::usage="defaultSelectorFunc"
+
+@}
+
+
+\subsection{smolyakInterpolationPrep}
+\label{sec:smoly}
+
+Applies techniques for \cite{Judd2014}.
+Takes model specification and prepares inputs for smolyakInterpolation function.
+\begin{description}
+\item[xPts] The smolyak points
+\item[smolMat]The matrix for computing the weights
+\item[smolPolys] The polynomial basis
+\item[intSolPolys] The expected value of each polynomial basis
+\end{description}
+
+@d smolyakInterpolationPrepUsage
+@{smolyakInterpolationPrep::usage="place holder"
+smolPolyDrvs::usage="derivatives of smolyak polynomials"
+backXtoZ::usage="backXtoZ[theXs_?MatrixQ,theMeans_?VectorQ,theSDs_?VectorQ,theV_?MatrixQ]"
+backZtoX::usage="backZtoX[theXs_?MatrixQ,theMeans_?VectorQ,theSDs_?VectorQ,theV_?MatrixQ]"
+@}
+
+@d smolyakInterpolationPrep
+@{
+Options[smolyakInterpolationPrep]={"Derivatives"->False,"ptGenerator"->chebyshevPtGenerator}
+smolyakInterpolationPrep[approxLevels_?listOfIntegersQ,smolRngs_?MatrixQ,
+@<distribSpec@>,opts:OptionsPattern[]]:=
+Module[{smolRes=
+  sparseGridEvalPolysAtPts[approxLevels,OptionValue["ptGenerator"],
+chebyshevPolyGenerator],
+numVars=Length[approxLevels],numEps=Length[distribSpec[[1]]]},
+With[{thePts=smolRes[[1]],smolPolys=smolRes[[2]],smolMat=smolRes[[3]]},
+With[{xPts=Map[Function[xx,xformToXVec[xx,smolRngs]],thePts]},
+With[{numPolys=Length[smolPolys]},
+With[{intPolys=ExpandAll[smolPolyExp[smolPolys,smolRngs,distribSpec]]},
+With[{dintPolys=
+If[OptionValue["Derivatives"]===True,smolPolyDrvs[intPolys,smolRngs,numEps],{}]},
+{xPts,smolMat,ExpandAll[smolPolys],intPolys,dintPolys}]]]]]]/;And[Length[smolRngs]==Length[approxLevels]]
+
+backZtoX[theZs_?MatrixQ,theMeans_?VectorQ,theSDs_?VectorQ,theV_?MatrixQ]:=
+With[{theInv=Inverse[theV]},
+Map[(#+theMeans)&,Map[(#*theSDs)&,Map[# . theInv&,theZs]]]]
+
+backXtoZ[theXs_?MatrixQ,theMeans_?VectorQ,theSDs_?VectorQ,theV_?MatrixQ]:=
+Map[# . theV&,
+Map[(#/theSDs)&,
+Map[(#-theMeans)&,theXs]]]
+
+smolyakInterpolationPrep[approxLevels_?listOfIntegersQ,
+{means_?VectorQ,stds_?VectorQ,minZs_?VectorQ,maxZs_?VectorQ,vv_?MatrixQ},
+@<distribSpec@>,opts:OptionsPattern[]]:=
+Module[{smolRes=
+sparseGridEvalPolysAtPts[approxLevels,OptionValue["ptGenerator"],
+chebyshevPolyGenerator],
+smolRngs=Transpose[{minZs,maxZs}],
+numVars=Length[approxLevels],numEps=Length[distribSpec[[1]]]},
+With[{thePts=smolRes[[1]],smolPolys=smolRes[[2]],smolMat=smolRes[[3]]},
+With[{zPts=Map[Function[xx,xformToXVec[xx,smolRngs]],thePts]},
+With[{xPts=backZtoX[zPts,means,stds,vv]},
+With[{numPolys=Length[smolPolys]},
+With[{intPolys=ExpandAll[smolPolyExp[smolPolys,smolRngs,distribSpec]]},
+With[{dintPolys=
+If[OptionValue["Derivatives"]===True,
+smolPolyDrvs[intPolys,smolRngs,numEps],{}]},
+With[{oldSmolPolys=smolPolys/.xx->oldX,
+oldIntPolys=intPolys/.xx->oldX,
+oldDPolys=dPolys/.xx->oldX,
+allXs=Table[xx[ii],{ii,Length[means]}],
+allOldXs=Table[oldX[ii],{ii,Length[means]}]},
+With[{theSubs=Thread[allOldXs->Flatten[backXtoZ[{allXs},means,stds,vv]]]},
+{xPts,smolMat,
+ExpandAll[smolPolys],
+intPolys,
+dintPolys}]]]]]]]]]/;And[Length[means]==Length[approxLevels]]
+
+
+smolyakInterpolationPrep[approxLevels_?listOfIntegersQ,smolRngs_?MatrixQ]:=
+Module[{smolRes=sparseGridEvalPolysAtPts[approxLevels],
+numVars=Length[approxLevels]},
+With[{thePts=smolRes[[1]],smolPolys=smolRes[[2]],smolMat=smolRes[[3]]},
+With[{xPts=Map[Function[xx,xformToXVec[xx,smolRngs]],thePts]},
+With[{numPolys=Length[smolPolys]},
+{xPts,smolMat,ExpandAll[smolPolys]}]]]]/;And[Length[smolRngs]==Length[approxLevels]]
+
+
+smolPolyDrvs[theSmolPoly_List,smolRngs_?MatrixQ,numEps_Integer]:=
+With[{vars=Table[xx[ii],{ii,Length[smolRngs]-numEps}]},
+Map[Function[ee,Map[D[ee,#]&,vars]],theSmolPoly]]
+
+
+
+
+
+
+smolPolyExp[aSmolPoly_,smolRngs_?MatrixQ,@<distribSpec@>]:=
+With[{numEps=Length[distribSpec[[1]]],
+polyVars=Sort[Cases[aSmolPoly,xx[_Integer]]]},
+With[{theChebValSubs=Thread[polyVars->
+MapThread[xformXValToCheb,{polyVars,smolRngs}]]
+},
+With[{numX=Length[polyVars]-numEps},
+With[{intVarRes=genIntVars[numX,distribSpec]},
+With[{polyEps=Drop[polyVars,numX],intEps=Drop[intVarRes[[2]],numX]},
+With[{epsSubs=MapThread[#1->#2&,{polyEps,intEps}]},
+With[{funcGuts=((aSmolPoly/.theChebValSubs)/.epsSubs)},
+myExpectation[funcGuts,intVarRes[[3]]]]]]]]]]
+
+
+
+
+
+
+
+xformXValToCheb[xVal_,
+range:{lowVal_?NumberQ,highVal_?NumberQ}]:=
+xFormToChebInterval[xVal,lowVal,highVal]
+
+
+
+
+xformChebValToX[chebVal_,
+range:{lowVal_?NumberQ,highVal_?NumberQ}]:=
+xFormFromChebInterval[chebVal,lowVal,highVal]
+
+
+
+
+xformToXVec[chebPt_?VectorQ,ranges_?MatrixQ]:=
+MapThread[xformChebValToX,{chebPt,ranges}]
+
+
+@}
+
+
+
+\subsection{myExpectation}
+\label{sec:myexpectation}
+
+
+@d myExpectationUsage
+@{myExpectation::usage=
+"place holder for myExpectation"
+@}
+
+@d myExpectation
+@{
+(*begin code for myExpectation*)
+
+
+myExpectation[farg_List,nArgs_List]:=
+stringArgsToInt[
+Expectation[intArgsToString[farg],intArgsToString[nArgs]]]
+
+
+intArgsToString[exp_]:=exp/.xx[val_Integer]:>xx[ToString[val]]
+
+stringArgsToInt[exp_]:=exp/.xx[val_String]:>xx[ToExpression[val]]
+
+(*end code for myExpectation*)
+@}
+
+
+\subsection{genIntVars}
+\label{sec:genintvars}
+
+
+
+@d genIntVarsUsage
+@{genIntVars::usage=
+"place holder for genIntVars"
+@}
+
+@d genIntVars
+@{
+(*begin code for genIntVars*)
+ genIntVars[numX_Integer,@<distribSpec@>]:=
+With[{xVars=Table[Unique["xV"],{numX}],
+	dists=getDistribs[distribSpec],
+	distVars=Table[Unique["epIntV"],{getNumEpsVars[distribSpec]}]},
+With[{xEpsVars=Join[xVars,distVars],
+	intArg=
+MapThread[Function[{xx,yy},xx \[Distributed] yy],{distVars,dists}]},
+	{xVars,xEpsVars,intArg}]]
+
+
+(*end code for genIntVars*)
+@}
 
 
 \subsection{Getters and Setters}
 \label{sec:getters-setters}
 
+
+
+@d getDistribsUsage
+@{getDistribs::usage=
+"place holder for getDistribs"
+@}
+
+@d getDistribs
+@{
+(*begin code for getDistribs*)
+
+getDistribs[@<distribSpec@>]:= Map[Last,expctSpec]
+(*{numReg,tranType,tranFunc}*)
+
+(*end code for getDistribs*)
+@}
+
+
+@d getNumEpsVarsUsage
+@{getNumEpsVars::usage=
+"place holder for getNumEpsVars"
+@}
+
+@d getNumEpsVars
+@{
+(*begin code for getNumEpsVars*)
+getNumEpsVars[@<distribSpec@>]:=Length[expctSpec]
+
+
+(*end code for getNumEpsVars*)
+@}
 
 @d getNumEpsUsage
 @{
@@ -550,6 +782,11 @@ theHMat
 
 \label{sec:argum-spec}
 
+@d distribSpec
+@{distribSpec:{expctSpec:{{_Symbol,_}..}}@}
+
+
+
 @d cmptXArgsInit
 @{xArgsInit=If[varRanges==={},
 MapThread[Function[{xx,yy},{xx,yy}],
@@ -606,6 +843,12 @@ psiC
 @<genLilXkZkFuncUsage@>
 @<fSumCUsage@>
 @<genFRExtFuncUsage@>
+@<smolyakGenInterpDataUsage@>
+@<smolyakInterpolationPrepUsage@>
+@<myExpectationUsage@>
+@<genIntVarsUsage@>
+@<getNumEpsVarsUsage@>
+@<getDistribsUsage@>
 @}
 
 \subsection{Package Code}
@@ -627,6 +870,11 @@ psiC
 @<genXtOfXtm1@>
 @<genXtp1OfXt@>
 @<genFRExtFunc@>
+@<smolyakInterpolationPrep@>
+@<myExpectation@>
+@<genIntVars@>
+@<getNumEpsVars@>
+@<getDistribs@>
 @}
 
 \subsection{m-File Definition}

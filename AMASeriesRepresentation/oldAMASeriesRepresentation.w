@@ -4294,4 +4294,92 @@ getterSetterTests::usage="getterSetterTestsUsage"
 \bibliographystyle{plainnat}
 \bibliography{files}
 
+collect
+genlilxkzk
+
+@d XZ Functions Given
+@{
+With[{},
+With[{fCon=fSum[linMod,XZFuncs,xtGuess]},
+With[{theRes=genLilXkZkFunc[linMod,fCon]},theRes]]]
+
+
+
+@}
+
+@d genLilXkZkFunc theZs call
+@{genLilXkZkFunc[@<linMod@>,@<theZs@>]@}
+
+@d genLilXkZkFunc
+@{
+@< genLilXkZkFunc theZs call@>:=
+Module[{},
+@<Z Matrices Given@>
+]
+@}
+
+@d Z Matrices Given
+@{With[{fCon=Check[fSumC[phi,FF,psiZ,theZs],Print["trying to throw low"];
+Throw[$Failed,"low"]]},
+With[{theRes=genLilXkZkFunc[linMod,fCon]},
+theRes]]
+
+
+
+@}
+
+
+@d genLilXkZkFunc full call
+@{genLilXkZkFunc[@<linMod@>,@<XZFuncs@>,@<xtGuess@>]@}
+
+@d genLilXkZkFunc
+@{
+@<genLilXkZkFunc full call@>:=
+With[{},
+@<XZ Functions Given@>]
+
+@}
+
+@d genLilXkZkFunc fcon call
+@{genLilXkZkFunc[@<linMod@>,@<fCon@>]@}
+
+
+@d genLilXkZkFunc
+@{
+@<genLilXkZkFunc fcon call@>:=
+Module[{},
+@<apply formula F...@>
+]
+@}
+
+@d apply formula F contribution given
+@{With[{numXVars=getNumX[linMod],numEpsVars=getNumEps[linMod],
+numZVars=getNumZ[linMod]},
+With[{theSlots=genSlots[numXVars+numEpsVars+numZVars]},
+With[{xtm1Vars=theSlots[[Range[numXVars]]],
+epsVars=theSlots[[numXVars+Range[numEpsVars]]],
+zVars=theSlots[[numXVars+numEpsVars+Range[numZVars]]]},
+With[{xtVals=genXtOfXtm1[linMod,xtm1Vars,epsVars,zVars,fCon]},
+With[{xtp1Vals=genXtp1OfXt[linMod,xtVals,fCon]},
+With[{fullVec=Join[xtm1Vars,xtVals,xtp1Vals,epsVars]},
+With[{chk=Function[fullVec]},
+chk
+]]]]]]]@}
+
+@d XZFuncs
+@{XZFuncs:{(_Function|_InterpolatingFunction|_CompiledFunction|_Symbol),numSteps_Integer}@}
+
+@d theZs
+@{theZs:{_?MatrixQ..}@}
+
+
+@d xtGuess
+@{xtGuess_?MatrixQ@}
+
+@d fCon
+@{fCon_?MatrixQ@}
+
+
+
+
 \end{document}

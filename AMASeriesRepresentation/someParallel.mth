@@ -78,7 +78,7 @@ sgSpecErg = {toIg, smolRngErg, ptErg, tfErg, plyErg, iplyErg,
 
 X0Z0 = AMASeriesRepresentation`genBothX0Z0Funcs[
    nkZLB`linModnkZLB];
-approx=1*{1,1};theK=65;theIter=35
+approx=1*{1,1};theK=80;theIter=35
 Print["{approx,theK,theIter}=",{approx,theK,theIter}];
 smolStuff = {ptErg, tfErg, plyErg, iplyErg, dplyErg} = 
    AMASeriesRepresentation`smolyakInterpolationPrep[approx, {nkZLB`nkNKCSMean, 

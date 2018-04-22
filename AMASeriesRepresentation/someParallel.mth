@@ -103,7 +103,7 @@ theRes01 = AMASeriesRepresentation`parallelNestGenericIterREInterp[
    nkZLB`linModnkZLB, {X0Z0, theK}, 
    nkZLB`nkEqnsnkZLBNot, sgSpecErg, 
    AMASeriesRepresentation`smolyakInterpolation, {}, theIter,
-"xVarRanges"->theRanges,"Traditional"->False]];
+"xVarRanges"->theRanges,"Traditional"->True]];
 
 Print["wTime=",wTime[[1]]]
 Print["numhosts=",Length[hosts]]
@@ -134,7 +134,7 @@ theRes02 = AMASeriesRepresentation`parallelNestGenericIterREInterp[
    nkZLB`linModnkZLB, {theRes01[[-1]], theK}, 
    nkZLB`nkEqnsnkZLBNot, sgSpecErg, 
    AMASeriesRepresentation`smolyakInterpolation, {}, theIter,
-"xVarRanges"->theRanges,"Traditional"->False]];
+"xVarRanges"->theRanges,"Traditional"->True]];
 Through[theRes02[[-1]] @@ # &[
   nkZLB`anXEpsFlatnkZLB]]
 
@@ -161,7 +161,7 @@ theRes02Bind = AMASeriesRepresentation`parallelNestGenericIterREInterp[
    nkZLB`linModnkZLB, {theRes02[[-1]], theK}, 
    nkZLB`nkEqnsnkZLB, sgSpecErg, 
    AMASeriesRepresentation`smolyakInterpolation, {},theIter,
-"xVarRanges"->theRanges,"Traditional"->False]];
+"xVarRanges"->theRanges,"Traditional"->True]];
 Through[theRes02Bind[[-1]] @@ # &[
   nkZLB`anXEpsFlatnkZLB]]
 
@@ -206,7 +206,7 @@ theRes03Bind = AMASeriesRepresentation`parallelNestGenericIterREInterp[
    nkZLB`linModnkZLB, {theRes02Bind[[-1]], theK}, 
    nkZLB`nkEqnsnkZLB, sgSpecErg, 
    AMASeriesRepresentation`smolyakInterpolation, {},theIter,
-"xVarRanges"->theRanges,"Traditional"->False]];
+"xVarRanges"->theRanges,"Traditional"->True]];
 Through[theRes03Bind[[-1]] @@ # &[
   nkZLB`anXEpsFlatnkZLB]]
 
@@ -253,7 +253,7 @@ theRes02OBC = AMASeriesRepresentation`parallelNestGenericIterREInterp[
    nkZLB`linModnkZLB, {theRes02[[-1]], theK}, 
    nkZLB`nkEqnsnkZLB, sgSpecErg, 
    AMASeriesRepresentation`smolyakInterpolation, {}, theIter,
-"xVarRanges"->theRanges,"Traditional"->False];
+"xVarRanges"->theRanges,"Traditional"->True];
 Through[theRes02OBC[[-1]] @@ # &[
   nkZLB`anXEpsFlatnkZLB]]
 
@@ -285,7 +285,7 @@ theRes03 = AMASeriesRepresentation`parallelNestGenericIterREInterp[
    nkZLB`linModnkZLB, {theRes02[[-1]], theK}, 
    nkZLB`nkEqnsnkZLBNot, sgSpecErg, 
    AMASeriesRepresentation`smolyakInterpolation, {}, theIter,
-"xVarRanges"->theRanges,"Traditional"->False]];
+"xVarRanges"->theRanges,"Traditional"->True]];
 Through[theRes03[[-1]] @@ # &[
   nkZLB`anXEpsFlatnkZLB]]
 
@@ -312,7 +312,7 @@ theRes04 = AMASeriesRepresentation`parallelNestGenericIterREInterp[
    nkZLB`linModnkZLB, {theRes03[[-1]], theK}, 
    nkZLB`nkEqnsnkZLBNot, sgSpecErg, 
    AMASeriesRepresentation`smolyakInterpolation, {}, theIter,
-"xVarRanges"->theRanges,"Traditional"->False]];
+"xVarRanges"->theRanges,"Traditional"->True]];
 Through[theRes04[[-1]] @@ # &[
   nkZLB`anXEpsFlatnkZLB]]
 
@@ -357,7 +357,7 @@ theRes05 = AMASeriesRepresentation`parallelNestGenericIterREInterp[
    nkZLB`linModnkZLB, {theRes04[[-1]], theK}, 
    nkZLB`nkEqnsnkZLBNot, sgSpecErg, 
    AMASeriesRepresentation`smolyakInterpolation, {},theIter,
-"xVarRanges"->theRanges,"Traditional"->False]];
+"xVarRanges"->theRanges,"Traditional"->True]];
 Through[theRes05[[-1]] @@ # &[
   nkZLB`anXEpsFlatnkZLB]]
 
@@ -401,7 +401,7 @@ theRes05Bind = AMASeriesRepresentation`parallelNestGenericIterREInterp[
    nkZLB`linModnkZLB, {theRes05[[-1]], theK}, 
    nkZLB`nkEqnsnkZLB, sgSpecErg, 
    AMASeriesRepresentation`smolyakInterpolation, {},theIter,
-"xVarRanges"->theRanges,"Traditional"->False]];
+"xVarRanges"->theRanges,"Traditional"->True]];
 Through[theRes05Bind[[-1]] @@ # &[
   nkZLB`anXEpsFlatnkZLB]]
 

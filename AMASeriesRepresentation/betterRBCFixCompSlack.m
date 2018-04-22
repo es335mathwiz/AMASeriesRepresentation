@@ -1,3 +1,5 @@
+
+
 (* Wolfram Language Package *)
 
 BeginPackage["betterRBCFixCompSlack`", { "AMASeriesRepresentation`", "ProtectedSymbols`", "AMAModel`", "SymbolicAMA`", "NumericAMA`"}]
@@ -150,11 +152,11 @@ eps[theta][t]->epsVal
 theArgs={cctm1,iitm1,kktm1,lamtm1,mutm1,nltm1,thetatm1,epsVal};
 
 rbcEqnsBetterBackLookingFixCompSlack=
-Function @@ ({theArgs,rbcBackLookingEqns/.argsSubs}/.paramSubs)
+Apply[Function , ({theArgs,rbcBackLookingEqns/.argsSubs}/.paramSubs)]
 
 
 rbcEqnsBetterBackLookingExpFixCompSlack=
-Function @@ ({Drop[theArgs,-1],rbcBackLookingExpEqns/.argsSubs}/.paramSubs)
+Apply[Function , ({Drop[theArgs,-1],rbcBackLookingExpEqns/.argsSubs}/.paramSubs)]
 
 preRbcEqnsBinding={
 lam[t] +1/cc[t],
@@ -225,25 +227,25 @@ betterRBCFixCompSlack`Private`ssFRSolnSubs)//N
   rbcEqnsBetterFixCompSlack={
  { 
 {True&,
-Compile @@ {
+Apply[Compile , {
 {
 {cctm1,_Real},{iitm1,_Real},{kktm1,_Real},{lamtm1,_Real},{mu1tm1,_Real},{nltm1,_Real},{thetatm1,_Real},
 {cct,_Real},{iit,_Real},{kkt,_Real},{lamt,_Real},{mu1t,_Real},{nlt,_Real},{thetat,_Real},
 {cctp1,_Real},{iitp1,_Real},{kktp1,_Real},{lamtp1,_Real},{mu1tp1,_Real},{nltp1,_Real},{thetatp1,_Real},
 {epsVal,_Real}
 },
-(eqnsForNotBind),"RuntimeOptions"->{"RuntimeErrorHandler"->Function[$Failed],"CatchMachineOverflow"->True,"CatchMachineUnderflow"->True}},
+(eqnsForNotBind),"RuntimeOptions"->{"RuntimeErrorHandler"->Function[$Failed],"CatchMachineOverflow"->True,"CatchMachineUnderflow"->True}}],
 Function[{aPt,aRes},
 If[aRes===$Failed,False,And[aRes[[1,1]]>0,aRes[[2,1]]>(theProduct)]]]},
 {True&,
-Compile @@ {
+Apply[Compile , {
 {
 {cctm1,_Real},{iitm1,_Real},{kktm1,_Real},{lamtm1,_Real},{mu1tm1,_Real},{nltm1,_Real},{thetatm1,_Real},
 {cct,_Real},{iit,_Real},{kkt,_Real},{lamt,_Real},{mu1t,_Real},{nlt,_Real},{thetat,_Real},
 {cctp1,_Real},{iitp1,_Real},{kktp1,_Real},{lamtp1,_Real},{mu1tp1,_Real},{nltp1,_Real},{thetatp1,_Real},
 {epsVal,_Real}
 },
-(eqnsForBind),"RuntimeOptions"->{"RuntimeErrorHandler"->Function[$Failed],"CatchMachineOverflow"->True,"CatchMachineUnderflow"->True}},(True)&}},
+(eqnsForBind),"RuntimeOptions"->{"RuntimeErrorHandler"->Function[$Failed],"CatchMachineOverflow"->True,"CatchMachineUnderflow"->True}}],(True)&}},
 Function[{aPt,allRes},
 If[And[allRes[[1]]===$Failed,allRes[[2]]===$Failed],Throw[$Failed,"noSolutionFound"]];
 If[allRes[[1]]===$Failed,Flatten[allRes[[2]]],Flatten[allRes[[1]]]]]
@@ -261,7 +263,7 @@ psiz=IdentityMatrix[7]
 hmatSymbRawRE=(((equationsToMatrix[
 rbcEqnsNotBinding/.simpParamSubs]//FullSimplify)/.{xxxx_[t+_.]->xxxx})//.ssFRSolnSubs)/.{eps[_]->0}//FullSimplify;
 
-psiepsSymbRE=-Transpose[{((D[#,eps[theta][t]]&/@ rbcEqnsNotBinding)/.{eps[_][_]->0,xxxx_[t+_.]->xxxx})//.ssFRSolnSubs}/.simpParamSubs]
+psiepsSymbRE=-Transpose[{((Map[D[#,eps[theta][t]]&, rbcEqnsNotBinding])/.{eps[_][_]->0,xxxx_[t+_.]->xxxx})//.ssFRSolnSubs}/.simpParamSubs]
 
 
 hmatSymbRE=hmatSymbRawRE//.simpParamSubs
@@ -332,18 +334,18 @@ initVec=Transpose[{{99,99,kVal,99,99,99,thVal}}],
 fMul=Inverse[IdentityMatrix[7]-fmatSymbRE]},
 With[{mats=FoldList[(bmatSymbRE . #1+ (phimatSymbRE .psiepsSymbRE .{{#2}})+
 fMul.phimatSymbRE.psicSymbRE)&,initVec,draws]},
-Flatten/@mats]]
+Map[Flatten,mats]]]
 
 simulateBetterRBCCS[anAugDR_Function,numPers_Integer]:=
 With[{draws=RandomVariate[theDistBetterFixCompSlack[[1,1,2]],numPers],
 initVec=Transpose[{{99,99,kVal,99,99,99,thVal}}]},
-With[{mats=FoldList[((anAugDR @@ Flatten[{#1[[Range[7]]],#2}]))&,initVec,draws]},Flatten/@mats]]
+With[{mats=FoldList[((Apply[anAugDR , Flatten[{#1[[Range[7]]],#2}]]))&,initVec,draws]},Map[Flatten,mats]]]
 
 
 iterateRBCCSDRCE[anAugDRCE_Function,numPers_Integer,aPt_?MatrixQ]:=
 With[{mats=
-NestList[((anAugDR @@ Flatten[{#1[[Range[7]]],#2}]))&,initVec,draws]},
-Flatten/@mats]
+NestList[((Apply[anAugDR , Flatten[{#1[[Range[7]]],#2}]]))&,initVec,draws]},
+Map[Flatten,mats]]
 
 chkBounded[anAugDRCE_Function,numPers_Integer,aPt_?MatrixQ,lim_?NumberQ]:=
 Module[{},
@@ -361,11 +363,11 @@ justKT=theRes[[All,{3,7}]];
 betterRBCCSMean=Mean[justKT];
 betterRBCCSSD=StandardDeviation[justKT];
 
-normedRes=(#/betterRBCCSSD)&/@((#-betterRBCCSMean)&/@justKT);
+normedRes=Map[(#/betterRBCCSSD)&,(Map[(#-betterRBCCSMean)&,justKT])];
 {uu,ss,vv}=SingularValueDecomposition[normedRes];
 zz=normedRes .vv;
-betterRBCCSMinZ=Min/@Transpose[zz];
-betterRBCCSMaxZ=Max/@Transpose[zz];
+betterRBCCSMinZ=Map[Min,Transpose[zz]];
+betterRBCCSMaxZ=Map[Max,Transpose[zz]];
 {ig,ig,theKs,ig,ig,ig,theThetas}=Transpose[theRes];
 
 betterRBCCSMean=Append[betterRBCCSMean,0];
@@ -379,5 +381,6 @@ End[] (* End Private Context *)
 
 EndPackage[]
 Print["done reading betterRBCFixCompSlack.m"]
+
 
 

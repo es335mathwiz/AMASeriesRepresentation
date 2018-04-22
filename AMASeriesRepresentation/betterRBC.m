@@ -1,3 +1,4 @@
+
 (* Wolfram Language Package *)
 Print["start reading betterRBC.m"]
 BeginPackage["betterRBC`", { "AMASeriesRepresentation`", "ProtectedSymbols`", "AMAModel`", "SymbolicAMA`", "NumericAMA`"}]
@@ -117,7 +118,7 @@ eps[betterRBC`Private`theta][t]->epsVal
 
 *)
 
-rbcEqnsBetter=eqnsCompiledBetter=Compile @@ {
+rbcEqnsBetter=eqnsCompiledBetter=Apply[Compile, {
 {
 {cctm1,_Real},{kktm1,_Real},{nltm1,_Real},{thetatm1,_Real},
 {cct,_Real},{kkt,_Real},{nlt,_Real},{thetat,_Real},
@@ -127,7 +128,7 @@ rbcEqnsBetter=eqnsCompiledBetter=Compile @@ {
 ({cct^(-1) - (alpha*delta*nltp1)/kkt^(1-alpha),
 cct + kkt - 1.*kktm1^(alpha)*thetat, 
 nlt - thetat/cct,
-thetat - ((N[E]^epsVal)*(thetatm1^(rho)))}/.paramSubs),"RuntimeOptions"->{"RuntimeErrorHandler"->Function[$Failed],"CatchMachineOverflow"->True,"CatchMachineUnderflow"->True}}
+thetat - ((N[E]^epsVal)*(thetatm1^(rho)))}/.paramSubs),"RuntimeOptions"->{"RuntimeErrorHandler"->Function[$Failed],"CatchMachineOverflow"->True,"CatchMachineUnderflow"->True}}]
 
 rbcEqnsBetterSymb[
 cctm1_,kktm1_,nltm1_,thetatm1_,
@@ -148,12 +149,12 @@ CompiledFunction::cfn:
 
 
 
-eqnsCompiledBetter  @@ Flatten[{{1}, {0.0187324}, {1}, {1.1}, {0.293437}, {-0.0351748},      {7.51431}, {1.08125}, {0.232894}, {0.120986}, {3.96721}, 
-     {1.07709}, {-0.0124264}}]
+Apply[eqnsCompiledBetter  , Flatten[{{1}, {0.0187324}, {1}, {1.1}, {0.293437}, {-0.0351748},      {7.51431}, {1.08125}, {0.232894}, {0.120986}, {3.96721}, 
+     {1.07709}, {-0.0124264}}]]
 
 *)
 (*
-eqnsEulerCompiledBetter=Compile @@ {
+eqnsEulerCompiledBetter=Apply[Compile , {
 {
 {cctm1,_Real},{kktm1,_Real},{nltm1,_Real},{thetatm1,_Real},
 {cct,_Real},{kkt,_Real},{nlt,_Real},{thetat,_Real},
@@ -163,7 +164,7 @@ eqnsEulerCompiledBetter=Compile @@ {
 {((kkt^(16/25)) - (0.342*nltp1)*cct)/cct,
 cct + kkt - 1.*kktm1^(9/25)*thetat, 
 nlt - thetat/cct,
-thetat - 1.*2.718281828459045^epsVal*thetatm1^(19/20)},"RuntimeOptions"->{"RuntimeErrorHandler"->Function[$Failed],"CatchMachineOverflow"->True,"CatchMachineUnderflow"->True}}
+thetat - 1.*2.718281828459045^epsVal*thetatm1^(19/20)},"RuntimeOptions"->{"RuntimeErrorHandler"->Function[$Failed],"CatchMachineOverflow"->True,"CatchMachineUnderflow"->True}}]
 *)
 
 Needs["CompiledFunctionTools`"]
@@ -211,12 +212,12 @@ ccExp=Expectation[(((((tht^rho)*E^eps)*kkt^alpha)*(1-alpha*delta))),eps \[Distri
 nnExp=Expectation[((tht^rho)*E^eps)/((((((tht^rho)*E^eps)*kkt^alpha)*(1-alpha*delta)))),eps \[Distributed] NormalDistribution[0,sigma]]
  
 simpRBCExactDRCEBetter = 
-  Function @@ {{cct, kkt, nlt, tht}, Flatten[
-	       {ccExp,kkExp,nnExp,thExp}//.paramSubs]}
+Apply[  Function , {{cct, kkt, nlt, tht}, Flatten[
+               {ccExp,kkExp,nnExp,thExp}//.paramSubs]}]
 
 makeExactArgs[kk_,tt_,ee_]:=
     With[{xt = Flatten[simpRBCExactDRBetter[ig, kk, ig, tt, ee]]}, 
-     With[{xtp1 = Flatten[simpRBCExactDRCEBetter @@ xt]}, 
+     With[{xtp1 = Flatten[Apply[simpRBCExactDRCEBetter , xt]]}, 
       Append[Join[{999, kk, 999, tt}, xt, xtp1], ee]]]
 
 
@@ -229,7 +230,7 @@ hmatSymbSlowRawRE01=(((equationsToMatrix[
 rbcEqns/.simpParamSubs]//FullSimplify)))//FullSimplify;
 hmatSymbRawRE=(((equationsToMatrix[
 rbcEqns/.simpParamSubs]//FullSimplify)/.{xxxx_[t+_.]->xxxx})//.ssSolnSubsRE)/.{eps[_]->0}//FullSimplify;
-psiepsSymbRE=-Transpose[{((D[#,eps[theta][t]]&/@ rbcEqns)/.{eps[_][_]->0,xxxx_[t+_.]->xxxx})//.ssSolnSubsRE}/.simpParamSubs]
+psiepsSymbRE=-Transpose[{((Map[D[#,eps[theta][t]]&, rbcEqns])/.{eps[_][_]->0,xxxx_[t+_.]->xxxx})//.ssSolnSubsRE}/.simpParamSubs]
 
 hmatSymbRE=hmatSymbRawRE//.simpSubs
 hSumRE=hmatSymbRE[[All,Range[4]]]+hmatSymbRE[[All,4+Range[4]]]+hmatSymbRE[[All,8+Range[4]]];
@@ -258,25 +259,25 @@ linModBetter={hmatSymbRE//N,bmatSymbRE // N, phimatSymbRE // N,
 
 
 simpRBCExactZBetter = 
- Function @@ {{cct, kkt, nlt, tht,ee},
+Apply[ Function , {{cct, kkt, nlt, tht,ee},
    With[{args=makeExactArgs[kkt,tht,ee],
      pc=getPsiC[linModBetter],pe=getPsiEps[linModBetter]},
 With[{zt=Flatten[
-(getH[linModBetter] . Transpose[{ Drop[Flatten[args],-1]}])-pc-pe*ee]},zt]]}
+(getH[linModBetter] . Transpose[{ Drop[Flatten[args],-1]}])-pc-pe*ee]},zt]]}]
 
 simpRBCExactZCEBetter = 
- Function @@ {{cct, kkt, nlt, tht},
+Apply[ Function, {{cct, kkt, nlt, tht},
    With[{args=makeExactArgs[kkt,tht,ee],
      pc=getPsiC[linModBetter],pe=getPsiEps[linModBetter]},
 With[{zt=Flatten[
 (getH[linModBetter] . Transpose[{ Drop[Flatten[args],-1]}])-pc-pe*ee]},
-  Expectation[zt,ee \[Distributed]NormalDistribution[0,sigma//.paramSubs]]]]}
+  Expectation[zt,ee \[Distributed]NormalDistribution[0,sigma//.paramSubs]]]]}]
 
 simpRBCExactX0Z0CEBetter = 
- Function @@ {{cct, kkt, nlt, tht},
-	      Transpose[{Flatten[
-	 Join[simpRBCExactDRCEBetter[cct,kkt,nlt,tht],
-	      simpRBCExactZCEBetter[cct,kkt,nlt,tht]]]}]}
+Apply[ Function , {{cct, kkt, nlt, tht},
+              Transpose[{Flatten[
+         Join[simpRBCExactDRCEBetter[cct,kkt,nlt,tht],
+              simpRBCExactZCEBetter[cct,kkt,nlt,tht]]]}]}]
 
 
 
@@ -288,7 +289,7 @@ thePFDistBetter={{{ee,PerfectForesight}}};
 simulateBetterRBCExact[numPers_Integer]:=
 With[{draws=RandomVariate[theDistBetter[[1,1,2]],numPers],
 initVec={99,betterRBC`Private`kVal,99,betterRBC`Private`thVal}},
-FoldList[Flatten[simpRBCExactDRBetter@@ Append[Flatten[#1],#2]]&,initVec,draws]]
+FoldList[Flatten[Apply[simpRBCExactDRBetter,Append[Flatten[#1],#2]]]&,initVec,draws]]
 
 
 betterRBCExactCondExp = (*AMASeriesRepresentation`Private`*)makeREIterFunc[simpRBCExactDRBetter,theDistBetter]
@@ -298,7 +299,7 @@ betterExactZ=
 Function[{cc, kk, nl, th, eps},
 With[{hm=getH[linModBetter],pc=getPsiC[linModBetter],pe=getPsiEps[linModBetter],
 xt=Flatten[simpRBCExactDRBetter[cc,kk,nl,th,eps]]},
-With[{xtp1=Flatten[betterRBCExactCondExp @@ xt]},
+With[{xtp1=Flatten[Apply[betterRBCExactCondExp, xt]]},
 hm.Transpose[{Join[{cc,kk,nl,th},xt,xtp1]}]-pc-pe*eps]]]
 
 betterExactXZ=
@@ -336,22 +337,22 @@ sigHigh = 3*sigVal;
 thLow = 9/10;
 thHigh = 11/10;
 
-	(*
+        (*
 aGSpecBetter={{1,3},2,{{6,kLow,kHigh},{10,thLow,thHigh},{6,sigLow,3*sigHigh}}};
-	 aGSpecBetter={{1,3},1,{{4,kLow,kHigh},{3,thLow,thHigh},{3,sigLow,3*sigHigh}}};*)
+         aGSpecBetter={{1,3},1,{{4,kLow,kHigh},{3,thLow,thHigh},{3,sigLow,3*sigHigh}}};*)
 
-	 aGSpecBetter={{1,3},1,{{4,kLow,kHigh},{3,thLow,thHigh},{3,sigLow,sigHigh}}};
+         aGSpecBetter={{1,3},1,{{4,kLow,kHigh},{3,thLow,thHigh},{3,sigLow,sigHigh}}};
 Print["about to simulate fixed seed"];
 SeedRandom[1234]
 theRes=simulateBetterRBCExact[200];
 justKT=theRes[[All,{2,4}]];
 betterRBCMean=Mean[justKT]
 betterRBCSD=StandardDeviation[justKT]
-normedRes=(#/betterRBCSD)&/@((#-betterRBCMean)&/@justKT)
+normedRes=Map[(#/betterRBCSD)&,(Map[(#-betterRBCMean)&,justKT])]
 {uu,ss,vv}=SingularValueDecomposition[normedRes];
 zz=normedRes .vv;
-betterRBCMinZ=Min/@Transpose[zz];
-betterRBCMaxZ=Max/@Transpose[zz];
+betterRBCMinZ=Map[Min,Transpose[zz]];
+betterRBCMaxZ=Map[Max,Transpose[zz]];
 {ig,theKs,ig,theThetas}=Transpose[theRes];
 
 betterRBCMean=Append[betterRBCMean,0]
@@ -374,10 +375,12 @@ Print["at next export"]
 Export["ergodicKTheta.pdf",ListPlot[Transpose[{theKs,theThetas}],PlotLabel->"Ergodic Values for K and \[Theta]"]];
 Print["at next export"]
 zPts=backXtoZ[Transpose[{theKs,theThetas,Table[0,{Length[theKs]}]}],betterRBCMean,betterRBCSD,betterRBCvv];Print["errBndLoc=",errBndLoc];
-	Export["ergodicZs.pdf",ListPlot[zPts[[All,{1,2}]],PlotLabel->"Ergodic Values for K and \[Theta]"]];
+        Export["ergodicZs.pdf",ListPlot[zPts[[All,{1,2}]],PlotLabel->"Ergodic Values for K and \[Theta]"]];
 Print["after last export"]
 *)
 End[] (* End Private Context *)
 
 EndPackage[]
 Print["done reading betterRBC.m"]
+
+

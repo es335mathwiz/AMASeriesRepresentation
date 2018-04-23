@@ -65,7 +65,7 @@ phiP->100.,
 piBar->1.005,
 epsi->6.,
 gammaPi->2.,
-rho->.95,
+rho->0.985,
 sigma->.5/100,
 theBound->1
 } ;

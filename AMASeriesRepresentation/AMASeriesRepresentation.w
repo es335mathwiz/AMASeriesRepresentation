@@ -1640,6 +1640,22 @@ psiEps
 @}
 
 
+@d getFUsage
+@{
+getF::usage=
+"getF[@<linMod@>]"<>
+"number of z variables"
+@}
+
+@d getF
+@{
+getF[@<linMod@>]:=
+FF
+@}
+
+
+
+
 @d getBUsage
 @{
 getB::usage=
@@ -1753,6 +1769,7 @@ psiC
 @<getPsiZUsage@>
 @<getPsiEpsUsage@>
 @<getBUsage@>
+@<getFUsage@>
 @<getHUsage@>
 @<genLilXkZkFuncUsage@>
 @<fSumCUsage@>
@@ -1796,6 +1813,7 @@ psiC
 @<getPsiZ@>
 @<getPsiEps@>
 @<getB@>
+@<getF@>
 @<getH@>
 @<genLilXkZkFunc@>
 @<fSumC@>
@@ -1861,7 +1879,8 @@ EndPackage[]
 @{
 (* Wolfram Language Package *)
 Print["start reading betterRBC.m"]
-BeginPackage["betterRBC`", { "AMASeriesRepresentation`", "ProtectedSymbols`", "AMAModel`", "SymbolicAMA`", "NumericAMA`"}]
+BeginPackage["betterRBC`", { "AMASeriesRepresentation`", 
+"ProtectedSymbols`", "AMAModel`", "SymbolicAMA`", "NumericAMA`"}]
 (* Exported symbols added here with SymbolName::usage *)  
 anXBetter::usage="for test input";
 anEpsBetter::usage="for test input";
@@ -1874,6 +1893,10 @@ anEpsFlatBetter::usage="for test input";
 anXEpsFlatBetter::usage="for test input";
 aZFlatBetter::usage="for test input";
 anXEpsZsFlatBetter::usage="for test input";
+@}
+@o betterRBC.m
+@{
+
 
 probDimsBetter::usage="for test input";
 simpRBCExactX0Z0CEBetter::usage="simpRBCExactX0Z0CEBetter"
@@ -1886,7 +1909,8 @@ betterRBCExactCondExp::usage="betterRBCExactCondExp"
 theDistBetter::usage="theDist={{{ee,NormalDistribution[0,sigVal]}}};"
 thePFDistBetter::usage="theDist={{{ee,PerfectForesight]}}};"
 linModBetter::usage="linear model matrices for approx"
-aGSpecBetter::usage="aGSpec={{1},1,{{4,kLow,kHigh},{3,thLow,thHigh},{3,sigLow,3*sigHigh}}}";
+aGSpecBetter::usage="aGSpec={{1},1,{{4,kLow,kHigh},{3,thLow,thHigh},
+{3,sigLow,3*sigHigh}}}";
 eqnsCompiledBetter::usage="model equations function"
 rbcEqnsBetter::usage="model equations"
 eqnsEulerCompiledBetter::usage="eqnsEulerCompiledBetter"
@@ -1898,6 +1922,11 @@ betterRBCSD::usage="betterRBCSD"
 betterRBCvv::usage="betterRBCvv"
 betterRBCMinZ::usage="betterRBCMinZ"
 betterRBCMaxZ::usage="betterRBCMaxZ"
+
+@}
+@o betterRBC.m
+@{
+
 Print["at Private"]
 Begin["`Private`"] (* Begin Private Context *) 
 
@@ -1931,6 +1960,11 @@ zfEqns=discMapEqns00[[{2,3,4}]]//PowerExpand
 discMapEqns01=Append[zfEqns/.t->t+1,discMapEqns00[[1]]]//PowerExpand
 (*soln=Solve[Thread[discMapEqns01==0],{cc[t+1],kk[t+1],nlPart[t+1],lnTheta[t+1]}]*)
 
+@}
+@o betterRBC.m
+@{
+
+
 (*parameters page 21 using state 1*)
 (*
 paramSubs=Rationalize[{
@@ -1955,6 +1989,10 @@ forSubs={alpha^(1 - alpha)^(-1)*delta^(1 - alpha)^(-1)};
 simpSubs=Thread[forSubs->nu];
 forParamSubs=Thread[nu->forSubs]//.paramSubs;
 simpParamSubs=Join[paramSubs,forParamSubs];
+@}
+@o betterRBC.m
+@{
+
 (*
 
 rbcCompileGuts=(betterRBC`Private`rbcEqns/.{
@@ -1978,6 +2016,10 @@ eps[betterRBC`Private`theta][t]->epsVal
 
 *)
 
+@}
+@o betterRBC.m
+@{
+
 rbcEqnsBetter=eqnsCompiledBetter=Apply[Compile, {
 {
 {cctm1,_Real},{kktm1,_Real},{nltm1,_Real},{thetatm1,_Real},
@@ -2000,6 +2042,11 @@ cct + kkt - 1.*kktm1^(alpha)*thetat,
 nlt - thetat/cct,
 thetat - ((N[E]^epsVal)*(thetatm1^(rho)))}/.paramSubs)
 
+@}
+@o betterRBC.m
+@{
+
+
 (*
 causes error a
 CompiledFunction::cfn: 
@@ -2013,6 +2060,10 @@ Apply[eqnsCompiledBetter  , Flatten[{{1}, {0.0187324}, {1}, {1.1}, {0.293437}, {
      {1.07709}, {-0.0124264}}]]
 
 *)
+
+@}
+@o betterRBC.m
+@{
 (*
 eqnsEulerCompiledBetter=Apply[Compile , {
 {
@@ -2026,6 +2077,11 @@ cct + kkt - 1.*kktm1^(9/25)*thetat,
 nlt - thetat/cct,
 thetat - 1.*2.718281828459045^epsVal*thetatm1^(19/20)},"RuntimeOptions"->{"RuntimeErrorHandler"->Function[$Failed],"CatchMachineOverflow"->True,"CatchMachineUnderflow"->True}}]
 *)
+
+@}
+@o betterRBC.m
+@{
+
 
 Needs["CompiledFunctionTools`"]
 
@@ -2054,6 +2110,12 @@ cSSSubPF=cc->(yNow[kk/.kSSSubPF,theta/.thSubsPF]-kk/.kSSSubPF);
 nlPartSSSubPF=(nlPart->(nlPartRHS/.xxxx_[t]->xxxx))//.{kSSSubPF,cSSSubPF,thSubsPF};
 ssSolnSubsPF=Flatten[{thSubsPF,kSSSubPF,cSSSubPF,nlPartSSSubPF}];
 
+
+
+
+@}
+@o betterRBC.m
+@{
 
 
 
@@ -2097,6 +2159,9 @@ hSumRE=hmatSymbRE[[All,Range[4]]]+hmatSymbRE[[All,4+Range[4]]]+hmatSymbRE[[All,8
 
 ssSolnVecRE={{cc},{kk},{nlPart},{theta}}//.ssSolnSubsRE;
 psicSymbRE=hSumRE . ssSolnVecRE;
+@}
+@o betterRBC.m
+@{
 
 
 {zfSymbRE,hfSymbRE}=symbolicAR[hmatSymbRE//.simpParamSubs];
@@ -2116,6 +2181,9 @@ linModBetter={hmatSymbRE//N,bmatSymbRE // N, phimatSymbRE // N,
 (*linModBetter=Map[Rationalize[#,1/100000000]&,linModBetter,{-1}]*)
 
 
+@}
+@o betterRBC.m
+@{
 
 
 simpRBCExactZBetter = 
@@ -2144,6 +2212,9 @@ Apply[ Function , {{cct, kkt, nlt, tht},
 theDistBetter={{{ee,NormalDistribution[0,sigma]}}}//.paramSubs;
 thePFDistBetter={{{ee,PerfectForesight}}};
 
+@}
+@o betterRBC.m
+@{
 
 
 simulateBetterRBCExact[numPers_Integer]:=
@@ -2186,6 +2257,11 @@ anXEpsZsFlatBetter=anXEpsZsBetter//Flatten;
 probDimsBetter={4,1,4};
 
 
+@}
+@o betterRBC.m
+@{
+
+
 thVal=(theta//.ssSolnSubsRE//.(simpParamSubs//N))//N;
 kVal = (kk //.kSSSubRE//.(simpParamSubs//N))//N;
 cVal = (cc //.cSSSubRE//.(simpParamSubs//N))//N ;
@@ -2196,6 +2272,10 @@ sigLow = -3*sigVal;
 sigHigh = 3*sigVal;
 thLow = 9/10;
 thHigh = 11/10;
+
+@}
+@o betterRBC.m
+@{
 
 	(*
 aGSpecBetter={{1,3},2,{{6,kLow,kHigh},{10,thLow,thHigh},{6,sigLow,3*sigHigh}}};
@@ -2220,6 +2300,10 @@ betterRBCSD=Append[betterRBCSD,sigVal]
 betterRBCMinZ=Append[betterRBCMinZ,-3]
 betterRBCMaxZ=Append[betterRBCMaxZ,3]
 betterRBCvv=ArrayFlatten[{{ArrayFlatten[{{vv,{{0},{0}}}}]},{{{0,0,1}}}}]
+@}
+@o betterRBC.m
+@{
+
 (*
 Print["at first export"]
 Export["ergodicV.pdf", MatrixForm[betterRBCvv//N]];
@@ -2279,6 +2363,11 @@ rbcEqnsBetterBackLookingFixCompSlack::usage="rbcEqnsBetterBackLookingFixCompSlac
 rbcEqnsBetterBackLookingExpFixCompSlack::usage="rbcEqnsBetterBackLookingFixCompSlack"
 rbcEqnsBetterFixCompSlack::usage="model equations"
 eqnsEulerCompiledBetterFixCompSlack::usage="eqnsEulerCompiledBetterFixCompSlack"
+@}
+@o betterRBCFixCompSlack.m
+@{
+
+
 
 simulateBetterRBCCS::usage="simulateBetterRBCExact[numPers_Integer]"
 betterRBCCSMean::usage="betterRBCCSMean"
@@ -2291,6 +2380,11 @@ chkBounded::usage="chkBounded[anAugDRCE_Function,numPers_Integer,aPt_?MatrixQ,li
 
 
 iterateRBCCSDRCE::usage="iterateRBCCSDRCE[anAugDRCE_Function,numPers_Integer,aPt_?MatrixQ]"
+
+
+@}
+@o betterRBCFixCompSlack.m
+@{
 
 
 Begin["`Private`"] (* Begin Private Context *) 
@@ -2332,6 +2426,9 @@ forParamSubs=Thread[nu->forSubs]//.paramSubs;
 simpParamSubs=Join[paramSubs,forParamSubs,simpSubs];
 
 
+@}
+@o betterRBCFixCompSlack.m
+@{
 
 rbcEqnsNotBinding={
 lam[t] +1/cc[t],
@@ -2373,6 +2470,9 @@ ssFRSolnSubs=Prepend[Chop[FindRoot[forFR,frArg,MaxIterations->1000]],IIss->0];
 theProduct=upsilon*II//.ssFRSolnSubs/.betterRBCFixCompSlack`Private`paramSubs;
 
 
+@}
+@o betterRBCFixCompSlack.m
+@{
 
 argsSubs={
 cc[t-1]->cctm1,
@@ -2399,6 +2499,9 @@ theta[t+1]->thetatp1,
 eps[theta][t]->epsVal
 }
 
+@}
+@o betterRBCFixCompSlack.m
+@{
 
 
 theArgs={cctm1,iitm1,kktm1,lamtm1,mutm1,nltm1,thetatm1,epsVal};
@@ -2420,6 +2523,10 @@ II[t] -(kk[t]-(1-dd)*kk[t-1]),
 mu1[t]
 }
 
+
+@}
+@o betterRBCFixCompSlack.m
+@{
 
 eqnsForBind=(((betterRBCFixCompSlack`Private`preRbcEqnsBinding/.betterRBCFixCompSlack`Private`paramSubs)/.{
 eps[betterRBCFixCompSlack`Private`theta][t]->epsVal,
@@ -2447,6 +2554,9 @@ betterRBCFixCompSlack`Private`theta[t+1]->thetat
 })//.
 betterRBCFixCompSlack`Private`ssFRSolnSubs)//N
 
+@}
+@o betterRBCFixCompSlack.m
+@{
 
 eqnsForNotBind=(((betterRBCFixCompSlack`Private`rbcEqnsNotBinding/.betterRBCFixCompSlack`Private`paramSubs)
 /.{
@@ -2475,6 +2585,9 @@ betterRBCFixCompSlack`Private`theta[t+1]->thetat
 })//.
 betterRBCFixCompSlack`Private`ssFRSolnSubs)//N
 
+@}
+@o betterRBCFixCompSlack.m
+@{
 
   rbcEqnsBetterFixCompSlack={
  { 
@@ -2503,6 +2616,9 @@ If[And[allRes[[1]]===$Failed,allRes[[2]]===$Failed],Throw[$Failed,"noSolutionFou
 If[allRes[[1]]===$Failed,Flatten[allRes[[2]]],Flatten[allRes[[1]]]]]
 }
 
+@}
+@o betterRBCFixCompSlack.m
+@{
 
 theDistBetterFixCompSlack={{{ee,NormalDistribution[0,sigma]}}}//.paramSubs;
 thePFDistBetterFixCompSlack={{{ee,PerfectForesight}}};
@@ -2526,6 +2642,9 @@ ssSolnVecRE={{cc},{II},{kk},{lam},{mu1},{nlPart},{theta}}//.ssFRSolnSubs;
 psicSymbRE=hSumRE . ssSolnVecRE;
 
 
+@}
+@o betterRBCFixCompSlack.m
+@{
 
 {zfSymbRE,hfSymbRE}=symbolicAR[hmatSymbRE//.simpParamSubs];
 amatSymbRE=symbolicTransitionMatrix[hfSymbRE];
@@ -2562,6 +2681,11 @@ anXEpsZsFlatBetterFixCompSlack=anXEpsZsBetterFixCompSlack//Flatten;
 probDimsBetterFixCompSlack={7,1,7};
 
 
+@}
+@o betterRBCFixCompSlack.m
+@{
+
+
 thVal=(theta//.ssFRSolnSubs//.(simpParamSubs//N))//N;
 kVal = (kk //.ssFRSolnSubs//.(simpParamSubs//N))//N;
 cVal = (cc //.ssFRSolnSubs//.(simpParamSubs//N))//N ;
@@ -2594,6 +2718,11 @@ initVec=Transpose[{{99,99,kVal,99,99,99,thVal}}]},
 With[{mats=FoldList[((Apply[anAugDR , Flatten[{#1[[Range[7]]],#2}]]))&,initVec,draws]},Map[Flatten,mats]]]
 
 
+@}
+@o betterRBCFixCompSlack.m
+@{
+
+
 iterateRBCCSDRCE[anAugDRCE_Function,numPers_Integer,aPt_?MatrixQ]:=
 With[{mats=
 NestList[((Apply[anAugDR , Flatten[{#1[[Range[7]]],#2}]]))&,initVec,draws]},
@@ -2614,6 +2743,11 @@ Print["done simulate"];
 justKT=theRes[[All,{3,7}]];
 betterRBCCSMean=Mean[justKT];
 betterRBCCSSD=StandardDeviation[justKT];
+
+@}
+@o betterRBCFixCompSlack.m
+@{
+
 
 normedRes=Map[(#/betterRBCCSSD)&,(Map[(#-betterRBCCSMean)&,justKT])];
 {uu,ss,vv}=SingularValueDecomposition[normedRes];

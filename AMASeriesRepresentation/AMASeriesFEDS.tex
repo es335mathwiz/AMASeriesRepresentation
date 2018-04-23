@@ -1738,7 +1738,35 @@ Consider adding constraints the constraints:
 
 \label{sec:regime-switch-model}
 
+To apply the series formula, on must construct condional expectations paths from each initial $x(x_{t-1},\epsilon_t)$.  Consider the case when the transition 
+probabilities $p_{ij}$ are constant and do not depend on 
+$x_{t-1},\epsilon_t,x_t$.
 
+\begin{gather*}
+E_t[x_{t+1}]=  \sum_{j=1}^{N} p_{ij} E_t(x_{t+1}(x_t)|s_{t+1}=j)  \\
+E_t[x_{t+2}]=  \sum_{j=1}^{N} p_{ij} E_t(x_{t+2}(x_{t+1})|s_{t+2}=j)  \\
+\end{gather*}
+
+Since we know the current state we can use the known conditional expectation function for the state:
+\begin{gather*}
+    \begin{bmatrix}
+E_t(x_{t+1}(x_{t})|s_{t}=1)  \\    \vdots \\
+E_t(x_{t+1}(x_{t})|s_{t}=N)  
+  \end{bmatrix}
+\end{gather*}
+
+For the next state we can compute expectations since the errors are independent
+\begin{gather*}
+  \begin{bmatrix}
+E_t(x_{t+2}(x_t)|s_{t}=1)  \\    \vdots \\
+E_t(x_{t+2}(x_t)|s_{t}=N)  
+  \end{bmatrix}=
+(P \otimes  I)
+  \begin{bmatrix}
+E_t(x_{t+2}(x_{t+1})|s_{t+1}=1)  \\    \vdots \\
+E_t(x_{t+2}(x_{t+1})|s_{t+1}=N)  
+  \end{bmatrix}
+\end{gather*}
 
 Consider two states $s_t \in {0,1}$ where the depreciation rates are different:  $d_0>d_1$
 

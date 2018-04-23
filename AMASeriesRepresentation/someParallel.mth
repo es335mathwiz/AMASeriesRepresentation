@@ -78,7 +78,7 @@ sgSpecErg = {toIg, smolRngErg, ptErg, tfErg, plyErg, iplyErg,
 
 X0Z0 = AMASeriesRepresentation`genBothX0Z0Funcs[
    nkZLB`linModnkZLB];
-approx=1*{1,1};theK=80;theIter=35
+approx=1*{1,1};theK=50;theIter=35
 Print["{approx,theK,theIter}=",{approx,theK,theIter}];
 smolStuff = {ptErg, tfErg, plyErg, iplyErg, dplyErg} = 
    AMASeriesRepresentation`smolyakInterpolationPrep[approx, {nkZLB`nkNKCSMean, 
@@ -103,7 +103,7 @@ theRes01 = AMASeriesRepresentation`parallelNestGenericIterREInterp[
    nkZLB`linModnkZLB, {X0Z0, theK}, 
    nkZLB`nkEqnsnkZLBNot, sgSpecErg, 
    AMASeriesRepresentation`smolyakInterpolation, {}, theIter,
-"xVarRanges"->theRanges,"Traditional"->True]];
+"xVarRanges"->theRanges,"Traditional"->False]];
 
 Print["wTime=",wTime[[1]]]
 Print["numhosts=",Length[hosts]]
@@ -134,7 +134,7 @@ theRes02 = AMASeriesRepresentation`parallelNestGenericIterREInterp[
    nkZLB`linModnkZLB, {theRes01[[-1]], theK}, 
    nkZLB`nkEqnsnkZLBNot, sgSpecErg, 
    AMASeriesRepresentation`smolyakInterpolation, {}, theIter,
-"xVarRanges"->theRanges,"Traditional"->True]];
+"xVarRanges"->theRanges,"Traditional"->False]];
 Through[theRes02[[-1]] @@ # &[
   nkZLB`anXEpsFlatnkZLB]]
 
@@ -161,7 +161,7 @@ theRes02Bind = AMASeriesRepresentation`parallelNestGenericIterREInterp[
    nkZLB`linModnkZLB, {theRes02[[-1]], theK}, 
    nkZLB`nkEqnsnkZLB, sgSpecErg, 
    AMASeriesRepresentation`smolyakInterpolation, {},theIter,
-"xVarRanges"->theRanges,"Traditional"->True]];
+"xVarRanges"->theRanges,"Traditional"->False]];
 Through[theRes02Bind[[-1]] @@ # &[
   nkZLB`anXEpsFlatnkZLB]]
 
@@ -176,26 +176,26 @@ pts=Join[#,(theRes02Bind[[-1,1]]@@Flatten[fillIn[{{},{1,3,4,5,6,7,8},#}]])[[7]]]
 
 lpp3d=ListPointPlot3D[pts,PlotStyle->{PointSize[Large],Red},AxesLabel->{Framed["\[Eta](t-1)",FrameStyle->None,FrameMargins->{{0,0},{0,80}}],Framed["e(t)",FrameStyle->None,FrameMargins->20],Framed["R(t)",FrameStyle->None,FrameMargins->20]}]
 p3d=Plot3D[{1,(theRes02Bind[[-1,1]][99,ee,99,99,99,99,99,99,eps])[[7]]},{ee,minE,maxE},{eps,minEps,maxEps}]
-Export["RPlotBind.pdf",Show[lpp3d,p3d]]
+Export["RPlot02Bind.pdf",Show[lpp3d,p3d]]
 
 (*C*)
 pts=Join[#,(theRes02Bind[[-1,1]]@@Flatten[fillIn[{{},{1,3,4,5,6,7,8},#}]])[[1]]] & /@ sgSpecErg[[3]];
 lpp3d=ListPointPlot3D[pts,PlotStyle->{PointSize[Large],Red},AxesLabel->{Framed["\[Eta](t-1)",FrameStyle->None,FrameMargins->{{0,0},{0,80}}],Framed["e(t)",FrameStyle->None,FrameMargins->20],Framed["C(t)",FrameStyle->None,FrameMargins->20]}]
 p3d=Plot3D[{(theRes02Bind[[-1,1]][99,ee,99,99,99,99,99,99,eps])[[1]]},{ee,minE,maxE},{eps,minEps,maxEps}]
-Export["CPlotBind.pdf",Show[lpp3d,p3d]]
+Export["CPlot02Bind.pdf",Show[lpp3d,p3d]]
 
 (*Y*)
 pts=Join[#,(theRes02Bind[[-1,1]]@@Flatten[fillIn[{{},{1,3,4,5,6,7,8},#}]])[[8]]] & /@ sgSpecErg[[3]];
 lpp3d=ListPointPlot3D[pts,PlotStyle->{PointSize[Large],Red},AxesLabel->{Framed["\[Eta](t-1)",FrameStyle->None,FrameMargins->{{0,0},{0,80}}],Framed["e(t)",FrameStyle->None,FrameMargins->20],Framed["Y(t)",FrameStyle->None,FrameMargins->20]}]
 p3d=Plot3D[{(theRes02Bind[[-1,1]][99,ee,99,99,99,99,99,99,eps])[[8]]},{ee,minE,maxE},{eps,minEps,maxEps}]
-Export["YPlotBind.pdf",Show[lpp3d,p3d]]
+Export["YPlot02Bind.pdf",Show[lpp3d,p3d]]
 
 
 (*pi*)
 pts=Join[#,(theRes02Bind[[-1,1]]@@Flatten[fillIn[{{},{1,3,4,5,6,7,8},#}]])[[6]]] & /@ sgSpecErg[[3]];
 lpp3d=ListPointPlot3D[pts,PlotStyle->{PointSize[Large],Red},AxesLabel->{Framed["\[Eta](t-1)",FrameStyle->None,FrameMargins->{{0,0},{0,80}}],Framed["e(t)",FrameStyle->None,FrameMargins->20],Framed["\[Pi](t)",FrameStyle->None,FrameMargins->{{0,80},{0,0}}]}]
 p3d=Plot3D[{(theRes02Bind[[-1,1]][99,ee,99,99,99,99,99,99,eps])[[6]]},{ee,minE,maxE},{eps,minEps,maxEps}]
-Export["PiPlotBind.pdf",Show[lpp3d,p3d]]
+Export["PiPlot02Bind.pdf",Show[lpp3d,p3d]]
 
 
 approx=3*{1,1};
@@ -206,7 +206,7 @@ theRes03Bind = AMASeriesRepresentation`parallelNestGenericIterREInterp[
    nkZLB`linModnkZLB, {theRes02Bind[[-1]], theK}, 
    nkZLB`nkEqnsnkZLB, sgSpecErg, 
    AMASeriesRepresentation`smolyakInterpolation, {},theIter,
-"xVarRanges"->theRanges,"Traditional"->True]];
+"xVarRanges"->theRanges,"Traditional"->False]];
 Through[theRes03Bind[[-1]] @@ # &[
   nkZLB`anXEpsFlatnkZLB]]
 
@@ -222,26 +222,26 @@ pts=Join[#,(theRes03Bind[[-1,1]]@@Flatten[fillIn[{{},{1,3,4,5,6,7,8},#}]])[[7]]]
 
 lpp3d=ListPointPlot3D[pts,PlotStyle->{PointSize[Large],Red},AxesLabel->{Framed["\[Eta](t-1)",FrameStyle->None,FrameMargins->{{0,0},{0,80}}],Framed["e(t)",FrameStyle->None,FrameMargins->20],Framed["R(t)",FrameStyle->None,FrameMargins->20]}]
 p3d=Plot3D[{1,(theRes03Bind[[-1,1]][99,ee,99,99,99,99,99,99,eps])[[7]]},{ee,minE,maxE},{eps,minEps,maxEps}]
-Export["RPlotBind.pdf",Show[lpp3d,p3d]]
+Export["RPlot03Bind.pdf",Show[lpp3d,p3d]]
 
 (*C*)
 pts=Join[#,(theRes03Bind[[-1,1]]@@Flatten[fillIn[{{},{1,3,4,5,6,7,8},#}]])[[1]]] & /@ sgSpecErg[[3]];
 lpp3d=ListPointPlot3D[pts,PlotStyle->{PointSize[Large],Red},AxesLabel->{Framed["\[Eta](t-1)",FrameStyle->None,FrameMargins->{{0,0},{0,80}}],Framed["e(t)",FrameStyle->None,FrameMargins->20],Framed["C(t)",FrameStyle->None,FrameMargins->20]}]
 p3d=Plot3D[{(theRes03Bind[[-1,1]][99,ee,99,99,99,99,99,99,eps])[[1]]},{ee,minE,maxE},{eps,minEps,maxEps}]
-Export["CPlotBind.pdf",Show[lpp3d,p3d]]
+Export["CPlot03Bind.pdf",Show[lpp3d,p3d]]
 
 (*Y*)
 pts=Join[#,(theRes03Bind[[-1,1]]@@Flatten[fillIn[{{},{1,3,4,5,6,7,8},#}]])[[8]]] & /@ sgSpecErg[[3]];
 lpp3d=ListPointPlot3D[pts,PlotStyle->{PointSize[Large],Red},AxesLabel->{Framed["\[Eta](t-1)",FrameStyle->None,FrameMargins->{{0,0},{0,80}}],Framed["e(t)",FrameStyle->None,FrameMargins->20],Framed["Y(t)",FrameStyle->None,FrameMargins->20]}]
 p3d=Plot3D[{(theRes03Bind[[-1,1]][99,ee,99,99,99,99,99,99,eps])[[8]]},{ee,minE,maxE},{eps,minEps,maxEps}]
-Export["YPlotBind.pdf",Show[lpp3d,p3d]]
+Export["YPlot03Bind.pdf",Show[lpp3d,p3d]]
 
 
 (*pi*)
 pts=Join[#,(theRes03Bind[[-1,1]]@@Flatten[fillIn[{{},{1,3,4,5,6,7,8},#}]])[[6]]] & /@ sgSpecErg[[3]];
 lpp3d=ListPointPlot3D[pts,PlotStyle->{PointSize[Large],Red},AxesLabel->{Framed["\[Eta](t-1)",FrameStyle->None,FrameMargins->{{0,0},{0,80}}],Framed["e(t)",FrameStyle->None,FrameMargins->20],Framed["\[Pi](t)",FrameStyle->None,FrameMargins->{{0,80},{0,0}}]}]
 p3d=Plot3D[{(theRes03Bind[[-1,1]][99,ee,99,99,99,99,99,99,eps])[[6]]},{ee,minE,maxE},{eps,minEps,maxEps}]
-Export["PiPlotBind.pdf",Show[lpp3d,p3d]]
+Export["PiPlot03Bind.pdf",Show[lpp3d,p3d]]
 
 
 
@@ -253,7 +253,7 @@ theRes02OBC = AMASeriesRepresentation`parallelNestGenericIterREInterp[
    nkZLB`linModnkZLB, {theRes02[[-1]], theK}, 
    nkZLB`nkEqnsnkZLB, sgSpecErg, 
    AMASeriesRepresentation`smolyakInterpolation, {}, theIter,
-"xVarRanges"->theRanges,"Traditional"->True];
+"xVarRanges"->theRanges,"Traditional"->False];
 Through[theRes02OBC[[-1]] @@ # &[
   nkZLB`anXEpsFlatnkZLB]]
 
@@ -285,7 +285,7 @@ theRes03 = AMASeriesRepresentation`parallelNestGenericIterREInterp[
    nkZLB`linModnkZLB, {theRes02[[-1]], theK}, 
    nkZLB`nkEqnsnkZLBNot, sgSpecErg, 
    AMASeriesRepresentation`smolyakInterpolation, {}, theIter,
-"xVarRanges"->theRanges,"Traditional"->True]];
+"xVarRanges"->theRanges,"Traditional"->False]];
 Through[theRes03[[-1]] @@ # &[
   nkZLB`anXEpsFlatnkZLB]]
 
@@ -312,7 +312,7 @@ theRes04 = AMASeriesRepresentation`parallelNestGenericIterREInterp[
    nkZLB`linModnkZLB, {theRes03[[-1]], theK}, 
    nkZLB`nkEqnsnkZLBNot, sgSpecErg, 
    AMASeriesRepresentation`smolyakInterpolation, {}, theIter,
-"xVarRanges"->theRanges,"Traditional"->True]];
+"xVarRanges"->theRanges,"Traditional"->False]];
 Through[theRes04[[-1]] @@ # &[
   nkZLB`anXEpsFlatnkZLB]]
 
@@ -357,7 +357,7 @@ theRes05 = AMASeriesRepresentation`parallelNestGenericIterREInterp[
    nkZLB`linModnkZLB, {theRes04[[-1]], theK}, 
    nkZLB`nkEqnsnkZLBNot, sgSpecErg, 
    AMASeriesRepresentation`smolyakInterpolation, {},theIter,
-"xVarRanges"->theRanges,"Traditional"->True]];
+"xVarRanges"->theRanges,"Traditional"->False]];
 Through[theRes05[[-1]] @@ # &[
   nkZLB`anXEpsFlatnkZLB]]
 
@@ -392,7 +392,7 @@ Export["PiPlot05.pdf",Show[lpp3d,p3d]]
 
 
 
-
+approx=1*{1,1};theK=250;theIter=185
 approx=5*{1,1};
 sgSpecErg=updateSmol[theRes05,approx]
 wTime=AbsoluteTiming[
@@ -401,7 +401,7 @@ theRes05Bind = AMASeriesRepresentation`parallelNestGenericIterREInterp[
    nkZLB`linModnkZLB, {theRes05[[-1]], theK}, 
    nkZLB`nkEqnsnkZLB, sgSpecErg, 
    AMASeriesRepresentation`smolyakInterpolation, {},theIter,
-"xVarRanges"->theRanges,"Traditional"->True]];
+"xVarRanges"->theRanges,"Traditional"->False]];
 Through[theRes05Bind[[-1]] @@ # &[
   nkZLB`anXEpsFlatnkZLB]]
 
@@ -415,26 +415,26 @@ pts=Join[#,(theRes05Bind[[-1,1]]@@Flatten[fillIn[{{},{1,3,4,5,6,7,8},#}]])[[7]]]
 
 lpp3d=ListPointPlot3D[pts,PlotStyle->{PointSize[Large],Red},AxesLabel->{Framed["\[Eta](t-1)",FrameStyle->None,FrameMargins->{{0,0},{0,80}}],Framed["e(t)",FrameStyle->None,FrameMargins->20],Framed["R(t)",FrameStyle->None,FrameMargins->20]}]
 p3d=Plot3D[{1,(theRes05Bind[[-1,1]][99,ee,99,99,99,99,99,99,eps])[[7]]},{ee,minE,maxE},{eps,minEps,maxEps}]
-Export["RPlotBind.pdf",Show[lpp3d,p3d]]
+Export["RPlot05Bind.pdf",Show[lpp3d,p3d]]
 
 (*C*)
 pts=Join[#,(theRes05Bind[[-1,1]]@@Flatten[fillIn[{{},{1,3,4,5,6,7,8},#}]])[[1]]] & /@ sgSpecErg[[3]];
 lpp3d=ListPointPlot3D[pts,PlotStyle->{PointSize[Large],Red},AxesLabel->{Framed["\[Eta](t-1)",FrameStyle->None,FrameMargins->{{0,0},{0,80}}],Framed["e(t)",FrameStyle->None,FrameMargins->20],Framed["C(t)",FrameStyle->None,FrameMargins->20]}]
 p3d=Plot3D[{(theRes05Bind[[-1,1]][99,ee,99,99,99,99,99,99,eps])[[1]]},{ee,minE,maxE},{eps,minEps,maxEps}]
-Export["CPlotBind.pdf",Show[lpp3d,p3d]]
+Export["CPlot05Bind.pdf",Show[lpp3d,p3d]]
 
 (*Y*)
 pts=Join[#,(theRes05Bind[[-1,1]]@@Flatten[fillIn[{{},{1,3,4,5,6,7,8},#}]])[[8]]] & /@ sgSpecErg[[3]];
 lpp3d=ListPointPlot3D[pts,PlotStyle->{PointSize[Large],Red},AxesLabel->{Framed["\[Eta](t-1)",FrameStyle->None,FrameMargins->{{0,0},{0,80}}],Framed["e(t)",FrameStyle->None,FrameMargins->20],Framed["Y(t)",FrameStyle->None,FrameMargins->20]}]
 p3d=Plot3D[{(theRes05Bind[[-1,1]][99,ee,99,99,99,99,99,99,eps])[[8]]},{ee,minE,maxE},{eps,minEps,maxEps}]
-Export["YPlotBind.pdf",Show[lpp3d,p3d]]
+Export["YPlot05Bind.pdf",Show[lpp3d,p3d]]
 
 
 (*pi*)
 pts=Join[#,(theRes05Bind[[-1,1]]@@Flatten[fillIn[{{},{1,3,4,5,6,7,8},#}]])[[6]]] & /@ sgSpecErg[[3]];
 lpp3d=ListPointPlot3D[pts,PlotStyle->{PointSize[Large],Red},AxesLabel->{Framed["\[Eta](t-1)",FrameStyle->None,FrameMargins->{{0,0},{0,80}}],Framed["e(t)",FrameStyle->None,FrameMargins->20],Framed["\[Pi](t)",FrameStyle->None,FrameMargins->{{0,80},{0,0}}]}]
 p3d=Plot3D[{(theRes05Bind[[-1,1]][99,ee,99,99,99,99,99,99,eps])[[6]]},{ee,minE,maxE},{eps,minEps,maxEps}]
-Export["PiPlotBind.pdf",Show[lpp3d,p3d]]
+Export["PiPlot05Bind.pdf",Show[lpp3d,p3d]]
 
 
 

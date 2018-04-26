@@ -392,7 +392,8 @@ Export["PiPlot05.pdf",Show[lpp3d,p3d]]
 
 
 
-approx=1*{1,1};theK=250;theIter=185
+(*approx=1*{1,1};theK=250;theIter=185*)
+approx=1*{1,1};theK=50;theIter=35
 approx=5*{1,1};
 sgSpecErg=updateSmol[theRes05,approx]
 wTime=AbsoluteTiming[

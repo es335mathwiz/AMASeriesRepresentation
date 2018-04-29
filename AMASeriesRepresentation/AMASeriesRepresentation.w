@@ -313,14 +313,15 @@ And[numPers>0]
 
 
 iterateDRCE[drExpFuncs:{(_Function|_CompiledFunction|_Symbol)..},
-initVecs:{{_?MatrixQ..}..},probFunc:(_Symbol|_Function|_CompiledFunction),0]:=initVecs
+initVecs:{_?MatrixQ..},probFunc:(_Symbol|_Function|_CompiledFunction),0]:=
+initVecs
 
 
 
 iterateDRCE[drExpFuncs:{(_Function|_CompiledFunction|_Symbol)..},
 initVecs:{_?MatrixQ..},
 probFunc:(_Symbol|_Function|_CompiledFunction),numPers_?NumberQ]:=
-	With[{numX=Length[initVecs[[1]]]},Print["numX=",numX];
+	With[{numX=Length[initVecs[[1]]]},
 With[{iterated=NestList[doStep[drExpFuncs,#,numX]&,initVecs,numPers]},
 iterated]]/;
 And[numPers>0]
@@ -328,13 +329,17 @@ And[numPers>0]
 doStep[drExpFuncs:{(_Function|_CompiledFunction|_Symbol)..},
 initVecs:{_?MatrixQ..},
 numX_Integer]:=Flatten[
-Outer[(Apply[#1 , Flatten[#2]])[[Range[numX]]]&,drExpFuncs,initVecs,1,1],1]
+Outer[(Apply[#1 , Flatten[#2]])&,drExpFuncs,initVecs,1,1],1]
+
+
 
 regimesExp[preVec_?MatrixQ,probFunc:(_Symbol|_Function|_CompiledFunction),
-postVec:{_?MatrixQ..}]:=Apply[probFunc,Flatten[preVec]] . postVec
+postVec:{_?MatrixQ..}]:=Module[{},Apply[probFunc,Flatten[preVec]] . postVec]
 
 
 @}
+
+
 \subsubsection{Using just decision rule  expectation}
 \label{sec:using-both-decision}
 
@@ -3209,11 +3214,16 @@ If[allRes[[1]]===$Failed,Flatten[allRes[[2]]],Flatten[allRes[[1]]]]]
 }
 (*https://en.wikipedia.org/wiki/Sigmoid_function*)
 sigmoidPair[xx_,bb_]:=  With[{pp=E^(bb*xx)/(E^(bb*xx)+1)},{pp,1-pp}]
-
+(*
 probFunc[cct_?NumberQ,iit_?NumberQ,kkt_?NumberQ,lamt_?NumberQ,
 mu1t_?NumberQ,nlt_?NumberQ,thetat_?NumberQ]:=
 With[{pk=sigmoidPair[kkt,1.],pc=sigmoidPair[cct,2.]},
 {pk,pc}]
+*)
+probFunc[cct_?NumberQ,iit_?NumberQ,kkt_?NumberQ,lamt_?NumberQ,
+mu1t_?NumberQ,nlt_?NumberQ,thetat_?NumberQ]:=
+{{Global`p11,Global`p12},{Global`p21,Global`p22}}
+
 
 
 rbcEqnsBetterRegimes={{rbcEqnsBetterRegime01,

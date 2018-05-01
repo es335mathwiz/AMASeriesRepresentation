@@ -49,7 +49,7 @@ RR->Log[nkZLB`Private`piBar/nkZLB`Private`beta],
 beta->nkZLB`Private`beta,
 gamma->2,
 rho->nkZLB`Private`rho,
-sigma->nkZLB`Private`sigma}//.nkZLB`Private`paramSubs;
+sigma->150*nkZLB`Private`sigma}//.nkZLB`Private`paramSubs;
 
 
 qlEqnsCommon={

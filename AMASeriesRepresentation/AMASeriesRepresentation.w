@@ -292,7 +292,7 @@ Range[(Length[thePath]/numX)-3]]},
 
 @}
 
-@d iterateDRCEUSAGE
+@d iterateDRCEUsage
 @{
 iterateDRCE::usage="iterateDRCE[drExpFunc:(_Function|_CompiledFunction|_Symbol),initVec_?MatrixQ,numPers_Integer]"
 @}
@@ -312,24 +312,63 @@ Apply[Join,
 And[numPers>0]
 
 
-iterateDRCE[drExpFuncs:{(_Function|_CompiledFunction|_Symbol)..},
+@}
+
+@d iterateRegimesDRValsUsage
+@{
+iterateRegimesDRVals::usage="iterateRegimesDRVals[drExpFunc:(_Function|_CompiledFunction|_Symbol),initVec_?MatrixQ,numPers_Integer]"
+@}
+
+@d iterateRegimesDRVals
+@{
+
+(*
+not needed
+iterateRegimesDRVals[drExpFuncs:{(_Function|_CompiledFunction|_Symbol)..},
 initVecs:{_?MatrixQ..},probFunc:(_Symbol|_Function|_CompiledFunction),0]:=
 initVecs
+*)
+
+iterateRegimesDRVals[drFuncs:{(_Function|_CompiledFunction|_Symbol)..},
+initVec_?MatrixQ..,probFunc:(_Symbol|_Function|_CompiledFunction),
+regimeNum_Integer]:=
+Module[{},
+Apply[drFuncs[[regimeNum]],Flatten[initVec]]]/;
+And[Length[drFuncs]>=regimeNum>0]
 
 
 
-iterateDRCE[drExpFuncs:{(_Function|_CompiledFunction|_Symbol)..},
+
+iterateRegimesDRVals[drExpFuncs:{(_Function|_CompiledFunction|_Symbol)..},
 initVecs:{_?MatrixQ..},
 probFunc:(_Symbol|_Function|_CompiledFunction),numPers_?NumberQ]:=
-	With[{numX=Length[initVecs[[1]]]},
-With[{iterated=NestList[doStep[drExpFuncs,#,numX]&,initVecs,numPers]},
-iterated]]/;
+With[{iterated=NestList[doStep[drExpFuncs,#]&,initVecs,numPers]},
+iterated]/;
 And[numPers>0]
 
-doStep[drExpFuncs:{(_Function|_CompiledFunction|_Symbol)..},
+
+iterateRegimesDRProbs[drFuncs:{(_Function|_CompiledFunction|_Symbol)..},
+initVec_?MatrixQ..,probFunc:(_Symbol|_Function|_CompiledFunction),
+regimeNum_Integer]:=
+Module[{},
+Apply[drFuncs[[regimeNum]],Flatten[initVec]]]/;
+And[Length[drFuncs]>=regimeNum>0]
+
+
+
+
+iterateRegimesDRProbs[drExpFuncs:{(_Function|_CompiledFunction|_Symbol)..},
 initVecs:{_?MatrixQ..},
-numX_Integer]:=Flatten[
-Outer[(Apply[#1 , Flatten[#2]])&,drExpFuncs,initVecs,1,1],1]
+probFunc:(_Symbol|_Function|_CompiledFunction)]:=
+With[{iterated=NestList[doStep[drExpFuncs,#]&,initVecs,numPers]},
+iterated]/;
+And[numPers>0]
+
+
+
+doStep[drExpFuncs:{(_Function|_CompiledFunction|_Symbol)..},
+initVecs:{_?MatrixQ..}]:=Flatten[
+Outer[(Apply[#2 , Flatten[#1]])&,initVecs,drExpFuncs,1,1],1]
 
 
 
@@ -1846,7 +1885,8 @@ psiC
 @<parallelNestIterREInterpUsage@>
 @<genBothX0Z0FuncsUsage@>
 @<evaluateTripleUsage@>
-@<iterateDRCEUSAGE@>
+@<iterateRegimesDRValsUsage@>
+@<iterateDRCEUsage@>
 @}
 
 \subsection{Package Code}
@@ -1898,6 +1938,7 @@ psiC
 @<genBothX0Z0Funcs@>
 @<evaluateTriple@>
 @<iterateDRCE@>
+@<iterateRegimesDRVals@>
 @}
 
 

@@ -42,29 +42,41 @@ iterateQLINCSDRCE::usage="iterateQLINCSDRCE[anAugDRCE_Function,numPers_Integer,a
 Begin["`Private`"] (* Begin Private Context *) 
 
 (*parameters page 28 guerrieri iacoviello*)
-
+(*
 paramSubs={
 kappa->(nkZLB`Private`epsi-1)/nkZLB`Private`phiP,
 RR->Log[nkZLB`Private`piBar/nkZLB`Private`beta],
 beta->nkZLB`Private`beta,
-gamma->2,
+gammaPi->2,
+gammaY->2,
 rho->nkZLB`Private`rho,
 sigma->150*nkZLB`Private`sigma}//.nkZLB`Private`paramSubs;
+*)
+
+paramSubs={
+beta->.99,
+gammaPi->2,
+gammaY->0,
+kappa->0.05,
+piBar->1.005,
+RR->Log[piBar/beta],
+rho->0.99,
+sigma->0.00025}
 
 
 qlEqnsCommon={
-yy[t] - (yy[t+1] -rr[t]+pi[t+1]+eta[t]),
+yy[t] - (yy[t+1] -rr[t]+pi[t+1]+eta[t-1]),
 pi[t]-(beta*pi[t+1]+kappa*yy[t]),
 eta[t] -(rho*eta[t-1] +eps[eta][t])
 	}
-qlEqnsNotBinding=Append[qlEqnsCommon,rr[t]-gamma*pi[t]]
+qlEqnsNotBinding=Append[qlEqnsCommon,rr[t]-gammaPi*pi[t]-gammaY*yy[t]]
 qlEqnsBinding=Append[qlEqnsCommon,rr[t]-(-RR)]
 
 
 ssEqnSubs=
 {xx_Symbol[t+v_.]->xx}
 
-qlEqnsNotBindingSubbed=(((qlEqnsNotBinding/.ssEqnSubs)/.paramSubs)/.eps[eta][t]->0)
+qlEqnsNotBindingSubbed=(((qlEqnsNotBinding/.ssEqnSubs)//.paramSubs)/.eps[eta][t]->0)
 
 
 
@@ -93,7 +105,7 @@ qmatSymbRE=Join[zfSymbRE,evcsSymbRE[[{1,2}]]];
 
 
 
-psiepsSymbRE=-Transpose[{((D[#,eps[eta][t]]&/@ qlEqnsNotBinding)/.{eps[_][_]->0,xxxx_[t+_.]->xxxx})}/.paramSubs]
+psiepsSymbRE=-Transpose[{((D[#,eps[eta][t]]&/@ qlEqnsNotBinding)/.{eps[_][_]->0,xxxx_[t+_.]->xxxx})}//.paramSubs]
 
 
 
@@ -116,7 +128,7 @@ Print["took out backlooking"]
 argsSubs={
 eta[t-1]->etatm1, 
 pi[t-1]->pitm1, 
-rr[t-1]->RRtm1, 
+rr[t-1]->rrtm1, 
 yy[t-1]->YYtm1,
 eta[t]->etat, 
 pi[t]->pit, 
@@ -153,7 +165,7 @@ Compile @@ {
 },
 (eqnsForNotBind),"RuntimeOptions"->{"RuntimeErrorHandler"->Function[dollarFailed],"CatchMachineOverflow"->True,"CatchMachineUnderflow"->True}},
 Function[{aPt,aRes},
-If[aRes===Failed,False,Print[{"huh",(-RR/.paramSubs),aRes[[3,1]]}];And[aRes[[3,1]]>=(-RR/.paramSubs)]]]},
+If[aRes===Failed,False,Print[{"huh",(-RR//.paramSubs),aRes[[3,1]]}];And[aRes[[3,1]]>=(-RR//.paramSubs)]]]},
 {(True)&,
 Compile @@ {
 {
@@ -181,7 +193,7 @@ Compile @@ {
 },
 (eqnsForNotBind),"RuntimeOptions"->{"RuntimeErrorHandler"->Function[dollarFailed],"CatchMachineOverflow"->True,"CatchMachineUnderflow"->True}},
 Function[{aPt,aRes},
-If[aRes===dollarFailed,False,And[aRes[[3,1]]>=(-RR/.paramSubs)]]]},
+If[aRes===dollarFailed,False,And[aRes[[3,1]]>=(-RR//.paramSubs)]]]},
 {(True)&,
 Compile @@ {
 {

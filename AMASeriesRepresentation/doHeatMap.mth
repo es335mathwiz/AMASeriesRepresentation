@@ -1,0 +1,143 @@
+$AMADIR = 
+  Switch[$OperatingSystem, "MacOSX", 
+   "~/git/AMASeriesRepresentation/AMASeriesRepresentation", 
+"Windows",   "u:/git/AMASeriesRepresentation/AMASeriesRepresentation",
+"Unix",   "/msu/scratch2/m1gsa00/git/AMASeriesRepresentation/AMASeriesRepresentation"];
+SetDirectory[$AMADIR];
+Get["tests/pathSetup.mth"]; 
+
+Get["AMASeriesRepresentation`"];
+Get["quasiLinear`"];
+
+
+Print["pre eval"]
+LaunchKernels[]
+ParallelEvaluate[$MachineName]
+Print["post eval"]
+(*Get["JavaGraphics`"]*)
+ParallelEvaluate[SetDirectory["/msu/scratch2/m1gsa00/git/AMASeriesRepresentation/AMASeriesRepresentation"]]
+Get["tests/pathSetup.mth"]
+ParallelEvaluate[Get["tests/pathSetup.mth"]]
+ParallelEvaluate[Get["AMASeriesRepresentation`"]];
+Get["quasiLinear`"];
+ParallelEvaluate[Get["quasiLinear`"]];
+Needs["AMASeriesRepresentation`"]
+ParallelNeeds["AMASeriesRepresentation`"]
+
+
+
+
+X0Z0 = AMASeriesRepresentation`genBothX0Z0Funcs[
+   linModQLZLB];
+(*approx=1*{1,1};theK=65;theIter=35*)
+approx=5*{1,1};theK=10;theIter=20
+Print["{approx,theK,theIter}=",{approx,theK,theIter}];
+
+
+smolStuff = {ptErg, tfErg, plyErg, iplyErg, dplyErg} = 
+   AMASeriesRepresentation`smolyakInterpolationPrep[approx, {qlCSMean, 
+     qlCSSD, 
+     qlCSMinZ, 
+     qlCSMaxZ, 
+     qlCSvv}, 
+    theDistqlZLB];
+smolRngErg = 
+  Transpose[{qlCSMinZ, 
+    qlCSMaxZ}];
+toIg = quasiLinear`aGSpecqLin[[1]];
+sgSpecErg = {toIg, smolRngErg, ptErg, tfErg, plyErg, iplyErg, 
+   1, approx, {qlCSMean, 
+    qlCSSD, 
+    qlCSMinZ, 
+    qlCSMaxZ, 
+    qlCSvv}};
+(*
+
+wTime=AbsoluteTiming[
+theRes01 = AMASeriesRepresentation`parallelNestGenericIterREInterp[
+   AMASeriesRepresentation`genFRExtFunc, 
+   linModQLZLB, {X0Z0, theK}, 
+   quasiLinear`Private`qlEqnsqlZLB, sgSpecErg, 
+   AMASeriesRepresentation`smolyakInterpolation, {}, theIter,
+"Traditional"->False]];
+*)
+(*
+Print["wTime=",wTime[[1]]]
+Print["numhosts=",Length[hosts]]
+Print["kernels=",Length[Kernels[]]]
+Through[theRes01[[-1]] @@ # &[
+  quasiLinear`anXEpsFlatqLin]]
+
+fullVecs=Flatten[fillIn[{{},{2,3,4},#}]]& /@ sgSpecErg[[3]];
+
+pts=Join[#,(theRes01[[-1,1]]@@Flatten[fillIn[{{},{2,3,4},#}]])[[3]]] & /@ sgSpecErg[[3]]
+
+
+{minE,minEps,ig}=Min/@Transpose[pts];{maxE,maxEps,ig}=Max/@Transpose[pts];
+lpp3d=ListPointPlot3D[pts,PlotStyle->{PointSize[Large],Red}]
+p3d=Plot3D[{(-quasiLinear`Private`RR/.quasiLinear`Private`paramSubs),(theRes01[[-1,1]][ee,99,99,99,eps])[[3]]},{ee,minE,maxE},{eps,minEps,maxEps},PlotRange->All]
+Export["reallyR.pdf",Show[lpp3d,p3d],PlotRange->All]
+
+
+*)
+
+X0Z0 = AMASeriesRepresentation`genBothX0Z0Funcs[
+   linModQLZLB];
+(*approx=1*{1,1};theK=65;theIter=35*)
+approx=5*{1,1};theK=10;theIter=10
+Print["{approx,theK,theIter}=",{approx,theK,theIter}];
+smolStuff = {ptErg, tfErg, plyErg, iplyErg, dplyErg} = 
+   AMASeriesRepresentation`smolyakInterpolationPrep[approx, {qlCSMean, 
+     qlCSSD, 
+     qlCSMinZ, 
+     qlCSMaxZ, 
+     qlCSvv}, 
+    theDistqlZLB];
+smolRngErg = 
+  Transpose[{qlCSMinZ, 
+    qlCSMaxZ}];
+toIg = quasiLinear`aGSpecqLin[[1]];
+sgSpecErg = {toIg, smolRngErg, ptErg, tfErg, plyErg, iplyErg, 
+   1, approx, {qlCSMean, 
+    qlCSSD, 
+    qlCSMinZ, 
+    qlCSMaxZ, 
+    qlCSvv}};
+wTime=AbsoluteTiming[
+theResW01 = AMASeriesRepresentation`parallelNestGenericIterREInterp[
+   AMASeriesRepresentation`genFRExtFunc, 
+   linModQLZLB, {X0Z0, theK}, 
+   quasiLinear`Private`qlEqnsqlZLB, sgSpecErg, 
+   AMASeriesRepresentation`smolyakInterpolation, {}, theIter,
+"Traditional"->False,"addTailContribution"->True]];
+
+Print["wTime=",wTime[[1]]]
+Print["numhosts=",Length[hosts]]
+Print["kernels=",Length[Kernels[]]]
+Through[theResW01[[-1]] @@ # &[
+  quasiLinear`anXEpsFlatqLin]]
+
+fullVecs=Flatten[fillIn[{{},{2,3,4},#}]]& /@ sgSpecErg[[3]];
+
+ptsW=Join[#,(theResW01[[-1,1]]@@Flatten[fillIn[{{},{2,3,4},#}]])[[3]]] & /@ sgSpecErg[[3]]
+
+
+{minE,minEps,ig}=Min/@Transpose[ptsW];{maxE,maxEps,ig}=Max/@Transpose[ptsW];
+lpp3d=ListPointPlot3D[ptsW,PlotStyle->{PointSize[Large],Red}]
+p3d=Plot3D[{(-quasiLinear`Private`RR/.quasiLinear`Private`paramSubs),(theResW01[[-1,1]][ee,99,99,99,eps])[[3]]},{ee,minE,maxE},{eps,minEps,maxEps},PlotRange->All]
+Export["reallyRW.pdf",Show[lpp3d,p3d],PlotRange->All]
+
+
+
+
+(*
+
+
+wTime=AbsoluteTiming[
+theResW02 = AMASeriesRepresentation`parallelNestGenericIterREInterp[
+   AMASeriesRepresentation`genFRExtFunc, 
+   linModQLZLB, {theResW01[[-1]], theK}, 
+   quasiLinear`Private`qlEqnsqlZLB, sgSpecErg, 
+   AMASeriesRepresentation`smolyakInterpolation, {}, 3,
+"Traditional"->False,"addTailContribution"->True]];
+*)

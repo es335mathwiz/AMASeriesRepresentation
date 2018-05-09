@@ -34,8 +34,8 @@ genX0Z0Funcs[@<linMod@>]:=
 With[{numXVars=getNumX[linMod],numZVars=getNumZ[linMod]},
 With[{xtm1Vars=genSlots[numXVars]},
 With[{fromLinMod=Join[BB.xtm1Vars+
-Inverse[IdentityMatrix[Length[xtm1Vars]]-FF] . phi . 
-psiC,ConstantArray[0,{numZVars,1}]]},
+Inverse[IdentityMatrix[Length[xtm1Vars]]-FF] . phi . psiC,
+ConstantArray[0,{numZVars,1}]]},
 Apply[Function,{replaceLinPart[fromLinMod,xtm1Vars,backLookingInfo]}]]]]
 @}
 
@@ -46,6 +46,8 @@ With[{theRes=Map[Function[uu,{uu[[1]],Apply[uu[[3]],Flatten[xtm1Vars]]}],ble]},
 Fold[ReplacePart[#1,#2[[1]]->#2[[2]]]&,flm,theRes]]
 (*end code for genX0Z0Funcs*)
 @}
+
+
 
 
 
@@ -81,7 +83,7 @@ genLilXkZkFunc::usage=
 \subsubsection{Zero F contribution }
 \label{sec:zero-f-contribution}
 @d genLilXkZkFunc noZs call
-@{ genLilXkZkFunc[@<linMod@>,{}]@}
+@{ genLilXkZkFunc[@<linMod@>,{},opts:OptionsPattern[]]@}
 
 @d genLilXkZkFunc
 @{
@@ -121,7 +123,9 @@ MapThread[Function[{xx,yy},Dot[xx,phi.psiZ.yy]],{fPows , zPath}]]]]]
 @d theZs
 @{theZs:{_?MatrixQ..}@}
 @d genLilXkZkFunc theZs call
-@{genLilXkZkFunc[@<linMod@>,@<theZs@>]@}
+@{
+Options[genLilXkZkFunc]={"addTailContribution"->False};
+genLilXkZkFunc[@<linMod@>,@<theZs@>,opts:OptionsPattern[]]@}
 
 @d genLilXkZkFunc
 @{
@@ -129,16 +133,25 @@ MapThread[Function[{xx,yy},Dot[xx,phi.psiZ.yy]],{fPows , zPath}]]]]]
 Module[{},
 @<Z Matrices Given@>
 ]
+tailContribution[FF_?MatrixQ,phi_?MatrixQ,theTailZ_?MatrixQ]:=
+Module[{},Inverse[IdentityMatrix[Length[FF]]-FF] . phi . theTailZ]
+
+
 @}
 
 @d Z Matrices Given
 @{With[{fCon=Check[fSumC[phi,FF,psiZ,theZs],Print["trying to throw low"];
 Throw[$Failed,"low"]]},
-With[{theRes=genLilXkZkFunc[linMod,fCon]},
-theRes]]
-
-
-
+Print[{"zmatgiven:",OptionValue["addTailContribution"],{Length[theZs],Max[Abs[Flatten[theZs]]]},$KernelID}];
+With[{theRes=genLilXkZkFunc[linMod,fCon,
+Apply[Sequence,FilterRules[{opts},
+Options[genLilXkZkFunc]]]
+],numZs=Length[theZs]},
+If[And[OptionValue["addTailContribution"],numZs>=1],Print["addingTailContribution"];
+genLilXkZkFunc[linMod,fCon+MatrixPower[FF,Length[theZs]+1].tailContribution[FF,phi,theZs[[-1]]]],
+genLilXkZkFunc[linMod,fCon]
+]
+]]
 @}
 
 @d genLilXkZkFunc
@@ -164,7 +177,7 @@ chk
 ]]]]]]]@}
 
 @d genLilXkZkFunc fcon call
-@{genLilXkZkFunc[@<linMod@>,@<fCon@>]@}
+@{genLilXkZkFunc[@<linMod@>,@<fCon@>,opts:OptionsPattern[]]@}
 
 @d fCon
 @{fCon_?MatrixQ@}
@@ -289,7 +302,6 @@ Range[(Length[thePath]/numX)-3]]},
 
 
 
-
 @}
 
 @d iterateDRCEUsage
@@ -347,22 +359,6 @@ iterated]/;
 And[numPers>0]
 
 
-iterateRegimesDRProbs[drFuncs:{(_Function|_CompiledFunction|_Symbol)..},
-initVec_?MatrixQ..,probFunc:(_Symbol|_Function|_CompiledFunction),
-regimeNum_Integer]:=
-Module[{},
-Apply[drFuncs[[regimeNum]],Flatten[initVec]]]/;
-And[Length[drFuncs]>=regimeNum>0]
-
-
-
-
-iterateRegimesDRProbs[drExpFuncs:{(_Function|_CompiledFunction|_Symbol)..},
-initVecs:{_?MatrixQ..},
-probFunc:(_Symbol|_Function|_CompiledFunction)]:=
-With[{iterated=NestList[doStep[drExpFuncs,#]&,initVecs,numPers]},
-iterated]/;
-And[numPers>0]
 
 
 
@@ -378,6 +374,46 @@ postVec:{_?MatrixQ..}]:=Module[{},Apply[probFunc,Flatten[preVec]] . postVec]
 
 @}
 
+@d iterateRegimesDRProbsUsage
+@{
+
+iterateRegimesDRProbs::usage="iterateRegimesDRProbs"
+@}
+
+
+@d iterateRegimesDRProbs
+@{
+iterateRegimesDRProbs[initVec_?MatrixQ,
+probFunc:(_Symbol|_Function|_CompiledFunction),
+regimeNum_Integer]:=
+Module[{},Apply[probFunc,Flatten[initVec]][[{regimeNum}]]]
+And[Length[drFuncs]>=regimeNum>0]
+
+
+
+
+iterateRegimesDRProbs[initVecs:{{_?MatrixQ..}..},initProbs_?VectorQ,
+probFunc:(_Symbol|_Function|_CompiledFunction),numX_Integer]:=
+With[{iterated=FoldList[doStepProbs[#2,#1,probFunc,numX]&,initProbs,initVecs]},
+iterated]
+
+iterateRegimesDRProbs[initVecs:{{_?MatrixQ..}...},initProbs_?VectorQ,
+probFunc:(_Symbol|_Function|_CompiledFunction),numX_Integer]:=
+With[{iterated=FoldList[doStepProbs[#2,#1,probFunc,numX]&,initProbs,initVecs]},
+iterated]
+
+doStepProbs[initVecs:{_?MatrixQ..},initProbs_?VectorQ,
+probFunc:(_Symbol|_Function|_CompiledFunction),numX_Integer]:=
+With[{theTransProbs=Flatten[
+Map[Apply[probFunc,Flatten[#][[Range[numX]]]]&,
+initVecs],1]},Flatten[MapThread[#1*#2&,{initProbs,theTransProbs}]]]
+
+
+
+
+
+@}
+
 
 \subsubsection{Using just decision rule  expectation}
 \label{sec:using-both-decision}
@@ -387,7 +423,9 @@ postVec:{_?MatrixQ..}]:=Module[{},Apply[probFunc,Flatten[preVec]] . postVec]
 @{
 
 (*begin code for genFRExtFunc*)
-Options[genFRExtFunc]={"xVarRanges"->{},"Traditional"->False} 
+Options[genFRExtFunc]={"xVarRanges"->{},"Traditional"->False,"addTailContribution"->False} 
+
+
 
 genFRExtFunc[{numX_Integer,numEps_Integer,numZ_Integer},@<linMod@>,@<XZFuncs@>,
 @<eqnsFunc@>,opts:OptionsPattern[]]:=
@@ -455,7 +493,10 @@ Apply[Sequence,xtztArgPatterns]],
 Module[{theZsNow=genZsForFindRoot[linMod,
 Transpose[{xArgs}],XZFuncs[[1]],XZFuncs[[2]]]
 },
-With[{xkFunc=Catch[(Check[genLilXkZkFunc[linMod,theZsNow],
+With[{xkFunc=Catch[(Check[genLilXkZkFunc[linMod,theZsNow,
+Apply[Sequence,FilterRules[{opts},
+Options[genLilXkZkFunc]]]
+],
 Print["trying higher throw"];
 Throw[$Failed,"higher"]]),_,Function[{val,tag},
 Print["catchfxtzt:",{xArgs,val,tag}//InputForm];Throw[$Failed,"fromGenLil"]]]},
@@ -541,7 +582,10 @@ Module[{theZsNow=genZsForFindRoot[linMod,
 Transpose[{xArgs}],bothXZFuncs[[1,2]],bothXZFuncs[[2]]]
 },
 With[{xkFunc=Catch[
-(Check[genLilXkZkFunc[linMod,theZsNow],
+(Check[genLilXkZkFunc[linMod,theZsNow,
+Apply[Sequence,FilterRules[{opts},
+Options[genLilXkZkFunc]]]
+],
 Print["trying higher throw"];Throw[$Failed,"higher"]]),_,
 Function[{val,tag},Print["catchfxtzt:",{xArgs,val,tag}//InputForm];
 Throw[$Failed,"fromGenLil"]]]},
@@ -976,7 +1020,7 @@ doGenericIterREInterp::usage=
 @{
 (*begin code for doSmolyakIterREInterp*)
 
-Options[doGenericIterREInterp]={"xVarRanges"->{},"Traditional"->False}
+Options[doGenericIterREInterp]={"xVarRanges"->{},"Traditional"->False,"addTailContribution"->False}
 doGenericIterREInterp[genFRExtFunc,
 	@<linMod@>,
 	@<XZFuncs@>,
@@ -1013,7 +1057,7 @@ nestGenericIterREInterp::usage=
 @{
 (*begin code for nestGenericIterREInterp*)
 
-Options[nestGenericIterREInterp]={"xVarRanges"->{},"Traditional"->False}
+Options[nestGenericIterREInterp]={"xVarRanges"->{},"Traditional"->False,"addTailContribution"->False}
 nestGenericIterREInterp[genFRExtFunc,@<linMod@>,
 @<XZFuncs@>,@<eqnsFunc@>,@<smolGSpec@>,
 genericInterp:(smolyakInterpolation|svmRegressionLinear|
@@ -1022,7 +1066,8 @@ svmArgs:{_?NumberQ...},
 numIters_Integer,opts:OptionsPattern[]]:=
 NestList[Function[xx,doGenericIterREInterp[genFRExtFunc,linMod,
 {xx[[2]],numSteps},eqnsFunc,smolGSpec,
-genericInterp,svmArgs]],{99,XZFuncs[[1]]},numIters]
+genericInterp,svmArgs,Apply[Sequence,
+FilterRules[{opts},Options[doGenericIterREInterp]]]]],{99,XZFuncs[[1]]},numIters]
 
 
 (*end code for nestGenericIterREInterp*)
@@ -1197,7 +1242,7 @@ parallelDoGenericIterREInterp::usage=
 
 
 
-Options[parallelDoGenericIterREInterp]={"xVarRanges"->{},"Traditional"->False}
+Options[parallelDoGenericIterREInterp]={"xVarRanges"->{},"Traditional"->False,"addTailContribution"->False}
 parallelDoGenericIterREInterp[genFRExtFunc,
 	@<linMod@>,
 	@<XZFuncs@>,
@@ -1236,7 +1281,7 @@ parallelNestGenericIterREInterp::usage=
 
 
 
-Options[parallelNestGenericIterREInterp]={"xVarRanges"->{},"Traditional"->False}
+Options[parallelNestGenericIterREInterp]={"xVarRanges"->{},"Traditional"->False,"addTailContribution"->False}
 
 parallelNestGenericIterREInterp[genFRExtFunc,@<linMod@>,
 @<XZFuncs@>,@<eqnsFunc@>,@<smolGSpec@>,
@@ -1887,6 +1932,7 @@ psiC
 @<evaluateTripleUsage@>
 @<iterateRegimesDRValsUsage@>
 @<iterateDRCEUsage@>
+@<iterateRegimesDRProbsUsage@>
 @}
 
 \subsection{Package Code}
@@ -1939,6 +1985,7 @@ psiC
 @<evaluateTriple@>
 @<iterateDRCE@>
 @<iterateRegimesDRVals@>
+@<iterateRegimesDRProbs@>
 @}
 
 

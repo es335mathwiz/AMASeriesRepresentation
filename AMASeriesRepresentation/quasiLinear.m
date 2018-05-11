@@ -51,6 +51,11 @@ gammaPi->2,
 gammaY->2,
 rho->nkZLB`Private`rho,
 sigma->150*nkZLB`Private`sigma}//.nkZLB`Private`paramSubs;
+
+stdeta=Sqrt[(stdinnov^2)/(1-rho^2)]
+psi=stdeta*Sqrt[ns-1]
+
+
 *)
 
 paramSubs={
@@ -60,9 +65,10 @@ gammaY->0,
 kappa->0.05,
 piBar->1.005,
 RR->Log[piBar/beta],
-rho->0.99,
+rho->0.91,
 sigma->0.00025}
 
+happy=Solve[4==Sqrt[((sigTry)^2)/(1-(rho^2))]/.paramSubs,sigTry]
 
 qlEqnsCommon={
 yy[t] - (yy[t+1] -rr[t]+pi[t+1]+eta[t-1]),
@@ -288,7 +294,7 @@ qlCSMaxZ=Max/@Transpose[zz];
 
 Print["try 10 time SD for eta range"];
 qlCSMean=Append[qlCSMean,0];
-qlCSSD=Append[10*qlCSSD,sigVal];
+qlCSSD=Append[20*qlCSSD,sigVal];
 qlCSMinZ=Append[qlCSMinZ,-3];
 qlCSMaxZ=Append[qlCSMaxZ,3];
 qlCSvv=ArrayFlatten[{{ArrayFlatten[{{vv,{{0}}}}]},{{{0,1}}}}];

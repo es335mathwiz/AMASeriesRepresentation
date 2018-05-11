@@ -1,0 +1,194 @@
+$AMADIR = 
+  Switch[$OperatingSystem, "MacOSX", 
+   "~/git/AMASeriesRepresentation/AMASeriesRepresentation", "Windows",
+   "u:/git/AMASeriesRepresentation/AMASeriesRepresentation",
+"Unix", "/msu/scratch2/m1gsa00/git/AMASeriesRepresentation/AMASeriesRepresentation"];
+SetDirectory[$AMADIR];
+Get["tests/pathSetup.mth"]; 
+
+Get["AMASeriesRepresentation`"];
+Get["betterRBCRegimes`"];
+
+(*
+X0Z0 = AMASeriesRepresentation`genBothX0Z0Funcs[
+   betterRBCRegimes`linModBetterRegimes];
+frFunc = AMASeriesRepresentation`genFRExtFunc[{7, 1, 7}, 
+   betterRBCRegimes`linModBetterRegimes, {X0Z0, 2}, 
+   betterRBCRegimes`rbcEqnsBetterRegimes[[1,1]]];
+Print[{"1",AMASeriesRepresentation`evaluateTriple[frFunc[[1,1]],  Flatten[betterRBCRegimes`anXEpsBetterRegimes]]}]
+Print[{"2",AMASeriesRepresentation`evaluateTriple[frFunc[[1,2]],  Flatten[betterRBCRegimes`anXEpsBetterRegimes]]}]
+
+
+frFunc = AMASeriesRepresentation`genFRExtFunc[{7, 1, 7}, 
+   betterRBCRegimes`linModBetterRegimes, {X0Z0, 2}, 
+   betterRBCRegimes`rbcEqnsBetterRegimes[[1,2]]];
+Print[{"3",AMASeriesRepresentation`evaluateTriple[frFunc[[1,1]],  Flatten[betterRBCRegimes`anXEpsBetterRegimes]]}]
+Print[{"4",AMASeriesRepresentation`evaluateTriple[frFunc[[1,2]],  Flatten[betterRBCRegimes`anXEpsBetterRegimes]]}]
+*)
+
+X0Z0 = AMASeriesRepresentation`genBothX0Z0Funcs[
+   betterRBCRegimes`linModBetterRegimes];
+frFunc = AMASeriesRepresentation`genFRExtFunc[{7, 1, 7}, 
+   betterRBCRegimes`linModBetterRegimes, {X0Z0, 2}, 
+   betterRBCRegimes`rbcEqnsBetterRegimes[[1,1]]];
+smolStuff = {ptErg, tfErg, plyErg, iplyErg, dplyErg} = 
+   AMASeriesRepresentation`smolyakInterpolationPrep[{1, 1, 
+     1}, {betterRBCRegimes`betterRBCCSMean, 
+     betterRBCRegimes`betterRBCCSSD, 
+     betterRBCRegimes`betterRBCCSMinZ, 
+     betterRBCRegimes`betterRBCCSMaxZ, 
+     betterRBCRegimes`betterRBCCSvv}, 
+    betterRBCRegimes`theDistBetterRegimes];
+smolRngErg = 
+  Transpose[{betterRBCRegimes`betterRBCCSMinZ, 
+    betterRBCRegimes`betterRBCCSMaxZ}];
+toIg = betterRBCRegimes`aGSpecBetterRegimes[[1]];
+sgSpecErg = {toIg, smolRngErg, ptErg, tfErg, plyErg, iplyErg, 
+   1, {1, 1, 1}, {betterRBCRegimes`betterRBCCSMean, 
+    betterRBCRegimes`betterRBCCSSD, 
+    betterRBCRegimes`betterRBCCSMinZ, 
+    betterRBCRegimes`betterRBCCSMaxZ, 
+    betterRBCRegimes`betterRBCCSvv}};
+theRes01 = AMASeriesRepresentation`parallelNestGenericIterREInterp[
+   AMASeriesRepresentation`genFRExtFunc, 
+   betterRBCRegimes`linModBetterRegimes, {X0Z0, 2}, 
+   betterRBCRegimes`rbcEqnsBetterRegimes[[1,1]], sgSpecErg, 
+   AMASeriesRepresentation`smolyakInterpolation, {}, 10];
+Print[{"5",Through[theRes01[[-1]] @@ # &[  betterRBCRegimes`anXEpsFlatBetterRegimes]]}
+]
+theRes02 = AMASeriesRepresentation`parallelNestGenericIterREInterp[
+   AMASeriesRepresentation`genFRExtFunc, 
+   betterRBCRegimes`linModBetterRegimes, {X0Z0, 2}, 
+   betterRBCRegimes`rbcEqnsBetterRegimes[[1,2]], sgSpecErg, 
+   AMASeriesRepresentation`smolyakInterpolation, {}, 10];
+Print[{"6",Through[theRes02[[-1]] @@ # &[  betterRBCRegimes`anXEpsFlatBetterRegimes]]}
+]
+
+(*
+Print[{"7",iterateRegimesDRVals[{theRes01[[-1,2]]},
+{anXBetterRegimes,anXBetterRegimes},
+betterRBCRegimes`rbcEqnsBetterRegimes[[2]],0]}]
+
+Print[{"7a",iterateRegimesDRVals[{theRes02[[-1,2]]},
+{anXBetterRegimes,anXBetterRegimes},
+betterRBCRegimes`rbcEqnsBetterRegimes[[2]],0]}]
+*)
+
+(*
+first step should use error
+hmm01=iterateRegimesDRVals[{theRes01[[-1,2]]},
+{Join[anXBetterRegimes,anXBetterRegimes]},
+betterRBCRegimes`rbcEqnsBetterRegimes[[2]],1];
+
+
+hmm02=iterateRegimesDRVals[{theRes02[[-1,2]]},
+{Join[anXBetterRegimes,anXBetterRegimes]},
+betterRBCRegimes`rbcEqnsBetterRegimes[[2]],1];
+
+hmm=iterateRegimesDRVals[{theRes01[[-1,2]],theRes02[[-1,2]]},
+hmm01,
+betterRBCRegimes`rbcEqnsBetterRegimes[[2]],2];
+Print[{"8",hmm[[-1]]}];
+
+Print[{"9",hip=AMASeriesRepresentation`Private`regimesExp[anXBetterRegimes,
+betterRBCRegimes`Private`probFunc,hmm[[2]]]}]
+*)
+
+
+(*
+AMASeriesRepresentation`Private`regimesExp[hmm[[-2,1,Range[7]]],
+betterRBCRegimes`Private`probFunc,hmm[[-1,Range[2]]]][[1]]
+
+
+AMASeriesRepresentation`Private`regimesExp[hmm[[-2,2,Range[7]]],
+betterRBCRegimes`Private`probFunc,hmm[[-1,2+Range[2]]]][[2]]
+
+
+AMASeriesRepresentation`Private`regimesExp[hmm[[-2,3,Range[7]]],
+betterRBCRegimes`Private`probFunc,hmm[[-1,(3-1)*2+Range[2]]]][[1]]
+
+*)
+(*
+not needed
+
+doRiff[thePreviousList:{_?MatrixQ..},
+theProbFunc:(_Function|_CompiledFunction|_Symbol),
+theNextList:{_?MatrixQ..}]:=
+Module[{numRegimes=Length[theNextList]/Length[thePreviousList],
+numVars=Length[thePreviousList[[1]]]/2},Print[{"huh",numVars,numRegimes}];
+Map[
+(Print[{"hehe",theNextList[[(#-1)*numRegimes+Range[numRegimes]]],#}];
+doOne[thePreviousList[[#,Range[numVars]]],theProbFunc,
+theNextList[[(#-1)*numRegimes+Range[numRegimes]]],#])&,
+Flatten[Table[Range[numRegimes],{Length[thePreviousList]/numRegimes}]]]]
+
+doOne[previousVec_?MatrixQ,
+theProbFunc:(_Function|_CompiledFunction|_Symbol),
+nextVecs:{_?MatrixQ..},regimeIndx_Integer]:=
+Module[{},Print[{"bopo",previousVec,nextVecs}];
+AMASeriesRepresentation`Private`regimesExp[previousVec,
+theProbFunc,nextVecs][[regimeIndx]]]
+
+*)
+(*
+
+doRiff[hmm[[1]],betterRBCRegimes`Private`probFunc,hmm[[2]]]
+
+hmmff=iterateRegimesDRVals[{ff1,ff2},
+{Join[anXBetterRegimes,anXBetterRegimes]},
+betterRBCRegimes`rbcEqnsBetterRegimes[[2]],2];
+Print[{"8",hmm[[-1]]}];
+
+
+
+*)
+
+
+(*compute the first step using DR  for each possible regime*)
+Print[{"7a",beg01=iterateRegimesDRVals[{theRes01[[-1,1]],theRes02[[-1,1]]},
+anXEpsBetterRegimes,1]}]
+Print[{"7b",beg02=iterateRegimesDRVals[{theRes01[[-1,1]],theRes02[[-1,1]]},
+anXEpsBetterRegimes,2]}]
+
+
+
+(*compute the succeding steps using DR  for each possible following regime*)
+Print[{"8a",more01=iterateRegimesDRVals[{theRes01[[-1,2]],theRes02[[-1,2]]},
+{beg01},2]}]
+Print[{"8b",more02=iterateRegimesDRVals[{theRes01[[-1,2]],theRes02[[-1,2]]},
+{beg02},2]}]
+
+
+
+Print[{"9a",pr01=iterateRegimesDRProbs[Drop[anXEpsBetterRegimes,-1],
+betterRBCRegimes`rbcEqnsBetterRegimes[[2]],1]}]
+Print[{"9b",pr02=iterateRegimesDRProbs[Drop[anXEpsBetterRegimes,-1],
+betterRBCRegimes`rbcEqnsBetterRegimes[[2]],2]}]
+
+gip01=iterateRegimesDRProbs[Drop[more01,-2],{z1,z2},betterRBCRegimes`Private`probFunc,7];
+gip02=iterateRegimesDRProbs[Drop[more02,0],{z1,z2},betterRBCRegimes`Private`probFunc,7];
+
+
+Drop[more01,1] * gip01
+Print[{"7a",beg01=regimesExpectation[{theRes01[[-1,1]],theRes02[[-1,1]]},
+{theRes01[[-1,2]],theRes02[[-1,2]]},anXEpsBetterRegimes,
+betterRBCRegimes`rbcEqnsBetterRegimes[[2]],7,2]}]
+
+firstSteps=
+Map[iterateRegimesDRVals[{theRes01[[-1,1]],theRes02[[-1,1]]},anXEpsBetterRegimes,#]&,Range[2]]
+firstProbs=
+Map[Flatten[iterateRegimesDRProbs[anXEpsBetterRegimes[[Range[7]]],
+betterRBCRegimes`Private`probFunc,#]]&,
+Range[2]]
+
+
+Print[{"7a",beg01=regimesExpectation[firstSteps,firstProbs,
+{theRes01[[-1,2]],theRes02[[-1,2]]},
+betterRBCRegimes`rbcEqnsBetterRegimes[[2]],7,2]}]
+
+
+
+Print[{"7a",beg01=AMASeriesRepresentation`Private`genZsForFindRoot[
+betterRBCRegimes`linModBetterRegimes,firstSteps,firstProbs,
+{theRes01[[-1,2]],theRes02[[-1,2]]},
+betterRBCRegimes`rbcEqnsBetterRegimes[[2]],2]}]

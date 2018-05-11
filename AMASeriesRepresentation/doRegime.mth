@@ -1,0 +1,15 @@
+
+Get["pathSetup.mth"]
+Needs["AMASeriesRepresentation`"]
+Needs["betterRBC`"]
+Needs["mathSmolyak`"]
+
+
+
+theFRExtGate=genFRExtFunc[{4,1,4},linModBetterTrips,{genX0Z0Funcs[linModBetterTrips],2},eqnsCompiledBetterTrips,"xVarRanges"->{{0.01,2},{0.01,2},{0.01,20},{0.85,1.3}}]
+
+
+X0Z0=genX0Z0Funcs[linModBetter];
+theLilFunc=genLilXkZkFunc[linModBetter, {X0Z0,2},anXEpsBetter];
+theFR=genFRFunc[{4,1,4},theLilFunc,rbcEqnsFunctionalNextBetter];
+theFR@@anXEpsFlatBetter

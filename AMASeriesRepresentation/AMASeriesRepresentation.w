@@ -304,6 +304,32 @@ Range[(Length[thePath]/numX)-3]]},
 
 @}
 
+@d genZsForFindRoot
+@{
+
+genZsForFindRoot[linMod:{theHMat_?MatrixQ,BB_?MatrixQ,
+phi_?MatrixQ,FF_?MatrixQ,psiEps_?MatrixQ,psiC_?MatrixQ,psiZ_?MatrixQ,
+backLookingInfo:{{_Integer,backLooking_,backLookingExp_}...}},
+firstSteps:{_?MatrixQ..},firstProbs_?MatrixQ,
+drExpFuncs:{(_Function|_CompiledFunction|_Symbol)..},probFunc:(_Symbol|_Function|_CompiledFunction),iters_Integer]:=
+Module[{numX=Length[getB[linMod]]},
+With[{thePaths=
+Check[
+regimesExpectation[firstSteps,firstProbs,drExpFuncs,probFunc,numX,iters+1],
+Print["problems with current DRCE,using at",initVec,"linMod!!!!!"]]},
+Print[{"thePaths:",thePaths}];
+With[{restVals=
+Map[compZsOnPath[theHMat,psiC,numX,#]&,thePaths]},
+      restVals
+]]]
+
+compZsOnPath[theHMat_?MatrixQ,psiC_?MatrixQ,numX_Integer,thePath_?MatrixQ]:=
+  Map[(theHMat .thePath[[Range[3*numX]+numX*(#-1)]] -psiC)&,
+Range[(Length[thePath]/numX)-3]]
+
+
+@}
+
 @d iterateDRCEUsage
 @{
 iterateDRCE::usage="iterateDRCE[drExpFunc:(_Function|_CompiledFunction|_Symbol),initVec_?MatrixQ,numPers_Integer]"
@@ -334,16 +360,9 @@ iterateRegimesDRVals::usage="iterateRegimesDRVals[drExpFunc:(_Function|_Compiled
 @d iterateRegimesDRVals
 @{
 
-(*
-not needed
-iterateRegimesDRVals[drExpFuncs:{(_Function|_CompiledFunction|_Symbol)..},
-initVecs:{_?MatrixQ..},probFunc:(_Symbol|_Function|_CompiledFunction),0]:=
-initVecs
-*)
 
 iterateRegimesDRVals[drFuncs:{(_Function|_CompiledFunction|_Symbol)..},
-initVec_?MatrixQ..,probFunc:(_Symbol|_Function|_CompiledFunction),
-regimeNum_Integer]:=
+initVec_?MatrixQ,regimeNum_Integer]:=
 Module[{},
 Apply[drFuncs[[regimeNum]],Flatten[initVec]]]/;
 And[Length[drFuncs]>=regimeNum>0]
@@ -352,8 +371,7 @@ And[Length[drFuncs]>=regimeNum>0]
 
 
 iterateRegimesDRVals[drExpFuncs:{(_Function|_CompiledFunction|_Symbol)..},
-initVecs:{_?MatrixQ..},
-probFunc:(_Symbol|_Function|_CompiledFunction),numPers_?NumberQ]:=
+initVecs:{_?MatrixQ..},numPers_?NumberQ]:=
 With[{iterated=NestList[doStep[drExpFuncs,#]&,initVecs,numPers]},
 iterated]/;
 And[numPers>0]
@@ -368,8 +386,6 @@ Outer[(Apply[#2 , Flatten[#1]])&,initVecs,drExpFuncs,1,1],1]
 
 
 
-regimesExp[preVec_?MatrixQ,probFunc:(_Symbol|_Function|_CompiledFunction),
-postVec:{_?MatrixQ..}]:=Module[{},Apply[probFunc,Flatten[preVec]] . postVec]
 
 
 @}
@@ -414,6 +430,58 @@ initVecs],1]},Flatten[MapThread[#1*#2&,{initProbs,theTransProbs}]]]
 
 @}
 
+
+\subsubsection{regimes expectation}
+\label{sec:using-both-decision}
+
+@d regimesExpectationUsage
+@{
+regimesExpectation::usage="regimesExpectation"
+
+@}
+
+@d regimesExpectation
+@{
+
+regimesExpectation[
+drFuncs:{(_Function|_CompiledFunction|_Symbol)..},
+drExpFuncs:{(_Function|_CompiledFunction|_Symbol)..},
+initVec_?MatrixQ,probFunc:(_Symbol|_Function|_CompiledFunction),
+numXVars_Integer,
+numSteps_Integer]:=
+Module[{numRegimes=Length[drFuncs]},
+With[{firstSteps=
+Map[iterateRegimesDRVals[drFuncs,initVec,#]&,Range[numRegimes]]},
+With[{furtherSteps=Map[iterateRegimesDRVals[drExpFuncs,{#},numSteps]&,
+firstSteps],
+firstProbs=
+Map[Flatten[iterateRegimesDRProbs[initVec[[Range[numXVars]]],probFunc,#]]&,
+Range[numRegimes]]},
+Print["firstStuff:",{firstSteps,firstProbs}//InputForm];
+With[{restProbs=
+MapThread[iterateRegimesDRProbs[Drop[#1,-2],#2,probFunc,numXVars]&,
+{furtherSteps,firstProbs}]},
+With[{theProducts=MapThread[Drop[#1,1]*#2&,{furtherSteps,restProbs}]},
+With[{theSums=Map[doRegime,theProducts]},
+theSums]]]]]]
+
+regimesExpectation[firstSteps:{_?MatrixQ..},firstProbs_?MatrixQ,
+drExpFuncs:{(_Function|_CompiledFunction|_Symbol)..},probFunc:(_Symbol|_Function|_CompiledFunction),
+numXVars_Integer,
+numSteps_Integer]:=
+Module[{numRegimes=Length[drFuncs]},
+With[{furtherSteps=Map[iterateRegimesDRVals[drExpFuncs,{#},numSteps]&,
+firstSteps]},
+With[{restProbs=
+MapThread[iterateRegimesDRProbs[Drop[#1,-2],#2,probFunc,numXVars]&,
+{furtherSteps,firstProbs}]},
+With[{theProducts=MapThread[Drop[#1,1]*#2&,{furtherSteps,restProbs}]},
+With[{theSums=Map[doRegime,theProducts]},
+theSums]]]]]
+
+plusAllEvents[theEvents:{_?MatrixQ..}]:=Apply[Plus,theEvents]
+doRegime[regimeEvents:{{_?MatrixQ..}..}]:=Map[plusAllEvents,regimeEvents]
+@}
 
 \subsubsection{Using just decision rule  expectation}
 \label{sec:using-both-decision}
@@ -1933,6 +2001,7 @@ psiC
 @<iterateRegimesDRValsUsage@>
 @<iterateDRCEUsage@>
 @<iterateRegimesDRProbsUsage@>
+@<regimesExpectationUsage@>
 @}
 
 \subsection{Package Code}
@@ -1986,6 +2055,7 @@ psiC
 @<iterateDRCE@>
 @<iterateRegimesDRVals@>
 @<iterateRegimesDRProbs@>
+@<regimesExpectation@>
 @}
 
 

@@ -115,9 +115,9 @@ aSoln]
 
 
 (*{solution$type,yy,dp,notr,nomr}*)
-
-pp=(1+.99)/2;
-ns=2
+rhoVal=.91
+pp=(1+rhoVal)/2;
+ns=20
 PP=rouwenhorst[ns,pp,pp];
 eta=Range[-.02,0.02,0.04/(ns-1)]
 hip=solve$model[eta,PP,params];

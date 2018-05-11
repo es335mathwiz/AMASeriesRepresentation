@@ -51,7 +51,7 @@ smolStuff = {ptErg, tfErg, plyErg, iplyErg, dplyErg} =
      nkNKCSMinZ01, 
      nkNKCSMaxZ01, 
      nkNKCSvv01}, 
-    quasiLinear`theDistquasiLinear];
+    theDistqlZLB];
 smolRngErg = 
   Transpose[{nkNKCSMinZ01, 
     nkNKCSMaxZ01}];
@@ -64,10 +64,11 @@ sgSpecErg = {toIg, smolRngErg, ptErg, tfErg, plyErg, iplyErg,
     nkNKCSvv01}}]
 
 
+
 X0Z0 = AMASeriesRepresentation`genBothX0Z0Funcs[
    linModQLZLB];
 (*approx=1*{1,1};theK=65;theIter=35*)
-approx=5*{1,1};theK=25;theIter=30
+approx=5*{1,1};theK=35;theIter=20
 Print["{approx,theK,theIter}=",{approx,theK,theIter}];
 smolStuff = {ptErg, tfErg, plyErg, iplyErg, dplyErg} = 
    AMASeriesRepresentation`smolyakInterpolationPrep[approx, {qlCSMean, 
@@ -86,6 +87,12 @@ sgSpecErg = {toIg, smolRngErg, ptErg, tfErg, plyErg, iplyErg,
     qlCSMinZ, 
     qlCSMaxZ, 
     qlCSvv}};
+
+smolRngNoErg={{-0.02,0.02},{-.001,.001}};
+smolStuffNoErg = {ptNoErg, tfNoErg, plyNoErg, iplyNoErg, dplyNoErg} = 
+   AMASeriesRepresentation`smolyakInterpolationPrep[approx, smolRngNoErg,     theDistqlZLB];
+sgSpecNoErg = {toIg, smolRngNoErg, ptNoErg, tfNoErg, plyNoErg, iplyNoErg, 1, approx, {}}
+
 wTime=AbsoluteTiming[
 theRes01 = AMASeriesRepresentation`parallelNestGenericIterREInterp[
    AMASeriesRepresentation`genFRExtFunc, 
@@ -142,23 +149,6 @@ Print[{"18",AMASeriesRepresentation`evaluateTriple[frFuncTrad[[1, 1]],  Flatten[
 
 approx=5*{1,1};theK=0;theIter=1
 Print["{approx,theK,theIter}=",{approx,theK,theIter}];
-smolStuff = {ptErg, tfErg, plyErg, iplyErg, dplyErg} = 
-   AMASeriesRepresentation`smolyakInterpolationPrep[approx, {qlCSMean, 
-     qlCSSD, 
-     qlCSMinZ, 
-     qlCSMaxZ, 
-     qlCSvv}, 
-    theDistqlZLB];
-smolRngErg = 
-  Transpose[{qlCSMinZ, 
-    qlCSMaxZ}];
-toIg = quasiLinear`aGSpecqLin[[1]];
-sgSpecErg = {toIg, smolRngErg, ptErg, tfErg, plyErg, iplyErg, 
-   1, approx, {qlCSMean, 
-    qlCSSD, 
-    qlCSMinZ, 
-    qlCSMaxZ, 
-    qlCSvv}};
 wTime=AbsoluteTiming[
 theResTrad = AMASeriesRepresentation`parallelNestGenericIterREInterp[
    AMASeriesRepresentation`genFRExtFunc, 
@@ -173,7 +163,7 @@ PrependTo[$Path,"/msu/scratch2/m1gsa00/git/persistentDR/code/"]
 
 Get["canonicalNK.mth"]
 
-
+<<JavaGraphics`
 pts=Join[#,(theRes01[[-1,1]]@@Flatten[fillIn[{{},{2,3,4},#}]])[[3]]] & /@ sgSpecErg[[3]]
 
 {minE,minEps,ig}=Min/@Transpose[pts];{maxE,maxEps,ig}=Max/@Transpose[pts];
@@ -184,7 +174,7 @@ Export["reallyR2.pdf",Show[lpp,plt],PlotRange->All]
 
 
 lpnow=ListPlot[Transpose[{eta,hip[[1,-1]]}]]
-Show[lpnow,plt,DisplayFunction->$DisplayFunction]
+Show[lpnow,plt,DisplayFunction->$DisplayFunction,PlotRange->All]
 
 
 
@@ -200,3 +190,5 @@ backZtoX[{{z1,z2,tryEps}},betterRBCMean,betterRBCSD,betterRBCvv][[1]]]],
 {z1,betterRBCMinZ[[1]],betterRBCMaxZ[[1]]},{z2,betterRBCMinZ[[2]],betterRBCMaxZ[[2]]},PlotRange->All,PlotLegends->Automatic,PlotLabel->StringReplace[theName,"Iters"->"\nIters"
 ]<>bothErrStr,
 Epilog->{PointSize[0.05],Green,Point[acterrLoc[[{1,2}]]],PointSize[0.025],Orange,Point[errBndLoc[[{1,2}]]],PointSize[0.0125],Black,Point[#]&/@zPts[[All,{1,2}]]},PlotRangeClipping->False]]
+
+da=Plot[((theRes01[[-1,1]] @@ {xx,0,0,0,0})[[3]])-((theRes01[[-2,1]] @@ {xx,0,0,0,0})[[3]]),{xx,-.02,.02}]

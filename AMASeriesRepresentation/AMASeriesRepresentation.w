@@ -432,100 +432,6 @@ numSteps_Integer}@}
 
 
 
-\subsubsection{Using both decision rule and decision rule expectation for regimes}
-\label{sec:using-both-decision}
-
-
-@d genFRExtFunc
-@{
-
-genFRExtFunc[{numX_Integer,numEps_Integer,numZ_Integer},
-@<linMod@>,@<regimesBothXZFuncs@>,
-@<eqnsFunc@>,opts:OptionsPattern[]]:=
-Module[{varRanges=OptionValue["xVarRanges"]},
-With[{@<findRootArgNames@>},
-With[{@<prepFindRootXInitBoth@>},
-With[{@<cmptXArgsInit@>,
-@<makeArgPatternsBoth@>},
-(**)
-Switch[OptionValue["Traditional"],
-True,@<setDelayedTradFXtZtRegimesBoth@>;@<setDelayedTradFXtm1Eps@>,
-False,@<setDelayedSeriesFXtZtRegimesBoth@>;@<setDelayedSeriesFXtm1Eps@>]
-(**)
-(**)
-DistributeDefinitions[funcOfXtZt,funcOfXtm1Eps]
-Off[FindRoot::srect];
-Off[FindRoot::nlnum];Sow[{funcOfXtm1Eps,funcOfXtZt},"theFuncs"];
-funcOfXtm1Eps
-]]]]
-@}
-
-@d setDelayedSeriesFXtZtRegimesBoth
-@{SetDelayed[
-funcOfXtZt[
-(**)
-Apply[Sequence,xtztArgPatterns]],
-Module[{theZsNow=genZsForFindRoot[linMod,
-Transpose[{xArgs}],bothXZFuncs[[1,2]],bothXZFuncs[[2]]]
-},
-With[{xkFunc=Catch[
-(Check[genLilXkZkFunc[linMod,theZsNow,
-Apply[Sequence,FilterRules[{opts},
-Options[genLilXkZkFunc]]]
-],
-Print["trying higher throw"];Throw[$Failed,"higher"]]),_,
-Function[{val,tag},Print["catchfxtzt:",{xArgs,val,tag}//InputForm];
-Throw[$Failed,"fromGenLil"]]]},
-With[{xkAppl=Apply[xkFunc,Join[xLagArgs,eArgs,zArgs]]},
-With[{eqnAppl=Apply[eqnsFunc,Flatten[xkAppl]],
-xDisc=xArgs-xkAppl[[numX+Range[numX]]]},
-Flatten[Join[xDisc,eqnAppl]]]]]]]@}
-
-
-@d setDelayedTradFXtZtRegimesBoth
-@{SetDelayed[
-funcOfXtZt[
-(**)
-Apply[Sequence,xtNoZtArgPatterns]],
-Module[{},
-With[{
-xkAppl=Flatten[
-Join[xLagArgs,xArgs,
-(Apply[regimesBothXZFuncs[[1,2]],xArgs][[Range[numX]]]),eArgs]]},
-With[{eqnAppl=Apply[eqnsFunc,Flatten[xkAppl]]},
-Flatten[Join[eqnAppl]]]]]]@}
-@d setDelayedSeriesFXtZtRegimesBoth
-@{SetDelayed[
-funcOfXtZt[
-(**)
-Apply[Sequence,xtztArgPatterns]],
-Module[{theZsNow=genZsForFindRoot[linMod,
-Transpose[{xArgs}],regimesBothXZFuncs[[1,2]],regimesBothXZFuncs[[2]]]
-},
-With[{xkFunc=Catch[
-(Check[genLilXkZkFunc[linMod,theZsNow,
-Apply[Sequence,FilterRules[{opts},
-Options[genLilXkZkFunc]]]
-],
-Print["trying higher throw"];Throw[$Failed,"higher"]]),_,
-Function[{val,tag},Print["catchfxtzt:",{xArgs,val,tag}//InputForm];
-Throw[$Failed,"fromGenLil"]]]},
-With[{xkAppl=Apply[xkFunc,Join[xLagArgs,eArgs,zArgs]]},
-With[{eqnAppl=Apply[eqnsFunc,Flatten[xkAppl]],
-xDisc=xArgs-xkAppl[[numX+Range[numX]]]},
-Flatten[Join[xDisc,eqnAppl]]]]]]]@}
-
-
-@d regimesBothXZFuncs
-@{regimesBothXZFuncs:{
-{
-{
-(_Function|_InterpolatingFunction|_CompiledFunction|_Symbol),
-(_Function|_InterpolatingFunction|_CompiledFunction|_Symbol)},
-_Integer}..}@}
-
-
-
 @d prepFindRootXInitBoth
 @{theXInit=Flatten[Apply[bothXZFuncs[[1,1]],Join[xLagArgs,eArgs]]],
 zArgsInit=Map[Function[xx,{xx,0}],zArgs],
@@ -1656,6 +1562,114 @@ Options[parallelDoGenericIterREInterp]]]]],justBothXZFuncs,numIters]]
 \label{sec:genx0z0funcs}
 
 
+\subsubsection{Using both decision rule and decision rule expectation for regimes}
+\label{sec:using-both-decision}
+
+
+@d genFRExtFunc
+@{
+
+genFRExtFunc[{numX_Integer,numEps_Integer,numZ_Integer},
+@<linMod@>,
+@<regimesBothXZFuncs@>,
+regimeTriples:{{{
+{
+{_Function,(_Function|_CompiledFunction|_Symbol),_Function}..},_Function}..},
+probFunc:(_Function|_CompiledFunction|_Symbol)},regimeIndx_Integer,opts:OptionsPattern[]]:=
+Module[{varRanges=OptionValue["xVarRanges"]},
+With[{@<findRootArgNames@>},
+With[{@<prepFindRootXInitRegimesBoth@>},
+With[{@<cmptXArgsInit@>,
+@<makeArgPatternsBoth@>},
+(**)
+Switch[OptionValue["Traditional"],
+True,@<setDelayedTradFXtZtRegimesBoth@>;@<setDelayedTradFXtm1Eps@>,
+False,@<setDelayedSeriesFXtZtRegimesBoth@>;@<setDelayedSeriesFXtm1Eps@>]
+(**)
+(**)
+DistributeDefinitions[funcOfXtZt,funcOfXtm1Eps]
+Off[FindRoot::srect];
+Off[FindRoot::nlnum];Sow[{funcOfXtm1Eps,funcOfXtZt},"theFuncs"];
+funcOfXtm1Eps
+]]]]
+@}
+
+@d prepFindRootXInitRegimesBoth
+@{theXInit=Flatten[Apply[regimesBothXZFuncs[[regimeIndx,1,1]],
+Join[xLagArgs,eArgs]]],
+zArgsInit=Map[Function[xx,{xx,0}],zArgs],
+funcOfXtm1Eps=Unique["fNameXtm1Eps"],
+funcOfXtZt=Unique["fNameXtZt"]
+@}
+
+
+@d setDelayedSeriesFXtZtRegimesBoth
+@{SetDelayed[
+funcOfXtZt[
+(**)
+Apply[Sequence,xtztArgPatterns]],
+Module[{theZsNow=genZsForFindRoot[linMod,
+Transpose[{xArgs}],Map[#[[1,2]]&,regimesBothXZFuncs],probFunc,
+Map[#[[2]]&,regimesBothXZFuncs]]
+},
+With[{xkFunc=Catch[
+(Check[genLilXkZkFunc[linMod,theZsNow,
+Apply[Sequence,FilterRules[{opts},
+Options[genLilXkZkFunc]]]
+],
+Print["trying higher throw"];Throw[$Failed,"higher"]]),_,
+Function[{val,tag},Print["catchfxtzt:",{xArgs,val,tag}//InputForm];
+Throw[$Failed,"fromGenLil"]]]},
+With[{xkAppl=Apply[xkFunc,Join[xLagArgs,eArgs,zArgs]]},
+With[{eqnAppl=Apply[eqnsFunc,Flatten[xkAppl]],
+xDisc=xArgs-xkAppl[[numX+Range[numX]]]},
+Flatten[Join[xDisc,eqnAppl]]]]]]]@}
+
+
+@d setDelayedTradFXtZtRegimesBoth
+@{SetDelayed[
+funcOfXtZt[
+(**)
+Apply[Sequence,xtNoZtArgPatterns]],
+Module[{},
+With[{
+xkAppl=Flatten[
+Join[xLagArgs,xArgs,
+Map[(Apply[#[[1,2]],xArgs][[Range[numX]]])&,regimesBothXZFuncs],eArgs]]},
+With[{eqnAppl=Apply[eqnsFunc,Flatten[xkAppl]]},
+Flatten[Join[eqnAppl]]]]]]@}
+@d setDelayedSeriesFXtZtRegimesBoth
+@{SetDelayed[
+funcOfXtZt[
+(**)
+Apply[Sequence,xtztArgPatterns]],
+Module[{theZsNow=genZsForFindRoot[linMod,
+Transpose[{xArgs}],Map[#[[1]]&,regimesBothXZFuncs],probFunc,Map[#[[2]]&,regimesBothXZFuncs]]
+},
+With[{xkFunc=Catch[
+(Check[genLilXkZkFunc[linMod,theZsNow,
+Apply[Sequence,FilterRules[{opts},
+Options[genLilXkZkFunc]]]
+],
+Print["trying higher throw"];Throw[$Failed,"higher"]]),_,
+Function[{val,tag},Print["catchfxtzt:",{xArgs,val,tag}//InputForm];
+Throw[$Failed,"fromGenLil"]]]},
+With[{xkAppl=Apply[xkFunc,Join[xLagArgs,eArgs,zArgs]]},
+With[{eqnAppl=Apply[eqnsFunc,Flatten[xkAppl]],
+xDisc=xArgs-xkAppl[[numX+Range[numX]]]},
+Flatten[Join[xDisc,eqnAppl]]]]]]]@}
+
+
+@d regimesBothXZFuncs
+@{regimesBothXZFuncs:{
+{
+{
+(_Function|_InterpolatingFunction|_CompiledFunction|_Symbol),
+(_Function|_InterpolatingFunction|_CompiledFunction|_Symbol)},
+_Integer}..}@}
+
+
+
 @d genRegimesBothX0Z0FuncsUsage
 @{genRegimesBothX0Z0Funcs::usage=
 "place holder for genRegimesBothX0Z0Funcs"
@@ -1668,21 +1682,6 @@ genRegimesBothX0Z0Funcs[@<linMods@>]:=Map[genBothX0Z0Funcs,linMods]
 
 @}
 
-@d genFRExtFunc
-@{
-genFRExtFunc[{numX_Integer,numEps_Integer,numZ_Integer},@<linMod@>,
-@<regimesBothXZFuncs@>,
-regimeTriples:{{{{_Function,(_Function|_CompiledFunction|_Symbol),_Function}..},
-selectorFunc_Function..},probFunc:(_Function|_CompiledFunction|_Symbol)},
-opts:OptionsPattern[]]:=
-Module[{varRanges=OptionValue["xVarRanges"]},
-With[{funcTrips=
-Map[{#[[1]],genFRExtFunc[{numX,numEps,numZ},linMod,regimesBothXZFuncs,#[[2]],
-Apply[Sequence,
-FilterRules[{opts},Options[genFRExtFunc]]]],#[[3]]}&,triples[[1]]]},
-{funcTrips,selectorFunc}
-]]
-@}
 
 
 

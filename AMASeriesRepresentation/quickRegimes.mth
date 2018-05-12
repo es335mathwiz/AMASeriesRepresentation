@@ -201,7 +201,8 @@ betterRBCRegimes`linModBetterRegimes,short,firstProbs,
 betterRBCRegimes`rbcEqnsBetterRegimes[[2]],{2,3}]}]
 
 
-regX0Z0=genRegimesBothX0Z0Funcs[{betterRBCRegimes`linModBetterRegimes,betterRBCRegimes`linModBetterRegimes}]
+regX0Z0=
+{#,1}&/@genRegimesBothX0Z0Funcs[{betterRBCRegimes`linModBetterRegimes,betterRBCRegimes`linModBetterRegimes}]
 
 genFRExtFunc[{7,1,7},betterRBCRegimes`linModBetterRegimes,regX0Z0,
 rbcEqnsBetterRegimes]

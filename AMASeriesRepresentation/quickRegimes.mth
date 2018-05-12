@@ -182,13 +182,26 @@ betterRBCRegimes`Private`probFunc,#]]&,
 Range[2]]
 
 
-Print[{"7a",beg01=regimesExpectation[firstSteps,firstProbs,
+Print[{"7a",beg01=regimesExpectation[Take[#,7]&/@firstSteps,firstProbs,
 {theRes01[[-1,2]],theRes02[[-1,2]]},
 betterRBCRegimes`rbcEqnsBetterRegimes[[2]],7,2]}]
 
 
 
 Print[{"7a",beg01=AMASeriesRepresentation`Private`genZsForFindRoot[
-betterRBCRegimes`linModBetterRegimes,firstSteps,firstProbs,
+betterRBCRegimes`linModBetterRegimes,Take[#,7]&/@firstSteps,firstProbs,
 {theRes01[[-1,2]],theRes02[[-1,2]]},
 betterRBCRegimes`rbcEqnsBetterRegimes[[2]],2]}]
+
+
+short=Take[#,7]&/@firstSteps;
+Print[{"7a",beg01=AMASeriesRepresentation`Private`genZsForFindRoot[
+betterRBCRegimes`linModBetterRegimes,short,firstProbs,
+{theRes01[[-1,2]],theRes02[[-1,2]]},
+betterRBCRegimes`rbcEqnsBetterRegimes[[2]],{2,3}]}]
+
+
+regX0Z0=genRegimesBothX0Z0Funcs[{betterRBCRegimes`linModBetterRegimes,betterRBCRegimes`linModBetterRegimes}]
+
+genFRExtFunc[{7,1,7},betterRBCRegimes`linModBetterRegimes,regX0Z0,
+rbcEqnsBetterRegimes]

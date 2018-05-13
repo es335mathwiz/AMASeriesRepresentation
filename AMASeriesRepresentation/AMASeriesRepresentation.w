@@ -1644,7 +1644,7 @@ funcOfXtZt[
 (**)
 Apply[Sequence,xtztArgPatterns]],
 Module[{theZsNow=genZsForFindRoot[linMod,
-Transpose[{xArgs}],Map[#[[1]]&,regimesBothXZFuncs],probFunc,Map[#[[2]]&,regimesBothXZFuncs]]
+Transpose[{xArgs}],Map[#[[1,2]]&,regimesBothXZFuncs],probFunc,Map[#[[2]]&,regimesBothXZFuncs]]
 },
 With[{xkFunc=Catch[
 (Check[genLilXkZkFunc[linMod,theZsNow,
@@ -1711,7 +1711,7 @@ backLookingInfo:{{_Integer,backLooking_,backLookingExp_}...}},
 firstSteps:{_?MatrixQ..},firstProbs_?MatrixQ,
 drExpFuncs:{(_Function|_CompiledFunction|_Symbol)..},probFunc:(_Symbol|_Function|_CompiledFunction),iters:{_Integer..}]:=
 MapThread[Flatten[genZsForFindRoot[linMod,{#1},{#2},drExpFuncs,probFunc,#3],1]&,
-{firstSteps,firstProbs,iters}]
+{firstSteps,firstProbs,iters+1}]
 
 
 compZsOnPath[theHMat_?MatrixQ,psiC_?MatrixQ,numX_Integer,thePath:{_?MatrixQ..}]:=

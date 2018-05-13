@@ -8,7 +8,7 @@ Get["tests/pathSetup.mth"];
 
 Get["AMASeriesRepresentation`"];
 Get["betterRBCRegimes`"];
-
+Get["betterRBC`"];
 (*
 X0Z0 = AMASeriesRepresentation`genBothX0Z0Funcs[
    betterRBCRegimes`linModBetterRegimes];
@@ -192,6 +192,10 @@ Print[{"7a",beg01=AMASeriesRepresentation`Private`genZsForFindRoot[
 betterRBCRegimes`linModBetterRegimes,Take[#,7]&/@firstSteps,firstProbs,
 {theRes01[[-1,2]],theRes02[[-1,2]]},
 betterRBCRegimes`rbcEqnsBetterRegimes[[2]],2]}]
+
+X0Z0 = AMASeriesRepresentation`genX0Z0Funcs[betterRBC`linModBetter];
+AMASeriesRepresentation`Private`genZsForFindRoot[betterRBC`linModBetter,betterRBC`anXBetter,X0Z0,1]
+
 
 
 short=Take[#,7]&/@firstSteps;

@@ -218,5 +218,24 @@ regX0Z0=
 
 
 frFunc=genFRExtFunc[{7,1,7},betterRBCRegimes`linModBetterRegimes,regX0Z0,
-rbcEqnsBetterRegimes[[1,1,1,1,2]]]
+betterRBCRegimes`Private`probFunc,rbcEqnsBetterRegimes[[1,1,1,1,2]],1]
 frFunc @@ Flatten[anXEpsBetterRegimes]
+
+
+
+frFunc=genFRExtFunc[{7,1,7},betterRBCRegimes`linModBetterRegimes,regX0Z0,
+betterRBCRegimes`Private`probFunc,rbcEqnsBetterRegimes[[1,1,1,2,2]],1]
+frFunc @@ Flatten[anXEpsBetterRegimes]
+
+
+
+
+frFunc=genFRExtFunc[{7,1,7},betterRBCRegimes`linModBetterRegimes,regX0Z0,
+betterRBCRegimes`Private`probFunc,rbcEqnsBetterRegimes[[1,1,1]],1]
+evaluateTriple[frFunc[[1,1]],Flatten[anXEpsBetterRegimes]]
+
+
+
+frFunc=genFRExtFunc[{7,1,7},betterRBCRegimes`linModBetterRegimes,regX0Z0,
+betterRBCRegimes`Private`probFunc,rbcEqnsBetterRegimes[[1,1,1,2,2]],1]
+evaluateTriple[frFunc[[1,2]],Flatten[anXEpsBetterRegimes]]

@@ -1592,6 +1592,24 @@ funcOfXtm1Eps
 @}
 
 
+
+@d genFRExtFunc
+@{
+genFRExtFunc[{numX_Integer,numEps_Integer,numZ_Integer},@<linMod@>,
+@<regimesBothXZFuncs@>,probFunc:(_Function|_CompiledFunction|_Symbol),
+triples:{{{_Function,(_Function|_CompiledFunction|_Symbol),_Function}..},
+selectorFunc_Function},regimeIndx_Integer,
+opts:OptionsPattern[]]:=
+Module[{varRanges=OptionValue["xVarRanges"]},
+With[{funcTrips=
+Map[{#[[1]],genFRExtFunc[{numX,numEps,numZ},linMod,regimesBothXZFuncs,
+probFunc,#[[2]],regimeIndx,
+Apply[Sequence,
+FilterRules[{opts},Options[genFRExtFunc]]]],#[[3]]}&,triples[[1]]]},
+{funcTrips,selectorFunc}
+]]
+@}
+
 @d genFRExtFunc
 @{
 

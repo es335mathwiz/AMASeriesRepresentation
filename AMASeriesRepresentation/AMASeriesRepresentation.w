@@ -1572,15 +1572,38 @@ Options[parallelDoGenericIterREInterp]]]]],justBothXZFuncs,numIters]]
 genFRExtFunc[{numX_Integer,numEps_Integer,numZ_Integer},
 @<linMod@>,
 @<regimesBothXZFuncs@>,
-regimeTriples:{{{
-{
-{_Function,(_Function|_CompiledFunction|_Symbol),_Function}..},_Function}..},
-probFunc:(_Function|_CompiledFunction|_Symbol)},regimeIndx_Integer,opts:OptionsPattern[]]:=
+@<regimesTriples@>,regimeIndx_Integer,opts:OptionsPattern[]]:=
 Module[{varRanges=OptionValue["xVarRanges"]},
-With[{@<findRootArgNames@>},
-With[{@<prepFindRootXInitRegimesBoth@>},
+With[{@<findRootArgNames@>},Print["frArgs"];
+With[{@<prepFindRootXInitRegimesBoth@>},Print[{"prepfind:",theXInit}];
 With[{@<cmptXArgsInit@>,
-@<makeArgPatternsBoth@>},
+@<makeArgPatternsBoth@>},Print[{"cmptxar:",theXInit,xArgsInit}];
+(**)
+Switch[OptionValue["Traditional"],
+True,@<setDelayedTradFXtZtRegimesBoth@>;@<setDelayedTradFXtm1Eps@>,
+False,@<setDelayedSeriesFXtZtRegimesBoth@>;@<setDelayedSeriesFXtm1Eps@>]
+(**)
+(**)
+DistributeDefinitions[funcOfXtZt,funcOfXtm1Eps]
+Off[FindRoot::srect];
+Off[FindRoot::nlnum];Sow[{funcOfXtm1Eps,funcOfXtZt},"theFuncs"];
+funcOfXtm1Eps
+]]]]
+@}
+
+
+@d genFRExtFunc
+@{
+
+genFRExtFunc[{numX_Integer,numEps_Integer,numZ_Integer},
+@<linMod@>,
+@<regimesBothXZFuncs@>,probFunc:(_Symbol|_Function|_CompiledFunction),
+@<eqnsFunc@>,regimeIndx_Integer,opts:OptionsPattern[]]:=
+Module[{varRanges=OptionValue["xVarRanges"]},
+With[{@<findRootArgNames@>},Print["frArgs"];
+With[{@<prepFindRootXInitRegimesBoth@>},Print[{"prepfind:",theXInit}];
+With[{@<cmptXArgsInit@>,
+@<makeArgPatternsBoth@>},Print[{"cmptxar:",theXInit,xArgsInit}];
 (**)
 Switch[OptionValue["Traditional"],
 True,@<setDelayedTradFXtZtRegimesBoth@>;@<setDelayedTradFXtm1Eps@>,
@@ -1609,9 +1632,9 @@ funcOfXtZt[
 (**)
 Apply[Sequence,xtztArgPatterns]],
 Module[{theZsNow=genZsForFindRoot[linMod,
-Transpose[{xArgs}],Map[#[[1,2]]&,regimesBothXZFuncs],probFunc,
-Map[#[[2]]&,regimesBothXZFuncs]]
-},
+Transpose[{xArgs}],{.7,.3},regimesBothXZFuncs[[All,1,2]],
+probFunc,regimesBothXZFuncs[[regimeIndx,2]]]
+},Print["need real probabilities!!!!!!!!!!!!!!!!!!!!!!!!!!"];
 With[{xkFunc=Catch[
 (Check[genLilXkZkFunc[linMod,theZsNow,
 Apply[Sequence,FilterRules[{opts},
@@ -1644,8 +1667,9 @@ funcOfXtZt[
 (**)
 Apply[Sequence,xtztArgPatterns]],
 Module[{theZsNow=genZsForFindRoot[linMod,
-Transpose[{xArgs}],Map[#[[1,2]]&,regimesBothXZFuncs],probFunc,Map[#[[2]]&,regimesBothXZFuncs]]
-},
+Transpose[{xArgs}],{.7,.3},regimesBothXZFuncs[[All,1,2]],probFunc,
+regimesBothXZFuncs[[regimeIndx,2]]]
+},Print["need real probabilities!!!!!!!!!!!!!!!!!!!!!!!!!!"];
 With[{xkFunc=Catch[
 (Check[genLilXkZkFunc[linMod,theZsNow,
 Apply[Sequence,FilterRules[{opts},
@@ -1693,7 +1717,7 @@ phi_?MatrixQ,FF_?MatrixQ,psiEps_?MatrixQ,psiC_?MatrixQ,psiZ_?MatrixQ,
 backLookingInfo:{{_Integer,backLooking_,backLookingExp_}...}},
 firstSteps:{_?MatrixQ..},firstProbs_?MatrixQ,
 drExpFuncs:{(_Function|_CompiledFunction|_Symbol)..},probFunc:(_Symbol|_Function|_CompiledFunction),iters_Integer]:=
-Module[{numX=Length[getB[linMod]]},
+Module[{numX=Length[getB[linMod]]},Print["using first genzs"];
 With[{thePaths=
 Check[
 regimesExpectation[firstSteps,firstProbs,drExpFuncs,probFunc,numX,iters+1],
@@ -1705,6 +1729,7 @@ Map[compZsOnPath[theHMat,psiC,numX,#]&,thePaths]},
 ]]]
 
 
+
 genZsForFindRoot[linMod:{theHMat_?MatrixQ,BB_?MatrixQ,
 phi_?MatrixQ,FF_?MatrixQ,psiEps_?MatrixQ,psiC_?MatrixQ,psiZ_?MatrixQ,
 backLookingInfo:{{_Integer,backLooking_,backLookingExp_}...}},
@@ -1712,6 +1737,16 @@ firstSteps:{_?MatrixQ..},firstProbs_?MatrixQ,
 drExpFuncs:{(_Function|_CompiledFunction|_Symbol)..},probFunc:(_Symbol|_Function|_CompiledFunction),iters:{_Integer..}]:=
 MapThread[Flatten[genZsForFindRoot[linMod,{#1},{#2},drExpFuncs,probFunc,#3],1]&,
 {firstSteps,firstProbs,iters+1}]
+
+
+
+genZsForFindRoot[linMod:{theHMat_?MatrixQ,BB_?MatrixQ,
+phi_?MatrixQ,FF_?MatrixQ,psiEps_?MatrixQ,psiC_?MatrixQ,psiZ_?MatrixQ,
+backLookingInfo:{{_Integer,backLooking_,backLookingExp_}...}},
+firstSteps_?MatrixQ,firstProbs_?VectorQ,
+drExpFuncs:{(_Function|_CompiledFunction|_Symbol)..},probFunc:(_Symbol|_Function|_CompiledFunction),iters_Integer]:=
+Flatten[genZsForFindRoot[linMod,{firstSteps},{firstProbs},
+drExpFuncs,probFunc,iters+1],1]
 
 
 compZsOnPath[theHMat_?MatrixQ,psiC_?MatrixQ,numX_Integer,thePath:{_?MatrixQ..}]:=
@@ -1838,21 +1873,15 @@ evaluateRegime::usage=
 @{
 
 evaluateRegime[
-regimeTriples:{{{{_Function,(_Function|_CompiledFunction|_Symbol),_Function}..},
-selectorFunc_Function..},probFunc:(_Function|_CompiledFunction|_Symbol)},
-thePt_?VectorQ]:=
-Catch[
-If[
-Apply[preFunc,thePt],
-With[{theRes=
-Apply[theFunc,thePt]},
-If[Apply[postFunc,{thePt,theRes}],theRes,$Failed]],
-$Failed],_,Function[{val,tag},
-Print["catchinevaluateRegime:",{xArgs,val,tag}//InputForm];$Failed]]
+@<regimesTriples@>,
+thePt_?VectorQ,regimeIndx_Integer]:=
+evaluateTriple[regimesTriples[[regimeIndx]],thePt]
 
 @}
 
-
+@d regimesTriples
+@{regimesTriples:{{{{_Function,(_Function|_CompiledFunction|_Symbol),_Function}..},
+selectorFunc_Function..},probFunc:(_Function|_CompiledFunction|_Symbol)}@}
 
 
 @d regimesExpectationUsage

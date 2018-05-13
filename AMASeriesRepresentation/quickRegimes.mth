@@ -205,8 +205,18 @@ betterRBCRegimes`linModBetterRegimes,short,firstProbs,
 betterRBCRegimes`rbcEqnsBetterRegimes[[2]],{2,3}]}]
 
 
+short=Take[#,7]&/@firstSteps
+Print[{"7a",beg01=AMASeriesRepresentation`Private`genZsForFindRoot[
+betterRBCRegimes`linModBetterRegimes,short[[1]],firstProbs[[1]],
+{theRes01[[-1,2]],theRes02[[-1,2]]},
+betterRBCRegimes`rbcEqnsBetterRegimes[[2]],2]}]
+
+
 regX0Z0=
 {#,1}&/@genRegimesBothX0Z0Funcs[{betterRBCRegimes`linModBetterRegimes,betterRBCRegimes`linModBetterRegimes}]
 
-genFRExtFunc[{7,1,7},betterRBCRegimes`linModBetterRegimes,regX0Z0,
-rbcEqnsBetterRegimes]
+
+
+frFunc=genFRExtFunc[{7,1,7},betterRBCRegimes`linModBetterRegimes,regX0Z0,
+rbcEqnsBetterRegimes[[1,1,1,1,2]]]
+frFunc @@ Flatten[anXEpsBetterRegimes]

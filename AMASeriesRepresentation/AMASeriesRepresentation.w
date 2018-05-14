@@ -1392,8 +1392,16 @@ backLookingInfo:{{_Integer,_,_}...},@<smolGSpec@>,
 genericInterp:(smolyakInterpolation|svmRegressionLinear|svmRegressionPoly|
 svmRegressionRBF|svmRegressionSigmoid),svmArgs:{_?NumberQ...}]:=
 Module[{},
-With[{interpData=parallelSmolyakGenInterpData[triples,smolGSpec],
-numArgs=Length[smolPts[[1]]]},
+With[{interpData=parallelSmolyakGenInterpData[triples,smolGSpec]},
+Print["keep this working"];
+interpDataToFunc[interpData,backLookingInfo,smolGSpec,genericInterp,svmArgs]]]
+
+interpDataToFunc[interpData_?MatrixQ,
+backLookingInfo:{{_Integer,_,_}...},@<smolGSpec@>,
+genericInterp:(smolyakInterpolation|svmRegressionLinear|svmRegressionPoly|
+svmRegressionRBF|svmRegressionSigmoid),
+svmArgs:{_?NumberQ...}]:=
+With[{numArgs=Length[smolPts[[1]]]},
 With[{numFuncs=Length[interpData[[1]]],
 funcArgs=Table[Unique["f03Args"],{numArgs}],theXs=Table[xx[ii],{ii,numArgs}]},
 With[{longFuncArgs=fillInSymb[{{},smolToIgnore,funcArgs}],
@@ -1401,13 +1409,13 @@ funcSubs=Thread[theXs->funcArgs]},
 With[{interpFuncList=
 ParallelMap[Function[funcIdx,
 With[{theInterps=genericInterp[interpData[[All,funcIdx]],smolGSpec,svmArgs]},
-With[{smolApp=theInterps},
+With[{smolApp=theInterps},Print["theInterps:",theInterps];
 smolApp]]],Range[numFuncs]]},
 With[
 {applied=Transpose[{ParallelMap[notApply[#,funcArgs]/.funcSubs&,
 Map[First,interpFuncList]]}],
 appliedExp=Transpose[{ParallelMap[notApply[#,funcArgs]/.funcSubs&,
-Map[Last,interpFuncList]]}]},
+Map[Last,interpFuncList]]}]},Print["applied:",applied];
 With[{thePair=
 {
 ReplacePart[
@@ -1416,11 +1424,12 @@ ReplacePart[
 ReplacePart[
 	Function[xxxxxxx, appliedExp],
 		{1->Drop[longFuncArgs,-numEps]}]/.notApply->Apply
-}},
+}},Print["thePair:",thePair];
 {replaceEqnOrExp[thePair[[1]],longFuncArgs,2,backLookingInfo],
 replaceEqnOrExp[thePair[[2]],Drop[longFuncArgs,-numEps],3,backLookingInfo]}
-	]
 ]]]]]]
+
+
 
 
 @}

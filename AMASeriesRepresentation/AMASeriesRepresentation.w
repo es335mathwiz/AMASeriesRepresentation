@@ -142,7 +142,6 @@ Module[{},Inverse[IdentityMatrix[Length[FF]]-FF] . phi . theTailZ]
 @d Z Matrices Given
 @{With[{fCon=Check[fSumC[phi,FF,psiZ,theZs],Print["trying to throw low"];
 Throw[$Failed,"low"]]},
-Print[{"zmatgiven:",OptionValue["addTailContribution"],{Length[theZs],Max[Abs[Flatten[theZs]]]},$KernelID}];
 With[{theRes=genLilXkZkFunc[linMod,fCon,
 Apply[Sequence,FilterRules[{opts},
 Options[genLilXkZkFunc]]]
@@ -1328,8 +1327,7 @@ Just ADRCE
 @{
 
 genFRExtFunc[{numX_Integer,numEps_Integer,numZ_Integer},@<linMod@>,@<XZFuncs@>,
-triples:{{{_Function,(_Function|_CompiledFunction|_Symbol),_Function}..},
-selectorFunc_Function},
+@<rawTriples@>,
 opts:OptionsPattern[]]:=
 Module[{varRanges=OptionValue["xVarRanges"]},
 With[{funcTrips=
@@ -1348,8 +1346,7 @@ ADR and  ADRCE
 @{
 genFRExtFunc[{numX_Integer,numEps_Integer,numZ_Integer},@<linMod@>,
 @<bothXZFuncs@>,
-triples:{{{_Function,(_Function|_CompiledFunction|_Symbol),_Function}..},
-selectorFunc_Function},
+@<rawTriples@>,
 opts:OptionsPattern[]]:=
 Module[{varRanges=OptionValue["xVarRanges"]},
 With[{funcTrips=
@@ -1359,6 +1356,10 @@ FilterRules[{opts},Options[genFRExtFunc]]]],#[[3]]}&,triples[[1]]]},
 {funcTrips,selectorFunc}
 ]]
 @}
+@d aProcessedTriple@{
+triple:{preFunc_Function,theFunc:(_Function|_CompiledFunction|_Symbol),
+postFunc_Function}@}
+
 
 
 @d evaluateTripleUsage
@@ -1366,12 +1367,12 @@ FilterRules[{opts},Options[genFRExtFunc]]]],#[[3]]}&,triples[[1]]]},
 evaluateTriple::usage=
 "place holder for genFRExtFunc"
 @}
+
 @d evaluateTriple
 @{
 
 evaluateTriple[
-triple:{preFunc_Function,theFunc:(_Function|_CompiledFunction|_Symbol),
-postFunc_Function},
+@<aProcessedTriple@>,
 thePt_?VectorQ]:=
 Catch[
 If[
@@ -1386,9 +1387,7 @@ Print["catchinevaluateTriple:",{xArgs,val,tag}//InputForm];$Failed]]
 
 @d parallelMakeGenericInterpFuncs
 @{
-parallelMakeGenericInterpFuncs[triples:{{
-{_Function,(_Function|_CompiledFunction|_Symbol),
-_Function}..},selectorFunc_Function},
+parallelMakeGenericInterpFuncs[@<rawTriples@>,
 backLookingInfo:{{_Integer,_,_}...},@<smolGSpec@>,
 genericInterp:(smolyakInterpolation|svmRegressionLinear|svmRegressionPoly|
 svmRegressionRBF|svmRegressionSigmoid),svmArgs:{_?NumberQ...}]:=
@@ -1434,20 +1433,21 @@ replaceEqnOrExp[thePair[[2]],Drop[longFuncArgs,-numEps],3,backLookingInfo]}
  
 
 parallelSmolyakGenInterpData[
-triples:{{{_Function,(_Function|_CompiledFunction|_Symbol),
-_Function}..},selectorFunc_Function},@<smolGSpec@>]:=
+@<rawTriples@>,@<smolGSpec@>]:=
 Module[{},
 With[{filledPts=Map[Function[xx,fillIn[{{},smolToIgnore,xx}]],N[smolPts]]},
 With[{theVals=
 ParallelTable[evaluateTriple[aTriple,Flatten[aPt]],
 {aPt,filledPts},{aTriple,triples[[1]]}]},
+With[{toWorkOn={filledPts,theVals}//Transpose},
+Print["toWorkOn:",toWorkOn];
 With[{interpData=
 ParallelMap[With[{baddy=#},Catch[
 Apply[selectorFunc,#],
 _,Function[{val,tag},Print["catchsmolGenInterp: aborting",
 {val,tag,baddy,triples,filledPts}//InputForm];
-Abort[]]]]&,{filledPts,theVals}//Transpose]},
-interpData]]]]
+Abort[]]]]&,toWorkOn]},
+interpData]]]]]
 
 
 
@@ -1468,8 +1468,7 @@ just  and ADRCE
 parallelDoGenericIterREInterp[genFRExtFunc,
 	@<linMod@>,
 	@<XZFuncs@>,
-triples:{{{_Function,(_Function|_CompiledFunction|_Symbol),_Function}..},
-selectorFunc_Function},@<smolGSpec@>,
+@<rawTriples@>,@<smolGSpec@>,
 genericInterp:(smolyakInterpolation|svmRegressionLinear|
 svmRegressionPoly|svmRegressionRBF|svmRegressionSigmoid),
 svmArgs:{_?NumberQ...},opts:OptionsPattern[]]:=
@@ -1494,8 +1493,7 @@ ADR and ADRCE
 parallelDoGenericIterREInterp[genFRExtFunc,
 	@<linMod@>,
 	@<bothXZFuncs@>,
-triples:{{{_Function,(_Function|_CompiledFunction|_Symbol),_Function}..},
-selectorFunc_Function},@<smolGSpec@>,
+@<rawTriples@>,@<smolGSpec@>,
 genericInterp:(smolyakInterpolation|svmRegressionLinear|svmRegressionPoly|
 svmRegressionRBF|svmRegressionSigmoid),
 svmArgs:{_?NumberQ...},opts:OptionsPattern[]]:=
@@ -1522,8 +1520,7 @@ just  and ADRCE
 @{
 parallelNestGenericIterREInterp[genFRExtFunc,@<linMod@>,
 @<XZFuncs@>,
-triples:{{{_Function,(_Function|_CompiledFunction|_Symbol),_Function}..},
-selectorFunc_Function},@<smolGSpec@>,
+@<rawTriples@>,@<smolGSpec@>,
 genericInterp:(smolyakInterpolation|svmRegressionLinear|
 svmRegressionPoly|svmRegressionRBF|svmRegressionSigmoid),
 svmArgs:{_?NumberQ...},
@@ -1542,8 +1539,7 @@ both ADR and ADRCE
 @{
 parallelNestGenericIterREInterp[genFRExtFunc,@<linMod@>,
 @<bothXZFuncs@>,
-triples:{{{_Function,(_Function|_CompiledFunction|_Symbol),_Function}..},
-selectorFunc_Function},@<smolGSpec@>,
+@<rawTriples@>,@<smolGSpec@>,
 genericInterp:(smolyakInterpolation|svmRegressionLinear|
 svmRegressionPoly|svmRegressionRBF|svmRegressionSigmoid),
 svmArgs:{_?NumberQ...},
@@ -1562,6 +1558,49 @@ Options[parallelDoGenericIterREInterp]]]]],justBothXZFuncs,numIters]]
 \label{sec:genx0z0funcs}
 
 
+@d parallelSmolyakGenInterpData
+@{
+ 
+
+parallelSmolyakGenInterpData[
+@<processedRegimesTriples@>,@<smolGSpec@>]:=
+Module[{numRegimes=Range[Length[processedRegimesTriples]],
+numCases=Map[Range[Length[#[[1]]]]&,processedRegimesTriples],numPts=Length[smolPts]},Print["prefill"];
+With[{filledPts=Map[Function[xxxx,fillIn[{{},smolToIgnore,xxxx}]],N[smolPts]]},
+Print[{smolPts,smolToIgnore,numRegimes,numCases,numPts}];
+With[{preCombos=MapIndexed[Table[{#2[[1]],ii}, {ii,#}]&,numCases]},
+With[{combos=
+Map[Function[yyy,Map[forPoints[#,numPts]&,yyy]],preCombos]},
+Print[{"combos:",combos}//InputForm];
+With[{theVals=Map[evaluateTripleToCases[processedRegimesTriples,filledPts,#1]&,
+combos,{3}]},Print["dims",Map[Dimensions,{processedRegimesTriples,filledPts,theVals}]];
+MapThread[applySelectorFuncs[#1[[-1]],filledPts,#2]&,
+{processedRegimesTriples,theVals}]
+]]]]]
+
+evaluateTripleToCases[
+@<processedRegimesTriples@>,pts_?MatrixQ,
+{rIndx_Integer,cIndx_Integer,pIndx_Integer}]:=
+evaluateTriple[processedRegimesTriples[[rIndx,1,cIndx]],Flatten[pts[[pIndx]]]]
+
+
+forPoints[soFar_?VectorQ,numPts_Integer]:=
+Map[Append[soFar,#]&,Range[numPts]]
+
+applySelectorFuncs[aSelectorFunc:(_Function|_CompiledFunction|_Symbol),
+filledPts_?MatrixQ,theVals_List]:=
+With[{toWorkOn={filledPts,Transpose[theVals]}//Transpose},
+Print[{"toWorkOn:",toWorkOn}];
+With[{interpData=
+ParallelMap[With[{baddy=#},Catch[
+Apply[aSelectorFunc,#],
+_,Function[{val,tag},Print["catchsmolGenInterp: aborting",
+{val,tag,baddy,triples,filledPts}//InputForm];
+Abort[]]]]&,toWorkOn]},
+interpData]]
+
+
+@}
 \subsubsection{Using both decision rule and decision rule expectation for regimes}
 \label{sec:using-both-decision}
 
@@ -1572,24 +1611,16 @@ Options[parallelDoGenericIterREInterp]]]]],justBothXZFuncs,numIters]]
 genFRExtFunc[{numX_Integer,numEps_Integer,numZ_Integer},
 @<linMod@>,
 @<regimesBothXZFuncs@>,
-@<regimesTriples@>,regimeIndx_Integer,opts:OptionsPattern[]]:=
+@<rawRegimesTriples@>,opts:OptionsPattern[]]:=
 Module[{varRanges=OptionValue["xVarRanges"]},
-With[{@<findRootArgNames@>},Print["frArgs"];
-With[{@<prepFindRootXInitRegimesBoth@>},Print[{"prepfind:",theXInit}];
-With[{@<cmptXArgsInit@>,
-@<makeArgPatternsBoth@>},Print[{"cmptxar:",theXInit,xArgsInit}];
-(**)
-Switch[OptionValue["Traditional"],
-True,@<setDelayedTradFXtZtRegimesBoth@>;@<setDelayedTradFXtm1Eps@>,
-False,@<setDelayedSeriesFXtZtRegimesBoth@>;@<setDelayedSeriesFXtm1Eps@>]
-(**)
-(**)
-DistributeDefinitions[funcOfXtZt,funcOfXtm1Eps]
-Off[FindRoot::srect];
-Off[FindRoot::nlnum];Sow[{funcOfXtm1Eps,funcOfXtZt},"theFuncs"];
-funcOfXtm1Eps
-]]]]
+With[{regimeTrips=
+Table[genFRExtFunc[{numX,numEps,numZ},linMod,regimesBothXZFuncs,
+rawRegimesTriples[[-1]],rawRegimesTriples[[1,ii]],ii,Apply[Sequence,
+FilterRules[{opts},Options[genFRExtFunc]]]],{ii,Length[rawRegimesTriples]}]},
+regimeTrips
+]]
 @}
+
 
 
 
@@ -1597,8 +1628,7 @@ funcOfXtm1Eps
 @{
 genFRExtFunc[{numX_Integer,numEps_Integer,numZ_Integer},@<linMod@>,
 @<regimesBothXZFuncs@>,probFunc:(_Function|_CompiledFunction|_Symbol),
-triples:{{{_Function,(_Function|_CompiledFunction|_Symbol),_Function}..},
-selectorFunc_Function},regimeIndx_Integer,
+@<rawTriples@>,regimeIndx_Integer,
 opts:OptionsPattern[]]:=
 Module[{varRanges=OptionValue["xVarRanges"]},
 With[{funcTrips=
@@ -1610,6 +1640,11 @@ FilterRules[{opts},Options[genFRExtFunc]]]],#[[3]]}&,triples[[1]]]},
 ]]
 @}
 
+@d rawTriples
+@{triples:{{{_Function,(_Function|_CompiledFunction|_Symbol),_Function}..},
+selectorFunc_Function}@}
+
+
 @d genFRExtFunc
 @{
 
@@ -1618,10 +1653,10 @@ genFRExtFunc[{numX_Integer,numEps_Integer,numZ_Integer},
 @<regimesBothXZFuncs@>,probFunc:(_Symbol|_Function|_CompiledFunction),
 @<eqnsFunc@>,regimeIndx_Integer,opts:OptionsPattern[]]:=
 Module[{varRanges=OptionValue["xVarRanges"]},
-With[{@<findRootArgNames@>},Print["frArgs"];
-With[{@<prepFindRootXInitRegimesBoth@>},Print[{"prepfind:",theXInit}];
+With[{@<findRootArgNames@>},
+With[{@<prepFindRootXInitRegimesBoth@>},
 With[{@<cmptXArgsInit@>,
-@<makeArgPatternsBoth@>},Print[{"cmptxar:",theXInit,xArgsInit}];
+@<makeArgPatternsBoth@>},
 (**)
 Switch[OptionValue["Traditional"],
 True,@<setDelayedTradFXtZtRegimesBoth@>;@<setDelayedTradFXtm1Eps@>,
@@ -1644,28 +1679,6 @@ funcOfXtZt=Unique["fNameXtZt"]
 @}
 
 
-@d setDelayedSeriesFXtZtRegimesBoth
-@{SetDelayed[
-funcOfXtZt[
-(**)
-Apply[Sequence,xtztArgPatterns]],
-Module[{theZsNow=genZsForFindRoot[linMod,
-Transpose[{xArgs}],{.7,.3},regimesBothXZFuncs[[All,1,2]],
-probFunc,regimesBothXZFuncs[[regimeIndx,2]]]
-},Print["need real probabilities!!!!!!!!!!!!!!!!!!!!!!!!!!"];
-With[{xkFunc=Catch[
-(Check[genLilXkZkFunc[linMod,theZsNow,
-Apply[Sequence,FilterRules[{opts},
-Options[genLilXkZkFunc]]]
-],
-Print["trying higher throw"];Throw[$Failed,"higher"]]),_,
-Function[{val,tag},Print["catchfxtzt:",{xArgs,val,tag}//InputForm];
-Throw[$Failed,"fromGenLil"]]]},
-With[{xkAppl=Apply[xkFunc,Join[xLagArgs,eArgs,zArgs]]},
-With[{eqnAppl=Apply[eqnsFunc,Flatten[xkAppl]],
-xDisc=xArgs-xkAppl[[numX+Range[numX]]]},
-Flatten[Join[xDisc,eqnAppl]]]]]]]@}
-
 
 @d setDelayedTradFXtZtRegimesBoth
 @{SetDelayed[
@@ -1679,15 +1692,16 @@ Join[xLagArgs,xArgs,
 Map[(Apply[#[[1,2]],xArgs][[Range[numX]]])&,regimesBothXZFuncs],eArgs]]},
 With[{eqnAppl=Apply[eqnsFunc,Flatten[xkAppl]]},
 Flatten[Join[eqnAppl]]]]]]@}
+
 @d setDelayedSeriesFXtZtRegimesBoth
 @{SetDelayed[
 funcOfXtZt[
 (**)
 Apply[Sequence,xtztArgPatterns]],
 Module[{theZsNow=genZsForFindRoot[linMod,
-Transpose[{xArgs}],{.7,.3},regimesBothXZFuncs[[All,1,2]],probFunc,
+Transpose[{xArgs}],Apply[probFunc,xArgs][[regimeIndx]],regimesBothXZFuncs[[All,1,2]],probFunc,
 regimesBothXZFuncs[[regimeIndx,2]]]
-},Print["need real probabilities!!!!!!!!!!!!!!!!!!!!!!!!!!"];
+},
 With[{xkFunc=Catch[
 (Check[genLilXkZkFunc[linMod,theZsNow,
 Apply[Sequence,FilterRules[{opts},
@@ -1735,12 +1749,11 @@ phi_?MatrixQ,FF_?MatrixQ,psiEps_?MatrixQ,psiC_?MatrixQ,psiZ_?MatrixQ,
 backLookingInfo:{{_Integer,backLooking_,backLookingExp_}...}},
 firstSteps:{_?MatrixQ..},firstProbs_?MatrixQ,
 drExpFuncs:{(_Function|_CompiledFunction|_Symbol)..},probFunc:(_Symbol|_Function|_CompiledFunction),iters_Integer]:=
-Module[{numX=Length[getB[linMod]]},Print["using first genzs"];
+Module[{numX=Length[getB[linMod]]},
 With[{thePaths=
 Check[
 regimesExpectation[firstSteps,firstProbs,drExpFuncs,probFunc,numX,iters+1],
 Print["problems with current DRCE,using at",initVec,"linMod!!!!!"]]},
-Print[{"thePaths:",thePaths}];
 With[{restVals=
 Map[compZsOnPath[theHMat,psiC,numX,#]&,thePaths]},
       restVals
@@ -1768,7 +1781,7 @@ drExpFuncs,probFunc,iters+1],1]
 
 
 compZsOnPath[theHMat_?MatrixQ,psiC_?MatrixQ,numX_Integer,thePath:{_?MatrixQ..}]:=
-With[{fullPath=Apply[Join,thePath]},Print[{"fullPath:",fullPath,Dimensions[fullPath],numX}];
+With[{fullPath=Apply[Join,thePath]},
   Map[(theHMat .fullPath[[Range[3*numX]+numX*(#-1)]] -psiC)&,
 Range[(Length[fullPath]/numX)-3]]]
 
@@ -1882,25 +1895,28 @@ initVecs],1]},Flatten[MapThread[#1*#2&,{initProbs,theTransProbs}]]]
 
 
 
-@d evaluateRegimeUsage
+@d processedRegimesTriples
+@{processedRegimesTriples:xx_?processedRegimesGroupQ@}
+
+@d rawRegimesTriples
+@{rawRegimesTriples:xx_?regimesGroupQ@}
+
+
+
+
+@d patternMatchCode
 @{
-evaluateRegime::usage=
-"place holder for genFRExtFunc"
+aTripleQ[xx_]:=MatchQ[xx,{_Function,(_Function|_CompiledFunction|_Symbol),_Function}]
+
+conditionsGroupQ[xx_]:=MatchQ[xx,{{_?aTripleQ..},(_Function|_CompiledFunction|_Symbol)}]
+
+
+regimesGroupQ[xx_]:=MatchQ[xx,{{_?conditionsGroupQ..},(_Function|_CompiledFunction|_Symbol)}]
+
+processedRegimesGroupQ[xx_]:=MatchQ[xx,{_?conditionsGroupQ..}]
+
+
 @}
-@d evaluateRegime
-@{
-
-evaluateRegime[
-@<regimesTriples@>,
-thePt_?VectorQ,regimeIndx_Integer]:=
-evaluateTriple[regimesTriples[[regimeIndx]],thePt]
-
-@}
-
-@d regimesTriples
-@{regimesTriples:{{{{_Function,(_Function|_CompiledFunction|_Symbol),_Function}..},
-selectorFunc_Function..},probFunc:(_Function|_CompiledFunction|_Symbol)}@}
-
 
 @d regimesExpectationUsage
 @{
@@ -1925,7 +1941,6 @@ firstSteps],
 firstProbs=
 Map[Flatten[iterateRegimesDRProbs[initVec[[Range[numXVars]]],probFunc,#]]&,
 Range[numRegimes]]},
-Print["firstStuff:",{firstSteps,firstProbs}//InputForm];
 With[{restProbs=
 MapThread[iterateRegimesDRProbs[Drop[#1,-2],#2,probFunc,numXVars]&,
 {furtherSteps,firstProbs}]},
@@ -2227,7 +2242,6 @@ _?MatrixQ,_?MatrixQ,_?MatrixQ,
 @<genRegimesBothX0Z0FuncsUsage@>
 @<genBothX0Z0FuncsUsage@>
 @<evaluateTripleUsage@>
-@<evaluateRegimeUsage@>
 @<iterateRegimesDRValsUsage@>
 @<iterateDRCEUsage@>
 @<iterateRegimesDRProbsUsage@>
@@ -2284,11 +2298,11 @@ _?MatrixQ,_?MatrixQ,_?MatrixQ,
 @<genRegimesBothX0Z0Funcs@>
 @<genBothX0Z0Funcs@>
 @<evaluateTriple@>
-@<evaluateRegime@>
 @<iterateDRCE@>
 @<iterateRegimesDRVals@>
 @<iterateRegimesDRProbs@>
 @<regimesExpectation@>
+@<patternMatchCode@>
 @}
 
 
@@ -3613,7 +3627,7 @@ With[{pk=sigmoidPair[kkt,1.],pc=sigmoidPair[cct,2.]},
 *)
 probFunc[cct_?NumberQ,iit_?NumberQ,kkt_?NumberQ,lamt_?NumberQ,
 mu1t_?NumberQ,nlt_?NumberQ,thetat_?NumberQ]:=
-{{Global`p11,Global`p12},{Global`p21,Global`p22}}
+{{0.9,0.1},{0.2,0.8}}
 
 
 

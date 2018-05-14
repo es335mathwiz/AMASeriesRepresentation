@@ -271,3 +271,5 @@ evaluateTriple[frFunc[[2,1,2]],Flatten[anXEpsBetterRegimes]]
 
 
 parallelSmolyakGenInterpData[frFunc,sgSpecErg]
+
+parallelMakeGenericInterpFuncs[frFunc,{},sgSpecErg,smolyakInterpolation,{}]

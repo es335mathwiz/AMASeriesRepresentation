@@ -1393,7 +1393,6 @@ genericInterp:(smolyakInterpolation|svmRegressionLinear|svmRegressionPoly|
 svmRegressionRBF|svmRegressionSigmoid),svmArgs:{_?NumberQ...}]:=
 Module[{},
 With[{interpData=parallelSmolyakGenInterpData[triples,smolGSpec]},
-Print["keep this working"];
 interpDataToFunc[interpData,backLookingInfo,smolGSpec,genericInterp,svmArgs]]]
 
 interpDataToFunc[interpData_?MatrixQ,
@@ -1565,6 +1564,25 @@ Options[parallelDoGenericIterREInterp]]]]],justBothXZFuncs,numIters]]
 \section{Regimes}
 \subsection{genRegimesBothX0Z0Funcs}
 \label{sec:genx0z0funcs}
+
+
+
+@d parallelMakeGenericInterpFuncs
+@{
+parallelMakeGenericInterpFuncs[
+@<processedRegimesTriples@>,
+backLookingInfo:{{_Integer,_,_}...},@<smolGSpec@>,
+genericInterp:(smolyakInterpolation|svmRegressionLinear|svmRegressionPoly|
+svmRegressionRBF|svmRegressionSigmoid),svmArgs:{_?NumberQ...}]:=
+Module[{},
+ParallelMap[
+With[{interpData=parallelSmolyakGenInterpData[#,smolGSpec]},
+interpDataToFunc[interpData,backLookingInfo,smolGSpec,
+genericInterp,svmArgs]]&,
+processedRegimesTriples]]
+
+@}
+
 
 
 @d parallelSmolyakGenInterpData

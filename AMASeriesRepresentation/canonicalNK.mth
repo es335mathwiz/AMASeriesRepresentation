@@ -1,0 +1,126 @@
+Print["reading canonicalNK.mth"]
+paramSubs= {beta->0.99, gamma$pi-> 2.0, gamma$y-> 0.0, 
+kappa-> 0.05, dpbar-> 1.005,
+Nrow->100,Ncol -> 100,ns -> 51,
+upLimPVec->0.995,lowLimPVec->0.9
+};
+params=Take[Last/@paramSubs,5];
+
+mapswitch=True
+eta = ConstantArray[0,{ns}/.paramSubs]
+
+
+linSpace[lowLim_?NumberQ,upLim_?NumberQ,numElems_Integer]:=
+Range[lowLim,upLim,N[(upLim-lowLim)/numElems]]
+
+
+Switch[mapswitch,
+True,  (pvec = linSpace[0.9,0.995,Ncol/.paramSubs];
+    eta$psi = linSpace[0.005,0.025,Nrow/.paramSubs];
+    rhoeta = 2*pvec-1;
+    stdeta = eta$psi/Sqrt[ns-1]/.paramSubs),
+_,
+    (rhoeta = linSpace[0.85,0.99,Ncol/.paramSubs];
+    stdinnov = linSpace[0.00025,0.0003,Nrow/.paramSubs])
+]
+
+
+
+
+rouwenhorst[2,pp_?NumberQ,qq_?NumberQ]:=Module[{},
+{{pp,1-pp},{1-qq,qq}}]/;And[1>=pp>=0,1>=qq>=0]
+
+
+rouwenhorst[NN_Integer,pp_?NumberQ,qq_?NumberQ]:=
+With[{NMinusOneMat=rouwenhorst[NN-1,pp,qq]},
+doubleFirstLast[NN].
+((pp*firstMat[NN,pp,qq,NMinusOneMat]+
+(1-pp)*secondMat[NN,pp,qq,NMinusOneMat]+
+(1-qq)*thirdMat[NN,pp,qq,NMinusOneMat]+
+qq*fourthMat[NN,pp,qq,NMinusOneMat])/2)]/;And[NN>1,1>=pp>=0,1>=qq>=0]
+
+doubleFirstLast[NN_?NumberQ]:=DiagonalMatrix[
+Join[{2},Table[1,{NN-2}],{2}]]/;NN>1
+
+(*kopecky and suen 
+finite state markov-chain approximations to highly persistent processes 
+2009*)
+firstMat[NN_Integer,pp_?NumberQ,qq_?NumberQ,NMinusOneMat_?MatrixQ]:=
+Drop[ArrayPad[NMinusOneMat,{1,1}],1,1]/;And[NN>1,1>=pp>=0,1>=qq>=0]
+
+secondMat[NN_Integer,pp_?NumberQ,qq_?NumberQ,NMinusOneMat_?MatrixQ]:=
+Drop[ArrayPad[NMinusOneMat,{1,1}],1,-1]/;And[NN>1,1>=pp>=0,1>=qq>=0]
+
+thirdMat[NN_Integer,pp_?NumberQ,qq_?NumberQ,NMinusOneMat_?MatrixQ]:=
+Drop[ArrayPad[NMinusOneMat,{1,1}],-1,1]/;And[NN>1,1>=pp>=0,1>=qq>=0]
+
+fourthMat[NN_Integer,pp_?NumberQ,qq_?NumberQ,NMinusOneMat_?MatrixQ]:=
+Drop[ArrayPad[NMinusOneMat,{1,1}],-1,-1]/;And[NN>1,1>=pp>=0,1>=qq>=0]
+
+
+
+
+solve$case[eta_?VectorQ,PP_?MatrixQ,
+params:{beta_?NumberQ,gamma$pi_?NumberQ,gamma$y_?NumberQ,
+kappa_?NumberQ,dpbar_?NumberQ},js_Integer]:=
+With[{ns=Length[PP]},
+Module[{xx,
+    Rss = Log[dpbar/beta],
+    eyens = IdentityMatrix[ns],
+},
+    H0 = 
+If[js==0,
+ArrayFlatten[{
+{ArrayFlatten[{{(1+gamma$y)*IdentityMatrix[ns],gamma$pi*IdentityMatrix[ns]}}]},
+{ArrayFlatten[{{-kappa*eyens,eyens}}]}}],
+eyejs = IdentityMatrix[js];
+If[js<ns,
+    eyejps = IdentityMatrix[ns-js];
+ArrayFlatten[{
+{ArrayFlatten[{{eyejs,ConstantArray[0,{js,2*ns-js}]}}]},
+{ArrayFlatten[{{ConstantArray[0,{ns-js,js}],(1+gamma$y)*eyejps,ConstantArray[0,{ns-js,js}],gamma$pi*eyejps}}]},
+{ArrayFlatten[{{-kappa*eyens,eyens}}]}}],
+ArrayFlatten[{
+{ArrayFlatten[{{eyejs,ConstantArray[0,{js,2*ns-js}]}}]},
+{ArrayFlatten[{{-kappa*eyens,eyens}}]}}]]]
+;Print[{"H0:",H0}];
+    H1 = ArrayFlatten[{
+{ArrayFlatten[{{PP,PP}}]},
+{ArrayFlatten[{{ConstantArray[0,{ns,ns}],beta*PP}}]}}];Print[{"H1:",H1}];
+    AA = H0-H1;
+    BB=Join[ Rss+(eta[[Range[js]]]),Drop[eta,js],Table[0,{ns}]];
+    xx = LinearSolve[AA,BB];
+	Print[{"xx:",xx,"BB",BB,"AA",AA}];
+    yy = xx[[Range[ns]]];
+    dp = Drop[xx,ns];
+    notr = gamma$pi*dp+gamma$y*yy;
+    nomr = Max[-Rss,#]&/@notr;
+Print[{"notr,nomr:",notr,nomr}];
+{yy,dp,notr,nomr}]]/;With[{ns=Length[eta]},And[0<=js<=ns,ns>=2,Dimensions[PP]=={Length[eta],Length[eta]}]]
+
+
+
+solve$model[eta_?VectorQ,PP_?MatrixQ,
+params:{beta_?NumberQ,gamma$pi_?NumberQ,gamma$y_?NumberQ,
+kappa_?NumberQ,dpbar_?NumberQ}]:=
+Module[{ns=Length[PP],Rss = Log[dpbar/beta]},
+With[{theRes=theRes= solve$case[eta,PP,params,#]&/@ Range[0,ns]},
+Print[{"eta:",eta,theRes}//InputForm];
+theRes]]
+
+checkLiftoff[aSoln_?VectorQ]:=
+MapIndexed[If[And[
+Max[#[[Range[#2[[1]]]]]<=-Rss],Max[#[[Range[#2[[1]]]]]>=-Rss]]]&,
+aSoln]
+
+
+(*{solution$type,yy,dp,notr,nomr}*)
+rhoVal=.91
+pp=(1+rhoVal)/2;
+ns=20
+PP=rouwenhorst[ns,pp,pp];
+eta=Range[-.02,0.02,0.04/(ns-1)]
+hip=solve$model[eta,PP,params];
+
+
+Print["done reading canonicalNK.mth"]

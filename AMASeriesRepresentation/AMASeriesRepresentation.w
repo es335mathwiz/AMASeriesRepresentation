@@ -34,8 +34,8 @@ genX0Z0Funcs[@<linMod@>]:=
 With[{numXVars=getNumX[linMod],numZVars=getNumZ[linMod]},
 With[{xtm1Vars=genSlots[numXVars]},
 With[{fromLinMod=Join[BB.xtm1Vars+
-Inverse[IdentityMatrix[Length[xtm1Vars]]-FF] . phi . 
-psiC,ConstantArray[0,{numZVars,1}]]},
+Inverse[IdentityMatrix[Length[xtm1Vars]]-FF] . phi . psiC,
+ConstantArray[0,{numZVars,1}]]},
 Apply[Function,{replaceLinPart[fromLinMod,xtm1Vars,backLookingInfo]}]]]]
 @}
 
@@ -46,6 +46,8 @@ With[{theRes=Map[Function[uu,{uu[[1]],Apply[uu[[3]],Flatten[xtm1Vars]]}],ble]},
 Fold[ReplacePart[#1,#2[[1]]->#2[[2]]]&,flm,theRes]]
 (*end code for genX0Z0Funcs*)
 @}
+
+
 
 
 
@@ -81,7 +83,7 @@ genLilXkZkFunc::usage=
 \subsubsection{Zero F contribution }
 \label{sec:zero-f-contribution}
 @d genLilXkZkFunc noZs call
-@{ genLilXkZkFunc[@<linMod@>,{}]@}
+@{ genLilXkZkFunc[@<linMod@>,{},opts:OptionsPattern[]]@}
 
 @d genLilXkZkFunc
 @{
@@ -121,7 +123,9 @@ MapThread[Function[{xx,yy},Dot[xx,phi.psiZ.yy]],{fPows , zPath}]]]]]
 @d theZs
 @{theZs:{_?MatrixQ..}@}
 @d genLilXkZkFunc theZs call
-@{genLilXkZkFunc[@<linMod@>,@<theZs@>]@}
+@{
+Options[genLilXkZkFunc]={"addTailContribution"->False};
+genLilXkZkFunc[@<linMod@>,@<theZs@>,opts:OptionsPattern[]]@}
 
 @d genLilXkZkFunc
 @{
@@ -129,16 +133,24 @@ MapThread[Function[{xx,yy},Dot[xx,phi.psiZ.yy]],{fPows , zPath}]]]]]
 Module[{},
 @<Z Matrices Given@>
 ]
+tailContribution[FF_?MatrixQ,phi_?MatrixQ,theTailZ_?MatrixQ]:=
+Module[{},Inverse[IdentityMatrix[Length[FF]]-FF] . phi . theTailZ]
+
+
 @}
 
 @d Z Matrices Given
 @{With[{fCon=Check[fSumC[phi,FF,psiZ,theZs],Print["trying to throw low"];
 Throw[$Failed,"low"]]},
-With[{theRes=genLilXkZkFunc[linMod,fCon]},
-theRes]]
-
-
-
+With[{theRes=genLilXkZkFunc[linMod,fCon,
+Apply[Sequence,FilterRules[{opts},
+Options[genLilXkZkFunc]]]
+],numZs=Length[theZs]},
+If[And[OptionValue["addTailContribution"],numZs>=1],Print["addingTailContribution"];
+genLilXkZkFunc[linMod,fCon+MatrixPower[FF,Length[theZs]+1].tailContribution[FF,phi,theZs[[-1]]]],
+genLilXkZkFunc[linMod,fCon]
+]
+]]
 @}
 
 @d genLilXkZkFunc
@@ -164,7 +176,7 @@ chk
 ]]]]]]]@}
 
 @d genLilXkZkFunc fcon call
-@{genLilXkZkFunc[@<linMod@>,@<fCon@>]@}
+@{genLilXkZkFunc[@<linMod@>,@<fCon@>,opts:OptionsPattern[]]@}
 
 @d fCon
 @{fCon_?MatrixQ@}
@@ -267,7 +279,7 @@ Join[Apply[eqnsFunc,Flatten[theApp]],Flatten[xArgs-(Part[theApp,Range[numX]])]];
 
 @}
 
-@d genFRExtFunc
+@d genZsForFindRoot
 @{
 
 genZsForFindRoot[linMod:{theHMat_?MatrixQ,BB_?MatrixQ,
@@ -289,9 +301,7 @@ Range[(Length[thePath]/numX)-3]]},
 
 
 
-
 @}
-
 \subsubsection{Using just decision rule  expectation}
 \label{sec:using-both-decision}
 
@@ -300,7 +310,9 @@ Range[(Length[thePath]/numX)-3]]},
 @{
 
 (*begin code for genFRExtFunc*)
-Options[genFRExtFunc]={"xVarRanges"->{},"Traditional"->False} 
+Options[genFRExtFunc]={"xVarRanges"->{},"Traditional"->False,"addTailContribution"->False} 
+
+
 
 genFRExtFunc[{numX_Integer,numEps_Integer,numZ_Integer},@<linMod@>,@<XZFuncs@>,
 @<eqnsFunc@>,opts:OptionsPattern[]]:=
@@ -368,7 +380,10 @@ Apply[Sequence,xtztArgPatterns]],
 Module[{theZsNow=genZsForFindRoot[linMod,
 Transpose[{xArgs}],XZFuncs[[1]],XZFuncs[[2]]]
 },
-With[{xkFunc=Catch[(Check[genLilXkZkFunc[linMod,theZsNow],
+With[{xkFunc=Catch[(Check[genLilXkZkFunc[linMod,theZsNow,
+Apply[Sequence,FilterRules[{opts},
+Options[genLilXkZkFunc]]]
+],
 Print["trying higher throw"];
 Throw[$Failed,"higher"]]),_,Function[{val,tag},
 Print["catchfxtzt:",{xArgs,val,tag}//InputForm];Throw[$Failed,"fromGenLil"]]]},
@@ -415,6 +430,7 @@ numSteps_Integer}@}
 
 
 
+
 @d prepFindRootXInitBoth
 @{theXInit=Flatten[Apply[bothXZFuncs[[1,1]],Join[xLagArgs,eArgs]]],
 zArgsInit=Map[Function[xx,{xx,0}],zArgs],
@@ -445,6 +461,7 @@ Join[xLagArgs,xArgs,
 (Apply[bothXZFuncs[[1,2]],xArgs][[Range[numX]]]),eArgs]]},
 With[{eqnAppl=Apply[eqnsFunc,Flatten[xkAppl]]},
 Flatten[Join[eqnAppl]]]]]]@}
+
 @d setDelayedSeriesFXtZtBoth
 @{SetDelayed[
 funcOfXtZt[
@@ -454,7 +471,10 @@ Module[{theZsNow=genZsForFindRoot[linMod,
 Transpose[{xArgs}],bothXZFuncs[[1,2]],bothXZFuncs[[2]]]
 },
 With[{xkFunc=Catch[
-(Check[genLilXkZkFunc[linMod,theZsNow],
+(Check[genLilXkZkFunc[linMod,theZsNow,
+Apply[Sequence,FilterRules[{opts},
+Options[genLilXkZkFunc]]]
+],
 Print["trying higher throw"];Throw[$Failed,"higher"]]),_,
 Function[{val,tag},Print["catchfxtzt:",{xArgs,val,tag}//InputForm];
 Throw[$Failed,"fromGenLil"]]]},
@@ -889,7 +909,7 @@ doGenericIterREInterp::usage=
 @{
 (*begin code for doSmolyakIterREInterp*)
 
-Options[doGenericIterREInterp]={"xVarRanges"->{},"Traditional"->False}
+Options[doGenericIterREInterp]={"xVarRanges"->{},"Traditional"->False,"addTailContribution"->False}
 doGenericIterREInterp[genFRExtFunc,
 	@<linMod@>,
 	@<XZFuncs@>,
@@ -926,7 +946,7 @@ nestGenericIterREInterp::usage=
 @{
 (*begin code for nestGenericIterREInterp*)
 
-Options[nestGenericIterREInterp]={"xVarRanges"->{},"Traditional"->False}
+Options[nestGenericIterREInterp]={"xVarRanges"->{},"Traditional"->False,"addTailContribution"->False}
 nestGenericIterREInterp[genFRExtFunc,@<linMod@>,
 @<XZFuncs@>,@<eqnsFunc@>,@<smolGSpec@>,
 genericInterp:(smolyakInterpolation|svmRegressionLinear|
@@ -935,7 +955,8 @@ svmArgs:{_?NumberQ...},
 numIters_Integer,opts:OptionsPattern[]]:=
 NestList[Function[xx,doGenericIterREInterp[genFRExtFunc,linMod,
 {xx[[2]],numSteps},eqnsFunc,smolGSpec,
-genericInterp,svmArgs]],{99,XZFuncs[[1]]},numIters]
+genericInterp,svmArgs,Apply[Sequence,
+FilterRules[{opts},Options[doGenericIterREInterp]]]]],{99,XZFuncs[[1]]},numIters]
 
 
 (*end code for nestGenericIterREInterp*)
@@ -1110,7 +1131,7 @@ parallelDoGenericIterREInterp::usage=
 
 
 
-Options[parallelDoGenericIterREInterp]={"xVarRanges"->{},"Traditional"->False}
+Options[parallelDoGenericIterREInterp]={"xVarRanges"->{},"Traditional"->False,"addTailContribution"->False}
 parallelDoGenericIterREInterp[genFRExtFunc,
 	@<linMod@>,
 	@<XZFuncs@>,
@@ -1149,7 +1170,7 @@ parallelNestGenericIterREInterp::usage=
 
 
 
-Options[parallelNestGenericIterREInterp]={"xVarRanges"->{},"Traditional"->False}
+Options[parallelNestGenericIterREInterp]={"xVarRanges"->{},"Traditional"->False,"addTailContribution"->False}
 
 parallelNestGenericIterREInterp[genFRExtFunc,@<linMod@>,
 @<XZFuncs@>,@<eqnsFunc@>,@<smolGSpec@>,
@@ -1306,8 +1327,7 @@ Just ADRCE
 @{
 
 genFRExtFunc[{numX_Integer,numEps_Integer,numZ_Integer},@<linMod@>,@<XZFuncs@>,
-triples:{{{_Function,(_Function|_CompiledFunction|_Symbol),_Function}..},
-selectorFunc_Function},
+@<rawTriples@>,
 opts:OptionsPattern[]]:=
 Module[{varRanges=OptionValue["xVarRanges"]},
 With[{funcTrips=
@@ -1326,8 +1346,7 @@ ADR and  ADRCE
 @{
 genFRExtFunc[{numX_Integer,numEps_Integer,numZ_Integer},@<linMod@>,
 @<bothXZFuncs@>,
-triples:{{{_Function,(_Function|_CompiledFunction|_Symbol),_Function}..},
-selectorFunc_Function},
+@<rawTriples@>,
 opts:OptionsPattern[]]:=
 Module[{varRanges=OptionValue["xVarRanges"]},
 With[{funcTrips=
@@ -1337,17 +1356,23 @@ FilterRules[{opts},Options[genFRExtFunc]]]],#[[3]]}&,triples[[1]]]},
 {funcTrips,selectorFunc}
 ]]
 @}
+@d aProcessedTriple@{
+triple:{preFunc_Function,theFunc:(_Function|_CompiledFunction|_Symbol),
+postFunc_Function}@}
+
+
+
 @d evaluateTripleUsage
 @{
 evaluateTriple::usage=
 "place holder for genFRExtFunc"
 @}
+
 @d evaluateTriple
 @{
 
 evaluateTriple[
-triple:{preFunc_Function,theFunc:(_Function|_CompiledFunction|_Symbol),
-postFunc_Function},
+@<aProcessedTriple@>,
 thePt_?VectorQ]:=
 Catch[
 If[
@@ -1362,15 +1387,20 @@ Print["catchinevaluateTriple:",{xArgs,val,tag}//InputForm];$Failed]]
 
 @d parallelMakeGenericInterpFuncs
 @{
-parallelMakeGenericInterpFuncs[triples:{{
-{_Function,(_Function|_CompiledFunction|_Symbol),
-_Function}..},selectorFunc_Function},
+parallelMakeGenericInterpFuncs[@<rawTriples@>,
 backLookingInfo:{{_Integer,_,_}...},@<smolGSpec@>,
 genericInterp:(smolyakInterpolation|svmRegressionLinear|svmRegressionPoly|
 svmRegressionRBF|svmRegressionSigmoid),svmArgs:{_?NumberQ...}]:=
 Module[{},
-With[{interpData=parallelSmolyakGenInterpData[triples,smolGSpec],
-numArgs=Length[smolPts[[1]]]},
+With[{interpData=parallelSmolyakGenInterpData[triples,smolGSpec]},
+interpDataToFunc[interpData,backLookingInfo,smolGSpec,genericInterp,svmArgs]]]
+
+interpDataToFunc[interpData_?MatrixQ,
+backLookingInfo:{{_Integer,_,_}...},@<smolGSpec@>,
+genericInterp:(smolyakInterpolation|svmRegressionLinear|svmRegressionPoly|
+svmRegressionRBF|svmRegressionSigmoid),
+svmArgs:{_?NumberQ...}]:=
+With[{numArgs=Length[smolPts[[1]]]},
 With[{numFuncs=Length[interpData[[1]]],
 funcArgs=Table[Unique["f03Args"],{numArgs}],theXs=Table[xx[ii],{ii,numArgs}]},
 With[{longFuncArgs=fillInSymb[{{},smolToIgnore,funcArgs}],
@@ -1378,13 +1408,13 @@ funcSubs=Thread[theXs->funcArgs]},
 With[{interpFuncList=
 ParallelMap[Function[funcIdx,
 With[{theInterps=genericInterp[interpData[[All,funcIdx]],smolGSpec,svmArgs]},
-With[{smolApp=theInterps},
+With[{smolApp=theInterps},Print["theInterps:",theInterps];
 smolApp]]],Range[numFuncs]]},
 With[
 {applied=Transpose[{ParallelMap[notApply[#,funcArgs]/.funcSubs&,
 Map[First,interpFuncList]]}],
 appliedExp=Transpose[{ParallelMap[notApply[#,funcArgs]/.funcSubs&,
-Map[Last,interpFuncList]]}]},
+Map[Last,interpFuncList]]}]},Print["applied:",applied];
 With[{thePair=
 {
 ReplacePart[
@@ -1393,11 +1423,12 @@ ReplacePart[
 ReplacePart[
 	Function[xxxxxxx, appliedExp],
 		{1->Drop[longFuncArgs,-numEps]}]/.notApply->Apply
-}},
+}},Print["thePair:",thePair];
 {replaceEqnOrExp[thePair[[1]],longFuncArgs,2,backLookingInfo],
 replaceEqnOrExp[thePair[[2]],Drop[longFuncArgs,-numEps],3,backLookingInfo]}
-	]
 ]]]]]]
+
+
 
 
 @}
@@ -1410,20 +1441,21 @@ replaceEqnOrExp[thePair[[2]],Drop[longFuncArgs,-numEps],3,backLookingInfo]}
  
 
 parallelSmolyakGenInterpData[
-triples:{{{_Function,(_Function|_CompiledFunction|_Symbol),
-_Function}..},selectorFunc_Function},@<smolGSpec@>]:=
+@<rawTriples@>,@<smolGSpec@>]:=
 Module[{},
 With[{filledPts=Map[Function[xx,fillIn[{{},smolToIgnore,xx}]],N[smolPts]]},
 With[{theVals=
 ParallelTable[evaluateTriple[aTriple,Flatten[aPt]],
 {aPt,filledPts},{aTriple,triples[[1]]}]},
+With[{toWorkOn={filledPts,theVals}//Transpose},
+Print["toWorkOn:",toWorkOn];
 With[{interpData=
 ParallelMap[With[{baddy=#},Catch[
 Apply[selectorFunc,#],
 _,Function[{val,tag},Print["catchsmolGenInterp: aborting",
 {val,tag,baddy,triples,filledPts}//InputForm];
-Abort[]]]]&,{filledPts,theVals}//Transpose]},
-interpData]]]]
+Abort[]]]]&,toWorkOn]},
+interpData]]]]]
 
 
 
@@ -1444,8 +1476,7 @@ just  and ADRCE
 parallelDoGenericIterREInterp[genFRExtFunc,
 	@<linMod@>,
 	@<XZFuncs@>,
-triples:{{{_Function,(_Function|_CompiledFunction|_Symbol),_Function}..},
-selectorFunc_Function},@<smolGSpec@>,
+@<rawTriples@>,@<smolGSpec@>,
 genericInterp:(smolyakInterpolation|svmRegressionLinear|
 svmRegressionPoly|svmRegressionRBF|svmRegressionSigmoid),
 svmArgs:{_?NumberQ...},opts:OptionsPattern[]]:=
@@ -1470,8 +1501,7 @@ ADR and ADRCE
 parallelDoGenericIterREInterp[genFRExtFunc,
 	@<linMod@>,
 	@<bothXZFuncs@>,
-triples:{{{_Function,(_Function|_CompiledFunction|_Symbol),_Function}..},
-selectorFunc_Function},@<smolGSpec@>,
+@<rawTriples@>,@<smolGSpec@>,
 genericInterp:(smolyakInterpolation|svmRegressionLinear|svmRegressionPoly|
 svmRegressionRBF|svmRegressionSigmoid),
 svmArgs:{_?NumberQ...},opts:OptionsPattern[]]:=
@@ -1498,8 +1528,7 @@ just  and ADRCE
 @{
 parallelNestGenericIterREInterp[genFRExtFunc,@<linMod@>,
 @<XZFuncs@>,
-triples:{{{_Function,(_Function|_CompiledFunction|_Symbol),_Function}..},
-selectorFunc_Function},@<smolGSpec@>,
+@<rawTriples@>,@<smolGSpec@>,
 genericInterp:(smolyakInterpolation|svmRegressionLinear|
 svmRegressionPoly|svmRegressionRBF|svmRegressionSigmoid),
 svmArgs:{_?NumberQ...},
@@ -1518,8 +1547,7 @@ both ADR and ADRCE
 @{
 parallelNestGenericIterREInterp[genFRExtFunc,@<linMod@>,
 @<bothXZFuncs@>,
-triples:{{{_Function,(_Function|_CompiledFunction|_Symbol),_Function}..},
-selectorFunc_Function},@<smolGSpec@>,
+@<rawTriples@>,@<smolGSpec@>,
 genericInterp:(smolyakInterpolation|svmRegressionLinear|
 svmRegressionPoly|svmRegressionRBF|svmRegressionSigmoid),
 svmArgs:{_?NumberQ...},
@@ -1531,6 +1559,497 @@ Apply[Sequence,FilterRules[{opts},
 Options[parallelDoGenericIterREInterp]]]]],justBothXZFuncs,numIters]]
 
 @}
+
+
+\section{Regimes}
+\subsection{genRegimesBothX0Z0Funcs}
+\label{sec:genx0z0funcs}
+
+
+@d parallelNestGenericIterREInterp
+@{
+parallelNestGenericIterREInterp[genFRExtFunc,@<linMod@>,
+@<regimesBothXZFuncs@>,
+@<rawRegimesTriples@>,@<smolGSpec@>,
+genericInterp:(smolyakInterpolation|svmRegressionLinear|
+svmRegressionPoly|svmRegressionRBF|svmRegressionSigmoid),
+svmArgs:{_?NumberQ...},
+numIters_Integer,opts:OptionsPattern[]]:=
+Module[{theIters=getNumIters[regimesBothXZFuncs]},Print["theIters:",theIters];
+NestList[Function[xxx,Print[{"xxx",xxx}];
+parallelDoGenericIterREInterp[genFRExtFunc,linMod,
+resultsForIter[xxx,theIters],rawRegimesTriples,smolGSpec,genericInterp,svmArgs,
+Apply[Sequence,FilterRules[{opts},
+Options[parallelDoGenericIterREInterp]]]]],Map[First,regimesBothXZFuncs],numIters]]
+
+getNumIters[@<regimesBothXZFuncs@>]:=
+Map[Last,regimesBothXZFuncs]
+
+resultsForIter[@<functionPairs@>,numIters:{_Integer..}]:=
+With[{theRes=Transpose[{functionPairs,numIters}]},Print[{"resultsForIter:",theRes}];
+theRes]
+@}
+
+@d functionPairs
+@{functionPairs:{{_Function,_Function}..}
+@}
+
+
+@d parallelDoGenericIterREInterp
+@{
+parallelDoGenericIterREInterp[genFRExtFunc,
+	@<linMod@>,
+@<regimesBothXZFuncs@>,
+@<rawRegimesTriples@>,@<smolGSpec@>,
+genericInterp:(smolyakInterpolation|svmRegressionLinear|svmRegressionPoly|
+svmRegressionRBF|svmRegressionSigmoid),
+svmArgs:{_?NumberQ...},opts:OptionsPattern[]]:=
+With[{numX=Length[BB],numZ=Length[psiZ[[1]]]},
+tn=AbsoluteTime[];
+If[Length[Kernels[]]===0,LaunchKernels[]];reapRes=Reap[
+genFRExtFunc[{numX,numEps,numZ},linMod,regimesBothXZFuncs,
+rawRegimesTriples,Apply[Sequence,FilterRules[{opts},
+Options[genFRExtFunc]]]],"theFuncs"];
+Apply[DistributeDefinitions,Flatten[reapRes[[2]]]];
+With[{theFuncs=
+parallelMakeGenericInterpFuncs[reapRes[[1]],backLookingInfo,smolGSpec,
+genericInterp,svmArgs]},
+theFuncs]]
+
+
+@}
+
+
+
+
+@d parallelMakeGenericInterpFuncs
+@{
+parallelMakeGenericInterpFuncs[
+@<processedRegimesTriples@>,
+backLookingInfo:{{_Integer,_,_}...},@<smolGSpec@>,
+genericInterp:(smolyakInterpolation|svmRegressionLinear|svmRegressionPoly|
+svmRegressionRBF|svmRegressionSigmoid),svmArgs:{_?NumberQ...}]:=
+Module[{},
+ParallelMap[
+With[{interpData=parallelSmolyakGenInterpData[#,smolGSpec]},
+interpDataToFunc[interpData,backLookingInfo,smolGSpec,
+genericInterp,svmArgs]]&,
+processedRegimesTriples]]
+
+@}
+
+
+
+@d parallelSmolyakGenInterpData
+@{
+ 
+
+parallelSmolyakGenInterpData[
+@<processedRegimesTriples@>,@<smolGSpec@>]:=
+Module[{numRegimes=Range[Length[processedRegimesTriples]],
+numCases=Map[Range[Length[#[[1]]]]&,processedRegimesTriples],numPts=Length[smolPts]},Print["prefill"];
+With[{filledPts=Map[Function[xxxx,fillIn[{{},smolToIgnore,xxxx}]],N[smolPts]]},
+Print[{smolPts,smolToIgnore,numRegimes,numCases,numPts}];
+With[{preCombos=MapIndexed[Table[{#2[[1]],ii}, {ii,#}]&,numCases]},
+With[{combos=
+Map[Function[yyy,Map[forPoints[#,numPts]&,yyy]],preCombos]},
+Print[{"combos:",combos}//InputForm];
+With[{theVals=Map[evaluateTripleToCases[processedRegimesTriples,filledPts,#1]&,
+combos,{3}]},Print["dims",Map[Dimensions,{processedRegimesTriples,filledPts,theVals}]];
+MapThread[applySelectorFuncs[#1[[-1]],filledPts,#2]&,
+{processedRegimesTriples,theVals}]
+]]]]]
+
+evaluateTripleToCases[
+@<processedRegimesTriples@>,pts_?MatrixQ,
+{rIndx_Integer,cIndx_Integer,pIndx_Integer}]:=
+evaluateTriple[processedRegimesTriples[[rIndx,1,cIndx]],Flatten[pts[[pIndx]]]]
+
+
+forPoints[soFar_?VectorQ,numPts_Integer]:=
+Map[Append[soFar,#]&,Range[numPts]]
+
+applySelectorFuncs[aSelectorFunc:(_Function|_CompiledFunction|_Symbol),
+filledPts_?MatrixQ,theVals_List]:=
+With[{toWorkOn={filledPts,Transpose[theVals]}//Transpose},
+Print[{"toWorkOn:",toWorkOn}];
+With[{interpData=
+ParallelMap[With[{baddy=#},Catch[
+Apply[aSelectorFunc,#],
+_,Function[{val,tag},Print["catchsmolGenInterp: aborting",
+{val,tag,baddy,triples,filledPts}//InputForm];
+Abort[]]]]&,toWorkOn]},
+interpData]]
+
+
+@}
+\subsubsection{Using both decision rule and decision rule expectation for regimes}
+\label{sec:using-both-decision}
+
+
+@d genFRExtFunc
+@{
+
+genFRExtFunc[{numX_Integer,numEps_Integer,numZ_Integer},
+@<linMod@>,
+@<regimesBothXZFuncs@>,
+@<rawRegimesTriples@>,opts:OptionsPattern[]]:=
+Module[{varRanges=OptionValue["xVarRanges"]},
+With[{regimeTrips=
+Table[genFRExtFunc[{numX,numEps,numZ},linMod,regimesBothXZFuncs,
+rawRegimesTriples[[-1]],rawRegimesTriples[[1,ii]],ii,Apply[Sequence,
+FilterRules[{opts},Options[genFRExtFunc]]]],{ii,Length[rawRegimesTriples]}]},
+regimeTrips
+]]
+@}
+
+
+
+
+@d genFRExtFunc
+@{
+genFRExtFunc[{numX_Integer,numEps_Integer,numZ_Integer},@<linMod@>,
+@<regimesBothXZFuncs@>,probFunc:(_Function|_CompiledFunction|_Symbol),
+@<rawTriples@>,regimeIndx_Integer,
+opts:OptionsPattern[]]:=
+Module[{varRanges=OptionValue["xVarRanges"]},
+With[{funcTrips=
+Map[{#[[1]],genFRExtFunc[{numX,numEps,numZ},linMod,regimesBothXZFuncs,
+probFunc,#[[2]],regimeIndx,
+Apply[Sequence,
+FilterRules[{opts},Options[genFRExtFunc]]]],#[[3]]}&,triples[[1]]]},
+{funcTrips,selectorFunc}
+]]
+@}
+
+@d rawTriples
+@{triples:{{{_Function,(_Function|_CompiledFunction|_Symbol),_Function}..},
+selectorFunc_Function}@}
+
+
+@d genFRExtFunc
+@{
+
+genFRExtFunc[{numX_Integer,numEps_Integer,numZ_Integer},
+@<linMod@>,
+@<regimesBothXZFuncs@>,probFunc:(_Symbol|_Function|_CompiledFunction),
+@<eqnsFunc@>,regimeIndx_Integer,opts:OptionsPattern[]]:=
+Module[{varRanges=OptionValue["xVarRanges"]},
+With[{@<findRootArgNames@>},
+With[{@<prepFindRootXInitRegimesBoth@>},
+With[{@<cmptXArgsInit@>,
+@<makeArgPatternsBoth@>},
+(**)
+Switch[OptionValue["Traditional"],
+True,@<setDelayedTradFXtZtRegimesBoth@>;@<setDelayedTradFXtm1Eps@>,
+False,@<setDelayedSeriesFXtZtRegimesBoth@>;@<setDelayedSeriesFXtm1Eps@>]
+(**)
+(**)
+DistributeDefinitions[funcOfXtZt,funcOfXtm1Eps]
+Off[FindRoot::srect];
+Off[FindRoot::nlnum];Sow[{funcOfXtm1Eps,funcOfXtZt},"theFuncs"];
+funcOfXtm1Eps
+]]]]
+@}
+
+@d prepFindRootXInitRegimesBoth
+@{theXInit=Flatten[Apply[regimesBothXZFuncs[[regimeIndx,1,1]],
+Join[xLagArgs,eArgs]]],
+zArgsInit=Map[Function[xx,{xx,0}],zArgs],
+funcOfXtm1Eps=Unique["fNameXtm1Eps"],
+funcOfXtZt=Unique["fNameXtZt"]
+@}
+
+
+
+@d setDelayedTradFXtZtRegimesBoth
+@{SetDelayed[
+funcOfXtZt[
+(**)
+Apply[Sequence,xtNoZtArgPatterns]],
+Module[{},
+With[{
+xkAppl=Flatten[
+Join[xLagArgs,xArgs,
+Map[(Apply[#[[1,2]],xArgs][[Range[numX]]])&,regimesBothXZFuncs],eArgs]]},
+With[{eqnAppl=Apply[eqnsFunc,Flatten[xkAppl]]},
+Flatten[Join[eqnAppl]]]]]]@}
+
+@d setDelayedSeriesFXtZtRegimesBoth
+@{SetDelayed[
+funcOfXtZt[
+(**)
+Apply[Sequence,xtztArgPatterns]],
+Module[{theZsNow=genZsForFindRoot[linMod,
+Transpose[{xArgs}],Apply[probFunc,xArgs][[regimeIndx]],regimesBothXZFuncs[[All,1,2]],probFunc,
+regimesBothXZFuncs[[regimeIndx,2]]]
+},
+With[{xkFunc=Catch[
+(Check[genLilXkZkFunc[linMod,theZsNow,
+Apply[Sequence,FilterRules[{opts},
+Options[genLilXkZkFunc]]]
+],
+Print["trying higher throw"];Throw[$Failed,"higher"]]),_,
+Function[{val,tag},Print["catchfxtzt:",{xArgs,val,tag}//InputForm];
+Throw[$Failed,"fromGenLil"]]]},
+With[{xkAppl=Apply[xkFunc,Join[xLagArgs,eArgs,zArgs]]},
+With[{eqnAppl=Apply[eqnsFunc,Flatten[xkAppl]],
+xDisc=xArgs-xkAppl[[numX+Range[numX]]]},
+Flatten[Join[xDisc,eqnAppl]]]]]]]@}
+
+
+@d regimesBothXZFuncs
+@{regimesBothXZFuncs:{
+regimesJustBothXZFuncs:{
+{
+(_Function|_InterpolatingFunction|_CompiledFunction|_Symbol),
+(_Function|_InterpolatingFunction|_CompiledFunction|_Symbol)},
+_Integer}..}@}
+
+
+
+@d genRegimesBothX0Z0FuncsUsage
+@{genRegimesBothX0Z0Funcs::usage=
+"place holder for genRegimesBothX0Z0Funcs"
+@}
+
+@d genRegimesBothX0Z0Funcs
+@{
+(*begin code for genRegimesBothX0Z0Funcs*)
+genRegimesBothX0Z0Funcs[@<linMods@>]:=Map[genBothX0Z0Funcs,linMods]
+
+@}
+
+
+
+
+@d genZsForFindRoot
+@{
+
+genZsForFindRoot[linMod:{theHMat_?MatrixQ,BB_?MatrixQ,
+phi_?MatrixQ,FF_?MatrixQ,psiEps_?MatrixQ,psiC_?MatrixQ,psiZ_?MatrixQ,
+backLookingInfo:{{_Integer,backLooking_,backLookingExp_}...}},
+firstSteps:{_?MatrixQ..},firstProbs_?MatrixQ,
+drExpFuncs:{(_Function|_CompiledFunction|_Symbol)..},probFunc:(_Symbol|_Function|_CompiledFunction),iters_Integer]:=
+Module[{numX=Length[getB[linMod]]},
+With[{thePaths=
+Check[
+regimesExpectation[firstSteps,firstProbs,drExpFuncs,probFunc,numX,iters+1],
+Print["problems with current DRCE,using at",initVec,"linMod!!!!!"]]},
+With[{restVals=
+Map[compZsOnPath[theHMat,psiC,numX,#]&,thePaths]},
+      restVals
+]]]
+
+
+
+genZsForFindRoot[linMod:{theHMat_?MatrixQ,BB_?MatrixQ,
+phi_?MatrixQ,FF_?MatrixQ,psiEps_?MatrixQ,psiC_?MatrixQ,psiZ_?MatrixQ,
+backLookingInfo:{{_Integer,backLooking_,backLookingExp_}...}},
+firstSteps:{_?MatrixQ..},firstProbs_?MatrixQ,
+drExpFuncs:{(_Function|_CompiledFunction|_Symbol)..},probFunc:(_Symbol|_Function|_CompiledFunction),iters:{_Integer..}]:=
+MapThread[Flatten[genZsForFindRoot[linMod,{#1},{#2},drExpFuncs,probFunc,#3],1]&,
+{firstSteps,firstProbs,iters+1}]
+
+
+
+genZsForFindRoot[linMod:{theHMat_?MatrixQ,BB_?MatrixQ,
+phi_?MatrixQ,FF_?MatrixQ,psiEps_?MatrixQ,psiC_?MatrixQ,psiZ_?MatrixQ,
+backLookingInfo:{{_Integer,backLooking_,backLookingExp_}...}},
+firstSteps_?MatrixQ,firstProbs_?VectorQ,
+drExpFuncs:{(_Function|_CompiledFunction|_Symbol)..},probFunc:(_Symbol|_Function|_CompiledFunction),iters_Integer]:=
+Flatten[genZsForFindRoot[linMod,{firstSteps},{firstProbs},
+drExpFuncs,probFunc,iters+1],1]
+
+
+compZsOnPath[theHMat_?MatrixQ,psiC_?MatrixQ,numX_Integer,thePath:{_?MatrixQ..}]:=
+With[{fullPath=Apply[Join,thePath]},
+  Map[(theHMat .fullPath[[Range[3*numX]+numX*(#-1)]] -psiC)&,
+Range[(Length[fullPath]/numX)-3]]]
+
+
+@}
+
+@d iterateDRCEUsage
+@{
+iterateDRCE::usage="iterateDRCE[drExpFunc:(_Function|_CompiledFunction|_Symbol),initVec_?MatrixQ,numPers_Integer]"
+@}
+
+
+@d iterateDRCE
+@{
+
+iterateDRCE[drExpFunc:(_Function|_CompiledFunction|_Symbol),
+initVec_?MatrixQ,numPers_Integer]:=
+	With[{numX=Length[initVec]},
+With[{iterated=
+NestList[Function[xx,((Transpose[{Flatten[Apply[drExpFunc,Flatten[xx]]]}]))],
+Identity[initVec],numPers]},
+Apply[Join,
+(Map[Function[xx,Identity[xx[[Range[numX]]]]],iterated])]]]/;
+And[numPers>0]
+
+
+@}
+
+@d iterateRegimesDRValsUsage
+@{
+iterateRegimesDRVals::usage="iterateRegimesDRVals[drExpFunc:(_Function|_CompiledFunction|_Symbol),initVec_?MatrixQ,numPers_Integer]"
+@}
+
+@d iterateRegimesDRVals
+@{
+
+
+iterateRegimesDRVals[drFuncs:{(_Function|_CompiledFunction|_Symbol)..},
+initVec_?MatrixQ,regimeNum_Integer]:=
+Module[{},
+Apply[drFuncs[[regimeNum]],Flatten[initVec]]]/;
+And[Length[drFuncs]>=regimeNum>0]
+
+
+
+
+iterateRegimesDRVals[drExpFuncs:{(_Function|_CompiledFunction|_Symbol)..},
+initVecs:{_?MatrixQ..},numPers_?NumberQ]:=
+With[{iterated=NestList[doStep[drExpFuncs,#]&,initVecs,numPers]},
+iterated]/;
+And[numPers>0]
+
+
+
+
+
+doStep[drExpFuncs:{(_Function|_CompiledFunction|_Symbol)..},
+initVecs:{_?MatrixQ..}]:=
+With[{numX=Length[initVecs[[1]]]},Flatten[
+Outer[(Apply[#2 , Flatten[#1]][[Range[numX]]])&,initVecs,drExpFuncs,1,1],1]]
+
+
+
+
+
+@}
+
+@d iterateRegimesDRProbsUsage
+@{
+
+iterateRegimesDRProbs::usage="iterateRegimesDRProbs"
+@}
+
+
+@d iterateRegimesDRProbs
+@{
+iterateRegimesDRProbs[initVec_?MatrixQ,
+probFunc:(_Symbol|_Function|_CompiledFunction),
+regimeNum_Integer]:=
+Module[{},Apply[probFunc,Flatten[initVec]][[{regimeNum}]]]
+And[Length[drFuncs]>=regimeNum>0]
+
+
+
+
+iterateRegimesDRProbs[initVecs:{{_?MatrixQ..}..},initProbs_?VectorQ,
+probFunc:(_Symbol|_Function|_CompiledFunction),numX_Integer]:=
+With[{iterated=FoldList[doStepProbs[#2,#1,probFunc,numX]&,initProbs,initVecs]},
+iterated]
+
+iterateRegimesDRProbs[initVecs:{{_?MatrixQ..}...},initProbs_?VectorQ,
+probFunc:(_Symbol|_Function|_CompiledFunction),numX_Integer]:=
+With[{iterated=FoldList[doStepProbs[#2,#1,probFunc,numX]&,initProbs,initVecs]},
+iterated]
+
+doStepProbs[initVecs:{_?MatrixQ..},initProbs_?VectorQ,
+probFunc:(_Symbol|_Function|_CompiledFunction),numX_Integer]:=
+With[{theTransProbs=Flatten[
+Map[Apply[probFunc,Flatten[#][[Range[numX]]]]&,
+initVecs],1]},Flatten[MapThread[#1*#2&,{initProbs,theTransProbs}]]]
+
+
+
+
+
+@}
+
+
+\subsubsection{regimes expectation}
+\label{sec:using-both-decision}
+
+
+
+@d processedRegimesTriples
+@{processedRegimesTriples:xx_?processedRegimesGroupQ@}
+
+@d rawRegimesTriples
+@{rawRegimesTriples:xx_?regimesGroupQ@}
+
+
+
+
+@d patternMatchCode
+@{
+aTripleQ[xx_]:=MatchQ[xx,{_Function,(_Function|_CompiledFunction|_Symbol),_Function}]
+
+conditionsGroupQ[xx_]:=MatchQ[xx,{{_?aTripleQ..},(_Function|_CompiledFunction|_Symbol)}]
+
+
+regimesGroupQ[xx_]:=MatchQ[xx,{{_?conditionsGroupQ..},(_Function|_CompiledFunction|_Symbol)}]
+
+processedRegimesGroupQ[xx_]:=MatchQ[xx,{_?conditionsGroupQ..}]
+
+
+@}
+
+@d regimesExpectationUsage
+@{
+regimesExpectation::usage="regimesExpectation"
+
+@}
+
+@d regimesExpectation
+@{
+
+regimesExpectation[
+drFuncs:{(_Function|_CompiledFunction|_Symbol)..},
+drExpFuncs:{(_Function|_CompiledFunction|_Symbol)..},
+initVec_?MatrixQ,probFunc:(_Symbol|_Function|_CompiledFunction),
+numXVars_Integer,
+numSteps_Integer]:=
+Module[{numRegimes=Length[drFuncs]},
+With[{firstSteps=
+Map[iterateRegimesDRVals[drFuncs,initVec,#]&,Range[numRegimes]]},
+With[{furtherSteps=Map[iterateRegimesDRVals[drExpFuncs,{#},numSteps]&,
+firstSteps],
+firstProbs=
+Map[Flatten[iterateRegimesDRProbs[initVec[[Range[numXVars]]],probFunc,#]]&,
+Range[numRegimes]]},
+With[{restProbs=
+MapThread[iterateRegimesDRProbs[Drop[#1,-2],#2,probFunc,numXVars]&,
+{furtherSteps,firstProbs}]},
+With[{theProducts=MapThread[Drop[#1,1]*#2&,{furtherSteps,restProbs}]},
+With[{theSums=Map[doRegime,theProducts]},
+theSums]]]]]]
+
+regimesExpectation[firstSteps:{_?MatrixQ..},firstProbs_?MatrixQ,
+drExpFuncs:{(_Function|_CompiledFunction|_Symbol)..},probFunc:(_Symbol|_Function|_CompiledFunction),
+numXVars_Integer,
+numSteps_Integer]:=
+Module[{numRegimes=Length[drFuncs]},
+With[{furtherSteps=Map[iterateRegimesDRVals[drExpFuncs,{#},numSteps]&,
+firstSteps]},
+With[{restProbs=
+MapThread[iterateRegimesDRProbs[Drop[#1,-2],#2,probFunc,numXVars]&,
+{furtherSteps,firstProbs}]},
+With[{theProducts=MapThread[Drop[#1,1]*#2&,{furtherSteps,restProbs}]},
+With[{theSums=Map[doRegime,theProducts]},
+theSums]]]]]
+
+plusAllEvents[theEvents:{_?MatrixQ..}]:=Apply[Plus,theEvents]
+doRegime[regimeEvents:{{_?MatrixQ..}..}]:=Map[plusAllEvents,regimeEvents]
+@}
+
+
+
 
 \subsection{Getters and Setters}
 \label{sec:getters-setters}
@@ -1640,6 +2159,22 @@ psiEps
 @}
 
 
+@d getFUsage
+@{
+getF::usage=
+"getF[@<linMod@>]"<>
+"number of z variables"
+@}
+
+@d getF
+@{
+getF[@<linMod@>]:=
+FF
+@}
+
+
+
+
 @d getBUsage
 @{
 getB::usage=
@@ -1738,6 +2273,12 @@ theHMat
 psiC
 @}
 
+@d linMods
+@{linMods:{{_?MatrixQ,_?MatrixQ,_?MatrixQ,_?MatrixQ, 
+_?MatrixQ,_?MatrixQ,_?MatrixQ,
+{{_Integer,_,_}...}}..}
+@}
+
 
 \subsection{Usage Definitions}
 \label{sec:usage-definitions-1}
@@ -1753,6 +2294,7 @@ psiC
 @<getPsiZUsage@>
 @<getPsiEpsUsage@>
 @<getBUsage@>
+@<getFUsage@>
 @<getHUsage@>
 @<genLilXkZkFuncUsage@>
 @<fSumCUsage@>
@@ -1779,8 +2321,14 @@ psiC
 @<parallelMakeInterpFuncUsage@>
 @<parallelDoIterREInterpUsage@>
 @<parallelNestIterREInterpUsage@>
+@<genRegimesBothX0Z0FuncsUsage@>
 @<genBothX0Z0FuncsUsage@>
 @<evaluateTripleUsage@>
+@<iterateRegimesDRValsUsage@>
+@<iterateDRCEUsage@>
+@<iterateRegimesDRProbsUsage@>
+@<regimesExpectationUsage@>
+@<genRegimesBothX0Z0FuncsUsage@>
 @}
 
 \subsection{Package Code}
@@ -1796,12 +2344,14 @@ psiC
 @<getPsiZ@>
 @<getPsiEps@>
 @<getB@>
+@<getF@>
 @<getH@>
 @<genLilXkZkFunc@>
 @<fSumC@>
 @<genXtOfXtm1@>
 @<genXtp1OfXt@>
 @<genFRExtFunc@>
+@<genZsForFindRoot@>
 @<smolyakInterpolationPrep@>
 @<myExpectation@>
 @<genIntVars@>
@@ -1827,8 +2377,14 @@ psiC
 @<parallelDoIterREInterp@>
 @<parallelNestIterREInterp@>
 @<replaceLinPart@>
+@<genRegimesBothX0Z0Funcs@>
 @<genBothX0Z0Funcs@>
 @<evaluateTriple@>
+@<iterateDRCE@>
+@<iterateRegimesDRVals@>
+@<iterateRegimesDRProbs@>
+@<regimesExpectation@>
+@<patternMatchCode@>
 @}
 
 
@@ -1861,7 +2417,8 @@ EndPackage[]
 @{
 (* Wolfram Language Package *)
 Print["start reading betterRBC.m"]
-BeginPackage["betterRBC`", { "AMASeriesRepresentation`", "ProtectedSymbols`", "AMAModel`", "SymbolicAMA`", "NumericAMA`"}]
+BeginPackage["betterRBC`", { "AMASeriesRepresentation`", 
+"ProtectedSymbols`", "AMAModel`", "SymbolicAMA`", "NumericAMA`"}]
 (* Exported symbols added here with SymbolName::usage *)  
 anXBetter::usage="for test input";
 anEpsBetter::usage="for test input";
@@ -1874,6 +2431,10 @@ anEpsFlatBetter::usage="for test input";
 anXEpsFlatBetter::usage="for test input";
 aZFlatBetter::usage="for test input";
 anXEpsZsFlatBetter::usage="for test input";
+@}
+@o betterRBC.m
+@{
+
 
 probDimsBetter::usage="for test input";
 simpRBCExactX0Z0CEBetter::usage="simpRBCExactX0Z0CEBetter"
@@ -1886,7 +2447,8 @@ betterRBCExactCondExp::usage="betterRBCExactCondExp"
 theDistBetter::usage="theDist={{{ee,NormalDistribution[0,sigVal]}}};"
 thePFDistBetter::usage="theDist={{{ee,PerfectForesight]}}};"
 linModBetter::usage="linear model matrices for approx"
-aGSpecBetter::usage="aGSpec={{1},1,{{4,kLow,kHigh},{3,thLow,thHigh},{3,sigLow,3*sigHigh}}}";
+aGSpecBetter::usage="aGSpec={{1},1,{{4,kLow,kHigh},{3,thLow,thHigh},
+{3,sigLow,3*sigHigh}}}";
 eqnsCompiledBetter::usage="model equations function"
 rbcEqnsBetter::usage="model equations"
 eqnsEulerCompiledBetter::usage="eqnsEulerCompiledBetter"
@@ -1898,6 +2460,11 @@ betterRBCSD::usage="betterRBCSD"
 betterRBCvv::usage="betterRBCvv"
 betterRBCMinZ::usage="betterRBCMinZ"
 betterRBCMaxZ::usage="betterRBCMaxZ"
+
+@}
+@o betterRBC.m
+@{
+
 Print["at Private"]
 Begin["`Private`"] (* Begin Private Context *) 
 
@@ -1931,6 +2498,11 @@ zfEqns=discMapEqns00[[{2,3,4}]]//PowerExpand
 discMapEqns01=Append[zfEqns/.t->t+1,discMapEqns00[[1]]]//PowerExpand
 (*soln=Solve[Thread[discMapEqns01==0],{cc[t+1],kk[t+1],nlPart[t+1],lnTheta[t+1]}]*)
 
+@}
+@o betterRBC.m
+@{
+
+
 (*parameters page 21 using state 1*)
 (*
 paramSubs=Rationalize[{
@@ -1955,6 +2527,10 @@ forSubs={alpha^(1 - alpha)^(-1)*delta^(1 - alpha)^(-1)};
 simpSubs=Thread[forSubs->nu];
 forParamSubs=Thread[nu->forSubs]//.paramSubs;
 simpParamSubs=Join[paramSubs,forParamSubs];
+@}
+@o betterRBC.m
+@{
+
 (*
 
 rbcCompileGuts=(betterRBC`Private`rbcEqns/.{
@@ -1978,6 +2554,10 @@ eps[betterRBC`Private`theta][t]->epsVal
 
 *)
 
+@}
+@o betterRBC.m
+@{
+
 rbcEqnsBetter=eqnsCompiledBetter=Apply[Compile, {
 {
 {cctm1,_Real},{kktm1,_Real},{nltm1,_Real},{thetatm1,_Real},
@@ -2000,6 +2580,11 @@ cct + kkt - 1.*kktm1^(alpha)*thetat,
 nlt - thetat/cct,
 thetat - ((N[E]^epsVal)*(thetatm1^(rho)))}/.paramSubs)
 
+@}
+@o betterRBC.m
+@{
+
+
 (*
 causes error a
 CompiledFunction::cfn: 
@@ -2013,6 +2598,10 @@ Apply[eqnsCompiledBetter  , Flatten[{{1}, {0.0187324}, {1}, {1.1}, {0.293437}, {
      {1.07709}, {-0.0124264}}]]
 
 *)
+
+@}
+@o betterRBC.m
+@{
 (*
 eqnsEulerCompiledBetter=Apply[Compile , {
 {
@@ -2026,6 +2615,11 @@ cct + kkt - 1.*kktm1^(9/25)*thetat,
 nlt - thetat/cct,
 thetat - 1.*2.718281828459045^epsVal*thetatm1^(19/20)},"RuntimeOptions"->{"RuntimeErrorHandler"->Function[$Failed],"CatchMachineOverflow"->True,"CatchMachineUnderflow"->True}}]
 *)
+
+@}
+@o betterRBC.m
+@{
+
 
 Needs["CompiledFunctionTools`"]
 
@@ -2054,6 +2648,12 @@ cSSSubPF=cc->(yNow[kk/.kSSSubPF,theta/.thSubsPF]-kk/.kSSSubPF);
 nlPartSSSubPF=(nlPart->(nlPartRHS/.xxxx_[t]->xxxx))//.{kSSSubPF,cSSSubPF,thSubsPF};
 ssSolnSubsPF=Flatten[{thSubsPF,kSSSubPF,cSSSubPF,nlPartSSSubPF}];
 
+
+
+
+@}
+@o betterRBC.m
+@{
 
 
 
@@ -2097,6 +2697,9 @@ hSumRE=hmatSymbRE[[All,Range[4]]]+hmatSymbRE[[All,4+Range[4]]]+hmatSymbRE[[All,8
 
 ssSolnVecRE={{cc},{kk},{nlPart},{theta}}//.ssSolnSubsRE;
 psicSymbRE=hSumRE . ssSolnVecRE;
+@}
+@o betterRBC.m
+@{
 
 
 {zfSymbRE,hfSymbRE}=symbolicAR[hmatSymbRE//.simpParamSubs];
@@ -2116,6 +2719,9 @@ linModBetter={hmatSymbRE//N,bmatSymbRE // N, phimatSymbRE // N,
 (*linModBetter=Map[Rationalize[#,1/100000000]&,linModBetter,{-1}]*)
 
 
+@}
+@o betterRBC.m
+@{
 
 
 simpRBCExactZBetter = 
@@ -2144,6 +2750,9 @@ Apply[ Function , {{cct, kkt, nlt, tht},
 theDistBetter={{{ee,NormalDistribution[0,sigma]}}}//.paramSubs;
 thePFDistBetter={{{ee,PerfectForesight}}};
 
+@}
+@o betterRBC.m
+@{
 
 
 simulateBetterRBCExact[numPers_Integer]:=
@@ -2186,6 +2795,11 @@ anXEpsZsFlatBetter=anXEpsZsBetter//Flatten;
 probDimsBetter={4,1,4};
 
 
+@}
+@o betterRBC.m
+@{
+
+
 thVal=(theta//.ssSolnSubsRE//.(simpParamSubs//N))//N;
 kVal = (kk //.kSSSubRE//.(simpParamSubs//N))//N;
 cVal = (cc //.cSSSubRE//.(simpParamSubs//N))//N ;
@@ -2196,6 +2810,10 @@ sigLow = -3*sigVal;
 sigHigh = 3*sigVal;
 thLow = 9/10;
 thHigh = 11/10;
+
+@}
+@o betterRBC.m
+@{
 
 	(*
 aGSpecBetter={{1,3},2,{{6,kLow,kHigh},{10,thLow,thHigh},{6,sigLow,3*sigHigh}}};
@@ -2220,6 +2838,10 @@ betterRBCSD=Append[betterRBCSD,sigVal]
 betterRBCMinZ=Append[betterRBCMinZ,-3]
 betterRBCMaxZ=Append[betterRBCMaxZ,3]
 betterRBCvv=ArrayFlatten[{{ArrayFlatten[{{vv,{{0},{0}}}}]},{{{0,0,1}}}}]
+@}
+@o betterRBC.m
+@{
+
 (*
 Print["at first export"]
 Export["ergodicV.pdf", MatrixForm[betterRBCvv//N]];
@@ -2279,6 +2901,11 @@ rbcEqnsBetterBackLookingFixCompSlack::usage="rbcEqnsBetterBackLookingFixCompSlac
 rbcEqnsBetterBackLookingExpFixCompSlack::usage="rbcEqnsBetterBackLookingFixCompSlack"
 rbcEqnsBetterFixCompSlack::usage="model equations"
 eqnsEulerCompiledBetterFixCompSlack::usage="eqnsEulerCompiledBetterFixCompSlack"
+@}
+@o betterRBCFixCompSlack.m
+@{
+
+
 
 simulateBetterRBCCS::usage="simulateBetterRBCExact[numPers_Integer]"
 betterRBCCSMean::usage="betterRBCCSMean"
@@ -2291,6 +2918,11 @@ chkBounded::usage="chkBounded[anAugDRCE_Function,numPers_Integer,aPt_?MatrixQ,li
 
 
 iterateRBCCSDRCE::usage="iterateRBCCSDRCE[anAugDRCE_Function,numPers_Integer,aPt_?MatrixQ]"
+
+
+@}
+@o betterRBCFixCompSlack.m
+@{
 
 
 Begin["`Private`"] (* Begin Private Context *) 
@@ -2332,6 +2964,9 @@ forParamSubs=Thread[nu->forSubs]//.paramSubs;
 simpParamSubs=Join[paramSubs,forParamSubs,simpSubs];
 
 
+@}
+@o betterRBCFixCompSlack.m
+@{
 
 rbcEqnsNotBinding={
 lam[t] +1/cc[t],
@@ -2373,6 +3008,9 @@ ssFRSolnSubs=Prepend[Chop[FindRoot[forFR,frArg,MaxIterations->1000]],IIss->0];
 theProduct=upsilon*II//.ssFRSolnSubs/.betterRBCFixCompSlack`Private`paramSubs;
 
 
+@}
+@o betterRBCFixCompSlack.m
+@{
 
 argsSubs={
 cc[t-1]->cctm1,
@@ -2399,6 +3037,9 @@ theta[t+1]->thetatp1,
 eps[theta][t]->epsVal
 }
 
+@}
+@o betterRBCFixCompSlack.m
+@{
 
 
 theArgs={cctm1,iitm1,kktm1,lamtm1,mutm1,nltm1,thetatm1,epsVal};
@@ -2420,6 +3061,10 @@ II[t] -(kk[t]-(1-dd)*kk[t-1]),
 mu1[t]
 }
 
+
+@}
+@o betterRBCFixCompSlack.m
+@{
 
 eqnsForBind=(((betterRBCFixCompSlack`Private`preRbcEqnsBinding/.betterRBCFixCompSlack`Private`paramSubs)/.{
 eps[betterRBCFixCompSlack`Private`theta][t]->epsVal,
@@ -2447,6 +3092,9 @@ betterRBCFixCompSlack`Private`theta[t+1]->thetat
 })//.
 betterRBCFixCompSlack`Private`ssFRSolnSubs)//N
 
+@}
+@o betterRBCFixCompSlack.m
+@{
 
 eqnsForNotBind=(((betterRBCFixCompSlack`Private`rbcEqnsNotBinding/.betterRBCFixCompSlack`Private`paramSubs)
 /.{
@@ -2475,6 +3123,9 @@ betterRBCFixCompSlack`Private`theta[t+1]->thetat
 })//.
 betterRBCFixCompSlack`Private`ssFRSolnSubs)//N
 
+@}
+@o betterRBCFixCompSlack.m
+@{
 
   rbcEqnsBetterFixCompSlack={
  { 
@@ -2503,6 +3154,9 @@ If[And[allRes[[1]]===$Failed,allRes[[2]]===$Failed],Throw[$Failed,"noSolutionFou
 If[allRes[[1]]===$Failed,Flatten[allRes[[2]]],Flatten[allRes[[1]]]]]
 }
 
+@}
+@o betterRBCFixCompSlack.m
+@{
 
 theDistBetterFixCompSlack={{{ee,NormalDistribution[0,sigma]}}}//.paramSubs;
 thePFDistBetterFixCompSlack={{{ee,PerfectForesight}}};
@@ -2526,6 +3180,9 @@ ssSolnVecRE={{cc},{II},{kk},{lam},{mu1},{nlPart},{theta}}//.ssFRSolnSubs;
 psicSymbRE=hSumRE . ssSolnVecRE;
 
 
+@}
+@o betterRBCFixCompSlack.m
+@{
 
 {zfSymbRE,hfSymbRE}=symbolicAR[hmatSymbRE//.simpParamSubs];
 amatSymbRE=symbolicTransitionMatrix[hfSymbRE];
@@ -2562,6 +3219,11 @@ anXEpsZsFlatBetterFixCompSlack=anXEpsZsBetterFixCompSlack//Flatten;
 probDimsBetterFixCompSlack={7,1,7};
 
 
+@}
+@o betterRBCFixCompSlack.m
+@{
+
+
 thVal=(theta//.ssFRSolnSubs//.(simpParamSubs//N))//N;
 kVal = (kk //.ssFRSolnSubs//.(simpParamSubs//N))//N;
 cVal = (cc //.ssFRSolnSubs//.(simpParamSubs//N))//N ;
@@ -2594,6 +3256,15 @@ initVec=Transpose[{{99,99,kVal,99,99,99,thVal}}]},
 With[{mats=FoldList[((Apply[anAugDR , Flatten[{#1[[Range[7]]],#2}]]))&,initVec,draws]},Map[Flatten,mats]]]
 
 
+@}
+
+
+
+
+@o betterRBCFixCompSlack.m
+@{
+
+
 iterateRBCCSDRCE[anAugDRCE_Function,numPers_Integer,aPt_?MatrixQ]:=
 With[{mats=
 NestList[((Apply[anAugDR , Flatten[{#1[[Range[7]]],#2}]]))&,initVec,draws]},
@@ -2614,6 +3285,11 @@ Print["done simulate"];
 justKT=theRes[[All,{3,7}]];
 betterRBCCSMean=Mean[justKT];
 betterRBCCSSD=StandardDeviation[justKT];
+
+@}
+@o betterRBCFixCompSlack.m
+@{
+
 
 normedRes=Map[(#/betterRBCCSSD)&,(Map[(#-betterRBCCSMean)&,justKT])];
 {uu,ss,vv}=SingularValueDecomposition[normedRes];
@@ -2638,9 +3314,570 @@ Print["done reading betterRBCFixCompSlack.m"]
 
 @}
 
-\subsection{betterRBCRegime.m}
+\subsection{betterRBCRegimes.m}
 \label{sec:betterrbc.m}
 
+@o betterRBCRegimes.m
+@{
+
+(* Wolfram Language Package *)
+
+BeginPackage["betterRBCRegimes`", { "AMASeriesRepresentation`", "ProtectedSymbols`", "AMAModel`", "SymbolicAMA`", "NumericAMA`"}]
+(* Exported symbols added here with SymbolName::usage *)  
+rbcEqnsBetterCSTrips::usage="rbcEqnsBetterCSTrips"
+
+anXBetterRegimes::usage="for test input";
+anEpsBetterRegimes::usage="for test input";
+anXEpsBetterRegimes::usage="for test input";
+aZBetterRegimes::usage="for test input";
+anXEpsZsBetterRegimes::usage="for test input";
+
+anXFlatBetterRegimes::usage="for test input";
+anEpsFlatBetterRegimes::usage="for test input";
+anXEpsFlatBetterRegimes::usage="for test input";
+aZFlatBetterRegimes::usage="for test input";
+anXEpsZsFlatBetterRegimes::usage="for test input";
+
+probDimsBetterRegimes::usage="for test input";
+theDistBetterRegimes::usage="theDist={{{ee,NormalDistribution[0,sigVal]}}};"
+thePFDistBetterRegimes::usage="theDist={{{ee,PerfectForesight]}}};"
+linModBetterRegimes::usage="linear model matrices for approx"
+aGSpecBetterRegimes::usage="aGSpec={{1},1,{{4,kLow,kHigh},{3,thLow,thHigh},{3,sigLow,3*sigHigh}}}";
+rbcEqnsBetterBackLookingRegimes::usage="rbcEqnsBetterBackLookingRegimes"
+rbcEqnsBetterBackLookingExpRegimes::usage="rbcEqnsBetterBackLookingRegimes"
+rbcEqnsBetterRegimes::usage="model equations"
+rbcEqnsBetterRegimes::usage="modEqnsRegimes"
+eqnsEulerCompiledBetterRegimes::usage="eqnsEulerCompiledBetterRegimes"
+@}
+@o betterRBCRegimes.m
+@{
+
+
+
+simulateBetterRBCCS::usage="simulateBetterRBCExact[numPers_Integer]"
+betterRBCCSMean::usage="betterRBCCSMean"
+betterRBCCSSD::usage="betterRBCCSSD"
+betterRBCCSvv::usage="betterRBCCSvv"
+betterRBCCSMinZ::usage="betterRBCCSMinZ"
+betterRBCCSMaxZ::usage="betterRBCCSMaxZ"
+
+chkBounded::usage="chkBounded[anAugDRCE_Function,numPers_Integer,aPt_?MatrixQ,lim_?NumberQ]"
+
+
+iterateRBCCSDRCE::usage="iterateRBCCSDRCE[anAugDRCE_Function,numPers_Integer,aPt_?MatrixQ]"
+
+
+@}
+@o betterRBCRegimes.m
+@{
+
+
+Begin["`Private`"] (* Begin Private Context *) 
+
+
+
+
+
+
+
+
+
+
+
+(*pg 165 of  maliar maliar solving neoclassical growth model  
+closed form solution version  beta=1 geometric discounting
+chkcobb douglas production*)
+
+
+
+(*parameters page 28 guerrieri iacoviello*)
+
+paramSubs01={
+alpha->.36,
+beta->1,
+eta->1,
+delta->.95,
+rho->.95,
+sigma->.01,
+dd->.1,
+upsilon->0.975
+} ;
+
+paramSubs02={
+alpha->.26,
+beta->1,
+eta->1,
+delta->.85,
+rho->.45,
+sigma->.01,
+dd->.1,
+upsilon->0.275
+} ;
+
+
+
+forSubs={alpha^(1 - alpha)^(-1)*delta^(1 - alpha)^(-1)};
+simpSubs=Thread[forSubs->nu];
+forParamSubs=Thread[nu->forSubs]//.paramSubs01;
+simpParamSubs=Join[paramSubs01,forParamSubs,simpSubs];
+
+
+@}
+@o betterRBCRegimes.m
+@{
+
+rbcEqnsNotBinding={
+lam[t] +1/cc[t],
+cc[t] + II[t]-((theta[t])*(kk[t-1]^alpha)),
+nlPart[t] -((lam[t])*theta[t]),
+theta[t]-(N[E]^(eps[theta][t]))*(theta[t-1]^rho) ,
+(lam[t]) -(alpha*delta*nlPart[t+1]/(kk[t]^(1-alpha))) -lam[t+1]*delta*(1-dd),
+II[t] -(kk[t]-(1-dd)*kk[t-1])+mu1[t]-mu1[t+1]*delta*(1-dd),
+mu1[t]
+}
+
+
+rbcBackLookingEqns={E^(rho*Log[theta[t-1]] + eps[theta][t])}
+rbcBackLookingExpEqns={Expectation[rbcBackLookingEqns[[1]],eps[theta][t] \[Distributed] NormalDistribution[0,sigma]]}
+
+
+
+
+
+
+
+ssEqnSubs=
+{xx_Symbol[t+v_.]->xx}
+rbcEqnsNotBindingSubbed=((rbcEqnsNotBinding/.paramSubs01)/.eps[theta][t]->0)
+
+
+theVars=Cases[Variables[forFR=(rbcEqnsNotBindingSubbed/.ssEqnSubs)],_Symbol]
+
+
+
+frArg=MapThread[Prepend[#1,#2]&,{{{.3599,2},{0,.35},{.187,.9},{-9.,9.},{-.01,0.1},{-9.,9.},{.9,1.1}},theVars}]
+
+
+
+
+ssFRSolnSubs=Prepend[Chop[FindRoot[forFR,frArg,MaxIterations->1000]],IIss->0];
+
+
+theProduct=upsilon*II//.ssFRSolnSubs/.betterRBCRegimes`Private`paramSubs01;
+
+
+@}
+@o betterRBCRegimes.m
+@{
+
+argsSubs={
+cc[t-1]->cctm1,
+II[t-1]->iitm1,
+kk[t-1]->kktm1,
+lam[t-1]->lamtm1,
+mu1[t-1]->mu1tm1,
+nlPart[t-1]->nltm1,
+theta[t-1]->thetatm1,
+cc[t]->cct,
+II[t]->iit,
+kk[t]->kkt,
+lam[t]->lamt,
+mu1[t]->mu1t,
+nlPart[t]->nlt,
+theta[t]->thetat,
+cc[t+1]->cctp1,
+II[t+1]->iitp1,
+kk[t+1]->kktp1,
+lam[t+1]->lamtp1,
+mu1[t+1]->mu1tp1,
+nlPart[t+1]->nltp1,
+theta[t+1]->thetatp1,
+eps[theta][t]->epsVal
+}
+
+@}
+@o betterRBCRegimes.m
+@{
+
+
+theArgs={cctm1,iitm1,kktm1,lamtm1,mutm1,nltm1,thetatm1,epsVal};
+
+rbcEqnsBetterBackLookingRegimes=
+Apply[Function , ({theArgs,rbcBackLookingEqns/.argsSubs}/.paramSubs01)]
+
+
+rbcEqnsBetterBackLookingExpRegimes=
+Apply[Function , ({Drop[theArgs,-1],rbcBackLookingExpEqns/.argsSubs}/.paramSubs01)]
+
+preRbcEqnsBinding={
+lam[t] +1/cc[t],
+cc[t] + II[t]-((theta[t])*(kk[t-1]^alpha)),
+nlPart[t] -((lam[t])*theta[t]),
+theta[t]-(N[E]^(eps[theta][t]))*(theta[t-1]^rho) ,
+(lam[t]) -(alpha*delta*nlPart[t+1]/(kk[t]^(1-alpha)))-lam[t+1]*delta*(1-dd)+mu1[t]-mu1[t+1]*delta*(1-dd),
+II[t] -(kk[t]-(1-dd)*kk[t-1]),
+mu1[t]
+}
+
+
+@}
+@o betterRBCRegimes.m
+@{
+
+eqnsForBind01=(((betterRBCRegimes`Private`preRbcEqnsBinding/.betterRBCRegimes`Private`paramSubs01)/.{
+eps[betterRBCRegimes`Private`theta][t]->epsVal,
+betterRBCRegimes`Private`cc[t-1]->Global`cctm1,
+betterRBCRegimes`Private`II[t-1]->iitm1,
+betterRBCRegimes`Private`kk[t-1]->kktm1,
+betterRBCRegimes`Private`lam[t-1]->lamtm1,
+betterRBCRegimes`Private`mu1[t-1]->mu1tm1,
+betterRBCRegimes`Private`nlPart[t-1]->nltm1,
+betterRBCRegimes`Private`theta[t-1]->thetatm1,
+betterRBCRegimes`Private`cc[t]->cct,
+betterRBCRegimes`Private`II[t]->iit,
+betterRBCRegimes`Private`kk[t]->kkt,
+betterRBCRegimes`Private`lam[t]->lamt,
+betterRBCRegimes`Private`mu1[t]->mu1t,
+betterRBCRegimes`Private`nlPart[t]->nlt,
+betterRBCRegimes`Private`theta[t]->thetat,
+betterRBCRegimes`Private`cc[t+1]->cctp1,
+betterRBCRegimes`Private`II[t+1]->iitp1,
+betterRBCRegimes`Private`kk[t+1]->kktp1,
+betterRBCRegimes`Private`lam[t+1]->lamtp1,
+betterRBCRegimes`Private`mu1[t+1]->mu1tp1,
+betterRBCRegimes`Private`nlPart[t+1]->nltp1,
+betterRBCRegimes`Private`theta[t+1]->thetat
+})//.
+betterRBCRegimes`Private`ssFRSolnSubs)//N
+
+@}
+@o betterRBCRegimes.m
+@{
+
+eqnsForNotBind01=(((betterRBCRegimes`Private`rbcEqnsNotBinding/.betterRBCRegimes`Private`paramSubs01)
+/.{
+eps[betterRBCRegimes`Private`theta][t]->epsVal,
+betterRBCRegimes`Private`cc[t-1]->cctm1,
+betterRBCRegimes`Private`II[t-1]->iitm1,
+betterRBCRegimes`Private`kk[t-1]->kktm1,
+betterRBCRegimes`Private`lam[t-1]->lamtm1,
+betterRBCRegimes`Private`mu1[t-1]->mu1tm1,
+betterRBCRegimes`Private`nlPart[t-1]->nltm1,
+betterRBCRegimes`Private`theta[t-1]->thetatm1,
+betterRBCRegimes`Private`cc[t]->cct,
+betterRBCRegimes`Private`II[t]->iit,
+betterRBCRegimes`Private`kk[t]->kkt,
+betterRBCRegimes`Private`lam[t]->lamt,
+betterRBCRegimes`Private`mu1[t]->mu1t,
+betterRBCRegimes`Private`nlPart[t]->nlt,
+betterRBCRegimes`Private`theta[t]->thetat,
+betterRBCRegimes`Private`cc[t+1]->cctp1,
+betterRBCRegimes`Private`II[t+1]->iitp1,
+betterRBCRegimes`Private`kk[t+1]->kktp1,
+betterRBCRegimes`Private`lam[t+1]->lamtp1,
+betterRBCRegimes`Private`mu1[t+1]->mu1tp1,
+betterRBCRegimes`Private`nlPart[t+1]->nltp1,
+betterRBCRegimes`Private`theta[t+1]->thetat
+})//.
+betterRBCRegimes`Private`ssFRSolnSubs)//N
+
+@}
+@o betterRBCRegimes.m
+@{
+
+eqnsForBind02=(((betterRBCRegimes`Private`preRbcEqnsBinding/.betterRBCRegimes`Private`paramSubs02)/.{
+eps[betterRBCRegimes`Private`theta][t]->epsVal,
+betterRBCRegimes`Private`cc[t-1]->Global`cctm1,
+betterRBCRegimes`Private`II[t-1]->iitm1,
+betterRBCRegimes`Private`kk[t-1]->kktm1,
+betterRBCRegimes`Private`lam[t-1]->lamtm1,
+betterRBCRegimes`Private`mu1[t-1]->mu1tm1,
+betterRBCRegimes`Private`nlPart[t-1]->nltm1,
+betterRBCRegimes`Private`theta[t-1]->thetatm1,
+betterRBCRegimes`Private`cc[t]->cct,
+betterRBCRegimes`Private`II[t]->iit,
+betterRBCRegimes`Private`kk[t]->kkt,
+betterRBCRegimes`Private`lam[t]->lamt,
+betterRBCRegimes`Private`mu1[t]->mu1t,
+betterRBCRegimes`Private`nlPart[t]->nlt,
+betterRBCRegimes`Private`theta[t]->thetat,
+betterRBCRegimes`Private`cc[t+1]->cctp1,
+betterRBCRegimes`Private`II[t+1]->iitp1,
+betterRBCRegimes`Private`kk[t+1]->kktp1,
+betterRBCRegimes`Private`lam[t+1]->lamtp1,
+betterRBCRegimes`Private`mu1[t+1]->mu1tp1,
+betterRBCRegimes`Private`nlPart[t+1]->nltp1,
+betterRBCRegimes`Private`theta[t+1]->thetat
+})//.
+betterRBCRegimes`Private`ssFRSolnSubs)//N
+
+@}
+@o betterRBCRegimes.m
+@{
+
+eqnsForNotBind02=(((betterRBCRegimes`Private`rbcEqnsNotBinding/.betterRBCRegimes`Private`paramSubs02)
+/.{
+eps[betterRBCRegimes`Private`theta][t]->epsVal,
+betterRBCRegimes`Private`cc[t-1]->cctm1,
+betterRBCRegimes`Private`II[t-1]->iitm1,
+betterRBCRegimes`Private`kk[t-1]->kktm1,
+betterRBCRegimes`Private`lam[t-1]->lamtm1,
+betterRBCRegimes`Private`mu1[t-1]->mu1tm1,
+betterRBCRegimes`Private`nlPart[t-1]->nltm1,
+betterRBCRegimes`Private`theta[t-1]->thetatm1,
+betterRBCRegimes`Private`cc[t]->cct,
+betterRBCRegimes`Private`II[t]->iit,
+betterRBCRegimes`Private`kk[t]->kkt,
+betterRBCRegimes`Private`lam[t]->lamt,
+betterRBCRegimes`Private`mu1[t]->mu1t,
+betterRBCRegimes`Private`nlPart[t]->nlt,
+betterRBCRegimes`Private`theta[t]->thetat,
+betterRBCRegimes`Private`cc[t+1]->cctp1,
+betterRBCRegimes`Private`II[t+1]->iitp1,
+betterRBCRegimes`Private`kk[t+1]->kktp1,
+betterRBCRegimes`Private`lam[t+1]->lamtp1,
+betterRBCRegimes`Private`mu1[t+1]->mu1tp1,
+betterRBCRegimes`Private`nlPart[t+1]->nltp1,
+betterRBCRegimes`Private`theta[t+1]->thetat
+})//.
+betterRBCRegimes`Private`ssFRSolnSubs)//N
+
+@}
+@o betterRBCRegimes.m
+@{
+
+  rbcEqnsBetterRegime01={
+ { 
+{True&,
+Apply[Compile , {
+{
+{cctm1,_Real},{iitm1,_Real},{kktm1,_Real},{lamtm1,_Real},{mu1tm1,_Real},{nltm1,_Real},{thetatm1,_Real},
+{cct,_Real},{iit,_Real},{kkt,_Real},{lamt,_Real},{mu1t,_Real},{nlt,_Real},{thetat,_Real},
+{cctp1,_Real},{iitp1,_Real},{kktp1,_Real},{lamtp1,_Real},{mu1tp1,_Real},{nltp1,_Real},{thetatp1,_Real},
+{epsVal,_Real}
+},
+(eqnsForNotBind01),"RuntimeOptions"->{"RuntimeErrorHandler"->Function[$Failed],"CatchMachineOverflow"->True,"CatchMachineUnderflow"->True}}],
+Function[{aPt,aRes},
+If[aRes===$Failed,False,And[aRes[[1,1]]>0,aRes[[2,1]]>(theProduct)]]]},
+{True&,
+Apply[Compile , {
+{
+{cctm1,_Real},{iitm1,_Real},{kktm1,_Real},{lamtm1,_Real},{mu1tm1,_Real},{nltm1,_Real},{thetatm1,_Real},
+{cct,_Real},{iit,_Real},{kkt,_Real},{lamt,_Real},{mu1t,_Real},{nlt,_Real},{thetat,_Real},
+{cctp1,_Real},{iitp1,_Real},{kktp1,_Real},{lamtp1,_Real},{mu1tp1,_Real},{nltp1,_Real},{thetatp1,_Real},
+{epsVal,_Real}
+},
+(eqnsForBind01),"RuntimeOptions"->{"RuntimeErrorHandler"->Function[$Failed],"CatchMachineOverflow"->True,"CatchMachineUnderflow"->True}}],(True)&}},
+Function[{aPt,allRes},
+If[And[allRes[[1]]===$Failed,allRes[[2]]===$Failed],Throw[$Failed,"noSolutionFound"]];
+If[allRes[[1]]===$Failed,Flatten[allRes[[2]]],Flatten[allRes[[1]]]]]
+}
+
+  rbcEqnsBetterRegime02={
+ { 
+{True&,
+Apply[Compile , {
+{
+{cctm1,_Real},{iitm1,_Real},{kktm1,_Real},{lamtm1,_Real},{mu1tm1,_Real},{nltm1,_Real},{thetatm1,_Real},
+{cct,_Real},{iit,_Real},{kkt,_Real},{lamt,_Real},{mu1t,_Real},{nlt,_Real},{thetat,_Real},
+{cctp1,_Real},{iitp1,_Real},{kktp1,_Real},{lamtp1,_Real},{mu1tp1,_Real},{nltp1,_Real},{thetatp1,_Real},
+{epsVal,_Real}
+},
+(eqnsForNotBind02),"RuntimeOptions"->{"RuntimeErrorHandler"->Function[$Failed],"CatchMachineOverflow"->True,"CatchMachineUnderflow"->True}}],
+Function[{aPt,aRes},
+If[aRes===$Failed,False,And[aRes[[1,1]]>0,aRes[[2,1]]>(theProduct)]]]},
+{True&,
+Apply[Compile , {
+{
+{cctm1,_Real},{iitm1,_Real},{kktm1,_Real},{lamtm1,_Real},{mu1tm1,_Real},{nltm1,_Real},{thetatm1,_Real},
+{cct,_Real},{iit,_Real},{kkt,_Real},{lamt,_Real},{mu1t,_Real},{nlt,_Real},{thetat,_Real},
+{cctp1,_Real},{iitp1,_Real},{kktp1,_Real},{lamtp1,_Real},{mu1tp1,_Real},{nltp1,_Real},{thetatp1,_Real},
+{epsVal,_Real}
+},
+(eqnsForBind02),"RuntimeOptions"->{"RuntimeErrorHandler"->Function[$Failed],"CatchMachineOverflow"->True,"CatchMachineUnderflow"->True}}],(True)&}},
+Function[{aPt,allRes},
+If[And[allRes[[1]]===$Failed,allRes[[2]]===$Failed],Throw[$Failed,"noSolutionFound"]];
+If[allRes[[1]]===$Failed,Flatten[allRes[[2]]],Flatten[allRes[[1]]]]]
+}
+(*https://en.wikipedia.org/wiki/Sigmoid_function*)
+sigmoidPair[xx_,bb_]:=  With[{pp=E^(bb*xx)/(E^(bb*xx)+1)},{pp,1-pp}]
+(*
+probFunc[cct_?NumberQ,iit_?NumberQ,kkt_?NumberQ,lamt_?NumberQ,
+mu1t_?NumberQ,nlt_?NumberQ,thetat_?NumberQ]:=
+With[{pk=sigmoidPair[kkt,1.],pc=sigmoidPair[cct,2.]},
+{pk,pc}]
+*)
+probFunc[cct_?NumberQ,iit_?NumberQ,kkt_?NumberQ,lamt_?NumberQ,
+mu1t_?NumberQ,nlt_?NumberQ,thetat_?NumberQ]:=
+{{0.9,0.1},{0.2,0.8}}
+
+
+
+rbcEqnsBetterRegimes={{rbcEqnsBetterRegime01,
+ rbcEqnsBetterRegime02},probFunc}
+
+
+
+
+@}
+@o betterRBCRegimes.m
+@{
+
+theDistBetterRegimes={{{ee,NormalDistribution[0,sigma]}}}//.paramSubs01;
+thePFDistBetterRegimes={{{ee,PerfectForesight}}};
+
+
+
+
+psiz=IdentityMatrix[7]
+
+hmatSymbRawRE=(((equationsToMatrix[
+rbcEqnsNotBinding/.simpParamSubs]//FullSimplify)/.{xxxx_[t+_.]->xxxx})//.ssFRSolnSubs)/.{eps[_]->0}//FullSimplify;
+
+psiepsSymbRE=-Transpose[{((Map[D[#,eps[theta][t]]&, rbcEqnsNotBinding])/.{eps[_][_]->0,xxxx_[t+_.]->xxxx})//.ssFRSolnSubs}/.simpParamSubs]
+
+
+hmatSymbRE=hmatSymbRawRE//.simpParamSubs
+hSumRE=hmatSymbRE[[All,Range[7]]]+hmatSymbRE[[All,7+Range[7]]]+hmatSymbRE[[All,2*7+Range[7]]];
+
+
+ssSolnVecRE={{cc},{II},{kk},{lam},{mu1},{nlPart},{theta}}//.ssFRSolnSubs;
+psicSymbRE=hSumRE . ssSolnVecRE;
+
+
+@}
+@o betterRBCRegimes.m
+@{
+
+{zfSymbRE,hfSymbRE}=symbolicAR[hmatSymbRE//.simpParamSubs];
+amatSymbRE=symbolicTransitionMatrix[hfSymbRE];
+
+
+
+{evlsSymbRE,evcsSymbRE}=Eigensystem[Transpose[amatSymbRE]];
+
+
+qmatSymbRE=Join[zfSymbRE,evcsSymbRE[[{1}]]];
+
+
+{bmatSymbRE,phimatSymbRE,fmatSymbRE}=symbolicComputeBPhiF[hmatSymbRE,qmatSymbRE]//Simplify;
+
+linModBetterRegimes={hmatSymbRE//N,bmatSymbRE // N, phimatSymbRE // N, 
+    fmatSymbRE // N, psiepsSymbRE // N, 
+    psicSymbRE // N, psiz // N,{{4,rbcEqnsBetterBackLookingRegimes,rbcEqnsBetterBackLookingExpRegimes}}}
+
+
+
+
+anXBetterRegimes=Transpose[{{99,99,.18,99,99,99,1.01}}];
+anEpsBetterRegimes={{0.01}};
+anXEpsBetterRegimes=Join[anXBetterRegimes,anEpsBetterRegimes]
+aZBetterRegimes=Transpose[{{.1,.2,.3,.4,.5,.6,.7}}]
+anXEpsZsBetterRegimes=Join[anXEpsBetterRegimes,aZBetterRegimes];
+
+anXFlatBetterRegimes=anXBetterRegimes//Flatten;
+anEpsFlatBetterRegimes=anEpsBetterRegimes//Flatten;
+anXEpsFlatBetterRegimes=anXEpsBetterRegimes//Flatten;
+aZFlatBetterRegimes=aZBetterRegimes//Flatten;
+anXEpsZsFlatBetterRegimes=anXEpsZsBetterRegimes//Flatten;
+
+probDimsBetterRegimes={7,1,7};
+
+
+@}
+@o betterRBCRegimes.m
+@{
+
+
+thVal=(theta//.ssFRSolnSubs//.(simpParamSubs//N))//N;
+kVal = (kk //.ssFRSolnSubs//.(simpParamSubs//N))//N;
+cVal = (cc //.ssFRSolnSubs//.(simpParamSubs//N))//N ;
+(*following guerrieri and iacoviello Appendix A*)
+kLow = kVal*.95//N;
+kHigh = kVal*1.4//N;
+sigVal = sigma //. (simpParamSubs//N);
+sigLow = -3*sigVal;
+sigHigh = 3*sigVal;
+thLow = 9/10;
+thHigh = 11/10;
+
+
+aGSpecBetterRegimes={{1,2,4,5,6},1,{{4,kLow,kHigh},{3,thLow,thHigh},{3,sigLow,3*sigHigh}}};
+
+
+
+
+simulateBetterRBCCS[numPers_Integer]:=
+With[{draws=RandomVariate[theDistBetterRegimes[[1,1,2]],numPers],
+initVec=Transpose[{{99,99,kVal,99,99,99,thVal}}],
+fMul=Inverse[IdentityMatrix[7]-fmatSymbRE]},
+With[{mats=FoldList[(bmatSymbRE . #1+ (phimatSymbRE .psiepsSymbRE .{{#2}})+
+fMul.phimatSymbRE.psicSymbRE)&,initVec,draws]},
+Map[Flatten,mats]]]
+
+simulateBetterRBCCS[anAugDR_Function,numPers_Integer]:=
+With[{draws=RandomVariate[theDistBetterRegimes[[1,1,2]],numPers],
+initVec=Transpose[{{99,99,kVal,99,99,99,thVal}}]},
+With[{mats=FoldList[((Apply[anAugDR , Flatten[{#1[[Range[7]]],#2}]]))&,initVec,draws]},Map[Flatten,mats]]]
+
+
+@}
+
+
+
+
+@o betterRBCRegimes.m
+@{
+
+
+iterateRBCCSDRCE[anAugDRCE_Function,numPers_Integer,aPt_?MatrixQ]:=
+With[{mats=
+NestList[((Apply[anAugDR , Flatten[{#1[[Range[7]]],#2}]]))&,initVec,draws]},
+Map[Flatten,mats]]
+
+chkBounded[anAugDRCE_Function,numPers_Integer,aPt_?MatrixQ,lim_?NumberQ]:=
+Module[{},
+If[
+Catch[
+Nest[With[{val=Apply[anAugDRCE,Flatten[#]][[Range[7]]]},
+If[Norm[val]>lim,Throw[False,"chkBounded"],val]]&,aPt,numPers],
+"chkBounded"]===False,False,True]]
+
+Print["about to simulate fixed seed"];
+SeedRandom[1234]
+theRes=simulateBetterRBCCS[200];
+Print["done simulate"];
+justKT=theRes[[All,{3,7}]];
+betterRBCCSMean=Mean[justKT];
+betterRBCCSSD=StandardDeviation[justKT];
+
+@}
+@o betterRBCRegimes.m
+@{
+
+
+normedRes=Map[(#/betterRBCCSSD)&,(Map[(#-betterRBCCSMean)&,justKT])];
+{uu,ss,vv}=SingularValueDecomposition[normedRes];
+zz=normedRes .vv;
+betterRBCCSMinZ=Map[Min,Transpose[zz]];
+betterRBCCSMaxZ=Map[Max,Transpose[zz]];
+{ig,ig,theKs,ig,ig,ig,theThetas}=Transpose[theRes];
+
+betterRBCCSMean=Append[betterRBCCSMean,0];
+betterRBCCSSD=Append[betterRBCCSSD,sigVal];
+betterRBCCSMinZ=Append[betterRBCCSMinZ,-3];
+betterRBCCSMaxZ=Append[betterRBCCSMaxZ,3];
+betterRBCCSvv=ArrayFlatten[{{ArrayFlatten[{{vv,{{0},{0}}}}]},{{{0,0,1}}}}];
+
+
+End[] (* End Private Context *)
+
+EndPackage[]
+Print["done reading betterRBCRegimes.m"]
+
+
+
+@}
 
 \subsection{Identifiers}
 \label{sec:identifiers}

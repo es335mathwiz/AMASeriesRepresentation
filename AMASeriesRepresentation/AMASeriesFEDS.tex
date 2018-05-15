@@ -63,7 +63,7 @@ and to exploit the high degree of parallelism available in the algorithm.
 
 
 
-
+To speed large K computations check for convergence and use infinite series formula
 
 
 
@@ -81,7 +81,7 @@ It describes how to obtain decision rules satisfying a system of
 first-order conditions, ``Euler Equations'',  and how to assess their accuracy.\footnote{A future paper will 
 discuss  applications involving value function iteration.}
  For an overview of solution techniques,
-see \citep{judd92,Christiano2000,doraszelskiy04,gaspar97,Judd2014,marcet.lorenzoni99,juddGSSA2011,maliarmovingbounds}.
+see \citep{judd92,Christiano2000,doraszelskiy04,gaspar97,Judd2014,marcet.lorenzoni99,juddGSSA2011,maliarmovingbounds,RePEc:bny:wpaper:0058}.
 
 
 This new series representation for bounded time series, adapted from \citep{anderson10},
@@ -1649,6 +1649,7 @@ $\xguss=x_t(x_{t-1},\epsilon)$\;
 \item why useful Levine suspects only good for large 
 \item perturbation global worth mentioning
 \item error bound needs bound on first derivative since search not exhaustive
+\item for regime change probability $p(x_t)$ enough can embed lags and shock or even expected values in the $x_t$
 \end{itemize}
 
 \section{Conclusions}
@@ -1670,6 +1671,8 @@ the performance of  perturbation method
 decision rules by incorporating global information about the solution.
 The procedures should prove useful
 in handling dynamic economies with occasionally binding constraints\citep{holden15:_exist_dsge,guerrieri15:_occbin} and regime switching.
+
+Using tail contribution can reduce magnitude of $z_0$
 
 % \begin{description}
 % \item[Series Unique] Provides mechanism for bounding solutions
@@ -1738,7 +1741,35 @@ Consider adding constraints the constraints:
 
 \label{sec:regime-switch-model}
 
+To apply the series formula, on must construct condional expectations paths from each initial $x(x_{t-1},\epsilon_t)$.  Consider the case when the transition 
+probabilities $p_{ij}$ are constant and do not depend on 
+$x_{t-1},\epsilon_t,x_t$.
 
+\begin{gather*}
+E_t[x_{t+1}]=  \sum_{j=1}^{N} p_{ij} E_t(x_{t+1}(x_t)|s_{t+1}=j)  \\
+E_t[x_{t+2}]=  \sum_{j=1}^{N} p_{ij} E_t(x_{t+2}(x_{t+1})|s_{t+2}=j)  \\
+\end{gather*}
+
+Since we know the current state we can use the known conditional expectation function for the state:
+\begin{gather*}
+    \begin{bmatrix}
+E_t(x_{t+1}(x_{t})|s_{t}=1)  \\    \vdots \\
+E_t(x_{t+1}(x_{t})|s_{t}=N)  
+  \end{bmatrix}
+\end{gather*}
+
+For the next state we can compute expectations since the errors are independent
+\begin{gather*}
+  \begin{bmatrix}
+E_t(x_{t+2}(x_t)|s_{t}=1)  \\    \vdots \\
+E_t(x_{t+2}(x_t)|s_{t}=N)  
+  \end{bmatrix}=
+(P \otimes  I)
+  \begin{bmatrix}
+E_t(x_{t+2}(x_{t+1})|s_{t+1}=1)  \\    \vdots \\
+E_t(x_{t+2}(x_{t+1})|s_{t+1}=N)  
+  \end{bmatrix}
+\end{gather*}
 
 Consider two states $s_t \in {0,1}$ where the depreciation rates are different:  $d_0>d_1$
 

@@ -65,7 +65,7 @@ phiP->100.,
 piBar->1.005,
 epsi->6.,
 gammaPi->2.,
-rho->.95,
+rho->0.95,
 sigma->.5/100,
 theBound->1
 } ;
@@ -95,7 +95,9 @@ phiP*(pi[t]/piBar -1)*pi[t]/piBar -
 ),
 nl2[t]-((pi[t]*pi[t]*YY[t])/CC[t]),
 nl3[t]-(pi[t]*YY[t]/CC[t]),
-YY[t]-(CC[t]+(phiP/2)*(((pi[t]/piBar)-1)^2)*YY[t])
+(*YY[t]-(CC[t]+(phiP*YY[t]/2)*(((pi[t]/piBar)-1)^2))*)
+YY[t]-(CC[t]+(phiP/2)*(((pi[t]/piBar)-1)^2))
+(*YY[t]-(CC[t]+(phiP*YY[t]/2)*(((pi[t]/piBar)-1)^2))*)
 }
 
 nkEqnsNotBinding=Append[nkEqnsCommon,

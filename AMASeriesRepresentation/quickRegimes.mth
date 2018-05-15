@@ -273,3 +273,22 @@ evaluateTriple[frFunc[[2,1,2]],Flatten[anXEpsBetterRegimes]]
 parallelSmolyakGenInterpData[frFunc,sgSpecErg]
 
 parallelMakeGenericInterpFuncs[frFunc,{},sgSpecErg,smolyakInterpolation,{}]
+
+
+hip=parallelDoGenericIterREInterp[genFRExtFunc,
+betterRBCRegimes`linModBetterRegimes,regX0Z0,rbcEqnsBetterRegimes,
+sgSpecErg,smolyakInterpolation,{}]
+hip[[1,1]] @@Flatten[anXEpsBetterRegimes]
+hip[[1,2]] @@Flatten[anXEpsBetterRegimes]
+hip[[2,1]] @@Flatten[anXEpsBetterRegimes]
+hip[[1,2]] @@Flatten[anXEpsBetterRegimes]
+
+
+
+hip=parallelNestGenericIterREInterp[genFRExtFunc,
+betterRBCRegimes`linModBetterRegimes,regX0Z0,rbcEqnsBetterRegimes,
+sgSpecErg,smolyakInterpolation,{},2]
+hip[[1,1,-1]] @@Flatten[anXEpsBetterRegimes]
+hip[[1,2,-1]] @@Flatten[anXEpsBetterRegimes]
+hip[[2,1,-1]] @@Flatten[anXEpsBetterRegimes]
+hip[[1,2,-1]] @@Flatten[anXEpsBetterRegimes]

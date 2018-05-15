@@ -1566,6 +1566,61 @@ Options[parallelDoGenericIterREInterp]]]]],justBothXZFuncs,numIters]]
 \label{sec:genx0z0funcs}
 
 
+@d parallelNestGenericIterREInterp
+@{
+parallelNestGenericIterREInterp[genFRExtFunc,@<linMod@>,
+@<regimesBothXZFuncs@>,
+@<rawRegimesTriples@>,@<smolGSpec@>,
+genericInterp:(smolyakInterpolation|svmRegressionLinear|
+svmRegressionPoly|svmRegressionRBF|svmRegressionSigmoid),
+svmArgs:{_?NumberQ...},
+numIters_Integer,opts:OptionsPattern[]]:=
+Module[{theIters=getNumIters[regimesBothXZFuncs]},Print["theIters:",theIters];
+NestList[Function[xxx,Print[{"xxx",xxx}];
+parallelDoGenericIterREInterp[genFRExtFunc,linMod,
+resultsForIter[xxx,theIters],rawRegimesTriples,smolGSpec,genericInterp,svmArgs,
+Apply[Sequence,FilterRules[{opts},
+Options[parallelDoGenericIterREInterp]]]]],Map[First,regimesBothXZFuncs],numIters]]
+
+getNumIters[@<regimesBothXZFuncs@>]:=
+Map[Last,regimesBothXZFuncs]
+
+resultsForIter[@<functionPairs@>,numIters:{_Integer..}]:=
+With[{theRes=Transpose[{functionPairs,numIters}]},Print[{"resultsForIter:",theRes}];
+theRes]
+@}
+
+@d functionPairs
+@{functionPairs:{{_Function,_Function}..}
+@}
+
+
+@d parallelDoGenericIterREInterp
+@{
+parallelDoGenericIterREInterp[genFRExtFunc,
+	@<linMod@>,
+@<regimesBothXZFuncs@>,
+@<rawRegimesTriples@>,@<smolGSpec@>,
+genericInterp:(smolyakInterpolation|svmRegressionLinear|svmRegressionPoly|
+svmRegressionRBF|svmRegressionSigmoid),
+svmArgs:{_?NumberQ...},opts:OptionsPattern[]]:=
+With[{numX=Length[BB],numZ=Length[psiZ[[1]]]},
+tn=AbsoluteTime[];
+If[Length[Kernels[]]===0,LaunchKernels[]];reapRes=Reap[
+genFRExtFunc[{numX,numEps,numZ},linMod,regimesBothXZFuncs,
+rawRegimesTriples,Apply[Sequence,FilterRules[{opts},
+Options[genFRExtFunc]]]],"theFuncs"];
+Apply[DistributeDefinitions,Flatten[reapRes[[2]]]];
+With[{theFuncs=
+parallelMakeGenericInterpFuncs[reapRes[[1]],backLookingInfo,smolGSpec,
+genericInterp,svmArgs]},
+theFuncs]]
+
+
+@}
+
+
+
 
 @d parallelMakeGenericInterpFuncs
 @{
@@ -1745,7 +1800,7 @@ Flatten[Join[xDisc,eqnAppl]]]]]]]@}
 
 @d regimesBothXZFuncs
 @{regimesBothXZFuncs:{
-{
+regimesJustBothXZFuncs:{
 {
 (_Function|_InterpolatingFunction|_CompiledFunction|_Symbol),
 (_Function|_InterpolatingFunction|_CompiledFunction|_Symbol)},

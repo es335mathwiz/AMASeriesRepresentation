@@ -1408,13 +1408,13 @@ funcSubs=Thread[theXs->funcArgs]},
 With[{interpFuncList=
 ParallelMap[Function[funcIdx,
 With[{theInterps=genericInterp[interpData[[All,funcIdx]],smolGSpec,svmArgs]},
-With[{smolApp=theInterps},Print["theInterps:",theInterps];
+With[{smolApp=theInterps},
 smolApp]]],Range[numFuncs]]},
 With[
 {applied=Transpose[{ParallelMap[notApply[#,funcArgs]/.funcSubs&,
 Map[First,interpFuncList]]}],
 appliedExp=Transpose[{ParallelMap[notApply[#,funcArgs]/.funcSubs&,
-Map[Last,interpFuncList]]}]},Print["applied:",applied];
+Map[Last,interpFuncList]]}]},
 With[{thePair=
 {
 ReplacePart[
@@ -1423,7 +1423,7 @@ ReplacePart[
 ReplacePart[
 	Function[xxxxxxx, appliedExp],
 		{1->Drop[longFuncArgs,-numEps]}]/.notApply->Apply
-}},Print["thePair:",thePair];
+}},
 {replaceEqnOrExp[thePair[[1]],longFuncArgs,2,backLookingInfo],
 replaceEqnOrExp[thePair[[2]],Drop[longFuncArgs,-numEps],3,backLookingInfo]}
 ]]]]]]
@@ -1448,7 +1448,6 @@ With[{theVals=
 ParallelTable[evaluateTriple[aTriple,Flatten[aPt]],
 {aPt,filledPts},{aTriple,triples[[1]]}]},
 With[{toWorkOn={filledPts,theVals}//Transpose},
-Print["toWorkOn:",toWorkOn];
 With[{interpData=
 ParallelMap[With[{baddy=#},Catch[
 Apply[selectorFunc,#],
@@ -1575,8 +1574,8 @@ genericInterp:(smolyakInterpolation|svmRegressionLinear|
 svmRegressionPoly|svmRegressionRBF|svmRegressionSigmoid),
 svmArgs:{_?NumberQ...},
 numIters_Integer,opts:OptionsPattern[]]:=
-Module[{theIters=getNumIters[regimesBothXZFuncs]},Print["theIters:",theIters];
-NestList[Function[xxx,Print[{"xxx",xxx}];
+Module[{theIters=getNumIters[regimesBothXZFuncs]},
+NestList[Function[xxx,
 parallelDoGenericIterREInterp[genFRExtFunc,linMod,
 resultsForIter[xxx,theIters],rawRegimesTriples,smolGSpec,genericInterp,svmArgs,
 Apply[Sequence,FilterRules[{opts},
@@ -1586,7 +1585,7 @@ getNumIters[@<regimesBothXZFuncs@>]:=
 Map[Last,regimesBothXZFuncs]
 
 resultsForIter[@<functionPairs@>,numIters:{_Integer..}]:=
-With[{theRes=Transpose[{functionPairs,numIters}]},Print[{"resultsForIter:",theRes}];
+With[{theRes=Transpose[{functionPairs,numIters}]},
 theRes]
 @}
 
@@ -1647,15 +1646,13 @@ processedRegimesTriples]]
 parallelSmolyakGenInterpData[
 @<processedRegimesTriples@>,@<smolGSpec@>]:=
 Module[{numRegimes=Range[Length[processedRegimesTriples]],
-numCases=Map[Range[Length[#[[1]]]]&,processedRegimesTriples],numPts=Length[smolPts]},Print["prefill"];
+numCases=Map[Range[Length[#[[1]]]]&,processedRegimesTriples],numPts=Length[smolPts]},
 With[{filledPts=Map[Function[xxxx,fillIn[{{},smolToIgnore,xxxx}]],N[smolPts]]},
-Print[{smolPts,smolToIgnore,numRegimes,numCases,numPts}];
 With[{preCombos=MapIndexed[Table[{#2[[1]],ii}, {ii,#}]&,numCases]},
 With[{combos=
 Map[Function[yyy,Map[forPoints[#,numPts]&,yyy]],preCombos]},
-Print[{"combos:",combos}//InputForm];
 With[{theVals=Map[evaluateTripleToCases[processedRegimesTriples,filledPts,#1]&,
-combos,{3}]},Print["dims",Map[Dimensions,{processedRegimesTriples,filledPts,theVals}]];
+combos,{3}]},
 MapThread[applySelectorFuncs[#1[[-1]],filledPts,#2]&,
 {processedRegimesTriples,theVals}]
 ]]]]]
@@ -1672,7 +1669,6 @@ Map[Append[soFar,#]&,Range[numPts]]
 applySelectorFuncs[aSelectorFunc:(_Function|_CompiledFunction|_Symbol),
 filledPts_?MatrixQ,theVals_List]:=
 With[{toWorkOn={filledPts,Transpose[theVals]}//Transpose},
-Print[{"toWorkOn:",toWorkOn}];
 With[{interpData=
 ParallelMap[With[{baddy=#},Catch[
 Apply[aSelectorFunc,#],

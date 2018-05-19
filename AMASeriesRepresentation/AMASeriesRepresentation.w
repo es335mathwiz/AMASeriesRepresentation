@@ -449,6 +449,8 @@ genFRExtFunc[{numX_Integer,numEps_Integer,numZ_Integer},
 Module[{varRanges=OptionValue["xVarRanges"]},
 With[{@<findRootArgNames@>},
 With[{@<prepFindRootXInitBoth@>},
+With[{zArgsInit=Transpose[{zArgs,Drop[theXInit,numX]}]},
+Print[{"zargsinit:",zArgsInit}];
 With[{@<cmptXArgsInit@>,
 @<makeArgPatternsBoth@>},
 (**)
@@ -461,7 +463,7 @@ DistributeDefinitions[funcOfXtZt,funcOfXtm1Eps]
 Off[FindRoot::srect];
 Off[FindRoot::nlnum];Sow[{funcOfXtm1Eps,funcOfXtZt},"theFuncs"];
 funcOfXtm1Eps
-]]]]
+]]]]]
 @}
 
 
@@ -477,7 +479,6 @@ numSteps_Integer}@}
 
 @d prepFindRootXInitBoth
 @{theXInit=Flatten[Apply[bothXZFuncs[[1,1]],Join[xLagArgs,eArgs]]],
-zArgsInit=Map[Function[xx,{xx,0}],zArgs],
 funcOfXtm1Eps=Unique["fNameXtm1Eps"],
 funcOfXtZt=Unique["fNameXtZt"]
 @}
@@ -1797,6 +1798,8 @@ genFRExtFunc[{numX_Integer,numEps_Integer,numZ_Integer},
 Module[{varRanges=OptionValue["xVarRanges"]},
 With[{@<findRootArgNames@>},
 With[{@<prepFindRootXInitRegimesBoth@>},
+With[{zArgsInit=Transpose[{zArgs,Drop[theXInit,numX]}]},
+Print[{"zargsinit:",zArgsInit}];
 With[{@<cmptXArgsInit@>,
 @<makeArgPatternsBoth@>},
 (**)
@@ -1809,13 +1812,12 @@ DistributeDefinitions[funcOfXtZt,funcOfXtm1Eps]
 Off[FindRoot::srect];
 Off[FindRoot::nlnum];Sow[{funcOfXtm1Eps,funcOfXtZt},"theFuncs"];
 funcOfXtm1Eps
-]]]]
+]]]]]
 @}
 
 @d prepFindRootXInitRegimesBoth
 @{theXInit=Flatten[Apply[regimesBothXZFuncs[[regimeIndx,1,1]],
 Join[xLagArgs,eArgs]]],
-zArgsInit=Map[Function[xx,{xx,0}],zArgs],
 funcOfXtm1Eps=Unique["fNameXtm1Eps"],
 funcOfXtZt=Unique["fNameXtZt"]
 @}

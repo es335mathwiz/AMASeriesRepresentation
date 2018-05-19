@@ -44,7 +44,9 @@ xeps:{kk_?NumberQ,tt_?NumberQ,ee_?NumberQ}]:=
 Module[{xtVals=Flatten[approxDR[99,kk,99,tt,ee][[Range[4]]]],
 exactXtVals=Flatten[simpRBCExactDRBetterTrips[99,kk,99,tt,ee][[Range[4]]]],
 theH=getH[linModBetterRBCTrips],theF=getF[linModBetterRBCTrips],thePsiC=getPsiC[linModBetterRBCTrips],thePsiEps=getPsiEps[linModBetterRBCTrips]},
-With[{xtp1Vals=Flatten[(approxDRCE @@ xtVals)[[Range[4]]]]},
+With[{xtp1Vals=Flatten[(approxDRCE @@ xtVals)[[Range[4]]]]},Print[{"xtp1:",xtp1Vals}];
+With[{doEval=evaluateTriple[rbcEqnsBetterRBCTrips,Join[{99,kk,99,tt},xtVals,xtp1Vals,{ee}]]},
+Print["doEval:",doEval];
 With[{errNow=
 Norm[
 rbcEqnsBetterRBCTrips @@ 
@@ -53,7 +55,7 @@ delayEvalEqns @@
 Join[{99,kk,99,tt},xtVals,xtp1Vals,{ee},{approxDR,approxDRCE}],
 theZsNow=genZsFromDRCE[linModBetterRBCTrips,Transpose[{{99,kk,99,tt,ee}}],1,
 simpRBCExactDRBetterTrips,simpRBCExactDRCEBetterTrips,1][[1]]
-},(*Print["betterBounds:",{xtVals,xtp1Vals,ee,xeps}];*)
+},Print["betterBounds:",{xtVals,xtp1Vals,ee,xeps,errNow}];
 With[{lil=errNow,lilLil=.0001},
 With[{theZs=
 theH . Transpose[{
@@ -80,7 +82,7 @@ Norm[
 rbcEqnsBetterRBCTrips @@ 
 (Join[{99,kk,99,tt},{cct,kkt,nnt,tht,cctp1,kktp1,nntp1,thtp1},{ee}]/.theRes[[2]])]},
 {errNow,errPost,{Norm[xtVals-exactXtVals],xtVals,exactXtVals},theRes}
-]]]]]]]
+]]]]]]]]
 
 xtXtp1Vals[approxDR_Function,approxDRCE_Function,
 xeps:{kk_?NumberQ,tt_?NumberQ,ee_?NumberQ}]:=
@@ -630,4 +632,7 @@ doItApproxSeries[1*{1,1,1},70,#,"Traditional"->False]& /@Join[Range[0,5],Range[1
 doItApproxSeries[2*{1,1,1},70,#,"Traditional"->False]& /@Join[Range[0,5],Range[10,50,10]]
 doItApproxSeries[3*{1,1,1},70,#,"Traditional"->False]& /@Join[Range[0,5],Range[10,50,10]]
 
+X0Z0=genBothX0Z0Funcs[linModBetterRBCTrips];
+frFuncJustEval=genFRExtFuncJustEval[{4,1,4},
+linModBetterRBCTrips,{genBothX0Z0Funcs[linModBetterRBCTrips],2},rbcEqnsBetterRBCTrips]
 *)

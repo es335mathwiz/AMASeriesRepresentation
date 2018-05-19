@@ -224,8 +224,15 @@ BB.xtVals+Inverse[IdentityMatrix[Length[xtVals]]-FF] . phi . psiC+fCon},xtp1Vals
 \label{sec:genfrfunc}
 
 
+@d genFRExtFuncJustEvalUsage
+@{
+genFRExtFuncJustEval::usage=
+"genFRExtFuncJustEval"
+@}
+
 @d genFRExtFuncUsage
-@{genFRExtFunc::usage=
+@{g
+enFRExtFunc::usage=
 "genFRExtFunc"
 @}
 
@@ -240,6 +247,14 @@ funcOfXtZt[Apply[Sequence,Join[xLagArgs,eArgs,xArgs,zArgs]]],
 Join[xArgsInit,zArgsInit]]},If[Not[FreeQ[frRes,FindRoot]],
 Throw[$Failed,"genFRExtFunc:FindRoot"]];
 Transpose[{Flatten[Join[xArgs,zArgs]]/.frRes}]]]@}
+
+@d setDelayedSeriesFXtm1EpsJustEval
+@{SetDelayed[
+funcOfXtm1Eps[Apply[Sequence,xtm1epsArgPatterns]],
+(**)
+With[{frRes=
+funcOfXtZt[Apply[Sequence,Join[xLagArgs,eArgs,theXInit]]]},
+frRes]]@}
 
 
 
@@ -311,6 +326,8 @@ Range[(Length[thePath]/numX)-3]]},
 
 (*begin code for genFRExtFunc*)
 Options[genFRExtFunc]={"xVarRanges"->{},"Traditional"->False,"addTailContribution"->False} 
+
+
 
 
 
@@ -396,9 +413,36 @@ Flatten[Join[xDisc,eqnAppl]]]]]]]@}
 \label{sec:using-both-decision}
 
 
+@d genFRExtFuncJustEval
+@{
+Options[genFRExtFuncJustEval]={"xVarRanges"->{},"Traditional"->False,"addTailContribution"->False} 
+
+
+
+genFRExtFuncJustEval[{numX_Integer,numEps_Integer,numZ_Integer},
+@<linMod@>,@<bothXZFuncs@>,
+@<eqnsFunc@>,opts:OptionsPattern[]]:=
+Module[{varRanges=OptionValue["xVarRanges"]},
+With[{@<findRootArgNames@>},
+With[{@<prepFindRootXInitBoth@>},
+With[{@<cmptXArgsInit@>,
+@<makeArgPatternsBoth@>},
+(**)
+Switch[OptionValue["Traditional"],
+True,@<setDelayedTradFXtZtBoth@>;@<setDelayedTradFXtm1Eps@>,
+False,@<setDelayedSeriesFXtZtBoth@>;@<setDelayedSeriesFXtm1EpsJustEval@>]
+(**)
+(**)
+DistributeDefinitions[funcOfXtZt,funcOfXtm1Eps]
+Off[FindRoot::srect];
+Off[FindRoot::nlnum];Sow[{funcOfXtm1Eps,funcOfXtZt},"theFuncs"];
+funcOfXtm1Eps
+]]]]
+@}
+
+
 @d genFRExtFunc
 @{
-
 genFRExtFunc[{numX_Integer,numEps_Integer,numZ_Integer},
 @<linMod@>,@<bothXZFuncs@>,
 @<eqnsFunc@>,opts:OptionsPattern[]]:=
@@ -1323,6 +1367,7 @@ Apply[Function,{fromLinModCE}]
 @}
 Just ADRCE
 
+
 @d genFRExtFunc
 @{
 
@@ -1342,6 +1387,24 @@ ADR and  ADRCE
 
 
 
+@d genFRExtFuncJustEval
+@{
+genFRExtFuncJustEval[{numX_Integer,numEps_Integer,numZ_Integer},@<linMod@>,
+@<bothXZFuncs@>,
+@<rawTriples@>,
+opts:OptionsPattern[]]:=
+Module[{varRanges=OptionValue["xVarRanges"]},
+With[{funcTrips=
+Map[{#[[1]],genFRExtFuncJustEval[{numX,numEps,numZ},linMod,bothXZFuncs,#[[2]],
+Apply[Sequence,
+FilterRules[{opts},Options[genFRExtFunc]]]],#[[3]]}&,triples[[1]]]},
+{funcTrips,selectorFunc}
+]]
+@}
+
+
+
+
 @d genFRExtFunc
 @{
 genFRExtFunc[{numX_Integer,numEps_Integer,numZ_Integer},@<linMod@>,
@@ -1356,6 +1419,7 @@ FilterRules[{opts},Options[genFRExtFunc]]]],#[[3]]}&,triples[[1]]]},
 {funcTrips,selectorFunc}
 ]]
 @}
+
 @d aProcessedTriple@{
 triple:{preFunc_Function,theFunc:(_Function|_CompiledFunction|_Symbol),
 postFunc_Function}@}
@@ -2295,6 +2359,7 @@ _?MatrixQ,_?MatrixQ,_?MatrixQ,
 @<genLilXkZkFuncUsage@>
 @<fSumCUsage@>
 @<genFRExtFuncUsage@>
+@<genFRExtFuncJustEvalUsage@>
 @<smolyakGenInterpDataUsage@>
 @<smolyakInterpolationPrepUsage@>
 @<myExpectationUsage@>
@@ -2347,6 +2412,7 @@ _?MatrixQ,_?MatrixQ,_?MatrixQ,
 @<genXtOfXtm1@>
 @<genXtp1OfXt@>
 @<genFRExtFunc@>
+@<genFRExtFuncJustEval@>
 @<genZsForFindRoot@>
 @<smolyakInterpolationPrep@>
 @<myExpectation@>

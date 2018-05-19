@@ -18,7 +18,7 @@ aZFlatBetterRBCTrips::usage="for test input";
 anXEpsZsFlatBetterRBCTrips::usage="for test input";
 
 probDimsBetterRBCTrips::usage="for test input";
-simpRBCExactDRBetterRBCTrips::usage="simpRBCExactDR"
+simpRBCExactDRBetterTrips::usage="simpRBCExactDR"
 betterRBCTripsExactCondExp::usage="betterRBCTripsExactCondExp"
 theDistBetterRBCTrips::usage="theDist={{{ee,NormalDistribution[0,sigVal]}}};"
 thePFDistBetterRBCTrips::usage="theDist={{{ee,PerfectForesight]}}};"
@@ -182,7 +182,7 @@ ssSolnSubsPF=Flatten[{thSubsPF,kSSSubPF,cSSSubPF,nlPartSSSubPF}];
 
 
 
-simpRBCExactDRBetterRBCTrips = 
+simpRBCExactDRBetterTrips = 
  Function[{cc, kk, nl, th, eps}, 
 With[{tht=(th^rho)*E^eps//.simpParamSubs//N},
 With[{kkt=(tht*alpha*delta*kk^alpha)//.simpParamSubs//N},
@@ -199,19 +199,19 @@ thePFDistBetterRBCTrips={{{ee,PerfectForesight}}};
 
 
 
-betterRBCTripsExactCondExp = (*AMASeriesRepresentation`Private`*)makeREIterFunc[simpRBCExactDRBetterRBCTrips,theDistBetterRBCTrips]
+betterRBCTripsExactCondExp = (*AMASeriesRepresentation`Private`*)makeREIterFunc[simpRBCExactDRBetterTrips,theDistBetterRBCTrips]
 
 
 betterExactZ=
 Function[{cc, kk, nl, th, eps},
 With[{hm=getH[linModBetterRBCTrips],pc=getPsiC[linModBetterRBCTrips],pe=getPsiEps[linModBetterRBCTrips],
-xt=Flatten[simpRBCExactDRBetterRBCTrips[cc,kk,nl,th,eps]]},
+xt=Flatten[simpRBCExactDRBetterTrips[cc,kk,nl,th,eps]]},
 With[{xtp1=Flatten[betterRBCTripsExactCondExp @@ xt]},
 hm.Transpose[{Join[{cc,kk,nl,th},xt,xtp1]}]-pc-pe*eps]]]
 
 betterExactXZ=
 Function[{cc, kk, nl, th, eps},
-With[{xval=simpRBCExactDRBetterRBCTrips[cc,kk,nl,th,eps],
+With[{xval=simpRBCExactDRBetterTrips[cc,kk,nl,th,eps],
 zval=betterExactZ[cc,kk,nl,th,eps]},
 Join[xval,zval]]]
 
@@ -280,7 +280,7 @@ thHigh = 11/10;
 simulateBetterRBCExactTrips[numPers_Integer]:=
 With[{draws=RandomVariate[theDistBetterRBCTrips[[1,1,2]],numPers],
 initVec={99,kVal,99,thVal}},
-FoldList[Flatten[simpRBCExactDRBetterRBCTrips@@ Append[Flatten[#1],#2]]&,initVec,draws]]
+FoldList[Flatten[simpRBCExactDRBetterTrips@@ Append[Flatten[#1],#2]]&,initVec,draws]]
 
 aGSpecBetterRBCTrips={{1,3},2,{{6,kLow,kHigh},{10,thLow,thHigh},{6,sigLow,3*sigHigh}}};
 	(*	

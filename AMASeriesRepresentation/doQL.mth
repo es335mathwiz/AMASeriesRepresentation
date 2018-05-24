@@ -25,6 +25,63 @@ Needs["AMASeriesRepresentation`"]
 ParallelNeeds["AMASeriesRepresentation`"]
 
 
+genCheckPt[{dr_Function,drce_Function},rhoVal_?NumberQ]:=
+Function[{etatm1,err,ig},
+With[{drApp=dr[etatm1,ig1,ig2,ig3,err]},
+With[{drceApp=drce@@ drApp[[Range[4]]]},
+With[{etat=drApp[[1,1]],pit=drApp[[2,1]],rrt=drApp[[3,1]],yyt=drApp[[4,1]],
+etatp1=drceApp[[1,1]],pitp1=drceApp[[2,1]],rrtp1=drceApp[[3,1]],yytp1=drceApp[[4,1]]},
+With[{eqn1=yyt - (yytp1 -rrt+pitp1+etatm1),
+eqn2=pit-(quasiLinear`Private`beta*pitp1+quasiLinear`Private`kappa*yyt)//.quasiLinear`Private`paramSubs,
+eqn3=etat -(quasiLinear`Private`rho*etatm1 +err)/.quasiLinear`Private`rho->rhoVal,
+eqn4nb=(rrt-quasiLinear`Private`gammaPi*pit-quasiLinear`Private`gammaY*yyt)//.quasiLinear`Private`paramSubs,
+eqn4b=(rrt-(-quasiLinear`Private`RR))//.quasiLinear`Private`paramSubs
+},
+{{etat,pit,rrt,yyt,etatp1,pitp1,rrtp1,yytp1},
+Flatten[{eqn1,eqn2,eqn3,eqn4nb,eqn4b}]}]]]]]
+
+
+
+
+
+
+
+
+checkConv[{Adr_Function,Adrce_Function},{Bdr_Function,Bdrce_Function},
+pts:{{_?NumberQ,_?NumberQ,_?NumberQ}..}]:=
+With[{AVals=Map[Adr[#[[1]],ig1,ig2,ig3,#[[2]]]&,pts],
+BVals=Map[Bdr[#[[1]],ig1,ig2,ig3,#[[2]]]&,pts]},
+With[{diffs=AVals-BVals},
+With[{norms=Norm/@diffs},
+{diffs,norms}]]]
+
+
+updateSGSpec[rhoVal_?NumberQ,scale_?NumberQ,
+approx:{_Integer,_Integer},theK_Integer,theIter_Integer]:=
+Module[{},
+Print["{approx,theK,theIter}=",{approx,theK,theIter}];
+smolStuff = {ptErg, tfErg, plyErg, iplyErg, dplyErg} = 
+   AMASeriesRepresentation`smolyakInterpolationPrep[approx, adjustRange[scale], 
+    theDistqlZLB];
+smolRngErg = 
+  Transpose[{qlCSMinZ, 
+    qlCSMaxZ}];
+toIg = quasiLinear`aGSpecqLin[[1]];
+sgSpecErg = {toIg, smolRngErg, ptErg, tfErg, plyErg, iplyErg, 
+   1, approx, {qlCSMean, 
+    qlCSSD, 
+    qlCSMinZ, 
+    qlCSMaxZ, 
+    qlCSvv}};
+forZLB=resetRho[rhoVal];
+{sgSpecErg,AbsoluteTiming[
+theRes01 = AMASeriesRepresentation`parallelNestGenericIterREInterp[
+   AMASeriesRepresentation`genFRExtFunc, 
+   linModQLZLB, {X0Z0, theK}, 
+   forZLB, sgSpecErg, 
+   AMASeriesRepresentation`smolyakInterpolation, {}, theIter,
+"Traditional"->False,"addTailContribution"->True]]}
+]
 
 updateSmol[theDR_,approx_?VectorQ]:=
 Module[{},
@@ -67,57 +124,56 @@ sgSpecErg = {toIg, smolRngErg, ptErg, tfErg, plyErg, iplyErg,
 
 X0Z0 = AMASeriesRepresentation`genBothX0Z0Funcs[
    linModQLZLB];
-(*approx=1*{1,1};theK=65;theIter=35*)
-(*approx=5*{1,1};theK=25;theIter=50*)
+approx=1*{1,1};theK=15;theIters=15
+(*approx=5*{1,1};theK=25;theIters=50*)
 
-updateSGSpec[rhoVal_?NumberQ,scale_?NumberQ,
-approx:{_Integer,_Integer},theK_Integer,theIter_Integer]:=
-Module[{},
-Print["{approx,theK,theIter}=",{approx,theK,theIter}];
-smolStuff = {ptErg, tfErg, plyErg, iplyErg, dplyErg} = 
-   AMASeriesRepresentation`smolyakInterpolationPrep[approx, adjustRange[scale], 
-    theDistqlZLB];
-smolRngErg = 
-  Transpose[{qlCSMinZ, 
-    qlCSMaxZ}];
-toIg = quasiLinear`aGSpecqLin[[1]];
-sgSpecErg = {toIg, smolRngErg, ptErg, tfErg, plyErg, iplyErg, 
-   1, approx, {qlCSMean, 
-    qlCSSD, 
-    qlCSMinZ, 
-    qlCSMaxZ, 
-    qlCSvv}};
-forZLB=resetRho[rhoVal];
-{sgSpecErg,AbsoluteTiming[
-theRes01 = AMASeriesRepresentation`parallelNestGenericIterREInterp[
-   AMASeriesRepresentation`genFRExtFunc, 
-   linModQLZLB, {X0Z0, theK}, 
-   forZLB, sgSpecErg, 
-   AMASeriesRepresentation`smolyakInterpolation, {}, theIter,
-"Traditional"->False,"addTailContribution"->True]]}
-]
 
-approx={5,1};theK=15;theIters=10;
-{sgSpecErg,{wTime,theRes06}}=updateSGSpec[0.6,.3,approx,theK,theIters];
+
+approx={5,4};theK=15;theIters=10;scale=.3;
+approx={5,5};theK=35;theIters=20;scale=.3;
+approx={1,1};theK=15;theIters=10;scale=.3;
+{sgSpecErg,{wTime,theRes06}}=updateSGSpec[0.6,scale,approx,theK,theIters];
 Print["wTime=",wTime]
 pts=Join[#,(theRes06[[-1,1]]@@Flatten[fillIn[{{},{2,3,4},#}]])[[3]]] & /@ sgSpecErg[[3]]
 {minE,minEps,ig}=Min/@Transpose[pts];{maxE,maxEps,ig}=Max/@Transpose[pts];
 plt6=Plot[{(-quasiLinear`Private`RR//.quasiLinear`Private`paramSubs),(theRes06[[
 -1,1]][ee,99,99,99,0])[[3]]},{ee,minE,maxE},PlotRange->All]
 
-{sgSpecErg,{wTime,theRes96}}=updateSGSpec[0.96,.3,approx,theK,theIters];
+{sgSpecErg,{wTime,theRes90}}=updateSGSpec[0.90,scale,approx,theK,theIters];
+Print["wTime=",wTime]
+pts=Join[#,(theRes90[[-1,1]]@@Flatten[fillIn[{{},{2,3,4},#}]])[[3]]] & /@ sgSpecErg[[3]]
+{minE,minEps,ig}=Min/@Transpose[pts];{maxE,maxEps,ig}=Max/@Transpose[pts];
+plt90=Plot[{(-quasiLinear`Private`RR//.quasiLinear`Private`paramSubs),(theRes90[[-1,1]][ee,99,99,99,0])[[3]]},{ee,minE,maxE},PlotRange->All]
+
+
+{sgSpecErg,{wTime,theRes80}}=updateSGSpec[0.80,scale,approx,theK,theIters];
+Print["wTime=",wTime]
+pts=Join[#,(theRes80[[-1,1]]@@Flatten[fillIn[{{},{2,3,4},#}]])[[3]]] & /@ sgSpecErg[[3]]
+{minE,minEps,ig}=Min/@Transpose[pts];{maxE,maxEps,ig}=Max/@Transpose[pts];
+plt80=Plot[{(-quasiLinear`Private`RR//.quasiLinear`Private`paramSubs),(theRes80[[-1,1]][ee,99,99,99,0])[[3]]},{ee,minE,maxE},PlotRange->All]
+
+{sgSpecErg,{wTime,theRes95}}=updateSGSpec[0.95,scale,approx,theK,theIters];
+Print["wTime=",wTime]
+pts=Join[#,(theRes95[[-1,1]]@@Flatten[fillIn[{{},{2,3,4},#}]])[[3]]] & /@ sgSpecErg[[3]]
+{minE,minEps,ig}=Min/@Transpose[pts];{maxE,maxEps,ig}=Max/@Transpose[pts];
+plt95=Plot[{(-quasiLinear`Private`RR//.quasiLinear`Private`paramSubs),(theRes95[[-1,1]][ee,99,99,99,0])[[3]]},{ee,minE,maxE},PlotRange->All]
+
+
+
+
+{sgSpecErg,{wTime,theRes96}}=updateSGSpec[0.96,scale,approx,theK,theIters];
 Print["wTime=",wTime]
 pts=Join[#,(theRes96[[-1,1]]@@Flatten[fillIn[{{},{2,3,4},#}]])[[3]]] & /@ sgSpecErg[[3]]
 {minE,minEps,ig}=Min/@Transpose[pts];{maxE,maxEps,ig}=Max/@Transpose[pts];
 plt96=Plot[{(-quasiLinear`Private`RR//.quasiLinear`Private`paramSubs),(theRes96[[-1,1]][ee,99,99,99,0])[[3]]},{ee,minE,maxE},PlotRange->All]
 
-{sgSpecErg,{wTime,theRes98}}=updateSGSpec[0.98,.3,approx,theK,theIters];
+{sgSpecErg,{wTime,theRes98}}=updateSGSpec[0.98,scale,approx,theK,theIters];
 Print["wTime=",wTime]
 pts=Join[#,(theRes98[[-1,1]]@@Flatten[fillIn[{{},{2,3,4},#}]])[[3]]] & /@ sgSpecErg[[3]]
 {minE,minEps,ig}=Min/@Transpose[pts];{maxE,maxEps,ig}=Max/@Transpose[pts];
 plt98=Plot[{(-quasiLinear`Private`RR//.quasiLinear`Private`paramSubs),(theRes98[[-1,1]][ee,99,99,99,0])[[3]]},{ee,minE,maxE},PlotRange->All]
 
-{sgSpecErg,{wTime,theRes100}}=updateSGSpec[1.00,.3,approx,theK,theIters];
+{sgSpecErg,{wTime,theRes100}}=updateSGSpec[1.00,scale,approx,theK,theIters];
 Print["wTime=",wTime]
 pts=Join[#,(theRes100[[-1,1]]@@Flatten[fillIn[{{},{2,3,4},#}]])[[3]]] & /@ sgSpecErg[[3]]
 {minE,minEps,ig}=Min/@Transpose[pts];{maxE,maxEps,ig}=Max/@Transpose[pts];
@@ -133,11 +189,14 @@ thePlots=Plot[
 },
 {ee,minE,maxE},PlotRange->All,PlotLegends->{"1.00","0.98","0.96","0.6","LB"}]
 Export["toOne.pdf",thePlots]
+
+
 (*
 lpp3d=ListPointPlot3D[pts,PlotStyle->{PointSize[Large],Red}]
 p3d=Plot3D[{(-quasiLinear`Private`RR//.quasiLinear`Private`paramSubs),(theRes01[[-1,1]][ee,99,99,99,eps])[[3]]},{ee,minE,maxE},{eps,minEps,maxEps},PlotRange->All]
 Export["reallyR.pdf",Show[lpp3d,p3d],PlotRange->All]
 
+Print["herem01"]
 
 
 pts=Join[#,(theRes01[[-1,1]]@@Flatten[fillIn[{{},{2,3,4},#}]])[[2]]] & /@ sgSpecErg[[3]]
@@ -164,14 +223,15 @@ Print[{"18",AMASeriesRepresentation`evaluateTriple[frFuncTrad[[1, 1]],  Flatten[
 
 
 
-approx=5*{1,1};theK=0;theIter=1
-Print["{approx,theK,theIter}=",{approx,theK,theIter}];
+approx=5*{1,1};theK=0;theIters=1
+approx={1,1};theK=15;theIters=10;scale=.3;
+Print["{approx,theK,theIters}=",{approx,theK,theIters}];
 wTime=AbsoluteTiming[
 theResTrad = AMASeriesRepresentation`parallelNestGenericIterREInterp[
    AMASeriesRepresentation`genFRExtFunc, 
    linModQLZLB, {theRes01[[-1]], theK}, 
    quasiLinear`Private`qlEqnsqlZLB, sgSpecErg, 
-   AMASeriesRepresentation`smolyakInterpolation, {}, theIter,
+   AMASeriesRepresentation`smolyakInterpolation, {}, theIters,
 "Traditional"->True]]
 *)
 
@@ -189,7 +249,7 @@ pts=Join[#,(theRes01[[-1,1]]@@Flatten[fillIn[{{},{2,3,4},#}]])[[3]]] & /@ sgSpec
 lpp=ListPlot[pts[[All,{1,3}]],PlotStyle->{PointSize[Large],Red}]
 plt=Plot[{(-quasiLinear`Private`RR/.quasiLinear`Private`paramSubs),(theRes01[[-1,1]][ee,99,99,99,0])[[3]]},{ee,minE,maxE},PlotRange->All]
 Export["reallyR2.pdf",Show[lpp,plt],PlotRange->All]
-
+Print["here01"]
 (*
 
 lpnow=ListPlot[Transpose[{eta,hip[[1,-1]]}]]
@@ -211,6 +271,9 @@ backZtoX[{{z1,z2,tryEps}},betterRBCMean,betterRBCSD,betterRBCvv][[1]]]],
 Epilog->{PointSize[0.05],Green,Point[acterrLoc[[{1,2}]]],PointSize[0.025],Orange,Point[errBndLoc[[{1,2}]]],PointSize[0.0125],Black,Point[#]&/@zPts[[All,{1,2}]]},PlotRangeClipping->False]]
 
 da=Plot[((theRes01[[-1,1]] @@ {xx,0,0,0,0})[[3]])-((theRes01[[-2,1]] @@ {xx,0,0,0,0})[[3]]),{xx,-.02,.02}]
+
+Print["here02"]
+
 (*
 etasix=Flatten[Import["etasix.mat"]]
 nomrsix=Flatten[Import["nomrsix.mat"]]
@@ -233,23 +296,48 @@ eta9594=Flatten[Import["eta9594.mat"]]
 nomr9594=Flatten[Import["nomr9594.mat"]]
 notr9594=Flatten[Import["notr9594.mat"]]
 f9594=ListPlot[Transpose[{eta9594,nomr9594}]]
-{sgSpecErg,{wTime,theRes9594}}=updateSGSpec[(2*.9594)-1,.3,approx,theK,theIters];
+yy9594=Flatten[Import["yy9594.mat"]]
+fy9594=ListPlot[Transpose[{eta9594,yy9594}]]
+dp9594=Flatten[Import["dp9594.mat"]]
+fp9594=ListPlot[Transpose[{eta9594,dp9594}]]
+
+
+approx=5*{1,1};theK=15;theIters=10;scale=.3;
+approx={1,1};theK=15;theIters=10;scale=.3;
+approx={5,5};theK=50;theIters=20;scale=.3;
+approx={1,1};theK=15;theIters=10;scale=.3;
+{sgSpecErg,{wTime,theRes9594}}=updateSGSpec[(2*.9594)-1,scale,approx,theK,theIters];
+theResTrad = AMASeriesRepresentation`parallelNestGenericIterREInterp[
+   AMASeriesRepresentation`genFRExtFunc, 
+   linModQLZLB, {theRes9594[[-1]], theK}, 
+   quasiLinear`Private`qlEqnsqlZLB, sgSpecErg, 
+   AMASeriesRepresentation`smolyakInterpolation, {}, theIters,
+"Traditional"->True];
+
 Print["wTime=",wTime]
 pts=Join[#,(theRes9594[[-1,1]]@@Flatten[fillIn[{{},{2,3,4},#}]])[[3]]] & /@ sgSpecErg[[3]]
-{minE,minEps,ig}=Min/@Transpose[pts];{maxE,maxEps,ig}=Max/@Transpose[pts];
+
 plt9594=Plot[{(-quasiLinear`Private`RR//.quasiLinear`Private`paramSubs),(theRes9594[[-1,1]][ee,99,99,99,0])[[3]]},{ee,minE,maxE},PlotRange->All]
 Export["f9594Oten.pdf",Show[f9594,plt9594,DisplayFunction->$DisplayFunction,PlotRange->All]]
 
 
+pltp9594=Plot[{(-quasiLinear`Private`RR//.quasiLinear`Private`paramSubs),(theRes9594[[-1,1]][ee,99,99,99,0])[[2]]},{ee,minE,maxE},PlotRange->All]
+Export["fp9594Oten.pdf",Show[fp9594,pltp9594,DisplayFunction->$DisplayFunction,PlotRange->All]]
 
 
+plty9594=Plot[{(-quasiLinear`Private`RR//.quasiLinear`Private`paramSubs),(theRes9594[[-1,1]][ee,99,99,99,0])[[2]]},{ee,minE,maxE},PlotRange->All]
+Export["fp9594Oten.pdf",Show[fy9594,plty9594,DisplayFunction->$DisplayFunction,PlotRange->All]]
+
+
+
+Print["here03"]
 
 
 etanine=Flatten[Import["etanine.mat"]]
 nomrnine=Flatten[Import["nomrnine.mat"]]
 notrnine=Flatten[Import["notrnine.mat"]]
 fnine=ListPlot[Transpose[{etanine,nomrnine}]]
-{sgSpecErg,{wTime,theResnine}}=updateSGSpec[.9,.3,approx,theK,theIters];
+{sgSpecErg,{wTime,theResnine}}=updateSGSpec[.9,scale,approx,theK,theIters];
 Print["wTime=",wTime]
 pts=Join[#,(theResnine[[-1,1]]@@Flatten[fillIn[{{},{2,3,4},#}]])[[3]]] & /@ sgSpecErg[[3]]
 {minE,minEps,ig}=Min/@Transpose[pts];{maxE,maxEps,ig}=Max/@Transpose[pts];
@@ -262,7 +350,7 @@ etaeight=Flatten[Import["etaeight.mat"]]
 nomreight=Flatten[Import["nomreight.mat"]]
 notreight=Flatten[Import["notreight.mat"]]
 feight=ListPlot[Transpose[{etaeight,nomreight}]]
-{sgSpecErg,{wTime,theReseight}}=updateSGSpec[.8,.3,approx,theK,theIters];
+{sgSpecErg,{wTime,theReseight}}=updateSGSpec[.8,scale,approx,theK,theIters];
 Print["wTime=",wTime]
 pts=Join[#,(theReseight[[-1,1]]@@Flatten[fillIn[{{},{2,3,4},#}]])[[3]]] & /@ sgSpecErg[[3]]
 {minE,minEps,ig}=Min/@Transpose[pts];{maxE,maxEps,ig}=Max/@Transpose[pts];
@@ -274,12 +362,88 @@ etasix=Flatten[Import["etasix.mat"]]
 nomrsix=Flatten[Import["nomrsix.mat"]]
 notrsix=Flatten[Import["notrsix.mat"]]
 fsix=ListPlot[Transpose[{etasix,nomrsix}]]
-{sgSpecErg,{wTime,theRessix}}=updateSGSpec[.6,.3,approx,theK,theIters];
+{sgSpecErg,{wTime,theRessix}}=updateSGSpec[.6,scale,approx,theK,theIters];
 Print["wTime=",wTime]
 pts=Join[#,(theRessix[[-1,1]]@@Flatten[fillIn[{{},{2,3,4},#}]])[[3]]] & /@ sgSpecErg[[3]]
 {minE,minEps,ig}=Min/@Transpose[pts];{maxE,maxEps,ig}=Max/@Transpose[pts];
 pltsix=Plot[{(-quasiLinear`Private`RR//.quasiLinear`Private`paramSubs),(theRessix[[-1,1]][ee,99,99,99,0])[[3]]},{ee,minE,maxE},PlotRange->All]
 Export["fsix.pdf",Show[fsix,pltsix,DisplayFunction->$DisplayFunction,PlotRange->All]]
+
+
+*)
+Print["here04"]
+
+(*
+toEval[ee_?NumberQ,er_?NumberQ]:=With[{long=theRes100[[-1,1]] @@ {ee,99,99,99,er}},long[[3]]]
+
+
+huh100=iterateQLCSDRCE[theRes100[[-1,1]],2000,{-.015,99,99,0}];
+
+{-0.00052253, 0.00363284, -0.00603162, 0.00247337, 
+        -0.000286857, -0.00067856, 0.000211406, -0.00225072, 
+        0.00319971, -0.00441869}
+
+{0.000809341, -0.000538973, -0.00195324, 0.000996507, 
+         -0.000111526, -0.000802953, 0.000341776, 0.00465155, 
+         0.00413415, 0.00317105}
+
+-0.0150379
+ListPlot[{huh100[[2,Range[220],3]],Table[(-quasiLinear`Private`RR//.quasiLinear`Private`paramSubs),{220}]}]
+
+{-0.0454232, -0.00564569}  produces {-0.0157593}
+theRs=huh100[[2,All,3]];
+theEtas=huh100[[2,All,1]];
+theDraws=huh100[[1]];
+small= Flatten[Position[theRs,_?(#<-0.0150379&)]]
+*)
+
+
+
+frFunc = AMASeriesRepresentation`genFRExtFunc[{4, 1, 4}, 
+   linModQLZLB, {theRes01[[-1]], theK}, 
+   quasiLinear`Private`qlEqnsqlZLB]
+theVals=evaluateTriplesJustVals[frFunc,{pts[[1,1]],ig,ig,ig,pts[[1,2]]}];
+
+
+boo06=genCheckPt[{theRes06[[-1,1]],theRes06[[-2,2]]},.6];
+boo98=genCheckPt[{theRes98[[-1,1]],theRes98[[-1,2]]},.98];
+boo=genCheckPt[{theRes9594[[-1,1]],theRes9594[[-2,2]]},(2*0.9594)-1];
+
+
+frFunc = AMASeriesRepresentation`genFRExtFunc[{4, 1, 4}, 
+   linModQLZLB, {theRes98[[-1]], theK}, 
+   quasiLinear`Private`qlEqnsqlZLB]
+theVals=evaluateTriplesJustVals[frFunc,{pts[[1,1]],ig,ig,ig,pts[[1,2]]}];
+
+newGenCheckPt[linModQLZLB,{theRes06[[-1,1]],theRes06[[-2,2]]},resetRho[0.6]]
+
+
+
+*)
+
+newGenCheckPt[linMod:{theHMat_?MatrixQ,BB_?MatrixQ,phi_?MatrixQ,FF_?MatrixQ, 
+psiEps_?MatrixQ,psiC_?MatrixQ,psiZ_?MatrixQ,
+backLookingInfo:{{_Integer,_,_}...}},
+{dr_Function,drce_Function},
+triples:{{{_Function,(_Function|_CompiledFunction|_Symbol),_Function}..},
+selectorFunc_Function}]:=
+Module[{numX=Length[BB],numEps=Length[psiEps[[1]]]},
+With[{xVars=Table[Unique["xVars"],{numX}],
+epsVars=Table[Unique["epsVars"],{numEps}]},
+With[{drArgs=Join[xVars,epsVars]},
+With[{drApp=Apply[dr,drArgs][[Range[numX]]]},
+With[{drceApp=Apply[drce,drApp[[Range[numX]]]][[Range[numX]]]},
+With[{fullVec=Flatten[Join[xVars,drApp,drceApp,epsVars]]},
+With[{fullVecFunc=Apply[Function,{drArgs,fullVec}]},
+With[{theVals=Table[evaluateTriple[aTriple,fullVec],{aTriple,triples[[1]]}]},
+{fullVec,theVals,fullVecFunc}]]]]]]]]
+
+
+(*
+
+Table[evaluateTriple[aTriple,fullVec]
+With[{toWorkOn={{fullVec},theVals}},Print[{"towork:",toWorkOn}];
+With[{longRes=Apply[selectorFunc,toWorkOn]},
 
 
 *)

@@ -142,15 +142,17 @@ Module[{},Inverse[IdentityMatrix[Length[FF]]-FF] . phi . theTailZ]
 @d Z Matrices Given
 @{With[{fCon=Check[fSumC[phi,FF,psiZ,theZs],Print["trying to throw low"];
 Throw[$Failed,"low"]]},
-With[{theRes=genLilXkZkFunc[linMod,fCon,
+With[{(*theRes=genLilXkZkFunc[linMod,fCon,
 Apply[Sequence,FilterRules[{opts},
 Options[genLilXkZkFunc]]]
-],numZs=Length[theZs]},
-If[And[OptionValue["addTailContribution"],numZs>=1],Print["addingTailContribution"];
-genLilXkZkFunc[linMod,fCon+MatrixPower[FF,Length[theZs]+1].tailContribution[FF,phi,theZs[[-1]]]],
-genLilXkZkFunc[linMod,fCon]
+],*)numZs=Length[theZs]},
+If[numZs>=1,Print[{"norm tailContrib:",Norm[MatrixPower[FF,Length[theZs]+1].tailContribution[FF,phi,theZs[[-1]]]]}]];
+If[numZs>=2,Print[{"norm zdiffs:",Norm[theZs[[-1]]-theZs[[-2]]]}]];
+If[And[OptionValue["addTailContribution"],numZs>=1],
+With[{tailCon=MatrixPower[FF,Length[theZs]+1].tailContribution[FF,phi,theZs[[-1]]]},Print[{"addingTailContribution:",Norm[tailCon]}];
+genLilXkZkFunc[linMod,fCon+tailCon]],
+genLilXkZkFunc[linMod,fCon]]]
 ]
-]]
 @}
 
 @d genLilXkZkFunc
@@ -231,8 +233,7 @@ genFRExtFuncJustEval::usage=
 @}
 
 @d genFRExtFuncUsage
-@{g
-enFRExtFunc::usage=
+@{genFRExtFunc::usage=
 "genFRExtFunc"
 @}
 
@@ -1438,7 +1439,7 @@ evaluateTriple::usage=
 
 evaluateTriple[
 @<aProcessedTriple@>,
-thePt_?VectorQ]:=
+thePt:{_?NumberQ..}]:=
 Catch[
 If[
 Apply[preFunc,thePt],
@@ -1521,9 +1522,28 @@ _,Function[{val,tag},Print["catchsmolGenInterp: aborting",
 Abort[]]]]&,toWorkOn]},
 interpData]]]]]
 
+@}
 
 
+\subsection{evaluateTriplesJustVals}
+\label{sec:parall}
 
+@d evaluateTriplesJustValsUsage
+@{evaluateTriplesJustVals::usage="placeholder"
+@}
+
+@d evaluateTriplesJustVals
+@{
+ 
+
+evaluateTriplesJustVals[
+@<rawTriples@>,theArgs_?VectorQ]:=
+Module[{},
+With[{theVals=
+Table[evaluateTriple[aTriple,theArgs],{aTriple,triples[[1]]}]},
+With[{toWorkOn={{theArgs},theVals}},Print[{"towork:",toWorkOn}];
+With[{longRes=Apply[selectorFunc,toWorkOn]},
+Drop[longRes,Length[longRes]/2]]]]]
 
 
 @}
@@ -2392,6 +2412,7 @@ _?MatrixQ,_?MatrixQ,_?MatrixQ,
 @<iterateRegimesDRProbsUsage@>
 @<regimesExpectationUsage@>
 @<genRegimesBothX0Z0FuncsUsage@>
+@<evaluateTriplesJustValsUsage@>
 @}
 
 \subsection{Package Code}
@@ -2449,6 +2470,7 @@ _?MatrixQ,_?MatrixQ,_?MatrixQ,
 @<iterateRegimesDRProbs@>
 @<regimesExpectation@>
 @<patternMatchCode@>
+@<evaluateTriplesJustVals@>
 @}
 
 

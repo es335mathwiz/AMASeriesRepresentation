@@ -28,6 +28,11 @@ qLinEqnsqLin::usage="model equations"
 qLinEqnsqLinNot::usage="model equations"
 eqnsEulerCompiledqLin::usage="eqnsEulerCompiledqLin"
 
+
+
+iterateQLCSDR::usage="place holder"
+iterateQLCSDRCE::usage="place holder"
+
 simulateQLinQLINCS::usage="simulateQLinQLINExact[numPers_Integer]"
 qlCSMean::usage="qlCSMean"
 qlCSSD::usage="qlCSSD"
@@ -282,10 +287,17 @@ initVec=Transpose[{{99,etaVal,99,99,99,99,99,99}}]},
 With[{mats=FoldList[((anAugDR @@ Flatten[{#1[[Range[4]]],#2}]))&,initVec,draws]},Flatten/@mats]]
 
 
-iterateQLCSDRCE[anAugDRCE_Function,numPers_Integer,aPt_?MatrixQ]:=
+iterateQLCSDR[anAugDR_Function,numPers_Integer,initVec_?VectorQ]:=
+With[{draws=RandomVariate[0.0005*theDistqlZLB[[1,1,2]],numPers]},
 With[{mats=
-NestList[((anAugDR @@ Flatten[{#1[[Range[4]]],#2}]))&,initVec,draws]},
-Flatten/@mats]
+FoldList[((anAugDR @@ Flatten[{#1[[Range[4]]],#2}]))&,initVec,draws]},
+{draws,Flatten/@mats}]]
+
+iterateQLCSDRCE[anAugDRCE_Function,numPers_Integer,initVec_?VectorQ]:=
+With[{draws=RandomVariate[theDistqlZLB[[1,1,2]],numPers]},
+With[{mats=
+FoldList[((anAugDRCE @@ Flatten[{#1[[Range[4]]],#2}]))&,initVec,draws]},
+{draws,Flatten/@mats}]]
 
 chkBounded[anAugDRCE_Function,numPers_Integer,aPt_?MatrixQ,lim_?NumberQ]:=
 Module[{},
@@ -320,7 +332,7 @@ qlCSSDoriginal=qlCSSD
 adjustRange[scale_?NumberQ]:=
 Module[{},
 {qlCSMean,
-qlCSSD=ReplacePart[qlCSSD,1->scale*qlCSSDoriginal[[1]]],
+qlCSSD=ReplacePart[qlCSSD,{1->scale*qlCSSDoriginal[[1]],2->scale*qlCSSDoriginal[[2]]}],
 qlCSMinZ,
 qlCSMaxZ,
 qlCSvv}]

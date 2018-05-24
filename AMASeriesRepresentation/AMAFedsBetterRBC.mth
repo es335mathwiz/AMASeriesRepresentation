@@ -635,4 +635,33 @@ doItApproxSeries[3*{1,1,1},70,#,"Traditional"->False]& /@Join[Range[0,5],Range[1
 X0Z0=genBothX0Z0Funcs[linModBetterRBCTrips];
 frFuncJustEval=genFRExtFuncJustEval[{4,1,4},
 linModBetterRBCTrips,{genBothX0Z0Funcs[linModBetterRBCTrips],2},rbcEqnsBetterRBCTrips]
+
+evaluateTriple[frFuncJustEval[[1,2]],{1.52, 0.24, 1.8, 0.9097,0} ]
+evaluateTriple[frFuncJustEval[[1,1]],{1.52, 0.24, 1.8, 0.9097,0} ]
+evaluateTriplesJustVals[frFuncJustEval,Flatten[anXEpsBetterRBCTrips]]
+
+approx=1*{1,1,1};
+{ptErg,tfErg,plyErg,iplyErg,dplyErg}=smolyakInterpolationPrep[approx,{betterRBCTripsMean,betterRBCTripsSD,betterRBCTripsMinZ,betterRBCTripsMaxZ,betterRBCTripsvv},theDistBetterRBCTrips];
+smolRngErg=Transpose[{betterRBCTripsMinZ,betterRBCTripsMaxZ}];
+toIg=aGSpecBetterRBCTrips[[1]];
+sgSpecErg={toIg,smolRngErg,ptErg,tfErg,plyErg,iplyErg,1,approx,
+{betterRBCTripsMean,betterRBCTripsSD,betterRBCTripsMinZ,betterRBCTripsMaxZ,betterRBCTripsvv}};
+theRes01 = parallelNestGenericIterREInterp[genFRExtFunc, 
+   linModBetterRBCTrips, {X0Z0, 2}, rbcEqnsBetterRBCTrips, 
+   sgSpecErg,smolyakInterpolation,{}, 3];
+Print[{"16",Through[theRes[[-1]] @@ # &[anXEpsFlatBetterRBCTrips]]}]
+
+frFuncJustEval01=genFRExtFuncJustEval[{4,1,4},
+linModBetterRBCTrips,{genBothX0Z0Funcs[linModBetterRBCTrips],2},rbcEqnsBetterRBCTrips]
+evaluateTriple[frFuncJustEval01[[1,1]],{1.52, 0.24, 1.8, 0.9097,0} ]
+evaluateTriple[frFuncJustEval01[[1,2]],{1.52, 0.24, 1.8, 0.9097,0} ]
+evaluateTriplesJustVals[frFuncJustEval01,Flatten[anXEpsBetterRBCTrips]]
+
+
+
+frFuncJustEval02=genFRExtFuncJustEval[{4,1,4},
+linModBetterRBCTrips,{theRes01[[-1]],2},rbcEqnsBetterRBCTrips]
+evaluateTriple[frFuncJustEval02[[1,1]],{1.52, 0.24, 1.8, 0.9097,0} ]
+evaluateTriple[frFuncJustEval02[[1,2]],{1.52, 0.24, 1.8, 0.9097,0} ]
+evaluateTriplesJustVals[frFuncJustEval02,Flatten[anXEpsBetterRBCTrips]]
 *)

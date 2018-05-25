@@ -1428,6 +1428,7 @@ postFunc_Function}@}
 
 
 
+
 @d evaluateTripleUsage
 @{
 evaluateTriple::usage=
@@ -1448,6 +1449,32 @@ Apply[theFunc,thePt]},
 If[Apply[postFunc,{thePt,theRes}],theRes,$Failed]],
 $Failed],_,Function[{val,tag},
 Print["catchinevaluateTriple:",{xArgs,val,tag}//InputForm];$Failed]]
+
+@}
+
+@d evaluateTripleAddBracesUsage
+@{
+evaluateTripleAddBraces::usage=
+"place holder for genFRExtFunc"
+@}
+
+@d evaluateTripleAddBraces
+@{
+
+addBraces[xx__]:=Map[{#}&,xx]
+
+
+evaluateTripleAddBraces[
+@<aProcessedTriple@>,
+thePt:{_?NumberQ..}]:=
+Catch[
+If[
+Apply[preFunc,thePt],
+With[{theRes=
+addBraces[Apply[theFunc,thePt]]},
+If[Apply[postFunc,{thePt,theRes}],theRes,$Failed]],
+$Failed],_,Function[{val,tag},
+Print["catchinevaluateTripleAddBraces:",{xArgs,val,tag}//InputForm];$Failed]]
 
 @}
 
@@ -2131,6 +2158,30 @@ doRegime[regimeEvents:{{_?MatrixQ..}..}]:=Map[plusAllEvents,regimeEvents]
 @}
 
 
+@d genCheckPtUsage
+@{
+genCheckPt::usage="genCheckPt[@<linMod@>,{dr_Function,drce_Function},@<rawTriples@>]"
+@}
+@d genCheckPt
+@{
+genCheckPt[@<linMod@>,
+{dr_Function,drce_Function},
+@<rawTriples@>]:=
+Module[{numX=Length[BB],numEps=Length[psiEps[[1]]]},
+With[{xVars=Table[Unique["xVars"],{numX}],
+epsVars=Table[Unique["epsVars"],{numEps}]},
+With[{drArgs=Join[xVars,epsVars]},
+With[{drApp=Apply[dr,drArgs][[Range[numX]]]},
+With[{drceApp=Apply[drce,drApp[[Range[numX]]]][[Range[numX]]]},
+With[{fullVec=Flatten[Join[xVars,drApp,drceApp,epsVars]]},
+With[{fullVecFunc=Apply[Function,{drArgs,fullVec}]},
+With[{evts=Table[evaluateTripleAddBraces[aTriple,fullVec],{aTriple,triples[[1]]}]},
+With[{theVals=Apply[Function,{drArgs,notTranspose[{(selFunc[drArgs,evts])}]}]/.{selFunc->selectorFunc,notTranspose->Transpose},
+phiMultVals=Apply[Function,{drArgs,getPhi[linMod] .notTranspose[{(selFunc[drArgs,evts])}]}]/.{selFunc->selectorFunc,notTranspose->Transpose}},
+{theVals,phiMultVals}]]]]]]]]]
+@}
+
+
 
 
 \subsection{Getters and Setters}
@@ -2270,6 +2321,19 @@ getB[@<linMod@>]:=
 BB
 @}
 
+@d getPhiUsage
+@{
+getPhi::usage=
+"getPhi[@<linMod@>]"<>
+"phi matrix"
+@}
+
+@d getPhi
+@{
+getPhi[@<linMod@>]:=
+phi
+@}
+
 
 @d getHUsage
 @{
@@ -2376,6 +2440,7 @@ _?MatrixQ,_?MatrixQ,_?MatrixQ,
 @<getPsiZUsage@>
 @<getPsiEpsUsage@>
 @<getBUsage@>
+@<getPhiUsage@>
 @<getFUsage@>
 @<getHUsage@>
 @<genLilXkZkFuncUsage@>
@@ -2407,12 +2472,14 @@ _?MatrixQ,_?MatrixQ,_?MatrixQ,
 @<genRegimesBothX0Z0FuncsUsage@>
 @<genBothX0Z0FuncsUsage@>
 @<evaluateTripleUsage@>
+@<evaluateTripleAddBracesUsage@>
 @<iterateRegimesDRValsUsage@>
 @<iterateDRCEUsage@>
 @<iterateRegimesDRProbsUsage@>
 @<regimesExpectationUsage@>
 @<genRegimesBothX0Z0FuncsUsage@>
 @<evaluateTriplesJustValsUsage@>
+@<genCheckPtUsage@>
 @}
 
 \subsection{Package Code}
@@ -2427,6 +2494,7 @@ _?MatrixQ,_?MatrixQ,_?MatrixQ,
 @<getNumEps@>
 @<getPsiZ@>
 @<getPsiEps@>
+@<getPhi@>
 @<getB@>
 @<getF@>
 @<getH@>
@@ -2465,12 +2533,14 @@ _?MatrixQ,_?MatrixQ,_?MatrixQ,
 @<genRegimesBothX0Z0Funcs@>
 @<genBothX0Z0Funcs@>
 @<evaluateTriple@>
+@<evaluateTripleAddBraces@>
 @<iterateDRCE@>
 @<iterateRegimesDRVals@>
 @<iterateRegimesDRProbs@>
 @<regimesExpectation@>
 @<patternMatchCode@>
 @<evaluateTriplesJustVals@>
+@<genCheckPt@>
 @}
 
 

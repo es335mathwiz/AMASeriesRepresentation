@@ -131,7 +131,7 @@ approx=1*{1,1};theK=15;theIters=15
 
 approx={5,4};theK=15;theIters=10;scale=.3;
 approx={5,5};theK=35;theIters=20;scale=.3;
-approx={1,1};theK=15;theIters=10;scale=.3;
+approx={1,1};theK=25;theIters=10;scale=.3;
 {sgSpecErg,{wTime,theRes06}}=updateSGSpec[0.6,scale,approx,theK,theIters];
 Print["wTime=",wTime]
 pts=Join[#,(theRes06[[-1,1]]@@Flatten[fillIn[{{},{2,3,4},#}]])[[3]]] & /@ sgSpecErg[[3]]
@@ -415,35 +415,9 @@ frFunc = AMASeriesRepresentation`genFRExtFunc[{4, 1, 4},
    quasiLinear`Private`qlEqnsqlZLB]
 theVals=evaluateTriplesJustVals[frFunc,{pts[[1,1]],ig,ig,ig,pts[[1,2]]}];
 
-newGenCheckPt[linModQLZLB,{theRes06[[-1,1]],theRes06[[-2,2]]},resetRho[0.6]]
+genCheckPt[linModQLZLB,{theRes06[[-1,1]],theRes06[[-2,2]]},resetRho[0.6]]
 
 
 
 *)
 
-newGenCheckPt[linMod:{theHMat_?MatrixQ,BB_?MatrixQ,phi_?MatrixQ,FF_?MatrixQ, 
-psiEps_?MatrixQ,psiC_?MatrixQ,psiZ_?MatrixQ,
-backLookingInfo:{{_Integer,_,_}...}},
-{dr_Function,drce_Function},
-triples:{{{_Function,(_Function|_CompiledFunction|_Symbol),_Function}..},
-selectorFunc_Function}]:=
-Module[{numX=Length[BB],numEps=Length[psiEps[[1]]]},
-With[{xVars=Table[Unique["xVars"],{numX}],
-epsVars=Table[Unique["epsVars"],{numEps}]},
-With[{drArgs=Join[xVars,epsVars]},
-With[{drApp=Apply[dr,drArgs][[Range[numX]]]},
-With[{drceApp=Apply[drce,drApp[[Range[numX]]]][[Range[numX]]]},
-With[{fullVec=Flatten[Join[xVars,drApp,drceApp,epsVars]]},
-With[{fullVecFunc=Apply[Function,{drArgs,fullVec}]},
-With[{theVals=Table[evaluateTriple[aTriple,fullVec],{aTriple,triples[[1]]}]},
-{fullVec,theVals,fullVecFunc}]]]]]]]]
-
-
-(*
-
-Table[evaluateTriple[aTriple,fullVec]
-With[{toWorkOn={{fullVec},theVals}},Print[{"towork:",toWorkOn}];
-With[{longRes=Apply[selectorFunc,toWorkOn]},
-
-
-*)

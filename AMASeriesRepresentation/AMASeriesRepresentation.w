@@ -451,7 +451,6 @@ Module[{varRanges=OptionValue["xVarRanges"]},
 With[{@<findRootArgNames@>},
 With[{@<prepFindRootXInitBoth@>},
 With[{zArgsInit=Transpose[{zArgs,Drop[theXInit,numX]}]},
-Print[{"zargsinit:",zArgsInit}];
 With[{@<cmptXArgsInit@>,
 @<makeArgPatternsBoth@>},
 (**)
@@ -1669,6 +1668,19 @@ NestList[Function[xx,parallelDoGenericIterREInterp[genFRExtFunc,linMod,
 Apply[Sequence,FilterRules[{opts},
 Options[parallelDoGenericIterREInterp]]]]],justBothXZFuncs,numIters]]
 
+
+parallelNestGenericIterREInterp[genFRExtFunc,@<linMod@>,
+@<bothXZFuncs@>,
+@<rawTriples@>,@<smolGSpec@>,
+genericInterp:(smolyakInterpolation|svmRegressionLinear|
+svmRegressionPoly|svmRegressionRBF|svmRegressionSigmoid),
+svmArgs:{_?NumberQ...},opts:OptionsPattern[]]:=
+Module[{},
+NestWhile[Function[xx,parallelDoGenericIterREInterp[genFRExtFunc,linMod,
+{xx,numSteps},triples,smolGSpec,genericInterp,svmArgs,
+Apply[Sequence,FilterRules[{opts},
+Options[parallelDoGenericIterREInterp]]]]],justBothXZFuncs]]
+
 @}
 
 
@@ -1846,7 +1858,6 @@ Module[{varRanges=OptionValue["xVarRanges"]},
 With[{@<findRootArgNames@>},
 With[{@<prepFindRootXInitRegimesBoth@>},
 With[{zArgsInit=Transpose[{zArgs,Drop[theXInit,numX]}]},
-Print[{"zargsinit:",zArgsInit}];
 With[{@<cmptXArgsInit@>,
 @<makeArgPatternsBoth@>},
 (**)

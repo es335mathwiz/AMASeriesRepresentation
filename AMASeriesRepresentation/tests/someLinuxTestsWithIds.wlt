@@ -706,10 +706,19 @@ EndTestSection[]
 BeginTestSection["parallelMakeGenericInterpFunc"]
 
 VerificationTest[(* 56 *)
-	CompoundExpression[Needs["AMASeriesRepresentation`"], Needs["betterRBCFixCompSlack`"], Set[X0Z0, AMASeriesRepresentation`genBothX0Z0Funcs[betterRBCFixCompSlack`linModBetterFixCompSlack]], Set[frFunc, AMASeriesRepresentation`genFRExtFunc[List[7, 1, 7], betterRBCFixCompSlack`linModBetterFixCompSlack, List[X0Z0, 2], betterRBCFixCompSlack`rbcEqnsBetterFixCompSlack]], Set[smolStuff, Set[List[ptErg, tfErg, plyErg, iplyErg, dplyErg], AMASeriesRepresentation`smolyakInterpolationPrep[List[1, 1, 1], List[betterRBCFixCompSlack`betterRBCCSMean, betterRBCFixCompSlack`betterRBCCSSD, betterRBCFixCompSlack`betterRBCCSMinZ, betterRBCFixCompSlack`betterRBCCSMaxZ, betterRBCFixCompSlack`betterRBCCSvv], betterRBCFixCompSlack`theDistBetterFixCompSlack]]], Set[smolRngErg, Transpose[List[betterRBCFixCompSlack`betterRBCCSMinZ, betterRBCFixCompSlack`betterRBCCSMaxZ]]], Set[toIg, Part[betterRBCFixCompSlack`aGSpecBetterFixCompSlack, 1]], Set[sgSpecErg, List[toIg, smolRngErg, ptErg, tfErg, plyErg, iplyErg, 1, List[1, 1, 1], List[betterRBCFixCompSlack`betterRBCCSMean, betterRBCFixCompSlack`betterRBCCSSD, betterRBCFixCompSlack`betterRBCCSMinZ, betterRBCFixCompSlack`betterRBCCSMaxZ, betterRBCFixCompSlack`betterRBCCSvv]]], Set[theRes, AMASeriesRepresentation`parallelMakeGenericInterpFuncs[frFunc, List[], sgSpecErg, AMASeriesRepresentation`smolyakInterpolation, List[]]], Through[Function[Apply[theRes, Slot[1]]][betterRBCFixCompSlack`anXEpsFlatBetterFixCompSlack]]]
+	CompoundExpression[Needs["AMASeriesRepresentation`"], Needs["betterRBCFixCompSlack`"], Set[X0Z0, AMASeriesRepresentation`genBothX0Z0Funcs[betterRBCFixCompSlack`linModBetterFixCompSlack]], Set[frFunc, AMASeriesRepresentation`genFRExtFunc[List[7, 1, 7], betterRBCFixCompSlack`linModBetterFixCompSlack, List[X0Z0, 2], betterRBCFixCompSlack`rbcEqnsBetterFixCompSlack]], Set[smolStuff, Set[List[ptErg, tfErg, plyErg, iplyErg, dplyErg], AMASeriesRepresentation`smolyakInterpolationPrep[List[1, 1, 1], List[betterRBCFixCompSlack`betterRBCCSMean, betterRBCFixCompSlack`betterRBCCSSD, betterRBCFixCompSlack`betterRBCCSMinZ, betterRBCFixCompSlack`betterRBCCSMaxZ, betterRBCFixCompSlack`betterRBCCSvv], betterRBCFixCompSlack`theDistBetterFixCompSlack]]], Set[smolRngErg, Transpose[List[betterRBCFixCompSlack`betterRBCCSMinZ, betterRBCFixCompSlack`betterRBCCSMaxZ]]], Set[toIg, Part[betterRBCFixCompSlack`aGSpecBetterFixCompSlack, 1]], Set[sgSpecErg, List[toIg, smolRngErg, ptErg, tfErg, plyErg, iplyErg, 1, List[1, 1, 1], List[betterRBCFixCompSlack`betterRBCCSMean, betterRBCFixCompSlack`betterRBCCSSD, betterRBCFixCompSlack`betterRBCCSMinZ, betterRBCFixCompSlack`betterRBCCSMaxZ, betterRBCFixCompSlack`betterRBCCSvv]]], Set[theRes, AMASeriesRepresentation`parallelMakeGenericInterpFuncs[frFunc, List[], sgSpecErg, AMASeriesRepresentation`smolyakInterpolation, List[]]], Through[Function[Apply[theRes, Slot[1]]][betterRBCFixCompSlack`anXEpsFlatBetterFixCompSlack]]]=={{{0.7282176329007075}, {0.2717715381826382}, {0.43377153818253134}, 
+  {-1.3213443937367202}, {0.}, {-1.2240846758421564}, 
+  {1.0130317085672667}, {-0.18108287037353316}, {-0.08565209611116903}, 
+  {0.10778441043475162}, {-0.006468291432723098}, 
+  {-0.03251919872270716}, {1.9840004058519422*^-13}, {0.}}, 
+ {{0.7210930261940705}, {0.262439795739821}, {0.4244397957397139}, 
+  {-1.3258567064095186}, {0.}, {-1.2206039663287485}, 
+  {1.0029303148046118}, {-0.18094813661000517}, {-0.08574022411218879}, 
+  {0.10761932633493865}, {-0.006569685195378045}, 
+  {-0.032517083431829075}, {1.984182374398824*^-13}, {0.}}}
 	,
-	List[List[List[0.7282176329007075`], List[0.2717715381826382`], List[0.43377153818253134`], List[-1.3213443937367202`], List[0.`], List[-1.2240846758421564`], List[1.0130317085672667`], List[-0.18108287037353316`], List[-0.08565209611116903`], List[0.10778441043475162`], List[-0.006468291432723098`], List[-0.03251919872270716`], List[1.9840004058519422`*^-13], List[0.`]], List[List[0.7210930261940705`], List[0.262439795739821`], List[0.4244397957397139`], List[-1.3258567064095186`], List[0.`], List[-1.2206039663287485`], List[1.0029303148046118`], List[-0.18094813661000517`], List[-0.08574022411218879`], List[0.10761932633493865`], List[-0.006569685195378045`], List[-0.032517083431829075`], List[1.984182374398824`*^-13], List[0.`]]]	
-	,
+True
+,
 	TestID->"8306e0c0-2c0a-4f3f-a6db-d7205231c1c4"
 ]
 

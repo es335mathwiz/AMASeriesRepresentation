@@ -2,6 +2,8 @@
 
 BeginPackage["quasiLinear`", { "AMASeriesRepresentation`", "ProtectedSymbols`", "AMAModel`", "SymbolicAMA`", "NumericAMA`","nkZLB`"}]
 (* Exported symbols added here with SymbolName::usage *)  
+resetRho::usage="resetRho"
+adjustRange::usage="adjustRange[theMin_?NumberQ]"
 
 anXqLin::usage="for test input";
 anEpsqLin::usage="for test input";
@@ -25,6 +27,11 @@ qLinEqnsQLinBackLookingExpFixCompSlack::usage="qLinEqnsQLinBackLookingFixCompSla
 qLinEqnsqLin::usage="model equations"
 qLinEqnsqLinNot::usage="model equations"
 eqnsEulerCompiledqLin::usage="eqnsEulerCompiledqLin"
+
+
+
+iterateQLCSDR::usage="place holder"
+iterateQLCSDRCE::usage="place holder"
 
 simulateQLinQLINCS::usage="simulateQLinQLINExact[numPers_Integer]"
 qlCSMean::usage="qlCSMean"
@@ -57,7 +64,7 @@ psi=stdeta*Sqrt[ns-1]
 
 
 *)
-
+(*
 paramSubs={
 beta->.99,
 gammaPi->2,
@@ -65,8 +72,20 @@ gammaY->0,
 kappa->0.05,
 piBar->1.005,
 RR->Log[piBar/beta],
-rho->0.91,
-sigma->0.00025}
+rho->0.6,
+sigma->0.0025}
+*)
+
+paramSubs={
+beta->.99,
+gammaPi->1.5,
+gammaY->0.25,
+kappa->0.05,
+piBar->1.005,
+RR->Log[piBar/beta],
+rho->0.6,
+sigma->0.0035}
+
 
 happy=Solve[4==Sqrt[((sigTry)^2)/(1-(rho^2))]/.paramSubs,sigTry]
 
@@ -151,15 +170,14 @@ eps[eta][t]->epsVal
 
 theArgs={etatm1,pitm1,rrtm1,yytm1,epsVal};
 
-
-eqnsForBind=((qlEqnsBinding//.paramSubs)/.argsSubs)
-
-
-eqnsForNotBind=((qlEqnsNotBinding//.paramSubs)/.argsSubs)
-
 dollarFailed=$Failed
 
-qlEqnsqlZLB={
+
+resetRho[rhoVal_?NumberQ]:=
+Module[{
+eqnsForBind=(((qlEqnsBinding//.rho->rhoVal)//.paramSubs)/.argsSubs),
+eqnsForNotBind=(((qlEqnsNotBinding//.rho->rhoVal)//.paramSubs)/.argsSubs)},
+{
  { 
 {True&,
 Compile @@ {
@@ -185,7 +203,10 @@ Function[{aPt,allRes},Print["qlZLB:",{aPt,allRes}];
 If[And[allRes[[1]]===dollarFailed,allRes[[2]]===dollarFailed],Throw[dollarFailed,"noSolutionFound"]];
 If[allRes[[1]]===dollarFailed,Flatten[allRes[[2]]],
 If[True(*allRes[[1,1,1]]>=allRes[[2,1,1]]*),Flatten[allRes[[1]]],Flatten[allRes[[2]]]]]]
-}
+}]
+
+qlEqnsqlZLB=resetRho[0.6]
+
 
 qlEqnsqlZLBNot={
  { 
@@ -214,6 +235,8 @@ If[And[allRes[[1]]===dollarFailed,allRes[[2]]===dollarFailed],Throw[dollarFailed
 If[allRes[[1]]===dollarFailed,Flatten[allRes[[2]]],
 If[True(*allRes[[1,1,1]]>=allRes[[2,1,1]]*),Flatten[allRes[[1]]],Flatten[allRes[[2]]]]]]
 }
+
+
 
 
 theDistqlZLB={{{ee,NormalDistribution[0,sigma]}}}//.paramSubs;
@@ -264,10 +287,17 @@ initVec=Transpose[{{99,etaVal,99,99,99,99,99,99}}]},
 With[{mats=FoldList[((anAugDR @@ Flatten[{#1[[Range[4]]],#2}]))&,initVec,draws]},Flatten/@mats]]
 
 
-iterateQLCSDRCE[anAugDRCE_Function,numPers_Integer,aPt_?MatrixQ]:=
+iterateQLCSDR[anAugDR_Function,numPers_Integer,initVec_?VectorQ]:=
+With[{draws=RandomVariate[0.0005*theDistqlZLB[[1,1,2]],numPers]},
 With[{mats=
-NestList[((anAugDR @@ Flatten[{#1[[Range[4]]],#2}]))&,initVec,draws]},
-Flatten/@mats]
+FoldList[((anAugDR @@ Flatten[{#1[[Range[4]]],#2}]))&,initVec,draws]},
+{draws,Flatten/@mats}]]
+
+iterateQLCSDRCE[anAugDRCE_Function,numPers_Integer,initVec_?VectorQ]:=
+With[{draws=RandomVariate[theDistqlZLB[[1,1,2]],numPers]},
+With[{mats=
+FoldList[((anAugDRCE @@ Flatten[{#1[[Range[4]]],#2}]))&,initVec,draws]},
+{draws,Flatten/@mats}]]
 
 chkBounded[anAugDRCE_Function,numPers_Integer,aPt_?MatrixQ,lim_?NumberQ]:=
 Module[{},
@@ -292,12 +322,23 @@ qlCSMinZ=Min/@Transpose[zz];
 qlCSMaxZ=Max/@Transpose[zz];
 {theEtas,thePis,theRs,theYs}=Transpose[theSimRes];
 
-Print["try 10 time SD for eta range"];
-qlCSMean=Append[qlCSMean,0];
-qlCSSD=Append[20*qlCSSD,sigVal];
-qlCSMinZ=Append[qlCSMinZ,-3];
-qlCSMaxZ=Append[qlCSMaxZ,3];
-qlCSvv=ArrayFlatten[{{ArrayFlatten[{{vv,{{0}}}}]},{{{0,1}}}}];
+{qlCSMean,qlCSSD,qlCSMinZ,qlCSMaxZ,qlCSvv}={qlCSMean=Append[qlCSMean,0],
+qlCSSD=Append[10*qlCSSD,sigVal],
+qlCSMinZ=Append[qlCSMinZ,-3],
+qlCSMaxZ=Append[qlCSMaxZ,3],
+qlCSvv=ArrayFlatten[{{ArrayFlatten[{{vv,{{0}}}}]},{{{0,1}}}}]}
+qlCSSDoriginal=qlCSSD
+
+adjustRange[scale_?NumberQ]:=
+Module[{},
+{qlCSMean,
+qlCSSD=ReplacePart[qlCSSD,{1->scale*qlCSSDoriginal[[1]],2->scale*qlCSSDoriginal[[2]]}],
+qlCSMinZ,
+qlCSMaxZ,
+qlCSvv}]
+
+
+{qlCSMean,qlCSSD,qlCSMinZ,qlCSMaxZ,qlCSvv}=adjustRange[10]
 (*
 *)
 

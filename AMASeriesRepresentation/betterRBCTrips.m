@@ -5,36 +5,36 @@ BeginPackage["betterRBCTrips`", { "AMASeriesRepresentation`", "ProtectedSymbols`
 
 
 
-anXBetterTrips::usage="for test input";
-anEpsBetterTrips::usage="for test input";
-anXEpsBetterTrips::usage="for test input";
-aZBetterTrips::usage="for test input";
-anXEpsZsBetterTrips::usage="for test input";
+anXBetterRBCTrips::usage="for test input";
+anEpsBetterRBCTrips::usage="for test input";
+anXEpsBetterRBCTrips::usage="for test input";
+aZBetterRBCTrips::usage="for test input";
+anXEpsZsBetterRBCTrips::usage="for test input";
 
-anXFlatBetterTrips::usage="for test input";
-anEpsFlatBetterTrips::usage="for test input";
-anXEpsFlatBetterTrips::usage="for test input";
-aZFlatBetterTrips::usage="for test input";
-anXEpsZsFlatBetterTrips::usage="for test input";
+anXFlatBetterRBCTrips::usage="for test input";
+anEpsFlatBetterRBCTrips::usage="for test input";
+anXEpsFlatBetterRBCTrips::usage="for test input";
+aZFlatBetterRBCTrips::usage="for test input";
+anXEpsZsFlatBetterRBCTrips::usage="for test input";
 
-probDimsBetterTrips::usage="for test input";
+probDimsBetterRBCTrips::usage="for test input";
 simpRBCExactDRBetterTrips::usage="simpRBCExactDR"
-betterTripsExactCondExp::usage="betterTripsExactCondExp"
-theDistBetterTrips::usage="theDist={{{ee,NormalDistribution[0,sigVal]}}};"
-thePFDistBetterTrips::usage="theDist={{{ee,PerfectForesight]}}};"
-linModBetterTrips::usage="linear model matrices for approx"
-aGSpecBetterTrips::usage="aGSpec={{1},1,{{4,kLow,kHigh},{3,thLow,thHigh},{3,sigLow,3*sigHigh}}}";
-eqnsCompiledBetterTrips::usage="model equations function"
-rbcEqnsBetterTrips::usage="model equations"
-eqnsEulerCompiledBetterTrips::usage="eqnsEulerCompiledBetterTrips"
-betterTripsExactXZ::usage="betterExactXZ"
-betterTripsExactZ::usage="betterExactZ"
-simulateBetterRBCExactTrips::usage="simulateBetterTripsRBCExact[numPers_Integer]"
-betterTripsMean::usage="betterTripsMean"
-betterTripsSD::usage="betterTripsSD"
-betterTripsvv::usage="betterTripsvv"
-betterTripsMinZ::usage="betterTripsMinZ"
-betterTripsMaxZ::usage="betterTripsMaxZ"
+betterRBCTripsExactCondExp::usage="betterRBCTripsExactCondExp"
+theDistBetterRBCTrips::usage="theDist={{{ee,NormalDistribution[0,sigVal]}}};"
+thePFDistBetterRBCTrips::usage="theDist={{{ee,PerfectForesight]}}};"
+linModBetterRBCTrips::usage="linear model matrices for approx"
+aGSpecBetterRBCTrips::usage="aGSpec={{1},1,{{4,kLow,kHigh},{3,thLow,thHigh},{3,sigLow,3*sigHigh}}}";
+eqnsCompiledBetterRBCTrips::usage="model equations function"
+rbcEqnsBetterRBCTrips::usage="model equations"
+eqnsEulerCompiledBetterRBCTrips::usage="eqnsEulerCompiledBetterRBCTrips"
+betterRBCTripsExactXZ::usage="betterExactXZ"
+betterRBCTripsExactZ::usage="betterExactZ"
+simulateBetterRBCExactTrips::usage="simulateBetterRBCTripsRBCExact[numPers_Integer]"
+betterRBCTripsMean::usage="betterRBCTripsMean"
+betterRBCTripsSD::usage="betterRBCTripsSD"
+betterRBCTripsvv::usage="betterRBCTripsvv"
+betterRBCTripsMinZ::usage="betterRBCTripsMinZ"
+betterRBCTripsMaxZ::usage="betterRBCTripsMaxZ"
 
 Begin["`Private`"] (* Begin Private Context *) 
 
@@ -62,7 +62,7 @@ theta[t]-E^(rho*Log[theta[t-1]] + eps[theta][t])
 }
 
 discMapEqns00=(Append[rbcEqns[[{1,2,3}]],
-(rbcEqns[[4]]/.{xx_-yy_->Log[xx]-Log[yy]})]/.{Log[betterTrips`Private`theta[zz__]]->lnTheta[zz],theta[xx__]->E^lnTheta[xx]})//PowerExpand
+(rbcEqns[[4]]/.{xx_-yy_->Log[xx]-Log[yy]})]/.{Log[betterRBCTrips`Private`theta[zz__]]->lnTheta[zz],theta[xx__]->E^lnTheta[xx]})//PowerExpand
 
 zfEqns=discMapEqns00[[{2,3,4}]]//PowerExpand
 discMapEqns01=Append[zfEqns/.t->t+1,discMapEqns00[[1]]]//PowerExpand
@@ -93,7 +93,7 @@ eps[theta][t]->epsVal
 }//.paramSubs)//N
 
 
-  rbcEqnsBetterTrips=eqnsCompiledBetterTrips={
+  rbcEqnsBetterRBCTrips=eqnsCompiledBetterRBCTrips={
  { {True&,
   Compile @@ {
 {
@@ -106,7 +106,7 @@ eps[theta][t]->epsVal
 cct + kkt - 1.*kktm1^(alpha)*thetat, 
 nlt - thetat/cct,
   thetat - ((N[E]^epsVal)*(thetatm1^(rho)))}/.paramSubs),"RuntimeOptions"->{"RuntimeErrorHandler"->Function[$Failed],"CatchMachineOverflow"->True,"CatchMachineUnderflow"->True}},
-   #2<=.1&},
+   True&},
  {True&,
   Compile @@ {
 {
@@ -119,11 +119,14 @@ nlt - thetat/cct,
 cct + kkt - 1.*kktm1^(alpha)*thetat, 
 nlt - thetat/cct,
   thetat - ((N[E]^epsVal)*(thetatm1^(rho)))}/.paramSubs),"RuntimeOptions"->{"RuntimeErrorHandler"->Function[$Failed],"CatchMachineOverflow"->True,"CatchMachineUnderflow"->True}},
-   #2>.1&}},defaultSelectorFunc}
+   True&}},
+Function[{aPt,allRes},
+If[And[allRes[[1]]===$Failed,allRes[[2]]===$Failed],Throw[$Failed,"noSolutionFound"]];
+If[allRes[[1]]===$Failed,Flatten[allRes[[2]]],Flatten[allRes[[1]]]]]}
 
 
 (*
-theFRExt01=genFRExtFunc[{4,1,4},linModBetterTrips,{genX0Z0Funcs[linModBetterTrips],2},eqnsCompiledBetterTrips,
+theFRExt01=genFRExtFunc[{4,1,4},linModBetterRBCTrips,{genX0Z0Funcs[linModBetterRBCTrips],2},eqnsCompiledBetterRBCTrips,
 "xVarRanges"->{{0.01,2},{0.01,2},{0.01,20},{0.85,1.3}}];
 
 causes error a
@@ -131,12 +134,12 @@ CompiledFunction::cfn:
    Numerical error encountered at instruction 2; proceeding with
      uncompiled evaluation.
 
-eqnsCompiledBetterTrips  @@ Flatten[{{1}, {0.0187324}, {1}, {1.1}, {0.293437}, {-0.0351748},      {7.51431}, {1.08125}, {0.232894}, {0.120986}, {3.96721}, 
+eqnsCompiledBetterRBCTrips  @@ Flatten[{{1}, {0.0187324}, {1}, {1.1}, {0.293437}, {-0.0351748},      {7.51431}, {1.08125}, {0.232894}, {0.120986}, {3.96721}, 
      {1.07709}, {-0.0124264}}]
 
 *)
 (*
-eqnsEulerCompiledBetterTrips=Compile @@ {
+eqnsEulerCompiledBetterRBCTrips=Compile @@ {
 {
 {cctm1,_Real},{kktm1,_Real},{nltm1,_Real},{thetatm1,_Real},
 {cct,_Real},{kkt,_Real},{nlt,_Real},{thetat,_Real},
@@ -189,21 +192,21 @@ Transpose[{{cct,kkt,tht/cct,tht}}]]]]]
 
 
 
-theDistBetterTrips={{{ee,NormalDistribution[0,sigma]}}}//.paramSubs;
-thePFDistBetterTrips={{{ee,PerfectForesight}}};
+theDistBetterRBCTrips={{{ee,NormalDistribution[0,sigma]}}}//.paramSubs;
+thePFDistBetterRBCTrips={{{ee,PerfectForesight}}};
 
 
 
 
 
-betterTripsExactCondExp = (*AMASeriesRepresentation`Private`*)makeREIterFunc[simpRBCExactDRBetterTrips,theDistBetterTrips]
+betterRBCTripsExactCondExp = (*AMASeriesRepresentation`Private`*)makeREIterFunc[simpRBCExactDRBetterTrips,theDistBetterRBCTrips]
 
 
 betterExactZ=
 Function[{cc, kk, nl, th, eps},
-With[{hm=getH[linModBetterTrips],pc=getPsiC[linModBetterTrips],pe=getPsiEps[linModBetterTrips],
+With[{hm=getH[linModBetterRBCTrips],pc=getPsiC[linModBetterRBCTrips],pe=getPsiEps[linModBetterRBCTrips],
 xt=Flatten[simpRBCExactDRBetterTrips[cc,kk,nl,th,eps]]},
-With[{xtp1=Flatten[betterTripsExactCondExp @@ xt]},
+With[{xtp1=Flatten[betterRBCTripsExactCondExp @@ xt]},
 hm.Transpose[{Join[{cc,kk,nl,th},xt,xtp1]}]-pc-pe*eps]]]
 
 betterExactXZ=
@@ -238,7 +241,7 @@ qmatSymbRE=Join[zfSymbRE,evcsSymbRE[[{1}]]];
 (*Print["computing and simplifying the symbolic b phi f etc"]*)
 {bmatSymbRE,phimatSymbRE,fmatSymbRE}=symbolicComputeBPhiF[hmatSymbRE,qmatSymbRE]//Simplify;
 
-linModBetterTrips={hmatSymbRE//N,bmatSymbRE // N, phimatSymbRE // N, 
+linModBetterRBCTrips={hmatSymbRE//N,bmatSymbRE // N, phimatSymbRE // N, 
     fmatSymbRE // N, psiepsSymbRE // N, 
     psicSymbRE // N, psiz // N,{}};
 		     
@@ -247,19 +250,19 @@ linModBetterTrips={hmatSymbRE//N,bmatSymbRE // N, phimatSymbRE // N,
 
 
     
-anXBetterTrips=Transpose[{{.2,.18,1.0,1.01}}];
-anEpsBetterTrips={{0.01}};
-anXEpsBetterTrips=Join[anXBetterTrips,anEpsBetterTrips]
-aZBetterTrips=Transpose[{{.1,.2,.3,.4}}]
-anXEpsZsBetterTrips=Join[anXEpsBetterTrips,aZBetterTrips];
+anXBetterRBCTrips=Transpose[{{.2,.18,1.0,1.01}}];
+anEpsBetterRBCTrips={{0.01}};
+anXEpsBetterRBCTrips=Join[anXBetterRBCTrips,anEpsBetterRBCTrips]
+aZBetterRBCTrips=Transpose[{{.1,.2,.3,.4}}]
+anXEpsZsBetterRBCTrips=Join[anXEpsBetterRBCTrips,aZBetterRBCTrips];
 
-anXFlatBetterTrips=anXBetterTrips//Flatten;
-anEpsFlatBetterTrips=anEpsBetterTrips//Flatten;
-anXEpsFlatBetterTrips=anXEpsBetterTrips//Flatten;
-aZFlatBetterTrips=aZBetterTrips//Flatten;
-anXEpsZsFlatBetterTrips=anXEpsZsBetterTrips//Flatten;
+anXFlatBetterRBCTrips=anXBetterRBCTrips//Flatten;
+anEpsFlatBetterRBCTrips=anEpsBetterRBCTrips//Flatten;
+anXEpsFlatBetterRBCTrips=anXEpsBetterRBCTrips//Flatten;
+aZFlatBetterRBCTrips=aZBetterRBCTrips//Flatten;
+anXEpsZsFlatBetterRBCTrips=anXEpsZsBetterRBCTrips//Flatten;
 
-probDimsBetterTrips={4,1,4};
+probDimsBetterRBCTrips={4,1,4};
 
 
 thVal=(theta//.ssSolnSubsRE//.(simpParamSubs//N))//N;
@@ -275,37 +278,37 @@ thHigh = 11/10;
 
 
 simulateBetterRBCExactTrips[numPers_Integer]:=
-With[{draws=RandomVariate[theDistBetterTrips[[1,1,2]],numPers],
+With[{draws=RandomVariate[theDistBetterRBCTrips[[1,1,2]],numPers],
 initVec={99,kVal,99,thVal}},
 FoldList[Flatten[simpRBCExactDRBetterTrips@@ Append[Flatten[#1],#2]]&,initVec,draws]]
 
-aGSpecBetterTrips={{1,3},2,{{6,kLow,kHigh},{10,thLow,thHigh},{6,sigLow,3*sigHigh}}};
+aGSpecBetterRBCTrips={{1,3},2,{{6,kLow,kHigh},{10,thLow,thHigh},{6,sigLow,3*sigHigh}}};
 	(*	
-	 aGSpecBetterTrips={{1,3},1,{{4,kLow,kHigh},{3,thLow,thHigh},{3,sigLow,3*sigHigh}}};*)
+	 aGSpecBetterRBCTrips={{1,3},1,{{4,kLow,kHigh},{3,thLow,thHigh},{3,sigLow,3*sigHigh}}};*)
 	(*
-	 aGSpecBetterTrips={{1,3},1,{{4,kLow,kHigh},{3,thLow,thHigh},{3,sigLow,sigHigh}}};
+	 aGSpecBetterRBCTrips={{1,3},1,{{4,kLow,kHigh},{3,thLow,thHigh},{3,sigLow,sigHigh}}};
 	 *)
 
    theRes=simulateBetterRBCExactTrips[200];
 justKT=theRes[[All,{2,4}]];
-betterTripsMean=Mean[justKT]
-betterTripsSD=StandardDeviation[justKT]
-normedRes=(#/betterTripsSD)&/@((#-betterTripsMean)&/@justKT)
+betterRBCTripsMean=Mean[justKT]
+betterRBCTripsSD=StandardDeviation[justKT]
+normedRes=(#/betterRBCTripsSD)&/@((#-betterRBCTripsMean)&/@justKT)
 {uu,ss,vv}=SingularValueDecomposition[normedRes];
 zz=normedRes .vv;
-betterTripsMinZ=Min/@Transpose[zz];
-betterTripsMaxZ=Max/@Transpose[zz];
+betterRBCTripsMinZ=Min/@Transpose[zz];
+betterRBCTripsMaxZ=Max/@Transpose[zz];
 {ig,theKs,ig,theThetas}=Transpose[theRes];
 
-betterTripsMean=Append[betterTripsMean,0]
-betterTripsSD=Append[betterTripsSD,sigVal]
-betterTripsMinZ=Append[betterTripsMinZ,-3]
-betterTripsMaxZ=Append[betterTripsMaxZ,3]
-betterTripsvv=ArrayFlatten[{{ArrayFlatten[{{vv,{{0},{0}}}}]},{{{0,0,1}}}}]
+betterRBCTripsMean=Append[betterRBCTripsMean,0]
+betterRBCTripsSD=Append[betterRBCTripsSD,sigVal]
+betterRBCTripsMinZ=Append[betterRBCTripsMinZ,-3]
+betterRBCTripsMaxZ=Append[betterRBCTripsMaxZ,3]
+betterRBCTripsvv=ArrayFlatten[{{ArrayFlatten[{{vv,{{0},{0}}}}]},{{{0,0,1}}}}]
 
 
 
-zPts=backXtoZ[Transpose[{theKs,theThetas,Table[0,{Length[theKs]}]}],betterTripsMean,betterTripsSD,betterTripsvv];Print["errBndLoc=",errBndLoc];
+zPts=backXtoZ[Transpose[{theKs,theThetas,Table[0,{Length[theKs]}]}],betterRBCTripsMean,betterRBCTripsSD,betterRBCTripsvv];Print["errBndLoc=",errBndLoc];
 
 
 

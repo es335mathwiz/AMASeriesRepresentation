@@ -1,5 +1,5 @@
 Print["reading canonicalNK.mth"]
-paramSubs= {beta->0.99, gamma$pi-> 2.0, gamma$y-> 0.0, 
+paramSubs= {beta->0.99, gamma$pi-> 1.5, gamma$y-> 0.25, 
 kappa-> 0.05, dpbar-> 1.005,
 Nrow->100,Ncol -> 100,ns -> 51,
 upLimPVec->0.995,lowLimPVec->0.9
@@ -66,8 +66,7 @@ kappa_?NumberQ,dpbar_?NumberQ},js_Integer]:=
 With[{ns=Length[PP]},
 Module[{xx,
     Rss = Log[dpbar/beta],
-    eyens = IdentityMatrix[ns],
-},
+    eyens = IdentityMatrix[ns]},
     H0 = 
 If[js==0,
 ArrayFlatten[{
@@ -82,20 +81,17 @@ ArrayFlatten[{
 {ArrayFlatten[{{-kappa*eyens,eyens}}]}}],
 ArrayFlatten[{
 {ArrayFlatten[{{eyejs,ConstantArray[0,{js,2*ns-js}]}}]},
-{ArrayFlatten[{{-kappa*eyens,eyens}}]}}]]]
-;Print[{"H0:",H0}];
+{ArrayFlatten[{{-kappa*eyens,eyens}}]}}]]];
     H1 = ArrayFlatten[{
 {ArrayFlatten[{{PP,PP}}]},
-{ArrayFlatten[{{ConstantArray[0,{ns,ns}],beta*PP}}]}}];Print[{"H1:",H1}];
+{ArrayFlatten[{{ConstantArray[0,{ns,ns}],beta*PP}}]}}];
     AA = H0-H1;
     BB=Join[ Rss+(eta[[Range[js]]]),Drop[eta,js],Table[0,{ns}]];
     xx = LinearSolve[AA,BB];
-	Print[{"xx:",xx,"BB",BB,"AA",AA}];
     yy = xx[[Range[ns]]];
     dp = Drop[xx,ns];
     notr = gamma$pi*dp+gamma$y*yy;
     nomr = Max[-Rss,#]&/@notr;
-Print[{"notr,nomr:",notr,nomr}];
 {yy,dp,notr,nomr}]]/;With[{ns=Length[eta]},And[0<=js<=ns,ns>=2,Dimensions[PP]=={Length[eta],Length[eta]}]]
 
 
@@ -104,8 +100,7 @@ solve$model[eta_?VectorQ,PP_?MatrixQ,
 params:{beta_?NumberQ,gamma$pi_?NumberQ,gamma$y_?NumberQ,
 kappa_?NumberQ,dpbar_?NumberQ}]:=
 Module[{ns=Length[PP],Rss = Log[dpbar/beta]},
-With[{theRes=theRes= solve$case[eta,PP,params,#]&/@ Range[0,ns]},
-Print[{"eta:",eta,theRes}//InputForm];
+With[{theRes=solve$case[eta,PP,params,#]&/@ Range[0,ns]},
 theRes]]
 
 checkLiftoff[aSoln_?VectorQ]:=
@@ -115,11 +110,13 @@ aSoln]
 
 
 (*{solution$type,yy,dp,notr,nomr}*)
-rhoVal=.91
+rhoVal=.6
 pp=(1+rhoVal)/2;
-ns=20
+ns=100
 PP=rouwenhorst[ns,pp,pp];
-eta=Range[-.02,0.02,0.04/(ns-1)]
+etastd=0.0035;
+psi=Sqrt[ns-1]*etastd;
+eta=Range[-psi,psi,2*psi/(ns-1)]
 hip=solve$model[eta,PP,params];
 
 

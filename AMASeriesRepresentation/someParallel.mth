@@ -7,7 +7,7 @@ local=First[StringSplit[Environment["HOSTNAME"],"."]]
 hosts[local]--
 Needs["SubKernels`RemoteKernels`"]
 
-math = "/opt/mathematica/11.0/Executables/MathKernel" <> 
+math = "/opt/mathematica/11.3/Executables/MathKernel" <> 
    " -wstp -linkmode Connect `4` -linkname `2` -subkernel -noinit >&  \
 /dev/null &";
 

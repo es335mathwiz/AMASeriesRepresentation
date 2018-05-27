@@ -25,20 +25,6 @@ Needs["AMASeriesRepresentation`"]
 ParallelNeeds["AMASeriesRepresentation`"]
 
 
-genCheckPt[{dr_Function,drce_Function},rhoVal_?NumberQ]:=
-Function[{etatm1,err,ig},
-With[{drApp=dr[etatm1,ig1,ig2,ig3,err]},
-With[{drceApp=drce@@ drApp[[Range[4]]]},
-With[{etat=drApp[[1,1]],pit=drApp[[2,1]],rrt=drApp[[3,1]],yyt=drApp[[4,1]],
-etatp1=drceApp[[1,1]],pitp1=drceApp[[2,1]],rrtp1=drceApp[[3,1]],yytp1=drceApp[[4,1]]},
-With[{eqn1=yyt - (yytp1 -rrt+pitp1+etatm1),
-eqn2=pit-(quasiLinear`Private`beta*pitp1+quasiLinear`Private`kappa*yyt)//.quasiLinear`Private`paramSubs,
-eqn3=etat -(quasiLinear`Private`rho*etatm1 +err)/.quasiLinear`Private`rho->rhoVal,
-eqn4nb=(rrt-quasiLinear`Private`gammaPi*pit-quasiLinear`Private`gammaY*yyt)//.quasiLinear`Private`paramSubs,
-eqn4b=(rrt-(-quasiLinear`Private`RR))//.quasiLinear`Private`paramSubs
-},
-{{etat,pit,rrt,yyt,etatp1,pitp1,rrtp1,yytp1},
-Flatten[{eqn1,eqn2,eqn3,eqn4nb,eqn4b}]}]]]]]
 
 
 

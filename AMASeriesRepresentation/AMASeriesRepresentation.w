@@ -477,6 +477,7 @@ numSteps_Integer}@}
 
 
 
+
 @d prepFindRootXInitBoth
 @{theXInit=Flatten[Apply[bothXZFuncs[[1,1]],Join[xLagArgs,eArgs]]],
 funcOfXtm1Eps=Unique["fNameXtm1Eps"],
@@ -1477,6 +1478,22 @@ Print["catchinevaluateTripleAddBraces:",{xArgs,val,tag}//InputForm];$Failed]]
 
 @}
 
+@d parallelMakeGenericInterpFuncsAndInterpDataUsage
+@{
+parallelMakeGenericInterpFuncsAndInterpData::usage="Usage"
+@}
+
+@d parallelMakeGenericInterpFuncsAndInterpData
+@{
+parallelMakeGenericInterpFuncsAndInterpData[@<rawTriples@>,
+backLookingInfo:{{_Integer,_,_}...},@<smolGSpec@>,
+genericInterp:(smolyakInterpolation|svmRegressionLinear|svmRegressionPoly|
+svmRegressionRBF|svmRegressionSigmoid),svmArgs:{_?NumberQ...}]:=
+Module[{},
+With[{interpData=parallelSmolyakGenInterpData[triples,smolGSpec]},
+{interpDataToFunc[interpData,backLookingInfo,smolGSpec,genericInterp,svmArgs],interpData}]]
+@}
+
 @d parallelMakeGenericInterpFuncs
 @{
 parallelMakeGenericInterpFuncs[@<rawTriples@>,
@@ -1631,6 +1648,7 @@ theFuncs]]
 @}
 
 
+
 \subsection{parallelNestGenericIterREInterp}
 
 just  and ADRCE
@@ -1676,13 +1694,44 @@ genericInterp:(smolyakInterpolation|svmRegressionLinear|
 svmRegressionPoly|svmRegressionRBF|svmRegressionSigmoid),
 svmArgs:{_?NumberQ...},opts:OptionsPattern[]]:=
 Module[{},
-NestWhile[Function[xx,parallelDoGenericIterREInterp[genFRExtFunc,linMod,
-{xx,numSteps},triples,smolGSpec,genericInterp,svmArgs,
+NestWhileList[Function[xx,parallelDoGenericIterREInterpAndInterpData[genFRExtFunc,linMod,
+{xx[[1]],numSteps},triples,smolGSpec,genericInterp,svmArgs,
 Apply[Sequence,FilterRules[{opts},
-Options[parallelDoGenericIterREInterp]]]]],justBothXZFuncs]]
+Options[parallelDoGenericIterREInterpAndInterpData]]]]],{justBothXZFuncs,0},
+(With[{theResNow=Norm[#1[[-1]]-#2[[-1]]]},
+Print["thenestwhiletest:",{#1,#2,theResNow}];(theResNow>10^-10)])&,2 ]]
 
 @}
 
+@d parallelDoGenericIterREInterpAndInterpDataUsage
+@{
+parallelDoGenericIterREInterpAndInterpData::usage="someday"
+@}
+
+@d parallelDoGenericIterREInterpAndInterpData
+@{
+parallelDoGenericIterREInterpAndInterpData[genFRExtFunc,
+	@<linMod@>,
+	@<bothXZFuncs@>,
+@<rawTriples@>,@<smolGSpec@>,
+genericInterp:(smolyakInterpolation|svmRegressionLinear|svmRegressionPoly|
+svmRegressionRBF|svmRegressionSigmoid),
+svmArgs:{_?NumberQ...},opts:OptionsPattern[]]:=
+With[{numX=Length[BB],numZ=Length[psiZ[[1]]]},
+tn=AbsoluteTime[];
+If[Length[Kernels[]]===0,LaunchKernels[]];reapRes=Reap[
+genFRExtFunc[{numX,numEps,numZ},linMod,bothXZFuncs[[{1,2}]],
+triples,Apply[Sequence,FilterRules[{opts},
+Options[genFRExtFunc]]]],"theFuncs"];
+Apply[DistributeDefinitions,Flatten[reapRes[[2]]]];
+With[{theFuncsAndInterpData=
+parallelMakeGenericInterpFuncsAndInterpData[
+reapRes[[1]],backLookingInfo,smolGSpec,
+genericInterp,svmArgs]},
+theFuncsAndInterpData]]
+
+
+@}
 
 \section{Regimes}
 \subsection{genRegimesBothX0Z0Funcs}
@@ -2491,6 +2540,8 @@ _?MatrixQ,_?MatrixQ,_?MatrixQ,
 @<genRegimesBothX0Z0FuncsUsage@>
 @<evaluateTriplesJustValsUsage@>
 @<genCheckPtUsage@>
+@<parallelMakeGenericInterpFuncsAndInterpDataUsage@>
+@<parallelDoGenericIterREInterpAndInterpDataUsage@>
 @}
 
 \subsection{Package Code}
@@ -2535,6 +2586,7 @@ _?MatrixQ,_?MatrixQ,_?MatrixQ,
 @<oneDimGridPts@>
 @<parallelSmolyakGenInterpData@>
 @<parallelMakeGenericInterpFuncs@>
+@<parallelDoGenericIterREInterpAndInterpData@>
 @<parallelDoGenericIterREInterp@>
 @<parallelNestGenericIterREInterp@>
 @<parallelMakeInterpFunc@>
@@ -2552,6 +2604,7 @@ _?MatrixQ,_?MatrixQ,_?MatrixQ,
 @<patternMatchCode@>
 @<evaluateTriplesJustVals@>
 @<genCheckPt@>
+@<parallelMakeGenericInterpFuncsAndInterpData@>
 @}
 
 

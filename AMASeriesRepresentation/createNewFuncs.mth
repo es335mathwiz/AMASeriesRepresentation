@@ -1,0 +1,59 @@
+$AMADIR = 
+  Switch[$OperatingSystem, "MacOSX", 
+   "~/git/AMASeriesRepresentation/AMASeriesRepresentation", "Windows",
+   "u:/git/AMASeriesRepresentation/AMASeriesRepresentation",
+"Unix", "/msu/scratch2/m1gsa00/git/AMASeriesRepresentation/AMASeriesRepresentation"];
+SetDirectory[$AMADIR];
+Get["tests/pathSetup.mth"]; 
+Needs["AMASeriesRepresentation`"];
+Needs["betterRBCFixCompSlack`"];
+
+X0Z0 = AMASeriesRepresentation`genBothX0Z0Funcs[
+   betterRBCFixCompSlack`linModBetterFixCompSlack];
+frFunc = AMASeriesRepresentation`genFRExtFunc[{7, 1, 7}, 
+   betterRBCFixCompSlack`linModBetterFixCompSlack, {X0Z0, 2}, 
+   betterRBCFixCompSlack`rbcEqnsBetterFixCompSlack];
+smolStuff = {ptErg, tfErg, plyErg, iplyErg, dplyErg} = 
+   AMASeriesRepresentation`smolyakInterpolationPrep[{1, 1, 
+     1}, {betterRBCFixCompSlack`betterRBCCSMean, 
+     betterRBCFixCompSlack`betterRBCCSSD, 
+     betterRBCFixCompSlack`betterRBCCSMinZ, 
+     betterRBCFixCompSlack`betterRBCCSMaxZ, 
+     betterRBCFixCompSlack`betterRBCCSvv}, 
+    betterRBCFixCompSlack`theDistBetterFixCompSlack];
+smolRngErg = 
+  Transpose[{betterRBCFixCompSlack`betterRBCCSMinZ, 
+    betterRBCFixCompSlack`betterRBCCSMaxZ}];
+toIg = betterRBCFixCompSlack`aGSpecBetterFixCompSlack[[1]];
+sgSpecErg = {toIg, smolRngErg, ptErg, tfErg, plyErg, iplyErg, 
+   1, {1, 1, 1}, {betterRBCFixCompSlack`betterRBCCSMean, 
+    betterRBCFixCompSlack`betterRBCCSSD, 
+    betterRBCFixCompSlack`betterRBCCSMinZ, 
+    betterRBCFixCompSlack`betterRBCCSMaxZ, 
+    betterRBCFixCompSlack`betterRBCCSvv}};q
+theRes = AMASeriesRepresentation`parallelMakeGenericInterpFuncsAndInterpData[
+   frFunc, {}, sgSpecErg, 
+   AMASeriesRepresentation`smolyakInterpolation, {}];
+Print[{"20",{Through[theRes[[1]] @@ # &[  betterRBCFixCompSlack`anXEpsFlatBetterFixCompSlack]],theRes[[2]]}}]
+
+
+
+
+{{drFunc, drCEFunc},interpD} = 
+  theThree = 
+   AMASeriesRepresentation`parallelDoGenericIterREInterpAndInterpData[
+    AMASeriesRepresentation`genFRExtFunc, 
+    betterRBCFixCompSlack`linModBetterFixCompSlack, {X0Z0, 2}, betterRBCFixCompSlack`rbcEqnsBetterFixCompSlack, 
+    sgSpecErg, AMASeriesRepresentation`smolyakInterpolation, {}];
+Print[{"12",Through[{drFunc,drCEFunc} @@ # &[betterRBCFixCompSlack`anXEpsFlatBetterFixCompSlack]],theThree[[-1]]}]
+
+
+
+  theThreeNow = 
+   AMASeriesRepresentation`parallelNestGenericIterREInterp[
+    AMASeriesRepresentation`genFRExtFunc, 
+    betterRBCFixCompSlack`linModBetterFixCompSlack, {X0Z0, 2}, betterRBCFixCompSlack`rbcEqnsBetterFixCompSlack, 
+    sgSpecErg, AMASeriesRepresentation`smolyakInterpolation, {}];
+Print[{"15",Through[{theThreeNow[[-1,1,1]],theThreeNow[[-1,1,2]]} @@ # &[betterRBCFixCompSlack`anXEpsFlatBetterFixCompSlack]],theThree[[-1]]}]
+
+iterateDRCE[drCEFunc,anXEpsBetterFixCompSlack,1]

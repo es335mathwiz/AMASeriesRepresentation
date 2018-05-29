@@ -146,10 +146,8 @@ With[{(*theRes=genLilXkZkFunc[linMod,fCon,
 Apply[Sequence,FilterRules[{opts},
 Options[genLilXkZkFunc]]]
 ],*)numZs=Length[theZs]},
-If[numZs>=1,Print[{"norm tailContrib:",Norm[MatrixPower[FF,Length[theZs]+1].tailContribution[FF,phi,theZs[[-1]]]]}]];
-If[numZs>=2,Print[{"norm zdiffs:",Norm[theZs[[-1]]-theZs[[-2]]]}]];
 If[And[OptionValue["addTailContribution"],numZs>=1],
-With[{tailCon=MatrixPower[FF,Length[theZs]+1].tailContribution[FF,phi,theZs[[-1]]]},Print[{"addingTailContribution:",Norm[tailCon]}];
+With[{tailCon=MatrixPower[FF,Length[theZs]+1].tailContribution[FF,phi,theZs[[-1]]]},
 genLilXkZkFunc[linMod,fCon+tailCon]],
 genLilXkZkFunc[linMod,fCon]]]
 ]
@@ -1698,8 +1696,7 @@ NestWhileList[Function[xx,parallelDoGenericIterREInterpAndInterpData[genFRExtFun
 {xx[[1]],numSteps},triples,smolGSpec,genericInterp,svmArgs,
 Apply[Sequence,FilterRules[{opts},
 Options[parallelDoGenericIterREInterpAndInterpData]]]]],{justBothXZFuncs,0},
-(With[{theResNow=Norm[#1[[-1]]-#2[[-1]]]},
-Print["thenestwhiletest:",{#1,#2,theResNow}];(theResNow>10^-10)])&,2 ]]
+(With[{theResNow=Norm[#1[[-1]]-#2[[-1]]]},(theResNow>10^-10)])&,2 ]]
 
 @}
 
@@ -2057,6 +2054,29 @@ Identity[initVec],numPers]},
 Apply[Join,
 (Map[Function[xx,Identity[xx[[Range[numX]]]]],iterated])]]]/;
 And[numPers>0]
+
+
+@}
+
+@d iterateDRCEMonitoredUsage
+@{
+iterateDRCEMonitored::usage="someday"
+@}
+@d iterateDRCEMonitored
+@{
+Options[iterateDRCEMonitored]={zdiffThreshold->10^-8}
+iterateDRCEMonitored[drExpFunc:(_Function|_CompiledFunction|_Symbol),
+initVec_?MatrixQ,maxPers_Integer]:=
+	With[{numX=Length[initVec]},
+With[{iterated=
+NestWhileList[Function[xx,((Transpose[{Flatten[Apply[drExpFunc,Flatten[xx]]]}]))],
+Join[initVec,ConstantArray[{0},{numX}]],With[{theDiff=
+Drop[#1-#2,numX]},
+Print["theDiff=",theDiff];
+Norm[theDiff]>10^(-10)]&,2,maxPers]},
+Apply[Join,
+(Map[Function[xx,Identity[xx[[Range[numX]]]]],iterated])]]]/;
+And[maxPers>0]
 
 
 @}
@@ -2542,6 +2562,7 @@ _?MatrixQ,_?MatrixQ,_?MatrixQ,
 @<genCheckPtUsage@>
 @<parallelMakeGenericInterpFuncsAndInterpDataUsage@>
 @<parallelDoGenericIterREInterpAndInterpDataUsage@>
+@<iterateDRCEMonitoredUsage@>
 @}
 
 \subsection{Package Code}
@@ -2605,6 +2626,7 @@ _?MatrixQ,_?MatrixQ,_?MatrixQ,
 @<evaluateTriplesJustVals@>
 @<genCheckPt@>
 @<parallelMakeGenericInterpFuncsAndInterpData@>
+@<iterateDRCEMonitored@>
 @}
 
 

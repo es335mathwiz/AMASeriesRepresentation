@@ -54,7 +54,8 @@ With[{approxVals=(approxDR @@ {ig,kk,ig,tt,ee})[[Range[4]]],
 bestVals=bestDR @@ {ig,kk,ig,tt,ee}},
 (-1)*Abs[Flatten[(bestVals-actualVals)]]]
 
-Options[approxAndBound]={"Traditional"->False,"addTailContribution"->False};
+Options[approxAndBound]={"Traditional"->False,"addTailContribution"->False,"maxForCEIters"->40,
+"normConvTol"->10^(-10),"maxNormsToKeep"->50};
 approxAndBound[approx_?VectorQ,theK_Integer,
 opts:OptionsPattern[]]:=
 Module[{},
@@ -63,10 +64,11 @@ prepSmol[approx,theK];
 {tm,ig}=Timing[
 theRes=parallelNestGenericIterREInterp[genFRExtFunc,linModBetterRBCTrips,
 {bothX0Z0,theK},rbcEqnsBetterRBCTrips,sgSpecErg,smolyakInterpolation,{},Apply[Sequence,FilterRules[{opts},Options[parallelNestGenericIterREInterp]]]]];
-{sgSpecErg,theRes}]
+{sgSpecErg,theRes,tm,Length[Kernels[]]}]
 
 
-Options[errBoundInfo]={"Traditional"->False,"addTailContribution"->False};
+Options[errBoundInfo]={"Traditional"->False,"addTailContribution"->False,"maxForCEIters"->40,
+"normConvTol"->10^(-10),"maxNormsToKeep"->50};
 errBoundInfo[approx:{_Integer,_Integer,_Integer},
 theK_Integer,numPts_Integer,
 opts:OptionsPattern[]]:=
@@ -78,7 +80,8 @@ theResT,worstT,tLoc,
 theResCActual,worstCActual,cActualLoc,
 theResKActual,worstkActual,kActualLoc,
 theResTActual,worstTActual,tActualLoc},
-{sgSpec,theRes}=approxAndBound[approx,theK,Apply[Sequence,FilterRules[{opts},Options[approxAndBound]]]];
+{sgSpec,theRes,tm,kerns}=approxAndBound[approx,theK,Apply[Sequence,FilterRules[{opts},Options[approxAndBound]]]];
+Print["done approxAndBound",approx,tm,kerns];
 pts=sgSpec[[3]];
 {vals,phivals}=genCheckPt[linModBetterRBCTrips,
 {theRes[[-1,1,1]],theRes[[-2,1,2]]},rbcEqnsBetterRBCTrips];
@@ -121,3 +124,17 @@ worstTActual=-pickBestMSNTO[theResTActual];
 tActualLoc=MSNTOMinimizer[theResTActual];
 {{approx,theK,numPts,{opts}},{worstC,worstK,worstT},{cLoc,kLoc,tLoc},
 {worstCActual,worstKActual,worstTActual},{cActualLoc,kActualLoc,tActualLoc}}]
+
+
+
+
+Options[actErrCP]={"Traditional"->False}
+actErrCP[forDR_Function,{bothErrStr_String,acterrLoc_List,errBndLoc_List},
+zPts_List,theName_String,opts:OptionsPattern[]]:=
+Module[{},
+ContourPlot[
+Norm[actualErrs[forDR,
+backZtoX[{{z1,z2,tryEps}},betterRBCTripsMean,betterRBCTripsSD,betterRBCTripsvv][[1]]]],
+{z1,betterRBCTripsMinZ[[1]],betterRBCTripsMaxZ[[1]]},{z2,betterRBCTripsMinZ[[2]],betterRBCTripsMaxZ[[2]]},PlotRange->All,PlotLegends->Automatic,PlotLabel->StringReplace[theName,"Iters"->"\nIters"
+]<>bothErrStr,
+Epilog->{PointSize[0.05],Green,Point[acterrLoc[[{1,2}]]],PointSize[0.025],Orange,Point[errBndLoc[[{1,2}]]],PointSize[0.0125],Black,Point[#]&/@zPts[[All,{1,2}]]},PlotRangeClipping->False]]

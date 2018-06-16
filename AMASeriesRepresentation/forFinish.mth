@@ -40,8 +40,8 @@ Get["finishPaper.mth"]
 ParallelEvaluate[Get["finishPaper.mth"]]
 tval=True;
 Table[With[{theResNow=Prepend[Timing[errBoundInfo[{ii,jj,kk},
-theK,numPts,"addTailContribution"->tval]],Length[Kernels[]]]},PutAppend[theResNow,"someResultsTrue.mth"];Print[{"theResNow=",theResNow}];theResNow],{kk,1,5},{jj,1,5},{ii,1,5},
-{theK,20,20,10},{numPts,30,30,10}]
+theK,numPts,"addTailContribution"->tval]],Length[Kernels[]]]},PutAppend[theResNow,"someResultsTrue.mth"];Print[{"theResNow=",theResNow}];theResNow],{kk,1,1},{jj,1,1},{ii,1,1},
+{theK,5,5,10},{numPts,30,30,10}]
 
 
 Quit

@@ -308,7 +308,7 @@ betterRBCTripsvv=ArrayFlatten[{{ArrayFlatten[{{vv,{{0},{0}}}}]},{{{0,0,1}}}}]
 
 
 
-zPts=backXtoZ[Transpose[{theKs,theThetas,Table[0,{Length[theKs]}]}],betterRBCTripsMean,betterRBCTripsSD,betterRBCTripsvv];Print["errBndLoc=",errBndLoc];
+zPts=backXtoZ[Transpose[{theKs,theThetas,Table[0,{Length[theKs]}]}],betterRBCTripsMean,betterRBCTripsSD,betterRBCTripsvv];
 
 
 

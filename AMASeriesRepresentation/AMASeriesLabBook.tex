@@ -18,6 +18,31 @@
 
 
 \mainmatter
+\begin{itemize}
+\item \href{https://orgmode.org/manual/Structure-editing.html}{org editing}
+\item \href{http://ergoemacs.org/emacs/emacs_package_system.html}{emacs package system}
+\item org-meta-return doesn't seem to be defined
+\end{itemize}
+
+
+
+\labday{Wednesday May 30, 2018}
+
+\begin{itemize}
+\item convergence problems when using delta in collocation solutions occurs at specific collocation points
+\item probably conditional expectation at those points goes out of the grid
+\includegraphics{duh.pdf}
+\item need to distinguish between divergent and non convergent solutions
+\item should monitor evolution of the solution for the worst few.  if just bouncing around marginally time to stop.  if consistently moving away should stop
+\item probably just do time series regression and test for null of zero coefficients
+\end{itemize}
+
+
+\labday{Monday May 28, 2018}
+
+\begin{itemize}
+\item \href{ssh ublm1 /var/appl/matlmd/scripts/mathlm status}{math icence status}
+\end{itemize}
 \labday{Monday May 21, 2018}
 
 \begin{itemize}
@@ -41,7 +66,12 @@
 
 
 \begin{itemize}
-\item { docker run   -u root   --rm   -d   -p 8080:8080  -p 50000:50000  -v jenkins-data:/var/jenkins_home   -v /var/run/docker.sock:/var/run/docker.sock   jenkinsci/blueocean }{jenkins installation}
+\item 
+
+\begin{verbatim}
+{ docker run   -u root   --rm   -d   -p 8080:8080  -p 50000:50000  -v jenkins-data:/var/jenkins_home   -v /var/run/docker.sock:/var/run/docker.sock   jenkinsci/blueocean }{jenkins installation}
+
+\end{verbatim}
 \end{itemize}
 
 \labday{Thursday April 21, 2018}

@@ -1214,7 +1214,8 @@ parallelNestGenericIterREInterp::usage=
 
 
 
-Options[parallelNestGenericIterREInterp]={"xVarRanges"->{},"Traditional"->False,"addTailContribution"->False}
+Options[parallelNestGenericIterREInterp]={"xVarRanges"->{},"Traditional"->False,"addTailContribution"->False,"maxForCEIters"->Infinity,
+"normConvTol"->10^(-10),"maxNormsToKeep"->50}
 
 parallelNestGenericIterREInterp[genFRExtFunc,@<linMod@>,
 @<XZFuncs@>,@<eqnsFunc@>,@<smolGSpec@>,
@@ -1487,9 +1488,14 @@ parallelMakeGenericInterpFuncsAndInterpData[@<rawTriples@>,
 backLookingInfo:{{_Integer,_,_}...},@<smolGSpec@>,
 genericInterp:(smolyakInterpolation|svmRegressionLinear|svmRegressionPoly|
 svmRegressionRBF|svmRegressionSigmoid),svmArgs:{_?NumberQ...}]:=
-Module[{},
+Module[{},tn=AbsoluteTime[];
 With[{interpData=parallelSmolyakGenInterpData[triples,smolGSpec]},
-{interpDataToFunc[interpData,backLookingInfo,smolGSpec,genericInterp,svmArgs],interpData}]]
+     Print["pmg1:",AbsoluteTime[]-tn];     Sow[AbsoluteTime[]-tn,"pmg1"];
+tn=AbsoluteTime[];
+With[{outgoing=
+{interpDataToFunc[interpData,backLookingInfo,smolGSpec,genericInterp,svmArgs],interpData}},
+     Print["pmg2:",AbsoluteTime[]-tn];Sow[AbsoluteTime[]-tn,"pmg2"];
+outgoing]]]
 @}
 
 @d parallelMakeGenericInterpFuncs
@@ -1507,6 +1513,7 @@ backLookingInfo:{{_Integer,_,_}...},@<smolGSpec@>,
 genericInterp:(smolyakInterpolation|svmRegressionLinear|svmRegressionPoly|
 svmRegressionRBF|svmRegressionSigmoid),
 svmArgs:{_?NumberQ...}]:=
+Module[{},tn=AbsoluteTime[];
 With[{numArgs=Length[smolPts[[1]]]},
 With[{numFuncs=Length[interpData[[1]]],
 funcArgs=Table[Unique["f03Args"],{numArgs}],theXs=Table[xx[ii],{ii,numArgs}]},
@@ -1517,6 +1524,8 @@ ParallelMap[Function[funcIdx,
 With[{theInterps=genericInterp[interpData[[All,funcIdx]],smolGSpec,svmArgs]},
 With[{smolApp=theInterps},
 smolApp]]],Range[numFuncs]]},
+Print["intdattofunc1:",AbsoluteTime[]-tn];
+Sow[AbsoluteTime[]-tn,"intdattofunc1"];
 With[
 {applied=Transpose[{ParallelMap[notApply[#,funcArgs]/.funcSubs&,
 Map[First,interpFuncList]]}],
@@ -1531,9 +1540,13 @@ ReplacePart[
 	Function[xxxxxxx, appliedExp],
 		{1->Drop[longFuncArgs,-numEps]}]/.notApply->Apply
 }},
+With[{outgoing=
 {replaceEqnOrExp[thePair[[1]],longFuncArgs,2,backLookingInfo],
-replaceEqnOrExp[thePair[[2]],Drop[longFuncArgs,-numEps],3,backLookingInfo]}
-]]]]]]
+replaceEqnOrExp[thePair[[2]],Drop[longFuncArgs,-numEps],3,backLookingInfo]}},
+Print["intdattofunc2:",AbsoluteTime[]-tn];
+Sow[AbsoluteTime[]-tn,"intdattofunc2"];
+outgoing
+]]]]]]]]
 
 
 
@@ -1555,12 +1568,14 @@ With[{theVals=
 ParallelTable[evaluateTriple[aTriple,Flatten[aPt]],
 {aPt,filledPts},{aTriple,triples[[1]]}]},
 With[{toWorkOn={filledPts,theVals}//Transpose},
+tn=AbsoluteTime[];
 With[{interpData=
 ParallelMap[With[{baddy=#},Catch[
 Apply[selectorFunc,#],
 _,Function[{val,tag},Print["catchsmolGenInterp: aborting",
 {val,tag,baddy,triples,filledPts}//InputForm];
 Abort[]]]]&,toWorkOn]},
+Print["psgid:",AbsoluteTime[]-tn];Sow[AbsoluteTime[]-tn,"psgid"];
 interpData]]]]]
 
 @}
@@ -1692,13 +1707,38 @@ genericInterp:(smolyakInterpolation|svmRegressionLinear|
 svmRegressionPoly|svmRegressionRBF|svmRegressionSigmoid),
 svmArgs:{_?NumberQ...},opts:OptionsPattern[]]:=
 Module[{},
-NestWhileList[Function[xx,parallelDoGenericIterREInterpAndInterpData[genFRExtFunc,linMod,
+NestWhileList[Function[xx,
+parallelDoGenericIterREInterpAndInterpData[genFRExtFunc,linMod,
 {xx[[1]],numSteps},triples,smolGSpec,genericInterp,svmArgs,
 Apply[Sequence,FilterRules[{opts},
 Options[parallelDoGenericIterREInterpAndInterpData]]]]],{justBothXZFuncs,0},
-(With[{theResNow=Norm[#1[[-1]]-#2[[-1]]]},(theResNow>10^-10)])&,2 ]]
+(With[{theResNow=Norm[#1[[-1]]-#2[[-1]]]},
+Print[{"norm=",theResNow,
+With[{lookey=
+Map[Function[xxx,Max[Abs[xxx]]],#1[[-1]]-#2[[-1]]]},
+getWorstValsAndLocs[lookey,OptionValue["maxNormsToKeep"]]]}];(theResNow>OptionValue["normConvTol"])])&,2,OptionValue["maxForCEIters"]]]
+
+
+
+reNormTime[]:=AbsoluteTime[]/(10^9)
 
 @}
+
+@d getWorstValsAndLocsUsage
+@{
+getWorstValsAndLocs::usage="someday"
+
+
+@}
+@d getWorstValsAndLocs
+@{
+
+getWorstValsAndLocs[theVals_?VectorQ,maxKeep_Integer]:=
+With[{toKeep=Min[Length[theVals],maxKeep]},
+{Ordering[theVals][[-Range[toKeep]]],theVals[[Ordering[theVals][[-Range[toKeep]]]]]}]
+
+@}
+
 
 @d parallelDoGenericIterREInterpAndInterpDataUsage
 @{
@@ -1720,11 +1760,14 @@ If[Length[Kernels[]]===0,LaunchKernels[]];reapRes=Reap[
 genFRExtFunc[{numX,numEps,numZ},linMod,bothXZFuncs[[{1,2}]],
 triples,Apply[Sequence,FilterRules[{opts},
 Options[genFRExtFunc]]]],"theFuncs"];
+Print[{"dogen first time=",AbsoluteTime[]-tn}];tn=AbsoluteTime[];Sow[AbsoluteTime[]-tn,"firstDoGen"];
 Apply[DistributeDefinitions,Flatten[reapRes[[2]]]];
+Print[{"dogen mid time=",AbsoluteTime[]-tn}];tn=AbsoluteTime[];Sow[AbsoluteTime[]-tn,"midDoGen"];
 With[{theFuncsAndInterpData=
 parallelMakeGenericInterpFuncsAndInterpData[
 reapRes[[1]],backLookingInfo,smolGSpec,
 genericInterp,svmArgs]},
+Print[{"dogen second time=",AbsoluteTime[]-tn}];Sow[AbsoluteTime[]-tn,"secondDoGen"];
 theFuncsAndInterpData]]
 
 
@@ -2563,6 +2606,7 @@ _?MatrixQ,_?MatrixQ,_?MatrixQ,
 @<parallelMakeGenericInterpFuncsAndInterpDataUsage@>
 @<parallelDoGenericIterREInterpAndInterpDataUsage@>
 @<iterateDRCEMonitoredUsage@>
+@<getWorstValsAndLocsUsage@>
 @}
 
 \subsection{Package Code}
@@ -2627,6 +2671,7 @@ _?MatrixQ,_?MatrixQ,_?MatrixQ,
 @<genCheckPt@>
 @<parallelMakeGenericInterpFuncsAndInterpData@>
 @<iterateDRCEMonitored@>
+@<getWorstValsAndLocs@>
 @}
 
 

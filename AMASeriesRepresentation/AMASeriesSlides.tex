@@ -4,7 +4,7 @@
 %\usepackage{tikz}
 %\usetikzlibrary{shapes,arrows}
 \mode<presentation>{}
-\usepackage{beamerthemeshadow}
+%\usepackage{beamerthemeshadow}
 %\let\definition\relax
 \let\theorem\relax
 \input{../../paperProduction/occBind/docs/AMArepresentationNewCmds}
@@ -37,8 +37,16 @@ Nonlinear Dynamic Stochastic Model Solutions:  Error Bounds and a New Solution A
 \end{frame}
 
 \subsection{Introduction}
-\label{sec:introduction}
-
+  \frametitle{Introduction}
+\label{sec:introduction0}
+\begin{frame}
+  \frametitle{Introduction}
+  \begin{itemize}
+  \item Novel representation for {\bf Bounded Time Invariant Maps}
+  \item This {\bf Series Representation} plays and essential role in an algorithm for solving {\bf nonlinear} models with {\bf occasionally binding constraints} and/or {\bf regime switching}
+  \item A {\bf robust} way to implement something similar to {\bf parameterized expectations}
+  \end{itemize}
+\end{frame}
 
 \begin{frame}
   \frametitle{Introduction}
@@ -48,11 +56,13 @@ Nonlinear Dynamic Stochastic Model Solutions:  Error Bounds and a New Solution A
 \begin{gather}
 \eqnFuncSysI{i}\equiv \eqnFuncSysIExpl{i} \label{eqnGates}
 \end{gather}
-\item Boolean valued gates, $\preGate_i$ $\postGate_i$. 
+\item Boolean valued gates, $\preGate_i\allArgs$ $\postGate_i\allArgs$,
+$\lastGate_i\allArgs$. 
 \item Model equations, $\eqnFunc_i$,  
-\item ``Auxiliary variables'' if necessary
+\item ``Auxiliary variables'' as necessary
 \item Exhaustive and mutually exclusive determining the solution  $x_t\tArg$
-\item $M$ deterministic and parallelizable equation systems
+\item Employs a global projection method
+\item Stochastic system leads to a deterministic and parallelizable equation systems
 \end{itemize}
 }
 \end{frame}
@@ -111,7 +121,7 @@ Nonlinear Dynamic Stochastic Model Solutions:  Error Bounds and a New Solution A
 \end{frame}
 
 \begin{frame}
-  \frametitle{Related Work}
+  \frametitle{Some Related Work on Solution Algorithms}
   \begin{itemize}
 \item Similar in spirit to Parameterized Expectations\cite{haan90:_solvin_stoch}
 \item Both \cite{holden15:_exist_dsge} and  \cite{guerrieri15:_occbin}
@@ -132,9 +142,9 @@ Nonlinear Dynamic Stochastic Model Solutions:  Error Bounds and a New Solution A
   \item Polynomial interpolation highly parallelizable
   \item Model specification: 
     \begin{itemize}
-    \item Very general 
-\item Deterministic 
-    \item Parallelizable 
+    \item Very general  but leads to 
+\item deterministic computations that are 
+    \item highly parallelizable 
     \end{itemize}
   \end{itemize}
 \end{frame}
@@ -146,7 +156,7 @@ Nonlinear Dynamic Stochastic Model Solutions:  Error Bounds and a New Solution A
 \section{A New Series Representation For  Bounded Time Series}
 \label{sec:newseries}
 
-\subsection{Linear Reference Models and a Formula for  ``Anticipated Shocks''}
+\subsection{A Linear Reference Models and a Formula for  ``Anticipated Shocks''}
 \label{sec:linref}
 
 
@@ -182,7 +192,7 @@ x_t=B x_{t-1} + \phi \psi_\epsilon \epsilon + (I - F)^{-1} \phi \psi_c
   \frametitle{Fully Anticipated Shocks}
 {\small
 \begin{theorem}
-Arbitrary but bounded path
+For any bounded path
  \begin{gather*}
    \xWOarg_t \in{R^L}\,\text{ with }\,\someNorm{\xWOarg_t}  \le \bar{\mathcal{X}}\,\,\,\,\,\forall t> 0 
 \intertext{ define  $  z_{t} \equiv H_{-1} \xWOarg_{t-1} +  H_0 \xWOarg_{t} +  H_1 \xWOarg_{t+1}   $ then }
@@ -237,7 +247,11 @@ x_{3,t}=\epsilon_t
   \caption{Arbitrary Bounded Time Series Paths and Corresponding $z_{i,t}$ values}\label{arbpaths}
 \end{figure}
 
-
+\begin{itemize}
+\item the generated paths can depend on $x_{t-1},\epsilon_t$
+  
+\item apply the formula pointwise to get $z_t(x_{t-1},\epsilon_t)$
+\end{itemize}
 
 \end{frame}
 
@@ -521,7 +535,7 @@ F=
 \section{Computing Model Solution Error Bounds}
 \label{sec:solnerrorbounds}
 
-\subsection{The Formula Derivation}
+\subsection{The Error Bound Formula Derivation}
 \label{sec:errorformula}
 \begin{frame}
   \frametitle{Model Definitions}
@@ -532,7 +546,8 @@ F=
 \eqnFuncSysI{i}\equiv \eqnFuncSysIExpl{i} 
 \end{gather*}
 \item a set of model equations, $\eqnFunc_i$, 
-\item  a Boolean valued gate, $\preGate_i$, $\postGate_i$. 
+\item  a Boolean valued gate, $\preGate_i$, $\postGate_i$,
+$\lastGate_i$. 
 \item exhaustive and mutually exclusive equation systems 
   \begin{itemize}
   \item complementary slackness conditions 
@@ -674,7 +689,7 @@ I_t-(K_t-(1-d_1)k_{t-1})\\
 
 
 \begin{frame}
-  \frametitle{Derivation Continued}
+  \frametitle{Error Bound Formula Derivation}
   
 {\small
 
@@ -712,7 +727,7 @@ E_tx^\star_{t+1}=G^\star(g^\star(x_{t-1},\epsilon_t))\\
   
 Now consider a proposed solution for the model,
  $x^p_t=g^p(x_{t-1},\epsilon_t)$ define
-$G^p(x)\equiv\expct{g^p(x,\epsilon)}$  so that 
+$G^p(x)\equiv\expct{g^p(x,\epsilon)}$  with 
   \begin{gather}
 E_tx_{t+1}=G^p(g^p(x_{t-1},\epsilon_t))\\
 \eulerE_t(x_{t-1},\epsilon)\equiv
@@ -829,7 +844,7 @@ E_tx_{t+1}=G^p(g^p(x_{t-1},\epsilon_t))\\
 \item Given a proposed model solution $x_t=\xWOarg^p\tArg$ compute $\XWOarg^p(x_{t-1})\equiv \expct{\xWOarg^p\tArg}$. 
 \item we will use a linear reference model $\linMod  \equiv \linModMats$ 
 to construct a series of $\zpWOarg$ functions that improve the accuracy of the proposed solution.
-\end{itemize}
+\end{itemize}<
 }
 \end{frame}
 \begin{frame}
@@ -871,26 +886,26 @@ x_{t-1}\\ \xpWarg\\ \XpWOarg(\xWarg)
 }
 \end{frame}
 
-\begin{frame}
-  \includegraphics[width=2in]{resDir/forBetterRBC--1,1,1-Iters30theK0host-MacBook-Pro-2numKern2Trad.pdf}  
-  \includegraphics[width=2in]{resDir/forBetterRBC--1,1,1-Iters30theK0host-MacBook-Pro-2numKern2ApproxTrad.pdf}
-\end{frame}
+%% \begin{frame}
+%%   \includegraphics[width=2in]{resDir/forBetterRBC--1,1,1-Iters30theK0host-MacBook-Pro-2numKern2Trad.pdf}  
+%%   \includegraphics[width=2in]{resDir/forBetterRBC--1,1,1-Iters30theK0host-MacBook-Pro-2numKern2ApproxTrad.pdf}
+%% \end{frame}
 
-\begin{frame}
-    \includegraphics[width=2in]{resDir/forBetterRBC--1,1,1-Iters30theK0host-MacBook-Pro-2numKern2Approx.pdf}
-  \includegraphics[width=2in]{resDir/forBetterRBC--1,1,1-Iters30theK0host-MacBook-Pro-2numKern2.pdf}
+%% \begin{frame}
+%%     \includegraphics[width=2in]{resDir/forBetterRBC--1,1,1-Iters30theK0host-MacBook-Pro-2numKern2Approx.pdf}
+%%   \includegraphics[width=2in]{resDir/forBetterRBC--1,1,1-Iters30theK0host-MacBook-Pro-2numKern2.pdf}
 
-\end{frame}
-\begin{frame}
-  \includegraphics[width=2in]{resDir/forBetterRBC--1,1,1-Iters30theK30host-MacBook-Pro-2numKern2Approx.pdf}
-  \includegraphics[width=2in]{resDir/forBetterRBC--1,1,1-Iters30theK30host-MacBook-Pro-2numKern2.pdf}
+%% \end{frame}
+%% \begin{frame}
+%%   \includegraphics[width=2in]{resDir/forBetterRBC--1,1,1-Iters30theK30host-MacBook-Pro-2numKern2Approx.pdf}
+%%   \includegraphics[width=2in]{resDir/forBetterRBC--1,1,1-Iters30theK30host-MacBook-Pro-2numKern2.pdf}
 
-\end{frame}
+%% \end{frame}
 
-\begin{frame}
-    \includegraphics[width=2in]{resDir/forBetterRBC--3,3,3-Iters20theK20numKern2.pdf}
+%% \begin{frame}
+%%     \includegraphics[width=2in]{resDir/forBetterRBC--3,3,3-Iters20theK20numKern2.pdf}
 
-\end{frame}
+%% \end{frame}
 \subsection{{Some Algorithmic Details}}
 
 

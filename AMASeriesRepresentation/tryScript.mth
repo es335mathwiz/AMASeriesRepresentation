@@ -51,6 +51,6 @@ ParallelEvaluate[Get["finishPaper.mth"]]
 
 Get["finishPaper.mth"]
 theResNow=Prepend[AbsoluteTiming[errBoundInfo[theArgs[[{1,2,3}]],theArgs[[4]],theArgs[[5]],"addTailContribution"->theArgs[[6]]]],Length[Kernels[]]];
-PutAppend[theResNow,"nowResults"<>ToString[theArgs[[6]]]<>".mth"];
+PutAppend[theResNow,"anotherNowResults"<>ToString[theArgs[[6]]]<>".mth"];
 Print[{"theResNow=",theResNow}];
 Quit

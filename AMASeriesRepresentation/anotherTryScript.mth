@@ -1,9 +1,11 @@
-(*Limits Mathematica to requested resources*)
-Unprotect[$ProcessorCount];(*$ProcessorCount = 20;*)
-Print["pcount=",$ProcessorCount]
+Print[{$CommandLine,$ScriptCommandLine,$ScriptInputString}]
+theArgs=ToExpression[Flatten[StringSplit[Drop[$ScriptCommandLine,1],","]]]
+Print[theArgs]
+Print["more"]
+
 
 sjn=Environment["SLURM_JOB_NODELIST"]
-hosts=If[sjn==$Failed,0,Counts[StringSplit[sjn,","]]]
+hosts=If[sjn===$Failed,0,Counts[StringSplit[sjn,","]]]
 Print["sjn=",sjn,"<<<<"]
 local=$MachineName
 Print["local=",local,"<<<<"]
@@ -29,6 +31,14 @@ kerns = LaunchKernels[remote]
 Print["pre eval"]
 ParallelEvaluate[$MachineName]
 Print["post eval"]
+
+
+Print["hosts=",hosts];
+Print[remote // InputForm]
+kerns = LaunchKernels[remote]
+Print["pre eval"]
+ParallelEvaluate[$MachineName]
+Print["post eval"]
 (*Get["JavaGraphics`"]*)
 ParallelEvaluate[SetDirectory["/msu/scratch2/m1gsa00/git/AMASeriesRepresentation/AMASeriesRepresentation"]]
 Get["tests/pathSetup.mth"]
@@ -38,10 +48,8 @@ Needs["AMASeriesRepresentation`"]
 ParallelNeeds["AMASeriesRepresentation`"]
 Get["finishPaper.mth"]
 ParallelEvaluate[Get["finishPaper.mth"]]
-tval=True;
-Table[With[{theResNow=Prepend[Timing[errBoundInfo[{ii,jj,kk},
-theK,numPts,"addTailContribution"->tval]],Length[Kernels[]]]},PutAppend[theResNow,"someResultsTrue.mth"];Print[{"theResNow=",theResNow}];theResNow],{kk,1,1},{jj,1,1},{ii,1,1},
-{theK,5,5,10},{numPts,30,30,10}]
-
-
+Get["finishPaper.mth"]
+theResNow= Reap[Reap[Reap[Reap[Reap[Reap[Reap[approxAndBound[theArgs[[{1,2,3}]],theArgs[[4]]],"firstDoGen"],"secondDoGen"],"psgid"],"pmg1"],"pmg2"],"intdattofunc1"],"intdattofunc2"]
+PutAppend[theResNow,"whatNowResults02"<>ToString[theArgs[[6]]]<>".mth"];
+Print[{"theResNow=",theResNow}];
 Quit

@@ -264,8 +264,8 @@ Append[Join[{999,kk,999,tt},xt,xtp1],ee]]]]
 
 dirNameString[]:=
 Module[{},
-aDir="resDir"<>"-host-"<>$MachineName<>"numKern"<>ToString[numKern]<>"-"<>ToString[Round[AbsoluteTime[]]]<>"/";
-CreateDirectory[aDir]]
+aDir="resDir"<>"-host-"<>$MachineName<>"numKern"<>ToString[numKern]<>"-"<>ToString[Round[AbsoluteTime[]]]<>"/"(*;
+CreateDirectory[aDir]*)]
 
 fNameString[approx_?VectorQ,iters_Integer,theK_Integer,numKern_Integer]:=
 Module[{},

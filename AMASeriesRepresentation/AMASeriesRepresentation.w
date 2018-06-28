@@ -1490,11 +1490,11 @@ genericInterp:(smolyakInterpolation|svmRegressionLinear|svmRegressionPoly|
 svmRegressionRBF|svmRegressionSigmoid),svmArgs:{_?NumberQ...}]:=
 Module[{},tn=AbsoluteTime[];
 With[{interpData=parallelSmolyakGenInterpData[triples,smolGSpec]},
-     Print["pmg1:",AbsoluteTime[]-tn];     Sow[AbsoluteTime[]-tn,"pmg1"];
+     Print[NKs[],"pmg1:",AbsoluteTime[]-tn];     Sow[AbsoluteTime[]-tn,"pmg1"];
 tn=AbsoluteTime[];
 With[{outgoing=
 {interpDataToFunc[interpData,backLookingInfo,smolGSpec,genericInterp,svmArgs],interpData}},
-     Print["pmg2:",AbsoluteTime[]-tn];Sow[AbsoluteTime[]-tn,"pmg2"];
+     Print[NKs[],"pmg2:",AbsoluteTime[]-tn];Sow[AbsoluteTime[]-tn,"pmg2"];
 outgoing]]]
 @}
 
@@ -1524,8 +1524,8 @@ ParallelMap[Function[funcIdx,
 With[{theInterps=genericInterp[interpData[[All,funcIdx]],smolGSpec,svmArgs]},
 With[{smolApp=theInterps},
 smolApp]]],Range[numFuncs]]},
-Print["intdattofunc1:",AbsoluteTime[]-tn];
-Sow[AbsoluteTime[]-tn,"intdattofunc1"];
+Print[NKs[],"intdattofunc1:",AbsoluteTime[]-tn];
+Sow[AbsoluteTime[]-tn,"intdattofunc1"];tn=AbsoluteTime[];
 With[
 {applied=Transpose[{ParallelMap[notApply[#,funcArgs]/.funcSubs&,
 Map[First,interpFuncList]]}],
@@ -1543,7 +1543,7 @@ ReplacePart[
 With[{outgoing=
 {replaceEqnOrExp[thePair[[1]],longFuncArgs,2,backLookingInfo],
 replaceEqnOrExp[thePair[[2]],Drop[longFuncArgs,-numEps],3,backLookingInfo]}},
-Print["intdattofunc2:",AbsoluteTime[]-tn];
+Print[NKs[],"intdattofunc2:",AbsoluteTime[]-tn];
 Sow[AbsoluteTime[]-tn,"intdattofunc2"];
 outgoing
 ]]]]]]]]
@@ -1575,7 +1575,7 @@ Apply[selectorFunc,#],
 _,Function[{val,tag},Print["catchsmolGenInterp: aborting",
 {val,tag,baddy,triples,filledPts}//InputForm];
 Abort[]]]]&,toWorkOn]},
-Print["psgid:",AbsoluteTime[]-tn];Sow[AbsoluteTime[]-tn,"psgid"];
+Print[NKs[],"psgid:",AbsoluteTime[]-tn];Sow[AbsoluteTime[]-tn,"psgid"];
 interpData]]]]]
 
 @}
@@ -1630,6 +1630,7 @@ AbsoluteTiming[Apply[DistributeDefinitions,Flatten[reapRes[[2]]]]]];
 With[{theFuncs=
 parallelMakeGenericInterpFuncs[reapRes[[1]],backLookingInfo,smolGSpec,
 genericInterp,svmArgs]},
+Print[NKs[],"pmgifn:",AbsoluteTime[]-tn];Sow[AbsoluteTime[]-tn,"pmgifn"];
 theFuncs]]
 
 
@@ -1747,6 +1748,9 @@ parallelDoGenericIterREInterpAndInterpData::usage="someday"
 
 @d parallelDoGenericIterREInterpAndInterpData
 @{
+
+NKs[]:=Length[Kernels[]]
+
 parallelDoGenericIterREInterpAndInterpData[genFRExtFunc,
 	@<linMod@>,
 	@<bothXZFuncs@>,
@@ -1760,14 +1764,15 @@ If[Length[Kernels[]]===0,LaunchKernels[]];reapRes=Reap[
 genFRExtFunc[{numX,numEps,numZ},linMod,bothXZFuncs[[{1,2}]],
 triples,Apply[Sequence,FilterRules[{opts},
 Options[genFRExtFunc]]]],"theFuncs"];
-Print[{"dogen first time=",AbsoluteTime[]-tn}];tn=AbsoluteTime[];Sow[AbsoluteTime[]-tn,"firstDoGen"];
+Print[{NKs[]," dogen first time=",AbsoluteTime[]-tn}];tn=AbsoluteTime[];Sow[AbsoluteTime[]-tn,"firstDoGen"];tn=AbsoluteTime[];
 Apply[DistributeDefinitions,Flatten[reapRes[[2]]]];
-Print[{"dogen mid time=",AbsoluteTime[]-tn}];tn=AbsoluteTime[];Sow[AbsoluteTime[]-tn,"midDoGen"];
+Print[{"dogen mid time=",AbsoluteTime[]-tn}];Sow[AbsoluteTime[]-tn,"midDoGen"];
+tn=AbsoluteTime[];
 With[{theFuncsAndInterpData=
 parallelMakeGenericInterpFuncsAndInterpData[
 reapRes[[1]],backLookingInfo,smolGSpec,
 genericInterp,svmArgs]},
-Print[{"dogen second time=",AbsoluteTime[]-tn}];Sow[AbsoluteTime[]-tn,"secondDoGen"];
+Print[{NKs[],"dogen second time=",AbsoluteTime[]-tn}];Sow[AbsoluteTime[]-tn,"secondDoGen"];
 theFuncsAndInterpData]]
 
 

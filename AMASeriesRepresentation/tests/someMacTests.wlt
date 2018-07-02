@@ -598,6 +598,8 @@ VerificationTest[(* 48 *)
 	TestID->"bca13f13-18fc-41df-b044-22d67e5560e3"
 ]
 
+
+
 EndTestSection[]
 
 BeginTestSection["parallelMakeGenericInterpFuncs(not implemented for gSpec)"]
@@ -727,7 +729,7 @@ EndTestSection[]
 BeginTestSection["parallelNestGenericIterREInterp"]
 
 VerificationTest[(* 58 *)
-	CompoundExpression[Needs["AMASeriesRepresentation`"], Needs["betterRBCFixCompSlack`"], Set[X0Z0, AMASeriesRepresentation`genBothX0Z0Funcs[betterRBCFixCompSlack`linModBetterFixCompSlack]], Set[frFunc, AMASeriesRepresentation`genFRExtFunc[List[7, 1, 7], betterRBCFixCompSlack`linModBetterFixCompSlack, List[X0Z0, 2], betterRBCFixCompSlack`rbcEqnsBetterFixCompSlack]], Set[smolStuff, Set[List[ptErg, tfErg, plyErg, iplyErg, dplyErg], AMASeriesRepresentation`smolyakInterpolationPrep[List[1, 1, 1], List[betterRBCFixCompSlack`betterRBCCSMean, betterRBCFixCompSlack`betterRBCCSSD, betterRBCFixCompSlack`betterRBCCSMinZ, betterRBCFixCompSlack`betterRBCCSMaxZ, betterRBCFixCompSlack`betterRBCCSvv], betterRBCFixCompSlack`theDistBetterFixCompSlack]]], Set[smolRngErg, Transpose[List[betterRBCFixCompSlack`betterRBCCSMinZ, betterRBCFixCompSlack`betterRBCCSMaxZ]]], Set[toIg, Part[betterRBCFixCompSlack`aGSpecBetterFixCompSlack, 1]], Set[sgSpecErg, List[toIg, smolRngErg, ptErg, tfErg, plyErg, iplyErg, 1, List[1, 1, 1], List[betterRBCFixCompSlack`betterRBCCSMean, betterRBCFixCompSlack`betterRBCCSSD, betterRBCFixCompSlack`betterRBCCSMinZ, betterRBCFixCompSlack`betterRBCCSMaxZ, betterRBCFixCompSlack`betterRBCCSvv]]], Set[theRes, AMASeriesRepresentation`parallelNestGenericIterREInterp[AMASeriesRepresentation`genFRExtFunc, betterRBCFixCompSlack`linModBetterFixCompSlack, List[X0Z0, 2], betterRBCFixCompSlack`rbcEqnsBetterFixCompSlack, sgSpecErg, AMASeriesRepresentation`smolyakInterpolation, List[], 3]], Through[Function[Apply[Part[theRes, -1], Slot[1]]][betterRBCFixCompSlack`anXEpsFlatBetterFixCompSlack]]]
+	CompoundExpression[Needs["AMASeriesRepresentation`"], Needs["betterRBCFixCompSlack`"], Set[X0Z0, AMASeriesRepresentation`genBothX0Z0Funcs[betterRBCFixCompSlack`linModBetterFixCompSlack]], Set[frFunc, AMASeriesRepresentation`genFRExtFunc[List[7, 1, 7], betterRBCFixCompSlack`linModBetterFixCompSlack, List[X0Z0, 2], betterRBCFixCompSlack`rbcEqnsBetterFixCompSlack]], Set[smolStuff, Set[List[ptErg, tfErg, plyErg, iplyErg, dplyErg], AMASeriesRepresentation`smolyakInterpolationPrep[List[1, 1, 1], List[betterRBCFixCompSlack`betterRBCCSMean, betterRBCFixCpompSlack`betterRBCCSSD, betterRBCFixCompSlack`betterRBCCSMinZ, betterRBCFixCompSlack`betterRBCCSMaxZ, betterRBCFixCompSlack`betterRBCCSvv], betterRBCFixCompSlack`theDistBetterFixCompSlack]]], Set[smolRngErg, Transpose[List[betterRBCFixCompSlack`betterRBCCSMinZ, betterRBCFixCompSlack`betterRBCCSMaxZ]]], Set[toIg, Part[betterRBCFixCompSlack`aGSpecBetterFixCompSlack, 1]], Set[sgSpecErg, List[toIg, smolRngErg, ptErg, tfErg, plyErg, iplyErg, 1, List[1, 1, 1], List[betterRBCFixCompSlack`betterRBCCSMean, betterRBCFixCompSlack`betterRBCCSSD, betterRBCFixCompSlack`betterRBCCSMinZ, betterRBCFixCompSlack`betterRBCCSMaxZ, betterRBCFixCompSlack`betterRBCCSvv]]], Set[theRes, AMASeriesRepresentation`parallelNestGenericIterREInterp[AMASeriesRepresentation`genFRExtFunc, betterRBCFixCompSlack`linModBetterFixCompSlack, List[X0Z0, 2], betterRBCFixCompSlack`rbcEqnsBetterFixCompSlack, sgSpecErg, AMASeriesRepresentation`smolyakInterpolation, List[], 3]], Through[Function[Apply[Part[theRes, -1], Slot[1]]][betterRBCFixCompSlack`anXEpsFlatBetterFixCompSlack]]]
 	,
 	List[List[List[0.8024554428652859`], List[0.1975337282179022`], List[0.3595337282180246`], List[1.019643253155594`], List[0.`], List[-1.0300066075969083`], List[1.0130317085672698`], List[-0.04813293365291254`], List[-0.08565209611122968`], List[0.12049070417353934`], List[-0.006468291432727905`], List[-0.2046716062382039`], List[-3.031615890294998`*^-13], List[0.`]], List[List[0.789019623024924`], List[0.19451319890880994`], List[0.35651319890893207`], List[1.0095481094137133`], List[0.`], List[-1.0288515248253982`], List[1.002930314804615`], List[-0.04425842879828422`], List[-0.08574022411224952`], List[0.1183767302403422`], List[-0.006569685195382853`], List[-0.2047467144578098`], List[-3.030518283672924`*^-13], List[0.`]]]	
 	,
@@ -738,7 +740,68 @@ EndTestSection[]
 
 EndTestSection[]
 
-BeginTestSection["gSpec(not implemented)"]
+BeginTestSection["Regime"]
+
+VerificationTest[(* 59 *)
+	CompoundExpression[Get["betterRBCRegimes`"], Set[X0Z0, AMASeriesRepresentation`genBothX0Z0Funcs[betterRBCRegimes`linModBetterRegimes]], Set[frFunc, AMASeriesRepresentation`genFRExtFunc[List[7, 1, 7], betterRBCRegimes`linModBetterRegimes, List[X0Z0, 2], Part[betterRBCRegimes`rbcEqnsBetterRegimes, 1, 1]]], AMASeriesRepresentation`evaluateTriple[Part[frFunc, 1, 1], Flatten[betterRBCRegimes`anXEpsBetterRegimes]]]
+	,
+	$Failed	
+	,
+	TestID->"57a0747e-c5a8-4f32-82f5-9fe5ca18c182"
+]
+
+VerificationTest[(* 60 *)
+	CompoundExpression[Get["betterRBCRegimes`"], Set[X0Z0, AMASeriesRepresentation`genBothX0Z0Funcs[betterRBCRegimes`linModBetterRegimes]], Set[frFunc, AMASeriesRepresentation`genFRExtFunc[List[7, 1, 7], betterRBCRegimes`linModBetterRegimes, List[X0Z0, 2], Part[betterRBCRegimes`rbcEqnsBetterRegimes, 1, 1]]], AMASeriesRepresentation`evaluateTriple[Part[frFunc, 1, 2], Flatten[betterRBCRegimes`anXEpsBetterRegimes]]]
+	,
+	List[List[0.47000180408385206`], List[0.07997750582949112`], List[0.24197750582949112`], List[-2.127651407528623`], List[0.`], List[-2.1694454027535635`], List[1.019643253155594`], List[-0.8189678229184215`], List[-0.5463752535348115`], List[-0.02592967483392755`], List[0.00014325315559382545`], List[-0.8134341865604077`], List[-2.6707249632705274`*^-17], List[0.`]]	
+	,
+	TestID->"bc80363b-cf3e-48ea-b83d-127a8005a2ea"
+]
+
+VerificationTest[(* 61 *)
+	CompoundExpression[Get["betterRBCRegimes`"], Set[X0Z0, AMASeriesRepresentation`genBothX0Z0Funcs[betterRBCRegimes`linModBetterRegimes]], Set[frFunc, AMASeriesRepresentation`genFRExtFunc[List[7, 1, 7], betterRBCRegimes`linModBetterRegimes, List[X0Z0, 2], Part[betterRBCRegimes`rbcEqnsBetterRegimes, 1, 2]]], AMASeriesRepresentation`evaluateTriple[Part[frFunc, 1, 1], Flatten[betterRBCRegimes`anXEpsBetterRegimes]]]
+	,
+	$Failed	
+	,
+	TestID->"16d87c20-c0e4-4c44-8432-8d09db040a00"
+]
+
+VerificationTest[(* 62 *)
+	CompoundExpression[Get["betterRBCRegimes`"], Set[X0Z0, AMASeriesRepresentation`genBothX0Z0Funcs[betterRBCRegimes`linModBetterRegimes]], Set[frFunc, AMASeriesRepresentation`genFRExtFunc[List[7, 1, 7], betterRBCRegimes`linModBetterRegimes, List[X0Z0, 2], Part[betterRBCRegimes`rbcEqnsBetterRegimes, 1, 2]]], AMASeriesRepresentation`evaluateTriple[Part[frFunc, 1, 2], Flatten[betterRBCRegimes`anXEpsBetterRegimes]]]
+	,
+	List[List[0.5716029726591352`], List[0.07801557220103512`], List[0.24001557220103514`], List[-1.7494660591912832`], List[0.`], List[-1.77497844861899`], List[1.0145829576365146`], List[-0.5070521464093617`], List[-0.4385363544546117`], List[-0.013734874249252257`], List[-0.0049170423634854465`], List[-0.4333759076659805`], List[3.323473319737699`*^-17], List[0.`]]	
+	,
+	TestID->"fea8fd9b-dc15-44a1-87d8-bc3aa7edb7e8"
+]
+
+VerificationTest[(* 63 *)
+	CompoundExpression[Get["betterRBCRegimes`"], Set[X0Z0, AMASeriesRepresentation`genBothX0Z0Funcs[betterRBCRegimes`linModBetterRegimes]], Set[frFunc, AMASeriesRepresentation`genFRExtFunc[List[7, 1, 7], betterRBCRegimes`linModBetterRegimes, List[X0Z0, 2], Part[betterRBCRegimes`rbcEqnsBetterRegimes, 1, 1]]], Set[smolStuff, Set[List[ptErg, tfErg, plyErg, iplyErg, dplyErg], AMASeriesRepresentation`smolyakInterpolationPrep[List[1, 1, 1], List[betterRBCRegimes`betterRBCCSMean, betterRBCRegimes`betterRBCCSSD, betterRBCRegimes`betterRBCCSMinZ, betterRBCRegimes`betterRBCCSMaxZ, betterRBCRegimes`betterRBCCSvv], betterRBCRegimes`theDistBetterRegimes]]], Set[smolRngErg, Transpose[List[betterRBCRegimes`betterRBCCSMinZ, betterRBCRegimes`betterRBCCSMaxZ]]], Set[toIg, Part[betterRBCRegimes`aGSpecBetterRegimes, 1]], Set[sgSpecErg, List[toIg, smolRngErg, ptErg, tfErg, plyErg, iplyErg, 1, List[1, 1, 1], List[betterRBCRegimes`betterRBCCSMean, betterRBCRegimes`betterRBCCSSD, betterRBCRegimes`betterRBCCSMinZ, betterRBCRegimes`betterRBCCSMaxZ, betterRBCRegimes`betterRBCCSvv]]], Set[theRes01, AMASeriesRepresentation`parallelNestGenericIterREInterp[AMASeriesRepresentation`genFRExtFunc, betterRBCRegimes`linModBetterRegimes, List[X0Z0, 2], Part[betterRBCRegimes`rbcEqnsBetterRegimes, 1, 1], sgSpecErg, AMASeriesRepresentation`smolyakInterpolation, List[], 10]], Through[Function[Apply[Part[theRes01, -1], Slot[1]]][betterRBCRegimes`anXEpsFlatBetterRegimes]]]
+	,
+	List[List[List[0.8091235978691729`], List[0.1908655732140484`], List[0.35286557321417134`], List[1.019643253155594`], List[0.`], List[-1.030568787911142`], List[1.0130317085672698`], List[-0.05415552169374718`], List[-0.08565209611134501`], List[0.12160178747803134`], List[-0.006468291432727904`], List[-0.20538189244551275`], List[-2.0458627461072343`*^-13], List[0.`]], List[List[0.795479877679832`], List[0.18805294425393557`], List[0.35005294425405875`], List[1.0095481094137133`], List[0.`], List[-1.0294787817170405`], List[1.002930314804615`], List[-0.0501924506627246`], List[-0.08574022411236495`], List[0.11946977442722014`], List[-0.006569685195382851`], List[-0.2054478753993041`], List[-2.045537563193351`*^-13], List[0.`]]]	
+	,
+	TestID->"1cf6c4ba-bf80-43aa-9bdb-d22594cd2674"
+]
+
+VerificationTest[(* 64 *)
+	CompoundExpression[Get["betterRBCRegimes`"], Set[X0Z0, AMASeriesRepresentation`genBothX0Z0Funcs[betterRBCRegimes`linModBetterRegimes]], Set[frFunc, AMASeriesRepresentation`genFRExtFunc[List[7, 1, 7], betterRBCRegimes`linModBetterRegimes, List[X0Z0, 2], Part[betterRBCRegimes`rbcEqnsBetterRegimes, 1, 1]]], Set[smolStuff, Set[List[ptErg, tfErg, plyErg, iplyErg, dplyErg], AMASeriesRepresentation`smolyakInterpolationPrep[List[1, 1, 1], List[betterRBCRegimes`betterRBCCSMean, betterRBCRegimes`betterRBCCSSD, betterRBCRegimes`betterRBCCSMinZ, betterRBCRegimes`betterRBCCSMaxZ, betterRBCRegimes`betterRBCCSvv], betterRBCRegimes`theDistBetterRegimes]]], Set[smolRngErg, Transpose[List[betterRBCRegimes`betterRBCCSMinZ, betterRBCRegimes`betterRBCCSMaxZ]]], Set[toIg, Part[betterRBCRegimes`aGSpecBetterRegimes, 1]], Set[sgSpecErg, List[toIg, smolRngErg, ptErg, tfErg, plyErg, iplyErg, 1, List[1, 1, 1], List[betterRBCRegimes`betterRBCCSMean, betterRBCRegimes`betterRBCCSSD, betterRBCRegimes`betterRBCCSMinZ, betterRBCRegimes`betterRBCCSMaxZ, betterRBCRegimes`betterRBCCSvv]]], Set[theRes01, AMASeriesRepresentation`parallelNestGenericIterREInterp[AMASeriesRepresentation`genFRExtFunc, betterRBCRegimes`linModBetterRegimes, List[X0Z0, 2], Part[betterRBCRegimes`rbcEqnsBetterRegimes, 1, 2], sgSpecErg, AMASeriesRepresentation`smolyakInterpolation, List[], 10]], Through[Function[Apply[Part[theRes01, -1], Slot[1]]][betterRBCRegimes`anXEpsFlatBetterRegimes]]]
+	,
+	List[List[List[0.8988228757473824`], List[0.07918389400341867`], List[0.2411838940035163`], List[1.019643253155594`], List[0.`], List[-0.8744059811163545`], List[0.9804167187717319`], List[0.11680707755209226`], List[-0.05478541757691942`], List[0.021954789383641406`], List[-0.03908328122828998`], List[0.04637201557057562`], List[-2.9691662387866735`*^-13], List[0.`]], List[List[0.8799254971727869`], List[0.0837486371117136`], List[0.24574863711181116`], List[1.0095481094137133`], List[0.`], List[-0.8743392691129054`], List[0.9703416163025591`], List[0.12397315359175018`], List[-0.05279243410554044`], List[0.019044425248612627`], List[-0.03915838369746305`], List[0.047038249832394574`], List[-2.9705204394148014`*^-13], List[0.`]]]	
+	,
+	TestID->"51b88332-5521-4b41-9a47-7c1c1cfc6505"
+]
+
+VerificationTest[(* 65 *)
+	CompoundExpression[Get["betterRBCRegimes`"], Set[X0Z0, AMASeriesRepresentation`genBothX0Z0Funcs[betterRBCRegimes`linModBetterRegimes]], Set[frFunc, AMASeriesRepresentation`genFRExtFunc[List[7, 1, 7], betterRBCRegimes`linModBetterRegimes, List[X0Z0, 2], Part[betterRBCRegimes`rbcEqnsBetterRegimes, 1, 1]]], Set[smolStuff, Set[List[ptErg, tfErg, plyErg, iplyErg, dplyErg], AMASeriesRepresentation`smolyakInterpolationPrep[List[1, 1, 1], List[betterRBCRegimes`betterRBCCSMean, betterRBCRegimes`betterRBCCSSD, betterRBCRegimes`betterRBCCSMinZ, betterRBCRegimes`betterRBCCSMaxZ, betterRBCRegimes`betterRBCCSvv], betterRBCRegimes`theDistBetterRegimes]]], Set[smolRngErg, Transpose[List[betterRBCRegimes`betterRBCCSMinZ, betterRBCRegimes`betterRBCCSMaxZ]]], Set[toIg, Part[betterRBCRegimes`aGSpecBetterRegimes, 1]], Set[sgSpecErg, List[toIg, smolRngErg, ptErg, tfErg, plyErg, iplyErg, 1, List[1, 1, 1], List[betterRBCRegimes`betterRBCCSMean, betterRBCRegimes`betterRBCCSSD, betterRBCRegimes`betterRBCCSMinZ, betterRBCRegimes`betterRBCCSMaxZ, betterRBCRegimes`betterRBCCSvv]]], Set[theRes01, AMASeriesRepresentation`parallelNestGenericIterREInterp[AMASeriesRepresentation`genFRExtFunc, betterRBCRegimes`linModBetterRegimes, List[X0Z0, 2], Part[betterRBCRegimes`rbcEqnsBetterRegimes, 1, 1], sgSpecErg, AMASeriesRepresentation`smolyakInterpolation, List[], 10]], Set[theRes02, AMASeriesRepresentation`parallelNestGenericIterREInterp[AMASeriesRepresentation`genFRExtFunc, betterRBCRegimes`linModBetterRegimes, List[X0Z0, 2], Part[betterRBCRegimes`rbcEqnsBetterRegimes, 1, 2], sgSpecErg, AMASeriesRepresentation`smolyakInterpolation, List[], 10]], List[Set[beg01, iterateRegimesDRVals[List[Part[theRes01, -1, 1], Part[theRes02, -1, 1]], anXEpsBetterRegimes, 1]], Set[beg02, iterateRegimesDRVals[List[Part[theRes01, -1, 1], Part[theRes02, -1, 1]], anXEpsBetterRegimes, 2]]]]
+	,
+	List[List[List[0.8091235978691729`], List[0.1908655732140484`], List[0.35286557321417134`], List[1.019643253155594`], List[0.`], List[-1.030568787911142`], List[1.0130317085672698`], List[-0.05415552169374718`], List[-0.08565209611134501`], List[0.12160178747803134`], List[-0.006468291432727904`], List[-0.20538189244551275`], List[-2.0458627461072343`*^-13], List[0.`]], List[List[0.8988228757473824`], List[0.07918389400341867`], List[0.2411838940035163`], List[1.019643253155594`], List[0.`], List[-0.8744059811163545`], List[0.9804167187717319`], List[0.11680707755209226`], List[-0.05478541757691942`], List[0.021954789383641406`], List[-0.03908328122828998`], List[0.04637201557057562`], List[-2.9691662387866735`*^-13], List[0.`]]]	
+]
+
+EndTestSection[]
+
+EndTestSection[]
+
+
+
 
 EndTestSection[]
 
@@ -747,3 +810,5 @@ EndTestSection[]
 EndTestSection[]
 
 EndTestSection[]
+
+

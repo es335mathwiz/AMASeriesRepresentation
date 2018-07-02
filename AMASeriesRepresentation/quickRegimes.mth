@@ -86,8 +86,7 @@ hmm02=iterateRegimesDRVals[{theRes02[[-1,2]]},
 betterRBCRegimes`rbcEqnsBetterRegimes[[2]],1];
 
 hmm=iterateRegimesDRVals[{theRes01[[-1,2]],theRes02[[-1,2]]},
-hmm01,
-betterRBCRegimes`rbcEqnsBetterRegimes[[2]],2];
+hmm01,betterRBCRegimes`rbcEqnsBetterRegimes[[2]],2];
 Print[{"8",hmm[[-1]]}];
 
 Print[{"9",hip=AMASeriesRepresentation`Private`regimesExp[anXBetterRegimes,

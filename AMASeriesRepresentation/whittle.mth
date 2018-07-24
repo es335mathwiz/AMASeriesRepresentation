@@ -134,6 +134,7 @@ theRanges={{0.0026883, 1.07901}, {0.765095, 1.24209}, {0.89756, 3.08088},
 {{0.0000026883, 3.07901}, {0.765095, 1.24209}, {0.09756, 5.08088},     {0.790657, 4.32995}, {0.80013, 4.59132}, {0.754716, 4.23652},     {0.8, 1.27983}, {0.0000036563, 5.12448}};
 *)
 (**)
+(*
 X0Z0 = AMASeriesRepresentation`genBothX0Z0Funcs[
    nkZLB`linModnkZLB];
 approx=1*{1,1};theK=10;theIter=10
@@ -244,6 +245,8 @@ lpp3d=ListPointPlot3D[pts,PlotStyle->{PointSize[Large],Red}]
 p3d=Plot3D[{1,(theRes02[[-1,1]][99,ee,99,99,99,99,99,99,eps])[[7]]},{ee,minE,maxE},{eps,minEps,maxEps}]
 
 Show[lpp3d,p3d]
+*)
+
 (*
 approx=2*{1,1};
 smolStuff = {ptErg, tfErg, plyErg, iplyErg, dplyErg} = 
@@ -283,7 +286,7 @@ Show[lpp3d,p3d]
 (**)
 (**)
 
-
+(*
 approx=3*{1,1};
 smolStuff = {ptErg, tfErg, plyErg, iplyErg, dplyErg} = 
    AMASeriesRepresentation`smolyakInterpolationPrep[approx, {nkZLB`nkNKCSMean, 
@@ -594,3 +597,4 @@ difficult={4,22,26}
 
 
 
+*)

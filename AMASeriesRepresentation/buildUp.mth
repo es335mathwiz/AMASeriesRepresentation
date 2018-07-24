@@ -1,0 +1,93 @@
+Get["JavaGraphics`"]
+Get["tests/pathSetup.mth"]
+
+Get["AMASeriesRepresentation`"];
+
+
+
+Get["betterRBCTrips`"];
+
+
+aMatIn=anXEpsBetterRBCTrips
+Print["trying getNumX"]
+getNumX[linModBetterRBCTrips]
+
+Print["trying genBothX0Z0Funcs"]
+X0Z0 = genBothX0Z0Funcs[
+   linModBetterRBCTrips];
+X0Z0[[1]]@@ Flatten[aMatIn]
+
+Print["trying genZsForFindRoot"]
+theZsNow=AMASeriesRepresentation`Private`genZsForFindRoot[linModBetterRBCTrips,aMatIn[[Range[4]]],X0Z0[[2]],3]
+
+Print["trying genLilXkZkFunc"]
+xkzkFunc=genLilXkZkFunc[linModBetterRBCTrips,theZsNow];
+
+xkzkFunc @@ anXEpsZsFlatBetterRBCTrips
+
+Print["trying genFRExtFuncs"]
+frFunc = genFRExtFunc[{4, 1, 4}, 
+   linModBetterRBCTrips, {X0Z0, 2}, 
+   eqnsCompiledBetterRBCTrips];
+
+evaluateTriple[frFunc[[1, 2]], 
+  anXEpsFlatBetterRBCTrips]
+
+
+
+approx=1*{1,1,1};
+smolStuff = {ptErg, tfErg, plyErg, iplyErg, dplyErg} = 
+   smolyakInterpolationPrep[approx, {betterRBCTripsMean, 
+     betterRBCTripsSD, 
+     betterRBCTripsMinZ, 
+     betterRBCTripsMaxZ, 
+     betterRBCTripsvv}, 
+    theDistBetterRBCTrips]
+smolRngErg = 
+  Transpose[{betterRBCTripsMinZ, 
+    betterRBCTripsMaxZ}];
+toIg = aGSpecBetterRBCTrips[[1]];
+sgSpecErg = {toIg, smolRngErg, ptErg, tfErg, plyErg, iplyErg, 
+   1, approx, {betterRBCTripsMean, 
+    betterRBCTripsSD, 
+    betterRBCTripsMinZ, 
+    betterRBCTripsMaxZ, 
+    betterRBCTripsvv}}
+
+theK=2
+{dr,cedr}=parallelDoGenericIterREInterp[
+   genFRExtFunc, 
+   linModBetterRBCTrips,{X0Z0, theK}, 
+   eqnsCompiledBetterRBCTrips, sgSpecErg, 
+   smolyakInterpolation, {},(*
+"xVarRanges"->theRanges,*)"Traditional"->False]
+
+
+dr @@ anXEpsFlatBetterRBCTrips
+
+cedr @@ anXEpsFlatBetterRBCTrips
+
+theRes=parallelNestGenericIterREInterp[
+   genFRExtFunc, 
+   linModBetterRBCTrips,{X0Z0, theK}, 
+   eqnsCompiledBetterRBCTrips, sgSpecErg, 
+   smolyakInterpolation, {},3,(*
+"xVarRanges"->theRanges,*)"Traditional"->False]
+
+idr=theRes[[-1,1]]
+icedr=theRes[[-1,2]]
+
+idr @@ anXEpsFlatBetterRBCTrips
+icedr @@ anXEpsFlatBetterRBCTrips
+
+
+Get["betterRBCRegimes`"];
+
+
+X0Z0 = AMASeriesRepresentation`genBothX0Z0Funcs[
+   betterRBCRegimes`linModBetterRegimes];
+frFunc = AMASeriesRepresentation`genFRExtFunc[{7, 1, 7}, 
+   betterRBCRegimes`linModBetterRegimes, {X0Z0, 2}, 
+   betterRBCRegimes`rbcEqnsBetterRegimes[[1,1]]];
+Print[{"1",AMASeriesRepresentation`evaluateTriple[frFunc[[1,1]],  Flatten[betterRBCRegimes`anXEpsBetterRegimes]]}]
+Print[{"2",AMASeriesRepresentation`evaluateTriple[frFunc[[1,2]],  Flatten[betterRBCRegimes`anXEpsBetterRegimes]]}]

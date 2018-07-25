@@ -91,3 +91,59 @@ frFunc = AMASeriesRepresentation`genFRExtFunc[{7, 1, 7},
    betterRBCRegimes`rbcEqnsBetterRegimes[[1,1]]];
 Print[{"1",AMASeriesRepresentation`evaluateTriple[frFunc[[1,1]],  Flatten[betterRBCRegimes`anXEpsBetterRegimes]]}]
 Print[{"2",AMASeriesRepresentation`evaluateTriple[frFunc[[1,2]],  Flatten[betterRBCRegimes`anXEpsBetterRegimes]]}]
+
+
+
+frFunc = AMASeriesRepresentation`genFRExtFunc[{7, 1, 7}, 
+   betterRBCRegimes`linModBetterRegimes, {X0Z0, 2}, 
+   betterRBCRegimes`rbcEqnsBetterRegimes[[1,2]]];
+Print[{"3",AMASeriesRepresentation`evaluateTriple[frFunc[[1,1]],  Flatten[betterRBCRegimes`anXEpsBetterRegimes]]}]
+Print[{"4",AMASeriesRepresentation`evaluateTriple[frFunc[[1,2]],  Flatten[betterRBCRegimes`anXEpsBetterRegimes]]}]
+
+
+
+
+
+X0Z0 = AMASeriesRepresentation`genBothX0Z0Funcs[
+   betterRBCRegimes`linModBetterRegimes];
+frFunc = AMASeriesRepresentation`genFRExtFunc[{7, 1, 7}, 
+   betterRBCRegimes`linModBetterRegimes, {X0Z0, 2}, 
+   betterRBCRegimes`rbcEqnsBetterRegimes[[1,1]]];
+smolStuff = {ptErg, tfErg, plyErg, iplyErg, dplyErg} = 
+   AMASeriesRepresentation`smolyakInterpolationPrep[{1, 1, 
+     1}, {betterRBCRegimes`betterRBCCSMean, 
+     betterRBCRegimes`betterRBCCSSD, 
+     betterRBCRegimes`betterRBCCSMinZ, 
+     betterRBCRegimes`betterRBCCSMaxZ, 
+     betterRBCRegimes`betterRBCCSvv}, 
+    betterRBCRegimes`theDistBetterRegimes];
+smolRngErg = 
+  Transpose[{betterRBCRegimes`betterRBCCSMinZ, 
+    betterRBCRegimes`betterRBCCSMaxZ}];
+toIg = betterRBCRegimes`aGSpecBetterRegimes[[1]];
+sgSpecErg = {toIg, smolRngErg, ptErg, tfErg, plyErg, iplyErg, 
+   1, {1, 1, 1}, {betterRBCRegimes`betterRBCCSMean, 
+    betterRBCRegimes`betterRBCCSSD, 
+    betterRBCRegimes`betterRBCCSMinZ, 
+    betterRBCRegimes`betterRBCCSMaxZ, 
+    betterRBCRegimes`betterRBCCSvv}};
+theRes01 = AMASeriesRepresentation`parallelNestGenericIterREInterp[
+   AMASeriesRepresentation`genFRExtFunc, 
+   betterRBCRegimes`linModBetterRegimes, {X0Z0, 2}, 
+   betterRBCRegimes`rbcEqnsBetterRegimes[[1,1]], sgSpecErg, 
+   AMASeriesRepresentation`smolyakInterpolation, {}, 10];
+Print[{"5",Through[theRes01[[-1]] @@ # &[  betterRBCRegimes`anXEpsFlatBetterRegimes]]}
+]
+theRes02 = AMASeriesRepresentation`parallelNestGenericIterREInterp[
+   AMASeriesRepresentation`genFRExtFunc, 
+   betterRBCRegimes`linModBetterRegimes, {X0Z0, 2}, 
+   betterRBCRegimes`rbcEqnsBetterRegimes[[1,2]], sgSpecErg, 
+   AMASeriesRepresentation`smolyakInterpolation, {}, 10];
+Print[{"6",Through[theRes02[[-1]] @@ # &[  betterRBCRegimes`anXEpsFlatBetterRegimes]]}
+]
+
+
+
+Print[{"7",iterateRegimesDRVals[{theRes01[[-1,2]]},
+{anXBetterRegimes,anXBetterRegimes},
+betterRBCRegimes`rbcEqnsBetterRegimes[[2]],0]}]

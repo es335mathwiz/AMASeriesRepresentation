@@ -994,6 +994,169 @@ reNormTime[]:=AbsoluteTime[]/(10^9)
 
 
 
+\section{RegimeSwitching}
+
+
+@d iterateRegimesDRValsUsage
+@{
+iterateRegimesDRVals::usage="iterateRegimesDRVals[drExpFunc:(_Function|_CompiledFunction|_Symbol),initVec_?MatrixQ,numPers_Integer]"
+@}
+
+@d iterateRegimesDRVals
+@{
+
+
+iterateRegimesDRVals[drFuncs:{(_Function|_CompiledFunction|_Symbol)..},
+initVec_?MatrixQ,regimeNum_Integer]:=
+Module[{},
+Apply[drFuncs[[regimeNum]],Flatten[initVec]]]/;
+And[Length[drFuncs]>=regimeNum>0]
+
+
+
+
+iterateRegimesDRVals[drExpFuncs:{(_Function|_CompiledFunction|_Symbol)..},
+initVecs:{_?MatrixQ..},numPers_?NumberQ]:=
+With[{iterated=NestList[doStep[drExpFuncs,#]&,initVecs,numPers]},
+iterated]/;
+And[numPers>0]
+
+
+
+
+
+doStep[drExpFuncs:{(_Function|_CompiledFunction|_Symbol)..},
+initVecs:{_?MatrixQ..}]:=
+With[{numX=Length[initVecs[[1]]]},Flatten[
+Outer[(Apply[#2 , Flatten[#1]][[Range[numX]]])&,initVecs,drExpFuncs,1,1],1]]
+
+
+
+
+
+@}
+
+@d iterateRegimesDRProbsUsage
+@{
+
+iterateRegimesDRProbs::usage="iterateRegimesDRProbs"
+@}
+
+
+@d iterateRegimesDRProbs
+@{
+iterateRegimesDRProbs[initVec_?MatrixQ,
+probFunc:(_Symbol|_Function|_CompiledFunction),
+regimeNum_Integer]:=
+Module[{},Apply[probFunc,Flatten[initVec]][[{regimeNum}]]]
+And[Length[drFuncs]>=regimeNum>0]
+
+
+
+
+iterateRegimesDRProbs[initVecs:{{_?MatrixQ..}..},initProbs_?VectorQ,
+probFunc:(_Symbol|_Function|_CompiledFunction),numX_Integer]:=
+With[{iterated=FoldList[doStepProbs[#2,#1,probFunc,numX]&,initProbs,initVecs]},
+iterated]
+
+iterateRegimesDRProbs[initVecs:{{_?MatrixQ..}...},initProbs_?VectorQ,
+probFunc:(_Symbol|_Function|_CompiledFunction),numX_Integer]:=
+With[{iterated=FoldList[doStepProbs[#2,#1,probFunc,numX]&,initProbs,initVecs]},
+iterated]
+
+doStepProbs[initVecs:{_?MatrixQ..},initProbs_?VectorQ,
+probFunc:(_Symbol|_Function|_CompiledFunction),numX_Integer]:=
+With[{theTransProbs=Flatten[
+Map[Apply[probFunc,Flatten[#][[Range[numX]]]]&,
+initVecs],1]},Flatten[MapThread[#1*#2&,{initProbs,theTransProbs}]]]
+
+
+
+
+
+@}
+
+
+\subsubsection{regimes expectation}
+\label{sec:using-both-decision}
+
+
+
+@d processedRegimesTriples
+@{processedRegimesTriples:xx_?processedRegimesGroupQ@}
+
+@d rawRegimesTriples
+@{rawRegimesTriples:xx_?regimesGroupQ@}
+
+
+
+
+@d patternMatchCode
+@{
+aTripleQ[xx_]:=MatchQ[xx,{_Function,(_Function|_CompiledFunction|_Symbol),_Function}]
+
+conditionsGroupQ[xx_]:=MatchQ[xx,{{_?aTripleQ..},(_Function|_CompiledFunction|_Symbol)}]
+
+
+regimesGroupQ[xx_]:=MatchQ[xx,{{_?conditionsGroupQ..},(_Function|_CompiledFunction|_Symbol)}]
+
+processedRegimesGroupQ[xx_]:=MatchQ[xx,{_?conditionsGroupQ..}]
+
+
+@}
+
+@d regimesExpectationUsage
+@{
+regimesExpectation::usage="regimesExpectation"
+
+@}
+
+@d regimesExpectation
+@{
+
+regimesExpectation[
+drFuncs:{(_Function|_CompiledFunction|_Symbol)..},
+drExpFuncs:{(_Function|_CompiledFunction|_Symbol)..},
+initVec_?MatrixQ,probFunc:(_Symbol|_Function|_CompiledFunction),
+numXVars_Integer,
+numSteps_Integer]:=
+Module[{numRegimes=Length[drFuncs]},
+With[{firstSteps=
+Map[iterateRegimesDRVals[drFuncs,initVec,#]&,Range[numRegimes]]},
+With[{furtherSteps=Map[iterateRegimesDRVals[drExpFuncs,{#},numSteps]&,
+firstSteps],
+firstProbs=
+Map[Flatten[iterateRegimesDRProbs[initVec[[Range[numXVars]]],probFunc,#]]&,
+Range[numRegimes]]},
+With[{restProbs=
+MapThread[iterateRegimesDRProbs[Drop[#1,-2],#2,probFunc,numXVars]&,
+{furtherSteps,firstProbs}]},
+With[{theProducts=MapThread[Drop[#1,1]*#2&,{furtherSteps,restProbs}]},
+With[{theSums=Map[doRegime,theProducts]},
+theSums]]]]]]
+
+regimesExpectation[firstSteps:{_?MatrixQ..},firstProbs_?MatrixQ,
+drExpFuncs:{(_Function|_CompiledFunction|_Symbol)..},probFunc:(_Symbol|_Function|_CompiledFunction),
+numXVars_Integer,
+numSteps_Integer]:=
+Module[{numRegimes=Length[drFuncs]},
+With[{furtherSteps=Map[iterateRegimesDRVals[drExpFuncs,{#},numSteps]&,
+firstSteps]},
+With[{restProbs=
+MapThread[iterateRegimesDRProbs[Drop[#1,-2],#2,probFunc,numXVars]&,
+{furtherSteps,firstProbs}]},
+With[{theProducts=MapThread[Drop[#1,1]*#2&,{furtherSteps,restProbs}]},
+With[{theSums=Map[doRegime,theProducts]},
+theSums]]]]]
+
+plusAllEvents[theEvents:{_?MatrixQ..}]:=Apply[Plus,theEvents]
+doRegime[regimeEvents:{{_?MatrixQ..}..}]:=Map[plusAllEvents,regimeEvents]
+@}
+
+
+
+
+
 \appendix
 
 \subsection{Argument Specifications}
@@ -1240,12 +1403,21 @@ EndPackage[]
 @<fillInUsage@>
 @<fillInSymbUsage@>
 @<parallelNestGenericIterREInterpUsage@>
+@<iterateRegimesDRValsUsage@>
+@<iterateRegimesDRProbsUsage@>
+@<regimesExpectationUsage@>
+@<processedRegimesTriples@>
+@<rawRegimesTriples@>
+@<patternMatchCode@>
 @}
 
 
 
 @d package code
 @{
+@<iterateRegimesDRVals@>
+@<iterateRegimesDRProbs@>
+@<regimesExpectation@>
 @<parallelNestGenericIterREInterp@>
 @<smolyakInterpolation@>
 @<fillInSymb@>

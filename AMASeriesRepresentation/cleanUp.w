@@ -94,10 +94,10 @@ With[{funcTrips=
 Map[{#[[1]],genFRExtFunc[{numX,numEps,numZ},linMod,bothXZFuncs,#[[2]],
 Apply[Sequence,
 FilterRules[{opts},Options[genFRExtFunc]]]],#[[3]]}&,triples[[1]]]},
-{funcTrips,selectorFunc}
+{funcTrips,selectorFunc[triples]}
 ]]
 
-
+selectorFunc[@<rawTriples@>]:=triples[[-1]]
 
 @}
 
@@ -784,7 +784,7 @@ With[{toWorkOn={filledPts,theVals}//Transpose},
 tn=AbsoluteTime[];
 With[{interpData=
 ParallelMap[With[{baddy=#},Catch[
-Apply[selectorFunc,#],
+Apply[selectorFunc[triples],#],
 _,Function[{val,tag},Print["catchsmolGenInterp: aborting",
 {val,tag,baddy,triples,filledPts}//InputForm];
 Abort[]]]]&,toWorkOn]},
@@ -996,6 +996,310 @@ reNormTime[]:=AbsoluteTime[]/(10^9)
 
 \section{RegimeSwitching}
 
+\subsection{genRegimesBothX0Z0Funcs}
+\label{sec:genx0z0funcs}
+
+
+@d parallelNestGenericIterREInterp
+@{
+parallelNestGenericIterREInterp[genFRExtFunc,@<linMod@>,
+@<regimesBothXZFuncs@>,
+@<rawRegimesTriples@>,@<smolGSpec@>,
+genericInterp:(smolyakInterpolation|svmRegressionLinear|
+svmRegressionPoly|svmRegressionRBF|svmRegressionSigmoid),
+svmArgs:{_?NumberQ...},
+numIters_Integer,opts:OptionsPattern[]]:=
+Module[{theIters=getNumIters[regimesBothXZFuncs]},
+NestList[Function[xxx,
+parallelDoGenericIterREInterp[genFRExtFunc,linMod,
+resultsForIter[xxx,theIters],rawRegimesTriples,smolGSpec,genericInterp,svmArgs,
+Apply[Sequence,FilterRules[{opts},
+Options[parallelDoGenericIterREInterp]]]]],Map[First,regimesBothXZFuncs],numIters]]
+
+getNumIters[@<regimesBothXZFuncs@>]:=
+Map[Last,regimesBothXZFuncs]
+
+resultsForIter[@<functionPairs@>,numIters:{_Integer..}]:=
+With[{theRes=Transpose[{functionPairs,numIters}]},
+theRes]
+@}
+
+@d functionPairs
+@{functionPairs:{{_Function,_Function}..}
+@}
+
+
+@d parallelDoGenericIterREInterp
+@{
+parallelDoGenericIterREInterp[genFRExtFunc,
+	@<linMod@>,
+@<regimesBothXZFuncs@>,
+@<rawRegimesTriples@>,@<smolGSpec@>,
+genericInterp:(smolyakInterpolation|svmRegressionLinear|svmRegressionPoly|
+svmRegressionRBF|svmRegressionSigmoid),
+svmArgs:{_?NumberQ...},opts:OptionsPattern[]]:=
+With[{numX=Length[BB],numZ=Length[psiZ[[1]]]},
+tn=AbsoluteTime[];
+If[Length[Kernels[]]===0,LaunchKernels[]];reapRes=Reap[
+genFRExtFunc[{numX,numEps,numZ},linMod,regimesBothXZFuncs,
+rawRegimesTriples,Apply[Sequence,FilterRules[{opts},
+Options[genFRExtFunc]]]],"theFuncs"];
+Apply[DistributeDefinitions,Flatten[reapRes[[2]]]];
+With[{theFuncs=
+parallelMakeGenericInterpFuncs[reapRes[[1]],backLookingInfo,smolGSpec,
+genericInterp,svmArgs]},
+theFuncs]]
+
+
+@}
+
+
+
+
+@d parallelMakeGenericInterpFuncs
+@{
+parallelMakeGenericInterpFuncs[
+@<processedRegimesTriples@>,
+backLookingInfo:{{_Integer,_,_}...},@<smolGSpec@>,
+genericInterp:(smolyakInterpolation|svmRegressionLinear|svmRegressionPoly|
+svmRegressionRBF|svmRegressionSigmoid),svmArgs:{_?NumberQ...}]:=
+Module[{},
+ParallelMap[
+With[{interpData=parallelSmolyakGenInterpData[#,smolGSpec]},
+interpDataToFunc[interpData,backLookingInfo,smolGSpec,
+genericInterp,svmArgs]]&,
+processedRegimesTriples]]
+
+@}
+
+
+
+@d parallelSmolyakGenInterpData
+@{
+ 
+
+parallelSmolyakGenInterpData[
+@<processedRegimesTriples@>,@<smolGSpec@>]:=
+Module[{numRegimes=Range[Length[processedRegimesTriples]],
+numCases=Map[Range[Length[#[[1]]]]&,processedRegimesTriples],numPts=Length[smolPts]},
+With[{filledPts=Map[Function[xxxx,fillIn[{{},smolToIgnore,xxxx}]],N[smolPts]]},
+With[{preCombos=MapIndexed[Table[{#2[[1]],ii}, {ii,#}]&,numCases]},
+With[{combos=
+Map[Function[yyy,Map[forPoints[#,numPts]&,yyy]],preCombos]},
+With[{theVals=Map[evaluateTripleToCases[processedRegimesTriples,filledPts,#1]&,
+combos,{3}]},
+MapThread[applySelectorFuncs[#1[[-1]],filledPts,#2]&,
+{processedRegimesTriples,theVals}]
+]]]]]
+
+evaluateTripleToCases[
+@<processedRegimesTriples@>,pts_?MatrixQ,
+{rIndx_Integer,cIndx_Integer,pIndx_Integer}]:=
+evaluateTriple[processedRegimesTriples[[rIndx,1,cIndx]],Flatten[pts[[pIndx]]]]
+
+
+forPoints[soFar_?VectorQ,numPts_Integer]:=
+Map[Append[soFar,#]&,Range[numPts]]
+
+applySelectorFuncs[aSelectorFunc:(_Function|_CompiledFunction|_Symbol),
+filledPts_?MatrixQ,theVals_List]:=
+With[{toWorkOn={filledPts,Transpose[theVals]}//Transpose},
+With[{interpData=
+ParallelMap[With[{baddy=#},Catch[
+Apply[aSelectorFunc,#],
+_,Function[{val,tag},Print["catchsmolGenInterp: aborting",
+{val,tag,baddy,triples,filledPts}//InputForm];
+Abort[]]]]&,toWorkOn]},
+interpData]]
+
+
+@}
+\subsubsection{Using both decision rule and decision rule expectation for regimes}
+\label{sec:using-both-decision}
+
+
+@d genFRExtFunc
+@{
+
+genFRExtFunc[{numX_Integer,numEps_Integer,numZ_Integer},
+@<linMod@>,
+@<regimesBothXZFuncs@>,
+@<rawRegimesTriples@>,opts:OptionsPattern[]]:=
+Module[{varRanges=OptionValue["xVarRanges"]},
+With[{regimeTrips=
+Table[genFRExtFunc[{numX,numEps,numZ},linMod,regimesBothXZFuncs,
+rawRegimesTriples[[-1]],rawRegimesTriples[[1,ii]],ii,Apply[Sequence,
+FilterRules[{opts},Options[genFRExtFunc]]]],{ii,Length[rawRegimesTriples]}]},
+regimeTrips
+]]
+@}
+
+
+
+
+@d genFRExtFunc
+@{
+genFRExtFunc[{numX_Integer,numEps_Integer,numZ_Integer},@<linMod@>,
+@<regimesBothXZFuncs@>,probFunc:(_Function|_CompiledFunction|_Symbol),
+@<rawTriples@>,regimeIndx_Integer,
+opts:OptionsPattern[]]:=
+Module[{varRanges=OptionValue["xVarRanges"]},
+With[{funcTrips=
+Map[{#[[1]],genFRExtFunc[{numX,numEps,numZ},linMod,regimesBothXZFuncs,
+probFunc,#[[2]],regimeIndx,
+Apply[Sequence,
+FilterRules[{opts},Options[genFRExtFunc]]]],#[[3]]}&,triples[[1]]]},
+{funcTrips,selectorFunc[triples]}
+]]
+@}
+
+@d rawTriples
+@{triples:xxx_?conditionsGroupQ@}
+
+
+@d genFRExtFunc
+@{
+
+genFRExtFunc[{numX_Integer,numEps_Integer,numZ_Integer},
+@<linMod@>,
+@<regimesBothXZFuncs@>,probFunc:(_Symbol|_Function|_CompiledFunction),
+@<eqnsFunc@>,regimeIndx_Integer,opts:OptionsPattern[]]:=
+Module[{varRanges=OptionValue["xVarRanges"]},
+With[{@<findRootArgNames@>},
+With[{@<prepFindRootXInitRegimesBoth@>},
+With[{zArgsInit=Transpose[{zArgs,Drop[theXInit,numX]}]},
+With[{@<cmptXArgsInit@>,
+@<makeArgPatternsBoth@>},
+(**)
+Switch[OptionValue["Traditional"],
+True,@<setDelayedTradFXtZtRegimesBoth@>;@<setDelayedTradFXtm1Eps@>,
+False,@<setDelayedSeriesFXtZtRegimesBoth@>;@<setDelayedSeriesFXtm1Eps@>]
+(**)
+(**)
+DistributeDefinitions[funcOfXtZt,funcOfXtm1Eps]
+Off[FindRoot::srect];
+Off[FindRoot::nlnum];Sow[{funcOfXtm1Eps,funcOfXtZt},"theFuncs"];
+funcOfXtm1Eps
+]]]]]
+@}
+
+@d prepFindRootXInitRegimesBoth
+@{theXInit=Flatten[Apply[regimesBothXZFuncs[[regimeIndx,1,1]],
+Join[xLagArgs,eArgs]]],
+funcOfXtm1Eps=Unique["fNameXtm1Eps"],
+funcOfXtZt=Unique["fNameXtZt"]
+@}
+
+
+
+@d setDelayedTradFXtZtRegimesBoth
+@{SetDelayed[
+funcOfXtZt[
+(**)
+Apply[Sequence,xtNoZtArgPatterns]],
+Module[{},
+With[{
+xkAppl=Flatten[
+Join[xLagArgs,xArgs,
+Map[(Apply[#[[1,2]],xArgs][[Range[numX]]])&,regimesBothXZFuncs],eArgs]]},
+With[{eqnAppl=Apply[eqnsFunc,Flatten[xkAppl]]},
+Flatten[Join[eqnAppl]]]]]]@}
+
+@d setDelayedSeriesFXtZtRegimesBoth
+@{SetDelayed[
+funcOfXtZt[
+(**)
+Apply[Sequence,xtztArgPatterns]],
+Module[{theZsNow=genZsForFindRoot[linMod,
+Transpose[{xArgs}],Apply[probFunc,xArgs][[regimeIndx]],regimesBothXZFuncs[[All,1,2]],probFunc,
+regimesBothXZFuncs[[regimeIndx,2]]]
+},
+With[{xkFunc=Catch[
+(Check[genLilXkZkFunc[linMod,theZsNow,
+Apply[Sequence,FilterRules[{opts},
+Options[genLilXkZkFunc]]]
+],
+Print["trying higher throw"];Throw[$Failed,"higher"]]),_,
+Function[{val,tag},Print["catchfxtzt:",{xArgs,val,tag}//InputForm];
+Throw[$Failed,"fromGenLil"]]]},
+With[{xkAppl=Apply[xkFunc,Join[xLagArgs,eArgs,zArgs]]},
+With[{eqnAppl=Apply[eqnsFunc,Flatten[xkAppl]],
+xDisc=xArgs-xkAppl[[numX+Range[numX]]]},
+Flatten[Join[xDisc,eqnAppl]]]]]]]@}
+
+
+@d regimesBothXZFuncs
+@{regimesBothXZFuncs:{
+regimesJustBothXZFuncs:{
+{
+(_Function|_InterpolatingFunction|_CompiledFunction|_Symbol),
+(_Function|_InterpolatingFunction|_CompiledFunction|_Symbol)},
+_Integer}..}@}
+
+
+
+@d genRegimesBothX0Z0FuncsUsage
+@{genRegimesBothX0Z0Funcs::usage=
+"place holder for genRegimesBothX0Z0Funcs"
+@}
+
+@d genRegimesBothX0Z0Funcs
+@{
+(*begin code for genRegimesBothX0Z0Funcs*)
+genRegimesBothX0Z0Funcs[@<linMods@>]:=Map[genBothX0Z0Funcs,linMods]
+
+@}
+
+
+
+
+@d genZsForFindRoot
+@{
+
+genZsForFindRoot[linMod:{theHMat_?MatrixQ,BB_?MatrixQ,
+phi_?MatrixQ,FF_?MatrixQ,psiEps_?MatrixQ,psiC_?MatrixQ,psiZ_?MatrixQ,
+backLookingInfo:{{_Integer,backLooking_,backLookingExp_}...}},
+firstSteps:{_?MatrixQ..},firstProbs_?MatrixQ,
+drExpFuncs:{(_Function|_CompiledFunction|_Symbol)..},probFunc:(_Symbol|_Function|_CompiledFunction),iters_Integer]:=
+Module[{numX=Length[getB[linMod]]},
+With[{thePaths=
+Check[
+regimesExpectation[firstSteps,firstProbs,drExpFuncs,probFunc,numX,iters+1],
+Print["problems with current DRCE,using at",initVec,"linMod!!!!!"]]},
+With[{restVals=
+Map[compZsOnPath[theHMat,psiC,numX,#]&,thePaths]},
+      restVals
+]]]
+
+
+
+genZsForFindRoot[linMod:{theHMat_?MatrixQ,BB_?MatrixQ,
+phi_?MatrixQ,FF_?MatrixQ,psiEps_?MatrixQ,psiC_?MatrixQ,psiZ_?MatrixQ,
+backLookingInfo:{{_Integer,backLooking_,backLookingExp_}...}},
+firstSteps:{_?MatrixQ..},firstProbs_?MatrixQ,
+drExpFuncs:{(_Function|_CompiledFunction|_Symbol)..},probFunc:(_Symbol|_Function|_CompiledFunction),iters:{_Integer..}]:=
+MapThread[Flatten[genZsForFindRoot[linMod,{#1},{#2},drExpFuncs,probFunc,#3],1]&,
+{firstSteps,firstProbs,iters+1}]
+
+
+
+genZsForFindRoot[linMod:{theHMat_?MatrixQ,BB_?MatrixQ,
+phi_?MatrixQ,FF_?MatrixQ,psiEps_?MatrixQ,psiC_?MatrixQ,psiZ_?MatrixQ,
+backLookingInfo:{{_Integer,backLooking_,backLookingExp_}...}},
+firstSteps_?MatrixQ,firstProbs_?VectorQ,
+drExpFuncs:{(_Function|_CompiledFunction|_Symbol)..},probFunc:(_Symbol|_Function|_CompiledFunction),iters_Integer]:=
+Flatten[genZsForFindRoot[linMod,{firstSteps},{firstProbs},
+drExpFuncs,probFunc,iters+1],1]
+
+
+compZsOnPath[theHMat_?MatrixQ,psiC_?MatrixQ,numX_Integer,thePath:{_?MatrixQ..}]:=
+With[{fullPath=Apply[Join,thePath]},
+  Map[(theHMat .fullPath[[Range[3*numX]+numX*(#-1)]] -psiC)&,
+Range[(Length[fullPath]/numX)-3]]]
+
+
+@}
+
 
 @d iterateRegimesDRValsUsage
 @{
@@ -1197,6 +1501,12 @@ theHMat
 psiC
 @}
 
+
+@d linMods
+@{linMods:{{_?MatrixQ,_?MatrixQ,_?MatrixQ,_?MatrixQ, 
+_?MatrixQ,_?MatrixQ,_?MatrixQ,
+{{_Integer,_,_}...}}..}
+@}
 
 
 \subsection{Getters and Setters}
@@ -1409,12 +1719,14 @@ EndPackage[]
 @<processedRegimesTriples@>
 @<rawRegimesTriples@>
 @<patternMatchCode@>
+@<genRegimesBothX0Z0FuncsUsage@>
 @}
 
 
 
 @d package code
 @{
+@<genRegimesBothX0Z0Funcs@>
 @<iterateRegimesDRVals@>
 @<iterateRegimesDRProbs@>
 @<regimesExpectation@>
@@ -1475,9 +1787,6 @@ numSteps_Integer}@}
 
 
 
-@d rawTriples
-@{triples:{{{_Function,(_Function|_CompiledFunction|_Symbol),_Function}..},
-selectorFunc_Function}@}
 
 
 

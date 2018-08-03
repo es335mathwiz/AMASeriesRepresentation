@@ -218,3 +218,9 @@ AMASeriesRepresentation`Private`parallelSmolyakGenInterpData[frFunc,sgSpecErg]
 
 parallelMakeGenericInterpFuncs[frFunc,{},sgSpecErg,smolyakInterpolation,{}]
 
+
+
+
+hip=parallelDoGenericIterREInterp[genFRExtFunc,
+betterRBCRegimes`linModBetterRegimes,regX0Z0,rbcEqnsBetterRegimes,
+sgSpecErg,smolyakInterpolation,{}]

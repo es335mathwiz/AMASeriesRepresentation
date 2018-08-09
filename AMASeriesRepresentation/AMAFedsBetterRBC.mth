@@ -264,8 +264,8 @@ Append[Join[{999,kk,999,tt},xt,xtp1],ee]]]]
 
 dirNameString[]:=
 Module[{},
-aDir="resDir"<>"-host-"<>$MachineName<>"numKern"<>ToString[numKern]<>"-"<>ToString[Round[AbsoluteTime[]]]<>"/"(*;
-CreateDirectory[aDir]*)]
+aDir="resDir"<>"-host-"<>$MachineName<>"numKern"<>ToString[numKern]<>"-"<>ToString[Round[AbsoluteTime[]]]<>"/";
+CreateDirectory[aDir]]
 
 fNameString[approx_?VectorQ,iters_Integer,theK_Integer,numKern_Integer]:=
 Module[{},
@@ -433,6 +433,7 @@ theRes=parallelNestGenericIterREInterp[genFRExtFunc,linModBetterRBCTrips,
 {bothX0Z0,theK},rbcEqnsBetterRBCTrips,sgSpecErg,smolyakInterpolation,{},iters,Apply[Sequence,FilterRules[{opts},Options[parallelNestGenericIterREInterp]]]]];
 (*
 ,"xVarRanges"->{{0.01,2},{0.01,2},{0.01,20},{0.85,1.2}}
+*)
 Print["about to prepDRDRCE"];
 {{forDR,forDRCE},{drName,drerrName}}=prepDRDRCE[theRes];
 Print["about to findMinLocs",{drName,drerrName}];
@@ -457,7 +458,6 @@ Print["about to save"];
 If[FileExistsQ[mthName],DeleteFile[mthName]];
 Save[lclMthName,{lclName,tryEps,numKern,theName,mthName,bothX0Z0,sgSpecErg,zPts,tm,
 theRes,forDR,forDRCE,drName,drerrName,bothErrStr,acterrLoc,errBndLoc}];
-*)
 {zPts,theRes}
 ]
 

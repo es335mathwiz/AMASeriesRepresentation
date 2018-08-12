@@ -1509,6 +1509,60 @@ _?MatrixQ,_?MatrixQ,_?MatrixQ,
 @}
 
 
+\subsection{genSolutionPath}
+\label{sec:gensolnpath}
+
+@d genSolutionPathUsage
+@{
+genSolutionPath::usage="genSolutionPath[@<bothXZFuncs@>,initVec_?MatrixQ,numEps_Integer,iters_Integer]"
+@}
+
+
+@d genSolutionPath
+@{
+genSolutionPath[
+xzFuncs:(_Function|_InterpolatingFunction|_CompiledFunction|_Symbol),
+XZFuncs:(_Function|_InterpolatingFunction|_CompiledFunction|_Symbol),
+initVec_?MatrixQ,numEps_Integer,iters_Integer]:=
+Module[{},
+With[{numX=Length[initVec]-numEps},
+With[{firstVal=Apply[xzFuncs,Flatten[initVec]][[Range[numX]]]},
+With[{restVals=
+iterateDRCE[XZFuncs,firstVal,iters]},
+Print[{firstVal,restVals}];
+Join[firstVal,restVals]]]]]
+
+@}
+
+
+\subsection{genSolutionPathErrsPF}
+\label{sec:gensolnpath}
+
+@d genSolutionPathErrsPFUsage
+@{
+genSolutionPathErrsPF::usage="genSolutionPathErrsPF[@<bothXZFuncs@>,initVec_?MatrixQ,numEps_Integer,iters_Integer]"
+@}
+
+
+@d genSolutionPathErrsPF
+@{
+genSolutionPathErrsPF[@<rawTriples@>,
+xzFuncs:(_Function|_InterpolatingFunction|_CompiledFunction|_Symbol),
+XZFuncs:(_Function|_InterpolatingFunction|_CompiledFunction|_Symbol),
+initVec_?MatrixQ,numEps_Integer,iters_Integer]:=
+Module[{thePath=
+genSolutionPath[xzFuncs,XZFuncs,initVec,numEps,iters]},
+With[{numX=Length[initVec]-numEps},
+With[{theArgs=
+Map[Take[thePath,{1,3*numX}+(#1-1)*numX]&,Range[iters]]},
+With[{theVals=
+ParallelTable[evaluateTriple[aTriple,Flatten[anArg]],
+{aTriple,triples[[1]]},{anArg,theArgs}]},
+{theArgs,theVals}]]]]
+
+@}
+
+
 \subsection{Getters and Setters}
 \label{sec:getters-setters}
 
@@ -1664,6 +1718,10 @@ phi
 
 
 
+
+
+
+
 \section{Function Definitions}
 \label{sec:function-definitions}
 
@@ -1720,12 +1778,16 @@ EndPackage[]
 @<rawRegimesTriples@>
 @<patternMatchCode@>
 @<genRegimesBothX0Z0FuncsUsage@>
+@<genSolutionPathUsage@>
+@<genSolutionPathErrsPFUsage@>
 @}
 
 
 
 @d package code
 @{
+@<genSolutionPathErrsPF@>
+@<genSolutionPath@>
 @<genRegimesBothX0Z0Funcs@>
 @<iterateRegimesDRVals@>
 @<iterateRegimesDRProbs@>

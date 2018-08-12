@@ -30,15 +30,15 @@ A New Solution Algorithm with Error Bounds } %(Better?, Coherent? Comprehensive?
 \maketitle
 
 \begin{abstract}
-This paper provides a technique for solving discrete time  dynamic stochastic
+This paper provides a technique for solving discrete time  nonlinear dynamic stochastic
 infinite-horizon economies with bounded-time-invariant solutions.
 In addition, the paper provides 
-formulae for evaluating the accuracy of decision rules
-approximately satisfying the system of model equations and presents
-an algorithm that robustly improves the accuracy of proposed solutions.
+formulae for evaluating the accuracy of proposed solutions
+and presents
+a robust algorithm for improving the accuracy of those solutions.
 The error bounds apply for assessing the accuracy 
-of any proposed bounded time invariant decision rule, 
-regardless of the source.
+of  proposed bounded time invariant decision rules 
+regardless of their source.
 
 A straightforward applications of a  new series representation
 for bounded discrete time series, appropriate for
@@ -46,14 +46,10 @@ a very broad class of dynamic stochastic models, delivers these results.
 % This error bound calculation accounts for the impact of errors in any of the equations in the system.
 Using the series representation, the paper 
 augments a traditional solution strategty with an additional set of
-constraints thereby
-enhancing algorithm robustness and improving accuracy.
+constraints thereby enhancing algorithm robustness and improving accuracy.
 The technique can readily accommodate models with multiple invariant spaces
 and, like the error bound formula,  is appropriate
 for models with occasionally binding constraints and regime switching. 
-
-
-
 
 
 The  paper uses 
@@ -67,8 +63,6 @@ and to exploit the high degree of parallelism available in the algorithm.
 
 
 
-To speed large K computations check for convergence and use 
-infinite series formula
 
 
 
@@ -83,8 +77,11 @@ infinite series formula
 This paper investigates the solution of discrete time  dynamic stochastic
 infinite-horizon economies with bounded-time-invariant solutions.
 It describes how to obtain decision rules satisfying a system of 
-first-order conditions, ``Euler Equations'',  and how to assess their accuracy.\footnote{A future paper will 
-discuss  applications involving value function iteration.}
+first-order conditions, ``Euler Equations'',  and how to assess their accuracy.\footnote{This series 
+representation should also prove useful for applications based on
+value function iteration but I will defer treating this topic for
+a future work.
+}
  For an overview of solution techniques,
 see \citep{judd92,Christiano2000,doraszelskiy04,gaspar97,Judd2014,marcet.lorenzoni99,juddGSSA2011,maliarmovingbounds,RePEc:bny:wpaper:0058}.
 
@@ -104,10 +101,11 @@ one bounded infinite dimensional series into another.
     ``Euler equation errors'' to
     bound the magnitude of the    approximation error in components of 
     decision rules.
-    Others have also studied error bounds for dynamic stochastic models.\cite{judd2017lower,santos2005accuracy,Santos2000accuracy}, this paper provides a more precise bound 
+    Others have also studied error bounds for dynamic stochastic models.\cite{judd2017lower,santos2005accuracy,Santos2000accuracy} This paper provides a more precise bound 
     explicitly relating the magnitude of components of the
-    ``Euler equation errors'' to components of the magnitude of components of
-    errors in the decision rule without resort to statistical inference or ancillary simulations.
+    ``Euler equation errors'' to the magnitude of components of
+    errors in the decision rule 
+without resort to statistical inference or ancillary simulations.
 
     In addition, the series representation provides exploitable
     constraints on model solutions that enhance  
@@ -141,14 +139,17 @@ of the algorithm's components can be computed in parallel.
 
 Section \ref{sec:newseries} presents a useful new series representation for any bounded time series.
 Section \ref{sec:extToMaps} shows how to apply this series representation to time invariant maps.
-Section \ref{sec:solnerrorbounds} provides formulas for computing dynamic stochastic model error bounds for proposed  solutions.
+Section \ref{sec:solnerrorbounds} provides formulae for computing dynamic stochastic model error bounds for proposed  solutions.
 Section \ref{sec:algoforsoln} presents a new solution algorithm for improving proposed solutions.
 %Section \ref{sec:future} discusses directions for future work.
 Section \ref{sec:conc} concludes.
 
 \section{A New Series Representation For  Bounded Time Series}
 \label{sec:newseries}
-Since \cite{blanchard80} numerous authors have developed solution algorithms and formulae for solving linear rational expectations models.  The solutions associated with these linear saddle point models turn out to be instrumental in characterizing the solutions for highly nonlinear models.
+Since \cite{blanchard80} numerous authors have developed solution algorithms and formulae for solving linear rational expectations models.  It turns out that
+the solutions associated with these linear 
+saddle point models can play a very useful role in characterizing the 
+solutions for highly nonlinear models.
 \subsection{Linear Reference Models and a Formula for  ``Anticipated Shocks''}
 \label{sec:linref}
 
@@ -160,7 +161,6 @@ $L$ dimensional deterministic system that produces  a unique stable solution,
 \begin{gather*}
   	 H_{-1} x_{t-1} + H_0 x_t + H_1 x_{t+1}=0
 \end{gather*}
-
 inhomogeneous solutions 
 \begin{gather}
 	 H_{-1} x_{t-1} + H_0 x_t + H_1 x_{t+1}=\psi_\epsilon \epsilon +\psi_{c}
@@ -169,7 +169,7 @@ x_t=B x_{t-1} + \phi \psi_\epsilon \epsilon + (I - F)^{-1} \phi \psi_c\label{hSy
 \intertext{where}
 \phi= (H_0 +H_1 B)^{-1}  \text{ and } \,\,F=-\phi H_1.\citep{anderson10}
 \end{gather}
-It will be useful to collect the components of this solution for use later in the paper.
+It will be useful to collect the components of this solution for use later in the paper. We will use these matrices to construct a series representation for any bounded path.
 Define $\linMod \equiv \linModMats$.
 
 
@@ -185,7 +185,6 @@ Define $\linMod \equiv \linModMats$.
 % \end{pabox}
 %\begin{tcolorbox}[ams gather]
 
-We will use these matrices to construct a series representation for any bounded path.
 \begin{theorem}
 Consider an arbitrary, but bounded path
  \begin{gather}
@@ -196,8 +195,11 @@ $  \zWOarg_{t}$ as
 \begin{gather}
   \zWOarg_{t} \equiv H_{-1} \xWOarg_{t-1} +  H_0 \xWOarg_{t} +  H_1 \xWOarg_{t+1} -\psi_c - \psi_\epsilon \epsilon_t \label{defZ} 
 \end{gather}
-One can then express the $\xWOarg_t$ solving \ref{hSystem} along with the anticipated shocks $\zWOarg_t$ by the equation
-	 \begin{gather}
+One can then express the $\xWOarg_t$ solving 
+\begin{gather}
+	 H_{-1} x_{t-1} + H_0 x_t + H_1 x_{t+1}=\psi_\epsilon \epsilon +\psi_{c}+
+z_t
+\intertext{ using}
 	 \xWOarg_{t} =B x_{t-1}+ \phi \psi_\epsilon\epsilon + (I - F)^{-1} \phi \psi_c + \sum_{\sForSum=0}^\infty F^s \phi \zWOarg_{t+\sForSum} \label{theSeries}
 \intertext{and}
 	 \xWOarg_{t+k+1} =B \xWOarg_{t+k}  + (I - F)^{-1} \phi \psi_c+ \sum_{\sForSum =0}^\infty F^\sForSum \phi \zWOarg_{t+k+\sForSum+1} \,\,\,\,\,\forall t,k \ge  0.
@@ -219,14 +221,15 @@ Interestingly, the linear model, $H$, the  constant term $\psi_c$ and the
 impact of the stochastic shocks $\psi_\epsilon $ can  be 
 chosen rather arbitrarily -- the only constraints being the existence of a saddle-point solution for the linear system and that z-values fall in the row space of $H_1$.  
 %The formula will provide a series  for any $L$ dimensional $\linMod$.
- The formula supports the intuition that far distant shocks influence current conditions less than  imminent shocks.
 
 
 
 % \footnote{$\psi_c$ full rank provides a sufficient condition, but not necessary condition.}
 The
-transformation $ {\{ x_{t}, x_{t}, x_{t+1},x_{t+2}\ldots\}} \rightarrow \linMod(x_{t-1}) \rightarrow{\{ z_{t}, z_{t+1}, z_{t+2},\ldots\}} $ is invertible. $ {\{ z_{t}, z_{t+1}, z_{t+2},\ldots\}} \rightarrow \linMod(x_{t-1})^{-1} \rightarrow{\{ x_{t}, x_{t}, x_{t+1},x_{t+2}\ldots\}} $ and the inverse can be interpreted as giving the impact of ``fully anticipated future shocks'' on the path of $x_t$  in a linear perfect foresight model.  
+transformation $ {\{ x_{t}, x_{t}, x_{t+1},x_{t+2}\ldots\}} \rightarrow \linMod(x_{t-1},\epsilon_t) \rightarrow{\{ z_{t}, z_{t+1}, z_{t+2},\ldots\}} $ is invertible. $ {\{ z_{t}, z_{t+1}, z_{t+2},\ldots\}} \rightarrow \linMod(x_{t-1},\epsilon_t)^{-1} \rightarrow{\{ x_{t}, x_{t}, x_{t+1},x_{t+2}\ldots\}} $ and the inverse can be interpreted as giving the impact of ``fully anticipated future shocks'' on the path of $x_t$  in a linear perfect foresight model.  
 Note that the reference model is deterministic and the $z_t\tArg$ functions account for the stochastic nature of the model.
+ The formula supports the intuition that far distant shocks
+ influence current conditions less than  imminent shocks.
 
 A key feature to note is that the series representation can accommodate arbitrarily complex time series trajectories, so long as these trajectories are bounded.
 Later, this observation will give us some confidence in the 
@@ -377,7 +380,22 @@ However, we can conservatively bound the  series approximation  errors by using 
 
 Many dynamic stochastic models have solutions that 
 fall in the class of bounded time invariant maps.
-As we have seen bounded time invariant maps can 
+Consequently, by applying the law of iterated expectations, 
+we can compute conditional expected solution paths 
+forward from any initial value $x_{t-1}$
+and realization of $\epsilon_t$.
+Subsequently, we can use the family of conditional expectations paths 
+along with a contrived linear reference model to generate
+a series representation for the model solution solutions  and
+to construct error bounds for the approximation.
+
+Economists have long used similar manipulation of
+time series paths for dynamic models. 
+Indeed, Potter constructs his generalized impulse response functions using
+differences in conditional expectations paths.\cite{Potter2000,Koop1996a}
+Here, the series representation will provide a weighted sum of $z_t\tArg$ functions that give us an approximation for the model solutions.
+So long as the trajectories are 
+ bounded the time invariant maps can 
 be represented using the framework from section \ref{sec:newseries}.
 
 %\subsection{Application of the Series Representation to Time Invariant Maps}
@@ -440,17 +458,6 @@ compute the conditional expectation of the model variables for any given $\theta
 e^{\frac{\sigma^2}{2}}\theta_{t+k}^\rho
   \end{bmatrix}
 \end{gather*}
-Consequently, by applying the law of iterated expectations, we can compute conditional expected solution paths forward from any initial value $x_{t-1}$
-and realization of $\epsilon_t$.
-Subsequently, we can use the family of conditional expectations paths 
-along with a contrived linear reference model to recover an 
-approximation for equation \refeq{soln} along with error bounds.
-
-Economists have long used similar manipulation of
-time series paths for dynamic models. 
-Indeed, Potter constructs his generalized impulse response functions using
-differences in conditional expectations paths.\cite{Potter2000,Koop1996a}
-Here, the series representation will provide a weighted sum of $z_t\tArg$ functions that give us an approximation for the, in this case, known model solution.
 
 
 For any given values of $k_{t-1},\theta_{t-1}, \epsilon_t$, the model decision rule, ($\DR$), and decision rule conditional expectation, ($\DRCE$), can generate a conditional expectations path for any given initial $x_{t-1}$ and $\epsilon_t$:

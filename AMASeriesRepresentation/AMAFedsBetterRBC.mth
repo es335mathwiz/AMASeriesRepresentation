@@ -4,10 +4,10 @@ Get["tests/pathSetup.mth"]
 Get["AMASeriesRepresentation`"]
 Print["preemscstomma"]
 Get["emscsToMma`"]
-Get["betterRBCTrips`"]
+Get["firstRBCTrips`"]
 
-phiMat=getPhi[linModBetterRBCTrips]
-fMat=getF[linModBetterRBCTrips]
+phiMat=getPhi[linModFirstRBCTrips]
+fMat=getF[linModFirstRBCTrips]
 tErrMat=truncErrorMat[fMat,phiMat,0]
 tErrMatMax=Norm[tErrMat,Infinity]
 
@@ -37,23 +37,23 @@ approxErrs[approxDR_Function,approxDRCE_Function,
 xeps:{kk_?NumberQ,tt_?NumberQ,ee_?NumberQ}]:=
 Module[{approxVals=approxDR[99,kk,99,tt,ee][[Range[4]]]},
 (-1)*Abs[Flatten[(tErrMat. 
-Transpose[{rbcEqnsBetterRBCTrips @@ makeArgs[{approxDR,approxDRCE},xeps]}])]]]
+Transpose[{rbcEqnsFirstRBCTrips @@ makeArgs[{approxDR,approxDRCE},xeps]}])]]]
 
 betterBounds[approxDR_Function,approxDRCE_Function,
 xeps:{kk_?NumberQ,tt_?NumberQ,ee_?NumberQ}]:=
 Module[{xtVals=Flatten[approxDR[99,kk,99,tt,ee][[Range[4]]]],
 exactXtVals=Flatten[simpRBCExactDRBetterTrips[99,kk,99,tt,ee][[Range[4]]]],
-theH=getH[linModBetterRBCTrips],theF=getF[linModBetterRBCTrips],thePsiC=getPsiC[linModBetterRBCTrips],thePsiEps=getPsiEps[linModBetterRBCTrips]},
+theH=getH[linModFirstRBCTrips],theF=getF[linModFirstRBCTrips],thePsiC=getPsiC[linModFirstRBCTrips],thePsiEps=getPsiEps[linModFirstRBCTrips]},
 With[{xtp1Vals=Flatten[(approxDRCE @@ xtVals)[[Range[4]]]]},Print[{"xtp1:",xtp1Vals}];
-With[{doEval=evaluateTriple[rbcEqnsBetterRBCTrips,Join[{99,kk,99,tt},xtVals,xtp1Vals,{ee}]]},
+With[{doEval=evaluateTriple[rbcEqnsFirstRBCTrips,Join[{99,kk,99,tt},xtVals,xtp1Vals,{ee}]]},
 Print["doEval:",doEval];
 With[{errNow=
 Norm[
-rbcEqnsBetterRBCTrips @@ 
+rbcEqnsFirstRBCTrips @@ 
 Join[{99,kk,99,tt},xtVals,xtp1Vals,{ee}]],errDelay=
 delayEvalEqns @@ 
 Join[{99,kk,99,tt},xtVals,xtp1Vals,{ee},{approxDR,approxDRCE}],
-theZsNow=genZsFromDRCE[linModBetterRBCTrips,Transpose[{{99,kk,99,tt,ee}}],1,
+theZsNow=genZsFromDRCE[linModFirstRBCTrips,Transpose[{{99,kk,99,tt,ee}}],1,
 simpRBCExactDRBetterTrips,simpRBCExactDRCEBetterTrips,1][[1]]
 },Print["betterBounds:",{xtVals,xtp1Vals,ee,xeps,errNow}];
 With[{lil=errNow,lilLil=.0001},
@@ -79,7 +79,7 @@ Method->"InteriorPoint"
 ]},
 With[{errPost=
 Norm[
-rbcEqnsBetterRBCTrips @@ 
+rbcEqnsFirstRBCTrips @@ 
 (Join[{99,kk,99,tt},{cct,kkt,nnt,tht,cctp1,kktp1,nntp1,thtp1},{ee}]/.theRes[[2]])]},
 {errNow,errPost,{Norm[xtVals-exactXtVals],xtVals,exactXtVals},theRes}
 ]]]]]]]]
@@ -92,7 +92,7 @@ Join[xtVals,xtp1Vals]]]
 
 
 evenBetterBounds[approxDR_Function,approxDRCE_Function,ergSetFunc_Function]:=
-Module[{theH=getH[linModBetterRBCTrips],theF=getF[linModBetterRBCTrips],thePsiC=getPsiC[linModBetterRBCTrips],thePsiEps=getPsiEps[linModBetterRBCTrips]},
+Module[{theH=getH[linModFirstRBCTrips],theF=getF[linModFirstRBCTrips],thePsiC=getPsiC[linModFirstRBCTrips],thePsiEps=getPsiEps[linModFirstRBCTrips]},
 With[{},
 With[{},(*Print["betterBounds:",{xtVals,xtp1Vals,ee,xeps}];*)
 With[{},
@@ -102,7 +102,7 @@ FindMaximum[{delayEvalNrmBnd @@
 Join[{99,kk,99,tt},{cct,kkt,nnt,tht},{cctp1,kktp1,nntp1,thtp1},{ee},{approxDR,approxDRCE}],
 And[Norm[delayEvalEqns @@ 
 Join[{99,kk,99,tt},{cct,kkt,nnt,tht},{cctp1,kktp1,nntp1,thtp1},{ee},{approxDR,approxDRCE}]]<Norm[
-rbcEqnsBetterRBCTrips @@ 
+rbcEqnsFirstRBCTrips @@ 
 Join[{99,kk,99,tt},xtVals=xtXtp1Vals[approxDR,approxDRCE,{kk,tt,ee}],{ee}]]]},
 {
 {kk,.1},
@@ -118,7 +118,7 @@ Method->"InteriorPoint"
 ]},
 With[{errPost=
 Norm[
-rbcEqnsBetterRBCTrips @@ 
+rbcEqnsFirstRBCTrips @@ 
 (Join[{99,kk,99,tt},{cct,kkt,nnt,tht,cctp1,kktp1,nntp1,thtp1},{ee}]/.theRes[[2]])]},
 {errPost,{Norm[({cct,kkt,nnt,tht}/.theRes[[2]])-Flatten[simpRBCExactDRBetterTrips[99,kk,99,tt,ee][[Range[4]]]]],xtVals,exactXtVals},theRes}
 ]]]]]]]
@@ -221,7 +221,7 @@ cctm1_?NumberQ,kktm1_?NumberQ,nltm1_?NumberQ,thetatm1_?NumberQ,
 cct_?NumberQ,kkt_?NumberQ,nlt_?NumberQ,thetat_?NumberQ,
 cctp1_?NumberQ,kktp1_?NumberQ,nltp1_?NumberQ,thetatp1_?NumberQ,
 epsVal_?NumberQ,approxDR_Function,approxDRCE_Function]:=
-Module[{eqnVals=rbcEqnsBetterRBCTrips @@ {
+Module[{eqnVals=rbcEqnsFirstRBCTrips @@ {
 cctm1,kktm1,nltm1,thetatm1,
 cct,kkt,nlt,thetat,
 cctp1,kktp1,nltp1,thetatp1,
@@ -234,9 +234,9 @@ cctm1_?NumberQ,kktm1_?NumberQ,nltm1_?NumberQ,thetatm1_?NumberQ,
 cct_?NumberQ,kkt_?NumberQ,nlt_?NumberQ,thetat_?NumberQ,
 cctp1_?NumberQ,kktp1_?NumberQ,nltp1_?NumberQ,thetatp1_?NumberQ,
 epsVal_?NumberQ,approxDR_Function,approxDRCE_Function]:=
-Module[{theH=getH[linModBetterRBCTrips],theF=getF[linModBetterRBCTrips],thePsiC=getPsiC[linModBetterRBCTrips],thePsiEps=getPsiEps[linModBetterRBCTrips],
+Module[{theH=getH[linModFirstRBCTrips],theF=getF[linModFirstRBCTrips],thePsiC=getPsiC[linModFirstRBCTrips],thePsiEps=getPsiEps[linModFirstRBCTrips],
 theZsNow=
-genZsFromDRCE[linModBetterRBCTrips,Transpose[{{99,kktm1,99,thetatm1,epsVal}}],1,
+genZsFromDRCE[linModFirstRBCTrips,Transpose[{{99,kktm1,99,thetatm1,epsVal}}],1,
 approxDR,approxDRCE,10][[1]]
 },
 With[{theZs=
@@ -272,12 +272,12 @@ Module[{},
 StringReplace[dirNameString[]<>"forBetterTripsRBC-"<>ToString[approx]<>"Iters"<>ToString[iters]<>"theK"<>ToString[theK],{" "->"","{"->"-","}"->"-"}]];
 
 
-kl=betterRBCTrips`Private`kLow 
-kh=betterRBCTrips`Private`kHigh
-tl=betterRBCTrips`Private`thLow
-th=betterRBCTrips`Private`thHigh
-sl=betterRBCTrips`Private`sigLow
-sh=betterRBCTrips`Private`sigHigh
+kl=firstRBCTrips`Private`kLow 
+kh=firstRBCTrips`Private`kHigh
+tl=firstRBCTrips`Private`thLow
+th=firstRBCTrips`Private`thHigh
+sl=firstRBCTrips`Private`sigLow
+sh=firstRBCTrips`Private`sigHigh
 
 
 Options[checkPt]={"Traditional"->False}
@@ -290,14 +290,14 @@ xzt=adr @@ xtm1eps;
 xztp1=(adrce @@ Flatten[xzt])[[Range[4]]];
 tradArg=Flatten[
 Join[Drop[xtm1eps,-1],xzt[[Range[4]]],xztp1[[Range[4]]],{eps}]];
-rbcEqnsBetterRBCTrips @@ tradArg,
+rbcEqnsFirstRBCTrips @@ tradArg,
 xtm1eps=Flatten[fillIn[{{},{1,3},aPt}]];
 xzt=adr @@ xtm1eps;
-theZsNow=genZsForFindRoot[linModBetterRBCTrips,
+theZsNow=genZsForFindRoot[linModFirstRBCTrips,
 xzt[[Range[4]]],adrce,theK];
-xkzkFunc=genLilXkZkFunc[linModBetterRBCTrips,theZsNow];
+xkzkFunc=genLilXkZkFunc[linModFirstRBCTrips,theZsNow];
 xkApply=Flatten[xkzkFunc @@ Join[xtm1eps,Flatten[xzt[[4+Range[4]]]]]];
-rbcEqnsBetterRBCTrips @@ xkApply]]
+rbcEqnsFirstRBCTrips @@ xkApply]]
 
 prepSmol[approx_?VectorQ,iters_Integer,theK_Integer]:=
 Module[{toIg,zPts,ptErg,tfErg,plyErg,iplyErg,dplyErg,bothX0Z0,smolStuff,smolRngErg,sgSpecErg},
@@ -305,14 +305,14 @@ Module[{toIg,zPts,ptErg,tfErg,plyErg,iplyErg,dplyErg,bothX0Z0,smolStuff,smolRngE
 LaunchKernels[];numKern=Length[Kernels[]];
 theName=fNameString[approx,iters,theK,numKern];
 mthName=theName<>".mth";
-bothX0Z0=genBothX0Z0Funcs[linModBetterRBCTrips];
+bothX0Z0=genBothX0Z0Funcs[linModFirstRBCTrips];
 smolStuff=
-{ptErg,tfErg,plyErg,iplyErg,dplyErg}=smolyakInterpolationPrep[approx,{betterRBCTripsMean,betterRBCTripsSD,betterRBCTripsMinZ,betterRBCTripsMaxZ,betterRBCTripsvv},theDistBetterRBCTrips];
-smolRngErg=Transpose[{betterRBCTripsMinZ,betterRBCTripsMaxZ}];
-toIg=aGSpecBetterRBCTrips[[1]];
+{ptErg,tfErg,plyErg,iplyErg,dplyErg}=smolyakInterpolationPrep[approx,{firstRBCTripsMean,firstRBCTripsSD,firstRBCTripsMinZ,firstRBCTripsMaxZ,firstRBCTripsvv},theDistFirstRBCTrips];
+smolRngErg=Transpose[{firstRBCTripsMinZ,firstRBCTripsMaxZ}];
+toIg=aGSpecFirstRBCTrips[[1]];
 sgSpecErg={toIg,smolRngErg,ptErg,tfErg,plyErg,iplyErg,1,approx,
-{betterRBCTripsMean,betterRBCTripsSD,betterRBCTripsMinZ,betterRBCTripsMaxZ,betterRBCTripsvv}};
-zPts=backXtoZ[ptErg,betterRBCTripsMean,betterRBCTripsSD,betterRBCTripsvv];
+{firstRBCTripsMean,firstRBCTripsSD,firstRBCTripsMinZ,firstRBCTripsMaxZ,firstRBCTripsvv}};
+zPts=backXtoZ[ptErg,firstRBCTripsMean,firstRBCTripsSD,firstRBCTripsvv];
 {tryEps,numKern,theName,mthName,bothX0Z0,sgSpecErg,zPts}
 ]
 
@@ -321,7 +321,7 @@ prepDRDRCE[theRes_List]:=
 Module[{forDR,forDRCE,drName,drerrName},
 forDR=theRes[[-1,1]];DistributeDefinitions[forDR];
 forDRCE=theRes[[-2,2]];DistributeDefinitions[forDRCE];
-DistributeDefinitions[linModBetterRBCTrips];
+DistributeDefinitions[linModFirstRBCTrips];
 (**)
 drerrName=Unique["drerr"];
 (**)
@@ -329,12 +329,12 @@ drName=Unique["dr"];
 (**)
 drName[z1_?NumberQ,z2_?NumberQ,z3_?NumberQ]:=
 Module[{},
--Norm[actualErrs[forDR,backZtoX[{{z1,z2,z3}},betterRBCTripsMean,betterRBCTripsSD,betterRBCTripsvv][[1]]]]];
+-Norm[actualErrs[forDR,backZtoX[{{z1,z2,z3}},firstRBCTripsMean,firstRBCTripsSD,firstRBCTripsvv][[1]]]]];
 (**)
 drerrName[z1_?NumberQ,z2_?NumberQ,z3_?NumberQ]:=
 Module[{},
 With[{resNow=-Norm[approxErrs[forDR,forDRCE,
-backZtoX[{{z1,z2,z3}},betterRBCTripsMean,betterRBCTripsSD,betterRBCTripsvv][[1]]]]},
+backZtoX[{{z1,z2,z3}},firstRBCTripsMean,firstRBCTripsSD,firstRBCTripsvv][[1]]]]},
 resNow]];
 DistributeDefinitions[drerrName,drName];
 {{forDR,forDRCE},{drName,drerrName}}
@@ -343,18 +343,18 @@ DistributeDefinitions[drerrName,drName];
 
 minActualErr[drName_Symbol]:=
 NMinimize[drName[z1,z2,z3],
-And[betterRBCTripsMinZ[[1]] <=z1<=betterRBCTripsMaxZ[[1]],
-betterRBCTripsMinZ[[2]]<=z2<=betterRBCTripsMaxZ[[2]],
-betterRBCTripsMinZ[[3]]<=z3<=betterRBCTripsMaxZ[[3]]],{z1,z2,z3},
+And[firstRBCTripsMinZ[[1]] <=z1<=firstRBCTripsMaxZ[[1]],
+firstRBCTripsMinZ[[2]]<=z2<=firstRBCTripsMaxZ[[2]],
+firstRBCTripsMinZ[[3]]<=z3<=firstRBCTripsMaxZ[[3]]],{z1,z2,z3},
 {Method->"NelderMead","RandomSeed"->Round[AbsoluteTime[]]}
 ];
 
 minPredErr[drerrName_Symbol]:=
 Module[{errBnd,errBndVal,errBndSubs},
 errBnd={errBndVal,errBndSubs}=NMinimize[drerrName[z1,z2,z3],
-And[betterRBCTripsMinZ[[1]] <=z1<=betterRBCTripsMaxZ[[1]],
-betterRBCTripsMinZ[[2]]<=z2<=betterRBCTripsMaxZ[[2]],
-betterRBCTripsMinZ[[3]]<=z3<=betterRBCTripsMaxZ[[3]]],{z1,z2,z3},
+And[firstRBCTripsMinZ[[1]] <=z1<=firstRBCTripsMaxZ[[1]],
+firstRBCTripsMinZ[[2]]<=z2<=firstRBCTripsMaxZ[[2]],
+firstRBCTripsMinZ[[3]]<=z3<=firstRBCTripsMaxZ[[3]]],{z1,z2,z3},
 {Method->"NelderMead","RandomSeed"->Round[AbsoluteTime[]]}];
 {errBndVal,errBndSubs}
 ]
@@ -403,8 +403,8 @@ zPts_List,theName_String,opts:OptionsPattern[]]:=
 Module[{},
 ContourPlot[
 Norm[actualErrs[forDR,
-backZtoX[{{z1,z2,tryEps}},betterRBCTripsMean,betterRBCTripsSD,betterRBCTripsvv][[1]]]],
-{z1,betterRBCTripsMinZ[[1]],betterRBCTripsMaxZ[[1]]},{z2,betterRBCTripsMinZ[[2]],betterRBCTripsMaxZ[[2]]},PlotRange->All,PlotLegends->Automatic,PlotLabel->StringReplace[theName,"Iters"->"\nIters"
+backZtoX[{{z1,z2,tryEps}},firstRBCTripsMean,firstRBCTripsSD,firstRBCTripsvv][[1]]]],
+{z1,firstRBCTripsMinZ[[1]],firstRBCTripsMaxZ[[1]]},{z2,firstRBCTripsMinZ[[2]],firstRBCTripsMaxZ[[2]]},PlotRange->All,PlotLegends->Automatic,PlotLabel->StringReplace[theName,"Iters"->"\nIters"
 ]<>bothErrStr,
 Epilog->{PointSize[0.05],Green,Point[acterrLoc[[{1,2}]]],PointSize[0.025],Orange,Point[errBndLoc[[{1,2}]]],PointSize[0.0125],Black,Point[#]&/@zPts[[All,{1,2}]]},PlotRangeClipping->False]]
 
@@ -415,8 +415,8 @@ zPts_List,theName_String,opts:OptionsPattern[]]:=
 Module[{},
 ContourPlot[
 Norm[checkPt[forDR,forDRCE,theK,
-backZtoX[{{z1,z2,tryEps}},betterRBCTripsMean,betterRBCTripsSD,betterRBCTripsvv][[1]],FilterRules[{opts},Options[checkPt]]]],
-{z1,betterRBCTripsMinZ[[1]],betterRBCTripsMaxZ[[1]]},{z2,betterRBCTripsMinZ[[2]],betterRBCTripsMaxZ[[2]]},PlotRange->All,PlotLegends->Automatic,PlotLabel->StringReplace[theName,"Iters"->"\nIters"
+backZtoX[{{z1,z2,tryEps}},firstRBCTripsMean,firstRBCTripsSD,firstRBCTripsvv][[1]],FilterRules[{opts},Options[checkPt]]]],
+{z1,firstRBCTripsMinZ[[1]],firstRBCTripsMaxZ[[1]]},{z2,firstRBCTripsMinZ[[2]],firstRBCTripsMaxZ[[2]]},PlotRange->All,PlotLegends->Automatic,PlotLabel->StringReplace[theName,"Iters"->"\nIters"
 ]<>"Approx"<>bothErrStr,
 Epilog->{PointSize[0.05],Green,Point[acterrLoc[[{1,2}]]],PointSize[0.025],Orange,Point[errBndLoc[[{1,2}]]],PointSize[0.0125],Black,Point[#]&/@zPts[[All,{1,2}]]}]]
 
@@ -429,8 +429,8 @@ Module[{lclMthName,lclName,tryEps,numKern,theName,mthName,bothX0Z0,sgSpecErg,zPt
 prepSmol[approx,iters,theK];
 Print["indo:",{Options[parallelNestGenericIterREInterp],FilterRules[{opts},Options[parallelNestGenericIterREInterp]]}];
 {tm,ig}=Timing[
-theRes=parallelNestGenericIterREInterp[genFRExtFunc,linModBetterRBCTrips,
-{bothX0Z0,theK},rbcEqnsBetterRBCTrips,sgSpecErg,smolyakInterpolation,{},iters,Apply[Sequence,FilterRules[{opts},Options[parallelNestGenericIterREInterp]]]]];
+theRes=parallelNestGenericIterREInterp[genFRExtFunc,linModFirstRBCTrips,
+{bothX0Z0,theK},rbcEqnsFirstRBCTrips,sgSpecErg,smolyakInterpolation,{},iters,Apply[Sequence,FilterRules[{opts},Options[parallelNestGenericIterREInterp]]]]];
 (*
 ,"xVarRanges"->{{0.01,2},{0.01,2},{0.01,20},{0.85,1.2}}
 *)
@@ -473,11 +473,11 @@ Show[acterrsCP];
 
 (*
 approx=1*{1,1,1};
-{ptErg,tfErg,plyErg,iplyErg,dplyErg}=smolyakInterpolationPrep[approx,{betterRBCTripsMean,betterRBCTripsSD,betterRBCTripsMinZ,betterRBCTripsMaxZ,betterRBCTripsvv},theDistBetterRBCTrips];
-smolRngErg=Transpose[{betterRBCTripsMinZ,betterRBCTripsMaxZ}];
-toIg=aGSpecBetterRBCTrips[[1]];
+{ptErg,tfErg,plyErg,iplyErg,dplyErg}=smolyakInterpolationPrep[approx,{firstRBCTripsMean,firstRBCTripsSD,firstRBCTripsMinZ,firstRBCTripsMaxZ,firstRBCTripsvv},theDistFirstRBCTrips];
+smolRngErg=Transpose[{firstRBCTripsMinZ,firstRBCTripsMaxZ}];
+toIg=aGSpecFirstRBCTrips[[1]];
 sgSpecErg={toIg,smolRngErg,ptErg,tfErg,plyErg,iplyErg,1,approx,
-{betterRBCTripsMean,betterRBCTripsSD,betterRBCTripsMinZ,betterRBCTripsMaxZ,betterRBCTripsvv}};
+{firstRBCTripsMean,firstRBCTripsSD,firstRBCTripsMinZ,firstRBCTripsMaxZ,firstRBCTripsvv}};
 
 
 
@@ -532,9 +532,9 @@ approx=4*{1,1,1};
 
 (*
 betterBounds[simpRBCExactDRBetter,simpRBCExactDRCEBetter,{.2,1,.01}]
-X0Z0=genX0Z0Funcs[linModBetterRBCTrips];
-theRes=parallelNestIterREInterp[genFRExtFunc,linModBetterRBCTrips,
-{X0Z0,3},rbcEqnsBetterRBCTrips,sgSpecErg,5,"xVarRanges"->{{0.01,2},{0.01,2},{0.01,20},{0.85,1.2}}];
+X0Z0=genX0Z0Funcs[linModFirstRBCTrips];
+theRes=parallelNestIterREInterp[genFRExtFunc,linModFirstRBCTrips,
+{X0Z0,3},rbcEqnsFirstRBCTrips,sgSpecErg,5,"xVarRanges"->{{0.01,2},{0.01,2},{0.01,20},{0.85,1.2}}];
 betterBounds[theRes[[-1,1]],theRes[[-1,2]],{.2,1,.01}]
 
 
@@ -581,7 +581,7 @@ cctp1_?NumberQ,kktp1_?NumberQ,nltp1_?NumberQ,thetatp1_?NumberQ,
 epsVal_?NumberQ]:=
 Module[{theH=getH[linModBetter],theF=getF[linModBetter],thePsiC=getPsiC[linModBetter],thePsiEps=getPsiEps[linModBetter],
 theZsNow=
-genZsFromDRCE[linModBetterRBCTrips,Transpose[{{99,kktm1,99,thetatm1,epsVal}}],1,
+genZsFromDRCE[linModFirstRBCTrips,Transpose[{{99,kktm1,99,thetatm1,epsVal}}],1,
 simpRBCExactDRBetter,simpRBCExactDRCEBetter,10][[1]]
 },
 With[{theZs=
@@ -599,7 +599,7 @@ ParallelEvaluate[Get["pathSetup.mth"]]
 ParallelNeeds["AMASeriesRepresentation`"]
 Print["preemscstomma"]
 ParallelNeeds["emscsToMma`"]
-ParallelNeeds["betterRBCTrips`"]
+ParallelNeeds["firstRBCTrips`"]
 
 phiMat=getPhi[linModBetter]
 fMat=getF[linModBetter]
@@ -632,36 +632,36 @@ doItApproxSeries[1*{1,1,1},70,#,"Traditional"->False]& /@Join[Range[0,5],Range[1
 doItApproxSeries[2*{1,1,1},70,#,"Traditional"->False]& /@Join[Range[0,5],Range[10,50,10]]
 doItApproxSeries[3*{1,1,1},70,#,"Traditional"->False]& /@Join[Range[0,5],Range[10,50,10]]
 
-X0Z0=genBothX0Z0Funcs[linModBetterRBCTrips];
+X0Z0=genBothX0Z0Funcs[linModFirstRBCTrips];
 frFuncJustEval=genFRExtFuncJustEval[{4,1,4},
-linModBetterRBCTrips,{genBothX0Z0Funcs[linModBetterRBCTrips],2},rbcEqnsBetterRBCTrips]
+linModFirstRBCTrips,{genBothX0Z0Funcs[linModFirstRBCTrips],2},rbcEqnsFirstRBCTrips]
 
 evaluateTriple[frFuncJustEval[[1,2]],{1.52, 0.24, 1.8, 0.9097,0} ]
 evaluateTriple[frFuncJustEval[[1,1]],{1.52, 0.24, 1.8, 0.9097,0} ]
-evaluateTriplesJustVals[frFuncJustEval,Flatten[anXEpsBetterRBCTrips]]
+evaluateTriplesJustVals[frFuncJustEval,Flatten[anXEpsFirstRBCTrips]]
 
 approx=1*{1,1,1};
-{ptErg,tfErg,plyErg,iplyErg,dplyErg}=smolyakInterpolationPrep[approx,{betterRBCTripsMean,betterRBCTripsSD,betterRBCTripsMinZ,betterRBCTripsMaxZ,betterRBCTripsvv},theDistBetterRBCTrips];
-smolRngErg=Transpose[{betterRBCTripsMinZ,betterRBCTripsMaxZ}];
-toIg=aGSpecBetterRBCTrips[[1]];
+{ptErg,tfErg,plyErg,iplyErg,dplyErg}=smolyakInterpolationPrep[approx,{firstRBCTripsMean,firstRBCTripsSD,firstRBCTripsMinZ,firstRBCTripsMaxZ,firstRBCTripsvv},theDistFirstRBCTrips];
+smolRngErg=Transpose[{firstRBCTripsMinZ,firstRBCTripsMaxZ}];
+toIg=aGSpecFirstRBCTrips[[1]];
 sgSpecErg={toIg,smolRngErg,ptErg,tfErg,plyErg,iplyErg,1,approx,
-{betterRBCTripsMean,betterRBCTripsSD,betterRBCTripsMinZ,betterRBCTripsMaxZ,betterRBCTripsvv}};
+{firstRBCTripsMean,firstRBCTripsSD,firstRBCTripsMinZ,firstRBCTripsMaxZ,firstRBCTripsvv}};
 theRes01 = parallelNestGenericIterREInterp[genFRExtFunc, 
-   linModBetterRBCTrips, {X0Z0, 2}, rbcEqnsBetterRBCTrips, 
+   linModFirstRBCTrips, {X0Z0, 2}, rbcEqnsFirstRBCTrips, 
    sgSpecErg,smolyakInterpolation,{}, 3];
-Print[{"16",Through[theRes[[-1]] @@ # &[anXEpsFlatBetterRBCTrips]]}]
+Print[{"16",Through[theRes[[-1]] @@ # &[anXEpsFlatFirstRBCTrips]]}]
 
 frFuncJustEval01=genFRExtFuncJustEval[{4,1,4},
-linModBetterRBCTrips,{genBothX0Z0Funcs[linModBetterRBCTrips],2},rbcEqnsBetterRBCTrips]
+linModFirstRBCTrips,{genBothX0Z0Funcs[linModFirstRBCTrips],2},rbcEqnsFirstRBCTrips]
 evaluateTriple[frFuncJustEval01[[1,1]],{1.52, 0.24, 1.8, 0.9097,0} ]
 evaluateTriple[frFuncJustEval01[[1,2]],{1.52, 0.24, 1.8, 0.9097,0} ]
-evaluateTriplesJustVals[frFuncJustEval01,Flatten[anXEpsBetterRBCTrips]]
+evaluateTriplesJustVals[frFuncJustEval01,Flatten[anXEpsFirstRBCTrips]]
 
 
 
 frFuncJustEval02=genFRExtFuncJustEval[{4,1,4},
-linModBetterRBCTrips,{theRes01[[-1]],2},rbcEqnsBetterRBCTrips]
+linModFirstRBCTrips,{theRes01[[-1]],2},rbcEqnsFirstRBCTrips]
 evaluateTriple[frFuncJustEval02[[1,1]],{1.52, 0.24, 1.8, 0.9097,0} ]
 evaluateTriple[frFuncJustEval02[[1,2]],{1.52, 0.24, 1.8, 0.9097,0} ]
-evaluateTriplesJustVals[frFuncJustEval02,Flatten[anXEpsBetterRBCTrips]]
+evaluateTriplesJustVals[frFuncJustEval02,Flatten[anXEpsFirstRBCTrips]]
 *)

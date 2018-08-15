@@ -2,8 +2,10 @@ Print["setting history length to 1"];
 $HistoryLength=1;
 Get["tests/pathSetup.mth"]
 Get["AMASeriesRepresentation`"]
+(*
 Print["preemscstomma"]
-Get["emscsToMma`"]
+Get["emscsToMma`"]*)
+Needs["MSNTO`"]
 Get["firstRBCTrips`"]
 
 phiMat=getPhi[linModFirstRBCTrips]
@@ -317,6 +319,26 @@ zPts=backXtoZ[ptErg,firstRBCTripsMean,firstRBCTripsSD,firstRBCTripsvv];
 ]
 
 
+
+Options[doItNow]={"Traditional"->False}
+doItNow[approx_?VectorQ,iters_Integer,theK_Integer,opts:OptionsPattern[]]:=
+Module[{lclMthName,lclName,tryEps,numKern,theName,mthName,bothX0Z0,sgSpecErg,zPts,tm,ig,theRes,forDR,forDRCE,drName=Unique["drName"],drerrName=Unique["drerrName"],bothErrStr,acterrLoc,errBndLoc},
+{tryEps,numKern,theName,mthName,bothX0Z0,sgSpecErg,zPts}=
+prepSmol[approx,iters,theK];
+Print["indo:",{Options[parallelNestGenericIterREInterp],FilterRules[{opts},Options[parallelNestGenericIterREInterp]]}];
+{tm,ig}=Timing[
+theRes=parallelNestGenericIterREInterp[genFRExtFunc,linModFirstRBCTrips,
+{bothX0Z0,theK},rbcEqnsFirstRBCTrips,sgSpecErg,smolyakInterpolation,{},iters,Apply[Sequence,FilterRules[{opts},Options[parallelNestGenericIterREInterp]]]]];
+(*
+,"xVarRanges"->{{0.01,2},{0.01,2},{0.01,20},{0.85,1.2}}
+*)
+Print["about to prepDRDRCE"];
+{zPts,theRes}
+]
+
+
+
+
 prepDRDRCE[theRes_List]:=
 Module[{forDR,forDRCE,drName,drerrName},
 forDR=theRes[[-1,1]];DistributeDefinitions[forDR];
@@ -419,6 +441,8 @@ backZtoX[{{z1,z2,tryEps}},firstRBCTripsMean,firstRBCTripsSD,firstRBCTripsvv][[1]
 {z1,firstRBCTripsMinZ[[1]],firstRBCTripsMaxZ[[1]]},{z2,firstRBCTripsMinZ[[2]],firstRBCTripsMaxZ[[2]]},PlotRange->All,PlotLegends->Automatic,PlotLabel->StringReplace[theName,"Iters"->"\nIters"
 ]<>"Approx"<>bothErrStr,
 Epilog->{PointSize[0.05],Green,Point[acterrLoc[[{1,2}]]],PointSize[0.025],Orange,Point[errBndLoc[[{1,2}]]],PointSize[0.0125],Black,Point[#]&/@zPts[[All,{1,2}]]}]]
+
+
 
 
 

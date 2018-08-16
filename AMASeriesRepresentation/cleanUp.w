@@ -1601,6 +1601,22 @@ genTestPts::usage="place holder"
 
 @d genTestPts
 @{
+genTestPts[theVarBounds:{minVars_?VectorQ,maxVars_?VectorQ},numPts_Integer,
+numGen:(Nied|Sobol)]:=
+With[{varRanges=Transpose[theVarBounds]},
+With[{someUnis=numGen[numPts,Length[varRanges]]},
+Print[{"someUnis:",someUnis,varRanges}];
+With[{theVars=backUnisToVars[someUnis,varRanges]},
+theVars]]]
+
+backUnisToVars[someVars_?MatrixQ,varRanges_?MatrixQ]:=
+With[{},
+Transpose[MapThread[doAVar,{Transpose[someVars],varRanges}]]]
+
+doAVar[aVar_?VectorQ,aRange:{low_?NumberQ,high_?NumberQ}]:=
+Map[low+#*(high-low)&,aVar]
+
+
 genTestPts[theZBounds:{minZs_?VectorQ,maxZs_?VectorQ},numPts_Integer,
 numGen:(Nied|Sobol),theMeans_?VectorQ,theSDs_?VectorQ,thessv_?MatrixQ,
 ignored_?VectorQ]:=
@@ -1613,6 +1629,8 @@ Map[fillIn[{{},ignored,#}]&,theXs]]]]
 @d assessErrPredictionUsage
 @{
 assessErrPrediction::usage="place holder"
+getSlopesRSqs::usage="place holder"
+varyParamsForSlSq::usage="place holder"
 @}
 
 
@@ -1629,15 +1647,63 @@ opts:OptionsPattern[]]:=
 With[{
 pvals=Map[candErrFunc[triples,candxzFuncs,candXZFuncs,Transpose[{#}],numEps,
 linMod,opts]&,testPts]},
-Print[{"pvals",pvals}];
 With[{avals=Map[(((Apply[candxzFuncs ,Flatten[#]])[[Range[4]]])-(Apply[bestxzFuncs ,Flatten[#]]))&,testPts]},
-Print[{"avals",avals}];
 With[{
 forRegs=Map[Transpose[{Flatten[pvals[[All,#]]],Flatten[avals[[All,#]]]}]&,
 Range[Length[pvals[[1]]]]]},
-Print[{"forRegs",forRegs}];
 With[{lmfs=Map[LinearModelFit[#,xx,xx]&,forRegs]},
 lmfs]]]]
+
+Options[getSlopesRSqs]={"epsCalc"->"zero","useTail"->False}
+getSlopesRSqs[
+alphaVal_?NumberQ,
+deltaVal_?NumberQ,
+etaVal_?NumberQ,
+rhoVal_?NumberQ,
+sigmaVal_?NumberQ,
+bothXZFuncs:{
+xzFuncs:(_Function|_InterpolatingFunction|_CompiledFunction|_Symbol),
+XZFuncs:(_Function|_InterpolatingFunction|_CompiledFunction|_Symbol)},
+errFunc:(_Function|_InterpolatingFunction|_CompiledFunction|_Symbol),
+modGenerator:(_Function|_InterpolatingFunction|_CompiledFunction|_Symbol),
+numPts_Integer,
+opts:OptionsPattern[]]:=
+Module[{modData=modGenerator[.36,.95,1,.95,.01],
+resids,rsqs,bfs,mn,sd,minz,maxz,svd,
+linModFirstRBCTrips,rbcEqnsFirstRBCTrips,firstRBCTripsExactDR,
+firstRBCTripsExactDRCE,forErgodicInfo},
+{linModFirstRBCTrips,rbcEqnsFirstRBCTrips,firstRBCTripsExactDR,
+firstRBCTripsExactDRCE,forErgodicInfo}=modData;
+{mn,sd,minz,maxz,svd}=ergodicInfo[forErgodicInfo,{1,3}];
+theFullXs=genTestPts[{minz,maxz},numPts,Nied,mn,sd,svd,{1,3}];
+With[{lms=
+assessErrPrediction[{rbcEqnsFirstRBCTrips,theFullXs,1,
+linModFirstRBCTrips,firstRBCTripsExactDR},bothXZFuncs,errFunc,opts]},
+bfs=Through[lms["BestFitParameters"]];
+pvs=Through[lms["ParameterPValues"]];
+evs=Through[lms["EstimatedVariance"]];
+rsqs=Through[lms["RSquared"]];
+resids=Through[lms["FitResiduals"]];
+{bfs,pvs,evs,rsqs,resids}]]
+
+
+
+Options[varyParamsForSlSq]={"epsCalc"->"zero","useTail"->False}
+varyParamsForSlSq[paramRanges_?MatrixQ,
+bothXZFuncs:{
+xzFuncs:(_Function|_InterpolatingFunction|_CompiledFunction|_Symbol),
+XZFuncs:(_Function|_InterpolatingFunction|_CompiledFunction|_Symbol)},
+errFunc:(_Function|_InterpolatingFunction|_CompiledFunction|_Symbol),
+modGenerator:(_Function|_InterpolatingFunction|_CompiledFunction|_Symbol),
+numPts_Integer,numParamPts_Integer,
+opts:OptionsPattern[]]:=
+With[{testPts=genTestPts[{{0.2,0.7,0.8,0.01},{.38,.99,.98,0.1}},numParamPts,
+Nied]},
+Print[{"testPts:",testPts}];
+Map[getSlopesRSqs[#[[1]],#[[2]],1,#[[3]],#[[4]],bothXZFuncs,errFunc,
+modGenerator,numPts,opts]&,testPts]]
+
+
 
 @}
 
@@ -2070,8 +2136,7 @@ numSteps_Integer}@}
 \subsubsection{rbcEqns}
 @d rbcEqns
 @{
-
-CRRAUDrv[cc_,eta_]:=If[eta===1,D[Log[cc],cc],D[(1/(1-eta))*(cc^(1-eta)-1),cc]]
+CRRAUDrv[cc_,eta_]:=If[eta===1,D[Log[cc],cc],D[(1/(1-eta))*(cc^(1-eta)-1),cc]];
 (*pg 165 of  maliar maliar solving neoclassical growth model  
 closed form solution version  beta=1 geometric discounting
 chkcobb douglas production*)
@@ -2081,7 +2146,7 @@ CRRAUDrv[cc[t],1]-
 cc[t] + kk[t]-((theta[t])*(kk[t-1]^alpha)),
 nlPart[t] - (nlPartRHS=(1)* (theta[t]*CRRAUDrv[cc[t],1])),
 theta[t]-E^(rho*Log[theta[t-1]] + eps[theta][t])
-}
+};
 @}
 
 \subsubsection{steady state solution}
@@ -2096,10 +2161,10 @@ thNow[lastTh_,eps_]:=(E^eps)*lastTh^rho/.simpParamSubs;
 nxtK[lastK_,thNowVal_]:=((alpha*delta))*thNowVal*lastK^(alpha)/.simpParamSubs;
 yNow[kLag_,thNowVal_]:=thNowVal*kLag^(alpha)/.simpParamSubs;
 anExpRE=Expectation[E^ep,ep\[Distributed] NormalDistribution[0,sigma]/.simpParamSubs];
-Off[Solve::ifun]
+Off[Solve::ifun];
 thSubsRE=Flatten[Solve[theta==anExpRE*thNow[theta,0],theta][[2]]];
 kSSSubRE=Flatten[Solve[nxtK[kk,theta/.thSubsRE]==kk,kk][[-1]]];
-On[Solve::ifun]
+On[Solve::ifun];
 cSSSubRE=cc->(yNow[kk/.kSSSubRE,theta/.thSubsRE]-kk/.kSSSubRE);
 nlPartSSSubRE=(nlPart->(nlPartRHS/.xxxx_[t]->xxxx))//.Join[thSubsRE,Append[kSSSubRE,cSSSubRE]];
 ssSolnSubsRE=Flatten[{thSubsRE,kSSSubRE,cSSSubRE,nlPartSSSubRE}];
@@ -2123,6 +2188,13 @@ delta->.95,
 rho->.95,
 sigma->.01
 } ;
+paramSubs={
+alpha->alphaVal,
+delta->deltaVal,
+eta->etaVal,
+rho->rhoVal,
+sigma->sigmaVal
+} ;
 
 
 forSubs={alpha^(1 - alpha)^(-1)*delta^(1 - alpha)^(-1)};
@@ -2143,13 +2215,13 @@ linModFirstRBCTrips::usage="linear model matrices for approx"
 
 @d linModFirstRBCTrips
 @{
-Print["raw not needed?"]
+Print["raw not needed?"];
 hmatSymbRawRE=(((equationsToMatrix[
 rbcEqns/.simpParamSubs]//FullSimplify)/.{xxxx_[t+_.]->xxxx})//.ssSolnSubsRE)/.{eps[_]->0}//FullSimplify;
-psiepsSymbRE=-Transpose[{((Map[D[#,eps[theta][t]]&, rbcEqns])/.{eps[_][_]->0,xxxx_[t+_.]->xxxx})//.ssSolnSubsRE}/.simpParamSubs]
+psiepsSymbRE=-Transpose[{((Map[D[#,eps[theta][t]]&, rbcEqns])/.{eps[_][_]->0,xxxx_[t+_.]->xxxx})//.ssSolnSubsRE}/.simpParamSubs];
 
 
-hmatSymbRE=hmatSymbRawRE//.simpSubs
+hmatSymbRE=hmatSymbRawRE//.simpSubs;
 
 
 
@@ -2164,7 +2236,7 @@ qmatSymbRE=Join[zfSymbRE,evcsSymbRE[[{1}]]];
 hSumRE=hmatSymbRE[[All,Range[4]]]+hmatSymbRE[[All,4+Range[4]]]+hmatSymbRE[[All,8+Range[4]]];
 ssSolnVecRE={{cc},{kk},{nlPart},{theta}}//.ssSolnSubsRE;
 psicSymbRE=hSumRE . ssSolnVecRE;
-psiz=IdentityMatrix[4]
+psiz=IdentityMatrix[4];
 
 
 linModFirstRBCTrips={hmatSymbRE//N,bmatSymbRE // N, phimatSymbRE // N, 
@@ -2183,15 +2255,15 @@ anXEpsFirstRBCTrips::usage="for test input";
 @{
 anXFirstRBCTrips=Transpose[{{.2,.18,1.0,1.01}}];
 anEpsFirstRBCTrips={{0.01}};
-anXEpsFirstRBCTrips=Join[anXFirstRBCTrips,anEpsFirstRBCTrips]
-aZFirstRBCTrips=Transpose[{{.1,.2,.3,.4}}]
+anXEpsFirstRBCTrips=Join[anXFirstRBCTrips,anEpsFirstRBCTrips];
+aZFirstRBCTrips=Transpose[{{.1,.2,.3,.4}}];
 anXEpsZsFirstRBCTrips=Join[anXEpsFirstRBCTrips,aZFirstRBCTrips];
 
 @}
 
 @d rbcEqnsFirstRBCTripsUsage
 @{
-rbcEqnsFirstRBCTrips::usage="model equations"
+rbcEqnsFirstRBCTrips::usage="model equations";
 @}
 
 
@@ -2214,38 +2286,35 @@ nlt - thetat/cct,
  },
 Function[{aPt,allRes},
 If[allRes[[1]]===$Failed,Throw[$Failed,"noSolutionFound"],
-Flatten[allRes[[1]]]]]}
+Flatten[allRes[[1]]]]]};
 @}
 
 @d exact definitions usage
 @{
-firstRBCTripsExactDR::usage="simpRBCExactDR"
-firstRBCTripsExactDRCE::usage="firstRBCTripsExactDRCE"
-forErgodicInfo::usage="forErgodicInfo[numPers_Integer]"
+firstRBCTripsExactDR::usage="simpRBCExactDR";
+firstRBCTripsExactDRCE::usage="firstRBCTripsExactDRCE";
+forErgodicInfo::usage="forErgodicInfo[numPers_Integer]";
 
 @}
 
 
 @d exact definitions code
 @{
-
-
 thVal=(theta//.ssSolnSubsRE//.(simpParamSubs//N))//N;
 kVal = (kk //.kSSSubRE//.(simpParamSubs//N))//N;
 sigVal = sigma //. (simpParamSubs//N);
-
-Print["need to delete firstRBCTripsExactSimulate"]
+Print["need to delete firstRBCTripsExactSimulate"];
 firstRBCTripsExactSimulate[numPers_Integer]:=
 With[{draws=RandomVariate[theDistFirstRBCTrips[[1,1,2]],numPers],
 initVec={99,kVal,99,thVal}},
-FoldList[Flatten[Apply[firstRBCTripsExactDR, Append[Flatten[#1],#2]]]&,initVec,draws]]
+FoldList[Flatten[Apply[firstRBCTripsExactDR, Append[Flatten[#1],#2]]]&,initVec,draws]];
 
-forErgodicInfo[numPers_Integer]:=
+forErgodicInfo=Function[{numPers},
 With[{draws=RandomVariate[theDistFirstRBCTrips[[1,1,2]],numPers],
 initVec={99,kVal,99,thVal}},
 With[{vars=
 FoldList[Flatten[Apply[firstRBCTripsExactDR, Append[Flatten[#1],#2]]]&,initVec,draws]},
-ArrayFlatten[{{Drop[vars,1],Transpose[{draws}]}}]]]
+ArrayFlatten[{{Drop[vars,1],Transpose[{draws}]}}]]]];
 
 
 
@@ -2254,22 +2323,22 @@ firstRBCTripsExactDR =
 With[{tht=(th^rho)*E^eps//.simpParamSubs//N},
 With[{kkt=(tht*alpha*delta*kk^alpha)//.simpParamSubs//N},
 With[{cct=((tht*kk^alpha)*(1-alpha*delta))//.simpParamSubs//N},
-Transpose[{{cct,kkt,tht/cct,tht}}]]]]]
+Transpose[{{cct,kkt,tht/cct,tht}}]]]]];
 
 
 theDistFirstRBCTrips={{{ee,NormalDistribution[0,sigma]}}}//.paramSubs;
 thePFDistFirstRBCTrips={{{ee,PerfectForesight}}};
 
-thExp=Expectation[(tht^rho)*E^eps,eps \[Distributed] NormalDistribution[0,sigma]]
-kkExp=Expectation[(((tht^rho)*E^eps)*alpha*delta*kkt^alpha),eps \[Distributed] NormalDistribution[0,sigma]]
+thExp=Expectation[(tht^rho)*E^eps,eps \[Distributed] NormalDistribution[0,sigma]];
+kkExp=Expectation[(((tht^rho)*E^eps)*alpha*delta*kkt^alpha),eps \[Distributed] NormalDistribution[0,sigma]];
 
-ccExp=Expectation[(((((tht^rho)*E^eps)*kkt^alpha)*(1-alpha*delta))),eps \[Distributed] NormalDistribution[0,sigma]]
+ccExp=Expectation[(((((tht^rho)*E^eps)*kkt^alpha)*(1-alpha*delta))),eps \[Distributed] NormalDistribution[0,sigma]];
 
-nnExp=Expectation[((tht^rho)*E^eps)/((((((tht^rho)*E^eps)*kkt^alpha)*(1-alpha*delta)))),eps \[Distributed] NormalDistribution[0,sigma]]
+nnExp=Expectation[((tht^rho)*E^eps)/((((((tht^rho)*E^eps)*kkt^alpha)*(1-alpha*delta)))),eps \[Distributed] NormalDistribution[0,sigma]];
  
 firstRBCTripsExactDRCE=
 Apply[  Function , {{cct, kkt, nlt, tht}, Flatten[
-               {ccExp,kkExp,nnExp,thExp}//.paramSubs]}]
+               {ccExp,kkExp,nnExp,thExp}//.paramSubs]}];
 
 
 
@@ -2278,12 +2347,12 @@ Apply[  Function , {{cct, kkt, nlt, tht}, Flatten[
 
 @d ergodic usage
 @{
-firstRBCTripsExactSimulate::usage="simulateFirstRBCTripsRBCExact[numPers_Integer]"
-firstRBCTripsMean::usage="firstRBCTripsMean"
-firstRBCTripsSD::usage="firstRBCTripsSD"
-firstRBCTripsvv::usage="firstRBCTripsvv"
-firstRBCTripsMinZ::usage="firstRBCTripsMinZ"
-firstRBCTripsMaxZ::usage="firstRBCTripsMaxZ"
+firstRBCTripsExactSimulate::usage="simulateFirstRBCTripsRBCExact[numPers_Integer]";
+firstRBCTripsMean::usage="firstRBCTripsMean";
+firstRBCTripsSD::usage="firstRBCTripsSD";
+firstRBCTripsvv::usage="firstRBCTripsvv";
+firstRBCTripsMinZ::usage="firstRBCTripsMinZ";
+firstRBCTripsMaxZ::usage="firstRBCTripsMaxZ";
 
 
 @}
@@ -2292,20 +2361,20 @@ firstRBCTripsMaxZ::usage="firstRBCTripsMaxZ"
 @{
 theRes=firstRBCTripsExactSimulate[200];
 justKT=theRes[[All,{2,4}]];
-firstRBCTripsMean=Mean[justKT]
-firstRBCTripsSD=StandardDeviation[justKT]
-normedRes=Map[(#/firstRBCTripsSD)&,(Map[(#-firstRBCTripsMean)&,justKT])]
+firstRBCTripsMean=Mean[justKT];
+firstRBCTripsSD=StandardDeviation[justKT];
+normedRes=Map[(#/firstRBCTripsSD)&,(Map[(#-firstRBCTripsMean)&,justKT])];
 {uu,ss,vv}=SingularValueDecomposition[normedRes];
 zz=normedRes .vv;
 firstRBCTripsMinZ=Map[Min,Transpose[zz]];
 firstRBCTripsMaxZ=Map[Max,Transpose[zz]];
 
 
-firstRBCTripsMean=Append[firstRBCTripsMean,0]
-firstRBCTripsSD=Append[firstRBCTripsSD,sigVal]
-firstRBCTripsMinZ=Append[firstRBCTripsMinZ,-3]
-firstRBCTripsMaxZ=Append[firstRBCTripsMaxZ,3]
-firstRBCTripsvv=ArrayFlatten[{{ArrayFlatten[{{vv,{{0},{0}}}}]},{{{0,0,1}}}}]
+firstRBCTripsMean=Append[firstRBCTripsMean,0];
+firstRBCTripsSD=Append[firstRBCTripsSD,sigVal];
+firstRBCTripsMinZ=Append[firstRBCTripsMinZ,-3];
+firstRBCTripsMaxZ=Append[firstRBCTripsMaxZ,3];
+firstRBCTripsvv=ArrayFlatten[{{ArrayFlatten[{{vv,{{0},{0}}}}]},{{{0,0,1}}}}];
 
 @}
 
@@ -2321,13 +2390,23 @@ BeginPackage["firstRBCTrips`", {
 (* Exported symbols added here with SymbolName::usage *)  
 @<firstRBCTripsUsage definitions@>
 Begin["`Private`"]
+firstRBCGenModel[
+alphaVal_?NumberQ,
+deltaVal_?NumberQ,
+etaVal_?NumberQ,
+rhoVal_?NumberQ,
+sigmaVal_?NumberQ]:=
+Module[{},
 @<firstRBCTripsPackage code@>
+{linModFirstRBCTrips,rbcEqnsFirstRBCTrips,firstRBCTripsExactDR,firstRBCTripsExactDRCE,forErgodicInfo}
+]
 End[]
 EndPackage[]
 @}
 
 @d firstRBCTripsUsage definitions
 @{
+firstRBCGenModel::usage="firstRBCGenModel"
 @<linModFirstRBCTripsUsage@>
 @<simpParamSubsUsage@>
 @<exampleInitsUsage@>
@@ -2339,6 +2418,7 @@ EndPackage[]
 
 @d firstRBCTripsPackage code
 @{
+
 @<exampleInits@>
 @<rbcEqns@>
 @<simpParamSubs@>

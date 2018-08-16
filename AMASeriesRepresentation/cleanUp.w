@@ -1897,6 +1897,31 @@ phi
 @}
 
 
+\subsection{ergodic function analysis}
+
+@d ergodic function usage
+@{
+ergodicInfo::usage="ergodicInfo[simFunc,toIgnore]"
+
+@}
+
+@d ergodic function code
+@{
+ergodicInfo[
+simFunc:(_Function|_InterpolatingFunction|_CompiledFunction|_Symbol),
+toIgnore_?listOfIntegersQ]:=
+Module[{theRes=simFunc[200]},
+With[{toKeep=theRes[[All,Complement[Range[Length[theRes[[1]]]],toIgnore]]]},
+funcMean=Mean[toKeep];
+funcSD=StandardDeviation[toKeep];
+normedRes=Map[(#/funcSD)&,(Map[(#-funcMean)&,toKeep])];
+{uu,ss,vv}=SingularValueDecomposition[normedRes];
+zz=normedRes .vv;
+funcMinZ=Map[Min,Transpose[zz]];
+funcMaxZ=Map[Max,Transpose[zz]];
+{funcMean,funcSD,funcMinZ,funcMaxZ,vv}
+]]
+@}
 
 
 
@@ -1967,12 +1992,14 @@ EndPackage[]
 @<myNExpectationUsage@>
 @<assessErrPredictionUsage@>
 @<genTestPtsUsage@>
+@<ergodic function usage@>
 @}
 
 
 
 @d package code
 @{
+@<ergodic function code@>
 @<genTestPts@>
 @<assessErrPrediction@>
 @<myNExpectation@>
@@ -2044,19 +2071,10 @@ numSteps_Integer}@}
 @d rbcEqns
 @{
 
-
-
-
-
-
 CRRAUDrv[cc_,eta_]:=If[eta===1,D[Log[cc],cc],D[(1/(1-eta))*(cc^(1-eta)-1),cc]]
-
-
-
 (*pg 165 of  maliar maliar solving neoclassical growth model  
 closed form solution version  beta=1 geometric discounting
 chkcobb douglas production*)
-
 rbcEqns={
 CRRAUDrv[cc[t],1]-
 (delta*(nlPart[t+1]*((alpha *(kk[t]^(alpha-1)) )))),
@@ -2064,7 +2082,6 @@ cc[t] + kk[t]-((theta[t])*(kk[t-1]^alpha)),
 nlPart[t] - (nlPartRHS=(1)* (theta[t]*CRRAUDrv[cc[t],1])),
 theta[t]-E^(rho*Log[theta[t-1]] + eps[theta][t])
 }
-
 @}
 
 \subsubsection{steady state solution}
@@ -2204,6 +2221,8 @@ Flatten[allRes[[1]]]]]}
 @{
 firstRBCTripsExactDR::usage="simpRBCExactDR"
 firstRBCTripsExactDRCE::usage="firstRBCTripsExactDRCE"
+forErgodicInfo::usage="forErgodicInfo[numPers_Integer]"
+
 @}
 
 
@@ -2215,10 +2234,18 @@ thVal=(theta//.ssSolnSubsRE//.(simpParamSubs//N))//N;
 kVal = (kk //.kSSSubRE//.(simpParamSubs//N))//N;
 sigVal = sigma //. (simpParamSubs//N);
 
+Print["need to delete firstRBCTripsExactSimulate"]
 firstRBCTripsExactSimulate[numPers_Integer]:=
 With[{draws=RandomVariate[theDistFirstRBCTrips[[1,1,2]],numPers],
 initVec={99,kVal,99,thVal}},
 FoldList[Flatten[Apply[firstRBCTripsExactDR, Append[Flatten[#1],#2]]]&,initVec,draws]]
+
+forErgodicInfo[numPers_Integer]:=
+With[{draws=RandomVariate[theDistFirstRBCTrips[[1,1,2]],numPers],
+initVec={99,kVal,99,thVal}},
+With[{vars=
+FoldList[Flatten[Apply[firstRBCTripsExactDR, Append[Flatten[#1],#2]]]&,initVec,draws]},
+ArrayFlatten[{{Drop[vars,1],Transpose[{draws}]}}]]]
 
 
 
@@ -2281,6 +2308,7 @@ firstRBCTripsMaxZ=Append[firstRBCTripsMaxZ,3]
 firstRBCTripsvv=ArrayFlatten[{{ArrayFlatten[{{vv,{{0},{0}}}}]},{{{0,0,1}}}}]
 
 @}
+
 \subsection{assemble code}
 
 

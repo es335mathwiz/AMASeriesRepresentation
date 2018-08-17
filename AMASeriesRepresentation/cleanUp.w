@@ -1631,6 +1631,9 @@ Map[fillIn[{{},ignored,#}]&,theXs]]]]
 assessErrPrediction::usage="place holder"
 getSlopesRSqs::usage="place holder"
 varyParamsForSlSq::usage="place holder"
+assessSimplestErrPrediction::usage="place holder"
+assessNextSimplestErrPrediction::usage="place holder"
+
 @}
 
 
@@ -1647,6 +1650,42 @@ opts:OptionsPattern[]]:=
 With[{
 pvals=Map[candErrFunc[triples,candxzFuncs,candXZFuncs,Transpose[{#}],numEps,
 linMod,opts]&,testPts]},
+With[{avals=Map[(((Apply[candxzFuncs ,Flatten[#]])[[Range[4]]])-(Apply[bestxzFuncs ,Flatten[#]]))&,testPts]},
+With[{
+forRegs=Map[Transpose[{Flatten[pvals[[All,#]]],Flatten[avals[[All,#]]]}]&,
+Range[Length[pvals[[1]]]]]},
+With[{lmfs=Map[LinearModelFit[#,xx,xx]&,forRegs]},
+lmfs]]]]
+
+
+
+assessSimplestErrPrediction[{@<rawTriples@>,testPts_?MatrixQ,numEps_Integer,@<linMod@>,
+bestxzFuncs:(_Function|_InterpolatingFunction|_CompiledFunction|_Symbol)
+},
+{candxzFuncs:(_Function|_InterpolatingFunction|_CompiledFunction|_Symbol),
+candXZFuncs:(_Function|_InterpolatingFunction|_CompiledFunction|_Symbol)},
+opts:OptionsPattern[]]:=
+With[{
+pvals=Map[simplestErrXtm1Eps[triples,candxzFuncs,candXZFuncs,Transpose[{#}],numEps,
+linMod,opts]&,testPts]},
+With[{avals=Map[(((Apply[candxzFuncs ,Flatten[#]])[[Range[4]]])-(Apply[bestxzFuncs ,Flatten[#]]))&,testPts]},
+With[{
+forRegs=Map[Transpose[{Flatten[pvals[[All,#]]],Flatten[avals[[All,#]]]}]&,
+Range[Length[pvals[[1]]]]]},
+With[{lmfs=Map[LinearModelFit[#,xx,xx]&,forRegs]},
+lmfs]]]]
+
+
+assessNextSimplestErrPrediction[{@<rawTriples@>,testPts_?MatrixQ,numEps_Integer,@<linMod@>,
+bestxzFuncs:(_Function|_InterpolatingFunction|_CompiledFunction|_Symbol)
+},
+{candxzFuncs:(_Function|_InterpolatingFunction|_CompiledFunction|_Symbol),
+candXZFuncs:(_Function|_InterpolatingFunction|_CompiledFunction|_Symbol)},
+theK_Integer,
+opts:OptionsPattern[]]:=
+With[{
+pvals=Map[nextSimplestErrXtm1Eps[triples,candxzFuncs,candXZFuncs,Transpose[{#}],numEps,
+linMod,theK,opts]&,testPts]},
 With[{avals=Map[(((Apply[candxzFuncs ,Flatten[#]])[[Range[4]]])-(Apply[bestxzFuncs ,Flatten[#]]))&,testPts]},
 With[{
 forRegs=Map[Transpose[{Flatten[pvals[[All,#]]],Flatten[avals[[All,#]]]}]&,
@@ -1777,7 +1816,7 @@ Options[simplestErrXtm1Eps]={"useTail"->False}
 simplestErrXtm1Eps[@<rawTriples@>,
 xzFuncs:(_Function|_InterpolatingFunction|_CompiledFunction|_Symbol),
 XZFuncs:(_Function|_InterpolatingFunction|_CompiledFunction|_Symbol),
-initVec_?MatrixQ,numEps_Integer,@<linMod@>,
+initVec_?MatrixQ,numEps_Integer,
 opts:OptionsPattern[]]:=
 Module[{theErr=genSolutionErrXtm1Eps[triples,xzFuncs,XZFuncs,initVec,numEps]},
 With[{tErr=Transpose[{theErr}]},
@@ -1790,23 +1829,64 @@ phi . tErr]]]
 
 
 
-@d simplestErrXtUsage
+@d genSolutionErrXtEpsZeroUsage
 @{
-simplestErrXt::usage="simplestErrXt[@<bothXZFuncs@>,initVec_?MatrixQ,numEps_Integer]"
+genSolutionErrXtEpsZero::usage="genSolutionErrXtEpsZero[@<bothXZFuncs@>,initVec_?MatrixQ,numEps_Integer]"
 @}
 
 
-@d simplestErrXt
+@d genSolutionErrXtEpsZero
 @{
-Options[simplestErrXt]={"epsCalc"->"zero","useTail"->False}
-simplestErrXt[@<rawTriples@>,
+Options[genSolutionErrXtEpsZero]={"epsCalc"->"zero","useTail"->False}
+genSolutionErrXtEpsZero[@<rawTriples@>,
 xzFuncs:(_Function|_InterpolatingFunction|_CompiledFunction|_Symbol),
 XZFuncs:(_Function|_InterpolatingFunction|_CompiledFunction|_Symbol),
-initVec_?MatrixQ,numEps_Integer,@<linMod@>,opts:OptionsPattern[]]:=
-Switch[OptionValue["epsCalc"],
-"zero",simplestErrXtm1Eps[triples,xzFuncs,XZFuncs,
-Join[initVec,ConstantArray[0,{numEps,1}]],numEps,linMod,opts]]
+initVecNoEps_?MatrixQ,numEps_Integer,
+opts:OptionsPattern[]]:=
+Module[{},
+genSolutionErrXtm1Eps[triples,xzFuncs,XZFuncs,
+Join[initVecNoEps,ConstantArray[0,{numEps,1}]],numEps]]
 @}
+
+@d nextSimplestErrXtm1EpsUsage
+@{
+nextSimplestErrXtm1Eps::usage="place holder"
+@}
+
+@d nextSimplestErrXtm1Eps
+@{
+
+Options[nextSimplestErrXtm1Eps]={"useTail"->False}
+nextSimplestErrXtm1Eps[@<rawTriples@>,
+xzFuncs:(_Function|_InterpolatingFunction|_CompiledFunction|_Symbol),
+XZFuncs:(_Function|_InterpolatingFunction|_CompiledFunction|_Symbol),
+initVec_?MatrixQ,numEps_Integer,@<linMod@>,kk_Integer,
+opts:OptionsPattern[]]:=
+Module[{theErr=genSolutionErrXtm1Eps[triples,xzFuncs,XZFuncs,initVec,numEps],
+thePath=genSolutionPath[xzFuncs,XZFuncs,initVec,numEps,kk],
+numX=Length[initVec]-numEps},
+With[{fPows=Drop[NestList[FF .#&,IdentityMatrix[Length[FF]],kk],1],
+theArgs=
+Map[makeArgsNoEps[thePath,numX,#]&,Range[kk]]},
+With[{tErr=phi.Transpose[{theErr}],
+restErrs=Map[Transpose[{genSolutionErrXtEpsZero[triples,
+xzFuncs,XZFuncs,#,numEps]}]&,theArgs]},
+With[{fProds=MapThread[#1 . phi . #2&,{fPows,restErrs}]},
+Print[{"curious:",thePath,theArgs,restErrs,fProds,Apply[Plus,fProds]}];
+With[{totErr=tErr+Apply[Plus,fProds]},
+If[OptionValue["useTail"],
+If[kk===0,
+Inverse[IdentityMatrix[Length[initVec]-numEps]-FF] . totErr,
+totErr+Inverse[IdentityMatrix[Length[initVec]-numEps]-FF] . fProds[[-1]]],
+totErr
+]]]]]]
+
+
+makeArgsNoEps[thePath_?MatrixQ,numX_Integer,timeOffset_Integer]:=
+Take[thePath,{1,numX}+timeOffset*numX]
+@}
+
+
 
 
 \subsection{Getters and Setters}
@@ -2052,7 +2132,8 @@ EndPackage[]
 @<genSolutionPathUsage@>
 @<genSolutionErrXtm1EpsUsage@>
 @<simplestErrXtm1EpsUsage@>
-@<simplestErrXtUsage@>
+@<nextSimplestErrXtm1EpsUsage@>
+@<genSolutionErrXtEpsZeroUsage@>
 @<makeREIterFuncUsage@>
 @<genXZFuncREUsage@>
 @<myNExpectationUsage@>
@@ -2071,8 +2152,9 @@ EndPackage[]
 @<myNExpectation@>
 @<genXZFuncRE@>
 @<makeREIterFunc@>
-@<simplestErrXt@>
+@<genSolutionErrXtEpsZero@>
 @<simplestErrXtm1Eps@>
+@<nextSimplestErrXtm1Eps@>
 @<genSolutionErrXtm1Eps@>
 @<genSolutionPath@>
 @<genRegimesBothX0Z0Funcs@>

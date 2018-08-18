@@ -1605,7 +1605,6 @@ genTestPts[theVarBounds:{minVars_?VectorQ,maxVars_?VectorQ},numPts_Integer,
 numGen:(Nied|Sobol)]:=
 With[{varRanges=Transpose[theVarBounds]},
 With[{someUnis=numGen[numPts,Length[varRanges]]},
-Print[{"someUnis:",someUnis,varRanges}];
 With[{theVars=backUnisToVars[someUnis,varRanges]},
 theVars]]]
 
@@ -1736,7 +1735,6 @@ numPts_Integer,numParamPts_Integer,theK_Integer,
 opts:OptionsPattern[]]:=
 With[{testPts=genTestPts[paramRanges,numParamPts,
 Nied]},
-Print[{"testPts:",testPts}];
 Map[getSlopesRSqs[#[[1]],#[[2]],1,#[[3]],#[[4]],bothXZFuncs,
 modGenerator,numPts,theK,opts]&,testPts]]
 
@@ -2419,40 +2417,7 @@ Apply[  Function , {{cct, kkt, nlt, tht}, Flatten[
 
 
 @}
-\subsection{ergodic analysis}
 
-@d ergodic usage
-@{
-firstRBCTripsExactSimulate::usage="simulateFirstRBCTripsRBCExact[numPers_Integer]";
-firstRBCTripsMean::usage="firstRBCTripsMean";
-firstRBCTripsSD::usage="firstRBCTripsSD";
-firstRBCTripsvv::usage="firstRBCTripsvv";
-firstRBCTripsMinZ::usage="firstRBCTripsMinZ";
-firstRBCTripsMaxZ::usage="firstRBCTripsMaxZ";
-
-
-@}
-
-@d ergodic code
-@{
-theRes=firstRBCTripsExactSimulate[200];
-justKT=theRes[[All,{2,4}]];
-firstRBCTripsMean=Mean[justKT];
-firstRBCTripsSD=StandardDeviation[justKT];
-normedRes=Map[(#/firstRBCTripsSD)&,(Map[(#-firstRBCTripsMean)&,justKT])];
-{uu,ss,vv}=SingularValueDecomposition[normedRes];
-zz=normedRes .vv;
-firstRBCTripsMinZ=Map[Min,Transpose[zz]];
-firstRBCTripsMaxZ=Map[Max,Transpose[zz]];
-
-
-firstRBCTripsMean=Append[firstRBCTripsMean,0];
-firstRBCTripsSD=Append[firstRBCTripsSD,sigVal];
-firstRBCTripsMinZ=Append[firstRBCTripsMinZ,-3];
-firstRBCTripsMaxZ=Append[firstRBCTripsMaxZ,3];
-firstRBCTripsvv=ArrayFlatten[{{ArrayFlatten[{{vv,{{0},{0}}}}]},{{{0,0,1}}}}];
-
-@}
 
 \subsection{assemble code}
 
@@ -2488,7 +2453,6 @@ firstRBCGenModel::usage="firstRBCGenModel"
 @<exampleInitsUsage@>
 @<rbcEqnsFirstRBCTripsUsage@>
 @<exact definitions usage@>
-@<ergodic usage@>
 @}
 
 
@@ -2501,7 +2465,6 @@ firstRBCGenModel::usage="firstRBCGenModel"
 @<ssSolnSubsRE@>
 @<linModFirstRBCTrips@>
 @<exact definitions code@>
-@<ergodic code@>
 @<rbcEqnsFirstRBCTrips@>
 @}
 

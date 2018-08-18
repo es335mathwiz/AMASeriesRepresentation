@@ -1666,9 +1666,9 @@ bestxzFuncs:(_Function|_InterpolatingFunction|_CompiledFunction|_Symbol)
 candXZFuncs:(_Function|_InterpolatingFunction|_CompiledFunction|_Symbol)},
 opts:OptionsPattern[]]:=
 With[{
-pvals=Map[simplestErrXtm1Eps[triples,candxzFuncs,candXZFuncs,Transpose[{#}],numEps,
-linMod,opts]&,testPts]},
-With[{avals=Map[(((Apply[candxzFuncs ,Flatten[#]])[[Range[4]]])-(Apply[bestxzFuncs ,Flatten[#]]))&,testPts]},
+pvals=Map[simplestErrXtm1Eps[triples,candxzFuncs,candXZFuncs,Transpose[{#}],numEps,linMod,
+opts]&,testPts]},
+With[{avals=Map[(((Apply[candxzFuncs ,Flatten[#]])[[Range[4]]])-(Apply[bestxzFuncs ,Flatten[#]]))&,testPts]},(*Print[{"why:",pvals,avals}];*)
 With[{
 forRegs=Map[Transpose[{Flatten[pvals[[All,#]]],Flatten[avals[[All,#]]]}]&,
 Range[Length[pvals[[1]]]]]},
@@ -1703,9 +1703,8 @@ sigmaVal_?NumberQ,
 bothXZFuncs:{
 xzFuncs:(_Function|_InterpolatingFunction|_CompiledFunction|_Symbol),
 XZFuncs:(_Function|_InterpolatingFunction|_CompiledFunction|_Symbol)},
-errFunc:(_Function|_InterpolatingFunction|_CompiledFunction|_Symbol),
 modGenerator:(_Function|_InterpolatingFunction|_CompiledFunction|_Symbol),
-numPts_Integer,
+numPts_Integer,theK_Integer,
 opts:OptionsPattern[]]:=
 Module[{modData=modGenerator[.36,.95,1,.95,.01],
 resids,rsqs,bfs,mn,sd,minz,maxz,svd,
@@ -1716,8 +1715,8 @@ firstRBCTripsExactDRCE,forErgodicInfo}=modData;
 {mn,sd,minz,maxz,svd}=ergodicInfo[forErgodicInfo,{1,3}];
 theFullXs=genTestPts[{minz,maxz},numPts,Nied,mn,sd,svd,{1,3}];
 With[{lms=
-assessErrPrediction[{rbcEqnsFirstRBCTrips,theFullXs,1,
-linModFirstRBCTrips,firstRBCTripsExactDR},bothXZFuncs,errFunc,opts]},
+assessNextSimplestErrPrediction[{rbcEqnsFirstRBCTrips,theFullXs,1,
+linModFirstRBCTrips,firstRBCTripsExactDR},bothXZFuncs,theK,opts]},
 bfs=Through[lms["BestFitParameters"]];
 pvs=Through[lms["ParameterPValues"]];
 evs=Through[lms["EstimatedVariance"]];
@@ -1732,15 +1731,14 @@ varyParamsForSlSq[paramRanges_?MatrixQ,
 bothXZFuncs:{
 xzFuncs:(_Function|_InterpolatingFunction|_CompiledFunction|_Symbol),
 XZFuncs:(_Function|_InterpolatingFunction|_CompiledFunction|_Symbol)},
-errFunc:(_Function|_InterpolatingFunction|_CompiledFunction|_Symbol),
 modGenerator:(_Function|_InterpolatingFunction|_CompiledFunction|_Symbol),
-numPts_Integer,numParamPts_Integer,
+numPts_Integer,numParamPts_Integer,theK_Integer,
 opts:OptionsPattern[]]:=
-With[{testPts=genTestPts[{{0.2,0.7,0.8,0.01},{.38,.99,.98,0.1}},numParamPts,
+With[{testPts=genTestPts[paramRanges,numParamPts,
 Nied]},
 Print[{"testPts:",testPts}];
-Map[getSlopesRSqs[#[[1]],#[[2]],1,#[[3]],#[[4]],bothXZFuncs,errFunc,
-modGenerator,numPts,opts]&,testPts]]
+Map[getSlopesRSqs[#[[1]],#[[2]],1,#[[3]],#[[4]],bothXZFuncs,
+modGenerator,numPts,theK,opts]&,testPts]]
 
 
 
@@ -1817,6 +1815,7 @@ simplestErrXtm1Eps[@<rawTriples@>,
 xzFuncs:(_Function|_InterpolatingFunction|_CompiledFunction|_Symbol),
 XZFuncs:(_Function|_InterpolatingFunction|_CompiledFunction|_Symbol),
 initVec_?MatrixQ,numEps_Integer,
+@<linMod@>,
 opts:OptionsPattern[]]:=
 Module[{theErr=genSolutionErrXtm1Eps[triples,xzFuncs,XZFuncs,initVec,numEps]},
 With[{tErr=Transpose[{theErr}]},
@@ -1872,7 +1871,7 @@ With[{tErr=phi.Transpose[{theErr}],
 restErrs=Map[Transpose[{genSolutionErrXtEpsZero[triples,
 xzFuncs,XZFuncs,#,numEps]}]&,theArgs]},
 With[{fProds=MapThread[#1 . phi . #2&,{fPows,restErrs}]},
-Print[{"curious:",thePath,theArgs,restErrs,fProds,Apply[Plus,fProds]}];
+(*Print[{"curious:",thePath,theArgs,restErrs,fProds,Apply[Plus,fProds]}];*)
 With[{totErr=tErr+Apply[Plus,fProds]},
 If[OptionValue["useTail"],
 If[kk===0,

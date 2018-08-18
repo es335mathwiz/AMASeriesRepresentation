@@ -2296,7 +2296,7 @@ linModFirstRBCTrips::usage="linear model matrices for approx"
 
 @d linModFirstRBCTrips
 @{
-Print["raw not needed?"];
+
 hmatSymbRawRE=(((equationsToMatrix[
 rbcEqns/.simpParamSubs]//FullSimplify)/.{xxxx_[t+_.]->xxxx})//.ssSolnSubsRE)/.{eps[_]->0}//FullSimplify;
 psiepsSymbRE=-Transpose[{((Map[D[#,eps[theta][t]]&, rbcEqns])/.{eps[_][_]->0,xxxx_[t+_.]->xxxx})//.ssSolnSubsRE}/.simpParamSubs];
@@ -2384,11 +2384,6 @@ forErgodicInfo::usage="forErgodicInfo[numPers_Integer]";
 thVal=(theta//.ssSolnSubsRE//.(simpParamSubs//N))//N;
 kVal = (kk //.kSSSubRE//.(simpParamSubs//N))//N;
 sigVal = sigma //. (simpParamSubs//N);
-Print["need to delete firstRBCTripsExactSimulate"];
-firstRBCTripsExactSimulate[numPers_Integer]:=
-With[{draws=RandomVariate[theDistFirstRBCTrips[[1,1,2]],numPers],
-initVec={99,kVal,99,thVal}},
-FoldList[Flatten[Apply[firstRBCTripsExactDR, Append[Flatten[#1],#2]]]&,initVec,draws]];
 
 forErgodicInfo=Function[{numPers},
 With[{draws=RandomVariate[theDistFirstRBCTrips[[1,1,2]],numPers],

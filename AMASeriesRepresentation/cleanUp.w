@@ -186,8 +186,8 @@ funcOfXtZt[
 (**)
 Apply[Sequence,xtztArgPatterns]],
 Module[{theZsNow=genZsForFindRoot[linMod,
-Transpose[{xArgs}],bothXZFuncs[[1,2]],bothXZFuncs[[2]]]
-},
+Transpose[{xArgs}],bothXZFuncs[[1,2]],bothXZFuncs[[2]]]},
+Print[{"shouldgenz's:",theZsNow,bothXZFuncs[[1,2]],xArgs}];
 With[{xkFunc=Catch[
 (Check[genLilXkZkFunc[linMod,theZsNow,
 Apply[Sequence,FilterRules[{opts},
@@ -368,7 +368,7 @@ With[{theRes=genLilXkZkFunc[linMod,fCon]},theRes]]]
 @d genLilXkZkFunc
 @{
 @< genLilXkZkFunc theZs call@>:=
-Module[{},
+Module[{},Print[{"in genlilxkzkfun:",theZs}];
 @<Z Matrices Given@>
 ]
 tailContribution[FF_?MatrixQ,phi_?MatrixQ,theTailZ_?MatrixQ]:=
@@ -398,7 +398,7 @@ genZsForFindRoot[linMod:{theHMat_?MatrixQ,BB_?MatrixQ,
 phi_?MatrixQ,FF_?MatrixQ,psiEps_?MatrixQ,psiC_?MatrixQ,psiZ_?MatrixQ,
 backLookingInfo:{{_Integer,backLooking_,backLookingExp_}...}},
 	initVec_?MatrixQ,theCondExp:(_Function|_CompiledFunction),iters_Integer]:=
-Module[{},
+Module[{},Print[{"ingenzsforfindroot:",linMod,initVec,theCondExp}];
 With[{numX=Length[initVec],
  	thePath=
 Check[iterateDRCE[theCondExp,initVec,iters+1],
@@ -407,6 +407,7 @@ iterateDRCE[genX0Z0Funcs[linMod],initVec,iters+1]]},
 With[{restVals=
   Map[(theHMat .thePath[[Range[3*numX]+numX*(#-1)]] -psiC)&,
 Range[(Length[thePath]/numX)-3]]},
+Print[{"huh:",psiC,theHMat,thePath,linMod,initVec,iters,restVals}];
       restVals
 ]]]
 
@@ -1708,9 +1709,9 @@ opts:OptionsPattern[]]:=
 Module[{modData=modGenerator[.36,.95,1,.95,.01],
 resids,rsqs,bfs,mn,sd,minz,maxz,svd,
 linModFirstRBCTrips,rbcEqnsFirstRBCTrips,firstRBCTripsExactDR,
-firstRBCTripsExactDRCE,forErgodicInfo},
+firstRBCTripsExactDRCE,forErgodicInfo,theDistFirstRBCTrips},
 {linModFirstRBCTrips,rbcEqnsFirstRBCTrips,firstRBCTripsExactDR,
-firstRBCTripsExactDRCE,forErgodicInfo}=modData;
+firstRBCTripsExactDRCE,forErgodicInfo,theDistFirstRBCTrips}=modData;
 {mn,sd,minz,maxz,svd}=ergodicInfo[forErgodicInfo,{1,3}];
 theFullXs=genTestPts[{minz,maxz},numPts,Nied,mn,sd,svd,{1,3}];
 With[{lms=
@@ -2050,20 +2051,50 @@ ergodicInfo::usage="ergodicInfo[simFunc,toIgnore]"
 
 @d ergodic function code
 @{
+
+
+
+
 ergodicInfo[
 simFunc:(_Function|_InterpolatingFunction|_CompiledFunction|_Symbol),
-toIgnore_?listOfIntegersQ]:=
+toIgnore_?listOfIntegersQ,numEps_Integer]:=
 Module[{theRes=simFunc[200]},
-With[{toKeep=theRes[[All,Complement[Range[Length[theRes[[1]]]],toIgnore]]]},
-funcMean=Mean[toKeep];
-funcSD=StandardDeviation[toKeep];
-normedRes=Map[(#/funcSD)&,(Map[(#-funcMean)&,toKeep])];
+       With[{numVals=Length[theRes[[1]]]},
+	    With[{valCols=Range[numVals-numEps],
+		  errCols=Range[numVals-numEps+1,numVals]},
+	    With[{theErrs=theRes[[All,errCols]],
+     toKeep=theRes[[All,Complement[valCols,toIgnore]]]},
+{funcMean,funcSD,funcMinZ,funcMaxZ,funcvv}=doPCA[toKeep];
+{errsMean,errsSD,errsMinZ,errsMaxZ,errsvv}=doPCA[theErrs];
+Print[Dimensions[toKeep],Dimensions[theErrs],
+      valCols,errCols,{numVals,numEps},funcMean,errsMean,
+ funcSD,errsSD,
+ funcMinZ,errsMinZ,
+   funcMaxZ,errsMaxZ];
+{Join[funcMean,errsMean],
+ Join[funcSD,errsSD],
+ Join[funcMinZ,errsMinZ],
+ Join[funcMaxZ,errsMaxZ],
+ ArrayFlatten[{{funcvv,ConstantArray[0,{Length[funcvv],numEps}]},
+	       {ConstantArray[0,{numEps,Length[funcvv]}],errsvv}}]}]]]]
+
+
+
+doPCA[theVals_?MatrixQ]:=
+Module[{funcMean,funcSD,funcMinZ,funcMaxZ,vv},
+       Print[{"doPCA:",Dimensions[theVals]}];
+funcMean=Mean[theVals];
+funcSD=StandardDeviation[theVals];
+normedRes=Map[(#/funcSD)&,(Map[(#-funcMean)&,theVals])];
 {uu,ss,vv}=SingularValueDecomposition[normedRes];
 zz=normedRes .vv;
 funcMinZ=Map[Min,Transpose[zz]];
 funcMaxZ=Map[Max,Transpose[zz]];
 {funcMean,funcSD,funcMinZ,funcMaxZ,vv}
-]]
+]
+
+
+
 @}
 
 
@@ -2391,6 +2422,8 @@ FoldList[Flatten[Apply[firstRBCTripsExactDR, Append[Flatten[#1],#2]]]&,initVec,d
 ArrayFlatten[{{Drop[vars,1],Transpose[{draws}]}}]]]];
 
 
+theDistFirstRBCTrips={{{ee,NormalDistribution[0,sigma]}}}//.paramSubs;
+
 
 firstRBCTripsExactDR = 
  Function[{cc, kk, nl, th, eps}, 
@@ -2400,7 +2433,7 @@ With[{cct=((tht*kk^alpha)*(1-alpha*delta))//.simpParamSubs//N},
 Transpose[{{cct,kkt,tht/cct,tht}}]]]]];
 
 
-theDistFirstRBCTrips={{{ee,NormalDistribution[0,sigma]}}}//.paramSubs;
+
 thePFDistFirstRBCTrips={{{ee,PerfectForesight}}};
 
 thExp=Expectation[(tht^rho)*E^eps,eps \[Distributed] NormalDistribution[0,sigma]];
@@ -2439,7 +2472,7 @@ rhoVal_?NumberQ,
 sigmaVal_?NumberQ]:=
 Module[{},
 @<firstRBCTripsPackage code@>
-{linModFirstRBCTrips,rbcEqnsFirstRBCTrips,firstRBCTripsExactDR,firstRBCTripsExactDRCE,forErgodicInfo}
+{linModFirstRBCTrips,rbcEqnsFirstRBCTrips,firstRBCTripsExactDR,firstRBCTripsExactDRCE,forErgodicInfo,theDistFirstRBCTrips}
 ]
 End[]
 EndPackage[]

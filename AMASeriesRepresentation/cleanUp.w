@@ -187,7 +187,6 @@ funcOfXtZt[
 Apply[Sequence,xtztArgPatterns]],
 Module[{theZsNow=genZsForFindRoot[linMod,
 Transpose[{xArgs}],bothXZFuncs[[1,2]],bothXZFuncs[[2]]]},
-Print[{"shouldgenz's:",theZsNow,bothXZFuncs[[1,2]],xArgs}];
 With[{xkFunc=Catch[
 (Check[genLilXkZkFunc[linMod,theZsNow,
 Apply[Sequence,FilterRules[{opts},
@@ -368,7 +367,7 @@ With[{theRes=genLilXkZkFunc[linMod,fCon]},theRes]]]
 @d genLilXkZkFunc
 @{
 @< genLilXkZkFunc theZs call@>:=
-Module[{},Print[{"in genlilxkzkfun:",theZs}];
+Module[{},
 @<Z Matrices Given@>
 ]
 tailContribution[FF_?MatrixQ,phi_?MatrixQ,theTailZ_?MatrixQ]:=
@@ -398,7 +397,7 @@ genZsForFindRoot[linMod:{theHMat_?MatrixQ,BB_?MatrixQ,
 phi_?MatrixQ,FF_?MatrixQ,psiEps_?MatrixQ,psiC_?MatrixQ,psiZ_?MatrixQ,
 backLookingInfo:{{_Integer,backLooking_,backLookingExp_}...}},
 	initVec_?MatrixQ,theCondExp:(_Function|_CompiledFunction),iters_Integer]:=
-Module[{},Print[{"ingenzsforfindroot:",linMod,initVec,theCondExp}];
+Module[{},
 With[{numX=Length[initVec],
  	thePath=
 Check[iterateDRCE[theCondExp,initVec,iters+1],
@@ -407,7 +406,6 @@ iterateDRCE[genX0Z0Funcs[linMod],initVec,iters+1]]},
 With[{restVals=
   Map[(theHMat .thePath[[Range[3*numX]+numX*(#-1)]] -psiC)&,
 Range[(Length[thePath]/numX)-3]]},
-Print[{"huh:",psiC,theHMat,thePath,linMod,initVec,iters,restVals}];
       restVals
 ]]]
 
@@ -721,7 +719,6 @@ genericInterp:(smolyakInterpolation|svmRegressionLinear|svmRegressionPoly|
 svmRegressionRBF|svmRegressionSigmoid),svmArgs:{_?NumberQ...}]:=
 Module[{},
 With[{interpData=parallelSmolyakGenInterpData[triples,smolGSpec]},
-Print["interpData:",interpData];
 interpDataToFunc[interpData,backLookingInfo,smolGSpec,genericInterp,svmArgs]]]
 
 interpDataToFunc[interpData_?MatrixQ,
@@ -740,8 +737,7 @@ ParallelMap[Function[funcIdx,
 With[{theInterps=genericInterp[interpData[[All,funcIdx]],smolGSpec,svmArgs]},
 With[{smolApp=theInterps},
 smolApp]]],Range[numFuncs]]},
-Print["smolApp:",interpFuncList];
-Print[NKs[],"intdattofunc1:",AbsoluteTime[]-tn];
+(*Print[NKs[],"intdattofunc1:",AbsoluteTime[]-tn];*)
 Sow[AbsoluteTime[]-tn,"intdattofunc1"];tn=AbsoluteTime[];
 With[
 {applied=Transpose[{ParallelMap[notApply[#,funcArgs]/.funcSubs&,
@@ -760,7 +756,7 @@ ReplacePart[
 With[{outgoing=
 {replaceEqnOrExp[thePair[[1]],longFuncArgs,2,backLookingInfo],
 replaceEqnOrExp[thePair[[2]],Drop[longFuncArgs,-numEps],3,backLookingInfo]}},
-Print[NKs[],"intdattofunc2:",AbsoluteTime[]-tn];
+(*Print[NKs[],"intdattofunc2:",AbsoluteTime[]-tn];*)
 Sow[AbsoluteTime[]-tn,"intdattofunc2"];
 outgoing
 ]]]]]]]]
@@ -792,7 +788,7 @@ Apply[selectorFunc[triples],#],
 _,Function[{val,tag},Print["catchsmolGenInterp: aborting",
 {val,tag,baddy,triples,filledPts}//InputForm];
 Abort[]]]]&,toWorkOn]},
-Print[NKs[],"psgid:",AbsoluteTime[]-tn];Sow[AbsoluteTime[]-tn,"psgid"];
+(*Print[NKs[],"psgid:",AbsoluteTime[]-tn];Sow[AbsoluteTime[]-tn,"psgid"];*)
 interpData]]]]]
 
 @}
@@ -976,18 +972,17 @@ parallelNestGenericIterREInterp[genFRExtFunc,@<linMod@>,
 @<rawTriples@>,@<smolGSpec@>,
 genericInterp:(smolyakInterpolation|svmRegressionLinear|
 svmRegressionPoly|svmRegressionRBF|svmRegressionSigmoid),
-svmArgs:{_?NumberQ...},opts:OptionsPattern[]]:=
+svmArgs:{_?NumberQ...},evalPts_?MatrixQ,opts:OptionsPattern[]]:=
 Module[{},
-NestWhileList[Function[xx,
-parallelDoGenericIterREInterpAndInterpData[genFRExtFunc,linMod,
-{xx[[1]],numSteps},triples,smolGSpec,genericInterp,svmArgs,
+NestWhileList[Function[xx,parallelDoGenericIterREInterp[genFRExtFunc,linMod,
+{xx,numSteps},triples,smolGSpec,genericInterp,svmArgs,
 Apply[Sequence,FilterRules[{opts},
-Options[parallelDoGenericIterREInterpAndInterpData]]]]],{justBothXZFuncs,0},
-(With[{theResNow=Norm[#1[[-1]]-#2[[-1]]]},
-Print[{"norm=",theResNow,
-With[{lookey=
-Map[Function[xxx,Max[Abs[xxx]]],#1[[-1]]-#2[[-1]]]},
-getWorstValsAndLocs[lookey,OptionValue["maxNormsToKeep"]]]}];(theResNow>OptionValue["normConvTol"])])&,2,OptionValue["maxForCEIters"]]]
+Options[parallelDoGenericIterREInterp]]]]],justBothXZFuncs,
+With[{theNorms=
+Map[Function[notxx,
+(Norm[Apply[#1[[1]],notxx]-Apply[#2[[1]],notxx]])],
+evalPts]},Print[theNorms];Norm[theNorms]>OptionValue["normConvTol"]]&,2,
+OptionValue["maxForCEIters"]]]
 
 
 
@@ -1706,13 +1701,14 @@ XZFuncs:(_Function|_InterpolatingFunction|_CompiledFunction|_Symbol)},
 modGenerator:(_Function|_InterpolatingFunction|_CompiledFunction|_Symbol),
 numPts_Integer,theK_Integer,
 opts:OptionsPattern[]]:=
-Module[{modData=modGenerator[.36,.95,1,.95,.01],
+Module[{modData=modGenerator[alphaVal,deltaVal,1,rhoVal,sigmaVal],
 resids,rsqs,bfs,mn,sd,minz,maxz,svd,
 linModFirstRBCTrips,rbcEqnsFirstRBCTrips,firstRBCTripsExactDR,
 firstRBCTripsExactDRCE,forErgodicInfo,theDistFirstRBCTrips},
 {linModFirstRBCTrips,rbcEqnsFirstRBCTrips,firstRBCTripsExactDR,
 firstRBCTripsExactDRCE,forErgodicInfo,theDistFirstRBCTrips}=modData;
-{mn,sd,minz,maxz,svd}=ergodicInfo[forErgodicInfo,{1,3}];
+numEps=Length[modData[[-1,1]]];
+{mn,sd,minz,maxz,svd}=ergodicInfo[forErgodicInfo,{1,3},numEps];
 theFullXs=genTestPts[{minz,maxz},numPts,Nied,mn,sd,svd,{1,3}];
 With[{lms=
 assessNextSimplestErrPrediction[{rbcEqnsFirstRBCTrips,theFullXs,1,
@@ -2066,11 +2062,6 @@ Module[{theRes=simFunc[200]},
      toKeep=theRes[[All,Complement[valCols,toIgnore]]]},
 {funcMean,funcSD,funcMinZ,funcMaxZ,funcvv}=doPCA[toKeep];
 {errsMean,errsSD,errsMinZ,errsMaxZ,errsvv}=doPCA[theErrs];
-Print[Dimensions[toKeep],Dimensions[theErrs],
-      valCols,errCols,{numVals,numEps},funcMean,errsMean,
- funcSD,errsSD,
- funcMinZ,errsMinZ,
-   funcMaxZ,errsMaxZ];
 {Join[funcMean,errsMean],
  Join[funcSD,errsSD],
  Join[funcMinZ,errsMinZ],
@@ -2082,7 +2073,6 @@ Print[Dimensions[toKeep],Dimensions[theErrs],
 
 doPCA[theVals_?MatrixQ]:=
 Module[{funcMean,funcSD,funcMinZ,funcMaxZ,vv},
-       Print[{"doPCA:",Dimensions[theVals]}];
 funcMean=Mean[theVals];
 funcSD=StandardDeviation[theVals];
 normedRes=Map[(#/funcSD)&,(Map[(#-funcMean)&,theVals])];

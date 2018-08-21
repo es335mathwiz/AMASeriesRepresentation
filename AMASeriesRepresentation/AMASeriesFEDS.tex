@@ -1354,8 +1354,49 @@ V= \vcenter{\hbox{\includegraphics{ergodicV.pdf}}}
 \min U= \vcenter{\hbox{\includegraphics{ergodicMinZ.pdf}}}
 \end{gather}
 
+Generated points
+
+To assess the quality of the approximation error and  insights about
+improving the quality of the approximation and the impact of the
+
+Choosing k for speed of convergence.
+
+Highly correlated regression result in coeffients very near one. $R^2$ near one.
+Choosing k for accuracy of error approximation.
 
 
+
+
+
+\vspace{.25in}
+
+\begin{tabular}{|r|r|r|r|r|}
+\hline
+\multicolumn{5}{|c|}{$c \,\,\text{with}\,\, \mathbb{V}=\{1,1,1\},k_p=2$}\\
+\hline
+  MAE &$R^2$&$(\alpha,\beta)$&$\hat{\sigma}$&$k_e$\\
+\hline
+\end{tabular}
+Speedup
+
+\begin{figure}
+  \centering
+  
+  \caption{$c_t,k_t \,\,\text{with}\,\, \mathbb{V}=\{2,2,2\},k_p=10$}
+\begin{gather}
+\vcenter{\hbox{\includegraphics{curio01.pdf}}}
+\end{gather}
+\end{figure}
+
+
+\begin{figure}
+  \centering
+  
+  \caption{$c_t,k_t \,\,\text{with}\,\, \mathbb{V}=\{2,2,2\}, Traditional$}
+\begin{gather}
+\vcenter{\hbox{\includegraphics{curio02.pdf}}}
+\end{gather}
+\end{figure}
 
 \section{Conclusions}
 This paper introduces a new series representation for bounded time series and

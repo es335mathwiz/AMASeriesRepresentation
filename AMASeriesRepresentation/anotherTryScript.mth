@@ -9,7 +9,7 @@ hosts=If[sjn===$Failed,0,Counts[StringSplit[sjn,","]]]
 Print["sjn=",sjn,"<<<<"]
 local=$MachineName
 Print["local=",local,"<<<<"]
-hosts[local]--<
+hosts[local]--
 Needs["SubKernels`RemoteKernels`"]
 
 math = "/opt/mathematica/11.3/Executables/MathKernel" <> 

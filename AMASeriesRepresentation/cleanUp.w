@@ -114,8 +114,8 @@ With[{@<cmptXArgsInit@>,
 @<makeArgPatternsBoth@>},
 (**)
 Switch[OptionValue["Traditional"],
-True,@<setDelayedTradFXtZtBoth@>;@<setDelayedTradFXtm1Eps@>,
-False,@<setDelayedSeriesFXtZtBoth@>;@<setDelayedSeriesFXtm1Eps@>]
+True,Print["doing traditionalxxxxxxxxxxxxxxxxxxx"];@<setDelayedTradFXtZtBoth@>;@<setDelayedTradFXtm1Eps@>,
+False,Print["doing non traditional*************************"]@<setDelayedSeriesFXtZtBoth@>;@<setDelayedSeriesFXtm1Eps@>]
 (**)
 (**)
 DistributeDefinitions[funcOfXtZt,funcOfXtm1Eps]
@@ -981,7 +981,7 @@ Options[parallelDoGenericIterREInterp]]]]],justBothXZFuncs,
 With[{theNorms=
 Map[Function[notxx,
 (Norm[Apply[#1[[1]],notxx]-Apply[#2[[1]],notxx]])],
-evalPts]},Print[theNorms];Norm[theNorms]>OptionValue["normConvTol"]]&,2,
+evalPts]},Norm[theNorms]>OptionValue["normConvTol"]]&,2,
 OptionValue["maxForCEIters"]]]
 
 
@@ -2054,7 +2054,7 @@ ergodicInfo::usage="ergodicInfo[simFunc,toIgnore]"
 ergodicInfo[
 simFunc:(_Function|_InterpolatingFunction|_CompiledFunction|_Symbol),
 toIgnore_?listOfIntegersQ,numEps_Integer]:=
-Module[{theRes=simFunc[200]},
+Module[{theRes=simFunc[2000]},
        With[{numVals=Length[theRes[[1]]]},
 	    With[{valCols=Range[numVals-numEps],
 		  errCols=Range[numVals-numEps+1,numVals]},

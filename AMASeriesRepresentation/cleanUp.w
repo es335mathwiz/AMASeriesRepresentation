@@ -2509,7 +2509,7 @@ theta[t]-(N[E]^(eps[theta][t]))*(theta[t-1]^rho) ,
 II[t] -(kk[t]-(1-dd)*kk[t-1])+mu1[t]-mu1[t+1]*delta*(1-dd),
 mu1[t]
 };
-Print[rbcEqnsNotBinding];
+
 
 @}
 
@@ -2520,16 +2520,15 @@ Print[rbcEqnsNotBinding];
 @{
 (*parameters page 28 guerrieri iacoviello*)
 paramSubs={
-alpha->.36,
-beta->1,
-dd->.1,
-delta->.95,
-eta->1,
-rho->.95,
-sigma->.01,
-upsilon->0.975
+alpha->alphaVal,
+dd->ddVal,
+delta->deltaVal,
+eta->etaVal,
+rho->rhoVal,
+sigma->sigmaVal,
+upsilon->upsilonVal
 } ;
-Print["need to replace hard wired params"];
+
 
 
 forSubs={alpha^(1 - alpha)^(-1)*delta^(1 - alpha)^(-1)};
@@ -2547,14 +2546,14 @@ simpParamSubs=Join[paramSubs,forParamSubs,simpSubs];
 ssEqnSubs=
 {xx_Symbol[t+v_.]->xx};
 
-Print[ssEqnSubs];
+
 
 rbcEqnsNotBindingSubbed=((rbcEqnsNotBinding/.paramSubs)/.eps[theta][t]->0);
 theVars=Cases[Variables[forFR=(rbcEqnsNotBindingSubbed/.ssEqnSubs)],_Symbol];
 frArg=MapThread[Prepend[#1,#2]&,{{{.3599,2},{0,.35},{.187,.9},{-9.,9.},{-.01,0.1},{-9.,9.},{.9,1.1}},theVars}];
 ssFRSolnSubs=Prepend[Chop[FindRoot[forFR,frArg,MaxIterations->1000]],IIss->0];
 
-Print[{"now:",rbcEqnsNotBindingSubbed,forFR,theVars,frArg}];
+
 
 
 @}
@@ -2574,7 +2573,7 @@ rbcEqnsNotBinding/.simpParamSubs]//FullSimplify)/.{xxxx_[t+_.]->xxxx})//.ssFRSol
 
 psiepsSymbRE=-Transpose[{((Map[D[#,eps[theta][t]]&, rbcEqnsNotBinding])/.{eps[_][_]->0,xxxx_[t+_.]->xxxx})//.ssFRSolnSubs}/.simpParamSubs];
 
-Print[{"hmm:",hmatSymbRawRE}];
+
 
 hmatSymbRE=hmatSymbRawRE//.simpParamSubs;
 hSumRE=hmatSymbRE[[All,Range[7]]]+hmatSymbRE[[All,7+Range[7]]]+hmatSymbRE[[All,2*7+Range[7]]];
@@ -2616,14 +2615,13 @@ forErgodicInfoCS::usage="place holder";
 theDistCS::usage="place holder";
 @}
 
-@d exampleInits
+@d exampleInitsCS
 @{
 anXFirstRBCCSTrips=Transpose[{{99,99,.18,99,99,99,1.01}}];
 anEpsFirstRBCCSTrips={{0.01}};
 anXEpsFirstRBCCSTrips=Join[anXFirstRBCCSTrips,anEpsFirstRBCCSTrips];
 aZFirstRBCCSTrips=Transpose[{{.1,.2,.3,.4,.5,.6,.7}}];
-wanXEpsZsFirstRBCCSTrips=Join[anXEpsFirstRBCCSTrips,aZFirstRBCCSTrips];
-Print[{"init:",preRbcEqnsBindin}];
+anXEpsZsFirstRBCCSTrips=Join[anXEpsFirstRBCCSTrips,aZFirstRBCCSTrips];
 @}
 
 
@@ -2640,7 +2638,6 @@ rbcEqnsFirstRBCCSTrips::usage="model equations";
 theProduct=upsilon*II//.ssFRSolnSubs/.paramSubs;
 
 
-Print[{"prod:",theProduct}];
 
 argsSubs={
 cc[t-1]->cctm1,
@@ -2667,12 +2664,13 @@ theta[t+1]->thetatp1,
 eps[theta][t]->epsVal
 };
 
-Print[{"argsSubs:",argsSubs}];
+
 
 
 theArgs={cctm1,iitm1,kktm1,lamtm1,mutm1,nltm1,thetatm1,epsVal};
 
-Print[{"theArgs:",theArgs}];
+rbcBackLookingEqns={E^(rho*Log[theta[t-1]] + eps[theta][t])};
+rbcBackLookingExpEqns={Expectation[rbcBackLookingEqns[[1]],eps[theta][t] \[Distributed] NormalDistribution[0,sigma]]};
 
 
 rbcEqnsBackLookingCS=
@@ -2681,8 +2679,6 @@ Apply[Function , ({theArgs,rbcBackLookingEqns/.argsSubs}/.paramSubs)];
 
 rbcEqnsBackLookingExpCS=
 Apply[Function , ({Drop[theArgs,-1],rbcBackLookingExpEqns/.argsSubs}/.paramSubs)];
-
-Print[{"pair:",rbcEqnsBackLookingCS,rbcEqnsBackLookingExpCS}];
 
 preRbcEqnsBinding={
 lam[t] +1/cc[t],
@@ -2694,15 +2690,13 @@ II[t] -(kk[t]-(1-dd)*kk[t-1]),
 mu1[t]
 };
 
-Print[{"pree:",preRbcEqnsBinding}];
 
 eqnsForBind=(((preRbcEqnsBinding/.paramSubs)/.argsSubs)//.ssFRSolnSubs)//N;
 
-Print[{"eqnsForBind:",eqnsForBind}];
 
 eqnsForNotBind=(((rbcEqnsNotBinding/.paramSubs)/.argsSubs)//.ssFRSolnSubs)//N;
 
-Print[{"eqnsForNotBind:",eqnsForNotBind}];
+
 
   rbcEqnsFirstRBCCSTrips={
  { 
@@ -2733,13 +2727,23 @@ If[allRes[[1]]===$Failed,Flatten[allRes[[2]]],Flatten[allRes[[1]]]]]
 
 theDistCS={{{ee,NormalDistribution[0,sigma]}}}//.paramSubs;
 
+
+thVal=(theta//.ssFRSolnSubs//.(simpParamSubs//N))//N;
+kVal = (kk //.ssFRSolnSubs//.(simpParamSubs//N))//N;
+cVal = (cc //.ssFRSolnSubs//.(simpParamSubs//N))//N ;
+(*following guerrieri and iacoviello Appendix A*)
+
+
+
+
 forErgodicInfoCS[numPers_Integer]:=
 With[{draws=RandomVariate[theDistCS[[1,1,2]],numPers],
 initVec=Transpose[{{99,99,kVal,99,99,99,thVal}}],
 fMul=Inverse[IdentityMatrix[7]-fmatSymbRE]},
 With[{mats=FoldList[(bmatSymbRE . #1+ (phimatSymbRE .psiepsSymbRE .{{#2}})+
 fMul.phimatSymbRE.psicSymbRE)&,initVec,draws]},
-Map[Flatten,mats]]];
+With[{justVars=Map[Flatten,mats]},
+ArrayFlatten[{{Drop[justVars,1],Transpose[{draws}]}}]]]];
 
 
 @}
@@ -2797,6 +2801,7 @@ firstRBCCSGenModel::usage="firstRBCCSGenModel"
 
 @d firstRBCCSTripsPackage code
 @{
+@<exampleInitsCS@>
 @<simpCSParamSubs@>
 @<rbcEqnsNotBinding@>
 @<rbcCSSSSubs@>

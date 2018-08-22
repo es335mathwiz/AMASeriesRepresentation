@@ -1,13 +1,16 @@
 Print["setting history length to 1"];
 $HistoryLength=1;
 Get["tests/pathSetup.mth"]
+Print["series?"]
 Get["AMASeriesRepresentation`"]
 (*
 Print["preemscstomma"]
 Get["emscsToMma`"]*)
+Print["msnto?"]
 Needs["MSNTO`"]
-
+Print["reading first"]
 Get["firstRBCTrips`"]
+Print["done reading first"]
 
 
 phiMat=getPhi[linModFirstRBCTrips]

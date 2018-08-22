@@ -1,0 +1,48 @@
+Get["AMAFedsBetterRBC.mth"];
+(*
+alphaVal_?NumberQ,
+ddVal_?NumberQ,
+deltaVal_?NumberQ,
+etaVal_?NumberQ,
+rhoVal_?NumberQ,
+sigmaVal_?NumberQ,
+upsilon_?NumberQ
+*)
+(*Options[doCase]={"Traditional"->False,addTailContribution->False,addTailContribution->True,"normConvTol"->10^(-10)}*)
+doCase[approx_?VectorQ,kForSeries_Integer,opts:OptionsPattern[]]:=
+Module[{ptErg,tfErg,plyErg,iplyErg,dplyErg,smolRng,
+linModFirstRBCTrips,rbcEqnsFirstRBCTrips,firstRBCTripsExactDR,firstRBCTripsExactDRCE,forErgodicInfo,theDistFirstRBCTrips,toIg,mn,sd,minz,maxz,svd,theFullXs,xz0,XZ0,sgSpec,theRes},
+{linModFirstRBCTrips,rbcEqnsFirstRBCTrips,firstRBCTripsExactDR,firstRBCTripsExactDRCE,forErgodicInfo,theDistFirstRBCTrips}=firstRBCGenModel[
+.36,
+.1,
+.95,
+1,
+.95,
+.01,
+0.975];
+toIg={1,3};
+{mn,sd,minz,maxz,svd}=ergodicInfo[forErgodicInfo,toIg,1];
+theFullXs=genTestPts[{minz,maxz},200,Nied,mn,sd,svd,toIg];
+{xz0,XZ0}=genBothX0Z0Funcs[linModFirstRBCTrips];
+{ptErg,tfErg,plyErg,iplyErg,dplyErg}=smolyakInterpolationPrep[approx,{mn,sd,minz,maxz,svd},theDistFirstRBCTrips];
+smolRngErg=Transpose[{minz,maxz}];
+sgSpecErg={toIg,smolRngErg,ptErg,tfErg,plyErg,iplyErg,1,approx,
+{mn,sd,minz,maxz,svd}};
+theRes = parallelNestGenericIterREInterp[genFRExtFunc, 
+   linModFirstRBCTrips, {{xz0,XZ0}, kForSeries}, rbcEqnsFirstRBCTrips, 
+   sgSpecErg,smolyakInterpolation,{},theFullXs,"Traditional"->False];
+theResTrad = parallelNestGenericIterREInterp[genFRExtFunc, 
+   linModFirstRBCTrips, {{xz0,XZ0}, 0}, rbcEqnsFirstRBCTrips, 
+   sgSpecErg,smolyakInterpolation,{},theFullXs,"Traditional"->True];
+{cmpMAE[#,theFullXs]&/@theRes,cmpMAE[#,theFullXs]&/@theResTrad}
+]
+
+
+
+cmpMAE[aRes_List,testPts_?MatrixQ]:=
+With[{theErrs=Map[Flatten[Drop[aRes[[1]] @@ #,-4]-
+(firstRBCTripsExactDR @@ #)]&,testPts]},
+{Mean[Abs[#]&/@theErrs[[All,1]]],Mean[Abs[#]&/@theErrs[[All,2]]]}]
+
+
+

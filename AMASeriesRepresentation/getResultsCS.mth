@@ -1,0 +1,155 @@
+Get["AMAFedsBetterRBC.mth"];
+Get["firstRBCCSTrips`"]
+(*
+alphaVal_?NumberQ,
+ddVal_?NumberQ,
+deltaVal_?NumberQ,
+etaVal_?NumberQ,
+rhoVal_?NumberQ,
+sigmaVal_?NumberQ,
+upsilonVal_?NumberQ
+*)
+(*Options[doCaseCS]={"Traditional"->False,addTailContribution->False,addTailContribution->True,"normConvTol"->10^(-10)}*)
+
+
+
+doCaseCS[approx_?VectorQ,kForSeries_Integer,opts:OptionsPattern[]]:=
+Module[{ptErg,tfErg,plyErg,iplyErg,dplyErg,smolRng,
+linModFirstRBCTrips,rbcEqnsFirstRBCTrips,firstRBCTripsExactDR,firstRBCTripsExactDRCE,forErgodicInfo,theDistFirstRBCTrips,toIg,mn,sd,minz,maxz,svd,theFullXs,xz0,XZ0,sgSpec,theRes},
+{linModFirstRBCCSTrips,rbcEqnsFirstRBCCSTrips,forErgodicInfoCS,theDistFirstRBCCSTrips}=firstRBCCSGenModel[
+.36,
+.1,
+.95,
+1,
+.95,
+.01,
+0.975];
+toIg={1,2,4,5,6};
+{mn,sd,minz,maxz,svd}=ergodicInfo[forErgodicInfoCS,toIg,1];
+theFullXs=genTestPts[{minz,maxz},200,Nied,mn,sd,svd,toIg];
+{xz0,XZ0}=genBothX0Z0Funcs[linModFirstRBCCSTrips];
+{ptErg,tfErg,plyErg,iplyErg,dplyErg}=smolyakInterpolationPrep[approx,{mn,sd,minz,maxz,svd},theDistFirstRBCCSTrips];
+smolRngErg=Transpose[{minz,maxz}];
+sgSpecErg={toIg,smolRngErg,ptErg,tfErg,plyErg,iplyErg,1,approx,
+{mn,sd,minz,maxz,svd}};
+{theRes = parallelNestGenericIterREInterp[genFRExtFunc, 
+   linModFirstRBCCSTrips, {{xz0,XZ0}, kForSeries}, rbcEqnsFirstRBCCSTrips, 
+   sgSpecErg,smolyakInterpolation,{},theFullXs,"Traditional"->False],
+theResTrad = parallelNestGenericIterREInterp[genFRExtFunc, 
+   linModFirstRBCCSTrips, {{xz0,XZ0}, 0}, rbcEqnsFirstRBCCSTrips, 
+   sgSpecErg,smolyakInterpolation,{},theFullXs,"Traditional"->True]}]
+
+
+doCaseCS[approx_?VectorQ,kForSeries_Integer,
+benchMark:(_Function|_CompiledFunction|_Symbol),opts:OptionsPattern[]]:=
+Module[{theResNonTrad,theResTrad},
+{theResNonTrad,theResTrad}=
+doCaseCS[approx,kForSeries,opts];
+{cmpMAE[#,theFullXs,benchMark]&/@theResNonTrad,
+cmpMAE[#,theFullXs,benchMark]&/@theResTrad}];
+
+
+
+cmpMAE[{aRes1_Function,aRes2_Function},testPts_?MatrixQ,
+benchMark:(_Function|_CompiledFunction|_Symbol)]:=
+With[{theErrs=Map[Flatten[Drop[aRes1 @@ #,-7]]-
+(Take[benchMark @@ #,7])&,testPts]},Print[{"theErrs:",theErrs}];
+{Mean[Abs[#]&/@theErrs[[All,1]]],Mean[Abs[#]&/@theErrs[[All,2]]]}]
+
+
+doCaseCSTrad[approx_?VectorQ,
+{xz0:(_Function|_CompiledFunction|_Symbol),
+XZ0:(_Function|_CompiledFunction|_Symbol)},opts:OptionsPattern[]]:=
+Module[{ptErg,tfErg,plyErg,iplyErg,dplyErg,smolRng,
+linModFirstRBCTrips,rbcEqnsFirstRBCTrips,firstRBCTripsExactDR,firstRBCTripsExactDRCE,forErgodicInfo,theDistFirstRBCTrips,toIg,mn,sd,minz,maxz,svd,theFullXs,sgSpec,theRes},
+{linModFirstRBCCSTrips,rbcEqnsFirstRBCCSTrips,forErgodicInfoCS,theDistFirstRBCCSTrips}=firstRBCCSGenModel[
+.36,
+.1,
+.95,
+1,
+.95,
+.01,
+0.975];
+toIg={1,2,4,5,6};
+Print["aa"];
+{mn,sd,minz,maxz,svd}=ergodicInfo[forErgodicInfoCS,toIg,1];
+Print["bb"];
+theFullXs=genTestPts[{minz,maxz},200,Nied,mn,sd,svd,toIg];
+Print["cc"];
+Print["dd"];
+{ptErg,tfErg,plyErg,iplyErg,dplyErg}=smolyakInterpolationPrep[approx,{mn,sd,minz,maxz,svd},theDistFirstRBCCSTrips];
+Print["ee"];
+smolRngErg=Transpose[{minz,maxz}];
+Print["ff"];
+sgSpecErg={toIg,smolRngErg,ptErg,tfErg,plyErg,iplyErg,1,approx,
+{mn,sd,minz,maxz,svd}};
+Print["gg"];
+theResTrad = parallelNestGenericIterREInterp[genFRExtFunc, 
+   linModFirstRBCCSTrips, {{xz0,XZ0}, 0}, rbcEqnsFirstRBCCSTrips, 
+   sgSpecErg,smolyakInterpolation,{},theFullXs,"Traditional"->True]]
+
+
+
+
+
+
+
+doCaseCSNonTrad[approx_?VectorQ,
+kForSeries_Integer,
+{linModFirstRBCCSTrips:
+{theHMat_?MatrixQ,BB_?MatrixQ,phi_?MatrixQ,FF_?MatrixQ, 
+          psiEps_?MatrixQ,psiC_?MatrixQ,psiZ_?MatrixQ,
+          backLookingInfo:{{_Integer,_,_}...}},
+rbcEqnsFirstRBCCSTrips:xxx_?conditionsGroupQ,
+forErgodicInfoCS:(_Function|_InterpolatingFunction|_CompiledFunction|_Symbol),
+theDistFirstRBCCSTripsdistribSpec:{expctSpec:{{_Symbol,_}..}}},
+opts:OptionsPattern[]]:=
+Module[{ptErg,tfErg,plyErg,iplyErg,dplyErg,smolRng,
+toIg,mn,sd,minz,maxz,svd,theFullXs,sgSpec,theRes},
+{xz0,XZ0}=genBothX0Z0Funcs[linModFirstRBCCSTrips];
+toIg={1,2,4,5,6};
+{mn,sd,minz,maxz,svd}=ergodicInfo[forErgodicInfoCS,toIg,1];
+theFullXs=genTestPts[{minz,maxz},200,Nied,mn,sd,svd,toIg];
+{ptErg,tfErg,plyErg,iplyErg,dplyErg}=smolyakInterpolationPrep[approx,{mn,sd,minz,maxz,svd},theDistFirstRBCCSTrips];
+smolRngErg=Transpose[{minz,maxz}];
+sgSpecErg={toIg,smolRngErg,ptErg,tfErg,plyErg,iplyErg,1,approx,
+{mn,sd,minz,maxz,svd}};
+theRes = parallelNestGenericIterREInterp[genFRExtFunc, 
+   linModFirstRBCCSTrips, {{xz0,XZ0}, kForSeries}, rbcEqnsFirstRBCCSTrips, 
+   sgSpecErg,smolyakInterpolation,{},theFullXs,opts]]
+
+
+
+
+
+
+varyModelParams[
+alphaVal_?NumberQ,
+ddVal_?NumberQ,
+deltaVal_?NumberQ,
+etaVal_?NumberQ,
+rhoVal_?NumberQ,
+sigmaVal_?NumberQ,
+upsilonVal_?NumberQ]:=
+{linModFirstRBCCSTrips,rbcEqnsFirstRBCCSTrips,forErgodicInfoCS,theDistFirstRBCCSTrips}=firstRBCCSGenModel[alphaVal,ddVal,deltaVal,etaVal,rhoVal,sigmaVal,upsilonVal];
+
+
+
+(*
+
+theVarBounds:{minVars_?VectorQ,maxVars_?VectorQ},numPts_Integer,
+numGen:(Nied|Sobol)
+
+boo=(varyModelParams @@ #) &/@genTestPts[Transpose[{{.1,.5},{0,1},{.8,.99},{.1,80.},{0.8,.99},{0.01,0.03},{0.0,1.0}}],2,Nied];
+
+hmvary=doCaseCSNonTrad[{1,1,1},0,varyModelParams[.36,.1,.95,1,0.95,.01,0.975]]
+
+
+someParamsForTest=genTestPts[Transpose[{{.1,.5},{0,1},{.8,.99},{.1,100.},{0.0,1.0}}],10,Nied]
+
+doCaseCSNonTrad[{1,1,1},{xz0,XZ0}=genBothX0Z0Funcs[linModFirstRBCCSTrips],0];
+
+cmpMAE[hm[[1,-1]],theFullXs[[Range[3]]],hm[[1,-1,1]]]
+
+
+*)

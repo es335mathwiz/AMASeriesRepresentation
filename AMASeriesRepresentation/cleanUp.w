@@ -114,8 +114,8 @@ With[{@<cmptXArgsInit@>,
 @<makeArgPatternsBoth@>},
 (**)
 Switch[OptionValue["Traditional"],
-True,Print["doing traditionalxxxxxxxxxxxxxxxxxxx"];@<setDelayedTradFXtZtBoth@>;@<setDelayedTradFXtm1Eps@>,
-False,Print["doing non traditional*************************"]@<setDelayedSeriesFXtZtBoth@>;@<setDelayedSeriesFXtm1Eps@>]
+True,WriteString["stdout","t"];@<setDelayedTradFXtZtBoth@>;@<setDelayedTradFXtm1Eps@>,
+False,WriteString["stdout","n"]@<setDelayedSeriesFXtZtBoth@>;@<setDelayedSeriesFXtm1Eps@>]
 (**)
 (**)
 DistributeDefinitions[funcOfXtZt,funcOfXtm1Eps]
@@ -2241,10 +2241,10 @@ CRRAUDrv[cc_,eta_]:=If[eta===1,D[Log[cc],cc],D[(1/(1-eta))*(cc^(1-eta)-1),cc]];
 closed form solution version  beta=1 geometric discounting
 chkcobb douglas production*)
 rbcEqns={
-CRRAUDrv[cc[t],1]-
+CRRAUDrv[cc[t],eta]-
 (delta*(nlPart[t+1]*((alpha *(kk[t]^(alpha-1)) )))),
 cc[t] + kk[t]-((theta[t])*(kk[t-1]^alpha)),
-nlPart[t] - (nlPartRHS=(1)* (theta[t]*CRRAUDrv[cc[t],1])),
+nlPart[t] - (nlPartRHS=(1)* (theta[t]*CRRAUDrv[cc[t],eta])),
 theta[t]-E^(rho*Log[theta[t-1]] + eps[theta][t])
 };
 @}
@@ -2321,7 +2321,7 @@ rbcEqns/.simpParamSubs]//FullSimplify)/.{xxxx_[t+_.]->xxxx})//.ssSolnSubsRE)/.{e
 psiepsSymbRE=-Transpose[{((Map[D[#,eps[theta][t]]&, rbcEqns])/.{eps[_][_]->0,xxxx_[t+_.]->xxxx})//.ssSolnSubsRE}/.simpParamSubs];
 
 
-hmatSymbRE=hmatSymbRawRE//.simpSubs;
+hmatSymbRE=(hmatSymbRawRE//.simpSubs)//.simpParamSubs;
 
 
 
@@ -2334,7 +2334,7 @@ qmatSymbRE=Join[zfSymbRE,evcsSymbRE[[{1}]]];
 {bmatSymbRE,phimatSymbRE,fmatSymbRE}=symbolicComputeBPhiF[hmatSymbRE,qmatSymbRE]//Simplify;
 
 hSumRE=hmatSymbRE[[All,Range[4]]]+hmatSymbRE[[All,4+Range[4]]]+hmatSymbRE[[All,8+Range[4]]];
-ssSolnVecRE={{cc},{kk},{nlPart},{theta}}//.ssSolnSubsRE;
+ssSolnVecRE=({{cc},{kk},{nlPart},{theta}}//.ssSolnSubsRE)//.simpParamSubs;
 psicSymbRE=hSumRE . ssSolnVecRE;
 psiz=IdentityMatrix[4];
 
@@ -2481,7 +2481,6 @@ firstRBCGenModel::usage="firstRBCGenModel"
 
 @d firstRBCTripsPackage code
 @{
-
 @<exampleInits@>
 @<rbcEqns@>
 @<simpParamSubs@>
@@ -2492,12 +2491,318 @@ firstRBCGenModel::usage="firstRBCGenModel"
 @}
 
 
+\subsection{firstCompSlack}
+\subsubsection{rbcCSEqns}
+@d rbcEqnsNotBinding
+@{
+CRRAUDrv[cc_,eta_]:=If[eta===1,D[Log[cc],cc],D[(1/(1-eta))*(cc^(1-eta)-1),cc]];
+(*pg 165 of  maliar maliar solving neoclassical growth model  
+closed form solution version  beta=1 geometric discounting
+chkcobb douglas production*)
+
+rbcEqnsNotBinding={
+lam[t] +CRRAUDrv[cc[t],eta],
+cc[t] + II[t]-((theta[t])*(kk[t-1]^alpha)),
+nlPart[t] -((lam[t])*theta[t]),
+theta[t]-(N[E]^(eps[theta][t]))*(theta[t-1]^rho) ,
+(lam[t]) -(alpha*delta*nlPart[t+1]/(kk[t]^(1-alpha))) -lam[t+1]*delta*(1-dd),
+II[t] -(kk[t]-(1-dd)*kk[t-1])+mu1[t]-mu1[t+1]*delta*(1-dd),
+mu1[t]
+};
+Print[rbcEqnsNotBinding];
+
+@}
+
+
+@d simpCSParamSubs
+
+
+@{
+(*parameters page 28 guerrieri iacoviello*)
+paramSubs={
+alpha->.36,
+beta->1,
+dd->.1,
+delta->.95,
+eta->1,
+rho->.95,
+sigma->.01,
+upsilon->0.975
+} ;
+Print["need to replace hard wired params"];
+
+
+forSubs={alpha^(1 - alpha)^(-1)*delta^(1 - alpha)^(-1)};
+simpSubs=Thread[forSubs->nu];
+forParamSubs=Thread[nu->forSubs]//.paramSubs;
+simpParamSubs=Join[paramSubs,forParamSubs,simpSubs];
+
+@}
+\subsection{steady state solution}
+
+\subsubsection{substitutions}
+
+@d rbcCSSSSubs
+@{
+ssEqnSubs=
+{xx_Symbol[t+v_.]->xx};
+
+Print[ssEqnSubs];
+
+rbcEqnsNotBindingSubbed=((rbcEqnsNotBinding/.paramSubs)/.eps[theta][t]->0);
+theVars=Cases[Variables[forFR=(rbcEqnsNotBindingSubbed/.ssEqnSubs)],_Symbol];
+frArg=MapThread[Prepend[#1,#2]&,{{{.3599,2},{0,.35},{.187,.9},{-9.,9.},{-.01,0.1},{-9.,9.},{.9,1.1}},theVars}];
+ssFRSolnSubs=Prepend[Chop[FindRoot[forFR,frArg,MaxIterations->1000]],IIss->0];
+
+Print[{"now:",rbcEqnsNotBindingSubbed,forFR,theVars,frArg}];
+
+
+@}
+\subsubsection{linModFirstRBCCS}
+@d linModFirstRBCCSTripsUsage
+@{
+linModFirstRBCCSTrips::usage="linear model matrices for approx"
+@}
+
+@d linModFirstRBCCSTrips
+@{
+
+psiz=IdentityMatrix[7];
+
+hmatSymbRawRE=(((equationsToMatrix[
+rbcEqnsNotBinding/.simpParamSubs]//FullSimplify)/.{xxxx_[t+_.]->xxxx})//.ssFRSolnSubs)/.{eps[_]->0}//FullSimplify;
+
+psiepsSymbRE=-Transpose[{((Map[D[#,eps[theta][t]]&, rbcEqnsNotBinding])/.{eps[_][_]->0,xxxx_[t+_.]->xxxx})//.ssFRSolnSubs}/.simpParamSubs];
+
+Print[{"hmm:",hmatSymbRawRE}];
+
+hmatSymbRE=hmatSymbRawRE//.simpParamSubs;
+hSumRE=hmatSymbRE[[All,Range[7]]]+hmatSymbRE[[All,7+Range[7]]]+hmatSymbRE[[All,2*7+Range[7]]];
+
+
+ssSolnVecRE={{cc},{II},{kk},{lam},{mu1},{nlPart},{theta}}//.ssFRSolnSubs;
+psicSymbRE=hSumRE . ssSolnVecRE;
 
 
 
 
+{zfSymbRE,hfSymbRE}=symbolicAR[hmatSymbRE//.simpParamSubs];
+amatSymbRE=symbolicTransitionMatrix[hfSymbRE];
 
 
+
+{evlsSymbRE,evcsSymbRE}=Eigensystem[Transpose[amatSymbRE]];
+
+
+qmatSymbRE=Join[zfSymbRE,evcsSymbRE[[{1}]]];
+
+
+{bmatSymbRE,phimatSymbRE,fmatSymbRE}=symbolicComputeBPhiF[hmatSymbRE,qmatSymbRE]//Simplify;
+
+linModFirstRBCCSTrips={hmatSymbRE//N,bmatSymbRE // N, phimatSymbRE // N, 
+    fmatSymbRE // N, psiepsSymbRE // N, 
+    psicSymbRE // N, psiz // N,{{4,rbcEqnsBackLookingCS,rbcEqnsBackLookingExpCS}}};
+
+
+@}
+
+
+\subsection{some example initial conditions}
+
+@d exampleInitsCSUsage
+@{
+anXEpsFirstRBCCSTrips::usage="for test input";
+forErgodicInfoCS::usage="place holder";
+theDistCS::usage="place holder";
+@}
+
+@d exampleInits
+@{
+anXFirstRBCCSTrips=Transpose[{{99,99,.18,99,99,99,1.01}}];
+anEpsFirstRBCCSTrips={{0.01}};
+anXEpsFirstRBCCSTrips=Join[anXFirstRBCCSTrips,anEpsFirstRBCCSTrips];
+aZFirstRBCCSTrips=Transpose[{{.1,.2,.3,.4,.5,.6,.7}}];
+wanXEpsZsFirstRBCCSTrips=Join[anXEpsFirstRBCCSTrips,aZFirstRBCCSTrips];
+Print[{"init:",preRbcEqnsBindin}];
+@}
+
+
+
+@d rbcEqnsFirstRBCCSTripsUsage
+@{
+rbcEqnsFirstRBCCSTrips::usage="model equations";
+@}
+
+
+@d rbcEqnsFirstRBCCSTrips
+@{
+
+theProduct=upsilon*II//.ssFRSolnSubs/.paramSubs;
+
+
+Print[{"prod:",theProduct}];
+
+argsSubs={
+cc[t-1]->cctm1,
+II[t-1]->iitm1,
+kk[t-1]->kktm1,
+lam[t-1]->lamtm1,
+mu1[t-1]->mu1tm1,
+nlPart[t-1]->nltm1,
+theta[t-1]->thetatm1,
+cc[t]->cct,
+II[t]->iit,
+kk[t]->kkt,
+lam[t]->lamt,
+mu1[t]->mu1t,
+nlPart[t]->nlt,
+theta[t]->thetat,
+cc[t+1]->cctp1,
+II[t+1]->iitp1,
+kk[t+1]->kktp1,
+lam[t+1]->lamtp1,
+mu1[t+1]->mu1tp1,
+nlPart[t+1]->nltp1,
+theta[t+1]->thetatp1,
+eps[theta][t]->epsVal
+};
+
+Print[{"argsSubs:",argsSubs}];
+
+
+theArgs={cctm1,iitm1,kktm1,lamtm1,mutm1,nltm1,thetatm1,epsVal};
+
+Print[{"theArgs:",theArgs}];
+
+
+rbcEqnsBackLookingCS=
+Apply[Function , ({theArgs,rbcBackLookingEqns/.argsSubs}/.paramSubs)];
+
+
+rbcEqnsBackLookingExpCS=
+Apply[Function , ({Drop[theArgs,-1],rbcBackLookingExpEqns/.argsSubs}/.paramSubs)];
+
+Print[{"pair:",rbcEqnsBackLookingCS,rbcEqnsBackLookingExpCS}];
+
+preRbcEqnsBinding={
+lam[t] +1/cc[t],
+cc[t] + II[t]-((theta[t])*(kk[t-1]^alpha)),
+nlPart[t] -((lam[t])*theta[t]),
+theta[t]-(N[E]^(eps[theta][t]))*(theta[t-1]^rho) ,
+(lam[t]) -(alpha*delta*nlPart[t+1]/(kk[t]^(1-alpha)))-lam[t+1]*delta*(1-dd)+mu1[t]-mu1[t+1]*delta*(1-dd),
+II[t] -(kk[t]-(1-dd)*kk[t-1]),
+mu1[t]
+};
+
+Print[{"pree:",preRbcEqnsBinding}];
+
+eqnsForBind=(((preRbcEqnsBinding/.paramSubs)/.argsSubs)//.ssFRSolnSubs)//N;
+
+Print[{"eqnsForBind:",eqnsForBind}];
+
+eqnsForNotBind=(((rbcEqnsNotBinding/.paramSubs)/.argsSubs)//.ssFRSolnSubs)//N;
+
+Print[{"eqnsForNotBind:",eqnsForNotBind}];
+
+  rbcEqnsFirstRBCCSTrips={
+ { 
+{True&,
+Apply[Compile , {
+{
+{cctm1,_Real},{iitm1,_Real},{kktm1,_Real},{lamtm1,_Real},{mu1tm1,_Real},{nltm1,_Real},{thetatm1,_Real},
+{cct,_Real},{iit,_Real},{kkt,_Real},{lamt,_Real},{mu1t,_Real},{nlt,_Real},{thetat,_Real},
+{cctp1,_Real},{iitp1,_Real},{kktp1,_Real},{lamtp1,_Real},{mu1tp1,_Real},{nltp1,_Real},{thetatp1,_Real},
+{epsVal,_Real}
+},
+(eqnsForNotBind),"RuntimeOptions"->{"RuntimeErrorHandler"->Function[$Failed],"CatchMachineOverflow"->True,"CatchMachineUnderflow"->True}}],
+Function[{aPt,aRes},
+If[aRes===$Failed,False,And[aRes[[1,1]]>0,aRes[[2,1]]>(theProduct)]]]},
+{True&,
+Apply[Compile , {
+{
+{cctm1,_Real},{iitm1,_Real},{kktm1,_Real},{lamtm1,_Real},{mu1tm1,_Real},{nltm1,_Real},{thetatm1,_Real},
+{cct,_Real},{iit,_Real},{kkt,_Real},{lamt,_Real},{mu1t,_Real},{nlt,_Real},{thetat,_Real},
+{cctp1,_Real},{iitp1,_Real},{kktp1,_Real},{lamtp1,_Real},{mu1tp1,_Real},{nltp1,_Real},{thetatp1,_Real},
+{epsVal,_Real}
+},
+(eqnsForBind),"RuntimeOptions"->{"RuntimeErrorHandler"->Function[$Failed],"CatchMachineOverflow"->True,"CatchMachineUnderflow"->True}}],(True)&}},
+Function[{aPt,allRes},
+If[And[allRes[[1]]===$Failed,allRes[[2]]===$Failed],Throw[$Failed,"noSolutionFound"]];
+If[allRes[[1]]===$Failed,Flatten[allRes[[2]]],Flatten[allRes[[1]]]]]
+};
+
+theDistCS={{{ee,NormalDistribution[0,sigma]}}}//.paramSubs;
+
+forErgodicInfoCS[numPers_Integer]:=
+With[{draws=RandomVariate[theDistCS[[1,1,2]],numPers],
+initVec=Transpose[{{99,99,kVal,99,99,99,thVal}}],
+fMul=Inverse[IdentityMatrix[7]-fmatSymbRE]},
+With[{mats=FoldList[(bmatSymbRE . #1+ (phimatSymbRE .psiepsSymbRE .{{#2}})+
+fMul.phimatSymbRE.psicSymbRE)&,initVec,draws]},
+Map[Flatten,mats]]];
+
+
+@}
+
+
+\subsection{assemble code}
+
+
+
+@o firstRBCCSTrips.m
+@{
+(* Wolfram Language Package *)
+BeginPackage["firstRBCCSTrips`", { 
+"AMASeriesRepresentation`","AMAModel`", "ProtectedSymbols`", "SymbolicAMA`"
+}]
+(* Exported symbols added here with SymbolName::usage *)  
+@<firstRBCCSTripsUsage definitions@>
+Begin["`Private`"]
+(*
+alpha->.36,
+dd->.1,
+delta->.95,
+eta->1,
+rho->.95,
+sigma->.01,
+upsilon->0.975
+*)
+
+
+firstRBCCSGenModel[
+alphaVal_?NumberQ,
+ddVal_?NumberQ,
+deltaVal_?NumberQ,
+etaVal_?NumberQ,
+rhoVal_?NumberQ,
+sigmaVal_?NumberQ,
+upsilonVal_?NumberQ]:=
+Module[{},
+@<firstRBCCSTripsPackage code@>
+{linModFirstRBCCSTrips,rbcEqnsFirstRBCCSTrips,forErgodicInfoCS,theDistCS}
+]
+End[]
+EndPackage[]
+@}
+
+@d firstRBCCSTripsUsage definitions
+@{
+firstRBCCSGenModel::usage="firstRBCCSGenModel"
+@<exampleInitsCSUsage@>
+@<linModFirstRBCCSTripsUsage@>
+@<rbcEqnsFirstRBCCSTripsUsage@>
+@}
+
+
+
+@d firstRBCCSTripsPackage code
+@{
+@<simpCSParamSubs@>
+@<rbcEqnsNotBinding@>
+@<rbcCSSSSubs@>
+@<linModFirstRBCCSTrips@>
+@<rbcEqnsFirstRBCCSTrips@>
+@}
 
 
 \subsection{Identifiers}

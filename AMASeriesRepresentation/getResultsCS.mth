@@ -94,7 +94,7 @@ theResTrad = parallelNestGenericIterREInterp[genFRExtFunc,
 
 
 
-doCaseCSNonTrad[approx_?VectorQ,
+doCaseCSTradNonTrad[approx_?VectorQ,
 kForSeries_Integer,
 {linModFirstRBCCSTrips:
 {theHMat_?MatrixQ,BB_?MatrixQ,phi_?MatrixQ,FF_?MatrixQ, 
@@ -142,10 +142,18 @@ numGen:(Nied|Sobol)
 
 boo=(varyModelParams @@ #) &/@genTestPts[Transpose[{{.1,.5},{0,1},{.8,.99},{.1,80.},{0.8,.99},{0.01,0.03},{0.0,1.0}}],2,Nied];
 
+
 hmvary=doCaseCSNonTrad[{1,1,1},0,varyModelParams[.36,.1,.95,1,0.95,.01,0.975]]
 
 
-someParamsForTest=genTestPts[Transpose[{{.1,.5},{0,1},{.8,.99},{.1,100.},{0.0,1.0}}],10,Nied]
+
+someParamsForTest=genTestPts[Transpose[{{.2,.5},{0.1,0.15},{.9,.95},{.9,1.1},{0.8,.99},{0.01,0.03},{0.970,0.98}}],2,Nied];
+
+someParamsForTest=genTestPts[Transpose[{{.2,.5},{0.1,50},{.7,.99},{.9,1.1},{0.8,.99},{0.01,0.03},{0.5,0.98}}],30,Nied];
+
+hmvary=doCaseCSTradNonTrad[{1,1,1},0,(varyModelParams @@ #),"Traditional"->True]& /@ someParamsForTest[[{1,2}]]
+Print["*****************eliminate complex ins ss and simulation"]
+Throw and Catch
 
 doCaseCSNonTrad[{1,1,1},{xz0,XZ0}=genBothX0Z0Funcs[linModFirstRBCCSTrips],0];
 

@@ -973,7 +973,8 @@ parallelNestGenericIterREInterp[genFRExtFunc,@<linMod@>,
 genericInterp:(smolyakInterpolation|svmRegressionLinear|
 svmRegressionPoly|svmRegressionRBF|svmRegressionSigmoid),
 svmArgs:{_?NumberQ...},evalPts_?MatrixQ,opts:OptionsPattern[]]:=
-Module[{},
+Module[{itCount=1,maxNorm,tol},
+With[{nestResults=
 NestWhileList[Function[xx,parallelDoGenericIterREInterp[genFRExtFunc,linMod,
 {xx,numSteps},triples,smolGSpec,genericInterp,svmArgs,
 Apply[Sequence,FilterRules[{opts},
@@ -981,8 +982,10 @@ Options[parallelDoGenericIterREInterp]]]]],justBothXZFuncs,
 With[{theNorms=
 Map[Function[notxx,
 (Norm[Apply[#1[[1]],notxx]-Apply[#2[[1]],notxx]])],
-evalPts]},Norm[theNorms]>OptionValue["normConvTol"]]&,2,
-OptionValue["maxForCEIters"]]]
+evalPts]},Print[{"nestWhile:",itCount++,maxNorm=Max[theNorms],tol=Norm[theNorms]/Length[theNorms],OptionValue["normConvTol"]}];(Norm[theNorms]/Length[theNorms])>OptionValue["normConvTol"]]&,2,
+OptionValue["maxForCEIters"]]},
+{itCount,maxNorm,tol,nestResults}
+]]
 
 
 
@@ -1689,7 +1692,7 @@ With[{mnsStdevs=
 Map[{Mean[#[[1]]-#[[2]]],StandardDeviation[#[[1]]-#[[2]]]}&,forRegs]},
 Print[{"assess:",mnsStdevs}];
 With[{lmfs=Map[LinearModelFit[#,xx,xx]&,forRegs]},
-lmfs]]]]]
+{mnsStdevs,lmfs}]]]]]
 
 Options[getSlopesRSqs]={"epsCalc"->"zero","useTail"->False}
 getSlopesRSqs[
@@ -1705,6 +1708,7 @@ modGenerator:(_Function|_InterpolatingFunction|_CompiledFunction|_Symbol),
 numPts_Integer,theK_Integer,
 opts:OptionsPattern[]]:=
 Module[{modData=modGenerator[alphaVal,deltaVal,1,rhoVal,sigmaVal],
+lms,diffs,
 resids,rsqs,bfs,mn,sd,minz,maxz,svd,
 linModFirstRBCTrips,rbcEqnsFirstRBCTrips,firstRBCTripsExactDR,
 firstRBCTripsExactDRCE,forErgodicInfo,theDistFirstRBCTrips},
@@ -1713,15 +1717,15 @@ firstRBCTripsExactDRCE,forErgodicInfo,theDistFirstRBCTrips}=modData;
 numEps=Length[modData[[-1,1]]];
 {mn,sd,minz,maxz,svd}=ergodicInfo[forErgodicInfo,{1,3},numEps];
 theFullXs=genTestPts[{minz,maxz},numPts,Nied,mn,sd,svd,{1,3}];
-With[{lms=
+{diffs,lms}=
 assessNextSimplestErrPrediction[{rbcEqnsFirstRBCTrips,theFullXs,1,
-linModFirstRBCTrips,firstRBCTripsExactDR},bothXZFuncs,theK,opts]},
+linModFirstRBCTrips,firstRBCTripsExactDR},bothXZFuncs,theK,opts];
 bfs=Through[lms["BestFitParameters"]];
 pvs=Through[lms["ParameterPValues"]];
 evs=Through[lms["EstimatedVariance"]];
 rsqs=Through[lms["RSquared"]];
 resids=Through[lms["FitResiduals"]];
-{bfs,pvs,evs,rsqs,resids}]]
+{bfs,pvs,evs,rsqs,diffs,resids}]
 
 
 

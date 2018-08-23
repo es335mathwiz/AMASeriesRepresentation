@@ -15,7 +15,7 @@ upsilonVal_?NumberQ
 
 doCaseCS[approx_?VectorQ,kForSeries_Integer,opts:OptionsPattern[]]:=
 Module[{ptErg,tfErg,plyErg,iplyErg,dplyErg,smolRng,
-linModFirstRBCTrips,rbcEqnsFirstRBCTrips,firstRBCTripsExactDR,firstRBCTripsExactDRCE,forErgodicInfo,theDistFirstRBCTrips,toIg,mn,sd,minz,maxz,svd,theFullXs,xz0,XZ0,sgSpec,theRes},
+linModFirstRBCTrips,rbcEqnsFirstRBCTrips,firstRBCTripsExactDR,firstRBCTripsExactDRCE,forErgodicInfo,theDistFirstRBCCSTrips,toIg,mn,sd,minz,maxz,svd,theFullXs,xz0,XZ0,sgSpec,theRes},
 {linModFirstRBCCSTrips,rbcEqnsFirstRBCCSTrips,forErgodicInfoCS,theDistFirstRBCCSTrips}=firstRBCCSGenModel[
 .36,
 .1,
@@ -61,7 +61,7 @@ doCaseCSTrad[approx_?VectorQ,
 {xz0:(_Function|_CompiledFunction|_Symbol),
 XZ0:(_Function|_CompiledFunction|_Symbol)},opts:OptionsPattern[]]:=
 Module[{ptErg,tfErg,plyErg,iplyErg,dplyErg,smolRng,
-linModFirstRBCTrips,rbcEqnsFirstRBCTrips,firstRBCTripsExactDR,firstRBCTripsExactDRCE,forErgodicInfo,theDistFirstRBCTrips,toIg,mn,sd,minz,maxz,svd,theFullXs,sgSpec,theRes},
+linModFirstRBCTrips,rbcEqnsFirstRBCTrips,firstRBCTripsExactDR,firstRBCTripsExactDRCE,forErgodicInfo,theDistFirstRBCCSTrips,toIg,mn,sd,minz,maxz,svd,theFullXs,sgSpec,theRes},
 {linModFirstRBCCSTrips,rbcEqnsFirstRBCCSTrips,forErgodicInfoCS,theDistFirstRBCCSTrips}=firstRBCCSGenModel[
 .36,
 .1,
@@ -102,7 +102,7 @@ kForSeries_Integer,
           backLookingInfo:{{_Integer,_,_}...}},
 rbcEqnsFirstRBCCSTrips:xxx_?conditionsGroupQ,
 forErgodicInfoCS:(_Function|_InterpolatingFunction|_CompiledFunction|_Symbol),
-theDistFirstRBCCSTripsdistribSpec:{expctSpec:{{_Symbol,_}..}}},
+theDistFirstRBCCSTrips:{expctSpec:{{_Symbol,_}..}}},
 opts:OptionsPattern[]]:=
 Module[{ptErg,tfErg,plyErg,iplyErg,dplyErg,smolRng,
 toIg,mn,sd,minz,maxz,svd,theFullXs,sgSpec,theRes},
@@ -146,6 +146,10 @@ With[{theNorm=Norm[Flatten[Im[theHMat]]]},Print[theNorm];theNorm<10^-15]
 
 
 (*
+hmExact=doCaseCSNonTrad[{1,1,1},0,varyModelParams[.36,1,0.95,1,0.95,.01,-100000.]]
+
+
+
 
 theVarBounds:{minVars_?VectorQ,maxVars_?VectorQ},numPts_Integer,
 numGen:(Nied|Sobol)
@@ -201,5 +205,6 @@ doCaseCSNonTrad[{1,1,1},{xz0,XZ0}=genBothX0Z0Funcs[linModFirstRBCCSTrips],0];
 
 cmpMAE[hm[[1,-1]],theFullXs[[Range[3]]],hm[[1,-1,1]]]
 
+Plot3D[{.363318,(hey[[-1,2]][99,99,kk,99,99,99,tt])[[2]]},{kk,betterRBCFixCompSlack`Private`kLow,betterRBCFixCompSlack`Private`kHigh},{tt,0.9,1.1},PlotRange->All]
 
 *)

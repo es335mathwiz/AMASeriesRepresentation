@@ -1685,8 +1685,11 @@ With[{avals=Map[(((Apply[candxzFuncs ,Flatten[#]])[[Range[4]]])-(Apply[bestxzFun
 With[{
 forRegs=Map[Transpose[{Flatten[pvals[[All,#]]],Flatten[avals[[All,#]]]}]&,
 Range[Length[pvals[[1]]]]]},
+With[{mnsStdevs=
+Map[{Mean[#[[1]]-#[[2]]],StandardDeviation[#[[1]]-#[[2]]]}&,forRegs]},
+Print[{"assess:",mnsStdevs}];
 With[{lmfs=Map[LinearModelFit[#,xx,xx]&,forRegs]},
-lmfs]]]]
+lmfs]]]]]
 
 Options[getSlopesRSqs]={"epsCalc"->"zero","useTail"->False}
 getSlopesRSqs[

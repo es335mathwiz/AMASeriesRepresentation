@@ -134,6 +134,16 @@ upsilonVal_?NumberQ]:=
 {linModFirstRBCCSTrips,rbcEqnsFirstRBCCSTrips,forErgodicInfoCS,theDistFirstRBCCSTrips}=firstRBCCSGenModel[alphaVal,ddVal,deltaVal,etaVal,rhoVal,sigmaVal,upsilonVal];
 
 
+notImaginaryQ[{linModFirstRBCCSTrips:
+{theHMat_?MatrixQ,BB_?MatrixQ,phi_?MatrixQ,FF_?MatrixQ, 
+          psiEps_?MatrixQ,psiC_?MatrixQ,psiZ_?MatrixQ,
+          backLookingInfo:{{_Integer,_,_}...}},
+rbcEqnsFirstRBCCSTrips:xxx_?conditionsGroupQ,
+forErgodicInfoCS:(_Function|_InterpolatingFunction|_CompiledFunction|_Symbol),
+theDistFirstRBCCSTripsdistribSpec:{expctSpec:{{_Symbol,_}..}}},___]:=
+With[{theNorm=Norm[Flatten[Im[theHMat]]]},Print[theNorm];theNorm<10^-15]
+
+
 
 (*
 
@@ -151,7 +161,39 @@ someParamsForTest=genTestPts[Transpose[{{.2,.5},{0.1,0.15},{.9,.95},{.9,1.1},{0.
 
 someParamsForTest=genTestPts[Transpose[{{.2,.5},{0.1,50},{.7,.99},{.9,1.1},{0.8,.99},{0.01,0.03},{0.5,0.98}}],30,Nied];
 
-hmvary=doCaseCSTradNonTrad[{1,1,1},0,(varyModelParams @@ #),"Traditional"->True]& /@ someParamsForTest[[{1,2}]]
+
+someParamsForTest=genTestPts[Transpose[{{.34,.37},{.1,.2},{.93,.99},{.9,1.1},{0.94,.96},{0.01,0.03},{0.97,0.98}}],30,Nied];
+
+modsvary=(varyModelParams @@ #)& /@ someParamsForTest;
+
+tvals=Flatten[Position[notImaginaryQ/@modsvary,True]]
+exptvals=ReplacePart[Table[{"F"},{30}],Transpose[{tvals}] ->{"T"}]
+
+hmvary=doCaseCSTradNonTrad[{1,1,1},0,(varyModelParams @@ #),"Traditional"->False]& /@ someParamsForTest[[tvals]];
+apps=Flatten[((#[[-1,1]] @@ Flatten[anXEpsFirstRBCCSTrips])[[{1,2,3,7}]])]& /@ hmvary
+
+
+hmvaryTrad=doCaseCSTradNonTrad[{1,1,1},0,(varyModelParams @@ #),"Traditional"->True]& /@ someParamsForTest[[tvals]];
+appsTrad=Flatten[((#[[-1,1]] @@ Flatten[anXEpsFirstRBCCSTrips])[[{1,2,3,7}]])]& /@ hmvaryTrad
+
+goodSolnQ[{cc_?NumberQ,ii_?NumberQ,kk_?NumberQ,th_?NumberQ}]:=
+And[cc>0,kk>0]
+
+gstrad=Flatten[Position[goodSolnQ/@ appsTrad,True]]
+expgstrad=ReplacePart[Table[{"F"},{30}],Transpose[{gstrad}] ->{"T"}]
+
+Export["paramsForTest.pdf",(ArrayFlatten[{{exptvals,someParamsForTest,expgstrad}}])//TableForm]
+
+cc[t-1]
+II[t-1]
+kk[t-1]
+lam[t-1]
+mu1[t-1]
+nlPart[t-1]
+theta[t-1]
+
+(#[[-1,1]] @@ # Flatten[anXEpsFirstRBCCSTrips])& /@ hmvary
+
 Print["*****************eliminate complex ins ss and simulation"]
 Throw and Catch
 

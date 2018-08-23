@@ -1354,50 +1354,128 @@ V= \vcenter{\hbox{\includegraphics{ergodicV.pdf}}}
 \min U= \vcenter{\hbox{\includegraphics{ergodicMinZ.pdf}}}
 \end{gather}
 
-Generated points
+In order to evaluate how well the error approximation works, compute and
+fix a particular decision rule as a proposed solution and I 
+experiment with various parameterization of the 
+RBC with known analytic solutions.
+Consequently, I hold $\eta=d=1$ but approximate the model solution error 
+for 50 various  parameter settings
+\begin{gather*}
+ 0.20 <\alpha<0.40,\,\,0.85<\delta<0.99,\,\,0.85<\rho<0.99,\,\,0.005<\sigma<0.015
+\end{gather*}
+I do this approximation for 50 various values of 
+$(k_{t-1},\theta_{t-1},\epsilon_t)$ generated using the Niederreiter algorithm
+ covering the ergodic set.  I do this for values of k from 0 to 20.  The static proposed solution comes from linearing
+the RBC model around the deterministic steady tate for
+ the parameter settings in \ref{rbcparams}.  
+solution path.  I use the statically selected decision rule and its conditional
+expectation to construct the paths required in the error formula. 
 
-To assess the quality of the approximation error and  insights about
-improving the quality of the approximation and the impact of the
-
-Choosing k for speed of convergence.
-
-Highly correlated regression result in coeffients very near one. $R^2$ near one.
-Choosing k for accuracy of error approximation.
-
-
-
-
-
-\vspace{.25in}
-
-\begin{tabular}{|r|r|r|r|r|}
-\hline
-\multicolumn{5}{|c|}{$c \,\,\text{with}\,\, \mathbb{V}=\{1,1,1\},k_p=2$}\\
-\hline
-  MAE &$R^2$&$(\alpha,\beta)$&$\hat{\sigma}$&$k_e$\\
-\hline
-\end{tabular}
-Speedup
-
+Figure   \ref{fig:ccoefsk0}
 \begin{figure}
   \centering
-  
-  \caption{$c_t,k_t \,\,\text{with}\,\, \mathbb{V}=\{2,2,2\},k_p=10$}
+  \label{fig:ccoefsk0}
+  \caption{$c_{err}= c_0+ \beta c_{predicted}$}
 \begin{gather}
-\vcenter{\hbox{\includegraphics{curio01.pdf}}}
+\vcenter{\hbox{\includegraphics[width=5.5in]{cCoeffsk0.pdf}}}
 \end{gather}
 \end{figure}
 
 
+I used the Niedererreiter number theoretic algorithm to generated highly 
+dispersed test points throughout the ergodic region.\cite{niederreiter88,Xu2005}
+For the given set of parameters, I computed the exact solution.
+I chose a wide array of different degrees of  approximation for the
+smolyak polynomials and for each given degree of approximation I applied
+the error formula to approximate the error at each of
+the test points.  I ran a regression using the formula approximation as a right
+hand side variable along with a constant to predict the true error.
+Varying k from 0 to 20 consistently  produces $R^2$ near one, tiny standard errors and a coefficient on the estimated error very near one.
+
+
+
+
+
+
+
+% \vspace{.25in}
+
+% \begin{tabular}{|r|r|r|r|r|}
+% \hline
+% \multicolumn{5}{|c|}{$c \,\,\text{with}\,\, \mathbb{V}=\{1,1,1\},k_p=2$}\\
+% \hline
+%   MAE &$R^2$&$(\alpha,\beta)$&$\hat{\sigma}$&$k_e$\\
+% \hline
+% \end{tabular}
+% Speedup
+
+% \begin{figure}
+%   \centering
+  
+%   \caption{$c_t,k_t \,\,\text{with}\,\, \mathbb{V}=\{2,2,2\},k_p=10$}
+% \begin{gather}
+% \vcenter{\hbox{\includegraphics{curio01.pdf}}}
+% \end{gather}
+% \end{figure}
+
+
+% \begin{figure}
+%   \centering
+  
+%   \caption{$c_t,k_t \,\,\text{with}\,\, \mathbb{V}=\{2,2,2\}, Traditional$}
+% \begin{gather}
+% \vcenter{\hbox{\includegraphics{curio02.pdf}}}
+% \end{gather}
+% \end{figure}
+
+
+\section{Robust Calculations}
+
+ 
+
+Many global methods propose a solution and update the solution by solving
+the original system of equations with the previous iterations guess.
+These iterations are notorious for going off track.
+The series representation provides a useful additional constraint on the 
+evolution of proposed solution in the algorithm.
+To demonstrate this phenomonon, 
+I experimented with an RBC model with occassionally binding constraints.
+
+For a given set of parameters, I computed a deterministic 
+steady state for the non binding solution.  I discarded
+those parameter values that produced a negative steady state for capital or 
+consumption.  For each set of parameters,
+I linearized the model at the steady state and computed
+the linear perfect forsight solution to use as the linear reference model and
+as an initial guess for the equation system.
+
+In order to test the effectiveness of the 
+algorithm for model convergence I use Nied to generate model parameters.
+I discarded those parameters which failed to produce 
+I computed
+
+
+
+
+
 \begin{figure}
   \centering
   
-  \caption{$c_t,k_t \,\,\text{with}\,\, \mathbb{V}=\{2,2,2\}, Traditional$}
+  \caption{Values for $(c_{ss}>0\wedge k_{ss}>0)\,\,\{\alpha,d,\delta,\eta,\rho,\sigma,\Upsilon\}\,\, Converged?$}
 \begin{gather}
-\vcenter{\hbox{\includegraphics{curio02.pdf}}}
+\vcenter{\hbox{\includegraphics[width=5.5in]{paramsForTest.pdf}}}
 \end{gather}
 \end{figure}
 
+
+It will be useful to explore the computational aspects of choosing the right value for k.  Zero seems to improve reliability.
+It will be important to work on exploiting the high degree of parallelism 
+available.
+
+It should be possible to maintain a small footpring communication would involve
+sending the coefficient matrices for smolyak calculation.  These nodes
+should use efficient polynomial composition to compute conditional expectations
+paths .
 \section{Conclusions}
 This paper introduces a new series representation for bounded time series and
 shows how to apply the series for representing bounded time invariant maps.
@@ -1407,6 +1485,9 @@ The series representation plays a strategic role in developing a formula for bou
 also shows how to  augment traditional ``Euler Equation'' model solution
 methods with constraints reflecting how the updated
 conditional expectation paths impact the time t solution values.
+
+Although the series representation it appears much can be gained by using
+just the first term.
 
 
 There are many directions to pursue in future work.

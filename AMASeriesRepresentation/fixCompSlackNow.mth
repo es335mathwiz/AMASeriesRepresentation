@@ -1,4 +1,4 @@
-Get["pathSetup.mth"]
+Get["tests/pathSetup.mth"]
 Get["AMASeriesRepresentation`"]
 Get["emscsToMma`"]
 Print["after emscsToMma"]

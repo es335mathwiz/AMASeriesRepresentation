@@ -1689,7 +1689,7 @@ With[{
 forRegs=Map[Transpose[{Flatten[pvals[[All,#]]],Flatten[avals[[All,#]]]}]&,
 Range[Length[pvals[[1]]]]]},
 With[{mnsStdevs=
-Map[{Mean[#[[1]]-#[[2]]],StandardDeviation[#[[1]]-#[[2]]]}&,forRegs]},
+Map[{Mean[(#[[1]]-#[[2]])/#[[2]]],StandardDeviation[(#[[1]]-#[[2]])/#[[2]]]}&,forRegs]},
 Print[{"assess:",mnsStdevs}];
 With[{lmfs=Map[LinearModelFit[#,xx,xx]&,forRegs]},
 {mnsStdevs,lmfs}]]]]]
@@ -2508,7 +2508,7 @@ closed form solution version  beta=1 geometric discounting
 chkcobb douglas production*)
 
 rbcEqnsNotBinding={
-lam[t] +CRRAUDrv[cc[t],eta],
+lam[t] -CRRAUDrv[cc[t],eta],
 cc[t] + II[t]-((theta[t])*(kk[t-1]^alpha)),
 nlPart[t] -((lam[t])*theta[t]),
 theta[t]-(N[E]^(eps[theta][t]))*(theta[t-1]^rho) ,
@@ -2557,7 +2557,7 @@ ssEqnSubs=
 
 rbcEqnsNotBindingSubbed=((rbcEqnsNotBinding/.paramSubs)/.eps[theta][t]->0);
 theVars=Cases[Variables[forFR=(rbcEqnsNotBindingSubbed/.ssEqnSubs)],_Symbol];
-frArg=MapThread[Prepend[#1,#2]&,{{{.3599,2},{0,.35},{.187,.9},{-9.,9.},{-.01,0.1},{-9.,9.},{.9,1.1}},theVars}];
+frArg=MapThread[Prepend[#1,#2]&,{{{.3604,.1,2},{.187,-0.35,.35},{.187,0.1,1.9},{0,-9.,9.},{1,.03,10.},{0,-9.,9.},{1.0,.8,1.2}},theVars}];
 ssFRSolnSubs=Prepend[Chop[FindRoot[forFR,frArg,MaxIterations->1000]],IIss->0];
 
 
@@ -2688,7 +2688,7 @@ rbcEqnsBackLookingExpCS=
 Apply[Function , ({Drop[theArgs,-1],rbcBackLookingExpEqns/.argsSubs}/.paramSubs)];
 
 preRbcEqnsBinding={
-lam[t] +1/cc[t],
+lam[t] -CRRAUDrv[cc[t],eta],
 cc[t] + II[t]-((theta[t])*(kk[t-1]^alpha)),
 nlPart[t] -((lam[t])*theta[t]),
 theta[t]-(N[E]^(eps[theta][t]))*(theta[t-1]^rho) ,
@@ -2726,7 +2726,7 @@ Apply[Compile , {
 {cctp1,_Real},{iitp1,_Real},{kktp1,_Real},{lamtp1,_Real},{mu1tp1,_Real},{nltp1,_Real},{thetatp1,_Real},
 {epsVal,_Real}
 },
-(eqnsForBind),"RuntimeOptions"->{"RuntimeErrorHandler"->Function[$Failed],"CatchMachineOverflow"->True,"CatchMachineUnderflow"->True}}],(True)&}},
+(eqnsForNotBind),"RuntimeOptions"->{"RuntimeErrorHandler"->Function[$Failed],"CatchMachineOverflow"->True,"CatchMachineUnderflow"->True}}],(True)&}},
 Function[{aPt,allRes},
 If[And[allRes[[1]]===$Failed,allRes[[2]]===$Failed],Throw[$Failed,"noSolutionFound"]];
 If[allRes[[1]]===$Failed,Flatten[allRes[[2]]],Flatten[allRes[[1]]]]]

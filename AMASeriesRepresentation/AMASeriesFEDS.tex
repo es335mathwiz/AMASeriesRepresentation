@@ -18,7 +18,7 @@
 
 \title{A New Series Representation for Robustly Computing
   Nonlinear Dynamic Stochastic Model Solutions: 
-A New Solution Algorithm with Error Bounds } %(Better?, Coherent? Comprehensive? General? )
+A New Solution Algorithm and Error Formulas } %(Better?, Coherent? Comprehensive? General? )
 
 \date{\today: \currenttime}
 \begin{document}
@@ -30,15 +30,15 @@ A New Solution Algorithm with Error Bounds } %(Better?, Coherent? Comprehensive?
 \maketitle
 
 \begin{abstract}
-This paper provides a technique for solving discrete time  dynamic stochastic
+This paper provides a technique for solving discrete time  nonlinear dynamic stochastic
 infinite-horizon economies with bounded-time-invariant solutions.
 In addition, the paper provides 
-formulae for evaluating the accuracy of decision rules
-approximately satisfying the system of model equations and presents
-an algorithm that robustly improves the accuracy of proposed solutions.
+formulae for evaluating the accuracy of proposed solutions
+and presents
+a robust algorithm for improving the accuracy of those solutions.
 The error bounds apply for assessing the accuracy 
-of any proposed bounded time invariant decision rule, 
-regardless of the source.
+of  proposed bounded time invariant decision rules 
+regardless of their source.
 
 A straightforward applications of a  new series representation
 for bounded discrete time series, appropriate for
@@ -46,14 +46,10 @@ a very broad class of dynamic stochastic models, delivers these results.
 % This error bound calculation accounts for the impact of errors in any of the equations in the system.
 Using the series representation, the paper 
 augments a traditional solution strategty with an additional set of
-constraints thereby
-enhancing algorithm robustness and improving accuracy.
+constraints thereby enhancing algorithm robustness and improving accuracy.
 The technique can readily accommodate models with multiple invariant spaces
 and, like the error bound formula,  is appropriate
 for models with occasionally binding constraints and regime switching. 
-
-
-
 
 
 The  paper uses 
@@ -67,8 +63,6 @@ and to exploit the high degree of parallelism available in the algorithm.
 
 
 
-To speed large K computations check for convergence and use 
-infinite series formula
 
 
 
@@ -83,8 +77,11 @@ infinite series formula
 This paper investigates the solution of discrete time  dynamic stochastic
 infinite-horizon economies with bounded-time-invariant solutions.
 It describes how to obtain decision rules satisfying a system of 
-first-order conditions, ``Euler Equations'',  and how to assess their accuracy.\footnote{A future paper will 
-discuss  applications involving value function iteration.}
+first-order conditions, ``Euler Equations'',  and how to assess their accuracy.\footnote{This series 
+representation should also prove useful for applications based on
+value function iteration but I will defer treating this topic for
+a future work.
+}
  For an overview of solution techniques,
 see \citep{judd92,Christiano2000,doraszelskiy04,gaspar97,Judd2014,marcet.lorenzoni99,juddGSSA2011,maliarmovingbounds,RePEc:bny:wpaper:0058}.
 
@@ -104,10 +101,11 @@ one bounded infinite dimensional series into another.
     ``Euler equation errors'' to
     bound the magnitude of the    approximation error in components of 
     decision rules.
-    Others have also studied error bounds for dynamic stochastic models.\cite{judd2017lower,santos2005accuracy,Santos2000accuracy}, this paper provides a more precise bound 
+    Others have also studied error bounds for dynamic stochastic models.\cite{judd2017lower,santos2005accuracy,Santos2000accuracy} This paper provides a more precise bound 
     explicitly relating the magnitude of components of the
-    ``Euler equation errors'' to components of the magnitude of components of
-    errors in the decision rule without resort to statistical inference or ancillary simulations.
+    ``Euler equation errors'' to the magnitude of components of
+    errors in the decision rule 
+without resort to statistical inference or ancillary simulations.
 
     In addition, the series representation provides exploitable
     constraints on model solutions that enhance  
@@ -141,14 +139,17 @@ of the algorithm's components can be computed in parallel.
 
 Section \ref{sec:newseries} presents a useful new series representation for any bounded time series.
 Section \ref{sec:extToMaps} shows how to apply this series representation to time invariant maps.
-Section \ref{sec:solnerrorbounds} provides formulas for computing dynamic stochastic model error bounds for proposed  solutions.
+Section \ref{sec:solnerrorbounds} provides formulae for computing dynamic stochastic model error bounds for proposed  solutions.
 Section \ref{sec:algoforsoln} presents a new solution algorithm for improving proposed solutions.
 %Section \ref{sec:future} discusses directions for future work.
 Section \ref{sec:conc} concludes.
 
 \section{A New Series Representation For  Bounded Time Series}
 \label{sec:newseries}
-Since \cite{blanchard80} numerous authors have developed solution algorithms and formulae for solving linear rational expectations models.  The solutions associated with these linear saddle point models turn out to be instrumental in characterizing the solutions for highly nonlinear models.
+Since \cite{blanchard80} numerous authors have developed solution algorithms and formulae for solving linear rational expectations models.  It turns out that
+the solutions associated with these linear 
+saddle point models can play a very useful role in characterizing the 
+solutions for highly nonlinear models.
 \subsection{Linear Reference Models and a Formula for  ``Anticipated Shocks''}
 \label{sec:linref}
 
@@ -160,7 +161,6 @@ $L$ dimensional deterministic system that produces  a unique stable solution,
 \begin{gather*}
   	 H_{-1} x_{t-1} + H_0 x_t + H_1 x_{t+1}=0
 \end{gather*}
-
 inhomogeneous solutions 
 \begin{gather}
 	 H_{-1} x_{t-1} + H_0 x_t + H_1 x_{t+1}=\psi_\epsilon \epsilon +\psi_{c}
@@ -169,7 +169,7 @@ x_t=B x_{t-1} + \phi \psi_\epsilon \epsilon + (I - F)^{-1} \phi \psi_c\label{hSy
 \intertext{where}
 \phi= (H_0 +H_1 B)^{-1}  \text{ and } \,\,F=-\phi H_1.\citep{anderson10}
 \end{gather}
-It will be useful to collect the components of this solution for use later in the paper.
+It will be useful to collect the components of this solution for use later in the paper. We will use these matrices to construct a series representation for any bounded path.
 Define $\linMod \equiv \linModMats$.
 
 
@@ -185,7 +185,6 @@ Define $\linMod \equiv \linModMats$.
 % \end{pabox}
 %\begin{tcolorbox}[ams gather]
 
-We will use these matrices to construct a series representation for any bounded path.
 \begin{theorem}
 Consider an arbitrary, but bounded path
  \begin{gather}
@@ -196,8 +195,11 @@ $  \zWOarg_{t}$ as
 \begin{gather}
   \zWOarg_{t} \equiv H_{-1} \xWOarg_{t-1} +  H_0 \xWOarg_{t} +  H_1 \xWOarg_{t+1} -\psi_c - \psi_\epsilon \epsilon_t \label{defZ} 
 \end{gather}
-One can then express the $\xWOarg_t$ solving \ref{hSystem} along with the anticipated shocks $\zWOarg_t$ by the equation
-	 \begin{gather}
+One can then express the $\xWOarg_t$ solving 
+\begin{gather}
+	 H_{-1} x_{t-1} + H_0 x_t + H_1 x_{t+1}=\psi_\epsilon \epsilon +\psi_{c}+
+z_t
+\intertext{ using}
 	 \xWOarg_{t} =B x_{t-1}+ \phi \psi_\epsilon\epsilon + (I - F)^{-1} \phi \psi_c + \sum_{\sForSum=0}^\infty F^s \phi \zWOarg_{t+\sForSum} \label{theSeries}
 \intertext{and}
 	 \xWOarg_{t+k+1} =B \xWOarg_{t+k}  + (I - F)^{-1} \phi \psi_c+ \sum_{\sForSum =0}^\infty F^\sForSum \phi \zWOarg_{t+k+\sForSum+1} \,\,\,\,\,\forall t,k \ge  0.
@@ -219,14 +221,15 @@ Interestingly, the linear model, $H$, the  constant term $\psi_c$ and the
 impact of the stochastic shocks $\psi_\epsilon $ can  be 
 chosen rather arbitrarily -- the only constraints being the existence of a saddle-point solution for the linear system and that z-values fall in the row space of $H_1$.  
 %The formula will provide a series  for any $L$ dimensional $\linMod$.
- The formula supports the intuition that far distant shocks influence current conditions less than  imminent shocks.
 
 
 
 % \footnote{$\psi_c$ full rank provides a sufficient condition, but not necessary condition.}
 The
-transformation $ {\{ x_{t}, x_{t}, x_{t+1},x_{t+2}\ldots\}} \rightarrow \linMod(x_{t-1}) \rightarrow{\{ z_{t}, z_{t+1}, z_{t+2},\ldots\}} $ is invertible. $ {\{ z_{t}, z_{t+1}, z_{t+2},\ldots\}} \rightarrow \linMod(x_{t-1})^{-1} \rightarrow{\{ x_{t}, x_{t}, x_{t+1},x_{t+2}\ldots\}} $ and the inverse can be interpreted as giving the impact of ``fully anticipated future shocks'' on the path of $x_t$  in a linear perfect foresight model.  
+transformation $ {\{ x_{t}, x_{t}, x_{t+1},x_{t+2}\ldots\}} \rightarrow \linMod(x_{t-1},\epsilon_t) \rightarrow{\{ z_{t}, z_{t+1}, z_{t+2},\ldots\}} $ is invertible. $ {\{ z_{t}, z_{t+1}, z_{t+2},\ldots\}} \rightarrow \linMod(x_{t-1},\epsilon_t)^{-1} \rightarrow{\{ x_{t}, x_{t}, x_{t+1},x_{t+2}\ldots\}} $ and the inverse can be interpreted as giving the impact of ``fully anticipated future shocks'' on the path of $x_t$  in a linear perfect foresight model.  
 Note that the reference model is deterministic and the $z_t\tArg$ functions account for the stochastic nature of the model.
+ The formula supports the intuition that far distant shocks
+ influence current conditions less than  imminent shocks.
 
 A key feature to note is that the series representation can accommodate arbitrarily complex time series trajectories, so long as these trajectories are bounded.
 Later, this observation will give us some confidence in the 
@@ -377,7 +380,22 @@ However, we can conservatively bound the  series approximation  errors by using 
 
 Many dynamic stochastic models have solutions that 
 fall in the class of bounded time invariant maps.
-As we have seen bounded time invariant maps can 
+Consequently, by applying the law of iterated expectations, 
+we can compute conditional expected solution paths 
+forward from any initial value $x_{t-1}$
+and realization of $\epsilon_t$.
+Subsequently, we can use the family of conditional expectations paths 
+along with a contrived linear reference model to generate
+a series representation for the model solution solutions  and
+to construct error bounds for the approximation.
+
+Economists have long used similar manipulation of
+time series paths for dynamic models. 
+Indeed, Potter constructs his generalized impulse response functions using
+differences in conditional expectations paths.\cite{Potter2000,Koop1996a}
+Here, the series representation will provide a weighted sum of $z_t\tArg$ functions that give us an approximation for the model solutions.
+So long as the trajectories are 
+ bounded the time invariant maps can 
 be represented using the framework from section \ref{sec:newseries}.
 
 %\subsection{Application of the Series Representation to Time Invariant Maps}
@@ -385,10 +403,10 @@ be represented using the framework from section \ref{sec:newseries}.
 
 
 
-Often these time invariant maps impose additional structure on the time 
-series they generate that allows us to use the series formula to
-develop bounds for the error in the solution.
-In this section, to keep things simple, we will begin with a familiar three equation system?\footnote{
+% Often these time invariant maps impose additional structure on the time 
+% series they generate that allows us to use the series formula to
+% develop bounds for the error in the solution.
+In this section, to keep things simple, we will begin with a familiar RBC model example.\footnote{
 Later, in order to handle models with regime switching and occasionally binding constraints, will need to consider more complicated collections of 
 of equation systems with  Boolean gates. We will show how to apply the 
 series formulation and to get error bounds for these models as well.}
@@ -440,17 +458,6 @@ compute the conditional expectation of the model variables for any given $\theta
 e^{\frac{\sigma^2}{2}}\theta_{t+k}^\rho
   \end{bmatrix}
 \end{gather*}
-Consequently, by applying the law of iterated expectations, we can compute conditional expected solution paths forward from any initial value $x_{t-1}$
-and realization of $\epsilon_t$.
-Subsequently, we can use the family of conditional expectations paths 
-along with a contrived linear reference model to recover an 
-approximation for equation \refeq{soln} along with error bounds.
-
-Economists have long used similar manipulation of
-time series paths for dynamic models. 
-Indeed, Potter constructs his generalized impulse response functions using
-differences in conditional expectations paths.\cite{Potter2000,Koop1996a}
-Here, the series representation will provide a weighted sum of $z_t\tArg$ functions that give us an approximation for the, in this case, known model solution.
 
 
 For any given values of $k_{t-1},\theta_{t-1}, \epsilon_t$, the model decision rule, ($\DR$), and decision rule conditional expectation, ($\DRCE$), can generate a conditional expectations path for any given initial $x_{t-1}$ and $\epsilon_t$:
@@ -519,11 +526,10 @@ With
   \label{rbcpaths}
 \end{figure}
 
-The left panel of Figure \refeq{rbcpaths} shows the paths, from top to bottom, of $\theta_t, c_t, \text{ and } k_t$ from the initial values given in Equation \refeq{theInits}.  The right panel shows the paths for the $z_t$ variables associated with the linear reference model. The orange line corresponds to $z_{1t}\tArg$,
-the blue line corresponds to $z_{2t}\tArg$ and the green line corresponds to $z_{3t}\tArg$.\footnote{For now we focus on the times series paths, $z_t(x_{t-1},\epsilon_t)$ for given $(x_{t-1},\epsilon_t)$.  Later we will exploit the information available from explicit investigation of the variation in
-  $z_t(x_{t-1},\epsilon_t)$ with $(x_{t-1},\epsilon_t)$ to improve solution accuracy and robustness.}
+The left panel of Figure \refeq{rbcpaths} shows, from top to bottom, the paths of $\theta_t, c_t, \text{ and } k_t$ from the initial values given in Equation \refeq{theInits}.  The right panel shows the paths for the $z_t$ variables associated with the linear reference model. The orange line corresponds to $z_{1t}\tArg$,
+the blue line corresponds to $z_{2t}\tArg$ and the green line corresponds to $z_{3t}\tArg$.%\footnote{For now we focus on the times series paths, $z_t(x_{t-1},\epsilon_t)$ for given $(x_{t-1},\epsilon_t)$.  Later we will exploit the information available from explicit investigation of the variation in  $z_t(x_{t-1},\epsilon_t)$ with $(x_{t-1},\epsilon_t)$ to improve solution accuracy and robustness.}
 
-By including enough terms we can compute the exact solution for $x_t$ 
+By including enough terms we can compute the solution for $x_t$ 
 exactly.
 Figure \ref{rbcTrunc} shows the impact that truncating the series has 
 on the time t values of the state variables.   The bound for the error, $B_n$, shown in red 
@@ -533,13 +539,13 @@ With enough terms, even using an ``almost'' arbitrarily chosen linear model,  th
 \begin{figure}
   \centering
 \includegraphics[width=2.7in]{simpArbBoundsVActual.pdf}  
-  \caption{RBC Known Solution Truncation Error Bound Versus Actual: ``Almost Arbitrary'' Linear Reference Model}
+  \caption{RBC Known Solution: Truncation Error Bound Versus Actual: ``Almost Arbitrary'' Linear Reference Model}
   \label{rbcTrunc}
 \end{figure}
 \begin{figure}
   \centering
 \includegraphics[width=2.7in]{simpBoundsVActual.pdf}  
-  \caption{RBC Known Solution Truncation Error Bound Versus Actual: Stochastic Steady State Linearization Linear Reference Model}
+  \caption{RBC Known Solution: Truncation Error Bound Versus Actual: Stochastic Steady State Linearization Linear Reference Model}
   \label{rbcTruncSimp}
 \end{figure}
 
@@ -578,7 +584,7 @@ h_{21}^{det}(\cdot)=0\\
 h_{30}^{det}(\cdot)=\ln \theta_t -(\rho \ln \theta_{t-1} + \epsilon_t),\,\,
 h_{31}^{det}(\cdot)=0
 \end{gather}
-Since we would otherwise  need to compute 
+Since we   need to compute 
 the conditional expectation of nonlinear expressions,  
 this setup will make it possible for us to use auxiliary
 variables to correctly compute the required expected values.
@@ -590,12 +596,12 @@ We will be working with models where expectations are computed at time t, with  
 
 
 We can reconstruct a linear reference model for the modified RBC system
-by  augmenting the RBC model with the equation
+by  augmenting the RBC model with the equation substituting $\rcpC_{t+1}$ for $\frac{\theta_{t+1}}{c_{t+1}}$ 
 \begin{tcolorbox}[ams gather]
   \rcpC_t=\frac{\theta_t}{c_t}
 \end{tcolorbox}
 \noindent
-substituting $\rcpC_{t+1}$ for $\frac{\theta_{t+1}}{c_{t+1}}$ in the first equation and 
+in the first equation and 
  linearizing the RBC model about the ergodic mean
 given in \refeq{rbcparams} leads to:
 {\small
@@ -611,7 +617,7 @@ H_{-1}&H_{0}&H_{1}
 \end{bmatrix}, \psi_z=I
 \end{gather}%(\footnote{generated by AMAPaperCalcs.mth {RBCHmatSymb.pdf}})
 }
-These following coefficients  produce a unique stable linear solution.
+These coefficients  produce a unique stable linear solution.
 
 \begin{gather}
   B=
@@ -623,7 +629,7 @@ F=
 \psi_c=\vcenter{\hbox{\includegraphics{RBCPsissSymb.pdf}}}
 \end{gather}
 Recomputing the truncation errors with the expanded model produces very similar
-results for the original variables.
+results for the variable approximation errors.
 
 
 \section{Computing Model Solution Error Bounds}
@@ -634,7 +640,7 @@ The paper shows how to write a series representation for any proposed
 model solution and to characterize the series representation for a typically
 unknown solution in such a way that one can use the model equation errors  to construct an error bound for the norm of the distance between the proposed and the exact solution.
 
-This work contrast with the analysis provided in
+This work contrasts with the analysis provided in
 \cite{judd2017lower,peralta-alva14,santos2005accuracy,Santos2000accuracy}. 
 Their approaches identify Euler Equation Errors, but use statistical techniques to estimate the impact of these errors on solution accuracy.  Here we compute
 an equation for the bound that does not require statistical inference.
@@ -648,7 +654,7 @@ an equation for the bound that does not require statistical inference.
 
 We can construct an error bound for proposed model solutions.
 Consider a bounded region, $\bndRgn$, that contains all iterated conditional expectations paths.
-  By bounding the largest deviation in the paths for the $\Delta z_t^p$ we can bound the largest diviation in a proposed solution from the exact solution.
+  By bounding the largest deviation in the paths for the $\Delta z_t^p$ we can bound the largest diviation in a proposed solution from the exact solution.( For proof see Appendix \ref{sec:error-bound-formula}).
 
 
 
@@ -677,32 +683,37 @@ E_tx_{t+1}=G^p(g^p(x_{t-1},\epsilon_t))\\
     \max_{x_{t-1},\epsilon_t} (\phi \mathbf{e}_t^p(x_{t-1},\epsilon))^2
   \end{gather*}
 
+
+\section{Improving Proposed  Solutions}
+\label{sec:algoforsoln}
+
+
 \subsection{Generalization and Practical Considerations for Applying the Formula}
 \label{sec:practicalformula}
 
-The framework provides a new way to bound the error one can expect from
-employing a given proposed model solution and leads, in Section \ref{sec:algoforsoln},, to an
-algorithm with  components similar to parameterized expectations that
-one can use to improve proposed solutions. In that section, the
-series representation makes
-it possible to organize the calculation around computing a deterministic
-problem at time t given a proposed solution.  The deterministic solution
-can accommodate inequality constraints or alternative regimes to produce a
-solution for each set of initial conditions.  One can typically arrange,
-perhaps by adding auxiliary variables, to produce a ``decision rule''
-that one can use to correctly precompute a deterministic conditional
-expectation function that can be iterated forward and serves to
-improve upon the original proposed solution.
-Time invariant stochastic functions 
-lead naturally to an associated family of deterministic maps
-which can be conveniently represented by the series representation.
+% The framework provides a new way to bound the error one can expect from
+% employing a given proposed model solution and leads, in Section \ref{sec:algoforsoln},, to an
+% algorithm with  components similar to parameterized expectations that
+% one can use to improve proposed solutions. In that section, the
+% series representation makes
+% it possible to organize the calculation around computing a deterministic
+% problem at time t given a proposed solution.  The deterministic solution
+% can accommodate inequality constraints or alternative regimes to produce a
+% solution for each set of initial conditions.  One can typically arrange,
+% perhaps by adding auxiliary variables, to produce a ``decision rule''
+% that one can use to correctly precompute a deterministic conditional
+% expectation function that can be iterated forward and serves to
+% improve upon the original proposed solution.
+% Time invariant stochastic functions 
+% lead naturally to an associated family of deterministic maps
+% which can be conveniently represented by the series representation.
 
 
-The paper studies a very general class of models whose 
-solutions are characterized by $\eqnFuncSys$, a 
- exhaustive and mutually exclusive set of
-of   model equations, $\eqnFunc_i$,  and Boolean valued gates, $\preGate_i$, $\postGate_i$. 
-that together determine the solution  $x_t\tArg$
+% The paper studies a very general class of models whose 
+% solutions are characterized by $\eqnFuncSys$, an
+%  exhaustive and mutually exclusive set 
+% of   triples, $\eqnFuncSysI{i}\equiv\{\eqnFunc_i,\preGate_i,\postGate_i\}$, with model equations,  $\eqnFunc_i$,  and Boolean valued gates, $\preGate_i$, $\postGate_i$. 
+% that together determine a unique  solution  $x_t\tArg$
 %\begin{gather}
 %\intertext{ where, each }
 %\eqnFuncSysI{i}\equiv \eqnFuncSysIExpl{i} \label{eqnGates}
@@ -712,7 +723,7 @@ that together determine the solution  $x_t\tArg$
 
 
 To fix notation,  assume that we have a countable collection of equations systems that are mutually exclusive and exhaustive.
-Given $(x_{t-1},\epsilon_t$,  this collection of 
+Given $(x_{t-1},\epsilon_t)$,  this collection of 
 systems of equations produces a unique solution for $x_t$.  We will include 
 enough auxiliary variables so that we can correctly compute expected values
 for model variables by applying the law of iterated 
@@ -725,33 +736,29 @@ equations.  Examples of such systems include typical DSGE models that have one
 system of equations, occasionally binding constraints with solutions demonstrating complementary slackness, regime switching models with systems corresponding to the status in each given regime or combinations of the above.  See the appendix for an example of a specification for occasionally binding constraints(\ref{sec:occbind}) and for regime switching)(\ref{sec:ressw}).
 
 It will be convenient for describing the algorithms to
- augment the model equations to include auxiliary variables so that we can write the model in the form
+% augment the model equations to include auxiliary variables so that we can 
+write the model in the form
 
 \begin{gather}
 \eqnFuncSys \intertext{ where, each }
 \eqnFuncSysI{i}\equiv \eqnFuncSysIExpl{i} \label{eqnGates}
 \end{gather}
- represents a set of model equations, $\eqnFunc_i$,  with a Boolean valued gate, $\preGate_i, \postGate_i$. Consequently, will will have an equation system and a gatekeeper logical expression indicating which equation system is in force for a given solution for a give $x_{t-1}, \epsilon_t$  They represent exhaustive and mutually exclusive equation systems determining the solution at time t for the model.  They could be complementary slackness conditions or could represent a model with different regimes. We will consider time invariant model solutions $x_t=\xWarg$.  Given $\xWarg$, $\XWOarg(x_{t-1})\equiv \expct{\xWarg}$. 
+ represents a set of model equations, $\eqnFunc_i$,  with a Boolean valued gate, $\preGate_i, \postGate_i$. Consequently, we will have an equation system and  corresponding gatekeeper logical expressions 
+indicating which equation system is in force for producing the unique
+solution for a give $x_{t-1}, \epsilon_t$.
+  They represent exhaustive and mutually exclusive equation systems determining the solution at time t for the model.  They could be complementary slackness conditions or could represent a model with different regimes. We will consider time invariant model solutions $x_t=\xWarg$.  Given $\xWarg$, $\XWOarg(x_{t-1})\equiv \expct{\xWarg}$. 
 
 
 
 
-
-\section{Improving Proposed  Solutions}
-\label{sec:algoforsoln}
 
 \subsection{An Informal Characterization  of the Algorithm}
 \label{sec:walkthrough}
 
 
-Before presenting the pseudocode for the detailed algorithm, this section
-describes  how the proposed approach differs from 
+Before presenting the pseudocode for the detailed algorithm, this subsection
+characterizes  how the proposed approach differs from 
 what is typically done for solving dynamic stochastic models.
-In what follows, both the traditional and the new  approach use anisotropic
-Smolyak polynomial function approximation with precomputed expectations.
-This section uses the series representation to
-compute the solution for the case when the exact solution is known and
-to compare the various approximations to the known actual solution.
 
 As with the standard approach it is important to iterate on the proposed solution until consistency between
 the decision rule used for setting time t values and the expectations function for setting
@@ -763,51 +770,16 @@ conditional expectations path.
 
 
 
-\subsubsection{Approximating the Known Solution: $U(c) = Log(c)$ }
-\label{sec:recov-known-solut}
-
-Figure \ref{fig:erg}  characterizes the use of the parallelotope
-transformation described in \cite{Judd2013}. The left panel shows the 200 values of $k_t$ and $\theta_t$ resulting from a stochastic simulation of the the known decision rule. The right panel shows the transformed variables that constitute
-an improved set of variables for constructing function approximation values.
-\begin{figure}
-  \centering
-  \includegraphics[width=3.0in]{ergodicKTheta.pdf}
-  \includegraphics[width=3.0in]{ergodicZs.pdf}
-  \caption{The Ergodic Values for $k_t, \theta_t$ }
-  \label{fig:erg}
-\end{figure}
-
-
-\begin{gather}
-\bar{X}= \vcenter{\hbox{\includegraphics{ergodicMean.pdf}}}
-\end{gather}
-\begin{gather}
-\sigma_{X}= \vcenter{\hbox{\includegraphics{ergodicSD.pdf}}}
-\end{gather}
-
-
-\begin{gather}
-V= \vcenter{\hbox{\includegraphics{ergodicV.pdf}}}
-\end{gather}
-
-\begin{gather}
-\max U= \vcenter{\hbox{\includegraphics{ergodicMaxZ.pdf}}}
-\end{gather}
-\begin{gather}
-\min U= \vcenter{\hbox{\includegraphics{ergodicMinZ.pdf}}}
-\end{gather}
-
-
-The following graphs present key characteristics of the solutions.  
-The panels labeled approximation error show contour plots of $\mathbb{E}(z_{1,t-1},z_{2,t-1})$:
-\begin{gather*}
-\mathbb{E}(z_{1,t-1},z_{2,t-1})\equiv \sqrt{(c_t()-c_t^\star())^2 +(k_t()-k_t^\star())^2 +(\theta_t()-\theta_t^\star())^2 +(N_t()-N_t^\star())^2 }  
-\end{gather*}
-The panels labeled equation error show  contour plots for
-\begin{gather*}
-  \mathbb{D}(z_{1,t-1},z_{2,t-1})\equiv \eqnFunc(x_{-},g^p(x_{-},\epsilon),G^p(g^p(x_{-},\epsilon)),\epsilon). These are the model equation ``Euler'' errors.
-\end{gather*}
-The values of $U_t$ range over the ergodic set described above.
+% The following graphs present key characteristics of the solutions.  
+% The panels labeled approximation error show contour plots of $\mathbb{E}(z_{1,t-1},z_{2,t-1})$:
+% \begin{gather*}
+% \mathbb{E}(z_{1,t-1},z_{2,t-1})\equiv \sqrt{(c_t()-c_t^\star())^2 +(k_t()-k_t^\star())^2 +(\theta_t()-\theta_t^\star())^2 +(N_t()-N_t^\star())^2 }  
+% \end{gather*}
+% The panels labeled equation error show  contour plots for
+% \begin{gather*}
+%   \mathbb{D}(z_{1,t-1},z_{2,t-1})\equiv \eqnFunc(x_{-},g^p(x_{-},\epsilon),G^p(g^p(x_{-},\epsilon)),\epsilon). These are the model equation ``Euler'' errors.
+% \end{gather*}
+% The values of $U_t$ range over the ergodic set described above.
 
 % The bottom panel of
 % Figure \ref{fig:tradOne} shows the approximation error obtained by the standard
@@ -859,209 +831,209 @@ The values of $U_t$ range over the ergodic set described above.
 \definecolor{LightCyan}{rgb}{0.88,1,1}
 
 
-\makeatletter\let\expandableinput\@@input\makeatother
+% \makeatletter\let\expandableinput\@@input\makeatother
 
-\begin{table}
-  \centering
-\begin{tabular}{|r|r|r|r|}
-\hline
-  \multicolumn{1}{|c|}{Approximation}&
-  \multicolumn{1}{|c|}{K}&
-  \multicolumn{1}{|c|}{Bound}&
-  \multicolumn{1}{|c|}{Actual}\\
-\hline
-\input{./resDir-host-node014bnumKern16-3728048404/forBetterRBC--1,1,1-Iters1theK1TraderrTableRow.tex}
-\input{./resDir-host-node014bnumKern16-3728048390/forBetterRBC--1,1,1-Iters1theK1TraderrTableRow.tex}
-\input{./resDir-host-node014bnumKern16-3728048382/forBetterRBC--1,1,1-Iters1theK1TraderrTableRow.tex}
-\input{./resDir-host-node014bnumKern16-3728048397/forBetterRBC--1,1,1-Iters1theK1TraderrTableRow.tex}
-\input{./resDir-host-node001dnumKern16-3728046316/forBetterRBC--1,1,1-Iters70theK0TraderrTableRow.tex}
-\input{./resDir-host-node001dnumKern16-3728046340/forBetterRBC--1,1,1-Iters70theK0SerieserrTableRow.tex}
-\expandableinput ./resDir-host-node014bnumKern16-3728049511/forBetterRBC--1,1,1-Iters70theK1SerieserrTableRow.tex
-\expandableinput ./resDir-host-node014bnumKern16-3728048456/forBetterRBC--1,1,1-Iters1theK1SerieserrTableRow.tex
-\expandableinput ./resDir-host-node014bnumKern16-3728051519/forBetterRBC--1,1,1-Iters70theK1SerieserrTableRow.tex
-\expandableinput ./resDir-host-node014bnumKern16-3728048808/forBetterRBC--1,1,1-Iters1theK1SerieserrTableRow.tex
-\expandableinput ./resDir-host-node014bnumKern16-3728049693/forBetterRBC--1,1,1-Iters70theK1SerieserrTableRow.tex
-\expandableinput ./resDir-host-node014bnumKern16-3728049828/forBetterRBC--1,1,1-Iters70theK1SerieserrTableRow.tex
-\expandableinput ./resDir-host-node014bnumKern16-3728049454/forBetterRBC--1,1,1-Iters70theK1SerieserrTableRow.tex
-\expandableinput ./resDir-host-node014bnumKern16-3728049589/forBetterRBC--1,1,1-Iters70theK1SerieserrTableRow.tex
-\expandableinput ./resDir-host-node014bnumKern16-3728049244/forBetterRBC--1,1,1-Iters1theK1SerieserrTableRow.tex
-\expandableinput ./resDir-host-node014bnumKern16-3728049998/forBetterRBC--1,1,1-Iters70theK1SerieserrTableRow.tex
-\expandableinput ./resDir-host-node014bnumKern16-3728049254/forBetterRBC--1,1,1-Iters1theK1SerieserrTableRow.tex
-\expandableinput ./resDir-host-node001dnumKern16-3728046373/forBetterRBC--1,1,1-Iters70theK1SerieserrTableRow.tex
-\expandableinput ./resDir-host-node014bnumKern16-3728048446/forBetterRBC--1,1,1-Iters1theK1SerieserrTableRow.tex
-\expandableinput ./resDir-host-node014bnumKern16-3728048828/forBetterRBC--1,1,1-Iters1theK1SerieserrTableRow.tex
-\expandableinput ./resDir-host-node014bnumKern16-3728048818/forBetterRBC--1,1,1-Iters1theK1SerieserrTableRow.tex
-\expandableinput ./resDir-host-node014bnumKern16-3728048476/forBetterRBC--1,1,1-Iters1theK1SerieserrTableRow.tex
-\expandableinput ./resDir-host-node014bnumKern16-3728049415/forBetterRBC--1,1,1-Iters70theK1SerieserrTableRow.tex
-\expandableinput ./resDir-host-node014bnumKern16-3728049307/forBetterRBC--1,1,1-Iters1theK1SerieserrTableRow.tex
-\expandableinput ./resDir-host-node014bnumKern16-3728049377/forBetterRBC--1,1,1-Iters70theK1SerieserrTableRow.tex
-\expandableinput ./resDir-host-node014bnumKern16-3728049233/forBetterRBC--1,1,1-Iters1theK1SerieserrTableRow.tex
-\expandableinput ./resDir-host-node014bnumKern16-3728050207/forBetterRBC--1,1,1-Iters70theK1SerieserrTableRow.tex
-\expandableinput ./resDir-host-node014bnumKern16-3728048466/forBetterRBC--1,1,1-Iters1theK1SerieserrTableRow.tex
-\expandableinput ./resDir-host-node014bnumKern16-3728051975/forBetterRBC--1,1,1-Iters70theK1SerieserrTableRow.tex
-\expandableinput ./resDir-host-node014bnumKern16-3728051114/forBetterRBC--1,1,1-Iters70theK1SerieserrTableRow.tex
-\expandableinput ./resDir-host-node014bnumKern16-3728049275/forBetterRBC--1,1,1-Iters1theK1SerieserrTableRow.tex
-\expandableinput ./resDir-host-node014bnumKern16-3728049264/forBetterRBC--1,1,1-Iters1theK1SerieserrTableRow.tex
-\expandableinput ./resDir-host-node014bnumKern16-3728049296/forBetterRBC--1,1,1-Iters1theK1SerieserrTableRow.tex
-\expandableinput ./resDir-host-node014bnumKern16-3728050460/forBetterRBC--1,1,1-Iters70theK1SerieserrTableRow.tex
-\expandableinput ./resDir-host-node014bnumKern16-3728049286/forBetterRBC--1,1,1-Iters1theK1SerieserrTableRow.tex
-\expandableinput ./resDir-host-node014bnumKern16-3728050761/forBetterRBC--1,1,1-Iters70theK1SerieserrTableRow.tex
-\expandableinput ./resDir-host-node014bnumKern16-3728048838/forBetterRBC--1,1,1-Iters1theK1SerieserrTableRow.tex
-\input{./resDir-host-node001dnumKern16-3728046423/forBetterRBC--1,1,1-Iters70theK2SerieserrTableRow.tex}
-\input{./resDir-host-node001dnumKern16-3728046494/forBetterRBC--1,1,1-Iters70theK3SerieserrTableRow.tex}
-\input{./resDir-host-node001dnumKern16-3728046591/forBetterRBC--1,1,1-Iters70theK4SerieserrTableRow.tex}
-\input{./resDir-host-node001dnumKern16-3728046718/forBetterRBC--1,1,1-Iters70theK5SerieserrTableRow.tex}
-\input{./resDir-host-node001dnumKern16-3728046878/forBetterRBC--1,1,1-Iters70theK10SerieserrTableRow.tex}
-\expandableinput ./resDir-host-node001dnumKern16-3728047076/forBetterRBC--1,1,1-Iters70theK20SerieserrTableRow.tex
-\expandableinput ./resDir-host-node001dnumKern16-3728047318/forBetterRBC--1,1,1-Iters70theK30SerieserrTableRow.tex
-\end{tabular}
-\caption{Error Bounds and Actual Errors}
-\end{table}
-
-
-\begin{table}
-  \centering
-\begin{tabular}{|r|r|r|r|}
-\hline
-  \multicolumn{1}{|c|}{Approximation}&
-  \multicolumn{1}{|c|}{K}&
-  \multicolumn{1}{|c|}{Bound}&
-  \multicolumn{1}{|c|}{Actual}\\
-\hline
-\expandableinput ./resDir-host-node014bnumKern16-3728048404/forBetterRBC--1,1,1-Iters1theK1TraderrTableRow.tex
-\expandableinput ./resDir-host-node014bnumKern16-3728048390/forBetterRBC--1,1,1-Iters1theK1TraderrTableRow.tex
-\expandableinput ./resDir-host-node006cnumKern16-3728053052/forBetterRBC--1,1,1-Iters70theK0TraderrTableRow.tex
-\expandableinput ./resDir-host-node014bnumKern16-3728048382/forBetterRBC--1,1,1-Iters1theK1TraderrTableRow.tex
-\expandableinput ./resDir-host-node014cnumKern16-3728053050/forBetterRBC--1,1,1-Iters70theK0TraderrTableRow.tex
-\expandableinput ./resDir-host-node014bnumKern16-3728048397/forBetterRBC--1,1,1-Iters1theK1TraderrTableRow.tex
-\expandableinput ./resDir-host-node001dnumKern16-3728046316/forBetterRBC--1,1,1-Iters70theK0TraderrTableRow.tex
-\expandableinput ./resDir-host-node001dnumKern16-3728047956/forBetterRBC--1,1,1-Iters70theK50SerieserrTableRow.tex
-\expandableinput ./resDir-host-node014cnumKern16-3728054753/forBetterRBC--1,1,1-Iters70theK50SerieserrTableRow.tex
-\expandableinput ./resDir-host-node006cnumKern16-3728054706/forBetterRBC--1,1,1-Iters70theK50SerieserrTableRow.tex
-\expandableinput ./resDir-host-node014cnumKern16-3728081186/forBetterRBC--2,2,2-Iters70theK0TraderrTableRow.tex
-\expandableinput ./resDir-host-node006cnumKern16-3728080413/forBetterRBC--2,2,2-Iters70theK0TraderrTableRow.tex
-\expandableinput ./resDir-host-node001dnumKern16-3728073710/forBetterRBC--2,2,2-Iters70theK0TraderrTableRow.tex
-\expandableinput ./resDir-host-node006cnumKern16-3728057516/forBetterRBC--2,2,2-Iters70theK50SerieserrTableRow.tex
-\expandableinput ./resDir-host-node014cnumKern16-3728057626/forBetterRBC--2,2,2-Iters70theK50SerieserrTableRow.tex
-\expandableinput ./resDir-host-node001dnumKern16-3728050749/forBetterRBC--2,2,2-Iters70theK50SerieserrTableRow.tex
-\expandableinput ./resDir-host-node001dnumKern16-3728075486/forBetterRBC--3,3,3-Iters70theK0TraderrTableRow.tex
-\expandableinput ./resDir-host-node006cnumKern16-3728082193/forBetterRBC--3,3,3-Iters70theK0TraderrTableRow.tex
-\expandableinput ./resDir-host-node014cnumKern16-3728083327/forBetterRBC--3,3,3-Iters70theK0TraderrTableRow.tex
-\expandableinput ./resDir-host-node014cnumKern16-3728063389/forBetterRBC--3,3,3-Iters70theK50SerieserrTableRow.tex
-\expandableinput ./resDir-host-node006cnumKern16-3728063145/forBetterRBC--3,3,3-Iters70theK50SerieserrTableRow.tex
-\expandableinput ./resDir-host-node001dnumKern16-3728056324/forBetterRBC--3,3,3-Iters70theK50SerieserrTableRow.tex
-\expandableinput ./resDir-host-node001dnumKern16-3728069334/forBetterRBC--4,4,4-Iters70theK50SerieserrTableRow.tex
-\expandableinput ./resDir-host-node006cnumKern16-3728076072/forBetterRBC--4,4,4-Iters70theK50SerieserrTableRow.tex
-\expandableinput ./resDir-host-node014cnumKern16-3728076599/forBetterRBC--4,4,4-Iters70theK50SerieserrTableRow.tex
-\end{tabular}
-\caption{Error Bounds and Actual Errors}
-\end{table}
+% \begin{table}
+%   \centering
+% \begin{tabular}{|r|r|r|r|}
+% \hline
+%   \multicolumn{1}{|c|}{Approximation}&
+%   \multicolumn{1}{|c|}{K}&
+%   \multicolumn{1}{|c|}{Bound}&
+%   \multicolumn{1}{|c|}{Actual}\\
+% \hline
+% \input{./resDir-host-node014bnumKern16-3728048404/forBetterRBC--1,1,1-Iters1theK1TraderrTableRow.tex}
+% \input{./resDir-host-node014bnumKern16-3728048390/forBetterRBC--1,1,1-Iters1theK1TraderrTableRow.tex}
+% \input{./resDir-host-node014bnumKern16-3728048382/forBetterRBC--1,1,1-Iters1theK1TraderrTableRow.tex}
+% \input{./resDir-host-node014bnumKern16-3728048397/forBetterRBC--1,1,1-Iters1theK1TraderrTableRow.tex}
+% \input{./resDir-host-node001dnumKern16-3728046316/forBetterRBC--1,1,1-Iters70theK0TraderrTableRow.tex}
+% \input{./resDir-host-node001dnumKern16-3728046340/forBetterRBC--1,1,1-Iters70theK0SerieserrTableRow.tex}
+% \expandableinput ./resDir-host-node014bnumKern16-3728049511/forBetterRBC--1,1,1-Iters70theK1SerieserrTableRow.tex
+% \expandableinput ./resDir-host-node014bnumKern16-3728048456/forBetterRBC--1,1,1-Iters1theK1SerieserrTableRow.tex
+% \expandableinput ./resDir-host-node014bnumKern16-3728051519/forBetterRBC--1,1,1-Iters70theK1SerieserrTableRow.tex
+% \expandableinput ./resDir-host-node014bnumKern16-3728048808/forBetterRBC--1,1,1-Iters1theK1SerieserrTableRow.tex
+% \expandableinput ./resDir-host-node014bnumKern16-3728049693/forBetterRBC--1,1,1-Iters70theK1SerieserrTableRow.tex
+% \expandableinput ./resDir-host-node014bnumKern16-3728049828/forBetterRBC--1,1,1-Iters70theK1SerieserrTableRow.tex
+% \expandableinput ./resDir-host-node014bnumKern16-3728049454/forBetterRBC--1,1,1-Iters70theK1SerieserrTableRow.tex
+% \expandableinput ./resDir-host-node014bnumKern16-3728049589/forBetterRBC--1,1,1-Iters70theK1SerieserrTableRow.tex
+% \expandableinput ./resDir-host-node014bnumKern16-3728049244/forBetterRBC--1,1,1-Iters1theK1SerieserrTableRow.tex
+% \expandableinput ./resDir-host-node014bnumKern16-3728049998/forBetterRBC--1,1,1-Iters70theK1SerieserrTableRow.tex
+% \expandableinput ./resDir-host-node014bnumKern16-3728049254/forBetterRBC--1,1,1-Iters1theK1SerieserrTableRow.tex
+% \expandableinput ./resDir-host-node001dnumKern16-3728046373/forBetterRBC--1,1,1-Iters70theK1SerieserrTableRow.tex
+% \expandableinput ./resDir-host-node014bnumKern16-3728048446/forBetterRBC--1,1,1-Iters1theK1SerieserrTableRow.tex
+% \expandableinput ./resDir-host-node014bnumKern16-3728048828/forBetterRBC--1,1,1-Iters1theK1SerieserrTableRow.tex
+% \expandableinput ./resDir-host-node014bnumKern16-3728048818/forBetterRBC--1,1,1-Iters1theK1SerieserrTableRow.tex
+% \expandableinput ./resDir-host-node014bnumKern16-3728048476/forBetterRBC--1,1,1-Iters1theK1SerieserrTableRow.tex
+% \expandableinput ./resDir-host-node014bnumKern16-3728049415/forBetterRBC--1,1,1-Iters70theK1SerieserrTableRow.tex
+% \expandableinput ./resDir-host-node014bnumKern16-3728049307/forBetterRBC--1,1,1-Iters1theK1SerieserrTableRow.tex
+% \expandableinput ./resDir-host-node014bnumKern16-3728049377/forBetterRBC--1,1,1-Iters70theK1SerieserrTableRow.tex
+% \expandableinput ./resDir-host-node014bnumKern16-3728049233/forBetterRBC--1,1,1-Iters1theK1SerieserrTableRow.tex
+% \expandableinput ./resDir-host-node014bnumKern16-3728050207/forBetterRBC--1,1,1-Iters70theK1SerieserrTableRow.tex
+% \expandableinput ./resDir-host-node014bnumKern16-3728048466/forBetterRBC--1,1,1-Iters1theK1SerieserrTableRow.tex
+% \expandableinput ./resDir-host-node014bnumKern16-3728051975/forBetterRBC--1,1,1-Iters70theK1SerieserrTableRow.tex
+% \expandableinput ./resDir-host-node014bnumKern16-3728051114/forBetterRBC--1,1,1-Iters70theK1SerieserrTableRow.tex
+% \expandableinput ./resDir-host-node014bnumKern16-3728049275/forBetterRBC--1,1,1-Iters1theK1SerieserrTableRow.tex
+% \expandableinput ./resDir-host-node014bnumKern16-3728049264/forBetterRBC--1,1,1-Iters1theK1SerieserrTableRow.tex
+% \expandableinput ./resDir-host-node014bnumKern16-3728049296/forBetterRBC--1,1,1-Iters1theK1SerieserrTableRow.tex
+% \expandableinput ./resDir-host-node014bnumKern16-3728050460/forBetterRBC--1,1,1-Iters70theK1SerieserrTableRow.tex
+% \expandableinput ./resDir-host-node014bnumKern16-3728049286/forBetterRBC--1,1,1-Iters1theK1SerieserrTableRow.tex
+% \expandableinput ./resDir-host-node014bnumKern16-3728050761/forBetterRBC--1,1,1-Iters70theK1SerieserrTableRow.tex
+% \expandableinput ./resDir-host-node014bnumKern16-3728048838/forBetterRBC--1,1,1-Iters1theK1SerieserrTableRow.tex
+% \input{./resDir-host-node001dnumKern16-3728046423/forBetterRBC--1,1,1-Iters70theK2SerieserrTableRow.tex}
+% \input{./resDir-host-node001dnumKern16-3728046494/forBetterRBC--1,1,1-Iters70theK3SerieserrTableRow.tex}
+% \input{./resDir-host-node001dnumKern16-3728046591/forBetterRBC--1,1,1-Iters70theK4SerieserrTableRow.tex}
+% \input{./resDir-host-node001dnumKern16-3728046718/forBetterRBC--1,1,1-Iters70theK5SerieserrTableRow.tex}
+% \input{./resDir-host-node001dnumKern16-3728046878/forBetterRBC--1,1,1-Iters70theK10SerieserrTableRow.tex}
+% \expandableinput ./resDir-host-node001dnumKern16-3728047076/forBetterRBC--1,1,1-Iters70theK20SerieserrTableRow.tex
+% \expandableinput ./resDir-host-node001dnumKern16-3728047318/forBetterRBC--1,1,1-Iters70theK30SerieserrTableRow.tex
+% \end{tabular}
+% \caption{Error Bounds and Actual Errors}
+% \end{table}
 
 
-\begin{table}
-  \centering
-\begin{tabular}{|r|r|r|r|}
-\hline
-  \multicolumn{1}{|c|}{Approximation}&
-  \multicolumn{1}{|c|}{K}&
-  \multicolumn{1}{|c|}{Bound}&
-  \multicolumn{1}{|c|}{Actual}\\
-\hline
-\expandableinput ./resDir-host-node006cnumKern16-3728054360/forBetterRBC--1,1,1-Iters70theK40SerieserrTableRow.tex
-\expandableinput ./resDir-host-node014cnumKern16-3728054395/forBetterRBC--1,1,1-Iters70theK40SerieserrTableRow.tex
-\expandableinput ./resDir-host-node001dnumKern16-3728047610/forBetterRBC--1,1,1-Iters70theK40SerieserrTableRow.tex
-\expandableinput ./resDir-host-node001dnumKern16-3728050023/forBetterRBC--2,2,2-Iters70theK40SerieserrTableRow.tex
-\expandableinput ./resDir-host-node006cnumKern16-3728056785/forBetterRBC--2,2,2-Iters70theK40SerieserrTableRow.tex
-\expandableinput ./resDir-host-node014cnumKern16-3728056860/forBetterRBC--2,2,2-Iters70theK40SerieserrTableRow.tex
-\expandableinput ./resDir-host-node001dnumKern16-3728054855/forBetterRBC--3,3,3-Iters70theK40SerieserrTableRow.tex
-\expandableinput ./resDir-host-node014cnumKern16-3728061857/forBetterRBC--3,3,3-Iters70theK40SerieserrTableRow.tex
-\expandableinput ./resDir-host-node006cnumKern16-3728061663/forBetterRBC--3,3,3-Iters70theK40SerieserrTableRow.tex
-\expandableinput ./resDir-host-node014cnumKern16-3728072788/forBetterRBC--4,4,4-Iters70theK40SerieserrTableRow.tex
-\expandableinput ./resDir-host-node001dnumKern16-3728065567/forBetterRBC--4,4,4-Iters70theK40SerieserrTableRow.tex
-\expandableinput ./resDir-host-node006cnumKern16-3728072340/forBetterRBC--4,4,4-Iters70theK40SerieserrTableRow.tex
-\end{tabular}
-\caption{Error Bounds and Actual Errors}
-\end{table}
+% \begin{table}
+%   \centering
+% \begin{tabular}{|r|r|r|r|}
+% \hline
+%   \multicolumn{1}{|c|}{Approximation}&
+%   \multicolumn{1}{|c|}{K}&
+%   \multicolumn{1}{|c|}{Bound}&
+%   \multicolumn{1}{|c|}{Actual}\\
+% \hline
+% \expandableinput ./resDir-host-node014bnumKern16-3728048404/forBetterRBC--1,1,1-Iters1theK1TraderrTableRow.tex
+% \expandableinput ./resDir-host-node014bnumKern16-3728048390/forBetterRBC--1,1,1-Iters1theK1TraderrTableRow.tex
+% \expandableinput ./resDir-host-node006cnumKern16-3728053052/forBetterRBC--1,1,1-Iters70theK0TraderrTableRow.tex
+% \expandableinput ./resDir-host-node014bnumKern16-3728048382/forBetterRBC--1,1,1-Iters1theK1TraderrTableRow.tex
+% \expandableinput ./resDir-host-node014cnumKern16-3728053050/forBetterRBC--1,1,1-Iters70theK0TraderrTableRow.tex
+% \expandableinput ./resDir-host-node014bnumKern16-3728048397/forBetterRBC--1,1,1-Iters1theK1TraderrTableRow.tex
+% \expandableinput ./resDir-host-node001dnumKern16-3728046316/forBetterRBC--1,1,1-Iters70theK0TraderrTableRow.tex
+% \expandableinput ./resDir-host-node001dnumKern16-3728047956/forBetterRBC--1,1,1-Iters70theK50SerieserrTableRow.tex
+% \expandableinput ./resDir-host-node014cnumKern16-3728054753/forBetterRBC--1,1,1-Iters70theK50SerieserrTableRow.tex
+% \expandableinput ./resDir-host-node006cnumKern16-3728054706/forBetterRBC--1,1,1-Iters70theK50SerieserrTableRow.tex
+% \expandableinput ./resDir-host-node014cnumKern16-3728081186/forBetterRBC--2,2,2-Iters70theK0TraderrTableRow.tex
+% \expandableinput ./resDir-host-node006cnumKern16-3728080413/forBetterRBC--2,2,2-Iters70theK0TraderrTableRow.tex
+% \expandableinput ./resDir-host-node001dnumKern16-3728073710/forBetterRBC--2,2,2-Iters70theK0TraderrTableRow.tex
+% \expandableinput ./resDir-host-node006cnumKern16-3728057516/forBetterRBC--2,2,2-Iters70theK50SerieserrTableRow.tex
+% \expandableinput ./resDir-host-node014cnumKern16-3728057626/forBetterRBC--2,2,2-Iters70theK50SerieserrTableRow.tex
+% \expandableinput ./resDir-host-node001dnumKern16-3728050749/forBetterRBC--2,2,2-Iters70theK50SerieserrTableRow.tex
+% \expandableinput ./resDir-host-node001dnumKern16-3728075486/forBetterRBC--3,3,3-Iters70theK0TraderrTableRow.tex
+% \expandableinput ./resDir-host-node006cnumKern16-3728082193/forBetterRBC--3,3,3-Iters70theK0TraderrTableRow.tex
+% \expandableinput ./resDir-host-node014cnumKern16-3728083327/forBetterRBC--3,3,3-Iters70theK0TraderrTableRow.tex
+% \expandableinput ./resDir-host-node014cnumKern16-3728063389/forBetterRBC--3,3,3-Iters70theK50SerieserrTableRow.tex
+% \expandableinput ./resDir-host-node006cnumKern16-3728063145/forBetterRBC--3,3,3-Iters70theK50SerieserrTableRow.tex
+% \expandableinput ./resDir-host-node001dnumKern16-3728056324/forBetterRBC--3,3,3-Iters70theK50SerieserrTableRow.tex
+% \expandableinput ./resDir-host-node001dnumKern16-3728069334/forBetterRBC--4,4,4-Iters70theK50SerieserrTableRow.tex
+% \expandableinput ./resDir-host-node006cnumKern16-3728076072/forBetterRBC--4,4,4-Iters70theK50SerieserrTableRow.tex
+% \expandableinput ./resDir-host-node014cnumKern16-3728076599/forBetterRBC--4,4,4-Iters70theK50SerieserrTableRow.tex
+% \end{tabular}
+% \caption{Error Bounds and Actual Errors}
+% \end{table}
+
+
+% \begin{table}
+%   \centering
+% \begin{tabular}{|r|r|r|r|}
+% \hline
+%   \multicolumn{1}{|c|}{Approximation}&
+%   \multicolumn{1}{|c|}{K}&
+%   \multicolumn{1}{|c|}{Bound}&
+%   \multicolumn{1}{|c|}{Actual}\\
+% \hline
+% \expandableinput ./resDir-host-node006cnumKern16-3728054360/forBetterRBC--1,1,1-Iters70theK40SerieserrTableRow.tex
+% \expandableinput ./resDir-host-node014cnumKern16-3728054395/forBetterRBC--1,1,1-Iters70theK40SerieserrTableRow.tex
+% \expandableinput ./resDir-host-node001dnumKern16-3728047610/forBetterRBC--1,1,1-Iters70theK40SerieserrTableRow.tex
+% \expandableinput ./resDir-host-node001dnumKern16-3728050023/forBetterRBC--2,2,2-Iters70theK40SerieserrTableRow.tex
+% \expandableinput ./resDir-host-node006cnumKern16-3728056785/forBetterRBC--2,2,2-Iters70theK40SerieserrTableRow.tex
+% \expandableinput ./resDir-host-node014cnumKern16-3728056860/forBetterRBC--2,2,2-Iters70theK40SerieserrTableRow.tex
+% \expandableinput ./resDir-host-node001dnumKern16-3728054855/forBetterRBC--3,3,3-Iters70theK40SerieserrTableRow.tex
+% \expandableinput ./resDir-host-node014cnumKern16-3728061857/forBetterRBC--3,3,3-Iters70theK40SerieserrTableRow.tex
+% \expandableinput ./resDir-host-node006cnumKern16-3728061663/forBetterRBC--3,3,3-Iters70theK40SerieserrTableRow.tex
+% \expandableinput ./resDir-host-node014cnumKern16-3728072788/forBetterRBC--4,4,4-Iters70theK40SerieserrTableRow.tex
+% \expandableinput ./resDir-host-node001dnumKern16-3728065567/forBetterRBC--4,4,4-Iters70theK40SerieserrTableRow.tex
+% \expandableinput ./resDir-host-node006cnumKern16-3728072340/forBetterRBC--4,4,4-Iters70theK40SerieserrTableRow.tex
+% \end{tabular}
+% \caption{Error Bounds and Actual Errors}
+% \end{table}
 
 
 
 
-\begin{table}
-  \centering
-\begin{tabular}{|r|r|r|r|}
-\hline
-  \multicolumn{1}{|c|}{Approximation}&
-  \multicolumn{1}{|c|}{K}&
-  \multicolumn{1}{|c|}{Bound}&
-  \multicolumn{1}{|c|}{Actual}\\
-\hline
-\expandableinput ./resDir-host-node014cnumKern16-3728054090/forBetterRBC--1,1,1-Iters70theK30SerieserrTableRow.tex
-\expandableinput ./resDir-host-node006cnumKern16-3728054066/forBetterRBC--1,1,1-Iters70theK30SerieserrTableRow.tex
-\expandableinput ./resDir-host-node001dnumKern16-3728047318/forBetterRBC--1,1,1-Iters70theK30SerieserrTableRow.tex
-\expandableinput ./resDir-host-node001dnumKern16-3728049385/forBetterRBC--2,2,2-Iters70theK30SerieserrTableRow.tex
-\expandableinput ./resDir-host-node014cnumKern16-3728056210/forBetterRBC--2,2,2-Iters70theK30SerieserrTableRow.tex
-\expandableinput ./resDir-host-node006cnumKern16-3728056144/forBetterRBC--2,2,2-Iters70theK30SerieserrTableRow.tex
-\expandableinput ./resDir-host-node006cnumKern16-3728060383/forBetterRBC--3,3,3-Iters70theK30SerieserrTableRow.tex
-\expandableinput ./resDir-host-node001dnumKern16-3728053585/forBetterRBC--3,3,3-Iters70theK30SerieserrTableRow.tex
-\expandableinput ./resDir-host-node014cnumKern16-3728060543/forBetterRBC--3,3,3-Iters70theK30SerieserrTableRow.tex
-\expandableinput ./resDir-host-node001dnumKern16-3728062370/forBetterRBC--4,4,4-Iters70theK30SerieserrTableRow.tex\expandableinput ./resDir-host-node014cnumKern16-3728069554/forBetterRBC--4,4,4-Iters70theK30SerieserrTableRow.tex
-\expandableinput ./resDir-host-node006cnumKern16-3728069181/forBetterRBC--4,4,4-Iters70theK30SerieserrTableRow.tex
+% \begin{table}
+%   \centering
+% \begin{tabular}{|r|r|r|r|}
+% \hline
+%   \multicolumn{1}{|c|}{Approximation}&
+%   \multicolumn{1}{|c|}{K}&
+%   \multicolumn{1}{|c|}{Bound}&
+%   \multicolumn{1}{|c|}{Actual}\\
+% \hline
+% \expandableinput ./resDir-host-node014cnumKern16-3728054090/forBetterRBC--1,1,1-Iters70theK30SerieserrTableRow.tex
+% \expandableinput ./resDir-host-node006cnumKern16-3728054066/forBetterRBC--1,1,1-Iters70theK30SerieserrTableRow.tex
+% \expandableinput ./resDir-host-node001dnumKern16-3728047318/forBetterRBC--1,1,1-Iters70theK30SerieserrTableRow.tex
+% \expandableinput ./resDir-host-node001dnumKern16-3728049385/forBetterRBC--2,2,2-Iters70theK30SerieserrTableRow.tex
+% \expandableinput ./resDir-host-node014cnumKern16-3728056210/forBetterRBC--2,2,2-Iters70theK30SerieserrTableRow.tex
+% \expandableinput ./resDir-host-node006cnumKern16-3728056144/forBetterRBC--2,2,2-Iters70theK30SerieserrTableRow.tex
+% \expandableinput ./resDir-host-node006cnumKern16-3728060383/forBetterRBC--3,3,3-Iters70theK30SerieserrTableRow.tex
+% \expandableinput ./resDir-host-node001dnumKern16-3728053585/forBetterRBC--3,3,3-Iters70theK30SerieserrTableRow.tex
+% \expandableinput ./resDir-host-node014cnumKern16-3728060543/forBetterRBC--3,3,3-Iters70theK30SerieserrTableRow.tex
+% \expandableinput ./resDir-host-node001dnumKern16-3728062370/forBetterRBC--4,4,4-Iters70theK30SerieserrTableRow.tex\expandableinput ./resDir-host-node014cnumKern16-3728069554/forBetterRBC--4,4,4-Iters70theK30SerieserrTableRow.tex
+% \expandableinput ./resDir-host-node006cnumKern16-3728069181/forBetterRBC--4,4,4-Iters70theK30SerieserrTableRow.tex
 
-\end{tabular}
-\caption{Error Bounds and Actual Errors}
-\end{table}
-
-
-\begin{table}
-  \centering
-\begin{tabular}{|r|r|r|r|}
-\hline
-  \multicolumn{1}{|c|}{Approximation}&
-  \multicolumn{1}{|c|}{K}&
-  \multicolumn{1}{|c|}{Bound}&
-  \multicolumn{1}{|c|}{Actual}\\
-\hline
-\expandableinput ./resDir-host-node014cnumKern16-3728053837/forBetterRBC--1,1,1-Iters70theK20SerieserrTableRow.tex
-\expandableinput ./resDir-host-node006cnumKern16-3728053822/forBetterRBC--1,1,1-Iters70theK20SerieserrTableRow.tex
-\expandableinput ./resDir-host-node001dnumKern16-3728047076/forBetterRBC--1,1,1-Iters70theK20SerieserrTableRow.tex
-\expandableinput ./resDir-host-node006cnumKern16-3728055587/forBetterRBC--2,2,2-Iters70theK20SerieserrTableRow.tex
-\expandableinput ./resDir-host-node014cnumKern16-3728055643/forBetterRBC--2,2,2-Iters70theK20SerieserrTableRow.tex
-\expandableinput ./resDir-host-node001dnumKern16-3728048831/forBetterRBC--2,2,2-Iters70theK20SerieserrTableRow.tex
-\expandableinput ./resDir-host-node006cnumKern16-3728059273/forBetterRBC--3,3,3-Iters70theK20SerieserrTableRow.tex
-\expandableinput ./resDir-host-node001dnumKern16-3728052490/forBetterRBC--3,3,3-Iters70theK20SerieserrTableRow.tex
-\expandableinput ./resDir-host-node014cnumKern16-3728059404/forBetterRBC--3,3,3-Iters70theK20SerieserrTableRow.tex
-\expandableinput ./resDir-host-node006cnumKern16-3728066693/forBetterRBC--4,4,4-Iters70theK20SerieserrTableRow.tex
-\expandableinput ./resDir-host-node001dnumKern16-3728059860/forBetterRBC--4,4,4-Iters70theK20SerieserrTableRow.tex
-\expandableinput ./resDir-host-node014cnumKern16-3728067015/forBetterRBC--4,4,4-Iters70theK20SerieserrTableRow.tex
-\end{tabular}
-\caption{Error Bounds and Actual Errors}
-\end{table}
+% \end{tabular}
+% \caption{Error Bounds and Actual Errors}
+% \end{table}
 
 
-\begin{table}
-  \centering
-\begin{tabular}{|r|r|r|r|}
-\hline
-  \multicolumn{1}{|c|}{Approximation}&
-  \multicolumn{1}{|c|}{K}&
-  \multicolumn{1}{|c|}{Bound}&
-  \multicolumn{1}{|c|}{Actual}\\
-\hline
-\expandableinput ./resDir-host-node001dnumKern16-3728046878/forBetterRBC--1,1,1-Iters70theK10SerieserrTableRow.tex
-\expandableinput ./resDir-host-node014cnumKern16-3728053631/forBetterRBC--1,1,1-Iters70theK10SerieserrTableRow.tex
-\expandableinput ./resDir-host-node006cnumKern16-3728053623/forBetterRBC--1,1,1-Iters70theK10SerieserrTableRow.tex
-\expandableinput ./resDir-host-node001dnumKern16-3728048360/forBetterRBC--2,2,2-Iters70theK10SerieserrTableRow.tex
-\expandableinput ./resDir-host-node006cnumKern16-3728055113/forBetterRBC--2,2,2-Iters70theK10SerieserrTableRow.tex
-\expandableinput ./resDir-host-node014cnumKern16-3728055167/forBetterRBC--2,2,2-Iters70theK10SerieserrTableRow.tex
-\expandableinput ./resDir-host-node006cnumKern16-3728058341/forBetterRBC--3,3,3-Iters70theK10SerieserrTableRow.tex
-\expandableinput ./resDir-host-node001dnumKern16-3728051569/forBetterRBC--3,3,3-Iters70theK10SerieserrTableRow.tex
-\expandableinput ./resDir-host-node014cnumKern16-3728058462/forBetterRBC--3,3,3-Iters70theK10SerieserrTableRow.tex
-\expandableinput ./resDir-host-node001dnumKern16-3728057969/forBetterRBC--4,4,4-Iters70theK10SerieserrTableRow.tex
-\expandableinput ./resDir-host-node014cnumKern16-3728065084/forBetterRBC--4,4,4-Iters70theK10SerieserrTableRow.tex
-\expandableinput ./resDir-host-node006cnumKern16-3728064807/forBetterRBC--4,4,4-Iters70theK10SerieserrTableRow.tex
-\end{tabular}
-\caption{Error Bounds and Actual Errors}
-\end{table}
+% \begin{table}
+%   \centering
+% \begin{tabular}{|r|r|r|r|}
+% \hline
+%   \multicolumn{1}{|c|}{Approximation}&
+%   \multicolumn{1}{|c|}{K}&
+%   \multicolumn{1}{|c|}{Bound}&
+%   \multicolumn{1}{|c|}{Actual}\\
+% \hline
+% \expandableinput ./resDir-host-node014cnumKern16-3728053837/forBetterRBC--1,1,1-Iters70theK20SerieserrTableRow.tex
+% \expandableinput ./resDir-host-node006cnumKern16-3728053822/forBetterRBC--1,1,1-Iters70theK20SerieserrTableRow.tex
+% \expandableinput ./resDir-host-node001dnumKern16-3728047076/forBetterRBC--1,1,1-Iters70theK20SerieserrTableRow.tex
+% \expandableinput ./resDir-host-node006cnumKern16-3728055587/forBetterRBC--2,2,2-Iters70theK20SerieserrTableRow.tex
+% \expandableinput ./resDir-host-node014cnumKern16-3728055643/forBetterRBC--2,2,2-Iters70theK20SerieserrTableRow.tex
+% \expandableinput ./resDir-host-node001dnumKern16-3728048831/forBetterRBC--2,2,2-Iters70theK20SerieserrTableRow.tex
+% \expandableinput ./resDir-host-node006cnumKern16-3728059273/forBetterRBC--3,3,3-Iters70theK20SerieserrTableRow.tex
+% \expandableinput ./resDir-host-node001dnumKern16-3728052490/forBetterRBC--3,3,3-Iters70theK20SerieserrTableRow.tex
+% \expandableinput ./resDir-host-node014cnumKern16-3728059404/forBetterRBC--3,3,3-Iters70theK20SerieserrTableRow.tex
+% \expandableinput ./resDir-host-node006cnumKern16-3728066693/forBetterRBC--4,4,4-Iters70theK20SerieserrTableRow.tex
+% \expandableinput ./resDir-host-node001dnumKern16-3728059860/forBetterRBC--4,4,4-Iters70theK20SerieserrTableRow.tex
+% \expandableinput ./resDir-host-node014cnumKern16-3728067015/forBetterRBC--4,4,4-Iters70theK20SerieserrTableRow.tex
+% \end{tabular}
+% \caption{Error Bounds and Actual Errors}
+% \end{table}
+
+
+% \begin{table}
+%   \centering
+% \begin{tabular}{|r|r|r|r|}
+% \hline
+%   \multicolumn{1}{|c|}{Approximation}&
+%   \multicolumn{1}{|c|}{K}&
+%   \multicolumn{1}{|c|}{Bound}&
+%   \multicolumn{1}{|c|}{Actual}\\
+% \hline
+% \expandableinput ./resDir-host-node001dnumKern16-3728046878/forBetterRBC--1,1,1-Iters70theK10SerieserrTableRow.tex
+% \expandableinput ./resDir-host-node014cnumKern16-3728053631/forBetterRBC--1,1,1-Iters70theK10SerieserrTableRow.tex
+% \expandableinput ./resDir-host-node006cnumKern16-3728053623/forBetterRBC--1,1,1-Iters70theK10SerieserrTableRow.tex
+% \expandableinput ./resDir-host-node001dnumKern16-3728048360/forBetterRBC--2,2,2-Iters70theK10SerieserrTableRow.tex
+% \expandableinput ./resDir-host-node006cnumKern16-3728055113/forBetterRBC--2,2,2-Iters70theK10SerieserrTableRow.tex
+% \expandableinput ./resDir-host-node014cnumKern16-3728055167/forBetterRBC--2,2,2-Iters70theK10SerieserrTableRow.tex
+% \expandableinput ./resDir-host-node006cnumKern16-3728058341/forBetterRBC--3,3,3-Iters70theK10SerieserrTableRow.tex
+% \expandableinput ./resDir-host-node001dnumKern16-3728051569/forBetterRBC--3,3,3-Iters70theK10SerieserrTableRow.tex
+% \expandableinput ./resDir-host-node014cnumKern16-3728058462/forBetterRBC--3,3,3-Iters70theK10SerieserrTableRow.tex
+% \expandableinput ./resDir-host-node001dnumKern16-3728057969/forBetterRBC--4,4,4-Iters70theK10SerieserrTableRow.tex
+% \expandableinput ./resDir-host-node014cnumKern16-3728065084/forBetterRBC--4,4,4-Iters70theK10SerieserrTableRow.tex
+% \expandableinput ./resDir-host-node006cnumKern16-3728064807/forBetterRBC--4,4,4-Iters70theK10SerieserrTableRow.tex
+% \end{tabular}
+% \caption{Error Bounds and Actual Errors}
+% \end{table}
 
 
 % The panels in Figure \ref{fig:cntpltB} shows the results when $K=1,2,3,4,5$
@@ -1085,9 +1057,9 @@ The values of $U_t$ range over the ergodic set described above.
 
 
 
-Figure \ref{fig:cntpltA} shows the results when $K=0$, with degree of approximation $(1,1,1)$.  The top panel provides a contour plot of the
-norm of the equation errors. The bottom plot shows the error in the decision rule for different values of $k_{t-1}, \theta_{t-1}$ with $\epsilon_t=0$.  The plots for different values of $\epsilon_t$ are not appreciably different. The error bound, 
-% \ifmacosx
+% Figure \ref{fig:cntpltA} shows the results when $K=0$, with degree of approximation $(1,1,1)$.  The top panel provides a contour plot of the
+% norm of the equation errors. The bottom plot shows the error in the decision rule for different values of $k_{t-1}, \theta_{t-1}$ with $\epsilon_t=0$.  The plots for different values of $\epsilon_t$ are not appreciably different. The error bound, 
+% % \ifmacosx
 % \input{resDir/forBetterRBC--1,1,1-Iters30theK0host-MacBook-Pro-2numKern2errBnd.tex} 
 % \fi
 % \iflinux
@@ -1103,19 +1075,19 @@ norm of the equation errors. The bottom plot shows the error in the decision rul
 
 
 
-\begin{figure}
-  \centering
-\ifmacosx
-  \includegraphics[width=3.0in]{resDir/forBetterRBC--1,1,1-Iters30theK0host-MacBook-Pro-2numKern2.pdf}
-  \includegraphics[width=3.0in]{resDir/forBetterRBC--1,1,1-Iters30theK0host-MacBook-Pro-2numKern2Approx.pdf}
-\fi
-\iflinux
-  \includegraphics[width=3.0in]{resDir/forBetterRBC--1,1,1-Iters70theK50host-node014bnumKern16Series.pdf}
-  \includegraphics[width=3.0in]{resDir/forBetterRBC--1,1,1-Iters70theK50host-node014bnumKern16SeriesApprox.pdf}
-\fi
-  \caption{Contour Plot for approx=(1,1,1) K =50 }
-  \label{fig:cntpltA}
-\end{figure}
+% \begin{figure}
+%   \centering
+% \ifmacosx
+%   \includegraphics[width=3.0in]{resDir/forBetterRBC--1,1,1-Iters30theK0host-MacBook-Pro-2numKern2.pdf}
+%   \includegraphics[width=3.0in]{resDir/forBetterRBC--1,1,1-Iters30theK0host-MacBook-Pro-2numKern2Approx.pdf}
+% \fi
+% \iflinux
+%   \includegraphics[width=3.0in]{resDir/forBetterRBC--1,1,1-Iters70theK50host-node014bnumKern16Series.pdf}
+%   \includegraphics[width=3.0in]{resDir/forBetterRBC--1,1,1-Iters70theK50host-node014bnumKern16SeriesApprox.pdf}
+% \fi
+%   \caption{Contour Plot for approx=(1,1,1) K =50 }
+%   \label{fig:cntpltA}
+% \end{figure}
 
 
 % \begin{figure}
@@ -1258,8 +1230,7 @@ characterizing the evolution of expected values for
 the dynamic system going forward. It then solves
 a deterministic problem at time t to improve the proposed solution.
 There is nothing in the algorithm that precludes accommodating  inequality
-constraints.\footnote{See section \ref{sec:regime-switch-model} characterizing
-  models with regime switching.}
+constraints or regime switching.\footnote{See sections \ref{sec:occbind} and \ref{sec:regime-switch-model} characterizing  models with regime switching.}
 
 
 {
@@ -1335,14 +1306,380 @@ x_{t-1}\\ \xpWarg\\ \XpWOarg(\xWarg)
 
 
 
-\begin{itemize}
-\item still questions about why adding series equation should help.
-\item why useful Levine suspects only good for large 
-\item perturbation global worth mentioning
-\item error bound needs bound on first derivative since search not exhaustive
-\item for regime change probability $p(x_t)$ enough can embed lags and shock or even expected values in the $x_t$
-\end{itemize}
+% \begin{itemize}
+% \item still questions about why adding series equation should help.
+% \item why useful Levine suspects only good for large 
+% \item perturbation global worth mentioning
+% \item error bound needs bound on first derivative since search not exhaustive
+% \item for regime change probability $p(x_t)$ enough can embed lags and shock or even expected values in the $x_t$
+% \end{itemize}
 
+
+\subsection{Approximating the Known Solution: $U(c) = Log(c)$ }
+\label{sec:recov-known-solut}
+
+This subsection uses the series representation to
+compute the solution for the case when the exact solution is known and
+to compare the various approximations to the known actual solution.
+In what follows, both the traditional and the new  approach use anisotropic
+Smolyak polynomial function approximation with precomputed expectations.
+Figure \ref{fig:erg}  characterizes the use of the parallelotope
+transformation described in \cite{Judd2013}. The left panel shows the 200 values of $k_t$ and $\theta_t$ resulting from a stochastic simulation of the the known decision rule. The right panel shows the transformed variables that constitute
+an improved set of variables for constructing function approximation values.
+\begin{figure}
+  \centering
+  \includegraphics[width=2.3in]{ergodicKTheta.pdf}
+  \includegraphics[width=2.3in]{ergodicZs.pdf}
+  \caption{The Ergodic Values for $k_t, \theta_t$ }
+  \label{fig:erg}
+\end{figure}
+
+
+\begin{gather}
+\bar{X}= \vcenter{\hbox{\includegraphics{ergodicMean.pdf}}}
+\end{gather}
+\begin{gather}
+\sigma_{X}= \vcenter{\hbox{\includegraphics{ergodicSD.pdf}}}
+\end{gather}
+
+
+\begin{gather}
+V= \vcenter{\hbox{\includegraphics{ergodicV.pdf}}}
+\end{gather}
+
+\begin{gather}
+\max U= \vcenter{\hbox{\includegraphics{ergodicMaxZ.pdf}}}
+\end{gather}
+\begin{gather}
+\min U= \vcenter{\hbox{\includegraphics{ergodicMinZ.pdf}}}
+\end{gather}
+
+In order to evaluate how well the error approximation works, compute and
+fix a particular decision rule as a proposed solution and I 
+experiment with various parameterization of the 
+RBC with known analytic solutions.
+Consequently, I hold $\eta=d=1$ but approximate the model solution error 
+for 50 various  parameter settings
+\begin{gather*}
+ 0.20 <\alpha<0.40,\,\,0.85<\delta<0.99,\,\,0.85<\rho<0.99,\,\,0.005<\sigma<0.015
+\end{gather*}
+I do this approximation for 50 various values of 
+$(k_{t-1},\theta_{t-1},\epsilon_t)$ generated using the Niederreiter algorithm
+ covering the ergodic set.  I do this for values of k from 0 to 20.  The static proposed solution comes from linearing
+the RBC model around the deterministic steady tate for
+ the parameter settings in \ref{rbcparams}.  
+solution path.  I use the statically selected decision rule and its conditional
+expectation to construct the paths required in the error formula. 
+
+Figure   \ref{fig:diffsk0}
+\begin{figure}
+  \centering
+  \label{fig:cdiffsk0}
+  \caption{$c_{err}-c_{predicted}$ Mean Versus StandardDeviation, k=0} 
+\begin{gather}
+\vcenter{\hbox{\includegraphics[width=5.5in]{cDiffk0.pdf}}}
+\end{gather}
+\end{figure}
+
+Figure   \ref{fig:ccoefsk0}
+\begin{figure}
+  \centering
+  \label{fig:ccoefsk0}
+  \caption{$c_{err}= c_0+ \beta c_{predicted}$, k=0}
+\begin{gather}
+\vcenter{\hbox{\includegraphics[width=5.5in]{cCoeffsk0.pdf}}}
+\end{gather}
+\end{figure}
+
+
+
+Figure   \ref{fig:diffskT0}
+\begin{figure}
+  \centering
+  \label{fig:cdiffskT0}
+  \caption{$c_{err}-c_{predicted}$ Mean Versus StandardDeviation, k=0  with added tail} 
+\begin{gather}
+\vcenter{\hbox{\includegraphics[width=5.5in]{cDiffkT0.pdf}}}
+\end{gather}
+\end{figure}
+
+Figure   \ref{fig:ccoefskT0}
+\begin{figure}
+  \centering
+  \label{fig:ccoefskT0}
+  \caption{$c_{err}= c_0+ \beta c_{predicted}$, k=0 with added tail}
+\begin{gather}
+\vcenter{\hbox{\includegraphics[width=5.5in]{cCoeffskT0.pdf}}}
+\end{gather}
+\end{figure}
+
+Figure   \ref{fig:cdiffsk1}
+\begin{figure}
+  \centering
+  \label{fig:cdiffsk1}
+  \caption{$c_{err}-c_{predicted}$ Mean Versus StandardDeviation, k=1} 
+\begin{gather}
+\vcenter{\hbox{\includegraphics[width=5.5in]{cDiffk1.pdf}}}
+\end{gather}
+\end{figure}
+
+Figure   \ref{fig:ccoefsk1}
+\begin{figure}
+  \centering
+  \label{fig:ccoefsk1}
+  \caption{$c_{err}= c_0+ \beta c_{predicted}$, k=1}
+\begin{gather}
+\vcenter{\hbox{\includegraphics[width=5.5in]{cCoeffsk1.pdf}}}
+\end{gather}
+\end{figure}
+
+Figure   \ref{fig:cdiffsk1}
+\begin{figure}
+  \centering
+  \label{fig:cdiffsk1}
+  \caption{$c_{err}-c_{predicted}$ Mean Versus StandardDeviation, k=1 added tail} 
+\begin{gather}
+\vcenter{\hbox{\includegraphics[width=5.5in]{cDiffkT1.pdf}}}
+\end{gather}
+\end{figure}
+
+Figure   \ref{fig:ccoefsk1}
+\begin{figure}
+  \centering
+  \label{fig:ccoefsk1}
+  \caption{$c_{err}= c_0+ \beta c_{predicted}$, k=1, added tail}
+\begin{gather}
+\vcenter{\hbox{\includegraphics[width=5.5in]{cCoeffskT1.pdf}}}
+\end{gather}
+\end{figure}
+
+
+Figure   \ref{fig:cdiffsk5}
+\begin{figure}
+  \centering
+  \label{fig:cdiffsk5}
+  \caption{$c_{err}-c_{predicted}$ Mean Versus StandardDeviation, k=5} 
+\begin{gather}
+\vcenter{\hbox{\includegraphics[width=5.5in]{cDiffk5.pdf}}}
+\end{gather}
+\end{figure}
+
+Figure   \ref{fig:ccoefsk5}
+\begin{figure}
+  \centering
+  \label{fig:ccoefsk5}
+  \caption{$c_{err}= c_0+ \beta c_{predicted}$, k=5}
+\begin{gather}
+\vcenter{\hbox{\includegraphics[width=5.5in]{cCoeffsk5.pdf}}}
+\end{gather}
+\end{figure}
+
+
+Figure   \ref{fig:cdiffsk5}
+\begin{figure}
+  \centering
+  \label{fig:cdiffsk5}
+  \caption{$c_{err}-c_{predicted}$ Mean Versus StandardDeviation, k=5 added tail} 
+\begin{gather}
+\vcenter{\hbox{\includegraphics[width=5.5in]{cDiffkT5.pdf}}}
+\end{gather}
+\end{figure}
+
+Figure   \ref{fig:ccoefsk5}
+\begin{figure}
+  \centering
+  \label{fig:ccoefsk5}
+  \caption{$c_{err}= c_0+ \beta c_{predicted}$, k=5, added tail}
+\begin{gather}
+\vcenter{\hbox{\includegraphics[width=5.5in]{cCoeffskT5.pdf}}}
+\end{gather}
+\end{figure}
+
+
+
+Figure   \ref{fig:cdiffsk10}
+\begin{figure}
+  \centering
+  \label{fig:cdiffsk10}
+  \caption{$c_{err}-c_{predicted}$ Mean Versus StandardDeviation, k=10} 
+\begin{gather}
+\vcenter{\hbox{\includegraphics[width=5.5in]{cDiffk10.pdf}}}
+\end{gather}
+\end{figure}
+
+Figure   \ref{fig:ccoefsk10}
+\begin{figure}
+  \centering
+  \label{fig:ccoefsk10}
+  \caption{$c_{err}= c_0+ \beta c_{predicted}$, k=10}
+\begin{gather}
+\vcenter{\hbox{\includegraphics[width=5.5in]{cCoeffsk10.pdf}}}
+\end{gather}
+\end{figure}
+
+
+
+Figure   \ref{fig:cdiffsk10}
+\begin{figure}
+  \centering
+  \label{fig:cdiffsk10}
+  \caption{$c_{err}-c_{predicted}$ Mean Versus StandardDeviation, k=10 added tail} 
+\begin{gather}
+\vcenter{\hbox{\includegraphics[width=5.5in]{cDiffkT10.pdf}}}
+\end{gather}
+\end{figure}
+
+Figure   \ref{fig:ccoefsk10}
+\begin{figure}
+  \centering
+  \label{fig:ccoefsk10}
+  \caption{$c_{err}= c_0+ \beta c_{predicted}$, k=10, added tail}
+\begin{gather}
+\vcenter{\hbox{\includegraphics[width=5.5in]{cCoeffskT10.pdf}}}
+\end{gather}
+\end{figure}
+
+
+
+
+Figure   \ref{fig:cdiffsk10}
+\begin{figure}
+  \centering
+  \label{fig:cdiffsk10}
+  \caption{$c_{err}-c_{predicted}$ Mean Versus StandardDeviation, k=10 added tail} 
+\begin{gather}
+\vcenter{\hbox{\includegraphics[width=5.5in]{cDiffkT10.pdf}}}
+\end{gather}
+\end{figure}
+
+Figure   \ref{fig:ccoefsk10}
+\begin{figure}
+  \centering
+  \label{fig:ccoefsk10}
+  \caption{$c_{err}= c_0+ \beta c_{predicted}$, k=10, added tail}
+\begin{gather}
+\vcenter{\hbox{\includegraphics[width=5.5in]{cCoeffskT10.pdf}}}
+\end{gather}
+\end{figure}
+
+
+
+
+Figure   \ref{fig:cdiffsk20}
+\begin{figure}
+  \centering
+  \label{fig:cdiffsk20}
+  \caption{$c_{err}-c_{predicted}$ Mean Versus StandardDeviation, k=20} 
+\begin{gather}
+\vcenter{\hbox{\includegraphics[width=5.5in]{cDiffk20.pdf}}}
+\end{gather}
+\end{figure}
+
+Figure   \ref{fig:ccoefsk20}
+\begin{figure}
+  \centering
+  \label{fig:ccoefsk20}
+  \caption{$c_{err}= c_0+ \beta c_{predicted}$, k=20}
+\begin{gather}
+\vcenter{\hbox{\includegraphics[width=5.5in]{cCoeffsk20.pdf}}}
+\end{gather}
+\end{figure}
+
+
+I used the Niedererreiter number theoretic algorithm to generated highly 
+dispersed test points throughout the ergodic region.\cite{niederreiter88,Xu2005}
+For the given set of parameters, I computed the exact solution.
+I chose a wide array of different degrees of  approximation for the
+smolyak polynomials and for each given degree of approximation I applied
+the error formula to approximate the error at each of
+the test points.  I ran a regression using the formula approximation as a right
+hand side variable along with a constant to predict the true error.
+Varying k from 0 to 20 consistently  produces $R^2$ near one, tiny standard errors and a coefficient on the estimated error very near one.
+
+
+
+
+
+
+
+% \vspace{.25in}
+
+% \begin{tabular}{|r|r|r|r|r|}
+% \hline
+% \multicolumn{5}{|c|}{$c \,\,\text{with}\,\, \mathbb{V}=\{1,1,1\},k_p=2$}\\
+% \hline
+%   MAE &$R^2$&$(\alpha,\beta)$&$\hat{\sigma}$&$k_e$\\
+% \hline
+% \end{tabular}
+% Speedup
+
+% \begin{figure}
+%   \centering
+  
+%   \caption{$c_t,k_t \,\,\text{with}\,\, \mathbb{V}=\{2,2,2\},k_p=10$}
+% \begin{gather}
+% \vcenter{\hbox{\includegraphics{curio01.pdf}}}
+% \end{gather}
+% \end{figure}
+
+
+% \begin{figure}
+%   \centering
+  
+%   \caption{$c_t,k_t \,\,\text{with}\,\, \mathbb{V}=\{2,2,2\}, Traditional$}
+% \begin{gather}
+% \vcenter{\hbox{\includegraphics{curio02.pdf}}}
+% \end{gather}
+% \end{figure}
+
+
+\section{Robust Calculations}
+
+ 
+
+Many global methods propose a solution and update the solution by solving
+the original system of equations with the previous iterations guess.
+These iterations are notorious for going off track.
+The series representation provides a useful additional constraint on the 
+evolution of proposed solution in the algorithm.
+To demonstrate this phenomonon, 
+I experimented with an RBC model with occassionally binding constraints.
+
+For a given set of parameters, I computed a deterministic 
+steady state for the non binding solution.  I discarded
+those parameter values that produced a negative steady state for capital or 
+consumption.  For each set of parameters,
+I linearized the model at the steady state and computed
+the linear perfect forsight solution to use as the linear reference model and
+as an initial guess for the equation system.
+
+In order to test the effectiveness of the 
+algorithm for model convergence I use Nied to generate model parameters.
+I discarded those parameters which failed to produce 
+I computed
+
+
+
+
+
+\begin{figure}
+  \centering
+  
+  \caption{Values for $(c_{ss}>0\wedge k_{ss}>0)\,\,\{\alpha,d,\delta,\eta,\rho,\sigma,\Upsilon\}\,\, Converged?$}
+\begin{gather}
+\vcenter{\hbox{\includegraphics[width=5.5in]{paramsForTest.pdf}}}
+\end{gather}
+\end{figure}
+
+
+It will be useful to explore the computational aspects of choosing the right value for k.  Zero seems to improve reliability.
+It will be important to work on exploiting the high degree of parallelism 
+available.
+
+It should be possible to maintain a small footpring communication would involve
+sending the coefficient matrices for smolyak calculation.  These nodes
+should use efficient polynomial composition to compute conditional expectations
+paths .
 \section{Conclusions}
 This paper introduces a new series representation for bounded time series and
 shows how to apply the series for representing bounded time invariant maps.
@@ -1352,6 +1689,9 @@ The series representation plays a strategic role in developing a formula for bou
 also shows how to  augment traditional ``Euler Equation'' model solution
 methods with constraints reflecting how the updated
 conditional expectation paths impact the time t solution values.
+
+Although the series representation it appears much can be gained by using
+just the first term.
 
 
 There are many directions to pursue in future work.
@@ -1363,7 +1703,7 @@ decision rules by incorporating global information about the solution.
 The procedures should prove useful
 in handling dynamic economies with occasionally binding constraints\citep{holden15:_exist_dsge,guerrieri15:_occbin} and regime switching.
 
-Using tail contribution can reduce magnitude of $z_0$
+%Using tail contribution can reduce magnitude of $z_0$
 
 % \begin{description}
 % \item[Series Unique] Provides mechanism for bounding solutions
@@ -1380,11 +1720,9 @@ Using tail contribution can reduce magnitude of $z_0$
 \bibliography{anderson,files}
 \appendix
 
-\section{Proofs}
-\label{sec:proofs}
 
-\subsection{Error Boound Formula}
-\label{sec:error-boound-formula}
+\section{Error Bound Formula Proof}
+\label{sec:error-bound-formula}
 
 
 We consider time invariant maps such as often arise from solving an
@@ -1519,48 +1857,48 @@ H_0\left ( \pdrv{\eqnFunc(x_{t-1},x_{t},x_{t+1},\epsilon_t)}{x_t}\right )^{-1}
 
 
 
-Use Cluster MSNTO to find constrained max.  Should parallelize well.
+% Use Cluster MSNTO to find constrained max.  Should parallelize well.
 
 
-\begin{verbatim}
-Nelder–Mead
+% \begin{verbatim}
+% Nelder–Mead
 
-The Nelder–Mead method is a direct search method. For a function of variables, the algorithm maintains a set of points forming the vertices of a polytope in -dimensional space. This method is often termed the "simplex" method, which should not be confused with the well-known simplex method for linear programming.
+% The Nelder–Mead method is a direct search method. For a function of variables, the algorithm maintains a set of points forming the vertices of a polytope in -dimensional space. This method is often termed the "simplex" method, which should not be confused with the well-known simplex method for linear programming.
 
-At each iteration, points form a polytope. The points are ordered so that A new point is then generated to replace the worst point
+% At each iteration, points form a polytope. The points are ordered so that A new point is then generated to replace the worst point
 
-Let be the centroid of the polytope consisting of the best points, . A trial point is generated by reflecting the worst point through the centroid, , where is a parameter.
+% Let be the centroid of the polytope consisting of the best points, . A trial point is generated by reflecting the worst point through the centroid, , where is a parameter.
 
-If the new point is neither a new worst point nor a new best point, , replaces .
+% If the new point is neither a new worst point nor a new best point, , replaces .
 
-If the new point is better than the best point, , the reflection is very successful and can be carried out further to , where is a parameter to expand the polytope. If the expansion is successful, , replaces ; otherwise the expansion failed, and replaces .
+% If the new point is better than the best point, , the reflection is very successful and can be carried out further to , where is a parameter to expand the polytope. If the expansion is successful, , replaces ; otherwise the expansion failed, and replaces .
 
-If the new point is worse than the second worst point, , the polytope is assumed to be too large and needs to be contracted. A new trial point is defined as
+% If the new point is worse than the second worst point, , the polytope is assumed to be too large and needs to be contracted. A new trial point is defined as
 
-where is a parameter. If , the contraction is successful, and replaces . Otherwise a further contraction is carried out.
+% where is a parameter. If , the contraction is successful, and replaces . Otherwise a further contraction is carried out.
 
-The process is assumed to have converged if the difference between the best function values in the new and old polytope, as well as the distance between the new best point and the old best point, are less than the tolerances provided by AccuracyGoal and PrecisionGoal.
+% The process is assumed to have converged if the difference between the best function values in the new and old polytope, as well as the distance between the new best point and the old best point, are less than the tolerances provided by AccuracyGoal and PrecisionGoal.
 
-Strictly speaking, Nelder–Mead is not a true global optimization algorithm; however, in practice it tends to work reasonably well for problems that do not have many local minima.
-\end{verbatim}
-
-
-\begin{itemize}
-\item rank condition on $\psi_c$
-\item appendix derivations with all lagrangians
-\end{itemize}
-
-\section{Function Approximation Representation}
-\label{sec:funcApproxRep}
-
-\subsection{General Issues}
-\label{sec:generalissues}
+% Strictly speaking, Nelder–Mead is not a true global optimization algorithm; however, in practice it tends to work reasonably well for problems that do not have many local minima.
+% \end{verbatim}
 
 
+% \begin{itemize}
+% \item rank condition on $\psi_c$
+% \item appendix derivations with all lagrangians
+% \end{itemize}
+
+% \section{Function Approximation Representation}
+% \label{sec:funcApproxRep}
+
+% \subsection{General Issues}
+% \label{sec:generalissues}
 
 
 
-\section{Extension Examples}
+
+
+\section{ Examples}
 \label{sec:extension}
 
 
@@ -1596,7 +1934,7 @@ Consider adding constraints the constraints:
 
 \label{sec:regime-switch-model}
 
-To apply the series formula, on must construct condional expectations paths from each initial $x(x_{t-1},\epsilon_t)$.  Consider the case when the transition 
+To apply the series formula, one must construct condional expectations paths from each initial $x(x_{t-1},\epsilon_t)$.  Consider the case when the transition 
 probabilities $p_{ij}$ are constant and do not depend on 
 $x_{t-1},\epsilon_t,x_t$.
 
@@ -1723,23 +2061,23 @@ It is possible to precompute each of the integrals. Since the solution will be l
 
 
 
-\section{Multi-cluster Sequential Number Theoretic Optimization (MSNTO)}
-\label{sec:MSNTO}
+% \section{Multi-cluster Sequential Number Theoretic Optimization (MSNTO)}
+% \label{sec:MSNTO}
 
-This section describes a method for finding maxima in a closed bounded domain.
-Let $D=[a,b]$ in $R^s$ where $a_i \le x_i \le b_i$. We want to find  $M=f(x^\ast)= \max_{x \in D}f(x)$.
-Th number theoretic (Quasi-Monte Carlo) approached is designed for finding optima with many local optima.  It is based on the used of space filling points.\cite{Xu2005}
-The number theoretic method of optimization includes two basic steps.
-\begin{enumerate}
-\item Choose a set $p=x_i, i=1,\dots,n$ of potential optima that are uniformly scattered.
-\item Find $M_n\text{ and } x^\ast \in p =\max_{1\le i \le n}f(x_i)$
-\end{enumerate}
+% This section describes a method for finding maxima in a closed bounded domain.
+% Let $D=[a,b]$ in $R^s$ where $a_i \le x_i \le b_i$. We want to find  $M=f(x^\ast)= \max_{x \in D}f(x)$.
+% Th number theoretic (Quasi-Monte Carlo) approached is designed for finding optima with many local optima.  It is based on the used of space filling points.\cite{Xu2005}
+% The number theoretic method of optimization includes two basic steps.
+% \begin{enumerate}
+% \item Choose a set $p=x_i, i=1,\dots,n$ of potential optima that are uniformly scattered.
+% \item Find $M_n\text{ and } x^\ast \in p =\max_{1\le i \le n}f(x_i)$
+% \end{enumerate}
 
-Even when choosing $p$ wisely convergence slow until \cite{Niederreiter1983}.  They speed up the convergence by contracting the domain.
-Their algorithm discards all but the best in the domain. Must have very many points to guarantee choosing a point close to the optimum.
+% Even when choosing $p$ wisely convergence slow until \cite{Niederreiter1983}.  They speed up the convergence by contracting the domain.
+% Their algorithm discards all but the best in the domain. Must have very many points to guarantee choosing a point close to the optimum.
 
 
-MSNTO selects a finite number of sample points uniformly scattered on D.  Next it discard inferior points retaining small sample of potential maxima.  These form the clusters for the next step.  The algorithm performs a domain contraction on each of the clusters.
+% MSNTO selects a finite number of sample points uniformly scattered on D.  Next it discard inferior points retaining small sample of potential maxima.  These form the clusters for the next step.  The algorithm performs a domain contraction on each of the clusters.
 
 
 
@@ -2120,72 +2458,72 @@ u(c)=\frac{c^{1-\eta}-1}{1-\eta}\\
 
 %   \includegraphics{resDir/forBetterRBC--4,4,4-Iters70theK5host-node014bnumKern16SeriesApprox.pdf}
 
-\subsection{Ergodic Partition of Invariant Sets}
-\label{sec:ergod-part-invar}
+% \subsection{Ergodic Partition of Invariant Sets}
+% \label{sec:ergod-part-invar}
 
-Following \citep{ergodicvisual}, consider a map $T$ on a compact metric space $\mathcal{A}$ endowed with a measure $\mu$ preserved under $T$. We wish to 
-visualize invariant sets $\mathcal{B} \subseteq \mathcal{A}$.
+% Following \citep{ergodicvisual}, consider a map $T$ on a compact metric space $\mathcal{A}$ endowed with a measure $\mu$ preserved under $T$. We wish to 
+% visualize invariant sets $\mathcal{B} \subseteq \mathcal{A}$.
 
-\begin{gather*}
-  x_{t+1} =T x_t,\in A\,\,\forall t \in Z
-\end{gather*}
+% \begin{gather*}
+%   x_{t+1} =T x_t,\in A\,\,\forall t \in Z
+% \end{gather*}
 
-\begin{gather*}
-  x_0 \in B \implies T^t x_0 \in B \,\,\forall t \in Z
-\end{gather*}
+% \begin{gather*}
+%   x_0 \in B \implies T^t x_0 \in B \,\,\forall t \in Z
+% \end{gather*}
 
-For ergodic invariant sets, consider $L^1$ real valued functions on A
-\begin{gather*}
- f:A \rightarrow \mathbb{R}\in L^1(A) \iff \int_A |f(x)|dx <\infty
-\end{gather*}
+% For ergodic invariant sets, consider $L^1$ real valued functions on A
+% \begin{gather*}
+%  f:A \rightarrow \mathbb{R}\in L^1(A) \iff \int_A |f(x)|dx <\infty
+% \end{gather*}
 
-Define time average $f^\ast(x_0)$ of a function $f\in L^1(A)$ corresponding to a phase point $x_0\in A$
-\begin{gather*}
-  f^\ast(x_0)\equiv \lim_{t\rightarrow\infty} \frac{1}{t}\sum_{k=0}^{t-1}f(T^kx_0)
-\end{gather*}
+% Define time average $f^\ast(x_0)$ of a function $f\in L^1(A)$ corresponding to a phase point $x_0\in A$
+% \begin{gather*}
+%   f^\ast(x_0)\equiv \lim_{t\rightarrow\infty} \frac{1}{t}\sum_{k=0}^{t-1}f(T^kx_0)
+% \end{gather*}
 
-By the Ergodic Theorem, this limit exists almost everywhere ( a. e. ).
-Call map T ergodic over $B \subset A$ if for a. . point  $x_0 \in B$ time average equals the space average for every function $f \in L^1(B)$ so that there exists an
-ergodic measure.
-\begin{gather*}
-f^\ast(x_0) =\frac{1}{\mu_B(B)}\int_B f d\mu_B  
-\end{gather*}
-a.e. $B \subset A$
+% By the Ergodic Theorem, this limit exists almost everywhere ( a. e. ).
+% Call map T ergodic over $B \subset A$ if for a. . point  $x_0 \in B$ time average equals the space average for every function $f \in L^1(B)$ so that there exists an
+% ergodic measure.
+% \begin{gather*}
+% f^\ast(x_0) =\frac{1}{\mu_B(B)}\int_B f d\mu_B  
+% \end{gather*}
+% a.e. $B \subset A$
 
-This implies $f^\ast$ is a constant a. e. in $B \subset A$  almost every orbit starting in B covers B densey at the limit.  Each $f^\ast$ is an invariant function $f^\ast(x_0)= f^\ast(T^tx_0) \, \forall t$  
-The set of real numbers induces a partition of A called $\zeta_f\equiv \{B_a\}_{a\in\mathbb{R}}$ through a function $f\in L^1(A)$
+% This implies $f^\ast$ is a constant a. e. in $B \subset A$  almost every orbit starting in B covers B densey at the limit.  Each $f^\ast$ is an invariant function $f^\ast(x_0)= f^\ast(T^tx_0) \, \forall t$  
+% The set of real numbers induces a partition of A called $\zeta_f\equiv \{B_a\}_{a\in\mathbb{R}}$ through a function $f\in L^1(A)$
 
-\begin{gather*}
-  B_a=(f^\ast)^{-1}(a), \,\,\forall a \in \mathbb{R}
-\end{gather*}
-Some of $B_a$ may be empty.
+% \begin{gather*}
+%   B_a=(f^\ast)^{-1}(a), \,\,\forall a \in \mathbb{R}
+% \end{gather*}
+% Some of $B_a$ may be empty.
 
-\begin{gather*}
-  \mu\left (\bigcup_aB_a \right )=\mu(A),B_a\cap B_{a^\prime} = \emptyset ,\,\,\forall a \ne a^\prime
-\end{gather*}
-Denote set of points with no time average of $f$ by $\Sigma(f,T)$
+% \begin{gather*}
+%   \mu\left (\bigcup_aB_a \right )=\mu(A),B_a\cap B_{a^\prime} = \emptyset ,\,\,\forall a \ne a^\prime
+% \end{gather*}
+% Denote set of points with no time average of $f$ by $\Sigma(f,T)$
 
-\begin{gather*}
-  A=(\cup_aB_a)\bigcup \Sigma(f,T)
-\end{gather*}
-To guarantee we don't lump what should be independent invariant sets together just because averages match, define using a collection of functions.
-Final ergodic partation $\zeta_e$ product of all $zeta_f$ belonging to $S \subset L^1(A)$  Chose S as a basis for $L^1(A)$
+% \begin{gather*}
+%   A=(\cup_aB_a)\bigcup \Sigma(f,T)
+% \end{gather*}
+% To guarantee we don't lump what should be independent invariant sets together just because averages match, define using a collection of functions.
+% Final ergodic partation $\zeta_e$ product of all $zeta_f$ belonging to $S \subset L^1(A)$  Chose S as a basis for $L^1(A)$
 
-\begin{gather*}
-  \zeta_e= \bigvee_{f\in S} \zeta_f
-\end{gather*}
+% \begin{gather*}
+%   \zeta_e= \bigvee_{f\in S} \zeta_f
+% \end{gather*}
 
-Ergodic partition divides phase space into non-decomposable invariant sewts.  Can visualize using approximate ergodic partitions.
+% Ergodic partition divides phase space into non-decomposable invariant sewts.  Can visualize using approximate ergodic partitions.
 
-\begin{enumerate}
-\item Set up a grid of initial grid-points
-\item Pick N function $\{f_1,\ldots,f_N\}$ from $L^1(A)$ and compute partial time averages for $t_{final}$ iterations for each grid point.  These serve as approximations for $\{f_1^\ast,\ldots,f_N^\ast\}$
-\item To every initial grid point associate the corresponding time average vector
-  \begin{gather*}
-    x \rightarrow \bar{f}(x),\,\, \bar{f}(x)\equiv \{f_1^\ast(x),\ldots,f_N^\ast(x)\}\in \mathbb{R}^N
-  \end{gather*}
-\item Observe the distribution of ime average vectors $\bar{f}$ and group them into clusters
-\end{enumerate}
+% \begin{enumerate}
+% \item Set up a grid of initial grid-points
+% \item Pick N function $\{f_1,\ldots,f_N\}$ from $L^1(A)$ and compute partial time averages for $t_{final}$ iterations for each grid point.  These serve as approximations for $\{f_1^\ast,\ldots,f_N^\ast\}$
+% \item To every initial grid point associate the corresponding time average vector
+%   \begin{gather*}
+%     x \rightarrow \bar{f}(x),\,\, \bar{f}(x)\equiv \{f_1^\ast(x),\ldots,f_N^\ast(x)\}\in \mathbb{R}^N
+%   \end{gather*}
+% \item Observe the distribution of time average vectors $\bar{f}$ and group them into clusters
+% \end{enumerate}
 
 \subsection{Algorithm Pseudo-code}
 \label{sec:pseudocode}

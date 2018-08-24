@@ -43,13 +43,10 @@ Print["post eval"]
 ParallelEvaluate[SetDirectory["/msu/scratch2/m1gsa00/git/AMASeriesRepresentation/AMASeriesRepresentation"]]
 Get["tests/pathSetup.mth"]
 ParallelEvaluate[Get["tests/pathSetup.mth"]]
-ParallelEvaluate[Get["AMASeriesRepresentation`"]];
-Needs["AMASeriesRepresentation`"]
-ParallelNeeds["AMASeriesRepresentation`"]
-Get["finishPaper.mth"]
-ParallelEvaluate[Get["finishPaper.mth"]]
-Get["finishPaper.mth"]
-theResNow= Reap[Reap[Reap[Reap[Reap[Reap[Reap[approxAndBound[theArgs[[{1,2,3}]],theArgs[[4]]],"firstDoGen"],"secondDoGen"],"psgid"],"pmg1"],"pmg2"],"intdattofunc1"],"intdattofunc2"]
-PutAppend[theResNow,"whatNowResults02"<>ToString[theArgs[[6]]]<>".mth"];
-Print[{"theResNow=",theResNow}];
+Get["getResults.mth"];
+ParallelEvaluate[Get["getResults.mth"]];
+gotIt=doCase[1*{theArgs[[1]],theArgs[[2]],theArgs[[3]]},theArgs[[4]],"normConvTol"->10^-11]
+Print[theArgs];
+Print[InputForm[gotIt[[1]]]];
+Print[InputForm[gotIt[[2]]]];
 Quit

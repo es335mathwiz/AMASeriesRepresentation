@@ -2,6 +2,7 @@
 PrependTo[$Path,"../../mathSmolyak/mathSmolyak"];
 PrependTo[$Path,"../../ProtectedSymbols"];
 PrependTo[$Path,"../../CStochSims"];
+PrependTo[$Path,"../../MSNTO/src/mathematica"];
 PrependTo[$Path,"../../paperProduction/FormatOptimize"];
 PrependTo[$Path,"../../mathAMA/SymbolicAMA/SymbolicAMA"];
 PrependTo[$Path,"../../mathAMA/AMAModel"];

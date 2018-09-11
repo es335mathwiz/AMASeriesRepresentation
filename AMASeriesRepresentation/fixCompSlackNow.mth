@@ -20,7 +20,7 @@ CreateDirectory[aDir]]
 
 
 prepSmolCS[approx_?VectorQ,iters_Integer,theK_Integer]:=
-Module[{toIg,zPts,ptErg,tfErg,plyErg,iplyErg,dplyErg,bothX0Z0,smolStuff,smolRngErg,sgSpecErg},
+Module[{toIg={1,2,4,5,6},zPts,ptErg,tfErg,plyErg,iplyErg,dplyErg,bothX0Z0,smolStuff,smolRngErg,sgSpecErg},
 (**)tryEps=0;
 LaunchKernels[];numKern=Length[Kernels[]];
 theName=fNameStringCS[approx,iters,theK,numKern];

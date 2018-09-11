@@ -2165,12 +2165,14 @@ EndPackage[]
 @<assessErrPredictionUsage@>
 @<genTestPtsUsage@>
 @<ergodic function usage@>
+@<doSmolPrepUsage@>
 @}
 
 
 
 @d package code
 @{
+@<doSmolPrep@>
 @<ergodic function code@>
 @<genTestPts@>
 @<assessErrPrediction@>
@@ -2237,6 +2239,46 @@ XZFuncs:(_Function|_InterpolatingFunction|_CompiledFunction|_Symbol)},
 numSteps_Integer}@}
 
 
+\subsection{doSmolPrep}
+
+@d doSmolPrepUsage
+@{
+doSmolPrep::usage="doSmolPrep[approx_?VectorQ,iters_Integer,theK_Integer,forErgodicInfo:(_Symbol|_Function|_CompiledFunction),toIg_?VectorQ]"
+@}
+
+@d doSmolPrep
+@{
+doSmolPrep[approx_?VectorQ,iters_Integer,theK_Integer,
+forErgodicInfo:(_Symbol|_Function|_CompiledFunction),toIg_?VectorQ,
+@<linMod@>,
+@<distribSpec@>]:=
+Module[{zPts,ptErg,tfErg,plyErg,iplyErg,dplyErg,bothX0Z0,smolStuff,smolRngErg,sgSpecErg},
+(**)tryEps=0;
+LaunchKernels[];numKern=Length[Kernels[]];
+theName=fNameString[approx,iters,theK,numKern];
+mthName=theName<>".mth";
+bothX0Z0=genBothX0Z0Funcs[linMod];
+{mn,sd,minz,maxz,svd}=ergodicInfo[forErgodicInfo,toIg,1];
+smolStuff=
+{ptErg,tfErg,plyErg,iplyErg,dplyErg}=smolyakInterpolationPrep[approx,{mn,sd,minz,maxz,svd},distribSpec];
+smolRngErg=Transpose[{minz,maxz}];
+sgSpecErg={toIg,smolRngErg,ptErg,tfErg,plyErg,iplyErg,1,approx,
+{mn,sd,minz,maxz,svd}};
+zPts=backXtoZ[ptErg,mn,sd,svd];
+theFullXs=genTestPts[{minz,maxz},30,Nied,mn,sd,svd,toIg];
+{tryEps,numKern,theName,mthName,bothX0Z0,sgSpecErg,zPts,theFullXs}]
+
+
+
+fNameString[approx_?VectorQ,iters_Integer,theK_Integer,numKern_Integer]:=
+Module[{},
+StringReplace[dirNameString[]<>"forBetterRBC-CS-"<>ToString[approx]<>"Iters"<>ToString[iters]<>"theK"<>ToString[theK],{" "->"","{"->"-","}"->"-"}]];
+dirNameString[]:=
+Module[{},
+aDir="resDirGen"<>"-host-"<>$MachineName<>"numKern"<>ToString[numKern]<>"-"<>ToString[Round[AbsoluteTime[]]]<>"/";
+CreateDirectory[aDir]]
+
+@}
 
 \section{Models}
 \subsection{firstRBCTrips}
@@ -2507,7 +2549,7 @@ rhoVal_?NumberQ,
 sigmaVal_?NumberQ]:=
 Module[{},
 @<firstRBCTripsPackage code@>
-{linModFirstRBCTrips,rbcEqnsFirstRBCTrips,firstRBCTripsExactDR,firstRBCTripsExactDRCE,forErgodicInfo,theDistFirstRBCTrips}
+{linModFirstRBCTrips,rbcEqnsFirstRBCTrips,firstRBCTripsExactDR,firstRBCTripsExactDRCE,forErgodicInfo,theDistFirstRBCTrips,{1,3}}
 ]
 End[]
 EndPackage[]
@@ -2526,9 +2568,9 @@ firstRBCGenModel::usage="firstRBCGenModel"
 
 @d firstRBCTripsPackage code
 @{
+@<simpParamSubs@>
 @<exampleInits@>
 @<rbcEqns@>
-@<simpParamSubs@>
 @<ssSolnSubsRE@>
 @<linModFirstRBCTrips@>
 @<exact definitions code@>
@@ -2642,7 +2684,7 @@ qmatSymbRE=Join[zfSymbRE,evcsSymbRE[[{1}]]];
 
 linModFirstRBCCSTrips={hmatSymbRE//N,bmatSymbRE // N, phimatSymbRE // N, 
     fmatSymbRE // N, psiepsSymbRE // N, 
-    psicSymbRE // N, psiz // N,{{4,rbcEqnsBackLookingCS,rbcEqnsBackLookingExpCS}}};
+    psicSymbRE // N, psiz // N,{{7,rbcEqnsBackLookingCS,rbcEqnsBackLookingExpCS}}};
 
 
 @}
@@ -2801,7 +2843,7 @@ Apply[Compile , {
 {cctp1,_Real},{iitp1,_Real},{kktp1,_Real},{lamtp1,_Real},{mu1tp1,_Real},{nltp1,_Real},{thetatp1,_Real},
 {epsVal,_Real}
 },
-(eqnsForNotBind),"RuntimeOptions"->{"RuntimeErrorHandler"->Function[$Failed],"CatchMachineOverflow"->True,"CatchMachineUnderflow"->True}}],(True)&}},
+(eqnsForBind),"RuntimeOptions"->{"RuntimeErrorHandler"->Function[$Failed],"CatchMachineOverflow"->True,"CatchMachineUnderflow"->True}}],(True)&}},
 Function[{aPt,allRes},
 If[And[allRes[[1]]===$Failed,allRes[[2]]===$Failed],Throw[$Failed,"noSolutionFound"]];
 If[allRes[[1]]===$Failed,Flatten[allRes[[2]]],Flatten[allRes[[1]]]]]
@@ -2865,7 +2907,7 @@ sigmaVal_?NumberQ,
 upsilonVal_?NumberQ]:=
 Module[{},
 @<firstRBCCSTripsPackage code@>
-{linModFirstRBCCSTrips,rbcEqnsFirstRBCCSTrips,forErgodicInfoCS,theDistCS}
+{linModFirstRBCCSTrips,rbcEqnsFirstRBCCSTrips,forErgodicInfoCS,theDistCS,{1,2,4,5,6}}
 ]
 End[]
 EndPackage[]

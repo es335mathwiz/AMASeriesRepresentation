@@ -1631,6 +1631,9 @@ getSlopesRSqs::usage="place holder"
 varyParamsForSlSq::usage="place holder"
 assessSimplestErrPrediction::usage="place holder"
 assessNextSimplestErrPrediction::usage="place holder"
+varyParamsGenMods::usage="varyParamsGenMods[paramRanges_?MatrixQ,modGenerator:(_Function|_InterpolatingFunction|_CompiledFunction|_Symbol),numParamPts_Integer]"
+doRefModel::usage="doRefModel[approx_?VectorQ]"
+doGuessToRefModel::usage="doGuessToRefModel[aGuessFunc:{(_Function|_InterpolatingFunction|_CompiledFunction|_Symbol)"
 
 @}
 
@@ -1741,6 +1744,40 @@ With[{testPts=genTestPts[paramRanges,numParamPts,
 Nied]},
 Map[getSlopesRSqs[#[[1]],#[[2]],1,#[[3]],#[[4]],bothXZFuncs,
 modGenerator,numPts,theK,opts]&,testPts]]
+
+
+varyParamsGenMods[paramRanges_?MatrixQ,
+modGenerator:(_Function|_InterpolatingFunction|_CompiledFunction|_Symbol),
+numParamPts_Integer]:=
+With[{testPts=genTestPts[paramRanges,numParamPts,Nied]},
+Map[Apply[modGenerator,#]&,testPts]]
+
+
+
+doRefModel[approx_?VectorQ]:=
+Module[{linModFirstRBCTrips,rbcEqnsFirstRBCTrips,firstRBCTripsExactDR,firstRBCTripsExactDRCE,forErgodicInfo,theDistFirstRBCTrips,toIg,
+tryEps,numKern,theName,mthName,bothX0Z0,sgSpecErg,zPts,theFullXs},
+{linModFirstRBCTrips,rbcEqnsFirstRBCTrips,firstRBCTripsExactDR,firstRBCTripsExactDRCE,forErgodicInfo,theDistFirstRBCTrips,toIg}=
+(*alphaVal,ddVal,deltaVal,etaVal,rhoVal,sigmaVal,upsilonVal*)
+firstRBCTrips`firstRBCGenModel[0.36,0.95,1,0.95,0.01];
+{tryEps,numKern,theName,mthName,bothX0Z0,sgSpecErg,zPts,theFullXs}=
+doSmolPrep[approx,999,999,forErgodicInfo,toIg,linModFirstRBCTrips,theDistFirstRBCTrips];
+{rbcEqnsFirstRBCTrips,theFullXs,firstRBCTripsExactDR,sgSpecErg}]
+
+doGuessToRefModel[aGuessFunc:{(_Function|_InterpolatingFunction|_CompiledFunction|_Symbol),
+(_Function|_InterpolatingFunction|_CompiledFunction|_Symbol)},
+theK_Integer,@<linMod@>,
+{@<rawTriples@>,
+theFullXs_?MatrixQ,
+firstRBCTripsExactDR:(_Function|_InterpolatingFunction|_CompiledFunction|_Symbol),@<smolGSpec@>}]:=
+Module[{},
+{tm,ig}=Timing[
+theRes=parallelNestGenericIterREInterp[genFRExtFunc,linMod,
+{aGuessFunc,theK},triples,smolGSpec,smolyakInterpolation,{},theFullXs]];
+theRes]
+
+
+
 
 
 
@@ -2591,10 +2628,10 @@ rbcEqnsNotBinding={
 lam[t] -CRRAUDrv[cc[t],eta],
 cc[t] + II[t]-((theta[t])*(kk[t-1]^alpha)),
 nlPart[t] -((lam[t])*theta[t]),
-theta[t]-(N[E]^(eps[theta][t]))*(theta[t-1]^rho) ,
 (lam[t]) -(alpha*delta*nlPart[t+1]/(kk[t]^(1-alpha))) -lam[t+1]*delta*(1-dd),
-II[t] -(kk[t]-(1-dd)*kk[t-1])+mu1[t]-mu1[t+1]*delta*(1-dd),
-mu1[t]
+II[t] -(kk[t]-(1-dd)*kk[t-1]),
+mu1[t],
+theta[t]-(N[E]^(eps[theta][t]))*(theta[t-1]^rho)
 };
 
 
@@ -2808,10 +2845,10 @@ preRbcEqnsBinding={
 lam[t] -CRRAUDrv[cc[t],eta],
 cc[t] + II[t]-((theta[t])*(kk[t-1]^alpha)),
 nlPart[t] -((lam[t])*theta[t]),
-theta[t]-(N[E]^(eps[theta][t]))*(theta[t-1]^rho) ,
 (lam[t]) -(alpha*delta*nlPart[t+1]/(kk[t]^(1-alpha)))-lam[t+1]*delta*(1-dd)+mu1[t]-mu1[t+1]*delta*(1-dd),
 II[t] -(kk[t]-(1-dd)*kk[t-1]),
-mu1[t]
+II[t] - theProduct,
+theta[t]-(N[E]^(eps[theta][t]))*(theta[t-1]^rho)
 };
 
 
@@ -2834,7 +2871,7 @@ Apply[Compile , {
 },
 (eqnsForNotBind),"RuntimeOptions"->{"RuntimeErrorHandler"->Function[$Failed],"CatchMachineOverflow"->True,"CatchMachineUnderflow"->True}}],
 Function[{aPt,aRes},
-If[aRes===$Failed,False,And[aRes[[1,1]]>0,aRes[[2,1]]>(theProduct)]]]},
+If[aRes===$Failed,False,And[aRes[[1,1]]>0,aRes[[2,1]]>=(theProduct)]]]},
 {True&,
 Apply[Compile , {
 {

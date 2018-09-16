@@ -1693,36 +1693,27 @@ forRegs=Map[Transpose[{Flatten[pvals[[All,#]]],Flatten[avals[[All,#]]]}]&,
 Range[Length[pvals[[1]]]]]},
 With[{mnsStdevs=
 Map[{Mean[(#[[1]]-#[[2]])/#[[2]]],StandardDeviation[(#[[1]]-#[[2]])/#[[2]]]}&,forRegs]},
-Print[{"assess:",mnsStdevs}];
 With[{lmfs=Map[LinearModelFit[#,xx,xx]&,forRegs]},
 {mnsStdevs,lmfs}]]]]]
 
 Options[getSlopesRSqs]={"epsCalc"->"zero","useTail"->False}
 getSlopesRSqs[
-alphaVal_?NumberQ,
-deltaVal_?NumberQ,
-etaVal_?NumberQ,
-rhoVal_?NumberQ,
-sigmaVal_?NumberQ,
 bothXZFuncs:{
 xzFuncs:(_Function|_InterpolatingFunction|_CompiledFunction|_Symbol),
 XZFuncs:(_Function|_InterpolatingFunction|_CompiledFunction|_Symbol)},
-modGenerator:(_Function|_InterpolatingFunction|_CompiledFunction|_Symbol),
-numPts_Integer,theK_Integer,
+@<linMod@>,
+numEps_Integer,toIg_?VectorQ,approx_?VectorQ,theK_Integer,
 opts:OptionsPattern[]]:=
-Module[{modData=modGenerator[alphaVal,deltaVal,1,rhoVal,sigmaVal],
+Module[{refModData=doRefModel[approx],
 lms,diffs,
 resids,rsqs,bfs,mn,sd,minz,maxz,svd,
-linModFirstRBCTrips,rbcEqnsFirstRBCTrips,firstRBCTripsExactDR,
-firstRBCTripsExactDRCE,forErgodicInfo,theDistFirstRBCTrips},
-{linModFirstRBCTrips,rbcEqnsFirstRBCTrips,firstRBCTripsExactDR,
-firstRBCTripsExactDRCE,forErgodicInfo,theDistFirstRBCTrips}=modData;
-numEps=Length[modData[[-1,1]]];
-{mn,sd,minz,maxz,svd}=ergodicInfo[forErgodicInfo,{1,3},numEps];
-theFullXs=genTestPts[{minz,maxz},numPts,Nied,mn,sd,svd,{1,3}];
+rbcEqnsFirstRBCTrips,firstRBCTripsExactDR,
+firstRBCTripsExactDRCE,forErgodicInfo,theDistFirstRBCTrips,theFullXs},
+{rbcEqnsFirstRBCTrips,theFullXs,firstRBCTripsExactDR,sgSpecErg}=
+refModData;
 {diffs,lms}=
 assessNextSimplestErrPrediction[{rbcEqnsFirstRBCTrips,theFullXs,1,
-linModFirstRBCTrips,firstRBCTripsExactDR},bothXZFuncs,theK,opts];
+linMod,firstRBCTripsExactDR},bothXZFuncs,theK,opts];
 bfs=Through[lms["BestFitParameters"]];
 pvs=Through[lms["ParameterPValues"]];
 evs=Through[lms["EstimatedVariance"]];
@@ -1734,16 +1725,28 @@ resids=Through[lms["FitResiduals"]];
 
 Options[varyParamsForSlSq]={"epsCalc"->"zero","useTail"->False}
 varyParamsForSlSq[paramRanges_?MatrixQ,
-bothXZFuncs:{
-xzFuncs:(_Function|_InterpolatingFunction|_CompiledFunction|_Symbol),
-XZFuncs:(_Function|_InterpolatingFunction|_CompiledFunction|_Symbol)},
 modGenerator:(_Function|_InterpolatingFunction|_CompiledFunction|_Symbol),
-numPts_Integer,numParamPts_Integer,theK_Integer,
+numParamPts_Integer,approx_?VectorQ,theK_Integer,
 opts:OptionsPattern[]]:=
-With[{testPts=genTestPts[paramRanges,numParamPts,
-Nied]},
-Map[getSlopesRSqs[#[[1]],#[[2]],1,#[[3]],#[[4]],bothXZFuncs,
-modGenerator,numPts,theK,opts]&,testPts]]
+Module[{rbcEqnsFirstRBCTrips,theFullXs,firstRBCTripsExactDR,sgSpecErg},
+With[{theModsFull=varyParamsGenMods[paramRanges,modGenerator,numParamPts]},
+With[{theMods=Map[genBothX0Z0Funcs,Map[First,theModsFull]]},
+{rbcEqnsFirstRBCTrips,theFullXs,firstRBCTripsExactDR,sgSpecErg}=
+doRefModel[approx];
+numEps=Length[theModsFull[[1,-2]]];
+toIg=theModsFull[[1,-1]];
+someRes=ParallelTable[
+parallelNestGenericIterREInterp[genFRExtFunc,linModNow,
+{bFuncs,theK},rbcEqnsFirstRBCTrips,sgSpecErg,smolyakInterpolation,{},
+theFullXs],{bFuncs,theMods},{linModNow,Map[First,theModsFull]}];
+With[{thePreds=ParallelTable[getSlopesRSqs[bFuncs,linModNow,numEps,toIg,approx,
+theK,opts],
+{bFuncs,theMods},{linModNow,Map[First,theModsFull]}],
+morePreds=ParallelTable[getSlopesRSqs[bFuncs,linModNow,numEps,toIg,approx,
+theK,opts],
+{bFuncs,Flatten[Flatten[someRes,1][[All,4]],1]},{linModNow,Map[First,theModsFull]}]
+},
+{someRes,morePreds,thePreds}]]]]
 
 
 varyParamsGenMods[paramRanges_?MatrixQ,
@@ -2313,7 +2316,8 @@ StringReplace[dirNameString[]<>"forBetterRBC-CS-"<>ToString[approx]<>"Iters"<>To
 dirNameString[]:=
 Module[{},
 aDir="resDirGen"<>"-host-"<>$MachineName<>"numKern"<>ToString[numKern]<>"-"<>ToString[Round[AbsoluteTime[]]]<>"/";
-CreateDirectory[aDir]]
+If[Not[FileExistsQ[aDir]],
+CreateDirectory[aDir],aDir]]
 
 @}
 

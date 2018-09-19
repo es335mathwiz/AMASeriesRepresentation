@@ -223,7 +223,7 @@ Join[xArgsInit,zArgsInit]]},If[Not[FreeQ[frRes,FindRoot]],
 Throw[$Failed,"genFRExtFunc:FindRoot"]];
 Transpose[{Flatten[Join[xArgs,zArgs]]/.frRes}]]]@}
 
-\
+
 
 @d evaluateTripleUsage
 @{
@@ -392,7 +392,7 @@ genLilXkZkFunc[linMod,fCon]]]
 
 @d genZsForFindRoot
 @{
-
+Print["should update genZsForFindRoot to use conditional expectation instead of using hmat********************************"];
 genZsForFindRoot[linMod:{theHMat_?MatrixQ,BB_?MatrixQ,
 phi_?MatrixQ,FF_?MatrixQ,psiEps_?MatrixQ,psiC_?MatrixQ,psiZ_?MatrixQ,
 backLookingInfo:{{_Integer,backLooking_,backLookingExp_}...}},
@@ -2674,7 +2674,7 @@ ssEqnSubs=
 
 rbcEqnsNotBindingSubbed=((rbcEqnsNotBinding/.paramSubs)/.eps[theta][t]->0);
 theVars=Cases[Variables[forFR=(rbcEqnsNotBindingSubbed/.ssEqnSubs)],_Symbol];
-frArg=MapThread[Prepend[#1,#2]&,{{{.3604,.1,2},{.187,-0.35,.35},{.187,0.1,1.9},
+frArg=MapThread[Prepend[#1,#2]&,{{{.3604,.1,2},{.187,-0.35,.35},{.187,0.1,3.9},
  {0,-9.,9.},{1,-10.03,10.},{2.7741,0.001,9.},{1.0001,.8,1.2}},theVars}];
 ssFRSolnSubs=Prepend[Chop[FindRoot[forFR,frArg(*,MaxIterations->1000*)]],IIss->0];
 
@@ -2756,16 +2756,16 @@ nxtK[lastK_,thNowVal_]:=((alpha*delta))*thNowVal*lastK^(alpha)/.simpParamSubs;
 yNow[kLag_,thNowVal_]:=thNowVal*kLag^(alpha)/.simpParamSubs;
 anExpRE=Expectation[E^ep,ep\[Distributed] NormalDistribution[0,sigma]/.simpParamSubs];
 anExpPF=1;
-Off[Solve::ifun];
-thSubsRE=Flatten[Solve[theta==anExpRE*thNow[theta,0],theta][[2]]];
-kSSSubRE=Flatten[Solve[nxtK[kk,theta/.thSubsRE]==kk,kk][[-1]]];
+Off[NSolve::ifun];
+thSubsRE=Flatten[NSolve[theta==anExpRE*thNow[theta,0],theta,Reals][[2]]];
+kSSSubRE=Flatten[NSolve[nxtK[kk,theta/.thSubsRE]==kk,kk,Reals][[-1]]];
 cSSSubRE=cc->(yNow[kk/.kSSSubRE,theta/.thSubsRE]-kk/.kSSSubRE);
 nlPartSSSubRE=(nlPart->(nlPartRHS/.xxxx_[t]->xxxx))//.Join[thSubsRE,Append[kSSSubRE,cSSSubRE]];
 ssSolnSubsRE=Flatten[{thSubsRE,kSSSubRE,cSSSubRE,nlPartSSSubRE}];
 (*Print["RE done now PF"];*)
-thSubsPF=Flatten[Solve[theta==theta^rho,theta]][[1]];
-kSSSubPF=Flatten[Solve[nxtK[kk,theta/.thSubsPF]==kk,kk]][[-1]];
-On[Solve::ifun];
+thSubsPF=Flatten[NSolve[theta==theta^rho,theta,Reals]][[1]];
+kSSSubPF=Flatten[NSolve[nxtK[kk,theta/.thSubsPF]==kk,kk,Reals]][[-1]];
+On[NSolve::ifun];
 cSSSubPF=cc->(yNow[kk/.kSSSubPF,theta/.thSubsPF]-kk/.kSSSubPF);
 nlPartSSSubPF=(nlPart->(nlPartRHS/.xxxx_[t]->xxxx))//.{kSSSubPF,cSSSubPF,thSubsPF};
 ssSolnSubsPF=Flatten[{thSubsPF,kSSSubPF,cSSSubPF,nlPartSSSubPF}];

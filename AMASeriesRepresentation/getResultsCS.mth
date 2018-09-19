@@ -16,7 +16,7 @@ upsilonVal_?NumberQ
 doCaseCS[approx_?VectorQ,kForSeries_Integer,opts:OptionsPattern[]]:=
 Module[{ptErg,tfErg,plyErg,iplyErg,dplyErg,smolRng,
 linModFirstRBCTrips,rbcEqnsFirstRBCTrips,firstRBCTripsExactDR,firstRBCTripsExactDRCE,forErgodicInfo,theDistFirstRBCCSTrips,toIg,mn,sd,minz,maxz,svd,theFullXs,xz0,XZ0,sgSpec,theRes},
-{linModFirstRBCCSTrips,rbcEqnsFirstRBCCSTrips,forErgodicInfoCS,theDistFirstRBCCSTrips}=firstRBCCSGenModel[
+{linModFirstRBCCSTrips,rbcEqnsFirstRBCCSTrips,forErgodicInfoCS,theDistFirstRBCCSTrips,theig}=firstRBCCSGenModel[
 .36,
 .1,
 .95,
@@ -62,7 +62,7 @@ doCaseCSTrad[approx_?VectorQ,
 XZ0:(_Function|_CompiledFunction|_Symbol)},opts:OptionsPattern[]]:=
 Module[{ptErg,tfErg,plyErg,iplyErg,dplyErg,smolRng,
 linModFirstRBCTrips,rbcEqnsFirstRBCTrips,firstRBCTripsExactDR,firstRBCTripsExactDRCE,forErgodicInfo,theDistFirstRBCCSTrips,toIg,mn,sd,minz,maxz,svd,theFullXs,sgSpec,theRes},
-{linModFirstRBCCSTrips,rbcEqnsFirstRBCCSTrips,forErgodicInfoCS,theDistFirstRBCCSTrips}=firstRBCCSGenModel[
+{linModFirstRBCCSTrips,rbcEqnsFirstRBCCSTrips,forErgodicInfoCS,theDistFirstRBCCSTrips,theig}=firstRBCCSGenModel[
 .36,
 .1,
 .95,
@@ -131,7 +131,7 @@ etaVal_?NumberQ,
 rhoVal_?NumberQ,
 sigmaVal_?NumberQ,
 upsilonVal_?NumberQ]:=
-{linModFirstRBCCSTrips,rbcEqnsFirstRBCCSTrips,forErgodicInfoCS,theDistFirstRBCCSTrips}=firstRBCCSGenModel[alphaVal,ddVal,deltaVal,etaVal,rhoVal,sigmaVal,upsilonVal];
+{linModFirstRBCCSTrips,rbcEqnsFirstRBCCSTrips,forErgodicInfoCS,theDistFirstRBCCSTrips,theig}=firstRBCCSGenModel[alphaVal,ddVal,deltaVal,etaVal,rhoVal,sigmaVal,upsilonVal];
 
 
 notImaginaryQ[{linModFirstRBCCSTrips:
@@ -186,7 +186,7 @@ And[cc>0,kk>0]
 gstrad=Flatten[Position[goodSolnQ/@ appsTrad,True]]
 expgstrad=ReplacePart[Table[{"F"},{30}],Transpose[{gstrad}] ->{"T"}]
 
-Export["paramsForTest.pdf",(ArrayFlatten[{{exptvals,someParamsForTest,expgstrad}}])//TableForm]
+Export["newParamsForTest.pdf",(ArrayFlatten[{{exptvals,someParamsForTest,expgstrad}}])//TableForm]
 
 cc[t-1]
 II[t-1]

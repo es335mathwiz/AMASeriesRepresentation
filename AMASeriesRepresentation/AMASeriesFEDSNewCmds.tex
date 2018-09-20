@@ -14,7 +14,7 @@
 \usepackage{tikz-cd}
 \usepackage{amsmath}
 \usepackage[most]{tcolorbox}
-%\usepackage[margin=1.0in]{geometry}
+\usepackage[margin=1.0in]{geometry}
 %\usepackage{draftwatermark}
 \usepackage{color, colortbl}
 
@@ -67,7 +67,7 @@
 \newcommand{\posInt}{{\mathcal{N}^+}}
 \newcommand{\Rn}[1]{{\mathcal{R}^{#1}}}
 \newcommand{\numX}{{N_x}}
-\newcommand{\numZ}{{N_z}}
+\newcommand{\numZ}{{N_x}}
 \newcommand{\numEps}{{N_\epsilon}}
 \newcommand{\numR}{{N_r}}
 \newcommand{\numIters}{{K}}
@@ -124,6 +124,7 @@ B x_{t-1}+ \phi \psi_\epsilon\epsilon + (I - F)^{-1} \phi \psi_c
 (\Rn{({\numX+\numZ})})}}
 
 
+\newcommand{\bothFuncs}{\mathbb{H}}
 \newcommand{\xzFunc}{{{\gamma}}}
 \newcommand{\xzFuncSig}{{(\Rn{\numX+\numEps})\rightarrow
 (\Rn{({\numX+\numZ})})}}
@@ -161,11 +162,16 @@ B x_{t-1}+ \phi \psi_\epsilon\epsilon + (I - F)^{-1} \phi \psi_c
 \newcommand{\preGate}{\mathbf{b}}
 \newcommand{\postGate}{\mathbf{c}}
 \newcommand{\lastGate}{\mathbf{d}}
-\newcommand{\eqnFuncSysIExpl}[1]{\{(\mathbf{b}_{#1},\eqnFunc_{#1}\allArgs=0,\mathbf{c}_{#1},\mathbf{d}_{#1} \}}
+\newcommand{\eqnFuncSysIExpl}[1]{\{(\mathbf{b}_{#1},\eqnFunc_{#1}\allArgs=0,\mathbf{c}_{#1} )\}}
 \newcommand{\eqnFuncSysI}[1]{\mathbb{C}_{#1}}
-\newcommand{\eqnFuncSys}{\{\eqnFuncSysI{1},\ldots,\eqnFuncSysI{M}\}}
+\newcommand{\eqnFuncSys}{\{\{\eqnFuncSysI{1},\ldots,\eqnFuncSysI{M}\},\mathbf{d}\}}
+\newcommand{\theD}{\mathbf{d}}
+\newcommand{\eqnFuncSysNoD}{\{\eqnFuncSysI{1},\ldots,\eqnFuncSysI{M}\}}
 \newcommand{\eqnErrs}{{{m}_e}}
 \newcommand{\eqnFuncSig}{{\Rn{3\numX+\numEps+\numZ}\rightarrow\Rn{\numX}}}
+\newcommand{\theZsNow}{\mathcal{Z}}
+
+\newcommand{\modEqnArgsNow}{\mathcal{X}}
 
 
 
@@ -323,11 +329,14 @@ M_\varpi^{det}(#1,#2,\epsilon_#4)E_#4(#3)
 
 \newcommand{\fSum}{\mathcal{F}}
 \newcommand{\modArgs}{\mathbb{X}}
-
-\newcommand{\aSmolPoly}{p(x,\epsilon)}
+\newcommand{\smolSpec}{\mathbb{S}}
+\newcommand{\aSmolPoly}[1]{p_{#1}(x,\epsilon)}
+\newcommand{\aSmolPolyCE}[1]{P_{#1}(x)}
 \newcommand{\smolRngs}{\{(\underbar{x}_1,\bar{x}_1),\ldots,(\underbar{x}_L,\bar{x}_L),(\underbar{$\epsilon$}_1,\bar{\epsilon}_1),\ldots,(\underbar{$\epsilon$}_L,\bar{\epsilon}_K)\}}
 \newcommand{\distribSpec}{\{f_1,\ldots,f_K\}}
 
 
 %
 \newcommand{\eulerE}{\mathbf{e}}
+
+

@@ -1,4 +1,7 @@
 \documentclass[12pt]{article}
+\listfiles
+\usepackage{qtree}
+%C60 , C62, C63, C65
 %pdflatex --shell-escape AMASeriesFEDS.tex 
 
 % \usepackage[authoryear]{natbib}
@@ -14,11 +17,13 @@
 
 
 
-\author{Gary S. Anderson\thanks{The analysis and conclusions set forth are those of the author and do not indicate concurrence by other members of the research staff or the Board of Governors. I would like to thank Luca Guerrieri, Christopher Gust, Hess Chung, Benjamin Johannsen  and Robert Tetlow for their comments and suggestions.  And special thanks to Luca Guerrieri for first noticing that the series representation formulation could lead to an error bound for model solutions. Any remaining errors are mine alone.}}
+\author{Gary S. Anderson\thanks{The analysis and conclusions set forth are those of the author and do not indicate concurrence by other members of the research staff or the Board of Governors. I would like to thank Luca Guerrieri, Christopher Gust, Hess Chung, Benjamin Johannsen  and Robert Tetlow for their comments and suggestions.  I would also like to thank Stephanie Harrington for her help with document preparation.
+%And special thanks to Luca Guerrieri for first noticing that the series representation formulation could lead to an error bound for model solutions. Any remaining errors are mine alone.}
+}}
 
-\title{A New Series Representation for Robustly Computing
+\title{Reliably Computing
   Nonlinear Dynamic Stochastic Model Solutions: 
-A New Solution Algorithm and Error Formulas } %(Better?, Coherent? Comprehensive? General? )
+An Algorithm with Error Formulas } %(Better?, Coherent? Comprehensive? General? )
 
 \date{\today: \currenttime}
 \begin{document}
@@ -30,35 +35,16 @@ A New Solution Algorithm and Error Formulas } %(Better?, Coherent? Comprehensive
 \maketitle
 
 \begin{abstract}
-This paper provides a technique for solving discrete time  nonlinear dynamic stochastic
-infinite-horizon economies with bounded-time-invariant solutions.
-In addition, the paper provides 
-formulae for evaluating the accuracy of proposed solutions
-and presents
-a robust algorithm for improving the accuracy of those solutions.
-The error bounds apply for assessing the accuracy 
-of  proposed bounded time invariant decision rules 
-regardless of their source.
-
-A straightforward applications of a  new series representation
-for bounded discrete time series, appropriate for
-a very broad class of dynamic stochastic models, delivers these results.
-% This error bound calculation accounts for the impact of errors in any of the equations in the system.
-Using the series representation, the paper 
-augments a traditional solution strategty with an additional set of
+This paper provides a technique for representing  discrete time  nonlinear dynamic stochastic time invariant maps.
+\marginpar{Address Bullets in Other Computing? Section}
+Using this new series representation, the paper 
+augments a traditional solution strategy with an additional set of
 constraints thereby enhancing algorithm robustness and improving accuracy.
-The technique can readily accommodate models with multiple invariant spaces
-and, like the error bound formula,  is appropriate
-for models with occasionally binding constraints and regime switching. 
-
-
-The  paper uses 
-%a particular implementation of the algorithm to
-%demonstrate how to use the 
-%series representation in conjunction with 
-Smolyak polynomial function approximation  
-to eliminate the need for numerical integration during the solution updates 
-and to exploit the high degree of parallelism available in the algorithm.
+In addition, it provides general
+formulae for evaluating the accuracy of proposed solutions.
+The technique can readily accommodate models with occasionally binding constraints and regime switching. 
+The  algorithm  uses
+Smolyak polynomial function approximation  in a way which makes it possible to exploit a high degree of parallelism.
 
 
 
@@ -79,11 +65,11 @@ infinite-horizon economies with bounded-time-invariant solutions.
 It describes how to obtain decision rules satisfying a system of 
 first-order conditions, ``Euler Equations'',  and how to assess their accuracy.\footnote{This series 
 representation should also prove useful for applications based on
-value function iteration but I will defer treating this topic for
-a future work.
+value function iteration but I  defer treating this topic for
+ future work.
 }
- For an overview of solution techniques,
-see \citep{judd92,Christiano2000,doraszelskiy04,gaspar97,Judd2014,marcet.lorenzoni99,juddGSSA2011,maliarmovingbounds,RePEc:bny:wpaper:0058}.
+ For an overview of techniques for solving nonlinear models,
+see \citep{judd92,Christiano2000,doraszelskiy04,gaspar97,Judd2014,marcet.lorenzoni99,juddGSSA2011,maliarmovingbounds,RePEc:bny:wpaper:0058,JuddIntegrals}.
 
 
 This new series representation for bounded time series, adapted from \citep{anderson10},
@@ -92,39 +78,39 @@ This new series representation for bounded time series, adapted from \citep{ande
 %\expct{ x_{t+1}\tArg} =B x\tArg  + (I - F)^{-1} \phi \psi_c+ \sum_{\sForSum =1}^\infty F^{\sForSum-1} \phi \ZWOarg_{t+\nu}\tArg.
     \end{gather*}
  makes it possible to  construct a series
-    representation for any bounded time invariant discrete map.\footnote{As yet, the author has found no comparable use of a
+    representation for any bounded time invariant discrete time map. As yet, the author has found no comparable use of a
 linear reference dynamical system for  conveniently transforming
 one bounded infinite dimensional series into another.
-}
-    % and its conditional expectation function:
+
+
     It turns out that this representation provides a way to use
-    ``Euler equation errors'' to
-    bound the magnitude of the    approximation error in components of 
+    Euler equation errors to
+    approximate the magnitude of the    approximation error in components of 
     decision rules.
-    Others have also studied error bounds for dynamic stochastic models.\cite{judd2017lower,santos2005accuracy,Santos2000accuracy} This paper provides a more precise bound 
+\footnote{    Others have also studied approximation error for dynamic stochastic models\cite{judd2017lower,santos2005accuracy,Santos2000accuracy}.} This paper provides  approximation
     explicitly relating the magnitude of components of the
-    ``Euler equation errors'' to the magnitude of components of
+    Euler equation errors to the magnitude of components of
     errors in the decision rule 
 without resort to statistical inference or ancillary simulations.
 
     In addition, the series representation provides exploitable
     constraints on model solutions that enhance  
     algorithm reliability and improve solution accuracy.
-    The series representation readily accommodates models with
+    The series representation readily accommodates models even with
     multiple ergodic sets
-    thereby providing a robust solution method for a wide class of models.
+    thereby providing a robust solution method for a wide class of models including models with occasionally binding constraints and/or regime switching.
 
 %    $\ZWOarg_{t+\nu}$ that satisfy the model equations thereby
 
 The numerical implementation of the algorithm 
 builds upon the work of
-\citep{juddGSSA2011}.
+\citep{juddGSSA2011,JuddIntegrals}.
 In particular it uses
-the an-isotropic Smolyak Method and the adaptive
+the an-isotropic Smolyak Method, the adaptive
 parallelotope method\citep{Judd2014}
 and precomputes all integrals required for the conditional expectations.
 The algorithm should scale well to large models as many 
-of the algorithm's components can be computed in parallel.
+of the algorithm's components can be computed in parallel with limited amounts of information flowing between compute nodes.
 
 
 
@@ -136,10 +122,10 @@ of the algorithm's components can be computed in parallel.
 
 
 
-
+The paper is organized as follows.
 Section \ref{sec:newseries} presents a useful new series representation for any bounded time series.
 Section \ref{sec:extToMaps} shows how to apply this series representation to time invariant maps.
-Section \ref{sec:solnerrorbounds} provides formulae for computing dynamic stochastic model error bounds for proposed  solutions.
+Section \ref{sec:solnerrorbounds} provides formulae for approximating dynamic stochastic model error in proposed  solutions.
 Section \ref{sec:algoforsoln} presents a new solution algorithm for improving proposed solutions.
 %Section \ref{sec:future} discusses directions for future work.
 Section \ref{sec:conc} concludes.
@@ -148,8 +134,14 @@ Section \ref{sec:conc} concludes.
 \label{sec:newseries}
 Since \cite{blanchard80} numerous authors have developed solution algorithms and formulae for solving linear rational expectations models.  It turns out that
 the solutions associated with these linear 
-saddle point models can play a very useful role in characterizing the 
-solutions for highly nonlinear models.
+saddle point models, by quantifying the potential 
+impact of anticipated future shocks,
+ can play a new and somewhat surprising role 
+in characterizing the 
+solutions for highly nonlinear models. 
+This section describes the relationship 
+between {\em linear reference models} and general bounded time series in route to
+discussing how these calculations can be useful for representing time invariant maps.
 \subsection{Linear Reference Models and a Formula for  ``Anticipated Shocks''}
 \label{sec:linref}
 
@@ -159,7 +151,7 @@ solutions for highly nonlinear models.
 For any linear homogeneous 
 $L$ dimensional deterministic system that produces  a unique stable solution, 
 \begin{gather*}
-  	 H_{-1} x_{t-1} + H_0 x_t + H_1 x_{t+1}=0
+  	 H_{-1} x_{t-1} + H_0 x_t + H_1 x_{t+1}=0,
 \end{gather*}
 inhomogeneous solutions 
 \begin{gather}
@@ -169,7 +161,7 @@ x_t=B x_{t-1} + \phi \psi_\epsilon \epsilon + (I - F)^{-1} \phi \psi_c\label{hSy
 \intertext{where}
 \phi= (H_0 +H_1 B)^{-1}  \text{ and } \,\,F=-\phi H_1.\citep{anderson10}
 \end{gather}
-It will be useful to collect the components of this solution for use later in the paper. We will use these matrices to construct a series representation for any bounded path.
+It will be useful to collect the components of this solution for use later in the paper. In Section \ref{sec:almostarbitrary}, I will use these matrices  to construct a series representation for any bounded path.
 Define $\linMod \equiv \linModMats$.
 
 
@@ -186,7 +178,7 @@ Define $\linMod \equiv \linModMats$.
 %\begin{tcolorbox}[ams gather]
 
 \begin{theorem}
-Consider an arbitrary, but bounded path
+Consider any bounded discrete time path
  \begin{gather}
    \xWOarg_t \in{R^L}\,\text{ with }\,\infNorm{\xWOarg_t}  \le \overline{\mathcal{X}}\,\,\,\,\,\forall t> 0 \label{aBPath}.
  \end{gather}
@@ -214,12 +206,15 @@ See \citep{anderson10},
 \end{myProof}
 
 	 Consequently, given a bounded time series \refeq{aBPath},
-and a stable linear homogeneous system like \refeq{hSystem},
+and a stable linear homogeneous system,
 one can easily compute a corresponding series representation like
 \refeq{theSeries} for $x_t$.
 Interestingly, the linear model, $H$, the  constant term $\psi_c$ and the
 impact of the stochastic shocks $\psi_\epsilon $ can  be 
-chosen rather arbitrarily -- the only constraints being the existence of a saddle-point solution for the linear system and that z-values fall in the row space of $H_1$.  
+chosen rather arbitrarily -- the only constraints being the existence of a saddle-point solution for the linear system and that all z-values fall in the row space of $H_1$.  
+Further, note that since the eigenvalues of $F$ are all less than one in magnitude, the formula supports the intuition that far distant shocks
+ influence current conditions less than  imminent shocks.
+
 %The formula will provide a series  for any $L$ dimensional $\linMod$.
 
 
@@ -227,14 +222,15 @@ chosen rather arbitrarily -- the only constraints being the existence of a saddl
 % \footnote{$\psi_c$ full rank provides a sufficient condition, but not necessary condition.}
 The
 transformation $ {\{ x_{t}, x_{t}, x_{t+1},x_{t+2}\ldots\}} \rightarrow \linMod(x_{t-1},\epsilon_t) \rightarrow{\{ z_{t}, z_{t+1}, z_{t+2},\ldots\}} $ is invertible. $ {\{ z_{t}, z_{t+1}, z_{t+2},\ldots\}} \rightarrow \linMod(x_{t-1},\epsilon_t)^{-1} \rightarrow{\{ x_{t}, x_{t}, x_{t+1},x_{t+2}\ldots\}} $ and the inverse can be interpreted as giving the impact of ``fully anticipated future shocks'' on the path of $x_t$  in a linear perfect foresight model.  
-Note that the reference model is deterministic and the $z_t\tArg$ functions account for the stochastic nature of the model.
- The formula supports the intuition that far distant shocks
- influence current conditions less than  imminent shocks.
+Note that the reference model is deterministic, so that 
+ the $z_t\tArg$ functions will 
+fully account for any stochastic aspects encountered in the models I  analyze.
 
 A key feature to note is that the series representation can accommodate arbitrarily complex time series trajectories, so long as these trajectories are bounded.
 Later, this observation will give us some confidence in the 
-robustness of the algorithms described in section 
-\ref{sec:unknown-solutions} for constructing series 
+robustness of the algorithms 
+%described in section \ref{sec:unknown-solutions} for 
+constructing series 
 representations for unknown families of functions 
 satisfying complicated systems of dynamic non-linear equations.
 
@@ -245,12 +241,16 @@ satisfying complicated systems of dynamic non-linear equations.
 Consider the following matrix constructed from ``almost'' arbitrary coefficients
 \begin{gather}
   \begin{bmatrix}
-H_{-1}&H_{0}&H_{1} 
+H_{-1}&H_{0}&H_{1} \label{linRef}
   \end{bmatrix}=
 \vcenter{\hbox{\includegraphics{refHmat.pdf}}}\intertext{with $\psi_c=\psi_\epsilon=0, \,\,  \psi_z=I$.
-These coefficients are not completely arbitrary merely because the series 
-representation requires that the linear model
-has a unique stable solution.\footnote{I have chosen $H_1$ full rank to span the space for the 3 arbitrary independent $z_t$ time series.} The solution for this system is
+I have chosen these coefficients so that 
+the linear model has a unique stable solution and, since $H_1$ is full rank,
+its column space will span the column space for all non zero values for $z_t$. 
+The flexibility in choosing $\linMod$ will 
+become more important in the context below where we must 
+choose a  linear reference model in a context where we may have 
+little guidance about what might make a good choice.  It turns out that the algorithm is very forgiving about the choice of $\linMod$.  The solution for this system is
 }
   B=
 \vcenter{\hbox{\includegraphics{refBmat.pdf}}}\\
@@ -262,18 +262,18 @@ F=
 
 
 
-The existence of a series 
-representation requires only the $H_1$ spanning condition and the requirement that the state values along the 
-paths remain bounded.  For example, consider the following three
-bounded families of time series paths:
+It is straightforward to apply \ref{theSeries} to  the following three
+bounded families of time series paths 
 \begin{gather}
   x_{1,t}=\frac{\someNorm{x_{t-1}}}{{1+\someNorm{\epsilon_{t}}}} D_\pi(t) \intertext{where $D_\pi(t)$ gives the t-th digit of $\pi$}
 x_{2,t}=\frac{\someNorm{x_{t-1}}}{({1+\someNorm{\epsilon_{t}}})^2} (-1)^t\\
-x_{3,t}=\epsilon_t \intertext{and the $\epsilon_t$ are a sequence of pseudo random draws from the uniform distributions $\mathcal{U}(-4,4)$ produced subsequent to the selection of a random seed.} randomseed(\someNorm{x_{t-1}}+\someNorm{\epsilon_t})
+ax_{3,t}=\epsilon_t \intertext{and the $\epsilon_t$ are a sequence of pseudo random draws from the uniform distributions $\mathcal{U}(-4,4)$ produced subsequent to the selection of a random seed.} randomseed(\someNorm{x_{t-1}}+\someNorm{\epsilon_t})
 \end{gather} 
-The upper three panels in Figure \ref{arbpaths} display these three time series. The first set of trajectories characterizes 
+The upper three panels in Figure \ref{arbpaths} display these three time series
+generated  for a particular initial state vector and shock value.
+ The first set of trajectories characterizes 
 a function of the digits in the decimal representation of $\pi$ and was chosen
-to emphasize that continuity is not important for the existence of the series. 
+to emphasize that continuity is not important for the existence of the series representation. 
 The second set of trajectories  oscillates between two values
 determined by  a nonlinear function of the initial conditions, $x_{t-1}$ and the shock.
 The third set of trajectories characterizes a sequence of uniformly distributed random numbers based on a seed determined by  a nonlinear function of  the initial conditions and the shock.
@@ -282,10 +282,10 @@ These paths were chosen to emphasize that the trajectories
 need not be produced by some linear rational expectations solution or by the
  iteration of a discrete-time map.
 The spanning condition and the boundedness of the paths are  sufficient conditions for the existence 
-of the series representation based on the ``almost arbitrary'' 
+of the series representation based on the 
 linear reference model,$\linMod$.\footnote{Although potentially useful in some contexts,
 this paper will not investigate representations for families of
-unbounded trajectories.}
+unbounded, but slowly diverging  trajectories.}
 
 
 \begin{figure}
@@ -293,7 +293,6 @@ unbounded trajectories.}
 \includegraphics[width=2in]{piPath.pdf}
 \includegraphics[width=2in]{oscillPath.pdf}
 \includegraphics[width=2in]{pseudoPath.pdf}
-\includegraphics[width=3in]{theZs.pdf}  
   
   \caption{Arbitrary Bounded Time Series Paths and Corresponding $z_{i,t}$ values}\label{arbpaths}
 \end{figure}
@@ -302,11 +301,13 @@ unbounded trajectories.}
 
 
 
-Figure \ref{arbpaths} also shows, for a particular initial state vector and shock value,  the paths for the  fully anticipated z's that generate the corresponding $x_t$ path.
+The values for the z's are not at all important 
+and their relationship to the x trajectories are rather unintuitive. What is important is that these values exist and are easy to compute.
 One can repeat the calculations for any given initial condition to produce
 a z series exactly replicating the new set of trajectories.  Thus, the family
 of z functions along with equation \ref{theSeries} provide a series 
-representation for the entire family of trajectories. Numerical linear algebra calculations can easily transform a $z_t$ series into an $x_t$ series and vice versa.
+representation for the entire family of trajectories. Numerical linear algebra calculations can easily transform a $z_t$ series into an $x_t$ series and vice versa.  This can be done for any path starting from particular initial conditions. 
+ Thus,  any discrete time invariant map that generates families of bounded paths has a series representation like Equation \ref{theSeries}.
 
 
 
@@ -316,10 +317,10 @@ representation for the entire family of trajectories. Numerical linear algebra c
 \label{sec:truncationerr}
 The formula \ref{theSeries} was derived in \citep{anderson10}
 to compute the impact on the current state of fully anticipated future shocks.  The formula characterizes the impact exactly.  However one can contemplate the impact of at least two deviations from the exact calculation:
-\begin{enumerate}
+\begin{itemize}
 \item One could truncate a series of correct values of $z_t$.  
 \item One might have imprecise values of $z_t$ along the path.
-\end{enumerate}
+\end{itemize}
 \subsubsection{Truncation Error}
 
 
@@ -328,12 +329,12 @@ if all the terms are included, but, it will be useful to notice that
 the terms for state vectors closer 
 to the initial time have the most important impact.
 One could consider approximating  $\mathcal{X}_t$ by 
-truncating the series \ref{theSeries} at a finite number of terms.
+truncating the series  at a finite number of terms.
  	 \begin{gather}
  	 \xWOargK_t \equiv B x_{t-1}+ \phi \psi_\epsilon\epsilon  + (I - F)^{-1} \phi \psi_c + \sum_{s=0}^k F^s \phi z_{t}\label{theTruncSeries}
  \end{gather}
-We can bound the  series approximation truncation errors.
-Since
+We can bound the  series approximation truncation errors:
+
     \begin{gather}
       \label{eq:1}
 \sum_{s=k+1}^{\infty} F^s \phi \psi_z = (I -F)^{-1} F^{k+1}\phi \psi_z       \\
@@ -342,8 +343,8 @@ Since
 Again, note that for approximating $\xWarg$ the impact of  a given realization along the path declines for those realizations which are  more temporally distant.
 
  Figure \ref{figArbTrunc} shows
-that this truncation error bound is a very conservative measure of the accuracy
-of the truncated series.  The orange line represents the computed bound of
+that this truncation error can be  a very conservative measure of the accuracy
+of the truncated series.  The orange line represents the computed approximation of
 the infinity norm of the difference between $x_t$ from the full series and a truncated series for different lengths of the truncation.  The blue line shows the infinity norm of the actual difference between the $x_t$ computed using the full series and the value obtained using a truncated series.  The series requires only the first 20 terms to compute
 the initial value of the state vector to high precision. 
 
@@ -353,7 +354,7 @@ the initial value of the state vector to high precision.
 
 
 \includegraphics[width=3in]{arbTruncErr.pdf}  
-  \caption{$x_t$ Error Bound Versus Actual Error} \label{figArbTrunc}
+  \caption{$x_t$ Error Approximation Versus Actual Error} \label{figArbTrunc}
 
 \end{figure}
 
@@ -367,7 +368,7 @@ Thus, one can  approximate $\mathcal{X}_t$ using
  	 \xWOargK_t \equiv B x_{t-1}+ \phi \psi_\epsilon\epsilon  + (I - F)^{-1} \phi \psi_c + \sum_{s=0}^\infty F^s \phi (z_{t}+\Delta z_{t})\label{theDeltaSeries}
  \end{gather}
 Note yet again that for approximating $\xWarg$ the impact of  a given realization along the path declines for those realizations which are  more temporally distant.
-However, we can conservatively bound the  series approximation  errors by using the largest $\Delta z_t$ in the formula:
+However, we can conservatively bound the  series approximation  errors by using the largest possible $\Delta z_t$ in the formula:
     \begin{gather}
 \infNorm{\xWarg-\xWargK} \le \infNorm{(I -F)^{-1} \phi \psi_z}  \infNorm{\Delta z_t } \label{pathErr}
     \end{gather}
@@ -380,23 +381,27 @@ However, we can conservatively bound the  series approximation  errors by using 
 
 Many dynamic stochastic models have solutions that 
 fall in the class of bounded time invariant maps.
-Consequently, by applying the law of iterated expectations, 
-we can compute conditional expected solution paths 
+Consequently, if we take care (see Section \ref{sec:convenient}), we can apply the law of iterated expectations, 
+to compute conditional expected solution paths 
 forward from any initial value $x_{t-1}$
-and realization of $\epsilon_t$.
-Subsequently, we can use the family of conditional expectations paths 
-along with a contrived linear reference model to generate
-a series representation for the model solution solutions  and
-to construct error bounds for the approximation.
-
-Economists have long used similar manipulation of
+and realization of $\epsilon_t$.\footnote{Economists have long used similar manipulation of
 time series paths for dynamic models. 
 Indeed, Potter constructs his generalized impulse response functions using
-differences in conditional expectations paths.\cite{Potter2000,Koop1996a}
-Here, the series representation will provide a weighted sum of $z_t\tArg$ functions that give us an approximation for the model solutions.
+differences in conditional expectations paths\cite{Potter2000,Koop1996a}.
+}
+Subsequently, we can use the family of conditional expectations paths 
+along with a contrived linear reference model to generate
+a series representation for the model solutions  and
+to approximate errors.
+
+The series representation will provide a linearly weighted sum of $z_t\tArg$ functions that give us an approximation for the model solutions.
 So long as the trajectories are 
- bounded the time invariant maps can 
+ bounded, the time invariant maps can 
 be represented using the framework from section \ref{sec:newseries}.
+In this section I will begin with a familiar RBC model example.\footnote{
+Later, in order to handle models with regime switching and occasionally binding constraints, I will need to consider more complicated collections 
+of equation systems with  Boolean gates. I will show how to apply the 
+series formulation and to approximate the  errors for these models as well.}
 
 %\subsection{Application of the Series Representation to Time Invariant Maps}
 
@@ -406,15 +411,11 @@ be represented using the framework from section \ref{sec:newseries}.
 % Often these time invariant maps impose additional structure on the time 
 % series they generate that allows us to use the series formula to
 % develop bounds for the error in the solution.
-In this section, to keep things simple, we will begin with a familiar RBC model example.\footnote{
-Later, in order to handle models with regime switching and occasionally binding constraints, will need to consider more complicated collections of 
-of equation systems with  Boolean gates. We will show how to apply the 
-series formulation and to get error bounds for these models as well.}
 
 
 \subsection{An RBC Example}
 \label{sec:rbcaux}
-  We consider a model described in \cite{Maliar2005}\footnote{Here, we set their $\beta=1$ and 
+  I consider a model described in \cite{Maliar2005}\footnote{Here, I set their $\beta=1$ and 
 do not discuss quasi-geometric discounting or time-inconsistency.}
  \begin{gather*}
    \max\left \{  u(c_t) + E_t \sum_{t=1}^\infty  \delta^{t}u(c_{t+1})\right \}\\
@@ -431,7 +432,7 @@ c_t + k_t=\theta_{t-1}k_{t-1}^\alpha \\
  \end{tcolorbox}
 \label{sec:rbcexample}
 
-It is well know that when $\eta=d=1$, we have a closed form solution\citep{lettau03}:
+It is well known that when $\eta=d=1$, we have a closed form solution\citep{lettau03}:
 \begin{gather}
 x_t(\xtmEpsArg)\equiv    \DR(\xtmEpsArg)\equiv
    \begin{bmatrix}
@@ -460,12 +461,12 @@ e^{\frac{\sigma^2}{2}}\theta_{t+k}^\rho
 \end{gather*}
 
 
-For any given values of $k_{t-1},\theta_{t-1}, \epsilon_t$, the model decision rule, ($\DR$), and decision rule conditional expectation, ($\DRCE$), can generate a conditional expectations path for any given initial $x_{t-1}$ and $\epsilon_t$:
+For any given values of $k_{t-1},\theta_{t-1}, \epsilon_t$, the model decision rule, ($\DR$), and decision rule conditional expectation, ($\DRCE$), can generate a conditional expectations path forward from  any given initial $x_{t-1}$ and $\epsilon_t$:
 \begin{gather*}
   \xWOarg_t(\xtmEpsArg)=\DR(\xtmEpsArg)\\
   \xWOarg_{t+k+1}(\xtmEpsArg)=\DRCE(\xWOarg_{t+k}(\xtmEpsArg))
 \end{gather*}
-and produces paths for $\{(z_{1t}\tArg, z_{2t}\tArg, z_{3t}\tArg),\ldots\}$
+and corresponding paths for $\{(z_{1t}\tArg, z_{2t}\tArg, z_{3t}\tArg),\ldots\}$
 \begin{gather*}
   z_{t+k} \equiv H_{-1} \xWOarg_{t+k-1} +  H_0 \xWOarg_{t+k} +  H_1 \xWOarg_{t+K+1} 
 \end{gather*}
@@ -499,10 +500,10 @@ k_{t-1}\\
 % required for a given level of approximation
 % accuracy.}
 
-For example, using $d=1$ and the following parameter values and using the arbitrary linear reference model we can generate a series representation for the model solutions.
+For example, using $d=1$ and the following parameter values and using the arbitrary linear reference model \eqref{linRef} we can generate a series representation for the model solutions.
 
 \begin{gather}\label{rbcparams}
-\vcenter{\hbox{\includegraphics{../../paperProduction/occBind/docs/RBCParamSubs.pdf}}} \,\, \text{ we have } \,\,
+\vcenter{\hbox{\includegraphics{RBCParamSubs.pdf}}} \,\, \text{ we have } \,\,
   \begin{bmatrix}
     c_{ss}\\k_{ss} \\ \theta_{ss} 
   \end{bmatrix}=
@@ -520,7 +521,7 @@ With
 
 \begin{figure}
   \centering
-\includegraphics[width=3.0in]{simprbcvals.pdf}  \hspace{.75in}
+\includegraphics[width=3.0in]{simprbcvals.pdf}  %\hspace{.75in}
 \includegraphics[width=3.0in]{simprbczvals.pdf}  
   \caption{model variable values and z values}
   \label{rbcpaths}
@@ -532,20 +533,20 @@ the blue line corresponds to $z_{2t}\tArg$ and the green line corresponds to $z_
 By including enough terms we can compute the solution for $x_t$ 
 exactly.
 Figure \ref{rbcTrunc} shows the impact that truncating the series has 
-on the time t values of the state variables.   The bound for the error, $B_n$, shown in red 
- is again very pessimistic compared to the actual error, $Z_n$, shown in blue.
-With enough terms, even using an ``almost'' arbitrarily chosen linear model,  the series approximation provides a machine precision accurate value for the time t state vector.  
+on approximation of the time t values of the state variables.   The approximated magnitude for the error, $B_n$, shown in red 
+ is again very pessimistic compared to the actual error, $Z_n=\infNorm{x_t-x_t^\star}$, shown in blue.
+With enough terms, even using an ``almost'' arbitrarily chosen linear model,  the series approximation provides a machine precision accurate value for the time t state vector.  Thus we have wide latitude in choosing a linear reference model.
 
 \begin{figure}
   \centering
 \includegraphics[width=2.7in]{simpArbBoundsVActual.pdf}  
-  \caption{RBC Known Solution: Truncation Error Bound Versus Actual: ``Almost Arbitrary'' Linear Reference Model}
+  \caption{RBC Known Solution: Truncation Approximate Error  Versus Actual: ``Almost Arbitrary'' Linear Reference Model}
   \label{rbcTrunc}
 \end{figure}
 \begin{figure}
   \centering
 \includegraphics[width=2.7in]{simpBoundsVActual.pdf}  
-  \caption{RBC Known Solution: Truncation Error Bound Versus Actual: Stochastic Steady State Linearization Linear Reference Model}
+  \caption{RBC Known Solution: Truncation Approximate Error Versus Actual: Stochastic Steady State Linearization Linear Reference Model}
   \label{rbcTruncSimp}
 \end{figure}
 
@@ -553,8 +554,8 @@ With enough terms, even using an ``almost'' arbitrarily chosen linear model,  th
 
 Figure \ref{rbcTruncSimp} shows that using a 
 linearization that better tracks the 
-nonlinear model paths, improves the approximation $Z_n$, shown in blue  and the error bound $B_n$ shown in red.
-Using the linearization of the RBC model produces a tighter but still pessimistic bound on the errors for the initial state vector.
+nonlinear model paths, improves the approximation $Z_n$, shown in blue  and the approximate error  $B_n$ shown in red.
+Using the linearization of the RBC model around the ergodic mean produces a tighter but still pessimistic bound on the errors for the initial state vector.
 Again, the first few terms make most of the difference in approximating the value of the state variables.
 
 
@@ -588,22 +589,20 @@ Since we   need to compute
 the conditional expectation of nonlinear expressions,  
 this setup will make it possible for us to use auxiliary
 variables to correctly compute the required expected values.
-
-We will be working with models where expectations are computed at time t, with  $\epsilon_t$  known,  the only stochastic components are those with time subscripts greater than $t$. 
-
-
-
-
-
-We can reconstruct a linear reference model for the modified RBC system
-by  augmenting the RBC model with the equation substituting $\rcpC_{t+1}$ for $\frac{\theta_{t+1}}{c_{t+1}}$ 
+\label{simpRBCExample}
+We will be working with models where expectations are computed at time t, with  $\epsilon_t$  known. 
+We can construct a linear reference model for the modified RBC system
+by  augmenting the RBC model with the equation 
 \begin{tcolorbox}[ams gather]
   \rcpC_t=\frac{\theta_t}{c_t}
 \end{tcolorbox}
 \noindent
+substituting $\rcpC_{t+1}$ for $\frac{\theta_{t+1}}{c_{t+1}}$ 
 in the first equation and 
- linearizing the RBC model about the ergodic mean
-given in \refeq{rbcparams} leads to:
+ linearizing the RBC model about the ergodic mean.
+
+This 
+leads to:
 {\small
 \begin{gather}
   \begin{bmatrix}
@@ -628,33 +627,31 @@ F=
 \vcenter{\hbox{\includegraphics{RBCFmatSymb.pdf}}}\\
 \psi_c=\vcenter{\hbox{\includegraphics{RBCPsissSymb.pdf}}}
 \end{gather}
-Recomputing the truncation errors with the expanded model produces very similar
-results for the variable approximation errors.
+Recomputing the truncation errors with the expanded model produces nearly identicle results for the variable approximation errors.
 
 
-\section{Computing Model Solution Error Bounds}
+\section{Approximating Model Solution Errors}
 \label{sec:solnerrorbounds}
 
 
-The paper shows how to write a series representation for any proposed
+This section shows how to write a series representation for any proposed
 model solution and to characterize the series representation for a typically
-unknown solution in such a way that one can use the model equation errors  to construct an error bound for the norm of the distance between the proposed and the exact solution.
+unknown solution in such a way that one can use the model equation errors  to construct an approximate error for the norm of the distance between the proposed and the exact solution.
 
 This work contrasts with the analysis provided in
 \cite{judd2017lower,peralta-alva14,santos2005accuracy,Santos2000accuracy}. 
-Their approaches identify Euler Equation Errors, but use statistical techniques to estimate the impact of these errors on solution accuracy.  Here we compute
-an equation for the bound that does not require statistical inference.
+Their approaches identify Euler Equation Errors, but use statistical techniques to estimate the impact of these errors on solution accuracy.  Here I provide
+a formula for the approximate error that does not require statistical inference.
 
 
 
 
 
-\subsection{The Error Bound Formula}
+%\subsection{An Error Approximation Formula}
 \label{sec:errorformula}
 
-We can construct an error bound for proposed model solutions.
 Consider a bounded region, $\bndRgn$, that contains all iterated conditional expectations paths.
-  By bounding the largest deviation in the paths for the $\Delta z_t^p$ we can bound the largest diviation in a proposed solution from the exact solution.( For proof see Appendix \ref{sec:error-bound-formula}).
+  By bounding the largest deviation in the paths for the $\Delta z_t^p$ we can bound the largest deviation in a proposed solution from the exact solution. 
 
 
 
@@ -683,12 +680,13 @@ E_tx_{t+1}=G^p(g^p(x_{t-1},\epsilon_t))\\
     \max_{x_{t-1},\epsilon_t} (\phi \mathbf{e}_t^p(x_{t-1},\epsilon))^2
   \end{gather*}
 
+For proof see Appendix \ref{sec:error-bound-formula}.  
 
 \section{Improving Proposed  Solutions}
 \label{sec:algoforsoln}
 
 
-\subsection{Generalization and Practical Considerations for Applying the Formula}
+\subsection{Generalization and Practical Considerations for Applying the Series Formula}
 \label{sec:practicalformula}
 
 % The framework provides a new way to bound the error one can expect from
@@ -722,31 +720,46 @@ E_tx_{t+1}=G^p(g^p(x_{t-1},\epsilon_t))\\
 
 
 
-To fix notation,  assume that we have a countable collection of equations systems that are mutually exclusive and exhaustive.
-Given $(x_{t-1},\epsilon_t)$,  this collection of 
-systems of equations produces a unique solution for $x_t$.  We will include 
+To fix notation,  assume that our model is characterized by
+ a countable number of equations systems.
+I will require that, for any 
+ given $(x_{t-1},\epsilon_t)$,  this collection of 
+systems of equations produces a unique solution for $x_t$.  
+Using the convention described in section \ref{sec:convenient},
+ we will include 
 enough auxiliary variables so that we can correctly compute expected values
 for model variables by applying the law of iterated 
-expectations to individual variables.
-To simplify the algorithm specification and implementation, assume that the
-$x_t$ satisfies one and only one of the 
-collection of equations and $x_t$ is (locally) the unique solution 
-for the collection of
-equations.  Examples of such systems include typical DSGE models that have one
-system of equations, occasionally binding constraints with solutions demonstrating complementary slackness, regime switching models with systems corresponding to the status in each given regime or combinations of the above.  See the appendix for an example of a specification for occasionally binding constraints(\ref{sec:occbind}) and for regime switching)(\ref{sec:ressw}).
+expectations.
 
 It will be convenient for describing the algorithms to
-% augment the model equations to include auxiliary variables so that we can 
 write the model in the form
-
 \begin{gather}
 \eqnFuncSys \intertext{ where, each }
 \eqnFuncSysI{i}\equiv \eqnFuncSysIExpl{i} \label{eqnGates}
 \end{gather}
- represents a set of model equations, $\eqnFunc_i$,  with a Boolean valued gate, $\preGate_i, \postGate_i$. Consequently, we will have an equation system and  corresponding gatekeeper logical expressions 
+ represents a set of model equations, $\eqnFunc_i$,  with Boolean valued gate, $\preGate_i, \postGate_i$. 
+In the algorithm's implementation, the ${\mathbf b_i}$ will be a 
+boolean function precondition and 
+the ${\mathbf c_i}$ will be a 
+boolean function postcondition for a given equation system.  The
+${\mathbf d_i}$ will be a function for choosing among the 
+candidate $x_t\tArg$ values.
+Thus, we will have an equation system and  corresponding gatekeeper 
+logical expressions 
 indicating which equation system is in force for producing the unique
 solution for a give $x_{t-1}, \epsilon_t$.
-  They represent exhaustive and mutually exclusive equation systems determining the solution at time t for the model.  They could be complementary slackness conditions or could represent a model with different regimes. We will consider time invariant model solutions $x_t=\xWarg$.  Given $\xWarg$, $\XWOarg(x_{t-1})\equiv \expct{\xWarg}$. 
+I will only consider time invariant model solutions $x_t=\xWarg$.  Given a decision rule $\xWarg$, denote its conditional expectation $\XWOarg(x_{t-1})\equiv \expct{\xWarg}$. 
+
+
+ Examples of such systems include the simple RBC model from Section
+\ref{simpRBCExample}.
+Other examples include  models with 
+occasionally binding constraints with solutions 
+exhibiting complementary slackness, or models with 
+regime switching.  See the appendix for an example 
+of a specification for occasionally binding constraints(\ref{sec:occbind}) 
+and for regime switching)(\ref{sec:ressw}).
+
 
 
 
@@ -756,452 +769,21 @@ solution for a give $x_{t-1}, \epsilon_t$.
 \label{sec:walkthrough}
 
 
-Before presenting the pseudocode for the detailed algorithm, this subsection
-characterizes  how the proposed approach differs from 
+It may be worthwhile at this point
+to characterize  how the approach I propose here differs from 
 what is typically done for solving dynamic stochastic models.
-
-As with the standard approach it is important to iterate on the proposed solution until consistency between
-the decision rule used for setting time t values and the expectations function for setting
-$\expct{x_{t+1}}$ in the model equations.  Thirty iteration are more than enough for the standard and the new approach.
-The new approach entails adding constraints on the time t state variables that
-come from the series representation for the proposed solution.  The series
-expression relates the time t values to the values along the anticipated
-conditional expectations path.
-
-
-
-% The following graphs present key characteristics of the solutions.  
-% The panels labeled approximation error show contour plots of $\mathbb{E}(z_{1,t-1},z_{2,t-1})$:
-% \begin{gather*}
-% \mathbb{E}(z_{1,t-1},z_{2,t-1})\equiv \sqrt{(c_t()-c_t^\star())^2 +(k_t()-k_t^\star())^2 +(\theta_t()-\theta_t^\star())^2 +(N_t()-N_t^\star())^2 }  
-% \end{gather*}
-% The panels labeled equation error show  contour plots for
-% \begin{gather*}
-%   \mathbb{D}(z_{1,t-1},z_{2,t-1})\equiv \eqnFunc(x_{-},g^p(x_{-},\epsilon),G^p(g^p(x_{-},\epsilon)),\epsilon). These are the model equation ``Euler'' errors.
-% \end{gather*}
-% The values of $U_t$ range over the ergodic set described above.
-
-% The bottom panel of
-% Figure \ref{fig:tradOne} shows the approximation error obtained by the standard
-% practice of selecting a number of approximation points and solving the collocation problem for the model equations at these points to
-%  approximate the  decision rule. The green dot shows the values of $(u_1,u_2)$ associated with the largest actual error.  The orange dot shows $(u_1,u_2)$ associated with  the largest equation system discrepancy 
-% and was used in computing the error bound. The black dots show the interpolation points. The label of the figure provides the predicted error bound along with the largest error.
-% The top panel provides a contour plot of the
-% norm of the equation errors. The bottom plot shows the error in the decision rule for different values of $k_{t-1}, \theta_{t-1}$ with $\epsilon_t=0$.
-% Notice that  setting $K=0$ is not equivalent to the standard approach as
-% the series formula has a correction term for $z_t(x_{t-1},\epsilon_t)$
-
-
-
-
-% \begin{figure}
-%   \centering
-% \ifmacosx
-
-
-
-%   \includegraphics[width=3.0in]{resDir/forBetterRBC--1,1,1-Iters70theK0host-MacBook-Pro-2numKern2Trad.pdf}
-% \includegraphics[width=3.0in]{resDir/forBetterRBC--1,1,1-Iters70theK0host-MacBook-Pro-2numKern2ApproxTrad.pdf}
-
-
-% \fi
-% \iflinux
-% \includegraphics[width=3.0in]{resDir-host-node006dnumKern16-3727705036/forBetterRBC--1,1,1-Iters70theK0Trad.pdf}
-% \includegraphics[width=3.0in]{resDir-host-node006dnumKern16-3727705036/forBetterRBC--1,1,1-Iters70theK0TradApprox.pdf}
-% \fi
-%   \caption{Contour Plot for Standard Approach approx=(1,1,1) }
-%   \label{fig:tradOne}
-% \end{figure}
-
-
-% \begin{figure}
-%   \centering
-% \ifmacosx
-%   \includegraphics[width=3.0in]{resDir/forBetterRBC--1,1,1-Iters30theK0host-MacBook-Pro-2numKern2.pdf}
-%   \includegraphics[width=3.0in]{resDir/forBetterRBC--1,1,1-Iters30theK0host-MacBook-Pro-2numKern2Approx.pdf}
-% \fi
-% \iflinux
-% \includegraphics[width=3.0in]{resDir-host-node006dnumKern16-3727705061/forBetterRBC--1,1,1-Iters70theK0Series.pdf}
-% \includegraphics[width=3.0in]{resDir-host-node006dnumKern16-3727705061/forBetterRBC--1,1,1-Iters70theK0SeriesApprox.pdf}
-% \fi
-%   \caption{Contour Plot for approx=(1,1,1) K =0 }
-%   \label{fig:cntpltA}
-% \end{figure}
-
-\definecolor{LightCyan}{rgb}{0.88,1,1}
-
-
-% \makeatletter\let\expandableinput\@@input\makeatother
-
-% \begin{table}
-%   \centering
-% \begin{tabular}{|r|r|r|r|}
-% \hline
-%   \multicolumn{1}{|c|}{Approximation}&
-%   \multicolumn{1}{|c|}{K}&
-%   \multicolumn{1}{|c|}{Bound}&
-%   \multicolumn{1}{|c|}{Actual}\\
-% \hline
-% \input{./resDir-host-node014bnumKern16-3728048404/forBetterRBC--1,1,1-Iters1theK1TraderrTableRow.tex}
-% \input{./resDir-host-node014bnumKern16-3728048390/forBetterRBC--1,1,1-Iters1theK1TraderrTableRow.tex}
-% \input{./resDir-host-node014bnumKern16-3728048382/forBetterRBC--1,1,1-Iters1theK1TraderrTableRow.tex}
-% \input{./resDir-host-node014bnumKern16-3728048397/forBetterRBC--1,1,1-Iters1theK1TraderrTableRow.tex}
-% \input{./resDir-host-node001dnumKern16-3728046316/forBetterRBC--1,1,1-Iters70theK0TraderrTableRow.tex}
-% \input{./resDir-host-node001dnumKern16-3728046340/forBetterRBC--1,1,1-Iters70theK0SerieserrTableRow.tex}
-% \expandableinput ./resDir-host-node014bnumKern16-3728049511/forBetterRBC--1,1,1-Iters70theK1SerieserrTableRow.tex
-% \expandableinput ./resDir-host-node014bnumKern16-3728048456/forBetterRBC--1,1,1-Iters1theK1SerieserrTableRow.tex
-% \expandableinput ./resDir-host-node014bnumKern16-3728051519/forBetterRBC--1,1,1-Iters70theK1SerieserrTableRow.tex
-% \expandableinput ./resDir-host-node014bnumKern16-3728048808/forBetterRBC--1,1,1-Iters1theK1SerieserrTableRow.tex
-% \expandableinput ./resDir-host-node014bnumKern16-3728049693/forBetterRBC--1,1,1-Iters70theK1SerieserrTableRow.tex
-% \expandableinput ./resDir-host-node014bnumKern16-3728049828/forBetterRBC--1,1,1-Iters70theK1SerieserrTableRow.tex
-% \expandableinput ./resDir-host-node014bnumKern16-3728049454/forBetterRBC--1,1,1-Iters70theK1SerieserrTableRow.tex
-% \expandableinput ./resDir-host-node014bnumKern16-3728049589/forBetterRBC--1,1,1-Iters70theK1SerieserrTableRow.tex
-% \expandableinput ./resDir-host-node014bnumKern16-3728049244/forBetterRBC--1,1,1-Iters1theK1SerieserrTableRow.tex
-% \expandableinput ./resDir-host-node014bnumKern16-3728049998/forBetterRBC--1,1,1-Iters70theK1SerieserrTableRow.tex
-% \expandableinput ./resDir-host-node014bnumKern16-3728049254/forBetterRBC--1,1,1-Iters1theK1SerieserrTableRow.tex
-% \expandableinput ./resDir-host-node001dnumKern16-3728046373/forBetterRBC--1,1,1-Iters70theK1SerieserrTableRow.tex
-% \expandableinput ./resDir-host-node014bnumKern16-3728048446/forBetterRBC--1,1,1-Iters1theK1SerieserrTableRow.tex
-% \expandableinput ./resDir-host-node014bnumKern16-3728048828/forBetterRBC--1,1,1-Iters1theK1SerieserrTableRow.tex
-% \expandableinput ./resDir-host-node014bnumKern16-3728048818/forBetterRBC--1,1,1-Iters1theK1SerieserrTableRow.tex
-% \expandableinput ./resDir-host-node014bnumKern16-3728048476/forBetterRBC--1,1,1-Iters1theK1SerieserrTableRow.tex
-% \expandableinput ./resDir-host-node014bnumKern16-3728049415/forBetterRBC--1,1,1-Iters70theK1SerieserrTableRow.tex
-% \expandableinput ./resDir-host-node014bnumKern16-3728049307/forBetterRBC--1,1,1-Iters1theK1SerieserrTableRow.tex
-% \expandableinput ./resDir-host-node014bnumKern16-3728049377/forBetterRBC--1,1,1-Iters70theK1SerieserrTableRow.tex
-% \expandableinput ./resDir-host-node014bnumKern16-3728049233/forBetterRBC--1,1,1-Iters1theK1SerieserrTableRow.tex
-% \expandableinput ./resDir-host-node014bnumKern16-3728050207/forBetterRBC--1,1,1-Iters70theK1SerieserrTableRow.tex
-% \expandableinput ./resDir-host-node014bnumKern16-3728048466/forBetterRBC--1,1,1-Iters1theK1SerieserrTableRow.tex
-% \expandableinput ./resDir-host-node014bnumKern16-3728051975/forBetterRBC--1,1,1-Iters70theK1SerieserrTableRow.tex
-% \expandableinput ./resDir-host-node014bnumKern16-3728051114/forBetterRBC--1,1,1-Iters70theK1SerieserrTableRow.tex
-% \expandableinput ./resDir-host-node014bnumKern16-3728049275/forBetterRBC--1,1,1-Iters1theK1SerieserrTableRow.tex
-% \expandableinput ./resDir-host-node014bnumKern16-3728049264/forBetterRBC--1,1,1-Iters1theK1SerieserrTableRow.tex
-% \expandableinput ./resDir-host-node014bnumKern16-3728049296/forBetterRBC--1,1,1-Iters1theK1SerieserrTableRow.tex
-% \expandableinput ./resDir-host-node014bnumKern16-3728050460/forBetterRBC--1,1,1-Iters70theK1SerieserrTableRow.tex
-% \expandableinput ./resDir-host-node014bnumKern16-3728049286/forBetterRBC--1,1,1-Iters1theK1SerieserrTableRow.tex
-% \expandableinput ./resDir-host-node014bnumKern16-3728050761/forBetterRBC--1,1,1-Iters70theK1SerieserrTableRow.tex
-% \expandableinput ./resDir-host-node014bnumKern16-3728048838/forBetterRBC--1,1,1-Iters1theK1SerieserrTableRow.tex
-% \input{./resDir-host-node001dnumKern16-3728046423/forBetterRBC--1,1,1-Iters70theK2SerieserrTableRow.tex}
-% \input{./resDir-host-node001dnumKern16-3728046494/forBetterRBC--1,1,1-Iters70theK3SerieserrTableRow.tex}
-% \input{./resDir-host-node001dnumKern16-3728046591/forBetterRBC--1,1,1-Iters70theK4SerieserrTableRow.tex}
-% \input{./resDir-host-node001dnumKern16-3728046718/forBetterRBC--1,1,1-Iters70theK5SerieserrTableRow.tex}
-% \input{./resDir-host-node001dnumKern16-3728046878/forBetterRBC--1,1,1-Iters70theK10SerieserrTableRow.tex}
-% \expandableinput ./resDir-host-node001dnumKern16-3728047076/forBetterRBC--1,1,1-Iters70theK20SerieserrTableRow.tex
-% \expandableinput ./resDir-host-node001dnumKern16-3728047318/forBetterRBC--1,1,1-Iters70theK30SerieserrTableRow.tex
-% \end{tabular}
-% \caption{Error Bounds and Actual Errors}
-% \end{table}
-
-
-% \begin{table}
-%   \centering
-% \begin{tabular}{|r|r|r|r|}
-% \hline
-%   \multicolumn{1}{|c|}{Approximation}&
-%   \multicolumn{1}{|c|}{K}&
-%   \multicolumn{1}{|c|}{Bound}&
-%   \multicolumn{1}{|c|}{Actual}\\
-% \hline
-% \expandableinput ./resDir-host-node014bnumKern16-3728048404/forBetterRBC--1,1,1-Iters1theK1TraderrTableRow.tex
-% \expandableinput ./resDir-host-node014bnumKern16-3728048390/forBetterRBC--1,1,1-Iters1theK1TraderrTableRow.tex
-% \expandableinput ./resDir-host-node006cnumKern16-3728053052/forBetterRBC--1,1,1-Iters70theK0TraderrTableRow.tex
-% \expandableinput ./resDir-host-node014bnumKern16-3728048382/forBetterRBC--1,1,1-Iters1theK1TraderrTableRow.tex
-% \expandableinput ./resDir-host-node014cnumKern16-3728053050/forBetterRBC--1,1,1-Iters70theK0TraderrTableRow.tex
-% \expandableinput ./resDir-host-node014bnumKern16-3728048397/forBetterRBC--1,1,1-Iters1theK1TraderrTableRow.tex
-% \expandableinput ./resDir-host-node001dnumKern16-3728046316/forBetterRBC--1,1,1-Iters70theK0TraderrTableRow.tex
-% \expandableinput ./resDir-host-node001dnumKern16-3728047956/forBetterRBC--1,1,1-Iters70theK50SerieserrTableRow.tex
-% \expandableinput ./resDir-host-node014cnumKern16-3728054753/forBetterRBC--1,1,1-Iters70theK50SerieserrTableRow.tex
-% \expandableinput ./resDir-host-node006cnumKern16-3728054706/forBetterRBC--1,1,1-Iters70theK50SerieserrTableRow.tex
-% \expandableinput ./resDir-host-node014cnumKern16-3728081186/forBetterRBC--2,2,2-Iters70theK0TraderrTableRow.tex
-% \expandableinput ./resDir-host-node006cnumKern16-3728080413/forBetterRBC--2,2,2-Iters70theK0TraderrTableRow.tex
-% \expandableinput ./resDir-host-node001dnumKern16-3728073710/forBetterRBC--2,2,2-Iters70theK0TraderrTableRow.tex
-% \expandableinput ./resDir-host-node006cnumKern16-3728057516/forBetterRBC--2,2,2-Iters70theK50SerieserrTableRow.tex
-% \expandableinput ./resDir-host-node014cnumKern16-3728057626/forBetterRBC--2,2,2-Iters70theK50SerieserrTableRow.tex
-% \expandableinput ./resDir-host-node001dnumKern16-3728050749/forBetterRBC--2,2,2-Iters70theK50SerieserrTableRow.tex
-% \expandableinput ./resDir-host-node001dnumKern16-3728075486/forBetterRBC--3,3,3-Iters70theK0TraderrTableRow.tex
-% \expandableinput ./resDir-host-node006cnumKern16-3728082193/forBetterRBC--3,3,3-Iters70theK0TraderrTableRow.tex
-% \expandableinput ./resDir-host-node014cnumKern16-3728083327/forBetterRBC--3,3,3-Iters70theK0TraderrTableRow.tex
-% \expandableinput ./resDir-host-node014cnumKern16-3728063389/forBetterRBC--3,3,3-Iters70theK50SerieserrTableRow.tex
-% \expandableinput ./resDir-host-node006cnumKern16-3728063145/forBetterRBC--3,3,3-Iters70theK50SerieserrTableRow.tex
-% \expandableinput ./resDir-host-node001dnumKern16-3728056324/forBetterRBC--3,3,3-Iters70theK50SerieserrTableRow.tex
-% \expandableinput ./resDir-host-node001dnumKern16-3728069334/forBetterRBC--4,4,4-Iters70theK50SerieserrTableRow.tex
-% \expandableinput ./resDir-host-node006cnumKern16-3728076072/forBetterRBC--4,4,4-Iters70theK50SerieserrTableRow.tex
-% \expandableinput ./resDir-host-node014cnumKern16-3728076599/forBetterRBC--4,4,4-Iters70theK50SerieserrTableRow.tex
-% \end{tabular}
-% \caption{Error Bounds and Actual Errors}
-% \end{table}
-
-
-% \begin{table}
-%   \centering
-% \begin{tabular}{|r|r|r|r|}
-% \hline
-%   \multicolumn{1}{|c|}{Approximation}&
-%   \multicolumn{1}{|c|}{K}&
-%   \multicolumn{1}{|c|}{Bound}&
-%   \multicolumn{1}{|c|}{Actual}\\
-% \hline
-% \expandableinput ./resDir-host-node006cnumKern16-3728054360/forBetterRBC--1,1,1-Iters70theK40SerieserrTableRow.tex
-% \expandableinput ./resDir-host-node014cnumKern16-3728054395/forBetterRBC--1,1,1-Iters70theK40SerieserrTableRow.tex
-% \expandableinput ./resDir-host-node001dnumKern16-3728047610/forBetterRBC--1,1,1-Iters70theK40SerieserrTableRow.tex
-% \expandableinput ./resDir-host-node001dnumKern16-3728050023/forBetterRBC--2,2,2-Iters70theK40SerieserrTableRow.tex
-% \expandableinput ./resDir-host-node006cnumKern16-3728056785/forBetterRBC--2,2,2-Iters70theK40SerieserrTableRow.tex
-% \expandableinput ./resDir-host-node014cnumKern16-3728056860/forBetterRBC--2,2,2-Iters70theK40SerieserrTableRow.tex
-% \expandableinput ./resDir-host-node001dnumKern16-3728054855/forBetterRBC--3,3,3-Iters70theK40SerieserrTableRow.tex
-% \expandableinput ./resDir-host-node014cnumKern16-3728061857/forBetterRBC--3,3,3-Iters70theK40SerieserrTableRow.tex
-% \expandableinput ./resDir-host-node006cnumKern16-3728061663/forBetterRBC--3,3,3-Iters70theK40SerieserrTableRow.tex
-% \expandableinput ./resDir-host-node014cnumKern16-3728072788/forBetterRBC--4,4,4-Iters70theK40SerieserrTableRow.tex
-% \expandableinput ./resDir-host-node001dnumKern16-3728065567/forBetterRBC--4,4,4-Iters70theK40SerieserrTableRow.tex
-% \expandableinput ./resDir-host-node006cnumKern16-3728072340/forBetterRBC--4,4,4-Iters70theK40SerieserrTableRow.tex
-% \end{tabular}
-% \caption{Error Bounds and Actual Errors}
-% \end{table}
-
-
-
-
-% \begin{table}
-%   \centering
-% \begin{tabular}{|r|r|r|r|}
-% \hline
-%   \multicolumn{1}{|c|}{Approximation}&
-%   \multicolumn{1}{|c|}{K}&
-%   \multicolumn{1}{|c|}{Bound}&
-%   \multicolumn{1}{|c|}{Actual}\\
-% \hline
-% \expandableinput ./resDir-host-node014cnumKern16-3728054090/forBetterRBC--1,1,1-Iters70theK30SerieserrTableRow.tex
-% \expandableinput ./resDir-host-node006cnumKern16-3728054066/forBetterRBC--1,1,1-Iters70theK30SerieserrTableRow.tex
-% \expandableinput ./resDir-host-node001dnumKern16-3728047318/forBetterRBC--1,1,1-Iters70theK30SerieserrTableRow.tex
-% \expandableinput ./resDir-host-node001dnumKern16-3728049385/forBetterRBC--2,2,2-Iters70theK30SerieserrTableRow.tex
-% \expandableinput ./resDir-host-node014cnumKern16-3728056210/forBetterRBC--2,2,2-Iters70theK30SerieserrTableRow.tex
-% \expandableinput ./resDir-host-node006cnumKern16-3728056144/forBetterRBC--2,2,2-Iters70theK30SerieserrTableRow.tex
-% \expandableinput ./resDir-host-node006cnumKern16-3728060383/forBetterRBC--3,3,3-Iters70theK30SerieserrTableRow.tex
-% \expandableinput ./resDir-host-node001dnumKern16-3728053585/forBetterRBC--3,3,3-Iters70theK30SerieserrTableRow.tex
-% \expandableinput ./resDir-host-node014cnumKern16-3728060543/forBetterRBC--3,3,3-Iters70theK30SerieserrTableRow.tex
-% \expandableinput ./resDir-host-node001dnumKern16-3728062370/forBetterRBC--4,4,4-Iters70theK30SerieserrTableRow.tex\expandableinput ./resDir-host-node014cnumKern16-3728069554/forBetterRBC--4,4,4-Iters70theK30SerieserrTableRow.tex
-% \expandableinput ./resDir-host-node006cnumKern16-3728069181/forBetterRBC--4,4,4-Iters70theK30SerieserrTableRow.tex
-
-% \end{tabular}
-% \caption{Error Bounds and Actual Errors}
-% \end{table}
-
-
-% \begin{table}
-%   \centering
-% \begin{tabular}{|r|r|r|r|}
-% \hline
-%   \multicolumn{1}{|c|}{Approximation}&
-%   \multicolumn{1}{|c|}{K}&
-%   \multicolumn{1}{|c|}{Bound}&
-%   \multicolumn{1}{|c|}{Actual}\\
-% \hline
-% \expandableinput ./resDir-host-node014cnumKern16-3728053837/forBetterRBC--1,1,1-Iters70theK20SerieserrTableRow.tex
-% \expandableinput ./resDir-host-node006cnumKern16-3728053822/forBetterRBC--1,1,1-Iters70theK20SerieserrTableRow.tex
-% \expandableinput ./resDir-host-node001dnumKern16-3728047076/forBetterRBC--1,1,1-Iters70theK20SerieserrTableRow.tex
-% \expandableinput ./resDir-host-node006cnumKern16-3728055587/forBetterRBC--2,2,2-Iters70theK20SerieserrTableRow.tex
-% \expandableinput ./resDir-host-node014cnumKern16-3728055643/forBetterRBC--2,2,2-Iters70theK20SerieserrTableRow.tex
-% \expandableinput ./resDir-host-node001dnumKern16-3728048831/forBetterRBC--2,2,2-Iters70theK20SerieserrTableRow.tex
-% \expandableinput ./resDir-host-node006cnumKern16-3728059273/forBetterRBC--3,3,3-Iters70theK20SerieserrTableRow.tex
-% \expandableinput ./resDir-host-node001dnumKern16-3728052490/forBetterRBC--3,3,3-Iters70theK20SerieserrTableRow.tex
-% \expandableinput ./resDir-host-node014cnumKern16-3728059404/forBetterRBC--3,3,3-Iters70theK20SerieserrTableRow.tex
-% \expandableinput ./resDir-host-node006cnumKern16-3728066693/forBetterRBC--4,4,4-Iters70theK20SerieserrTableRow.tex
-% \expandableinput ./resDir-host-node001dnumKern16-3728059860/forBetterRBC--4,4,4-Iters70theK20SerieserrTableRow.tex
-% \expandableinput ./resDir-host-node014cnumKern16-3728067015/forBetterRBC--4,4,4-Iters70theK20SerieserrTableRow.tex
-% \end{tabular}
-% \caption{Error Bounds and Actual Errors}
-% \end{table}
-
-
-% \begin{table}
-%   \centering
-% \begin{tabular}{|r|r|r|r|}
-% \hline
-%   \multicolumn{1}{|c|}{Approximation}&
-%   \multicolumn{1}{|c|}{K}&
-%   \multicolumn{1}{|c|}{Bound}&
-%   \multicolumn{1}{|c|}{Actual}\\
-% \hline
-% \expandableinput ./resDir-host-node001dnumKern16-3728046878/forBetterRBC--1,1,1-Iters70theK10SerieserrTableRow.tex
-% \expandableinput ./resDir-host-node014cnumKern16-3728053631/forBetterRBC--1,1,1-Iters70theK10SerieserrTableRow.tex
-% \expandableinput ./resDir-host-node006cnumKern16-3728053623/forBetterRBC--1,1,1-Iters70theK10SerieserrTableRow.tex
-% \expandableinput ./resDir-host-node001dnumKern16-3728048360/forBetterRBC--2,2,2-Iters70theK10SerieserrTableRow.tex
-% \expandableinput ./resDir-host-node006cnumKern16-3728055113/forBetterRBC--2,2,2-Iters70theK10SerieserrTableRow.tex
-% \expandableinput ./resDir-host-node014cnumKern16-3728055167/forBetterRBC--2,2,2-Iters70theK10SerieserrTableRow.tex
-% \expandableinput ./resDir-host-node006cnumKern16-3728058341/forBetterRBC--3,3,3-Iters70theK10SerieserrTableRow.tex
-% \expandableinput ./resDir-host-node001dnumKern16-3728051569/forBetterRBC--3,3,3-Iters70theK10SerieserrTableRow.tex
-% \expandableinput ./resDir-host-node014cnumKern16-3728058462/forBetterRBC--3,3,3-Iters70theK10SerieserrTableRow.tex
-% \expandableinput ./resDir-host-node001dnumKern16-3728057969/forBetterRBC--4,4,4-Iters70theK10SerieserrTableRow.tex
-% \expandableinput ./resDir-host-node014cnumKern16-3728065084/forBetterRBC--4,4,4-Iters70theK10SerieserrTableRow.tex
-% \expandableinput ./resDir-host-node006cnumKern16-3728064807/forBetterRBC--4,4,4-Iters70theK10SerieserrTableRow.tex
-% \end{tabular}
-% \caption{Error Bounds and Actual Errors}
-% \end{table}
-
-
-% The panels in Figure \ref{fig:cntpltB} shows the results when $K=1,2,3,4,5$
-% while 
-% Figure \ref{fig:cntpltC} shows the results when $K=10$, with degree of approximation $(1,1,1)$
-% for computing the decision rule.  The top panel provides a contour plot of the
-% norm of the equation errors. The bottom plot shows the error in the decision rule for different values of $k_{t-1}, \theta_{t-1}$ with $\epsilon_t=0$.  The plots for different values of $\epsilon_t$ are not different.  The error bound, 
-% \ifmacosx
-% \input{resDir/forBetterRBC--1,1,1-Iters20theK30host-MacBook-Pro-2numKern2errBnd.tex} 
-% \fi
-% is 25\% larger than the actual error 
-% \iflinux
-% \input{resDir-host-node006dnumKern16-3727705617/forBetterRBC--2,2,2-Iters70theK10SerieserrBnd.tex}
-% \fi
-%  Notice that even though equation errors are comparable in magnitude, the error in the decision rule is significantly smaller for the series representation solution.  The additional constraints on the equation system provided by computing conditional expectations paths and incorporating them into the solution at time $t$ leads to better solutions.
-
-
-
-% In what follows I show the impact of increasing the number of terms 
-% employed in the series representation.  
-
-
-
-% Figure \ref{fig:cntpltA} shows the results when $K=0$, with degree of approximation $(1,1,1)$.  The top panel provides a contour plot of the
-% norm of the equation errors. The bottom plot shows the error in the decision rule for different values of $k_{t-1}, \theta_{t-1}$ with $\epsilon_t=0$.  The plots for different values of $\epsilon_t$ are not appreciably different. The error bound, 
-% % \ifmacosx
-% \input{resDir/forBetterRBC--1,1,1-Iters30theK0host-MacBook-Pro-2numKern2errBnd.tex} 
-% \fi
-% \iflinux
-% \input{resDir-host-node006dnumKern16-3727705061/forBetterRBC--1,1,1-Iters70theK0SerieserrBnd.tex}
-% \fi
-% is 25\% larger than the actual error 
-% \ifmacosx
-% \input{resDir/forBetterRBC--1,1,1-Iters70theK0host-MacBook-Pro-2numKern2acterr.tex}
-% \fi
-% \iflinux
-% \input{resDir-host-node006dnumKern16-3727705061/forBetterRBC--1,1,1-Iters70theK0Seriesacterr.tex}
-% \fi
-
-
-
-% \begin{figure}
-%   \centering
-% \ifmacosx
-%   \includegraphics[width=3.0in]{resDir/forBetterRBC--1,1,1-Iters30theK0host-MacBook-Pro-2numKern2.pdf}
-%   \includegraphics[width=3.0in]{resDir/forBetterRBC--1,1,1-Iters30theK0host-MacBook-Pro-2numKern2Approx.pdf}
-% \fi
-% \iflinux
-%   \includegraphics[width=3.0in]{resDir/forBetterRBC--1,1,1-Iters70theK50host-node014bnumKern16Series.pdf}
-%   \includegraphics[width=3.0in]{resDir/forBetterRBC--1,1,1-Iters70theK50host-node014bnumKern16SeriesApprox.pdf}
-% \fi
-%   \caption{Contour Plot for approx=(1,1,1) K =50 }
-%   \label{fig:cntpltA}
-% \end{figure}
-
-
-% \begin{figure}
-%   \centering
-% \iflinux  
-%   \includegraphics[width=3.0in]{./resDir-host-node006dnumKern16-3727725359/forBetterRBC--2,2,2-Iters70theK0Trad.pdf}
-%   \includegraphics[width=3.0in]{./resDir-host-node006dnumKern16-3727725359/forBetterRBC--2,2,2-Iters70theK0TradApprox.pdf}
-% \fi
-% \ifmacosx  
-% \includegraphics{resDir/forBetterRBC--2,2,2-Iters70theK0numKern2.pdf}
-% \fi
-%   \caption{Contour Plot for approx=(2,2,2) 70 iterations Standard Approach}
-%   \label{fig:cntpltD}
-% \end{figure}
-
-
-% \begin{figure}
-%   \centering
-% \iflinux
-%   \includegraphics[width=3.0in]{./resDir-host-node006dnumKern16-3727706925/forBetterRBC--2,2,2-Iters70theK50Series.pdf}
-%   \includegraphics[width=3.0in]{./resDir-host-node006dnumKern16-3727706925/forBetterRBC--2,2,2-Iters70theK50SeriesApprox.pdf}
-% \fi
-% \ifmacosx  
-% \includegraphics{resDir/forBetterRBC--2,2,2-Iters70theK5numKern2.pdf}
-% \fi
-%   \caption{Contour Plot for approx=(2,2,2) 70 iterations and K =50}
-%   \label{fig:cntpltE}
-% \end{figure}
-
-
-% \begin{figure}
-%   \centering
-% \ifmacosx
-%   \includegraphics{resDir/forBetterRBC--3,3,3-Iters70theK20numKern2.pdf}
-%   \fi
-% \iflinux
-% \includegraphics{./resDir-host-node006dnumKern16-3727726597/forBetterRBC--3,3,3-Iters70theK0Trad.pdf}
-% \includegraphics{./resDir-host-node006dnumKern16-3727726597/forBetterRBC--3,3,3-Iters70theK0TradApprox.pdf}
-  
-% \fi
-%   \caption{Contour Plot for approx=(3,3,3) 30 iterations  Standard Approach}
-%   \label{fig:cntpltI}
-% \end{figure}
-
-% \begin{figure}
-%   \centering
-% \ifmacosx
-%   \includegraphics{resDir/forBetterRBC--3,3,3-Iters70theK20numKern2.pdf}
-%   \fi
-% \iflinux
-% \includegraphics{resDir-host-node006dnumKern16-3727708776/forBetterRBC--3,3,3-Iters70theK30Series.pdf}
-%   \includegraphics{resDir-host-node006dnumKern16-3727708776/forBetterRBC--3,3,3-Iters70theK30SeriesApprox.pdf}
-% \fi
-%   \caption{Contour Plot for approx=(3,3,3) 20 iterations and K =30 }
-%   \label{fig:cntpltI}
-% \end{figure}
-
-
-
-% \begin{figure}
-%   \centering
-% \ifmacosx
-%   \includegraphics{resDir/forBetterRBC--3,3,3-Iters70theK20numKern2.pdf}
-%   \fi
-% \iflinux
-% \includegraphics{./resDir-host-node006dnumKern16-3727710766/forBetterRBC--3,3,3-Iters70theK50Series.pdf}
-%   \includegraphics{./resDir-host-node006dnumKern16-3727710766/forBetterRBC--3,3,3-Iters70theK50SeriesApprox.pdf}
-% \fi
-%   \caption{Contour Plot for approx=(3,3,3) 20 iterations and K =50 }
-%   \label{fig:cntpltI}
-% \end{figure}
-
-
-% \begin{figure}
-%   \centering
-% \ifmacosx
-%   \includegraphics{resDir/forBetterRBC--3,3,3-Iters70theK20numKern2.pdf}
-%   \fi
-% \iflinux
-% \includegraphics{./resDir-host-node006dnumKern16-3727726597/forBetterRBC--3,3,3-Iters70theK0Trad.pdf}
-% \includegraphics{./resDir-host-node006dnumKern16-3727726597/forBetterRBC--3,3,3-Iters70theK0TradApprox.pdf}
-  
-% \fi
-%   \caption{Contour Plot for approx=(4,4,4) 30 iterations Standard Approach}
-%   \label{fig:cntpltI}
-% \end{figure}
-
-% \begin{figure}
-%   \centering
-% \ifmacosx
-%   \includegraphics{resDir/forBetterRBC--3,3,3-Iters70theK20numKern2.pdf}
-%   \fi
-% \iflinux
-% \includegraphics{./resDir-host-node006dnumKern16-3727715561/forBetterRBC--4,4,4-Iters70theK30Series.pdf}
-%   \includegraphics{./resDir-host-node006dnumKern16-3727715561/forBetterRBC--4,4,4-Iters70theK30SeriesApprox.pdf}
-% \fi
-%   \caption{Contour Plot for approx=(4,4,4) 20 iterations and K =30 }
-%   \label{fig:cntpltI}
-% \end{figure}
-
-
-
-% \begin{figure}
-%   \centering
-% \ifmacosx
-%   \includegraphics{resDir/forBetterRBC--3,3,3-Iters70theK20numKern2.pdf}
-%   \fi
-% \iflinux
-% \includegraphics{./resDir-host-node006dnumKern16-3727721518/forBetterRBC--4,4,4-Iters70theK50Series.pdf}
-%   \includegraphics{./resDir-host-node006dnumKern16-3727721518/forBetterRBC--4,4,4-Iters70theK50SeriesApprox.pdf}
-% \fi
-%   \caption{Contour Plot for approx=(4,4,4) 20 iterations and K =50 }
-%   \label{fig:cntpltI}
-% \end{figure}
+As with the standard approach I characterize the solutions using a linearly
+weighted sums of orthogonal polynomials and solve the model equations
+at predetermined collocation points. However, in this new algorithm, I 
+augment the model Euler equations with equations based on \refeq{theSeries}
+ that link the conditional expectations for future values in
+the proposed solution with the
+time t value of the model variables.  As a result, the algorithm determines
+linearly weighted polynomials characterizing the 
+trajectories for the traditional
+variables $x_t(x_{t-1},\epsilon_t)$ as well as new  $z_t(x_{t-1},\epsilon_t)$ variables.  These new constraints 
+help keep proposed solutions bounded during the algorithmic iterations 
+thus improving algorithm reliability.
 
 
 
@@ -1223,25 +805,51 @@ conditional expectations path.
 \subsection{Algorithm Overview}
 
 % \subsubsection{Approximating an Unknown Solution: $U(c) \ne Log(c)$ }
- \label{sec:unknown-solutions}
-The algorithm we have described,
-uses a proposed deterministic map
-characterizing the evolution of expected values for
-the dynamic system going forward. It then solves
+% \label{sec:unknown-solutions}
+
+I closely follow the techniques outlined in \cite{Judd2013,Judd2014}. 
+I use their an-isotropic Smolyak Lagrange interpolation with adaptive domain.
+I also precompute all of the conditional expectations for the integrals as outlined in \cite{JuddIntegrals} so that the time t computations are all 
+deterministic.
+
+The algorithm uses a proposed decision rule characterized by a linearly weighted sum of Chebyshev polynomials with precomputed integrals.  Since the
+orthogonal polynomials have been integrated, the linearly weighted sum provides
+the conditional expectations function needed for computing conditional expectations paths from each collocation point forward.  This provides the 
+expected future values for the $z_t$ needed for the series representation.
+The algorithm then solves
 a deterministic problem at time t to improve the proposed solution.
-There is nothing in the algorithm that precludes accommodating  inequality
+The algorithm can easily accommodate inequality
 constraints or regime switching.\footnote{See sections \ref{sec:occbind} and \ref{sec:regime-switch-model} characterizing  models with regime switching.}
 
+\marginpar{incorporate bullets into text}
+\begin{enumerate}
+\item Specify a (collection of) model equations systems(s) 
+as in \refeq{eqnGates}.
+For all relevant values of $\tArg$ there is one and only one solution $x_t\tArg$
+\item specify a linear reference model
+\item specify an initial guess for decision rule $\xWargK$ obtain conditional expectations function
+\item decide upon the ranges for variables and the degrees of approximation for the an-isotropic Smolyak polynomial representation
+\item decide upon $K$, the number of conditional expectations function recursive iterations.  Fewer means more truncation error. In effect, 
+the algorithm imposes nonlinear constraints the for number of period specified 
+and uses the linear reference model thereafter(ie $z_{t+N}=0, \forall N>K$
+\end{enumerate}
 
-{
-  \begin{itemize}
-  \item Consider the single model case $  \eqnFunc(x_{t-1},x_t,\expct{x_{t+1}},\epsilon)=0$.  
-\item We seek $\eqnFunc(x_{t-1},\xWOarg^\star\tArg,\XWOarg^\star(\xWOarg^\star\tArg),\epsilon)=0\,\,\forall \tArg $
-\item Given a proposed model solution $x_t=\xWOarg^p\tArg$ compute $\XWOarg^p(x_{t-1})\equiv \expct{\xWOarg^p\tArg}$. 
-\item we will use a linear reference model $\linMod  \equiv \linModMats$ 
-to construct a series of $\zpWOarg$ functions that improve the accuracy of the proposed solution.
-\end{itemize}
-}
+
+\subsubsection{Single Equation System Case}
+
+For now, consider the single model equation system case. A description 
+of the actual, multi-system implementation follows.
+\begin{gather*}
+ \eqnFunc(x_{t-1},x_t,\expct{x_{t+1}},\epsilon)=0.\intertext{  We seek }
+\eqnFunc(x_{t-1},\xWOarg^\star\tArg,\XWOarg^\star(\xWOarg^\star\tArg),\epsilon)=0\,\,\forall \tArg.  \intertext{Given a proposed model solution}
+ x_t=\xWOarg^p\tArg\intertext{ compute}
+\XWOarg^p(x_{t-1})\equiv \expct{\xWOarg^p\tArg}.
+\end{gather*}
+We will use a linear reference model $\linMod  \equiv \linModMats$ 
+to construct a series of $\zpWOarg$ functions that help 
+improve the accuracy of the proposed solution.
+
+
 
 
 
@@ -1273,10 +881,99 @@ x_{t-1}\\ \xpWarg\\ \XpWOarg(\xWarg)
      \mathcal{X}_{t} =B x_{t-1}+ \phi \psi_\epsilon\epsilon + (I - F)^{-1} \phi \psi_c + \sum_{\sForSum=0}^\infty F^s \phi \ZWOarg(x_{t+\nu})\\
 	\expct{ \mathcal{X}_{t+1}} =B \mathcal{X}_{t}  + (I - F)^{-1} \phi \psi_c+ \sum_{\sForSum =0}^\infty F^{\sForSum-1} \phi \ZWOarg(x_{t+\nu}) \,\,\,\,\,\forall t,k \ge  0
 \end{gather*}
-\item Use the model equations, $\eqnFuncSys$ and $x_t\tArg=\mathcal{X}_t\tArg$ to determine $\xppWarg, \zppWarg$
+\item Use the model equations, $\eqnFunc(x_{t-1},x_t,\expct{x_{t+1}},\epsilon)=0$ and $x_t\tArg=\mathcal{X}_t\tArg$\\ to determine $\xppWarg, \zppWarg$
 \item $\xpWarg=\xppWarg, \zpWarg=\zppWarg$ -- {\color{blue}Repeat loop.}
   \end{itemize}
 }
+
+\subsubsection{Multiple Equation System Case}
+
+
+An outline of the current Mathematica implementation of the algorithm follows.
+Table \ref{algnotation} provides notation.
+\begin{table}[b]
+  \centering
+\begin{description}
+\item[$\linMod\equiv \linModMats$] The linear reference model
+\item[$ \xWOarg^{p}\tArg$] The proposed decision rule  $x_t$ components
+\item[$ \zWOarg^{p}\tArg$]The proposed decision rule  $z_t$ components
+\item[$ \XWOarg^p\tNo$] The proposed decision rule conditional expectations  $x_t$ components
+\item[$ \ZWOarg^p\tNo$] The proposed decision rule their conditional expectations  $z_t$ components
+\item[$ \kappa$] One less than the number of terms in series representation$(\kappa>=0)$
+\item[$\smolSpec$] Smolyak an-isotropic grid polynomials $(\aSmolPoly{1},\ldots,\aSmolPoly{N})$ and their conditional expectations $(\aSmolPolyCE{1},\ldots,\aSmolPolyCE{N})$
+\item[$\mathbb{T}$] Model evaluation points Neidereiter sequence in the model variable ergodic region.
+\item[$ \xzFunc$]  $\{\xWOarg\tArg,\zWOarg\tArg\}$ collects the decision rule components
+\item[$ \XZFunc$]  $\{\xWOarg\tArg,\zWOarg\tArg\}$ collects the decision rule conditional expectations components
+\item[$\bothFuncs$] $\{\xzFunc,\XZFunc\}$ collects decision rule information
+\item[$\eqnFuncSys$] The equation system $\eqnFuncSig$
+\end{description}
+
+  \caption{Algorithm Notation}\label{algnotation}
+\end{table}
+Figure \ref{calltree}
+provides a graphic depiction of the function call tree. For more algorithmic detail, see Appendix \ref{sec:pseudocode}. 
+The current implementation  has a couple of atypical features.  
+Many of the calculations exploit Mathematica's capability to blend
+numerical and symbolic computation and to easily use functions as arguments for
+other functions.  In addition, the implementation exploits parallelism at
+several points.   The parallel features apply whether or not one employs the
+the  traditional technique or the approach suggested here.
+Below, I note where these features play a role.
+
+
+\begin{figure}[h]
+  \centering
+  
+%\begin{tikzpicture}
+%\tikzset{every tree node/.style={align=center}}  
+{\small
+\Tree [.nestInterp\ref{nestInterp}  !\qsetw{4cm}
+[.doInterp  \ref{doInterp}
+[.genFindRootFuncs \ref{genFindRootFuncs}!\qsetw{2cm}
+[.genFindRootWorker\ref{genFindRootWorker} genZsForFindRoot\ref{genZsForFindRoot}
+[.genLilXkZkFunc\ref{genLilXkZkFunc} fSumC\ref{fSumC} genXtOfXtm1\ref{genXtOfXtm1} [.genXtp1OfXt\ref{genXtp1OfXt} ] ] ] ] 
+[.makeInterpFuncs\ref{makeInterpFuncs} !\qsetw{2cm} [.genInterpData\ref{genInterpData} evaluateTriple\ref{evaluateTriple} ] ] [.interpDataToFunc\ref{interpDataToFunc} 
+ ] ] ] 
+}
+%\end{tikzpicture}
+  \caption{Function Call Tree}\label{calltree}
+\end{figure}
+
+
+
+\begin{description}
+\item[nestInterp] --- Computes a sequence of decision rule and conditional expectation rule functions terminating when the evaluation of the decision rule 
+functions at the tests points no longer changes much.
+\item[doInterp] --- {\bf Symbolically} generates functions that return a unique $x_t$ for any value of $\tArg$ for the family model equations, $\eqnFuncSys$ and uses these functions to construct interpolating functions approximating the decision rules.
+\item[genFindRootFuncs] --- 
+The function can use \refeq{theSeries} or omit it thus implementing the usual
+approach for solving these models.
+
+The routine {\bf symbolically} generates a collection of function triples
+and an outer 
+model solution selection function. 
+Each of the function constructions can be done in {\bf parallel}.
+Each of the triples
+ returns the boolean gate values and a unique value for 
+$x_t$ for any given value of $\tArg$ the selection function chooses 
+one solution from the set of  model equations. The routine
+ subsequently uses these 
+functions to construct interpolating functions approximating the 
+decision rules. Subcomponents of this step exploit parallelism.
+
+
+\item[genLilXkZkFunc] --- {\bf Symbolically} creates a function that uses an initial $Z_t$ path to generate a function of $(x_{t-1},\epsilon_t,z_t)$ providing (potentially symbolic ) inputs 
+  \begin{gather*}
+    \begin{bmatrix}
+x_{t-1}\\x_t\\E_t(x_{t+1}),\epsilon_t)    
+    \end{bmatrix}
+  \end{gather*}
+ for model system equations $\eqnFunc$.  This  routine  provides the 
+information for constructing $x_t\tArg$ using the series expression \refeq{theSeries}.
+\item[makeInterpFuncs] --- Solves model equations at collocation points 
+producing interpolation data and subsequently returns the  
+ interpolating functions for the decision rule and decision rule conditional expectation.  This can be done in {\bf parallel}.
+\end{description}
 
 
 % \subsection{{Some Algorithmic Details}}
@@ -1315,13 +1012,17 @@ x_{t-1}\\ \xpWarg\\ \XpWOarg(\xWarg)
 % \end{itemize}
 
 
+
+
+
+
 \subsection{Approximating the Known Solution: $U(c) = Log(c)$ }
 \label{sec:recov-known-solut}
 
 This subsection uses the series representation to
 compute the solution for the case when the exact solution is known and
 to compare the various approximations to the known actual solution.
-In what follows, both the traditional and the new  approach use anisotropic
+In what follows, both the traditional and the new  approach use an-isotropic
 Smolyak polynomial function approximation with precomputed expectations.
 Figure \ref{fig:erg}  characterizes the use of the parallelotope
 transformation described in \cite{Judd2013}. The left panel shows the 200 values of $k_t$ and $\theta_t$ resulting from a stochastic simulation of the the known decision rule. The right panel shows the transformed variables that constitute
@@ -1354,247 +1055,360 @@ V= \vcenter{\hbox{\includegraphics{ergodicV.pdf}}}
 \min U= \vcenter{\hbox{\includegraphics{ergodicMinZ.pdf}}}
 \end{gather}
 
-In order to evaluate how well the error approximation works, compute and
-fix a particular decision rule as a proposed solution and I 
-experiment with various parameterization of the 
-RBC with known analytic solutions.
-Consequently, I hold $\eta=d=1$ but approximate the model solution error 
-for 50 various  parameter settings
-\begin{gather*}
- 0.20 <\alpha<0.40,\,\,0.85<\delta<0.99,\,\,0.85<\rho<0.99,\,\,0.005<\sigma<0.015
-\end{gather*}
-I do this approximation for 50 various values of 
-$(k_{t-1},\theta_{t-1},\epsilon_t)$ generated using the Niederreiter algorithm
- covering the ergodic set.  I do this for values of k from 0 to 20.  The static proposed solution comes from linearing
-the RBC model around the deterministic steady tate for
- the parameter settings in \ref{rbcparams}.  
-solution path.  I use the statically selected decision rule and its conditional
-expectation to construct the paths required in the error formula. 
-
-Figure   \ref{fig:diffsk0}
-\begin{figure}
-  \centering
-  \label{fig:cdiffsk0}
-  \caption{$c_{err}-c_{predicted}$ Mean Versus StandardDeviation, k=0} 
-\begin{gather}
-\vcenter{\hbox{\includegraphics[width=5.5in]{cDiffk0.pdf}}}
-\end{gather}
-\end{figure}
-
-Figure   \ref{fig:ccoefsk0}
-\begin{figure}
-  \centering
-  \label{fig:ccoefsk0}
-  \caption{$c_{err}= c_0+ \beta c_{predicted}$, k=0}
-\begin{gather}
-\vcenter{\hbox{\includegraphics[width=5.5in]{cCoeffsk0.pdf}}}
-\end{gather}
-\end{figure}
-
-
-
-Figure   \ref{fig:diffskT0}
-\begin{figure}
-  \centering
-  \label{fig:cdiffskT0}
-  \caption{$c_{err}-c_{predicted}$ Mean Versus StandardDeviation, k=0  with added tail} 
-\begin{gather}
-\vcenter{\hbox{\includegraphics[width=5.5in]{cDiffkT0.pdf}}}
-\end{gather}
-\end{figure}
-
-Figure   \ref{fig:ccoefskT0}
-\begin{figure}
-  \centering
-  \label{fig:ccoefskT0}
-  \caption{$c_{err}= c_0+ \beta c_{predicted}$, k=0 with added tail}
-\begin{gather}
-\vcenter{\hbox{\includegraphics[width=5.5in]{cCoeffskT0.pdf}}}
-\end{gather}
-\end{figure}
-
-Figure   \ref{fig:cdiffsk1}
-\begin{figure}
-  \centering
-  \label{fig:cdiffsk1}
-  \caption{$c_{err}-c_{predicted}$ Mean Versus StandardDeviation, k=1} 
-\begin{gather}
-\vcenter{\hbox{\includegraphics[width=5.5in]{cDiffk1.pdf}}}
-\end{gather}
-\end{figure}
-
-Figure   \ref{fig:ccoefsk1}
-\begin{figure}
-  \centering
-  \label{fig:ccoefsk1}
-  \caption{$c_{err}= c_0+ \beta c_{predicted}$, k=1}
-\begin{gather}
-\vcenter{\hbox{\includegraphics[width=5.5in]{cCoeffsk1.pdf}}}
-\end{gather}
-\end{figure}
-
-Figure   \ref{fig:cdiffsk1}
-\begin{figure}
-  \centering
-  \label{fig:cdiffsk1}
-  \caption{$c_{err}-c_{predicted}$ Mean Versus StandardDeviation, k=1 added tail} 
-\begin{gather}
-\vcenter{\hbox{\includegraphics[width=5.5in]{cDiffkT1.pdf}}}
-\end{gather}
-\end{figure}
-
-Figure   \ref{fig:ccoefsk1}
-\begin{figure}
-  \centering
-  \label{fig:ccoefsk1}
-  \caption{$c_{err}= c_0+ \beta c_{predicted}$, k=1, added tail}
-\begin{gather}
-\vcenter{\hbox{\includegraphics[width=5.5in]{cCoeffskT1.pdf}}}
-\end{gather}
-\end{figure}
-
-
-Figure   \ref{fig:cdiffsk5}
-\begin{figure}
-  \centering
-  \label{fig:cdiffsk5}
-  \caption{$c_{err}-c_{predicted}$ Mean Versus StandardDeviation, k=5} 
-\begin{gather}
-\vcenter{\hbox{\includegraphics[width=5.5in]{cDiffk5.pdf}}}
-\end{gather}
-\end{figure}
-
-Figure   \ref{fig:ccoefsk5}
-\begin{figure}
-  \centering
-  \label{fig:ccoefsk5}
-  \caption{$c_{err}= c_0+ \beta c_{predicted}$, k=5}
-\begin{gather}
-\vcenter{\hbox{\includegraphics[width=5.5in]{cCoeffsk5.pdf}}}
-\end{gather}
-\end{figure}
-
-
-Figure   \ref{fig:cdiffsk5}
-\begin{figure}
-  \centering
-  \label{fig:cdiffsk5}
-  \caption{$c_{err}-c_{predicted}$ Mean Versus StandardDeviation, k=5 added tail} 
-\begin{gather}
-\vcenter{\hbox{\includegraphics[width=5.5in]{cDiffkT5.pdf}}}
-\end{gather}
-\end{figure}
-
-Figure   \ref{fig:ccoefsk5}
-\begin{figure}
-  \centering
-  \label{fig:ccoefsk5}
-  \caption{$c_{err}= c_0+ \beta c_{predicted}$, k=5, added tail}
-\begin{gather}
-\vcenter{\hbox{\includegraphics[width=5.5in]{cCoeffskT5.pdf}}}
-\end{gather}
-\end{figure}
-
-
-
-Figure   \ref{fig:cdiffsk10}
-\begin{figure}
-  \centering
-  \label{fig:cdiffsk10}
-  \caption{$c_{err}-c_{predicted}$ Mean Versus StandardDeviation, k=10} 
-\begin{gather}
-\vcenter{\hbox{\includegraphics[width=5.5in]{cDiffk10.pdf}}}
-\end{gather}
-\end{figure}
-
-Figure   \ref{fig:ccoefsk10}
-\begin{figure}
-  \centering
-  \label{fig:ccoefsk10}
-  \caption{$c_{err}= c_0+ \beta c_{predicted}$, k=10}
-\begin{gather}
-\vcenter{\hbox{\includegraphics[width=5.5in]{cCoeffsk10.pdf}}}
-\end{gather}
-\end{figure}
-
-
-
-Figure   \ref{fig:cdiffsk10}
-\begin{figure}
-  \centering
-  \label{fig:cdiffsk10}
-  \caption{$c_{err}-c_{predicted}$ Mean Versus StandardDeviation, k=10 added tail} 
-\begin{gather}
-\vcenter{\hbox{\includegraphics[width=5.5in]{cDiffkT10.pdf}}}
-\end{gather}
-\end{figure}
-
-Figure   \ref{fig:ccoefsk10}
-\begin{figure}
-  \centering
-  \label{fig:ccoefsk10}
-  \caption{$c_{err}= c_0+ \beta c_{predicted}$, k=10, added tail}
-\begin{gather}
-\vcenter{\hbox{\includegraphics[width=5.5in]{cCoeffskT10.pdf}}}
-\end{gather}
-\end{figure}
 
 
 
 
-Figure   \ref{fig:cdiffsk10}
-\begin{figure}
-  \centering
-  \label{fig:cdiffsk10}
-  \caption{$c_{err}-c_{predicted}$ Mean Versus StandardDeviation, k=10 added tail} 
-\begin{gather}
-\vcenter{\hbox{\includegraphics[width=5.5in]{cDiffkT10.pdf}}}
-\end{gather}
-\end{figure}
-
-Figure   \ref{fig:ccoefsk10}
-\begin{figure}
-  \centering
-  \label{fig:ccoefsk10}
-  \caption{$c_{err}= c_0+ \beta c_{predicted}$, k=10, added tail}
-\begin{gather}
-\vcenter{\hbox{\includegraphics[width=5.5in]{cCoeffskT10.pdf}}}
-\end{gather}
-\end{figure}
+% The following graphs present some characteristics of a proposed solution
+% on a Smolyak grid with degree of approximation vector (1,1,1).  
+% The panels labeled approximation error show contour plots of the norm of
+% the difference between the approximate solution and the known exact solution
+% at various points in the ergodic set.
+% $\mathbb{E}()$:
+% \begin{gather*}
+% \mathbb{E}()\equiv \sqrt{(c_t()-c_t^\star())^2 +(k_t()-k_t^\star())^2 +(\theta_t()-\theta_t^\star())^2 +(N_t()-N_t^\star())^2 }  
+% \end{gather*}
+% The panels labeled equation error show  contour plots for
+% \begin{gather*}
+%   \mathbb{D}()\equiv \eqnFunc(x_{-},g^p(x_{-},\epsilon),G^p(g^p(x_{-},\epsilon)),\epsilon). 
+% \end{gather*}
+% These are the model equation ``Euler'' errors at various locations in the ergodic set.
 
 
+% The bottom panel of
+% Figure \ref{fig:tradOne} shows the approximation error obtained by the standard
+% practice of selecting a number of approximation points and solving the collocation problem for the model equations at these points to
+%  approximate the  decision rule. The black dots show the interpolation points. The label of the figure provides the predicted error bound along with the largest error.
+% The green dot shows the location associated with the largest actual error.  The orange dot shows the location associated with  the largest equation system discrepancy 
+% and was used in computing the error bound. 
+
+% The top panel provides a contour plot of the
+% norm of the equation errors. The bottom plot shows the error in the decision rule for different values of $k_{t-1}, \theta_{t-1}$ with $\epsilon_t=0$.
+% Notice that  setting $K=0$ is not equivalent to the standard approach as
+% the series formula has a correction term for $z_t(x_{t-1},\epsilon_t)$
 
 
-Figure   \ref{fig:cdiffsk20}
-\begin{figure}
-  \centering
-  \label{fig:cdiffsk20}
-  \caption{$c_{err}-c_{predicted}$ Mean Versus StandardDeviation, k=20} 
-\begin{gather}
-\vcenter{\hbox{\includegraphics[width=5.5in]{cDiffk20.pdf}}}
-\end{gather}
-\end{figure}
-
-Figure   \ref{fig:ccoefsk20}
-\begin{figure}
-  \centering
-  \label{fig:ccoefsk20}
-  \caption{$c_{err}= c_0+ \beta c_{predicted}$, k=20}
-\begin{gather}
-\vcenter{\hbox{\includegraphics[width=5.5in]{cCoeffsk20.pdf}}}
-\end{gather}
-\end{figure}
 
 
-I used the Niedererreiter number theoretic algorithm to generated highly 
-dispersed test points throughout the ergodic region.\cite{niederreiter88,Xu2005}
-For the given set of parameters, I computed the exact solution.
-I chose a wide array of different degrees of  approximation for the
-smolyak polynomials and for each given degree of approximation I applied
-the error formula to approximate the error at each of
-the test points.  I ran a regression using the formula approximation as a right
-hand side variable along with a constant to predict the true error.
-Varying k from 0 to 20 consistently  produces $R^2$ near one, tiny standard errors and a coefficient on the estimated error very near one.
+% \begin{figure}
+%   \centering
+% \ifmacosx
+
+
+
+%   \includegraphics[width=3.0in]{resDir/forBetterRBC--1,1,1-Iters70theK0host-MacBook-Pro-2numKern2Trad.pdf}
+% \includegraphics[width=3.0in]{resDir/forBetterRBC--1,1,1-Iters70theK0host-MacBook-Pro-2numKern2ApproxTrad.pdf}
+
+
+% \fi
+% %\iflinux
+% \includegraphics[width=3.0in]{keepQ/resDir-host-node006dnumKern16-3727705036/forBetterRBC--1,1,1-Iters70theK0Trad.pdf}
+% \includegraphics[width=3.0in]{keepQ/resDir-host-node006dnumKern16-3727705036/forBetterRBC--1,1,1-Iters70theK0TradApprox.pdf}
+% %\fi
+%   \caption{Contour Plot for Standard Approach approx=(1,1,1) }
+%   \label{fig:tradOne}
+% \end{figure}
+
+
+% \begin{figure}
+%   \centering
+% \ifmacosx
+%   \includegraphics[width=3.0in]{resDir/forBetterRBC--1,1,1-Iters30theK0host-MacBook-Pro-2numKern2.pdf}
+%   \includegraphics[width=3.0in]{resDir/forBetterRBC--1,1,1-Iters30theK0host-MacBook-Pro-2numKern2Approx.pdf}
+% \fi
+% %\iflinux
+% \includegraphics[width=3.0in]{keepQ/resDir-host-node006dnumKern16-3727705061/forBetterRBC--1,1,1-Iters70theK0Series.pdf}
+% \includegraphics[width=3.0in]{keepQ/resDir-host-node006dnumKern16-3727705061/forBetterRBC--1,1,1-Iters70theK0SeriesApprox.pdf}
+% %\fi
+%   \caption{Contour Plot for approx=(1,1,1) K =0 }
+%   \label{fig:cntpltA}
+% \end{figure}
+
+
+
+% In order to evaluate how well the error approximation works, compute and
+% fix a particular decision rule as a proposed solution and I 
+% experiment with various parameterization of the 
+% RBC with known analytic solutions.
+% Consequently, I hold $\eta=d=1$ but approximate the model solution error 
+% for 50 various  parameter settings
+% \begin{gather*}
+%  0.20 <\alpha<0.40,\,\,0.85<\delta<0.99,\,\,0.85<\rho<0.99,\,\,0.005<\sigma<0.015
+% \end{gather*}
+% I do this approximation for 50 various values of 
+% $(k_{t-1},\theta_{t-1},\epsilon_t)$ generated using the Niederreiter algorithm
+%  covering the ergodic set.  I do this for values of k from 0 to 20.  The static proposed solution comes from linearizing
+% the RBC model around the deterministic steady state for
+%  the parameter settings in \ref{rbcparams}.  
+% solution path.  I use the statically selected decision rule and its conditional
+% expectation to construct the paths required in the error formula. 
+
+% Figure   \ref{fig:cdiffsk0}
+% \begin{figure}
+%   \centering
+%   \label{fig:cdiffsk0}
+%   \caption{$c_{err}-c_{predicted}$ Mean Versus StandardDeviation, k=0} 
+% \begin{gather}
+% \vcenter{\hbox{\includegraphics[width=5.5in]{cDiffk0.pdf}}}
+% \end{gather}
+% \end{figure}
+
+% Figure   \ref{fig:ccoefsk0}
+% \begin{figure}
+%   \centering
+%   \label{fig:ccoefsk0}
+%   \caption{$c_{err}= c_0+ \beta c_{predicted}$, k=0}
+% \begin{gather}
+% \vcenter{\hbox{\includegraphics[width=5.5in]{cCoeffsk0.pdf}}}
+% \end{gather}
+% \end{figure}
+
+
+
+% Figure   \ref{fig:diffskT0}
+% \begin{figure}
+%   \centering
+%   \label{fig:cdiffskT0}
+%   \caption{$c_{err}-c_{predicted}$ Mean Versus StandardDeviation, k=0  with added tail} 
+% \begin{gather}
+% \vcenter{\hbox{\includegraphics[width=5.5in]{cDiffkT0.pdf}}}
+% \end{gather}
+% \end{figure}
+
+% Figure   \ref{fig:ccoefskT0}
+% \begin{figure}
+%   \centering
+%   \label{fig:ccoefskT0}
+%   \caption{$c_{err}= c_0+ \beta c_{predicted}$, k=0 with added tail}
+% \begin{gather}
+% \vcenter{\hbox{\includegraphics[width=5.5in]{cCoeffskT0.pdf}}}
+% \end{gather}
+% \end{figure}
+
+% Figure   \ref{fig:cdiffsk1}
+% \begin{figure}
+%   \centering
+%   \label{fig:cdiffsk1}
+%   \caption{$c_{err}-c_{predicted}$ Mean Versus StandardDeviation, k=1} 
+% \begin{gather}
+% \vcenter{\hbox{\includegraphics[width=5.5in]{cDiffk1.pdf}}}
+% \end{gather}
+% \end{figure}
+
+% Figure   \ref{fig:ccoefsk1}
+% \begin{figure}
+%   \centering
+%   \label{fig:ccoefsk1}
+%   \caption{$c_{err}= c_0+ \beta c_{predicted}$, k=1}
+% \begin{gather}
+% \vcenter{\hbox{\includegraphics[width=5.5in]{cCoeffsk1.pdf}}}
+% \end{gather}
+% \end{figure}
+
+% Figure   \ref{fig:cdiffsk1}
+% \begin{figure}
+%   \centering
+%   \label{fig:cdiffsk1}
+%   \caption{$c_{err}-c_{predicted}$ Mean Versus StandardDeviation, k=1 added tail} 
+% \begin{gather}
+% \vcenter{\hbox{\includegraphics[width=5.5in]{cDiffkT1.pdf}}}
+% \end{gather}
+% \end{figure}
+
+% Figure   \ref{fig:ccoefsk1}
+% \begin{figure}
+%   \centering
+%   \label{fig:ccoefsk1}
+%   \caption{$c_{err}= c_0+ \beta c_{predicted}$, k=1, added tail}
+% \begin{gather}
+% \vcenter{\hbox{\includegraphics[width=5.5in]{cCoeffskT1.pdf}}}
+% \end{gather}
+% \end{figure}
+
+
+% Figure   \ref{fig:cdiffsk5}
+% \begin{figure}
+%   \centering
+%   \label{fig:cdiffsk5}
+%   \caption{$c_{err}-c_{predicted}$ Mean Versus StandardDeviation, k=5} 
+% \begin{gather}
+% \vcenter{\hbox{\includegraphics[width=5.5in]{cDiffk5.pdf}}}
+% \end{gather}
+% \end{figure}
+
+% Figure   \ref{fig:ccoefsk5}
+% \begin{figure}
+%   \centering
+%   \label{fig:ccoefsk5}
+%   \caption{$c_{err}= c_0+ \beta c_{predicted}$, k=5}
+% \begin{gather}
+% \vcenter{\hbox{\includegraphics[width=5.5in]{cCoeffsk5.pdf}}}
+% \end{gather}
+% \end{figure}
+
+
+% Figure   \ref{fig:cdiffsk5}
+% \begin{figure}
+%   \centering
+%   \label{fig:cdiffsk5}
+%   \caption{$c_{err}-c_{predicted}$ Mean Versus StandardDeviation, k=5 added tail} 
+% \begin{gather}
+% \vcenter{\hbox{\includegraphics[width=5.5in]{cDiffkT5.pdf}}}
+% \end{gather}
+% \end{figure}
+
+% Figure   \ref{fig:ccoefsk5}
+% \begin{figure}
+%   \centering
+%   \label{fig:ccoefsk5}
+%   \caption{$c_{err}= c_0+ \beta c_{predicted}$, k=5, added tail}
+% \begin{gather}
+% \vcenter{\hbox{\includegraphics[width=5.5in]{cCoeffskT5.pdf}}}
+% \end{gather}
+% \end{figure}
+
+
+
+% Figure   \ref{fig:cdiffsk10}
+% \begin{figure}
+%   \centering
+%   \label{fig:cdiffsk10}
+%   \caption{$c_{err}-c_{predicted}$ Mean Versus StandardDeviation, k=10} 
+% \begin{gather}
+% \vcenter{\hbox{\includegraphics[width=5.5in]{cDiffk10.pdf}}}
+% \end{gather}
+% \end{figure}
+
+% Figure   \ref{fig:ccoefsk10}
+% \begin{figure}
+%   \centering
+%   \label{fig:ccoefsk10}
+%   \caption{$c_{err}= c_0+ \beta c_{predicted}$, k=10}
+% \begin{gather}
+% \vcenter{\hbox{\includegraphics[width=5.5in]{cCoeffsk10.pdf}}}
+% \end{gather}
+% \end{figure}
+
+
+
+% Figure   \ref{fig:cdiffsk10}
+% \begin{figure}
+%   \centering
+%   \label{fig:cdiffsk10}
+%   \caption{$c_{err}-c_{predicted}$ Mean Versus StandardDeviation, k=10 added tail} 
+% \begin{gather}
+% \vcenter{\hbox{\includegraphics[width=5.5in]{cDiffkT10.pdf}}}
+% \end{gather}
+% \end{figure}
+
+% Figure   \ref{fig:ccoefsk10}
+% \begin{figure}
+%   \centering
+%   \label{fig:ccoefsk10}
+%   \caption{$c_{err}= c_0+ \beta c_{predicted}$, k=10, added tail}
+% \begin{gather}
+% \vcenter{\hbox{\includegraphics[width=5.5in]{cCoeffskT10.pdf}}}
+% \end{gather}
+% \end{figure}
+
+
+
+
+% Figure   \ref{fig:cdiffsk10}
+% \begin{figure}
+%   \centering
+%   \label{fig:cdiffsk10}
+%   \caption{$c_{err}-c_{predicted}$ Mean Versus StandardDeviation, k=10 added tail} 
+% \begin{gather}
+% \vcenter{\hbox{\includegraphics[width=5.5in]{cDiffkT10.pdf}}}
+% \end{gather}
+% \end{figure}
+
+% Figure   \ref{fig:ccoefsk10}
+% \begin{figure}
+%   \centering
+%   \label{fig:ccoefsk10}
+%   \caption{$c_{err}= c_0+ \beta c_{predicted}$, k=10, added tail}
+% \begin{gather}
+% \vcenter{\hbox{\includegraphics[width=5.5in]{cCoeffskT10.pdf}}}
+% \end{gather}
+% \end{figure}
+
+
+
+
+% Figure   \ref{fig:cdiffsk20}
+% \begin{figure}
+%   \centering
+%   \label{fig:cdiffsk20}
+%   \caption{$c_{err}-c_{predicted}$ Mean Versus StandardDeviation, k=20} 
+% \begin{gather}
+% \vcenter{\hbox{\includegraphics[width=5.5in]{cDiffk20.pdf}}}
+% \end{gather}
+% \end{figure}
+
+% Figure   \ref{fig:ccoefsk20}
+% \begin{figure}
+%   \centering
+%   \label{fig:ccoefsk20}
+%   \caption{$c_{err}= c_0+ \beta c_{predicted}$, k=20}
+% \begin{gather}
+% \vcenter{\hbox{\includegraphics[width=5.5in]{cCoeffsk20.pdf}}}
+% \end{gather}
+% \end{figure}
+
+
+% Figure   \ref{fig:cdiffsk50}
+% \begin{figure}
+%   \centering
+%   \label{fig:cdiffsk50}
+%   \caption{$c_{err}-c_{predicted}$ Mean Versus StandardDeviation, k=50} 
+% \begin{gather}
+% %\vcenter{\hbox{\includegraphics[width=5.5in]{cDiffk50.pdf}}}
+% \end{gather}
+% \end{figure}
+
+% Figure   \ref{fig:ccoefsk50}
+% \begin{figure}
+%   \centering
+%   \label{fig:ccoefsk50}
+%   \caption{$c_{err}= c_0+ \beta c_{predicted}$, k=50}
+% \begin{gather}
+% %\vcenter{\hbox{\includegraphics[width=5.5in]{cCoeffsk50.pdf}}}
+% \end{gather}
+% \end{figure}
+
+
+% Figure   \ref{fig:cdiffsk50}
+% \begin{figure}
+%   \centering
+%   \label{fig:cdiffsk50}
+%   \caption{$c_{err}-c_{predicted}$ Mean Versus StandardDeviation, k=50} 
+% \begin{gather}
+% \vcenter{\hbox{\includegraphics[width=5.5in]{cDiffkT50.pdf}}}
+% \end{gather}
+% \end{figure}
+
+% Figure   \ref{fig:ccoefsk50}
+% \begin{figure}
+%   \centering
+%   \label{fig:ccoefsk50}
+%   \caption{$c_{err}= c_0+ \beta c_{predicted}$, k=50}
+% \begin{gather}
+% \vcenter{\hbox{\includegraphics[width=5.5in]{cCoeffskT50.pdf}}}
+% \end{gather}
+% \end{figure}
+
+
+% I used the Niedererreiter number theoretic algorithm to generated highly 
+% dispersed test points throughout the ergodic region.\cite{niederreiter88,Xu2005}
+% For the given set of parameters, I computed the exact solution.
+% I chose a wide array of different degrees of  approximation for the
+% Smolyak polynomials and for each given degree of approximation I applied
+% the error formula to approximate the error at each of
+% the test points.  I ran a regression using the formula approximation as a right
+% hand side variable along with a constant to predict the true error.
+% Varying k from 0 to 20 consistently  produces $R^2$ near one, tiny standard errors and a coefficient on the estimated error very near one.
 
 
 
@@ -1633,75 +1447,75 @@ Varying k from 0 to 20 consistently  produces $R^2$ near one, tiny standard erro
 % \end{figure}
 
 
-\section{Robust Calculations}
+% \section{Robust Calculations}
 
  
 
-Many global methods propose a solution and update the solution by solving
-the original system of equations with the previous iterations guess.
-These iterations are notorious for going off track.
-The series representation provides a useful additional constraint on the 
-evolution of proposed solution in the algorithm.
-To demonstrate this phenomonon, 
-I experimented with an RBC model with occassionally binding constraints.
+% Many global methods propose a solution and update the solution by solving
+% the original system of equations with the previous iterations guess.
+% These iterations are notorious for going off track.
+% The series representation provides a useful additional constraint on the 
+% evolution of proposed solution in the algorithm.
+% To demonstrate this phenomenon, 
+% I experimented with an RBC model with occasionally binding constraints.
 
-For a given set of parameters, I computed a deterministic 
-steady state for the non binding solution.  I discarded
-those parameter values that produced a negative steady state for capital or 
-consumption.  For each set of parameters,
-I linearized the model at the steady state and computed
-the linear perfect forsight solution to use as the linear reference model and
-as an initial guess for the equation system.
+% For a given set of parameters, I computed a deterministic 
+% steady state for the non binding solution.  I discarded
+% those parameter values that produced a negative steady state for capital or 
+% consumption.  For each set of parameters,
+% I linearized the model at the steady state and computed
+% the linear perfect foresight solution to use as the linear reference model and
+% as an initial guess for the equation system.
 
-In order to test the effectiveness of the 
-algorithm for model convergence I use Nied to generate model parameters.
-I discarded those parameters which failed to produce 
-I computed
-
-
+% In order to test the effectiveness of the 
+% algorithm for model convergence I use Nied to generate model parameters.
+% I discarded those parameters which failed to produce 
+% I computed
 
 
 
-\begin{figure}
-  \centering
+
+
+% \begin{figure}
+%   \centering
   
-  \caption{Values for $(c_{ss}>0\wedge k_{ss}>0)\,\,\{\alpha,d,\delta,\eta,\rho,\sigma,\Upsilon\}\,\, Converged?$}
-\begin{gather}
-\vcenter{\hbox{\includegraphics[width=5.5in]{paramsForTest.pdf}}}
-\end{gather}
-\end{figure}
+%   \caption{Values for $(c_{ss}>0\wedge k_{ss}>0)\,\,\{\alpha,d,\delta,\eta,\rho,\sigma,\Upsilon\}\,\, Converged?$}
+% \begin{gather}
+% \vcenter{\hbox{\includegraphics[width=5.5in]{paramsForTest.pdf}}}
+% \end{gather}
+% \end{figure}
 
 
-It will be useful to explore the computational aspects of choosing the right value for k.  Zero seems to improve reliability.
-It will be important to work on exploiting the high degree of parallelism 
-available.
+% It will be useful to explore the computational aspects of choosing the right value for k.  Zero seems to improve reliability.
+% It will be important to work on exploiting the high degree of parallelism 
+% available.
 
-It should be possible to maintain a small footpring communication would involve
-sending the coefficient matrices for smolyak calculation.  These nodes
-should use efficient polynomial composition to compute conditional expectations
-paths .
+% It should be possible to maintain a small footprint communication would involve
+% sending the coefficient matrices for Smolyak calculation.  These nodes
+% should use efficient polynomial composition to compute conditional expectations
+% paths .
 \section{Conclusions}
 This paper introduces a new series representation for bounded time series and
 shows how to apply the series for representing bounded time invariant maps.
 This representation proves useful because the solutions for many
 dynamic stochastic economic models fall in this class.
-The series representation plays a strategic role in developing a formula for bounding the errors in dynamic model solution decision rules.  The paper
+The series representation plays a strategic role in developing a formula for approximating the errors in dynamic model solution decision rules.  The paper
 also shows how to  augment traditional ``Euler Equation'' model solution
 methods with constraints reflecting how the updated
 conditional expectation paths impact the time t solution values.
-
-Although the series representation it appears much can be gained by using
-just the first term.
+The current prototype was written in Mathematica and is available on gitHub
 
 
 There are many directions to pursue in future work.
-I will investigate computational efficiency issues and further
+I have begun work  developing a Julia version.
+In writing  Mathematica code I applied a functional programming style
+while blending numerica and symbolic calculations. Along with
+Mathematica, Julia is also a homoiconic language where functions are first order objects. But, I suspect that the 
+symbolic numeric balance may be different as I implement the code in Julia.
+Indeed, perhaps the Julia code will be completely numeric.
+In that implementation, I 
+will investigate computational efficiency issues and further
 exploit the high degree of parallelism available in the algorithm.
-It seems likely that the technique can provide a way to improve 
-the performance of  perturbation method
-decision rules by incorporating global information about the solution.
-The procedures should prove useful
-in handling dynamic economies with occasionally binding constraints\citep{holden15:_exist_dsge,guerrieri15:_occbin} and regime switching.
 
 %Using tail contribution can reduce magnitude of $z_0$
 
@@ -1718,23 +1532,24 @@ in handling dynamic economies with occasionally binding constraints\citep{holden
 
 \bibliographystyle{plainnat}
 \bibliography{anderson,files}
+\newpage
+
 \appendix
 
 
-\section{Error Bound Formula Proof}
+\section{Error Approximation Formula Proof}
 \label{sec:error-bound-formula}
 
 
 We consider time invariant maps such as often arise from solving an
  optimization problem codified in a systems of equations.  
-In what follows, we construct an error bound for proposed model solutions.
+In what follows, we construct an error approximation for proposed model solutions.
 Consider a bounded region, $\bndRgn$, where all iterated conditional expectations paths remain bounded.
  Given an exact solution $x^\star_t=g^\star(x_{t-1},\epsilon_t)$ define the conditional expectations function,
   \begin{gather}
 G^\star(x)\equiv\expct{g^\star(x,\epsilon)} \intertext{then with}
 E_tx^\star_{t+1}=G^\star(g^\star(x_{t-1},\epsilon_t)) \intertext{we have}
-    \label{eq:2}
-\eqnFunc(x^\star_{t-1},x^\star_t,E_tx^\star_{t+1},\epsilon_t)=0  \,\, \forall  (x_{t-1},\epsilon_t)\\ \intertext{In words, the exact solution  exactly satisfies the model equations.  Using $G^\star$ and $\linMod$, construct the family of trajectories and corresponding $z^\star_t(x_{t-1},\epsilon)$ }
+    \eqnFunc(x^\star_{t-1},x^\star_t,E_tx^\star_{t+1},\epsilon_t)=0  \,\, \forall  (x_{t-1},\epsilon_t)\\ \intertext{In words, the exact solution  exactly satisfies the model equations.  Using $G^\star$ and $\linMod$, construct the family of trajectories and corresponding $z^\star_t(x_{t-1},\epsilon)$ }
    x^\star_t(x_{t-1},\epsilon_t) \in{R^L}\,\,\twoNorm{x^\star_t(x_{t-1},\epsilon_t)}  \le \bar{\mathcal{X}}\,\,\forall t\ > 0
   \end{gather}
    \begin{align}
@@ -1808,13 +1623,14 @@ in the region $\bndRgn^p$. Using $G^p$ and $\linMod$ construct the family of tra
 the largest error for $\Delta z_{t+k}^p$   are pessimistic bounds for the errors from the conditional expectations path. } The exact solution satisfies the model equations exactly.  The error associated with the proposed solution leads to a conservative bound on the largest change in $z$ needed to match the exact solution.
 
 %error  in formula phi should multiply delta z's
+{\small
   \begin{tcolorbox}[ams gather]
   \Delta z_t \le  
 \max_{\{x_{-},\epsilon\}} \twoNorm{ \phi \eqnFunc(x_{-},g^p(x_{-},\epsilon),G^p(g^p(x_{-},\epsilon)),\epsilon) }\\
 	\infNorm{ x^\star_{t}(x_{t-1},\epsilon) -	 x^p_{t}(x_{t-1},\epsilon)} \le
 \max_{\{x_{-},\epsilon\}} \twoNorm{(I-F)^{-1} \phi \eqnFunc(x_{-},g^p(x_{-},\epsilon),G^p(g^p(x_{-},\epsilon)),\epsilon) }
   \end{tcolorbox}
-
+}
 
 \newcommand{\hApp}[1]{{H_-{#1}_{t-1} +H_0{#1}_t +H_+{#1}_{t+1}}}
 
@@ -1827,7 +1643,7 @@ z^p_t=\hApp{x^p}\\
 \intertext{with}
 \eqnFunc(x^\star_{t-1},x^\star_{t},x^\star_{t+1},\epsilon_t) =0\\
 %\le \mathbf{e}_t^p(x_{t-1},\epsilon)\\
-\Delta \mathbf{e}_t^p(x_{t-1},\epsilon)\approx \pdrv{\eqnFunc(x_{t-1},x_{t},x_{t+1},\epsilon_t)}{x_t} (x^\star_t-x^p_t) +\pdrv{\eqnFunc(x_{t-1},x_{t},x_{t+1},\epsilon_t)}{x_{t+1}} (x^\star_{t+1}-x^p_{t+1}) \intertext{ when $\pdrv{\eqnFunc(x_{t-1},x_{t},x_{t+1},\epsilon_t)}{x_t}$ is nonsingular, we can write}
+\Delta \mathbf{e}_t^p(x_{t-1},\epsilon)\approx \pdrv{\eqnFunc(x_{t-1},x_{t},x_{t+1},\epsilon_t)}{x_t} (x^\star_t-x^p_t) +\pdrv{\eqnFunc(x_{t-1},x_{t},x_{t+1},\epsilon_t)}{x_{t+1}} (x^\star_{t+1}-x^p_{t+1}) \intertext{ when $\pdrv{\eqnFunc(x_{t-1},x_{t},x_{t+1},\epsilon_t)}{x_t}$ is non-singular, we can write}
  (x^\star_t-x^p_t) \approx \left ( \pdrv{\eqnFunc(x_{t-1},x_{t},x_{t+1},\epsilon_t)}{x_t}\right )^{-1} \left ( \Delta \mathbf{e}_t^p(x_{t-1},\epsilon) -\pdrv{\eqnFunc(x_{t-1},x_{t},x_{t+1},\epsilon_t)}{x_{t+1}} (x^\star_{t+1}-x^p_{t+1}) \right )
 \intertext{ collecting results}
  (\twoNorm{\phi \Delta z_t})^2 =\\ 
@@ -1850,7 +1666,10 @@ H_0\left ( \pdrv{\eqnFunc(x_{t-1},x_{t},x_{t+1},\epsilon_t)}{x_t}\right )^{-1}
 -\\
 \left ( H_0\left ( \pdrv{\eqnFunc(x_{t-1},x_{t},x_{t+1},\epsilon_t)}{x_t}\right )^{-1} 
 \pdrv{\eqnFunc(x_{t-1},x_{t},x_{t+1},\epsilon_t)}{x_{t+1}}  -H_+\right ) (x^\star_{t+1}-x^p_{t+1})
-))^2=\intertext{approximating the derivatives using he $H$ matrices produces}
+))^2=\intertext{approximating the derivatives using the $H$ matrices}
+\pdrv{\eqnFunc(x_{t-1},x_{t},x_{t+1},\epsilon_t)}{x_{t}} \approx H_0\\
+\pdrv{\eqnFunc(x_{t-1},x_{t},x_{t+1},\epsilon_t)}{x_{t+1}} \approx H_+\\
+\intertext{produces}
 \max_{x_{t-1},\epsilon_t} (\phi \Delta \mathbf{e}_t^p(x_{t-1},\epsilon))^2
   \end{gather*}
 
@@ -1917,178 +1736,14 @@ authors have described a variety of approaches.\footnote{The algorithms describe
 \cite{holden15:_exist_dsge,guerrieri15:_occbin,benigno09,hintermaier10,brumm10,nakov08,haefke98,nakata12,gordon11,billi11,Hintermaier2010,Guerrieri2015}
 
 
+%\subsection{First Order Conditions Lagrangian Derivations}
+\label{sec:folag}
 
 Consider adding constraints the constraints:
 
 \begin{gather*}
   I_t \ge \upsilon I_{ss}
 \end{gather*}
-
-
-\subsection{Regime Switching}
-\label{sec:ressw}
-
-
-\subsubsection{Regime Switching}
-
-
-\label{sec:regime-switch-model}
-
-To apply the series formula, one must construct condional expectations paths from each initial $x(x_{t-1},\epsilon_t)$.  Consider the case when the transition 
-probabilities $p_{ij}$ are constant and do not depend on 
-$x_{t-1},\epsilon_t,x_t$.
-
-\begin{gather*}
-E_t[x_{t+1}]=  \sum_{j=1}^{N} p_{ij} E_t(x_{t+1}(x_t)|s_{t+1}=j)  \\
-E_t[x_{t+2}]=  \sum_{j=1}^{N} p_{ij} E_t(x_{t+2}(x_{t+1})|s_{t+2}=j)  \\
-\end{gather*}
-
-Since we know the current state we can use the known conditional expectation function for the state:
-\begin{gather*}
-    \begin{bmatrix}
-E_t(x_{t+1}(x_{t})|s_{t}=1)  \\    \vdots \\
-E_t(x_{t+1}(x_{t})|s_{t}=N)  
-  \end{bmatrix}
-\end{gather*}
-
-For the next state we can compute expectations since the errors are independent
-\begin{gather*}
-  \begin{bmatrix}
-E_t(x_{t+2}(x_t)|s_{t}=1)  \\    \vdots \\
-E_t(x_{t+2}(x_t)|s_{t}=N)  
-  \end{bmatrix}=
-(P \otimes  I)
-  \begin{bmatrix}
-E_t(x_{t+2}(x_{t+1})|s_{t+1}=1)  \\    \vdots \\
-E_t(x_{t+2}(x_{t+1})|s_{t+1}=N)  
-  \end{bmatrix}
-\end{gather*}
-
-Consider two states $s_t \in {0,1}$ where the depreciation rates are different:  $d_0>d_1$
-
-\begin{gather}
-    Prob(s_t=j|s_{t-1}=i)=p_{ij}
-\end{gather}
-
-For example, the Euler equations for the  neoclassical growth  model 
-%\label{sec:simple-rbc-model-ext}
-can be written as
- 
-
-
-\begin{tcolorbox}[ams gather]
-if(\mu>0 \land (k_t - (1-d)k_{t-1}-\upsilon I_{ss})=0)\\
-  \lambda_t -\frac{1}{c_t}\\
-c_t+I_t-\theta_tk_{t-1}^\alpha\\
-N_t-\lambda_t \theta_t\\
-\theta_t-e^{(\rho\ln(\theta_{t-1})+\epsilon)}\\
-\lambda_t + \mu_t - (\alpha k_t^{(\alpha-1)}\delta N_{t+1}+\lambda_{t+1} \delta (1-d)+\mu_{t+1}+\delta (1-d)\mu_{t+1}\\
-I_t-(K_t-(1-d)k_{t-1})\\
-\mu_t(k_t - (1-d) k_{t-1}-\upsilon I_{ss})\\
-\end{tcolorbox}
-\begin{tcolorbox}[ams gather]
-if(\mu=0 \land (k_t - (1-d)k_{t-1}-\upsilon I_{ss})\ge 0)\\
-  \lambda_t -\frac{1}{c_t}\\
-c_t+I_t-\theta_tk_{t-1}^\alpha\\
-N_t-\lambda_t \theta_t\\
-\theta_t-e^{(\rho\ln(\theta_{t-1})+\epsilon)}\\
-\lambda_t + {\mu_t} - (\alpha k_t^{(\alpha-1)}\delta N_{t+1}+\lambda_{t+1} \delta (1-d)+{\mu_{t+1}}+\delta (1-d)\mu_{t+1}\\
-I_t-(K_t-(1-d)k_{t-1})\\
-\mu_t(k_t - (1-d) k_{t-1}-\upsilon I_{ss})
-\end{tcolorbox}
-
-
-
-\begin{tcolorbox}[ams gather]
-if(s_t=0\land \mu>0 \land (k_t - (1-d_0)k_{t-1}-\upsilon I_{ss})=0)\\
-  \lambda_t -\frac{1}{c_t}\\
-c_t+k_t-\theta_tk_{t-1}^\alpha\\
-N_t-\lambda_t \theta_t\\
-\theta_t-e^{(\rho\ln(\theta_{t-1})+\epsilon)}\\
-\lambda_t + {\mu_t} - (\alpha k_t^{(\alpha-1)}\delta N_{t+1}+\lambda_{t+1} \delta (1-d_0)+{\mu_{t+1}}+\delta (1-d_0)\\
-I_t-(K_t-(1-d_0)k_{t-1})\\
-\mu_t(k_t - (1-d_0) k_{t-1}-\upsilon I_{ss})\\
-\end{tcolorbox}
-\begin{tcolorbox}[ams gather]
-if(s_t=0\land\mu=0 \land (k_t - (1-d_0)k_{t-1}-\upsilon I_{ss})\ge 0)\\
-  \lambda_t -\frac{1}{c_t}\\
-c_t+k_t-\theta_tk_{t-1}^\alpha\\
-N_t-\lambda_t \theta_t\\
-\theta_t-e^{(\rho\ln(\theta_{t-1})+\epsilon)}\\
-\lambda_t + {\mu_t} - (\alpha k_t^{(\alpha-1)}\delta N_{t+1}+\lambda_{t+1} \delta (1-d_0)+{\mu_{t+1}}+\delta (1-d_0)\\
-I_t-(K_t-(1-d_0)k_{t-1})\\
-\mu_t(k_t - (1-d_0) k_{t-1}-\upsilon I_{ss})
-\end{tcolorbox}
-\begin{tcolorbox}[ams gather]
-if(s_t=1\land \mu>0 \land (k_t - (1-d_1)k_{t-1}-\upsilon I_{ss})=0)\\
-  \lambda_t -\frac{1}{c_t}\\
-c_t+k_t-\theta_tk_{t-1}^\alpha\\
-N_t-\lambda_t \theta_t\\
-\theta_t-e^{(\rho\ln(\theta_{t-1})+\epsilon)}\\
-\lambda_t + {\mu_t} - (\alpha k_t^{(\alpha-1)}\delta N_{t+1}+\lambda_{t+1} \delta (1-d_1)+{\mu_{t+1}}+\delta (1-d_1)\\
-I_t-(K_t-(1-d_1)k_{t-1})\\
-\mu_t(k_t - (1-d_1) k_{t-1}-\upsilon I_{ss})\\
-\end{tcolorbox}
-\begin{tcolorbox}[ams gather]
-if(s_t=1\land\mu=0 \land (k_t - (1-d_1)k_{t-1}-\upsilon I_{ss})\ge 0)\\
-  \lambda_t -\frac{1}{c_t}\\
-c_t+k_t-\theta_tk_{t-1}^\alpha\\
-N_t-\lambda_t \theta_t\\
-\theta_t-e^{(\rho\ln(\theta_{t-1})+\epsilon)}\\
-\lambda_t + {\mu_t} - (\alpha k_t^{(\alpha-1)}\delta N_{t+1}+\lambda_{t+1} \delta (1-d_1)+{\mu_{t+1}}+\delta (1-d_1)\\
-I_t-(K_t-(1-d_1)k_{t-1})\\
-\mu_t(k_t - (1-d_1) k_{t-1}-\upsilon I_{ss})
-\end{tcolorbox}
-
-
-
-\subsection{Smolyak Interpolation}
-\label{sec:smolyakinterp}
-
-\paragraph{An-isotropic}
-It is possible to precompute each of the integrals. Since the solution will be linear combination of the polynomials, precomputing the polynomials means the weighted sum of the precomputed integrals will provide the integrals.
-\paragraph{Precomputing Integrals}
-\begin{algorithm}
-  \SetKwInOut{Input}{input}
- \SetKwInOut{Output}{output}
-\Input{$\aSmolPoly$, $\smolRngs$, $\distribSpec$} 
-\Output{$\int \aSmolPoly \Pi (f_i(\epsilon_i)) d\epsilon_1 \ldots d\epsilon_k$}
-\end{algorithm}
-
-
-
-
-
-
-
-% \section{Multi-cluster Sequential Number Theoretic Optimization (MSNTO)}
-% \label{sec:MSNTO}
-
-% This section describes a method for finding maxima in a closed bounded domain.
-% Let $D=[a,b]$ in $R^s$ where $a_i \le x_i \le b_i$. We want to find  $M=f(x^\ast)= \max_{x \in D}f(x)$.
-% Th number theoretic (Quasi-Monte Carlo) approached is designed for finding optima with many local optima.  It is based on the used of space filling points.\cite{Xu2005}
-% The number theoretic method of optimization includes two basic steps.
-% \begin{enumerate}
-% \item Choose a set $p=x_i, i=1,\dots,n$ of potential optima that are uniformly scattered.
-% \item Find $M_n\text{ and } x^\ast \in p =\max_{1\le i \le n}f(x_i)$
-% \end{enumerate}
-
-% Even when choosing $p$ wisely convergence slow until \cite{Niederreiter1983}.  They speed up the convergence by contracting the domain.
-% Their algorithm discards all but the best in the domain. Must have very many points to guarantee choosing a point close to the optimum.
-
-
-% MSNTO selects a finite number of sample points uniformly scattered on D.  Next it discard inferior points retaining small sample of potential maxima.  These form the clusters for the next step.  The algorithm performs a domain contraction on each of the clusters.
-
-
-
-
-\section{First Order Conditions Lagrangian Derivations}
-\label{sec:folag}
-
-
-
-\section{RBC Example}
-\label{sec:rbc-example-1}
 
   We consider a model described in \cite{Maliar2005}\footnote{Here, we set their $\beta=1$ and do not discuss quasi-geometric discounting or time-inconsistency.}
  \begin{gather*}
@@ -2135,6 +1790,169 @@ u(c)=\frac{c^{1-\eta}-1}{1-\eta}\\
 % 0& \alpha(\alpha-1) k_t^{(\alpha-2)}
 % \end{bmatrix}
 \end{gather*}
+
+
+For example, the Euler equations for the  neoclassical growth  model 
+%\label{sec:simple-rbc-model-ext}
+can be written as
+ 
+
+
+\begin{tcolorbox}[ams gather]
+if(\mu>0 \land (k_t - (1-d)k_{t-1}-\upsilon I_{ss})=0)\\
+  \lambda_t -\frac{1}{c_t}\\
+c_t+I_t-\theta_tk_{t-1}^\alpha\\
+N_t-\lambda_t \theta_t\\
+\theta_t-e^{(\rho\ln(\theta_{t-1})+\epsilon)}\\
+\lambda_t + \mu_t - (\alpha k_t^{(\alpha-1)}\delta N_{t+1}+\lambda_{t+1} \delta (1-d)+\mu_{t+1}+\delta (1-d)\mu_{t+1}\\
+I_t-(K_t-(1-d)k_{t-1})\\
+\mu_t(k_t - (1-d) k_{t-1}-\upsilon I_{ss})\\
+\end{tcolorbox}
+\begin{tcolorbox}[ams gather]
+if(\mu=0 \land (k_t - (1-d)k_{t-1}-\upsilon I_{ss})\ge 0)\\
+  \lambda_t -\frac{1}{c_t}\\
+c_t+I_t-\theta_tk_{t-1}^\alpha\\
+N_t-\lambda_t \theta_t\\
+\theta_t-e^{(\rho\ln(\theta_{t-1})+\epsilon)}\\
+\lambda_t + {\mu_t} - (\alpha k_t^{(\alpha-1)}\delta N_{t+1}+\lambda_{t+1} \delta (1-d)+{\mu_{t+1}}+\delta (1-d)\mu_{t+1}\\
+I_t-(K_t-(1-d)k_{t-1})\\
+\mu_t(k_t - (1-d) k_{t-1}-\upsilon I_{ss})
+\end{tcolorbox}
+
+
+
+\subsection{Regime Switching}
+\label{sec:ressw}
+
+
+
+
+\label{sec:regime-switch-model}
+
+To apply the series formula, one must construct conditional expectations paths from each initial $x(x_{t-1},\epsilon_t)$.  Consider the case when the transition 
+probabilities $p_{ij}$ are constant and do not depend on 
+$x_{t-1},\epsilon_t,x_t$.
+
+\begin{gather*}
+E_t[x_{t+1}]=  \sum_{j=1}^{N} p_{ij} E_t(x_{t+1}(x_t)|s_{t+1}=j)  \\
+E_t[x_{t+2}]=  \sum_{j=1}^{N} p_{ij} E_t(x_{t+2}(x_{t+1})|s_{t+2}=j)  \\
+\end{gather*}
+
+If we know the current state we can use the known conditional expectation function for the state:
+\begin{gather*}
+    \begin{bmatrix}
+E_t(x_{t+1}(x_{t})|s_{t}=1)  \\    \vdots \\
+E_t(x_{t+1}(x_{t})|s_{t}=N)  
+  \end{bmatrix}
+\end{gather*}
+
+For the next state we can compute expectations if the errors are independent
+\begin{gather*}
+  \begin{bmatrix}
+E_t(x_{t+2}(x_t)|s_{t}=1)  \\    \vdots \\
+E_t(x_{t+2}(x_t)|s_{t}=N)  
+  \end{bmatrix}=
+(P \otimes  I)
+  \begin{bmatrix}
+E_t(x_{t+2}(x_{t+1})|s_{t+1}=1)  \\    \vdots \\
+E_t(x_{t+2}(x_{t+1})|s_{t+1}=N)  
+  \end{bmatrix}
+\end{gather*}
+
+Consider two states $s_t \in {0,1}$ where the depreciation rates are different:  $d_0>d_1$
+
+\begin{gather}
+    Prob(s_t=j|s_{t-1}=i)=p_{ij}
+\end{gather}
+
+
+\begin{tcolorbox}[ams gather]
+if(s_t=0\land \mu>0 \land (k_t - (1-d_0)k_{t-1}-\upsilon I_{ss})=0)\\
+  \lambda_t -\frac{1}{c_t}\\
+c_t+k_t-\theta_tk_{t-1}^\alpha\\
+N_t-\lambda_t \theta_t\\
+\theta_t-e^{(\rho\ln(\theta_{t-1})+\epsilon)}\\
+\lambda_t + {\mu_t} - (\alpha k_t^{(\alpha-1)}\delta N_{t+1}+\lambda_{t+1} \delta (1-d_0)+{\mu_{t+1}}+\delta (1-d_0)\\
+I_t-(K_t-(1-d_0)k_{t-1})\\
+\mu_t(k_t - (1-d_0) k_{t-1}-\upsilon I_{ss})\\
+\end{tcolorbox}
+\begin{tcolorbox}[ams gather]
+if(s_t=0\land\mu=0 \land (k_t - (1-d_0)k_{t-1}-\upsilon I_{ss})\ge 0)\\
+  \lambda_t -\frac{1}{c_t}\\
+c_t+k_t-\theta_tk_{t-1}^\alpha\\
+N_t-\lambda_t \theta_t\\
+\theta_t-e^{(\rho\ln(\theta_{t-1})+\epsilon)}\\
+\lambda_t + {\mu_t} - (\alpha k_t^{(\alpha-1)}\delta N_{t+1}+\lambda_{t+1} \delta (1-d_0)+{\mu_{t+1}}+\delta (1-d_0)\\
+I_t-(K_t-(1-d_0)k_{t-1})\\
+\mu_t(k_t - (1-d_0) k_{t-1}-\upsilon I_{ss})
+\end{tcolorbox}
+\begin{tcolorbox}[ams gather]
+if(s_t=1\land \mu>0 \land (k_t - (1-d_1)k_{t-1}-\upsilon I_{ss})=0)\\
+  \lambda_t -\frac{1}{c_t}\\
+c_t+k_t-\theta_tk_{t-1}^\alpha\\
+N_t-\lambda_t \theta_t\\
+\theta_t-e^{(\rho\ln(\theta_{t-1})+\epsilon)}\\
+\lambda_t + {\mu_t} - (\alpha k_t^{(\alpha-1)}\delta N_{t+1}+\lambda_{t+1} \delta (1-d_1)+{\mu_{t+1}}+\delta (1-d_1)\\
+I_t-(K_t-(1-d_1)k_{t-1})\\
+\mu_t(k_t - (1-d_1) k_{t-1}-\upsilon I_{ss})\\
+\end{tcolorbox}
+\begin{tcolorbox}[ams gather]
+if(s_t=1\land\mu=0 \land (k_t - (1-d_1)k_{t-1}-\upsilon I_{ss})\ge 0)\\
+  \lambda_t -\frac{1}{c_t}\\
+c_t+k_t-\theta_tk_{t-1}^\alpha\\
+N_t-\lambda_t \theta_t\\
+\theta_t-e^{(\rho\ln(\theta_{t-1})+\epsilon)}\\
+\lambda_t + {\mu_t} - (\alpha k_t^{(\alpha-1)}\delta N_{t+1}+\lambda_{t+1} \delta (1-d_1)+{\mu_{t+1}}+\delta (1-d_1)\\
+I_t-(K_t-(1-d_1)k_{t-1})\\
+\mu_t(k_t - (1-d_1) k_{t-1}-\upsilon I_{ss})
+\end{tcolorbox}
+
+
+
+% \subsection{Smolyak Interpolation}
+% \label{sec:smolyakinterp}
+
+% \paragraph{An-isotropic}
+% It is possible to precompute each of the integrals. Since the solution will be linear combination of the polynomials, precomputing the polynomials means the weighted sum of the precomputed integrals will provide the integrals.
+% \paragraph{Precomputing Integrals}
+% \begin{algorithm}
+%   \SetKwInOut{Input}{input}
+%  \SetKwInOut{Output}{output}
+% \Input{$\aSmolPoly$, $\smolRngs$, $\distribSpec$} 
+% \Output{$\int \aSmolPoly \Pi (f_i(\epsilon_i)) d\epsilon_1 \ldots d\epsilon_k$}
+% \end{algorithm}
+
+
+
+
+
+
+
+% \section{Multi-cluster Sequential Number Theoretic Optimization (MSNTO)}
+% \label{sec:MSNTO}
+
+% This section describes a method for finding maxima in a closed bounded domain.
+% Let $D=[a,b]$ in $R^s$ where $a_i \le x_i \le b_i$. We want to find  $M=f(x^\ast)= \max_{x \in D}f(x)$.
+% Th number theoretic (Quasi-Monte Carlo) approached is designed for finding optima with many local optima.  It is based on the used of space filling points.\cite{Xu2005}
+% The number theoretic method of optimization includes two basic steps.
+% \begin{enumerate}
+% \item Choose a set $p=x_i, i=1,\dots,n$ of potential optima that are uniformly scattered.
+% \item Find $M_n\text{ and } x^\ast \in p =\max_{1\le i \le n}f(x_i)$
+% \end{enumerate}
+
+% Even when choosing $p$ wisely convergence slow until \cite{Niederreiter1983}.  They speed up the convergence by contracting the domain.
+% Their algorithm discards all but the best in the domain. Must have very many points to guarantee choosing a point close to the optimum.
+
+
+% MSNTO selects a finite number of sample points uniformly scattered on D.  Next it discard inferior points retaining small sample of potential maxima.  These form the clusters for the next step.  The algorithm performs a domain contraction on each of the clusters.
+
+
+
+
+
+
+
+
 \newpage
 % \section{The doIt Graphs}
 % \label{sec:doit-graphs}
@@ -2525,159 +2343,284 @@ u(c)=\frac{c^{1-\eta}-1}{1-\eta}\\
 % \item Observe the distribution of time average vectors $\bar{f}$ and group them into clusters
 % \end{enumerate}
 
-\subsection{Algorithm Pseudo-code}
+\section{Algorithm Pseudo-code}
 \label{sec:pseudocode}
 
-\begin{enumerate}
-\item Specify a (collection of) model equations systems(s) 
-as in \refeq{eqnGates}.
-For all relevant values of $\tArg$ there is one and only one solution $x_t\tArg$
-\item specify a linear reference model
-\item specify an initial guess for decision rule $\xWargK$ obtain conditional expectations function
-\item decide upon the ranges for variables and the degrees of approximation for the an-isotropic Smolyak polynomial representation
-\item decide upon $K$, the number of conditional expectations function recursive iterations.  Fewer means more truncation error. In effect, 
-the algorithm imposes nonlinear constraints the for number of period specified 
-and uses the linear reference model thereafter(ie $z_{t+N}=0, \forall N>K$
-\item algorithm uses conditional expectation and model equations to produce an improved approximation to the decision rule.
-\item the algorithm finds a solution to the system that constrains $x_t= x_g$ determining $x_t,z_t$ at the interpolation points for $x_{t-1},\epsilon_t$  This can be done in parallel
-\item the data from the interpolation points is used to produce an updated decision rule
-\end{enumerate}
 
 
-
-It will be convenient for describing the algorithms to
- augment the model equations to include auxiliary variables so that we can write the model in the form
-$  \eqnFunc(x_{t-1},x_t,\expct{x_{t+1}},\epsilon)=0$.  We will consider time invariant model solutions $x_t=\xWarg$.  Compute $\XWOarg(x_{t-1})\equiv \expct{\xWarg}$. We will have
-
-\begin{gather}
-\eqnFunc(x_{t-1},\xWarg,\XWOarg(\xWarg),\epsilon)=0 \intertext{Given a linear reference model,}
-\linMod  \equiv \linModMats \intertext{we can define functions $\zWOarg$ by}
-\zWarg\equiv H
-\begin{bmatrix}
-x_{t-1}\\ \xWarg\\ \XWOarg(\xWarg)
-\end{bmatrix}+\phi_\epsilon \epsilon_t+\phi_c\intertext{compute $\ZWOarg$ }
-\ZWOarg(x_{t-1})\equiv \expct{\zWarg}\intertext{define conditional expectations paths for $x_t, z_t$}
-x_{t+k+1}=\XWOarg(x_{t+k}),\,\,\,z_{t+k+1}=\ZWOarg(x_{t+k})\,\,\,\,  \forall k\ge 0\\
-	 \mathcal{X}_{t} =B x_{t-1}+ \phi \psi_\epsilon\epsilon + (I - F)^{-1} \phi \psi_c + \sum_{\sForSum=0}^\infty F^s \phi z_{t+\sForSum} 
-\intertext{and}
-	 \mathcal{X}_{t+1} =B \mathcal{X}_{t}  + (I - F)^{-1} \phi \psi_c+ \sum_{\sForSum =0}^\infty F^\sForSum \phi z_{t+\sForSum+1} \,\,\,\,\,\forall t,k \ge  0 \\
-	\expct{ \mathcal{X}_{t+1}} =B \mathcal{X}_{t}  + (I - F)^{-1} \phi \psi_c+ \sum_{\sForSum =0}^\infty F^\sForSum \phi \expct{z_{t+\sForSum+1}} \,\,\,\,\,\forall t,k \ge  0\\
-	\expct{ \mathcal{X}_{t+1}} =B \mathcal{X}_{t}  + (I - F)^{-1} \phi \psi_c+ \sum_{\sForSum =0}^\infty F^\sForSum \phi \ZWOarg(x_{t+\nu}) \,\,\,\,\,\forall t,k \ge  0
-\end{gather}
+\begin{description}
+\item[$\linMod\equiv \linModMats$] The linear reference model
+\item[$ \xWOarg^{p}\tArg$] The proposed decision rule  $x_t$ components
+\item[$ \zWOarg^{p}\tArg$]The proposed decision rule  $z_t$ components
+\item[$ \XWOarg^p\tNo$] The proposed decision rule conditional expectations  $x_t$ components
+\item[$ \ZWOarg^p\tNo$] The proposed decision rule their conditional expectations  $z_t$ components
+\item[$ \kappa$] One less than the number of terms in series representation$(\kappa>=0)$
+\item[$\smolSpec$] Smolyak an-isotropic grid polynomials $(\aSmolPoly{1},\ldots,\aSmolPoly{N})$ and their conditional expectations $(\aSmolPolyCE{1},\ldots,\aSmolPolyCE{N})$
+\item[$\mathbb{T}$] Model evaluation points Neidereiter sequence in the model variable ergodic region.
+\item[$ \xzFunc$]  $\{\xWOarg\tArg,\zWOarg\tArg\}$ collects the decision rule components
+\item[$ \XZFunc$]  $\{\xWOarg\tArg,\zWOarg\tArg\}$ collects the decision rule conditional expectations components
+\item[$\bothFuncs$] $\{\xzFunc,\XZFunc\}$ collects decision rule information
+\item[$\eqnFuncSys$] The equation system $\eqnFuncSig$
+\end{description}
+\SetKw{nestWhile}{NestWhile}
+\SetKw{func}{Function}
+\SetKw{map}{Map}
 
 
-
-
-
-The $g$ function uses equation \ref{theSeries} to construct values needed to evaluate the model equations.
-\begin{gather}
-  g(x_{t-1},\epsilon_t,z_t)=
-  \begin{bmatrix}
-    x_{t-1}\\
-B x_{t-1}+ \phi \psi_\epsilon\epsilon + (I - F)^{-1} \phi \psi_c + \sum_{\sForSum=0}^K F^s \phi z_{t+\sForSum} \\
-B x_{t}+   (I - F)^{-1} \phi \psi_c + \sum_{\sForSum=0}^K F^s \phi z_{t+\sForSum} \\
-\epsilon_t
-  \end{bmatrix}
-\end{gather}
 \begin{algorithm}
  \SetKwInOut{Input}{input}
  \SetKwInOut{Output}{output}
-\Input{$\linMod$, $\sum_{\nu=1}^N F^{\nu-1} \phi z_{t+\nu}$}
-$x_t(x_{t-1},\epsilon_t,z_t)=B x_{t-1} + (I-F)^{-1} \phi. \psi_c+\phi \psi_\epsilon \epsilon_t + \phi . \psi_z z_t + F\sum_{\nu=1}^N F^{\nu-1} \phi z_{t+\nu} $\;
-$\expct{x_{t+1}}(x_{t-1},\epsilon_t,z_t)=B x_{t}(x_{t-1},\epsilon_t,z_t) + (I-F)^{-1} \phi. \psi_c + \sum_{\nu=1}^N F^{\nu-1} \phi z_{t+\nu} $\;
-$g(x_{t-1},\epsilon_t,z_t)\equiv
-\begin{bmatrix}
-  x_{t-1}\\x_t(x_{t-1},\epsilon_t,z_t)\\\expct{x_{t+1}}(x_{t-1},\epsilon_t,z_t)\\ \epsilon_t
-\end{bmatrix}
-$\;
-\Output{$g(x_{t-1},\epsilon_t,z_t)$}
-\caption{$\modArgs(\linMod,\sum_{\nu=1}^N F^{\nu-1} \phi z_{t+\nu})$}
-\label{gEqn}
+\Input{$(\linMod,\bothFuncs^0,\kappa,\eqnFuncSys,\smolSpec,\mathbb{T})$}
+\tcc{Compute a sequence of decision rule and conditional expectation rule function terminating when the evaluation of the functions at the tests points no longer changes much. Norm of the difference controlled by default (``normConvTol''->$10^{-10} $)}
+\nestWhile($\func(v,doInterp(\linMod, v, \kappa,\eqnFuncSys,\smolSpec)),\bothFuncs^0,notConvergedAt(v,\mathbb{T})$)\\
+\Output{$\{\bothFuncs^0,\bothFuncs^{1},\ldots,\bothFuncs^{c}\}$}
+\caption{$nestInterp$\label{nestInterp}} 
 \end{algorithm}
 
-We will represent model solutions using the an-isotropic Smolyak interpolation method outlined in \cite{Judd2014}.\footnote{ This choice makes it possible to precompute all the integrals necessary for the conditional expectations calculations. See section \ref{sec:smolyakinterp} for details.}  This will require solving
-the following system at a respecified number of points.  This can be done in parallel. We can use the linear system associated with some 
-linear reference model, $\linMod$, as the initial guess.  
-It is not necessary, but it may be useful to use some linearization of the model, $\eqnFunc$.  Typically one would start with the initial values for $z_t\tArg=0$.
+%linMod \xWOarg^{p}, \zWOarg^{p}, \XWOarg^p, \ZWOarg^p, \kappa,
 
-From the  trial value for the model solution codified in the $\ADR$, $\xWOarg^k\tArg$, we obtain the corresponding $\ADRCE$, $\XWOarg^k\tNo$ and, as
- shown in algorithm \ref{fSum}, using
-a guess for $x_t\tArg$ we compute a conditional expectations path of length N from $\tArg$ forward.  We use the $\ADRCE$\ expressions for $Z^k$ to compute the expected values for future $z_t$. As shown in algorithm \ref{gEqn}, we 
-will use these values in the formula \ref{theSeries} to compute $x_t$ and $\expct{x_{t+1}}$. Algorithm \ref{gEqn} provides all the arguments needed for solving the equation system, $\eqnFunc$.  Algorithm \ref{theSys} obtains  $\xWOarg^k\tArg,\zWOarg^k\tArg$ at the designated points so that the model equations are satisfied and the $\xguss=x$
 
 \begin{algorithm}
  \SetKwInOut{Input}{input}
  \SetKwInOut{Output}{output}
-\Input{$\linMod$, $\xguss$, $\XWOarg^k$, $\ZWOarg^k$, $N$}
-$x_{t+1}=\XWOarg^k(\xguss)$\;
-$z_{t+1}=\ZWOarg^k(\xguss)$\;
-\For{$i=2$ to $N$}{
-$x_{t+i}=\XWOarg^k(x_{t+i-1})$\;
-$z_{t+i}=\ZWOarg^k(x_{t+i-1})$\;
+\Input{$(\linMod,\bothFuncs^i,\kappa,\eqnFuncSys,\smolSpec)$}
+\tcc{Symbolically generates a collection of function triples
+and an outer 
+model solution selection function. Each of triples
+ returns the boolean gate values and a unique value for 
+$x_t$ for any given value of $(x_{t-1},\epsilon_t)$ 
+one of the  model equations  
+and subsequently uses these 
+functions to construct interpolating functions approximating the 
+decision rules.}
+$theFindRootFuncs=genFindRootFuncs(\linMod,\bothFuncs,\kappa,\eqnFuncSys)$\\
+$\bothFuncs^{i+1}=makeInterpFuncs(theFindRootFuncs,\smolSpec)$\\
+\Output{$\bothFuncs^{i+1}$}
+\caption{$doInterp$\label{doInterp}} 
+\label{doInterp}
+\end{algorithm}
+
+
+
+
+\begin{algorithm}
+ \SetKwInOut{Input}{input}
+ \SetKwInOut{Output}{output}
+\Input{$(\linMod,\bothFuncs,\kappa,\eqnFuncSys,\smolSpec)$}
+\tcc{Applies genFindRootWorker to each model component.
+Symbolically generates a collection of function triples
+and an outer 
+model solution selection function. Each of the triples
+ returns the boolean gate values and a unique value for 
+$x_t$ for any given value of $(x_{t-1},\epsilon_t)$ 
+for one from the set of  model equations. It
+ subsequently uses these 
+functions to construct interpolating functions approximating the 
+decision rules.
+Each of the function constructions can be done in {\bf parallel}.
 }
-\Output{$\sum_{\nu=1}^N F^{\nu-1} \phi z_{t+\nu}$}
-\caption{$\fSum(\linMod, \xguss, \XWOarg^k, \ZWOarg^k, N)$} 
-\label{fSum}
+$theFuncOptionsTriples=\map(\func(v,\{v[1],genFindRootWorker(\linMod,\bothFuncs,\kappa,v[2]),v[3]),
+\eqnFuncSysNoD)$\\
+\Output{$\{theFuncOptionsTriples,\theD\}$}
+\caption{$genFindRootFuncs$\label{genFindRootFuncs}} 
+\label{genFindRootFuncs}
+\end{algorithm}
+
+
+
+\begin{algorithm}
+ \SetKwInOut{Input}{input}
+ \SetKwInOut{Output}{output}
+\Input{$(\linMod,\XZFunc,\kappa,\eqnFunc)$}
+\tcc{{\bf Symbolically} constructs functions that return  $x_t$ for a given
+$\tArg$}
+$\theZsNow=\{Z_{t+1},\ldots,Z_{t+k-1}\}=genZsForFindRoot(\linMod,x_t^p,\XZFunc)$\\
+$modEqnArgsFunc=genLilXkZkFunc(\linMod,\theZsNow)$\\
+$\modEqnArgsNow=\{x_{t-1},x_{t},E_t(x_{t+1}),\epsilon_t\}=modEqnArgsFunc(x_{t-1},\epsilon_t,z_t)$\\
+$funcOfXtZt=FindRoot((x_t^p,z_t),\{\eqnFunc(\modEqnArgsNow),x_t-x_t^p\})$\\
+$funcOfXtm1Eps=Function((x_{t-1},\epsilon_t),funcOfXtZt)$\\
+\Output{$funcOfXtm1Eps$}
+\caption{$genFindRootWorker$\label{genFindRootWorker}} 
+\label{genFindRootWorker}
 \end{algorithm}
 
 
 \begin{algorithm}
  \SetKwInOut{Input}{input}
  \SetKwInOut{Output}{output}
-\Input{$\eqnFunc$, $\linMod$,  $\XWOarg^k$, $\ZWOarg^k$, $N$, $x_{t-1}$, $\epsilon_t$}
-Find $x_t$ and $z_t$
-$\eqnFunc(\modArgs(\linMod,\fSum(\linMod,\xguss,\XWOarg^k,\ZWOarg^k)))=0$\;
-$\xguss=x_t(x_{t-1},\epsilon)$\;
-\Output{$\xWOarg^{k+1}(x_{t-1},\epsilon_t)$, $\zWOarg^{k+1}(x_{t-1},\epsilon_t)$}
-\caption{$\xWOarg^{k+1}(x_{t-1},\epsilon_t)$, $\zWOarg^{k+1}(x_{t-1},\epsilon_t)$}
-\label{theSys}
+\Input{$(x_t^p,\linMod,\XZFunc,\kappa,\eqnFunc)$}
+\tcc{Symbolically compute the $\kappa-1$ future conditional Z's vectors needed for the series formula.(empty list for $\kappa=1$}
+$X_{t}=x_t^p$
+\For{$i=1,i<\kappa-1,i++$}{$
+\{X_{t+1},Z_{t+i}\}=\XZFunc(Z_{t+i-1})
+$}
+$=\{(X_{t+i},Z_{t+1}),\ldots,(X_{t+\kappa-1}Z_{t+\kappa-1})\}=genZsForFindRoot(\linMod,x_t^p,\XZFunc)$\\
+\Output{$\{Z_{t+1},\ldots,Z_{t+k-1}\}$}
+\caption{$genZsForFindRoot$\label{genZsForFindRoot}}
+\label{genZsForFindRoot}
+\end{algorithm}
+
+
+
+\begin{algorithm}
+ \SetKwInOut{Input}{input}
+ \SetKwInOut{Output}{output}
+\Input{$(\linMod=\linModMats)$}
+\tcc{Create functions that use the solution from the linear 
+reference model for an initial proposed decision rule function and 
+decision rule conditional expectation function.}
+$\xzFunc(x,\epsilon)=
+\begin{bmatrix}
+B x+(I-F)^{-1} \phi \psi_c+ \psi_\epsilon \epsilon_t\\0_{\numZ}  
+\end{bmatrix}$\\
+$\XZFunc(x,\epsilon)=
+\begin{bmatrix}
+B x+(I-F)^{-1} \phi \psi_c+ \psi_\epsilon \\0_{\numZ}  
+\end{bmatrix}$\\
+$\bothFuncs=\{\xzFunc,\XZFunc\}$\\
+\Output{$\{\bothFuncs\}$}
+\caption{$genBothX0Z0Funcs$\label{genBothX0Z0Funcs}} 
+\end{algorithm}
+
+
+\begin{algorithm}
+ \SetKwInOut{Input}{input}
+ \SetKwInOut{Output}{output}
+\Input{$(\linMod,\{Z_{t+1},\ldots,Z_{t+k-1}\})$}
+\tcc{Symbolically creates a function that uses an initial $Z_t$ path to generate a function of $(x_{t-1},\epsilon_t,z_t)$ providing (potentially symbolic ) inputs $(x_{t-1},x_t,E_t(x_{t+1}),\epsilon_t)$,for model system equations $\eqnFunc$} 
+$fCon=fSumC(\phi,F,\psi_z,\{Z_{t+1},\ldots,Z_{t+k-1}\})$
+$xtVals=genXtOfXtm1(\linMod,x_{t-1},\epsilon_t,z_t,fCon)$
+$xtp1Vals=genXtp1OfXt(\linMod,xtVals,fCon)$
+$fullVec=\{xtm1Vars,xtVals,xtp1Vals,epsVars\}$\\
+\Output{$fullVec$}
+\caption{$genLilXkZkFunc$\label{genLilXkZkFuncs}} 
+\label{genLilXkZkFunc}
+\end{algorithm}
+
+
+\begin{algorithm}
+ \SetKwInOut{Input}{input}
+ \SetKwInOut{Output}{output}
+\Input{$(\linMod,x_{t-1},\epsilon_t,z_t,fCon)$}
+\tcc{Symbolically creates a function that uses an initial $Z_t$ path to generate a function of $(x_{t-1},\epsilon_t,z_t)$ providing (potentially symbolically ) 
+the $x_t$ component of inputs  $(x_{t-1},x_t,E_t(x_{t+1}),\epsilon_t)$,for model system equations $\eqnFunc$}
+$x_t=B x_{t-1}+ (I-F)^{-1} \phi \psi_c + \phi . \psi_\epsilon . \epsilon_t+
+\phi \psi_z  z_t + F  fCon$\\
+\Output{$x_t$}
+\caption{$genXtOfXtm1$\label{genXtOfXtm1}} 
+\label{genXtOfXtm1}
+\end{algorithm}
+
+
+
+\begin{algorithm}
+ \SetKwInOut{Input}{input}
+ \SetKwInOut{Output}{output}
+\Input{$(\linMod,x_{t-1},fCon)$}
+\tcc{Symbolically creates a function that uses an initial $Z_t$ path to generate a function of $(x_{t-1},\epsilon_t,z_t)$ providing (potentially symbolically  )the $x_{t+1}$ component of inputs $(x_{t-1},x_t,E_t(x_{t+1}),\epsilon_t)$,for model system equations $\eqnFunc$}
+$x_t=B x_{t-1}+ (I-F)^{-1} \phi \psi_c + \phi . \psi_\epsilon . \epsilon_t+
+\phi \psi_z  z_t +fCon$\\
+\Output{$x_t$}
+\caption{$genXtp1OfXt$\label{genXtp1OfXt}} 
+\label{genXtp1OfXt}
 \end{algorithm}
 
 
 
 
-
-% \section{Future Work}
-% \label{sec:future}
-
-% \begin{itemize}
-%  \item Perturbation Occ bind zeroth order and $\phi=0$
-% \item perturbation global information better than pruning max convergent region
-% \item parallelMap don't need order, so ParallelTry  four args pretest posttest xvals keep all except failed  be sure to fail conflicts
-% \item convex hull of points computable
-% \end{itemize}
-
-% \begin{description}
-% \item[Support Vector Machine Regression (SVMR)] By using SVMR to represent the solutions in place of Smolyak interpolation, a by product of the representation is the identification of influential points.  It should be possible to improve the algorithm performance by updating solutions only at these influential points.
-% \item[Large Model Implementation] It should prove useful to further exploit 
-% the high degree of parallelism available in the algorithm.
-% \item[Dynare Interface] 
-% \item[Improve Error Bounds] 
-% \end{description}
+\begin{algorithm}
+ \SetKwInOut{Input}{input}
+ \SetKwInOut{Output}{output}
+\Input{$(\linMod,\{Z_{t+1},\ldots,Z_{t+k-1}\})$}
+\tcc{Numerically sums the F contribution for the series.}
+$S=\sum F^{\nu-1} \phi Z_{t+\nu}$\\
+\Output{$S$}
+\caption{$fSumC$\label{fSumC}} 
+\end{algorithm}
 
 
 
+\begin{algorithm}
+ \SetKwInOut{Input}{input}
+ \SetKwInOut{Output}{output}
+\Input{$(\eqnFuncSys,\smolSpec)$}
+\tcc{Solves model equations at collocation points producing interpolation data 
+and subsequently returns the  
+ interpolating functions for the decision rule and decision rule conditional expectation.  This routine also optionally replaces the approximations generated for all ``backward looking'' equations with user provided pre-computed functions. }
+$interpData=genInterpData(\eqnFuncSys,\smolSpec)$
+$\{\xzFunc,\XZFunc\}=interpDataToFunc(interData,\smolSpec)$\\
+\Output{$\{\xzFunc,\XZFunc\}$}
+\caption{$makeInterpFuncs$\label{makeInterpFuncs}} 
+\end{algorithm}
 
-\section{Regime Switching}
-\label{sec:regime-switching}
 
 
-\begin{gather*}
-  x_t(x_{t-1},\epsilon_t,s_t)=\sum \kappa_{j} \psi_{j}(x_{t-1},\epsilon_t,s_t)
-\end{gather*}
 
-\begin{gather*}
-  \epsilon_t \rightarrow p_{ij}(\epsilon_t) \intertext{ iid, but the following is not}
-s_t \rightarrow f_{s_t}(\epsilon_t)
-\end{gather*}
+\begin{algorithm}
+ \SetKwInOut{Input}{input}
+ \SetKwInOut{Output}{output}
+\Input{$(\eqnFuncSys,\smolSpec)$}
+\tcc{Solves model equations at collocation points producing interpolation data 
+and subsequently returns the  
+ interpolating functions for the decision rule and decision rule conditional expectation.  This routine also optionally replaces the approximations generated for all ``backward looking'' equations with user provided pre-computed functions. }
+\Output{$\{\xzFunc,\XZFunc\}$}
+\caption{$genInterpData$\label{genInterpData}} 
+\end{algorithm}
 
-For each state compute the integrals weighted by transition matrix to subsequent states
 
-If abstract from $p_{ij}(\epsilon_t)$
-\begin{gather*}
-  \sum \kappa_{1j} p_{11}\psi_j(x_{t-1}) +  \sum \kappa_{2j} p_{12} \psi_j(x_{t-1}) + \ldots  +  \sum \kappa_{2j} p_{1n} \psi_j(x_{t-1})\intertext{ already computed just need to carfully update}
-\end{gather*}
-Each state computes weights for polynomials.  The conditional expectation function for computing the future path 
-has the $\epsilon_t$ and $s_t$ ``integrated out''. Use these for formula.  Conditional expectation of $E_{t+1}$ should depend on current state.  Conditional expectations path with regime switching
+\begin{algorithm}
+ \SetKwInOut{Input}{input}
+ \SetKwInOut{Output}{output}
+\Input{$(\eqnFuncSysI,\tArg)$}
+\tcc{Evaluate the model equations obeying pre and post conditions}
+\Output{$x_{t}\,\, \text{or} \,\, {\bf failed}$}
+\caption{$evaluateTriple$\label{evaluateTriple}} 
+\end{algorithm}
+
+\begin{algorithm}
+ \SetKwInOut{Input}{input}
+ \SetKwInOut{Output}{output}
+\Input{$(V,\smolSpec)$}
+\tcc{Computes a vector of Smolyak interpolating polynomials corresponding to the matrix of function evaluations. Each row corresponds to a vector of values at a collocation point.}
+\Output{$\{\xzFunc,\XZFunc\}$}
+\caption{$interpDataToFunc$\label{interpDataToFunc}} 
+\end{algorithm}
+
+
+
+
+\section{Other Computing?}
+\label{sec:other-computing}
+
+\begin{itemize}
+\item Table 1 out of place
+\item {fix genInterpData checks all signatures}
+\item {Call tree, hyperlink?}
+\item function names bold greek and function name reconcile.
+\item More information about other error formulae.
+\item multiple formulae?
+\item legend for figs throughout
+\item axes labels throughout
+\item eliminate colors in graphs throughout
+\item {correct caption for ergodic values transformed}
+\item {mention genboth}
+\item {show solution accuracy for unknown solution}
+\item {show solution accuracy simple and OBC}
+\item {revise assess error calc or eliminate}
+\item {revise assess robust or eliminate}
+\item {just the first term.}
+\item Proof for robustness and accuracy and parallelism gains.
+\item doPrepPoly
+\item calculate using their error?
+\item {parallelism measure}
+\item {Large model multiple errors}
+\item units for z
+\end{itemize}
+
+
+
 \end{document}
+
+
+
 

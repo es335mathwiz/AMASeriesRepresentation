@@ -717,7 +717,8 @@ For proof see Appendix \ref{sec:error-bound-formula}.
 
 
 
-To fix notation,  assume that we have a countable collection of equations systems.
+To fix notation,  assume that our model is characterized by
+ a countable number of equations systems.
 I will require that, for any 
  given $(x_{t-1},\epsilon_t)$,  this collection of 
 systems of equations produces a unique solution for $x_t$.  
@@ -733,13 +734,18 @@ write the model in the form
 \eqnFuncSys \intertext{ where, each }
 \eqnFuncSysI{i}\equiv \eqnFuncSysIExpl{i} \label{eqnGates}
 \end{gather}
- represents a set of model equations, $\eqnFunc_i$,  with Boolean valued gate, $\preGate_i, \postGate_i$. Thus, we will have an equation system and  corresponding gatekeeper logical expressions 
+ represents a set of model equations, $\eqnFunc_i$,  with Boolean valued gate, $\preGate_i, \postGate_i$. 
+In the algorithm's implementation, the ${\mathbf b_i}$ will be a 
+boolean function precondition and 
+the ${\mathbf c_i}$ will be a 
+boolean function postcondition for a given equation system.  The
+${\mathbf d_i}$ will be a function for choosing among the 
+candidate $x_t\tArg$ values.
+Thus, we will have an equation system and  corresponding gatekeeper 
+logical expressions 
 indicating which equation system is in force for producing the unique
-solution for a give $x_{t-1}, \epsilon_t$.\footnote{It sometimes proves 
-practical and 
-useful to construct a post-processing gatekeeper to select the unique $x_t$
-from among competing potential solutions.}
-I will only consider time invariant model solutions $x_t=\xWarg$.  Given a decision rule $\xWarg$, we have its conditional expectation $\XWOarg(x_{t-1})\equiv \expct{\xWarg}$. 
+solution for a give $x_{t-1}, \epsilon_t$.
+I will only consider time invariant model solutions $x_t=\xWarg$.  Given a decision rule $\xWarg$, denote its conditional expectation $\XWOarg(x_{t-1})\equiv \expct{\xWarg}$. 
 
 
   Examples of such systems include simple cases like

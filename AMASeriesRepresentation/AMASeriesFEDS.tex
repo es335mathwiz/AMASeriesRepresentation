@@ -16,7 +16,7 @@
 
 
 
-\author{Gary S. Anderson\thanks{The analysis and conclusions set forth are those of the author and do not indicate concurrence by other members of the research staff or the Board of Governors. I would like to thank Luca Guerrieri, Christopher Gust, Hess Chung, Benjamin Johannsen  and Robert Tetlow for their comments and suggestions.  
+\author{Gary S. Anderson\thanks{The analysis and conclusions set forth are those of the author and do not indicate concurrence by other members of the research staff or the Board of Governors. I would like to thank Luca Guerrieri, Christopher Gust, Hess Chung, Benjamin Johannsen  and Robert Tetlow for their comments and suggestions.  I would also like to thank Stephanie Harrington for her help with document preparation.
 %And special thanks to Luca Guerrieri for first noticing that the series representation formulation could lead to an error bound for model solutions. Any remaining errors are mine alone.}
 }}
 
@@ -34,28 +34,15 @@ An Algorithm with Error Formulas } %(Better?, Coherent? Comprehensive? General? 
 \maketitle
 
 \begin{abstract}
-This paper provides a technique for representing a wide class of discrete time  nonlinear dynamic stochastic time invariant maps solving infinite-horizon economies.
-It provides general
-formulae for evaluating the accuracy of proposed solutions
-and presents a robust algorithm for improving the accuracy of those solutions.
-
-A straightforward applications of a  new series representation
-for any bounded discrete time series delivers these results.
-% This error bound calculation accounts for the impact of errors in any of the equations in the system.
-Using the series representation, the paper 
+This paper provides a technique for representing  discrete time  nonlinear dynamic stochastic time invariant maps.\marginpar{we/I. multiple formulae? Proof for robustness and accuracy and parallelism gains.  graphic for parallel communication of weights?  Pull out emphasize parallel features? functional style.  balance symbolic blend numeric.}
+Using this new series representation, the paper 
 augments a traditional solution strategy with an additional set of
 constraints thereby enhancing algorithm robustness and improving accuracy.
-The technique can readily accommodate models with multiple invariant spaces
-and  is appropriate
-for models with occasionally binding constraints and regime switching. 
-
-
-The  paper uses 
-%a particular implementation of the algorithm to
-%demonstrate how to use the 
-%series representation in conjunction with 
-Smolyak polynomial function approximation  
-to eliminate the need for numerical integration during the solution updates making in a way which makes it possible to exploit a high degree of parallelism in the algorithm.\marginpar{Proof for robustness and accuracy and parallelism gains.}
+In addition, it provides general
+formulae for evaluating the accuracy of proposed solutions.
+The technique can readily accommodate models with occasionally binding constraints and regime switching. 
+The  algorithm  uses
+Smolyak polynomial function approximation  in a way which makes it possible to exploit a high degree of parallelism.
 
 
 
@@ -80,7 +67,7 @@ value function iteration but I  defer treating this topic for
  future work.
 }
  For an overview of techniques for solving nonlinear models,
-see \citep{judd92,Christiano2000,doraszelskiy04,gaspar97,Judd2014,marcet.lorenzoni99,juddGSSA2011,maliarmovingbounds,RePEc:bny:wpaper:0058}.
+see \citep{judd92,Christiano2000,doraszelskiy04,gaspar97,Judd2014,marcet.lorenzoni99,juddGSSA2011,maliarmovingbounds,RePEc:bny:wpaper:0058,JuddIntegrals}.
 
 
 This new series representation for bounded time series, adapted from \citep{anderson10},
@@ -89,16 +76,16 @@ This new series representation for bounded time series, adapted from \citep{ande
 %\expct{ x_{t+1}\tArg} =B x\tArg  + (I - F)^{-1} \phi \psi_c+ \sum_{\sForSum =1}^\infty F^{\sForSum-1} \phi \ZWOarg_{t+\nu}\tArg.
     \end{gather*}
  makes it possible to  construct a series
-    representation for any bounded time invariant discrete time map.\footnote{As yet, the author has found no comparable use of a
+    representation for any bounded time invariant discrete time map. As yet, the author has found no comparable use of a
 linear reference dynamical system for  conveniently transforming
 one bounded infinite dimensional series into another.
-}
-    % and its conditional expectation function:
+
+
     It turns out that this representation provides a way to use
     Euler equation errors to
     approximate the magnitude of the    approximation error in components of 
     decision rules.
-    Others have also studied approximation error for dynamic stochastic models\cite{judd2017lower,santos2005accuracy,Santos2000accuracy}. This paper provides a more precise approximation
+\footnote{    Others have also studied approximation error for dynamic stochastic models\cite{judd2017lower,santos2005accuracy,Santos2000accuracy}.} This paper provides  approximation
     explicitly relating the magnitude of components of the
     Euler equation errors to the magnitude of components of
     errors in the decision rule 
@@ -107,7 +94,7 @@ without resort to statistical inference or ancillary simulations.
     In addition, the series representation provides exploitable
     constraints on model solutions that enhance  
     algorithm reliability and improve solution accuracy.
-    The series representation readily accommodates models with
+    The series representation readily accommodates models even with
     multiple ergodic sets
     thereby providing a robust solution method for a wide class of models including models with occasionally binding constraints and/or regime switching.\marginpar{More information about other error formulae.}
 
@@ -115,13 +102,13 @@ without resort to statistical inference or ancillary simulations.
 
 The numerical implementation of the algorithm 
 builds upon the work of
-\citep{juddGSSA2011}.
+\citep{juddGSSA2011,JuddIntegrals}.
 In particular it uses
 the an-isotropic Smolyak Method, the adaptive
 parallelotope method\citep{Judd2014}
 and precomputes all integrals required for the conditional expectations.
 The algorithm should scale well to large models as many 
-of the algorithm's components can be computed in parallel.
+of the algorithm's components can be computed in parallel with limited amounts of information flowing between compute nodes.
 
 
 
@@ -151,7 +138,7 @@ impact of anticipated future shocks,
 in characterizing the 
 solutions for highly nonlinear models. 
 This section describes the relationship 
-between linear reference models and general bounded time series in route to
+between {\em linear reference models} and general bounded time series in route to
 discussing how these calculations can be useful for representing time invariant maps.
 \subsection{Linear Reference Models and a Formula for  ``Anticipated Shocks''}
 \label{sec:linref}
@@ -162,7 +149,7 @@ discussing how these calculations can be useful for representing time invariant 
 For any linear homogeneous 
 $L$ dimensional deterministic system that produces  a unique stable solution, \marginpar{separate applied math paper?}
 \begin{gather*}
-  	 H_{-1} x_{t-1} + H_0 x_t + H_1 x_{t+1}=0
+  	 H_{-1} x_{t-1} + H_0 x_t + H_1 x_{t+1}=0,
 \end{gather*}
 inhomogeneous solutions 
 \begin{gather}
@@ -172,7 +159,7 @@ x_t=B x_{t-1} + \phi \psi_\epsilon \epsilon + (I - F)^{-1} \phi \psi_c\label{hSy
 \intertext{where}
 \phi= (H_0 +H_1 B)^{-1}  \text{ and } \,\,F=-\phi H_1.\citep{anderson10}
 \end{gather}
-It will be useful to collect the components of this solution for use later in the paper. I will use these matrices  to construct a series representation for any bounded path.
+It will be useful to collect the components of this solution for use later in the paper. In Section \ref{sec:almostarbitrary}, I will use these matrices  to construct a series representation for any bounded path.
 Define $\linMod \equiv \linModMats$.
 
 
@@ -217,12 +204,15 @@ See \citep{anderson10},
 \end{myProof}
 
 	 Consequently, given a bounded time series \refeq{aBPath},
-and a stable linear homogeneous system like \refeq{hSystem},
+and a stable linear homogeneous system,
 one can easily compute a corresponding series representation like
 \refeq{theSeries} for $x_t$.
 Interestingly, the linear model, $H$, the  constant term $\psi_c$ and the
 impact of the stochastic shocks $\psi_\epsilon $ can  be 
-chosen rather arbitrarily -- the only constraints being the existence of a saddle-point solution for the linear system and that z-values fall in the row space of $H_1$.  
+chosen rather arbitrarily -- the only constraints being the existence of a saddle-point solution for the linear system and that all z-values fall in the row space of $H_1$.  
+Further, note that since the eigenvalues of $F$ are all less than one in magnitude, the formula supports the intuition that far distant shocks
+ influence current conditions less than  imminent shocks.
+
 %The formula will provide a series  for any $L$ dimensional $\linMod$.
 
 
@@ -230,10 +220,7 @@ chosen rather arbitrarily -- the only constraints being the existence of a saddl
 % \footnote{$\psi_c$ full rank provides a sufficient condition, but not necessary condition.}
 The
 transformation $ {\{ x_{t}, x_{t}, x_{t+1},x_{t+2}\ldots\}} \rightarrow \linMod(x_{t-1},\epsilon_t) \rightarrow{\{ z_{t}, z_{t+1}, z_{t+2},\ldots\}} $ is invertible. $ {\{ z_{t}, z_{t+1}, z_{t+2},\ldots\}} \rightarrow \linMod(x_{t-1},\epsilon_t)^{-1} \rightarrow{\{ x_{t}, x_{t}, x_{t+1},x_{t+2}\ldots\}} $ and the inverse can be interpreted as giving the impact of ``fully anticipated future shocks'' on the path of $x_t$  in a linear perfect foresight model.  
-Note that the reference model is deterministic.  
-Further, note that since the eigenvalues of $F$ are all less than one in magnitude, the formula supports the intuition that far distant shocks
- influence current conditions less than  imminent shocks.
-In what follows,
+Note that the reference model is deterministic, so that 
  the $z_t\tArg$ functions will 
 fully account for any stochastic aspects encountered in the models I  analyze.
 
@@ -254,13 +241,13 @@ Consider the following matrix constructed from ``almost'' arbitrary coefficients
 H_{-1}&H_{0}&H_{1} \label{linRef}
   \end{bmatrix}=
 \vcenter{\hbox{\includegraphics{refHmat.pdf}}}\intertext{with $\psi_c=\psi_\epsilon=0, \,\,  \psi_z=I$.
-These coefficients are not completely arbitrary.  They have been chosen so that 
+I have chosen these coefficients so that 
 the linear model has a unique stable solution and, since $H_1$ is full rank,
-its column space will span the rows where I will encounter non zero values for $z_t$. 
-This flexibility will 
-become more important in the context below where I must 
-choose a  linear reference model in a context where I may have 
-little guidance about what might make a good linear reference model.  It turns out that the algorithm is very forgiving about the choice of $\linMod$.  The solution for this system is
+its column space will span the column space for all non zero values for $z_t$. 
+The flexibility in choosing $\linMod$ will 
+become more important in the context below where we must 
+choose a  linear reference model in a context where we may have 
+little guidance about what might make a good choice.  It turns out that the algorithm is very forgiving about the choice of $\linMod$.  The solution for this system is
 }
   B=
 \vcenter{\hbox{\includegraphics{refBmat.pdf}}}\\
@@ -281,7 +268,7 @@ ax_{3,t}=\epsilon_t \intertext{and the $\epsilon_t$ are a sequence of pseudo ran
 \end{gather} 
 The upper three panels in Figure \ref{arbpaths} display these three time series. The first set of trajectories characterizes 
 a function of the digits in the decimal representation of $\pi$ and was chosen
-to emphasize that continuity is not important for the existence of the series. 
+to emphasize that continuity is not important for the existence of the series representation. 
 The second set of trajectories  oscillates between two values
 determined by  a nonlinear function of the initial conditions, $x_{t-1}$ and the shock.
 The third set of trajectories characterizes a sequence of uniformly distributed random numbers based on a seed determined by  a nonlinear function of  the initial conditions and the shock.
@@ -655,7 +642,7 @@ a formula for the approximate error that does not require statistical inference.
 
 
 
-\subsection{An Error Approximation Formula}
+%\subsection{An Error Approximation Formula}
 \label{sec:errorformula}
 
 We can construct an error approximation for proposed model solutions.
@@ -1774,7 +1761,6 @@ I_t-(K_t-(1-d)k_{t-1})\\
 \label{sec:ressw}
 
 
-\subsubsection{Regime Switching}
 
 
 \label{sec:regime-switch-model}

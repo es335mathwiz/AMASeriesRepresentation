@@ -266,7 +266,9 @@ bounded families of time series paths
 x_{2,t}=\frac{\someNorm{x_{t-1}}}{({1+\someNorm{\epsilon_{t}}})^2} (-1)^t\\
 ax_{3,t}=\epsilon_t \intertext{and the $\epsilon_t$ are a sequence of pseudo random draws from the uniform distributions $\mathcal{U}(-4,4)$ produced subsequent to the selection of a random seed.} randomseed(\someNorm{x_{t-1}}+\someNorm{\epsilon_t})
 \end{gather} 
-The upper three panels in Figure \ref{arbpaths} display these three time series. The first set of trajectories characterizes 
+The upper three panels in Figure \ref{arbpaths} display these three time series
+generated  for a particular initial state vector and shock value.
+ The first set of trajectories characterizes 
 a function of the digits in the decimal representation of $\pi$ and was chosen
 to emphasize that continuity is not important for the existence of the series representation. 
 The second set of trajectories  oscillates between two values
@@ -277,12 +279,12 @@ These paths were chosen to emphasize that the trajectories
 need not be produced by some linear rational expectations solution or by the
  iteration of a discrete-time map.
 The spanning condition and the boundedness of the paths are  sufficient conditions for the existence 
-of the series representation based on the ``almost arbitrary'' 
+of the series representation based on the 
 linear reference model,$\linMod$.\footnote{Although potentially useful in some contexts,
 this paper will not investigate representations for families of
 unbounded, but slowly diverging  trajectories.}
 
-
+\marginpar{axes labels}
 \begin{figure}
   \centering
 \includegraphics[width=2in]{piPath.pdf}
@@ -297,11 +299,12 @@ unbounded, but slowly diverging  trajectories.}
 
 
 
-Figure \ref{arbpaths} also shows, for a particular initial state vector and shock value,  the paths for the  fully anticipated z's that generate the corresponding $x_t$ path.
+Figure \ref{arbpaths} also shows, for a particular initial state vector and shock value,  the paths for the  fully anticipated z's that generate the corresponding $x_t$ path.\footnote{For the example, the units are not important and all the z values appear on the same graph.}
 One can repeat the calculations for any given initial condition to produce
 a z series exactly replicating the new set of trajectories.  Thus, the family
 of z functions along with equation \ref{theSeries} provide a series 
-representation for the entire family of trajectories. Numerical linear algebra calculations can easily transform a $z_t$ series into an $x_t$ series and vice versa.  This can be done for any path starting from particular initial conditions.  In this way one can see that any discrete time invariant map that generates families of bounded paths has a series representation like Equation \ref{theSeries}.
+representation for the entire family of trajectories. Numerical linear algebra calculations can easily transform a $z_t$ series into an $x_t$ series and vice versa.  This can be done for any path starting from particular initial conditions. 
+ Thus,  any discrete time invariant map that generates families of bounded paths has a series representation like Equation \ref{theSeries}.
 
 
 
@@ -323,12 +326,12 @@ if all the terms are included, but, it will be useful to notice that
 the terms for state vectors closer 
 to the initial time have the most important impact.
 One could consider approximating  $\mathcal{X}_t$ by 
-truncating the series \ref{theSeries} at a finite number of terms.
+truncating the series  at a finite number of terms.
  	 \begin{gather}
  	 \xWOargK_t \equiv B x_{t-1}+ \phi \psi_\epsilon\epsilon  + (I - F)^{-1} \phi \psi_c + \sum_{s=0}^k F^s \phi z_{t}\label{theTruncSeries}
  \end{gather}
-I can bound the  series approximation truncation errors.
-Since
+We can bound the  series approximation truncation errors:
+
     \begin{gather}
       \label{eq:1}
 \sum_{s=k+1}^{\infty} F^s \phi \psi_z = (I -F)^{-1} F^{k+1}\phi \psi_z       \\
@@ -336,7 +339,7 @@ Since
     \end{gather}
 Again, note that for approximating $\xWarg$ the impact of  a given realization along the path declines for those realizations which are  more temporally distant.
 
- Figure \ref{figArbTrunc} shows
+ Figure \ref{figArbTrunc} shows\marginpar{eliminate colors in graphs}
 that this truncation error can be  a very conservative measure of the accuracy
 of the truncated series.  The orange line represents the computed approximation of
 the infinity norm of the difference between $x_t$ from the full series and a truncated series for different lengths of the truncation.  The blue line shows the infinity norm of the actual difference between the $x_t$ computed using the full series and the value obtained using a truncated series.  The series requires only the first 20 terms to compute
@@ -381,7 +384,7 @@ forward from any initial value $x_{t-1}$
 and realization of $\epsilon_t$.\footnote{Economists have long used similar manipulation of
 time series paths for dynamic models. 
 Indeed, Potter constructs his generalized impulse response functions using
-differences in conditional expectations paths.\cite{Potter2000,Koop1996a}
+differences in conditional expectations paths\cite{Potter2000,Koop1996a}.
 }
 Subsequently, we can use the family of conditional expectations paths 
 along with a contrived linear reference model to generate
@@ -426,7 +429,7 @@ c_t + k_t=\theta_{t-1}k_{t-1}^\alpha \\
  \end{tcolorbox}
 \label{sec:rbcexample}
 
-It is well know that when $\eta=d=1$, we have a closed form solution\citep{lettau03}:
+It is well known that when $\eta=d=1$, we have a closed form solution\citep{lettau03}:
 \begin{gather}
 x_t(\xtmEpsArg)\equiv    \DR(\xtmEpsArg)\equiv
    \begin{bmatrix}
@@ -515,7 +518,7 @@ With
 
 \begin{figure}
   \centering
-\includegraphics[width=3.0in]{simprbcvals.pdf}  \hspace{.75in}
+\includegraphics[width=3.0in]{simprbcvals.pdf}  %\hspace{.75in}
 \includegraphics[width=3.0in]{simprbczvals.pdf}  
   \caption{model variable values and z values}
   \label{rbcpaths}
@@ -528,9 +531,9 @@ By including enough terms we can compute the solution for $x_t$
 exactly.
 Figure \ref{rbcTrunc} shows the impact that truncating the series has 
 on approximation of the time t values of the state variables.   The approximated magnitude for the error, $B_n$, shown in red 
- is again very pessimistic compared to the actual error, $Z_n$, shown in blue.
+ is again very pessimistic compared to the actual error, $Z_n=\infNorm{x_t-x_t^\star}$, shown in blue.
 With enough terms, even using an ``almost'' arbitrarily chosen linear model,  the series approximation provides a machine precision accurate value for the time t state vector.  Thus we have wide latitude in choosing a linear reference model.
-
+\marginpar{legend for figs. units for z?}
 \begin{figure}
   \centering
 \includegraphics[width=2.7in]{simpArbBoundsVActual.pdf}  
@@ -584,8 +587,8 @@ the conditional expectation of nonlinear expressions,
 this setup will make it possible for us to use auxiliary
 variables to correctly compute the required expected values.
 
-We will be working with models where expectations are computed at time t, with  $\epsilon_t$  known,  the only stochastic components are those with time subscripts greater than $t$. 
-For example, we can reconstruct a linear reference model for the modified RBC system
+We will be working with models where expectations are computed at time t, with  $\epsilon_t$  known. 
+We can construct a linear reference model for the modified RBC system
 by  augmenting the RBC model with the equation 
 \begin{tcolorbox}[ams gather]
   \rcpC_t=\frac{\theta_t}{c_t}
@@ -621,15 +624,14 @@ F=
 \vcenter{\hbox{\includegraphics{RBCFmatSymb.pdf}}}\\
 \psi_c=\vcenter{\hbox{\includegraphics{RBCPsissSymb.pdf}}}
 \end{gather}
-Recomputing the truncation errors with the expanded model produces very similar
-results for the variable approximation errors.
+Recomputing the truncation errors with the expanded model produces nearly identicle results for the variable approximation errors.
 
 
 \section{Approximating Model Solution Errors}
 \label{sec:solnerrorbounds}
 
 
-The paper shows how to write a series representation for any proposed
+This section shows how to write a series representation for any proposed
 model solution and to characterize the series representation for a typically
 unknown solution in such a way that one can use the model equation errors  to construct an approximate error for the norm of the distance between the proposed and the exact solution.
 

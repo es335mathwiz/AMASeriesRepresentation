@@ -1,6 +1,7 @@
 \documentclass[12pt]{article}
 \listfiles
 \usepackage{qtree}
+%C60 , C62, C63, C65
 %pdflatex --shell-escape AMASeriesFEDS.tex 
 
 % \usepackage[authoryear]{natbib}
@@ -34,7 +35,8 @@ An Algorithm with Error Formulas } %(Better?, Coherent? Comprehensive? General? 
 \maketitle
 
 \begin{abstract}
-This paper provides a technique for representing  discrete time  nonlinear dynamic stochastic time invariant maps.\marginpar{we/I. multiple formulae? Proof for robustness and accuracy and parallelism gains.  graphic for parallel communication of weights?  Pull out emphasize parallel features? functional style.  balance symbolic blend numeric.}
+This paper provides a technique for representing  discrete time  nonlinear dynamic stochastic time invariant maps.
+\marginpar{Address Bullets in Other Computing? Section}
 Using this new series representation, the paper 
 augments a traditional solution strategy with an additional set of
 constraints thereby enhancing algorithm robustness and improving accuracy.
@@ -96,7 +98,7 @@ without resort to statistical inference or ancillary simulations.
     algorithm reliability and improve solution accuracy.
     The series representation readily accommodates models even with
     multiple ergodic sets
-    thereby providing a robust solution method for a wide class of models including models with occasionally binding constraints and/or regime switching.\marginpar{More information about other error formulae.}
+    thereby providing a robust solution method for a wide class of models including models with occasionally binding constraints and/or regime switching.
 
 %    $\ZWOarg_{t+\nu}$ that satisfy the model equations thereby
 
@@ -126,7 +128,7 @@ Section \ref{sec:extToMaps} shows how to apply this series representation to tim
 Section \ref{sec:solnerrorbounds} provides formulae for approximating dynamic stochastic model error in proposed  solutions.
 Section \ref{sec:algoforsoln} presents a new solution algorithm for improving proposed solutions.
 %Section \ref{sec:future} discusses directions for future work.
-Section \ref{sec:conc} concludes.\marginpar{Section 6?}
+Section \ref{sec:conc} concludes.
 
 \section{A New Series Representation For  Bounded Time Series}
 \label{sec:newseries}
@@ -147,7 +149,7 @@ discussing how these calculations can be useful for representing time invariant 
 
 
 For any linear homogeneous 
-$L$ dimensional deterministic system that produces  a unique stable solution, \marginpar{separate applied math paper?}
+$L$ dimensional deterministic system that produces  a unique stable solution, 
 \begin{gather*}
   	 H_{-1} x_{t-1} + H_0 x_t + H_1 x_{t+1}=0,
 \end{gather*}
@@ -226,8 +228,9 @@ fully account for any stochastic aspects encountered in the models I  analyze.
 
 A key feature to note is that the series representation can accommodate arbitrarily complex time series trajectories, so long as these trajectories are bounded.
 Later, this observation will give us some confidence in the 
-robustness of the algorithms described in section 
-\ref{sec:unknown-solutions} for constructing series 
+robustness of the algorithms 
+%described in section \ref{sec:unknown-solutions} for 
+constructing series 
 representations for unknown families of functions 
 satisfying complicated systems of dynamic non-linear equations.
 
@@ -284,13 +287,12 @@ linear reference model,$\linMod$.\footnote{Although potentially useful in some c
 this paper will not investigate representations for families of
 unbounded, but slowly diverging  trajectories.}
 
-\marginpar{axes labels}
+
 \begin{figure}
   \centering
 \includegraphics[width=2in]{piPath.pdf}
 \includegraphics[width=2in]{oscillPath.pdf}
 \includegraphics[width=2in]{pseudoPath.pdf}
-\includegraphics[width=3in]{theZs.pdf}  
   
   \caption{Arbitrary Bounded Time Series Paths and Corresponding $z_{i,t}$ values}\label{arbpaths}
 \end{figure}
@@ -299,7 +301,8 @@ unbounded, but slowly diverging  trajectories.}
 
 
 
-Figure \ref{arbpaths} also shows, for a particular initial state vector and shock value,  the paths for the  fully anticipated z's that generate the corresponding $x_t$ path.\footnote{For the example, the units are not important and all the z values appear on the same graph.}
+The values for the z's are not at all important 
+and their relationship to the x trajectories are rather unintuitive. What is important is that these values exist and are easy to compute.
 One can repeat the calculations for any given initial condition to produce
 a z series exactly replicating the new set of trajectories.  Thus, the family
 of z functions along with equation \ref{theSeries} provide a series 
@@ -314,10 +317,10 @@ representation for the entire family of trajectories. Numerical linear algebra c
 \label{sec:truncationerr}
 The formula \ref{theSeries} was derived in \citep{anderson10}
 to compute the impact on the current state of fully anticipated future shocks.  The formula characterizes the impact exactly.  However one can contemplate the impact of at least two deviations from the exact calculation:
-\begin{enumerate}
+\begin{itemize}
 \item One could truncate a series of correct values of $z_t$.  
 \item One might have imprecise values of $z_t$ along the path.
-\end{enumerate}
+\end{itemize}
 \subsubsection{Truncation Error}
 
 
@@ -339,7 +342,7 @@ We can bound the  series approximation truncation errors:
     \end{gather}
 Again, note that for approximating $\xWarg$ the impact of  a given realization along the path declines for those realizations which are  more temporally distant.
 
- Figure \ref{figArbTrunc} shows\marginpar{eliminate colors in graphs}
+ Figure \ref{figArbTrunc} shows
 that this truncation error can be  a very conservative measure of the accuracy
 of the truncated series.  The orange line represents the computed approximation of
 the infinity norm of the difference between $x_t$ from the full series and a truncated series for different lengths of the truncation.  The blue line shows the infinity norm of the actual difference between the $x_t$ computed using the full series and the value obtained using a truncated series.  The series requires only the first 20 terms to compute
@@ -533,7 +536,7 @@ Figure \ref{rbcTrunc} shows the impact that truncating the series has
 on approximation of the time t values of the state variables.   The approximated magnitude for the error, $B_n$, shown in red 
  is again very pessimistic compared to the actual error, $Z_n=\infNorm{x_t-x_t^\star}$, shown in blue.
 With enough terms, even using an ``almost'' arbitrarily chosen linear model,  the series approximation provides a machine precision accurate value for the time t state vector.  Thus we have wide latitude in choosing a linear reference model.
-\marginpar{legend for figs. units for z?}
+
 \begin{figure}
   \centering
 \includegraphics[width=2.7in]{simpArbBoundsVActual.pdf}  
@@ -638,7 +641,7 @@ unknown solution in such a way that one can use the model equation errors  to co
 This work contrasts with the analysis provided in
 \cite{judd2017lower,peralta-alva14,santos2005accuracy,Santos2000accuracy}. 
 Their approaches identify Euler Equation Errors, but use statistical techniques to estimate the impact of these errors on solution accuracy.  Here I provide
-a formula for the approximate error that does not require statistical inference.\marginpar{calculate using their error?}
+a formula for the approximate error that does not require statistical inference.
 
 
 
@@ -748,7 +751,7 @@ solution for a give $x_{t-1}, \epsilon_t$.
 I will only consider time invariant model solutions $x_t=\xWarg$.  Given a decision rule $\xWarg$, denote its conditional expectation $\XWOarg(x_{t-1})\equiv \expct{\xWarg}$. 
 
 
-  Examples of such systems include the simple RBC model from Section
+ Examples of such systems include the simple RBC model from Section
 \ref{simpRBCExample}.
 Other examples include  models with 
 occasionally binding constraints with solutions 
@@ -802,7 +805,7 @@ thus improving algorithm reliability.
 \subsection{Algorithm Overview}
 
 % \subsubsection{Approximating an Unknown Solution: $U(c) \ne Log(c)$ }
- \label{sec:unknown-solutions}
+% \label{sec:unknown-solutions}
 
 I closely follow the techniques outlined in \cite{Judd2013,Judd2014}. 
 I use their an-isotropic Smolyak Lagrange interpolation with adaptive domain.
@@ -832,7 +835,7 @@ and uses the linear reference model thereafter(ie $z_{t+N}=0, \forall N>K$
 \end{enumerate}
 
 
-
+\subsubsection{Single Equation System Case}
 
 For now, consider the single model equation system case. A description 
 of the actual, multi-system implementation follows.
@@ -883,6 +886,7 @@ x_{t-1}\\ \xpWarg\\ \XpWOarg(\xWarg)
   \end{itemize}
 }
 
+\subsubsection{Multiple Equation System Case}
 
 
 An outline of the current Mathematica implementation of the algorithm follows.
@@ -912,8 +916,10 @@ The current implementation  has a couple of atypical features.
 Many of the calculations exploit Mathematica's capability to blend
 numerical and symbolic computation and to easily use functions as arguments for
 other functions.  In addition, the implementation exploits parallelism at
-several points. Below, I note where these features play a role.
-\marginpar{homoiconic, julia. not necessarily need all symbolic, strike balance maybe all numeric}
+several points.   The parallel features apply whether or not one employs the
+the  traditional technique or the approach suggested here.
+Below, I note where these features play a role.
+
 
 \begin{figure}[h]
   \centering
@@ -921,22 +927,22 @@ several points. Below, I note where these features play a role.
 %\begin{tikzpicture}
 %\tikzset{every tree node/.style={align=center}}  
 {\small
-\Tree [.nestIterInterp  !\qsetw{4cm}
-[.doIterInterp  
-[.genFindRootFunc !\qsetw{2cm}
-[.genFindRootWorker genZsForFindRoot
-[.genLilXkZkFunc fSumC genXtOfXtm1 [.genXtp1OfXt ] ] ] ] 
-[.makeInterpFuncs !\qsetw{2cm} [.genInterpData evaluateTriple ] ] [.interpDataToFunc 
+\Tree [.nestInterp\ref{nestInterp}  !\qsetw{4cm}
+[.doInterp  \ref{doInterp}
+[.genFindRootFuncs \ref{genFindRootFuncs}!\qsetw{2cm}
+[.genFindRootWorker\ref{genFindRootWorker} genZsForFindRoot\ref{genZsForFindRoot}
+[.genLilXkZkFunc\ref{genLilXkZkFunc} fSumC\ref{fSumC} genXtOfXtm1\ref{genXtOfXtm1} [.genXtp1OfXt\ref{genXtp1OfXt} ] ] ] ] 
+[.makeInterpFuncs\ref{makeInterpFuncs} !\qsetw{2cm} [.genInterpData\ref{genInterpData} evaluateTriple\ref{evaluateTriple} ] ] [.interpDataToFunc\ref{interpDataToFunc} 
  ] ] ] 
 }
 %\end{tikzpicture}
   \caption{Function Call Tree}\label{calltree}
 \end{figure}
 
-\marginpar{function names bold. parallel works for traditional too.}
+
 
 \begin{description}
-\item[nestIterInterp] --- Computes a sequence of decision rule and conditional expectation rule functions terminating when the evaluation of the decision rule 
+\item[nestInterp] --- Computes a sequence of decision rule and conditional expectation rule functions terminating when the evaluation of the decision rule 
 functions at the tests points no longer changes much.
 \item[doInterp] --- {\bf Symbolically} generates functions that return a unique $x_t$ for any value of $\tArg$ for the family model equations, $\eqnFuncSys$ and uses these functions to construct interpolating functions approximating the decision rules.
 \item[genFindRootFuncs] --- 
@@ -1006,6 +1012,10 @@ producing interpolation data and subsequently returns the
 % \end{itemize}
 
 
+
+
+
+
 \subsection{Approximating the Known Solution: $U(c) = Log(c)$ }
 \label{sec:recov-known-solut}
 
@@ -1024,13 +1034,7 @@ an improved set of variables for constructing function approximation values.
   \caption{The Ergodic Values for $k_t, \theta_t$ }
   \label{fig:erg}
 \end{figure}
-\marginpar{correct caption for ergodic values transformed}
 
-\marginpar{show solution accuracy simple and OBC}
-
-\marginpar{revise assess error calc or eliminate}
-
-\marginpar{revise assess robust or eliminate}
 
 \begin{gather}
 \bar{X}= \vcenter{\hbox{\includegraphics{ergodicMean.pdf}}}
@@ -1500,13 +1504,15 @@ also shows how to  augment traditional ``Euler Equation'' model solution
 methods with constraints reflecting how the updated
 conditional expectation paths impact the time t solution values.
 The current prototype was written in Mathematica and is available on gitHub
-\marginpar{parallelism measure}\marginpar{julia}
-\marginpar{just the first term.}
-\marginpar{Large model multiple errors}
 
 
 There are many directions to pursue in future work.
 I have begun work  developing a Julia version.
+In writing  Mathematica code I applied a functional programming style
+while blending numerica and symbolic calculations. Along with
+Mathematica, Julia is also a homoiconic language where functions are first order objects. But, I suspect that the 
+symbolic numeric balance may be different as I implement the code in Julia.
+Indeed, perhaps the Julia code will be completely numeric.
 In that implementation, I 
 will investigate computational efficiency issues and further
 exploit the high degree of parallelism available in the algorithm.
@@ -2340,7 +2346,7 @@ I_t-(K_t-(1-d_1)k_{t-1})\\
 \section{Algorithm Pseudo-code}
 \label{sec:pseudocode}
 
-\marginpar{Call tree, hyperlink?}
+
 
 \begin{description}
 \item[$\linMod\equiv \linModMats$] The linear reference model
@@ -2368,8 +2374,7 @@ I_t-(K_t-(1-d_1)k_{t-1})\\
 \tcc{Compute a sequence of decision rule and conditional expectation rule function terminating when the evaluation of the functions at the tests points no longer changes much. Norm of the difference controlled by default (``normConvTol''->$10^{-10} $)}
 \nestWhile($\func(v,doInterp(\linMod, v, \kappa,\eqnFuncSys,\smolSpec)),\bothFuncs^0,notConvergedAt(v,\mathbb{T})$)\\
 \Output{$\{\bothFuncs^0,\bothFuncs^{1},\ldots,\bothFuncs^{c}\}$}
-\caption{$nestInterp$} 
-\label{nestInterp}
+\caption{$nestInterp$\label{nestInterp}} 
 \end{algorithm}
 
 %linMod \xWOarg^{p}, \zWOarg^{p}, \XWOarg^p, \ZWOarg^p, \kappa,
@@ -2391,7 +2396,7 @@ decision rules.}
 $theFindRootFuncs=genFindRootFuncs(\linMod,\bothFuncs,\kappa,\eqnFuncSys)$\\
 $\bothFuncs^{i+1}=makeInterpFuncs(theFindRootFuncs,\smolSpec)$\\
 \Output{$\bothFuncs^{i+1}$}
-\caption{$doInterp$} 
+\caption{$doInterp$\label{doInterp}} 
 \label{doInterp}
 \end{algorithm}
 
@@ -2417,7 +2422,7 @@ Each of the function constructions can be done in {\bf parallel}.
 $theFuncOptionsTriples=\map(\func(v,\{v[1],genFindRootWorker(\linMod,\bothFuncs,\kappa,v[2]),v[3]),
 \eqnFuncSysNoD)$\\
 \Output{$\{theFuncOptionsTriples,\theD\}$}
-\caption{$genFindRootFuncs$} 
+\caption{$genFindRootFuncs$\label{genFindRootFuncs}} 
 \label{genFindRootFuncs}
 \end{algorithm}
 
@@ -2435,7 +2440,7 @@ $\modEqnArgsNow=\{x_{t-1},x_{t},E_t(x_{t+1}),\epsilon_t\}=modEqnArgsFunc(x_{t-1}
 $funcOfXtZt=FindRoot((x_t^p,z_t),\{\eqnFunc(\modEqnArgsNow),x_t-x_t^p\})$\\
 $funcOfXtm1Eps=Function((x_{t-1},\epsilon_t),funcOfXtZt)$\\
 \Output{$funcOfXtm1Eps$}
-\caption{$genFindRootWorker$} 
+\caption{$genFindRootWorker$\label{genFindRootWorker}} 
 \label{genFindRootWorker}
 \end{algorithm}
 
@@ -2451,7 +2456,7 @@ $X_{t}=x_t^p$
 $}
 $=\{(X_{t+i},Z_{t+1}),\ldots,(X_{t+\kappa-1}Z_{t+\kappa-1})\}=genZsForFindRoot(\linMod,x_t^p,\XZFunc)$\\
 \Output{$\{Z_{t+1},\ldots,Z_{t+k-1}\}$}
-\caption{$genZsForFindRoot$}
+\caption{$genZsForFindRoot$\label{genZsForFindRoot}}
 \label{genZsForFindRoot}
 \end{algorithm}
 
@@ -2474,10 +2479,9 @@ B x+(I-F)^{-1} \phi \psi_c+ \psi_\epsilon \\0_{\numZ}
 \end{bmatrix}$\\
 $\bothFuncs=\{\xzFunc,\XZFunc\}$\\
 \Output{$\{\bothFuncs\}$}
-\caption{$genBothX0Z0Funcs$} 
-\label{genBothX0Z0Funcs}
+\caption{$genBothX0Z0Funcs$\label{genBothX0Z0Funcs}} 
 \end{algorithm}
-\marginpar{mention genboth}
+
 
 \begin{algorithm}
  \SetKwInOut{Input}{input}
@@ -2489,7 +2493,7 @@ $xtVals=genXtOfXtm1(\linMod,x_{t-1},\epsilon_t,z_t,fCon)$
 $xtp1Vals=genXtp1OfXt(\linMod,xtVals,fCon)$
 $fullVec=\{xtm1Vars,xtVals,xtp1Vals,epsVars\}$\\
 \Output{$fullVec$}
-\caption{$genLilXkZkFunc$} 
+\caption{$genLilXkZkFunc$\label{genLilXkZkFuncs}} 
 \label{genLilXkZkFunc}
 \end{algorithm}
 
@@ -2503,7 +2507,7 @@ the $x_t$ component of inputs  $(x_{t-1},x_t,E_t(x_{t+1}),\epsilon_t)$,for model
 $x_t=B x_{t-1}+ (I-F)^{-1} \phi \psi_c + \phi . \psi_\epsilon . \epsilon_t+
 \phi \psi_z  z_t + F  fCon$\\
 \Output{$x_t$}
-\caption{$genXtOfXtm1$} 
+\caption{$genXtOfXtm1$\label{genXtOfXtm1}} 
 \label{genXtOfXtm1}
 \end{algorithm}
 
@@ -2517,7 +2521,7 @@ $x_t=B x_{t-1}+ (I-F)^{-1} \phi \psi_c + \phi . \psi_\epsilon . \epsilon_t+
 $x_t=B x_{t-1}+ (I-F)^{-1} \phi \psi_c + \phi . \psi_\epsilon . \epsilon_t+
 \phi \psi_z  z_t +fCon$\\
 \Output{$x_t$}
-\caption{$genXtp1OfXt$} 
+\caption{$genXtp1OfXt$\label{genXtp1OfXt}} 
 \label{genXtp1OfXt}
 \end{algorithm}
 
@@ -2531,8 +2535,7 @@ $x_t=B x_{t-1}+ (I-F)^{-1} \phi \psi_c + \phi . \psi_\epsilon . \epsilon_t+
 \tcc{Numerically sums the F contribution for the series.}
 $S=\sum F^{\nu-1} \phi Z_{t+\nu}$\\
 \Output{$S$}
-\caption{$fSumC$} 
-\label{fSumC}
+\caption{$fSumC$\label{fSumC}} 
 \end{algorithm}
 
 
@@ -2543,18 +2546,76 @@ $S=\sum F^{\nu-1} \phi Z_{t+\nu}$\\
 \Input{$(\eqnFuncSys,\smolSpec)$}
 \tcc{Solves model equations at collocation points producing interpolation data 
 and subsequently returns the  
- interpolating functions for the decision rule and decision rule conditional expectation.}
-$interpData=smolyakGenInterpData(\eqnFuncSys,\smolSpec)$
+ interpolating functions for the decision rule and decision rule conditional expectation.  This routine also optionally replaces the approximations generated for all ``backward looking'' equations with user provided pre-computed functions. }
+$interpData=genInterpData(\eqnFuncSys,\smolSpec)$
 $\{\xzFunc,\XZFunc\}=interpDataToFunc(interData,\smolSpec)$\\
 \Output{$\{\xzFunc,\XZFunc\}$}
-\caption{$makeInterpFuncs$} 
-\label{makeInterpFuncs}
+\caption{$makeInterpFuncs$\label{makeInterpFuncs}} 
 \end{algorithm}
 
 
-\marginpar{backLookingInfo}
 
 
+\begin{algorithm}
+ \SetKwInOut{Input}{input}
+ \SetKwInOut{Output}{output}
+\Input{$(\eqnFuncSys,\smolSpec)$}
+\tcc{Solves model equations at collocation points producing interpolation data 
+and subsequently returns the  
+ interpolating functions for the decision rule and decision rule conditional expectation.  This routine also optionally replaces the approximations generated for all ``backward looking'' equations with user provided pre-computed functions. }
+\Output{$\{\xzFunc,\XZFunc\}$}
+\caption{$genInterpData$\label{genInterpData}} 
+\end{algorithm}
+
+
+\begin{algorithm}
+ \SetKwInOut{Input}{input}
+ \SetKwInOut{Output}{output}
+\Input{$(\eqnFuncSysI,\tArg)$}
+\tcc{Evaluate the model equations obeying pre and post conditions}
+\Output{$x_{t}\,\, \text{or} \,\, {\bf failed}$}
+\caption{$evaluateTriple$\label{evaluateTriple}} 
+\end{algorithm}
+
+\begin{algorithm}
+ \SetKwInOut{Input}{input}
+ \SetKwInOut{Output}{output}
+\Input{$(V,\smolSpec)$}
+\tcc{Computes a vector of Smolyak interpolating polynomials corresponding to the matrix of function evaluations. Each row corresponds to a vector of values at a collocation point.}
+\Output{$\{\xzFunc,\XZFunc\}$}
+\caption{$interpDataToFunc$\label{interpDataToFunc}} 
+\end{algorithm}
+
+
+
+
+\section{Other Computing?}
+\label{sec:other-computing}
+
+\begin{itemize}
+\item Table 1 out of place
+\item {fix genInterpData checks all signatures}
+\item {Call tree, hyperlink?}
+\item function names bold greek and function name reconcile.
+\item More information about other error formulae.
+\item multiple formulae?
+\item legend for figs throughout
+\item axes labels throughout
+\item eliminate colors in graphs throughout
+\item {correct caption for ergodic values transformed}
+\item {mention genboth}
+\item {show solution accuracy for unknown solution}
+\item {show solution accuracy simple and OBC}
+\item {revise assess error calc or eliminate}
+\item {revise assess robust or eliminate}
+\item {just the first term.}
+\item Proof for robustness and accuracy and parallelism gains.
+\item doPrepPoly
+\item calculate using their error?
+\item {parallelism measure}
+\item {Large model multiple errors}
+\item units for z
+\end{itemize}
 
 
 

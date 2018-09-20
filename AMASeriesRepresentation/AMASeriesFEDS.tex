@@ -795,384 +795,6 @@ I also precompute all of the conditional expectations for the integrals as outli
 deterministic.
 
 
-%\definecolor{LightCyan}{rgb}{0.88,1,1}
-
-
-% \makeatletter\let\expandableinput\@@input\makeatother
-
-% \begin{table}
-%   \centering
-% \begin{tabular}{|r|r|r|r|}
-% \hline
-%   \multicolumn{1}{|c|}{Approximation}&
-%   \multicolumn{1}{|c|}{K}&
-%   \multicolumn{1}{|c|}{Bound}&
-%   \multicolumn{1}{|c|}{Actual}\\
-% \hline
-% \input{./resDir-host-node014bnumKern16-3728048404/forBetterRBC--1,1,1-Iters1theK1TraderrTableRow.tex}
-% \input{./resDir-host-node014bnumKern16-3728048390/forBetterRBC--1,1,1-Iters1theK1TraderrTableRow.tex}
-% \input{./resDir-host-node014bnumKern16-3728048382/forBetterRBC--1,1,1-Iters1theK1TraderrTableRow.tex}
-% \input{./resDir-host-node014bnumKern16-3728048397/forBetterRBC--1,1,1-Iters1theK1TraderrTableRow.tex}
-% \input{./resDir-host-node001dnumKern16-3728046316/forBetterRBC--1,1,1-Iters70theK0TraderrTableRow.tex}
-% \input{./resDir-host-node001dnumKern16-3728046340/forBetterRBC--1,1,1-Iters70theK0SerieserrTableRow.tex}
-% \expandableinput ./resDir-host-node014bnumKern16-3728049511/forBetterRBC--1,1,1-Iters70theK1SerieserrTableRow.tex
-% \expandableinput ./resDir-host-node014bnumKern16-3728048456/forBetterRBC--1,1,1-Iters1theK1SerieserrTableRow.tex
-% \expandableinput ./resDir-host-node014bnumKern16-3728051519/forBetterRBC--1,1,1-Iters70theK1SerieserrTableRow.tex
-% \expandableinput ./resDir-host-node014bnumKern16-3728048808/forBetterRBC--1,1,1-Iters1theK1SerieserrTableRow.tex
-% \expandableinput ./resDir-host-node014bnumKern16-3728049693/forBetterRBC--1,1,1-Iters70theK1SerieserrTableRow.tex
-% \expandableinput ./resDir-host-node014bnumKern16-3728049828/forBetterRBC--1,1,1-Iters70theK1SerieserrTableRow.tex
-% \expandableinput ./resDir-host-node014bnumKern16-3728049454/forBetterRBC--1,1,1-Iters70theK1SerieserrTableRow.tex
-% \expandableinput ./resDir-host-node014bnumKern16-3728049589/forBetterRBC--1,1,1-Iters70theK1SerieserrTableRow.tex
-% \expandableinput ./resDir-host-node014bnumKern16-3728049244/forBetterRBC--1,1,1-Iters1theK1SerieserrTableRow.tex
-% \expandableinput ./resDir-host-node014bnumKern16-3728049998/forBetterRBC--1,1,1-Iters70theK1SerieserrTableRow.tex
-% \expandableinput ./resDir-host-node014bnumKern16-3728049254/forBetterRBC--1,1,1-Iters1theK1SerieserrTableRow.tex
-% \expandableinput ./resDir-host-node001dnumKern16-3728046373/forBetterRBC--1,1,1-Iters70theK1SerieserrTableRow.tex
-% \expandableinput ./resDir-host-node014bnumKern16-3728048446/forBetterRBC--1,1,1-Iters1theK1SerieserrTableRow.tex
-% \expandableinput ./resDir-host-node014bnumKern16-3728048828/forBetterRBC--1,1,1-Iters1theK1SerieserrTableRow.tex
-% \expandableinput ./resDir-host-node014bnumKern16-3728048818/forBetterRBC--1,1,1-Iters1theK1SerieserrTableRow.tex
-% \expandableinput ./resDir-host-node014bnumKern16-3728048476/forBetterRBC--1,1,1-Iters1theK1SerieserrTableRow.tex
-% \expandableinput ./resDir-host-node014bnumKern16-3728049415/forBetterRBC--1,1,1-Iters70theK1SerieserrTableRow.tex
-% \expandableinput ./resDir-host-node014bnumKern16-3728049307/forBetterRBC--1,1,1-Iters1theK1SerieserrTableRow.tex
-% \expandableinput ./resDir-host-node014bnumKern16-3728049377/forBetterRBC--1,1,1-Iters70theK1SerieserrTableRow.tex
-% \expandableinput ./resDir-host-node014bnumKern16-3728049233/forBetterRBC--1,1,1-Iters1theK1SerieserrTableRow.tex
-% \expandableinput ./resDir-host-node014bnumKern16-3728050207/forBetterRBC--1,1,1-Iters70theK1SerieserrTableRow.tex
-% \expandableinput ./resDir-host-node014bnumKern16-3728048466/forBetterRBC--1,1,1-Iters1theK1SerieserrTableRow.tex
-% \expandableinput ./resDir-host-node014bnumKern16-3728051975/forBetterRBC--1,1,1-Iters70theK1SerieserrTableRow.tex
-% \expandableinput ./resDir-host-node014bnumKern16-3728051114/forBetterRBC--1,1,1-Iters70theK1SerieserrTableRow.tex
-% \expandableinput ./resDir-host-node014bnumKern16-3728049275/forBetterRBC--1,1,1-Iters1theK1SerieserrTableRow.tex
-% \expandableinput ./resDir-host-node014bnumKern16-3728049264/forBetterRBC--1,1,1-Iters1theK1SerieserrTableRow.tex
-% \expandableinput ./resDir-host-node014bnumKern16-3728049296/forBetterRBC--1,1,1-Iters1theK1SerieserrTableRow.tex
-% \expandableinput ./resDir-host-node014bnumKern16-3728050460/forBetterRBC--1,1,1-Iters70theK1SerieserrTableRow.tex
-% \expandableinput ./resDir-host-node014bnumKern16-3728049286/forBetterRBC--1,1,1-Iters1theK1SerieserrTableRow.tex
-% \expandableinput ./resDir-host-node014bnumKern16-3728050761/forBetterRBC--1,1,1-Iters70theK1SerieserrTableRow.tex
-% \expandableinput ./resDir-host-node014bnumKern16-3728048838/forBetterRBC--1,1,1-Iters1theK1SerieserrTableRow.tex
-% \input{./resDir-host-node001dnumKern16-3728046423/forBetterRBC--1,1,1-Iters70theK2SerieserrTableRow.tex}
-% \input{./resDir-host-node001dnumKern16-3728046494/forBetterRBC--1,1,1-Iters70theK3SerieserrTableRow.tex}
-% \input{./resDir-host-node001dnumKern16-3728046591/forBetterRBC--1,1,1-Iters70theK4SerieserrTableRow.tex}
-% \input{./resDir-host-node001dnumKern16-3728046718/forBetterRBC--1,1,1-Iters70theK5SerieserrTableRow.tex}
-% \input{./resDir-host-node001dnumKern16-3728046878/forBetterRBC--1,1,1-Iters70theK10SerieserrTableRow.tex}
-% \expandableinput ./resDir-host-node001dnumKern16-3728047076/forBetterRBC--1,1,1-Iters70theK20SerieserrTableRow.tex
-% \expandableinput ./resDir-host-node001dnumKern16-3728047318/forBetterRBC--1,1,1-Iters70theK30SerieserrTableRow.tex
-% \end{tabular}
-% \caption{Error Bounds and Actual Errors}
-% \end{table}
-
-
-% \begin{table}
-%   \centering
-% \begin{tabular}{|r|r|r|r|}
-% \hline
-%   \multicolumn{1}{|c|}{Approximation}&
-%   \multicolumn{1}{|c|}{K}&
-%   \multicolumn{1}{|c|}{Bound}&
-%   \multicolumn{1}{|c|}{Actual}\\
-% \hline
-% \expandableinput ./resDir-host-node014bnumKern16-3728048404/forBetterRBC--1,1,1-Iters1theK1TraderrTableRow.tex
-% \expandableinput ./resDir-host-node014bnumKern16-3728048390/forBetterRBC--1,1,1-Iters1theK1TraderrTableRow.tex
-% \expandableinput ./resDir-host-node006cnumKern16-3728053052/forBetterRBC--1,1,1-Iters70theK0TraderrTableRow.tex
-% \expandableinput ./resDir-host-node014bnumKern16-3728048382/forBetterRBC--1,1,1-Iters1theK1TraderrTableRow.tex
-% \expandableinput ./resDir-host-node014cnumKern16-3728053050/forBetterRBC--1,1,1-Iters70theK0TraderrTableRow.tex
-% \expandableinput ./resDir-host-node014bnumKern16-3728048397/forBetterRBC--1,1,1-Iters1theK1TraderrTableRow.tex
-% \expandableinput ./resDir-host-node001dnumKern16-3728046316/forBetterRBC--1,1,1-Iters70theK0TraderrTableRow.tex
-% \expandableinput ./resDir-host-node001dnumKern16-3728047956/forBetterRBC--1,1,1-Iters70theK50SerieserrTableRow.tex
-% \expandableinput ./resDir-host-node014cnumKern16-3728054753/forBetterRBC--1,1,1-Iters70theK50SerieserrTableRow.tex
-% \expandableinput ./resDir-host-node006cnumKern16-3728054706/forBetterRBC--1,1,1-Iters70theK50SerieserrTableRow.tex
-% \expandableinput ./resDir-host-node014cnumKern16-3728081186/forBetterRBC--2,2,2-Iters70theK0TraderrTableRow.tex
-% \expandableinput ./resDir-host-node006cnumKern16-3728080413/forBetterRBC--2,2,2-Iters70theK0TraderrTableRow.tex
-% \expandableinput ./resDir-host-node001dnumKern16-3728073710/forBetterRBC--2,2,2-Iters70theK0TraderrTableRow.tex
-% \expandableinput ./resDir-host-node006cnumKern16-3728057516/forBetterRBC--2,2,2-Iters70theK50SerieserrTableRow.tex
-% \expandableinput ./resDir-host-node014cnumKern16-3728057626/forBetterRBC--2,2,2-Iters70theK50SerieserrTableRow.tex
-% \expandableinput ./resDir-host-node001dnumKern16-3728050749/forBetterRBC--2,2,2-Iters70theK50SerieserrTableRow.tex
-% \expandableinput ./resDir-host-node001dnumKern16-3728075486/forBetterRBC--3,3,3-Iters70theK0TraderrTableRow.tex
-% \expandableinput ./resDir-host-node006cnumKern16-3728082193/forBetterRBC--3,3,3-Iters70theK0TraderrTableRow.tex
-% \expandableinput ./resDir-host-node014cnumKern16-3728083327/forBetterRBC--3,3,3-Iters70theK0TraderrTableRow.tex
-% \expandableinput ./resDir-host-node014cnumKern16-3728063389/forBetterRBC--3,3,3-Iters70theK50SerieserrTableRow.tex
-% \expandableinput ./resDir-host-node006cnumKern16-3728063145/forBetterRBC--3,3,3-Iters70theK50SerieserrTableRow.tex
-% \expandableinput ./resDir-host-node001dnumKern16-3728056324/forBetterRBC--3,3,3-Iters70theK50SerieserrTableRow.tex
-% \expandableinput ./resDir-host-node001dnumKern16-3728069334/forBetterRBC--4,4,4-Iters70theK50SerieserrTableRow.tex
-% \expandableinput ./resDir-host-node006cnumKern16-3728076072/forBetterRBC--4,4,4-Iters70theK50SerieserrTableRow.tex
-% \expandableinput ./resDir-host-node014cnumKern16-3728076599/forBetterRBC--4,4,4-Iters70theK50SerieserrTableRow.tex
-% \end{tabular}
-% \caption{Error Bounds and Actual Errors}
-% \end{table}
-
-
-% \begin{table}
-%   \centering
-% \begin{tabular}{|r|r|r|r|}
-% \hline
-%   \multicolumn{1}{|c|}{Approximation}&
-%   \multicolumn{1}{|c|}{K}&
-%   \multicolumn{1}{|c|}{Bound}&
-%   \multicolumn{1}{|c|}{Actual}\\
-% \hline
-% \expandableinput ./resDir-host-node006cnumKern16-3728054360/forBetterRBC--1,1,1-Iters70theK40SerieserrTableRow.tex
-% \expandableinput ./resDir-host-node014cnumKern16-3728054395/forBetterRBC--1,1,1-Iters70theK40SerieserrTableRow.tex
-% \expandableinput ./resDir-host-node001dnumKern16-3728047610/forBetterRBC--1,1,1-Iters70theK40SerieserrTableRow.tex
-% \expandableinput ./resDir-host-node001dnumKern16-3728050023/forBetterRBC--2,2,2-Iters70theK40SerieserrTableRow.tex
-% \expandableinput ./resDir-host-node006cnumKern16-3728056785/forBetterRBC--2,2,2-Iters70theK40SerieserrTableRow.tex
-% \expandableinput ./resDir-host-node014cnumKern16-3728056860/forBetterRBC--2,2,2-Iters70theK40SerieserrTableRow.tex
-% \expandableinput ./resDir-host-node001dnumKern16-3728054855/forBetterRBC--3,3,3-Iters70theK40SerieserrTableRow.tex
-% \expandableinput ./resDir-host-node014cnumKern16-3728061857/forBetterRBC--3,3,3-Iters70theK40SerieserrTableRow.tex
-% \expandableinput ./resDir-host-node006cnumKern16-3728061663/forBetterRBC--3,3,3-Iters70theK40SerieserrTableRow.tex
-% \expandableinput ./resDir-host-node014cnumKern16-3728072788/forBetterRBC--4,4,4-Iters70theK40SerieserrTableRow.tex
-% \expandableinput ./resDir-host-node001dnumKern16-3728065567/forBetterRBC--4,4,4-Iters70theK40SerieserrTableRow.tex
-% \expandableinput ./resDir-host-node006cnumKern16-3728072340/forBetterRBC--4,4,4-Iters70theK40SerieserrTableRow.tex
-% \end{tabular}
-% \caption{Error Bounds and Actual Errors}
-% \end{table}
-
-
-
-
-% \begin{table}
-%   \centering
-% \begin{tabular}{|r|r|r|r|}
-% \hline
-%   \multicolumn{1}{|c|}{Approximation}&
-%   \multicolumn{1}{|c|}{K}&
-%   \multicolumn{1}{|c|}{Bound}&
-%   \multicolumn{1}{|c|}{Actual}\\
-% \hline
-% \expandableinput ./resDir-host-node014cnumKern16-3728054090/forBetterRBC--1,1,1-Iters70theK30SerieserrTableRow.tex
-% \expandableinput ./resDir-host-node006cnumKern16-3728054066/forBetterRBC--1,1,1-Iters70theK30SerieserrTableRow.tex
-% \expandableinput ./resDir-host-node001dnumKern16-3728047318/forBetterRBC--1,1,1-Iters70theK30SerieserrTableRow.tex
-% \expandableinput ./resDir-host-node001dnumKern16-3728049385/forBetterRBC--2,2,2-Iters70theK30SerieserrTableRow.tex
-% \expandableinput ./resDir-host-node014cnumKern16-3728056210/forBetterRBC--2,2,2-Iters70theK30SerieserrTableRow.tex
-% \expandableinput ./resDir-host-node006cnumKern16-3728056144/forBetterRBC--2,2,2-Iters70theK30SerieserrTableRow.tex
-% \expandableinput ./resDir-host-node006cnumKern16-3728060383/forBetterRBC--3,3,3-Iters70theK30SerieserrTableRow.tex
-% \expandableinput ./resDir-host-node001dnumKern16-3728053585/forBetterRBC--3,3,3-Iters70theK30SerieserrTableRow.tex
-% \expandableinput ./resDir-host-node014cnumKern16-3728060543/forBetterRBC--3,3,3-Iters70theK30SerieserrTableRow.tex
-% \expandableinput ./resDir-host-node001dnumKern16-3728062370/forBetterRBC--4,4,4-Iters70theK30SerieserrTableRow.tex\expandableinput ./resDir-host-node014cnumKern16-3728069554/forBetterRBC--4,4,4-Iters70theK30SerieserrTableRow.tex
-% \expandableinput ./resDir-host-node006cnumKern16-3728069181/forBetterRBC--4,4,4-Iters70theK30SerieserrTableRow.tex
-
-% \end{tabular}
-% \caption{Error Bounds and Actual Errors}
-% \end{table}
-
-
-% \begin{table}
-%   \centering
-% \begin{tabular}{|r|r|r|r|}
-% \hline
-%   \multicolumn{1}{|c|}{Approximation}&
-%   \multicolumn{1}{|c|}{K}&
-%   \multicolumn{1}{|c|}{Bound}&
-%   \multicolumn{1}{|c|}{Actual}\\
-% \hline
-% \expandableinput ./resDir-host-node014cnumKern16-3728053837/forBetterRBC--1,1,1-Iters70theK20SerieserrTableRow.tex
-% \expandableinput ./resDir-host-node006cnumKern16-3728053822/forBetterRBC--1,1,1-Iters70theK20SerieserrTableRow.tex
-% \expandableinput ./resDir-host-node001dnumKern16-3728047076/forBetterRBC--1,1,1-Iters70theK20SerieserrTableRow.tex
-% \expandableinput ./resDir-host-node006cnumKern16-3728055587/forBetterRBC--2,2,2-Iters70theK20SerieserrTableRow.tex
-% \expandableinput ./resDir-host-node014cnumKern16-3728055643/forBetterRBC--2,2,2-Iters70theK20SerieserrTableRow.tex
-% \expandableinput ./resDir-host-node001dnumKern16-3728048831/forBetterRBC--2,2,2-Iters70theK20SerieserrTableRow.tex
-% \expandableinput ./resDir-host-node006cnumKern16-3728059273/forBetterRBC--3,3,3-Iters70theK20SerieserrTableRow.tex
-% \expandableinput ./resDir-host-node001dnumKern16-3728052490/forBetterRBC--3,3,3-Iters70theK20SerieserrTableRow.tex
-% \expandableinput ./resDir-host-node014cnumKern16-3728059404/forBetterRBC--3,3,3-Iters70theK20SerieserrTableRow.tex
-% \expandableinput ./resDir-host-node006cnumKern16-3728066693/forBetterRBC--4,4,4-Iters70theK20SerieserrTableRow.tex
-% \expandableinput ./resDir-host-node001dnumKern16-3728059860/forBetterRBC--4,4,4-Iters70theK20SerieserrTableRow.tex
-% \expandableinput ./resDir-host-node014cnumKern16-3728067015/forBetterRBC--4,4,4-Iters70theK20SerieserrTableRow.tex
-% \end{tabular}
-% \caption{Error Bounds and Actual Errors}
-% \end{table}
-
-
-% \begin{table}
-%   \centering
-% \begin{tabular}{|r|r|r|r|}
-% \hline
-%   \multicolumn{1}{|c|}{Approximation}&
-%   \multicolumn{1}{|c|}{K}&
-%   \multicolumn{1}{|c|}{Bound}&
-%   \multicolumn{1}{|c|}{Actual}\\
-% \hline
-% \expandableinput ./resDir-host-node001dnumKern16-3728046878/forBetterRBC--1,1,1-Iters70theK10SerieserrTableRow.tex
-% \expandableinput ./resDir-host-node014cnumKern16-3728053631/forBetterRBC--1,1,1-Iters70theK10SerieserrTableRow.tex
-% \expandableinput ./resDir-host-node006cnumKern16-3728053623/forBetterRBC--1,1,1-Iters70theK10SerieserrTableRow.tex
-% \expandableinput ./resDir-host-node001dnumKern16-3728048360/forBetterRBC--2,2,2-Iters70theK10SerieserrTableRow.tex
-% \expandableinput ./resDir-host-node006cnumKern16-3728055113/forBetterRBC--2,2,2-Iters70theK10SerieserrTableRow.tex
-% \expandableinput ./resDir-host-node014cnumKern16-3728055167/forBetterRBC--2,2,2-Iters70theK10SerieserrTableRow.tex
-% \expandableinput ./resDir-host-node006cnumKern16-3728058341/forBetterRBC--3,3,3-Iters70theK10SerieserrTableRow.tex
-% \expandableinput ./resDir-host-node001dnumKern16-3728051569/forBetterRBC--3,3,3-Iters70theK10SerieserrTableRow.tex
-% \expandableinput ./resDir-host-node014cnumKern16-3728058462/forBetterRBC--3,3,3-Iters70theK10SerieserrTableRow.tex
-% \expandableinput ./resDir-host-node001dnumKern16-3728057969/forBetterRBC--4,4,4-Iters70theK10SerieserrTableRow.tex
-% \expandableinput ./resDir-host-node014cnumKern16-3728065084/forBetterRBC--4,4,4-Iters70theK10SerieserrTableRow.tex
-% \expandableinput ./resDir-host-node006cnumKern16-3728064807/forBetterRBC--4,4,4-Iters70theK10SerieserrTableRow.tex
-% \end{tabular}
-% \caption{Error Bounds and Actual Errors}
-% \end{table}
-
-
-% The panels in Figure \ref{fig:cntpltB} shows the results when $K=1,2,3,4,5$
-% while 
-% Figure \ref{fig:cntpltC} shows the results when $K=10$, with degree of approximation $(1,1,1)$
-% for computing the decision rule.  The top panel provides a contour plot of the
-% norm of the equation errors. The bottom plot shows the error in the decision rule for different values of $k_{t-1}, \theta_{t-1}$ with $\epsilon_t=0$.  The plots for different values of $\epsilon_t$ are not different.  The error bound, 
-% \ifmacosx
-% \input{resDir/forBetterRBC--1,1,1-Iters20theK30host-MacBook-Pro-2numKern2errBnd.tex} 
-% \fi
-% is 25\% larger than the actual error 
-% \iflinux
-% \input{resDir-host-node006dnumKern16-3727705617/forBetterRBC--2,2,2-Iters70theK10SerieserrBnd.tex}
-% \fi
-%  Notice that even though equation errors are comparable in magnitude, the error in the decision rule is significantly smaller for the series representation solution.  The additional constraints on the equation system provided by computing conditional expectations paths and incorporating them into the solution at time $t$ leads to better solutions.
-
-
-
-% In what follows I show the impact of increasing the number of terms 
-% employed in the series representation.  
-
-
-
-% Figure \ref{fig:cntpltA} shows the results when $K=0$, with degree of approximation $(1,1,1)$.  The top panel provides a contour plot of the
-% norm of the equation errors. The bottom plot shows the error in the decision rule for different values of $k_{t-1}, \theta_{t-1}$ with $\epsilon_t=0$.  The plots for different values of $\epsilon_t$ are not appreciably different. The error bound, 
-% % \ifmacosx
-% \input{resDir/forBetterRBC--1,1,1-Iters30theK0host-MacBook-Pro-2numKern2errBnd.tex} 
-% \fi
-% \iflinux
-% \input{resDir-host-node006dnumKern16-3727705061/forBetterRBC--1,1,1-Iters70theK0SerieserrBnd.tex}
-% \fi
-% is 25\% larger than the actual error 
-% \ifmacosx
-% \input{resDir/forBetterRBC--1,1,1-Iters70theK0host-MacBook-Pro-2numKern2acterr.tex}
-% \fi
-% \iflinux
-% \input{resDir-host-node006dnumKern16-3727705061/forBetterRBC--1,1,1-Iters70theK0Seriesacterr.tex}
-% \fi
-
-
-
-% \begin{figure}
-%   \centering
-% \ifmacosx
-%   \includegraphics[width=3.0in]{resDir/forBetterRBC--1,1,1-Iters30theK0host-MacBook-Pro-2numKern2.pdf}
-%   \includegraphics[width=3.0in]{resDir/forBetterRBC--1,1,1-Iters30theK0host-MacBook-Pro-2numKern2Approx.pdf}
-% \fi
-% \iflinux
-%   \includegraphics[width=3.0in]{resDir/forBetterRBC--1,1,1-Iters70theK50host-node014bnumKern16Series.pdf}
-%   \includegraphics[width=3.0in]{resDir/forBetterRBC--1,1,1-Iters70theK50host-node014bnumKern16SeriesApprox.pdf}
-% \fi
-%   \caption{Contour Plot for approx=(1,1,1) K =50 }
-%   \label{fig:cntpltA}
-% \end{figure}
-
-
-% \begin{figure}
-%   \centering
-% \iflinux  
-%   \includegraphics[width=3.0in]{./resDir-host-node006dnumKern16-3727725359/forBetterRBC--2,2,2-Iters70theK0Trad.pdf}
-%   \includegraphics[width=3.0in]{./resDir-host-node006dnumKern16-3727725359/forBetterRBC--2,2,2-Iters70theK0TradApprox.pdf}
-% \fi
-% \ifmacosx  
-% \includegraphics{resDir/forBetterRBC--2,2,2-Iters70theK0numKern2.pdf}
-% \fi
-%   \caption{Contour Plot for approx=(2,2,2) 70 iterations Standard Approach}
-%   \label{fig:cntpltD}
-% \end{figure}
-
-
-% \begin{figure}
-%   \centering
-% \iflinux
-%   \includegraphics[width=3.0in]{./resDir-host-node006dnumKern16-3727706925/forBetterRBC--2,2,2-Iters70theK50Series.pdf}
-%   \includegraphics[width=3.0in]{./resDir-host-node006dnumKern16-3727706925/forBetterRBC--2,2,2-Iters70theK50SeriesApprox.pdf}
-% \fi
-% \ifmacosx  
-% \includegraphics{resDir/forBetterRBC--2,2,2-Iters70theK5numKern2.pdf}
-% \fi
-%   \caption{Contour Plot for approx=(2,2,2) 70 iterations and K =50}
-%   \label{fig:cntpltE}
-% \end{figure}
-
-
-% \begin{figure}
-%   \centering
-% \ifmacosx
-%   \includegraphics{resDir/forBetterRBC--3,3,3-Iters70theK20numKern2.pdf}
-%   \fi
-% \iflinux
-% \includegraphics{./resDir-host-node006dnumKern16-3727726597/forBetterRBC--3,3,3-Iters70theK0Trad.pdf}
-% \includegraphics{./resDir-host-node006dnumKern16-3727726597/forBetterRBC--3,3,3-Iters70theK0TradApprox.pdf}
-  
-% \fi
-%   \caption{Contour Plot for approx=(3,3,3) 30 iterations  Standard Approach}
-%   \label{fig:cntpltI}
-% \end{figure}
-
-% \begin{figure}
-%   \centering
-% \ifmacosx
-%   \includegraphics{resDir/forBetterRBC--3,3,3-Iters70theK20numKern2.pdf}
-%   \fi
-% \iflinux
-% \includegraphics{resDir-host-node006dnumKern16-3727708776/forBetterRBC--3,3,3-Iters70theK30Series.pdf}
-%   \includegraphics{resDir-host-node006dnumKern16-3727708776/forBetterRBC--3,3,3-Iters70theK30SeriesApprox.pdf}
-% \fi
-%   \caption{Contour Plot for approx=(3,3,3) 20 iterations and K =30 }
-%   \label{fig:cntpltI}
-% \end{figure}
-
-
-
-% \begin{figure}
-%   \centering
-% \ifmacosx
-%   \includegraphics{resDir/forBetterRBC--3,3,3-Iters70theK20numKern2.pdf}
-%   \fi
-% \iflinux
-% \includegraphics{./resDir-host-node006dnumKern16-3727710766/forBetterRBC--3,3,3-Iters70theK50Series.pdf}
-%   \includegraphics{./resDir-host-node006dnumKern16-3727710766/forBetterRBC--3,3,3-Iters70theK50SeriesApprox.pdf}
-% \fi
-%   \caption{Contour Plot for approx=(3,3,3) 20 iterations and K =50 }
-%   \label{fig:cntpltI}
-% \end{figure}
-
-
-% \begin{figure}
-%   \centering
-% \ifmacosx
-%   \includegraphics{resDir/forBetterRBC--3,3,3-Iters70theK20numKern2.pdf}
-%   \fi
-% \iflinux
-% \includegraphics{./resDir-host-node006dnumKern16-3727726597/forBetterRBC--3,3,3-Iters70theK0Trad.pdf}
-% \includegraphics{./resDir-host-node006dnumKern16-3727726597/forBetterRBC--3,3,3-Iters70theK0TradApprox.pdf}
-  
-% \fi
-%   \caption{Contour Plot for approx=(4,4,4) 30 iterations Standard Approach}
-%   \label{fig:cntpltI}
-% \end{figure}
-
-% \begin{figure}
-%   \centering
-% \ifmacosx
-%   \includegraphics{resDir/forBetterRBC--3,3,3-Iters70theK20numKern2.pdf}
-%   \fi
-% \iflinux
-% \includegraphics{./resDir-host-node006dnumKern16-3727715561/forBetterRBC--4,4,4-Iters70theK30Series.pdf}
-%   \includegraphics{./resDir-host-node006dnumKern16-3727715561/forBetterRBC--4,4,4-Iters70theK30SeriesApprox.pdf}
-% \fi
-%   \caption{Contour Plot for approx=(4,4,4) 20 iterations and K =30 }
-%   \label{fig:cntpltI}
-% \end{figure}
-
-
-
-% \begin{figure}
-%   \centering
-% \ifmacosx
-%   \includegraphics{resDir/forBetterRBC--3,3,3-Iters70theK20numKern2.pdf}
-%   \fi
-% \iflinux
-% \includegraphics{./resDir-host-node006dnumKern16-3727721518/forBetterRBC--4,4,4-Iters70theK50Series.pdf}
-%   \includegraphics{./resDir-host-node006dnumKern16-3727721518/forBetterRBC--4,4,4-Iters70theK50SeriesApprox.pdf}
-% \fi
-%   \caption{Contour Plot for approx=(4,4,4) 20 iterations and K =50 }
-%   \label{fig:cntpltI}
-% \end{figure}
-
-
-
-
 % \begin{itemize}
 % \item show describe $z_t(x_{t-1},\epsilon_t)$ for RBC
 % \item start linear.  check error bounds, if adequate done
@@ -1245,6 +867,65 @@ x_{t-1}\\ \xpWarg\\ \XpWOarg(\xWarg)
 \item $\xpWarg=\xppWarg, \zpWarg=\zppWarg$ -- {\color{blue}Repeat loop.}
   \end{itemize}
 }
+
+Here is an outline of the routines that implement the algorithm. 
+Figure \ref{calltree}
+provides a graphic depiction of the function call tree. For more algorithmic detail, see Appendix \ref{sec:pseudocode}. 
+The current implementation, written in  Mathematica,
+  has a couple of atypical features.  
+Many of the calculations exploit Mathematica's capability to blend
+numerical and symbolic computation and to easily use functions as arguments for
+other functions.  In addition, the implementation exploits parallelism at
+several points. Below, I note where these features play a role.
+
+
+\begin{figure}
+  \centering
+  
+%\begin{tikzpicture}
+%\tikzset{every tree node/.style={align=center}}  
+{\small
+\Tree [.nestIterInterp  !\qsetw{4cm}
+[.doIterInterp  
+[.genFindRootFunc !\qsetw{2cm}
+[.genFindRootWorker genZsForFindRoot
+[.genLilXkZkFunc fSumC genXtOfXtm1 [.genXtp1OfXt ] ] ] ] 
+[.makeInterpFuncs !\qsetw{2cm} [.genInterpData evaluateTriple ] ] [.interpDataToFunc 
+ ] ] ] 
+}
+%\end{tikzpicture}
+  \caption{Function Call Tree}\label{calltree}
+\end{figure}
+
+
+
+\begin{description}
+\item[nestIterInterp] --- Computes a sequence of decision rule and conditional expectation rule functions terminating when the evaluation of the decision rule 
+functions at the tests points no longer changes much.
+\item[doInterp] --- {\bf Symbolically} generates functions that return a unique $x_t$ for any value of $\tArg$ for the family model equations, $\eqnFuncSys$ and uses these functions to construct interpolating functions approximating the decision rules.
+\item[genFindRootFuncs] --- {\bf Symbolically} generates a collection of function triples
+and an outer 
+model solution selection function. Each of the triples
+ returns the boolean gate values and a unique value for 
+$x_t$ for any given value of $\tArg$ 
+for one from the set of  model equations. It
+ subsequently uses these 
+functions to construct interpolating functions approximating the 
+decision rules.
+Each of the function constructions can be done in {\bf parallel}.
+
+The function can use \refeq{theSeries} or omit it thus implementing the usual
+approach for solving these types of models.
+\item[genLilXkZkFunc] --- {\bf Symbolically} creates a function that uses an initial $Z_t$ path to generate a function of $(x_{t-1},\epsilon_t,z_t)$ providing (potentially symbolic ) inputs 
+  \begin{gather*}
+(x_{t-1},x_t,E_t(x_{t+1}),\epsilon_t)    
+  \end{gather*}
+ for model system equations $\eqnFunc$.  This  routine  provides the information for
+implementing the series expression \refeq{theSeries}
+\item[makeInterpFuncs] --- Solves model equations at collocation points 
+producing interpolation data and subsequently returns the  
+ interpolating functions for the decision rule and decision rule conditional expectation.  This can be done in {\bf parallel}.
+\end{description}
 
 
 % \subsection{{Some Algorithmic Details}}
@@ -2624,7 +2305,7 @@ I_t-(K_t-(1-d_1)k_{t-1})\\
 \item[$ \XWOarg^p\tNo$] The proposed decision rule conditional expectations  $x_t$ components
 \item[$ \ZWOarg^p\tNo$] The proposed decision rule their conditional expectations  $z_t$ components
 \item[$ \kappa$] One less than the number of terms in series representation$(\kappa>=0)$
-\item[$\smolSpec$] Smolyak anisotropic grid polynomials $(\aSmolPoly{1},\ldots,\aSmolPoly{N})$ and their conditional expectations $(\aSmolPolyCE{1},\ldots,\aSmolPolyCE{N})$
+\item[$\smolSpec$] Smolyak an-isotropic grid polynomials $(\aSmolPoly{1},\ldots,\aSmolPoly{N})$ and their conditional expectations $(\aSmolPolyCE{1},\ldots,\aSmolPolyCE{N})$
 \item[$\mathbb{T}$] Model evaluation points Neidereiter sequence in the model variable ergodic region.
 \item[$ \xzFunc$]  $\{\xWOarg\tArg,\zWOarg\tArg\}$ collects the decision rule components
 \item[$ \XZFunc$]  $\{\xWOarg\tArg,\zWOarg\tArg\}$ collects the decision rule conditional expectations components
@@ -2634,25 +2315,6 @@ I_t-(K_t-(1-d_1)k_{t-1})\\
 \SetKw{nestWhile}{NestWhile}
 \SetKw{func}{Function}
 \SetKw{map}{Map}
-
-
-\begin{figure}
-  \centering
-  
-%\begin{tikzpicture}
-%\tikzset{every tree node/.style={align=center}}  
-{\small
-\Tree [.nestIterInterp  !\qsetw{4cm}
-[.doIterInterp  
-[.genFindRootFunc !\qsetw{2cm}
-[.genFindRootWorker genZsForFindRoot
-[.genLilXkZkFunc fSumC genXtOfXtm1 [.genXtp1OfXt ] ] ] ] 
-[.makeInterpFuncs !\qsetw{2cm} genInterpData evaluateTriple ] [.interpDataToFunc 
- ] ] ] 
-}
-%\end{tikzpicture}
-  \caption{Function Call Tree}
-\end{figure}
 
 
 \begin{algorithm}
@@ -2673,6 +2335,15 @@ I_t-(K_t-(1-d_1)k_{t-1})\\
  \SetKwInOut{Input}{input}
  \SetKwInOut{Output}{output}
 \Input{$(\linMod,\bothFuncs^i,\kappa,\eqnFuncSys,\smolSpec)$}
+\tcc{Symbolically generates a collection of function triples
+and an outer 
+model solution selection function. Each of triples
+ returns the boolean gate values and a unique value for 
+$x_t$ for any given value of $(x_{t-1},\epsilon_t)$ 
+one of the  model equations  
+and subsequently uses these 
+functions to construct interpolating functions approximating the 
+decision rules.}
 $theFindRootFuncs=genFindRootFuncs(\linMod,\bothFuncs,\kappa,\eqnFuncSys)$\\
 $\bothFuncs^{i+1}=makeInterpFuncs(theFindRootFuncs,\smolSpec)$\\
 \Output{$\bothFuncs^{i+1}$}
@@ -2687,6 +2358,18 @@ $\bothFuncs^{i+1}=makeInterpFuncs(theFindRootFuncs,\smolSpec)$\\
  \SetKwInOut{Input}{input}
  \SetKwInOut{Output}{output}
 \Input{$(\linMod,\bothFuncs,\kappa,\eqnFuncSys,\smolSpec)$}
+\tcc{Applies genFindRootWorker to each model component.
+Symbolically generates a collection of function triples
+and an outer 
+model solution selection function. Each of the triples
+ returns the boolean gate values and a unique value for 
+$x_t$ for any given value of $(x_{t-1},\epsilon_t)$ 
+for one from the set of  model equations. It
+ subsequently uses these 
+functions to construct interpolating functions approximating the 
+decision rules.
+Each of the function constructions can be done in {\bf parallel}.
+}
 $theFuncOptionsTriples=\map(\func(v,\{v[1],genFindRootWorker(\linMod,\bothFuncs,\kappa,v[2]),v[3]),
 \eqnFuncSysNoD)$\\
 \Output{$\{theFuncOptionsTriples,\theD\}$}
@@ -2700,6 +2383,8 @@ $theFuncOptionsTriples=\map(\func(v,\{v[1],genFindRootWorker(\linMod,\bothFuncs,
  \SetKwInOut{Input}{input}
  \SetKwInOut{Output}{output}
 \Input{$(\linMod,\XZFunc,\kappa,\eqnFunc)$}
+\tcc{{\bf Symbolically} constructs functions that return  $x_t$ for a given
+$\tArg$}
 $\theZsNow=\{Z_{t+1},\ldots,Z_{t+k-1}\}=genZsForFindRoot(\linMod,x_t^p,\XZFunc)$\\
 $modEqnArgsFunc=genLilXkZkFunc(\linMod,\theZsNow)$\\
 $\modEqnArgsNow=\{x_{t-1},x_{t},E_t(x_{t+1}),\epsilon_t\}=modEqnArgsFunc(x_{t-1},\epsilon_t,z_t)$\\
@@ -2812,13 +2497,14 @@ $S=\sum F^{\nu-1} \phi Z_{t+\nu}$\\
  \SetKwInOut{Input}{input}
  \SetKwInOut{Output}{output}
 \Input{$(\eqnFuncSys,\smolSpec)$}
-\tcc{Solves model equations at collocation points producing interpolation data returns the  
+\tcc{Solves model equations at collocation points producing interpolation data 
+and subsequently returns the  
  interpolating functions for the decision rule and decision rule conditional expectation.}
 $interpData=smolyakGenInterpData(\eqnFuncSys,\smolSpec)$
 $\{\xzFunc,\XZFunc\}=interpDataToFunc(interData,\smolSpec)$\\
 \Output{$\{\xzFunc,\XZFunc\}$}
-\caption{$makeInterpFunc$} 
-\label{makeInterpFunc}
+\caption{$makeInterpFuncs$} 
+\label{makeInterpFuncs}
 \end{algorithm}
 
 
@@ -2983,4 +2669,385 @@ $\xguss=x_t(x_{t-1},\epsilon)$\;
 % Each state computes weights for polynomials.  The conditional expectation function for computing the future path 
 % has the $\epsilon_t$ and $s_t$ ``integrated out''. Use these for formula.  Conditional expectation of $E_{t+1}$ should depend on current state.  Conditional expectations path with regime switching
 \end{document}
+
+
+
+
+
+
+%\definecolor{LightCyan}{rgb}{0.88,1,1}
+
+
+% \makeatletter\let\expandableinput\@@input\makeatother
+
+% \begin{table}
+%   \centering
+% \begin{tabular}{|r|r|r|r|}
+% \hline
+%   \multicolumn{1}{|c|}{Approximation}&
+%   \multicolumn{1}{|c|}{K}&
+%   \multicolumn{1}{|c|}{Bound}&
+%   \multicolumn{1}{|c|}{Actual}\\
+% \hline
+% \input{./resDir-host-node014bnumKern16-3728048404/forBetterRBC--1,1,1-Iters1theK1TraderrTableRow.tex}
+% \input{./resDir-host-node014bnumKern16-3728048390/forBetterRBC--1,1,1-Iters1theK1TraderrTableRow.tex}
+% \input{./resDir-host-node014bnumKern16-3728048382/forBetterRBC--1,1,1-Iters1theK1TraderrTableRow.tex}
+% \input{./resDir-host-node014bnumKern16-3728048397/forBetterRBC--1,1,1-Iters1theK1TraderrTableRow.tex}
+% \input{./resDir-host-node001dnumKern16-3728046316/forBetterRBC--1,1,1-Iters70theK0TraderrTableRow.tex}
+% \input{./resDir-host-node001dnumKern16-3728046340/forBetterRBC--1,1,1-Iters70theK0SerieserrTableRow.tex}
+% \expandableinput ./resDir-host-node014bnumKern16-3728049511/forBetterRBC--1,1,1-Iters70theK1SerieserrTableRow.tex
+% \expandableinput ./resDir-host-node014bnumKern16-3728048456/forBetterRBC--1,1,1-Iters1theK1SerieserrTableRow.tex
+% \expandableinput ./resDir-host-node014bnumKern16-3728051519/forBetterRBC--1,1,1-Iters70theK1SerieserrTableRow.tex
+% \expandableinput ./resDir-host-node014bnumKern16-3728048808/forBetterRBC--1,1,1-Iters1theK1SerieserrTableRow.tex
+% \expandableinput ./resDir-host-node014bnumKern16-3728049693/forBetterRBC--1,1,1-Iters70theK1SerieserrTableRow.tex
+% \expandableinput ./resDir-host-node014bnumKern16-3728049828/forBetterRBC--1,1,1-Iters70theK1SerieserrTableRow.tex
+% \expandableinput ./resDir-host-node014bnumKern16-3728049454/forBetterRBC--1,1,1-Iters70theK1SerieserrTableRow.tex
+% \expandableinput ./resDir-host-node014bnumKern16-3728049589/forBetterRBC--1,1,1-Iters70theK1SerieserrTableRow.tex
+% \expandableinput ./resDir-host-node014bnumKern16-3728049244/forBetterRBC--1,1,1-Iters1theK1SerieserrTableRow.tex
+% \expandableinput ./resDir-host-node014bnumKern16-3728049998/forBetterRBC--1,1,1-Iters70theK1SerieserrTableRow.tex
+% \expandableinput ./resDir-host-node014bnumKern16-3728049254/forBetterRBC--1,1,1-Iters1theK1SerieserrTableRow.tex
+% \expandableinput ./resDir-host-node001dnumKern16-3728046373/forBetterRBC--1,1,1-Iters70theK1SerieserrTableRow.tex
+% \expandableinput ./resDir-host-node014bnumKern16-3728048446/forBetterRBC--1,1,1-Iters1theK1SerieserrTableRow.tex
+% \expandableinput ./resDir-host-node014bnumKern16-3728048828/forBetterRBC--1,1,1-Iters1theK1SerieserrTableRow.tex
+% \expandableinput ./resDir-host-node014bnumKern16-3728048818/forBetterRBC--1,1,1-Iters1theK1SerieserrTableRow.tex
+% \expandableinput ./resDir-host-node014bnumKern16-3728048476/forBetterRBC--1,1,1-Iters1theK1SerieserrTableRow.tex
+% \expandableinput ./resDir-host-node014bnumKern16-3728049415/forBetterRBC--1,1,1-Iters70theK1SerieserrTableRow.tex
+% \expandableinput ./resDir-host-node014bnumKern16-3728049307/forBetterRBC--1,1,1-Iters1theK1SerieserrTableRow.tex
+% \expandableinput ./resDir-host-node014bnumKern16-3728049377/forBetterRBC--1,1,1-Iters70theK1SerieserrTableRow.tex
+% \expandableinput ./resDir-host-node014bnumKern16-3728049233/forBetterRBC--1,1,1-Iters1theK1SerieserrTableRow.tex
+% \expandableinput ./resDir-host-node014bnumKern16-3728050207/forBetterRBC--1,1,1-Iters70theK1SerieserrTableRow.tex
+% \expandableinput ./resDir-host-node014bnumKern16-3728048466/forBetterRBC--1,1,1-Iters1theK1SerieserrTableRow.tex
+% \expandableinput ./resDir-host-node014bnumKern16-3728051975/forBetterRBC--1,1,1-Iters70theK1SerieserrTableRow.tex
+% \expandableinput ./resDir-host-node014bnumKern16-3728051114/forBetterRBC--1,1,1-Iters70theK1SerieserrTableRow.tex
+% \expandableinput ./resDir-host-node014bnumKern16-3728049275/forBetterRBC--1,1,1-Iters1theK1SerieserrTableRow.tex
+% \expandableinput ./resDir-host-node014bnumKern16-3728049264/forBetterRBC--1,1,1-Iters1theK1SerieserrTableRow.tex
+% \expandableinput ./resDir-host-node014bnumKern16-3728049296/forBetterRBC--1,1,1-Iters1theK1SerieserrTableRow.tex
+% \expandableinput ./resDir-host-node014bnumKern16-3728050460/forBetterRBC--1,1,1-Iters70theK1SerieserrTableRow.tex
+% \expandableinput ./resDir-host-node014bnumKern16-3728049286/forBetterRBC--1,1,1-Iters1theK1SerieserrTableRow.tex
+% \expandableinput ./resDir-host-node014bnumKern16-3728050761/forBetterRBC--1,1,1-Iters70theK1SerieserrTableRow.tex
+% \expandableinput ./resDir-host-node014bnumKern16-3728048838/forBetterRBC--1,1,1-Iters1theK1SerieserrTableRow.tex
+% \input{./resDir-host-node001dnumKern16-3728046423/forBetterRBC--1,1,1-Iters70theK2SerieserrTableRow.tex}
+% \input{./resDir-host-node001dnumKern16-3728046494/forBetterRBC--1,1,1-Iters70theK3SerieserrTableRow.tex}
+% \input{./resDir-host-node001dnumKern16-3728046591/forBetterRBC--1,1,1-Iters70theK4SerieserrTableRow.tex}
+% \input{./resDir-host-node001dnumKern16-3728046718/forBetterRBC--1,1,1-Iters70theK5SerieserrTableRow.tex}
+% \input{./resDir-host-node001dnumKern16-3728046878/forBetterRBC--1,1,1-Iters70theK10SerieserrTableRow.tex}
+% \expandableinput ./resDir-host-node001dnumKern16-3728047076/forBetterRBC--1,1,1-Iters70theK20SerieserrTableRow.tex
+% \expandableinput ./resDir-host-node001dnumKern16-3728047318/forBetterRBC--1,1,1-Iters70theK30SerieserrTableRow.tex
+% \end{tabular}
+% \caption{Error Bounds and Actual Errors}
+% \end{table}
+
+
+% \begin{table}
+%   \centering
+% \begin{tabular}{|r|r|r|r|}
+% \hline
+%   \multicolumn{1}{|c|}{Approximation}&
+%   \multicolumn{1}{|c|}{K}&
+%   \multicolumn{1}{|c|}{Bound}&
+%   \multicolumn{1}{|c|}{Actual}\\
+% \hline
+% \expandableinput ./resDir-host-node014bnumKern16-3728048404/forBetterRBC--1,1,1-Iters1theK1TraderrTableRow.tex
+% \expandableinput ./resDir-host-node014bnumKern16-3728048390/forBetterRBC--1,1,1-Iters1theK1TraderrTableRow.tex
+% \expandableinput ./resDir-host-node006cnumKern16-3728053052/forBetterRBC--1,1,1-Iters70theK0TraderrTableRow.tex
+% \expandableinput ./resDir-host-node014bnumKern16-3728048382/forBetterRBC--1,1,1-Iters1theK1TraderrTableRow.tex
+% \expandableinput ./resDir-host-node014cnumKern16-3728053050/forBetterRBC--1,1,1-Iters70theK0TraderrTableRow.tex
+% \expandableinput ./resDir-host-node014bnumKern16-3728048397/forBetterRBC--1,1,1-Iters1theK1TraderrTableRow.tex
+% \expandableinput ./resDir-host-node001dnumKern16-3728046316/forBetterRBC--1,1,1-Iters70theK0TraderrTableRow.tex
+% \expandableinput ./resDir-host-node001dnumKern16-3728047956/forBetterRBC--1,1,1-Iters70theK50SerieserrTableRow.tex
+% \expandableinput ./resDir-host-node014cnumKern16-3728054753/forBetterRBC--1,1,1-Iters70theK50SerieserrTableRow.tex
+% \expandableinput ./resDir-host-node006cnumKern16-3728054706/forBetterRBC--1,1,1-Iters70theK50SerieserrTableRow.tex
+% \expandableinput ./resDir-host-node014cnumKern16-3728081186/forBetterRBC--2,2,2-Iters70theK0TraderrTableRow.tex
+% \expandableinput ./resDir-host-node006cnumKern16-3728080413/forBetterRBC--2,2,2-Iters70theK0TraderrTableRow.tex
+% \expandableinput ./resDir-host-node001dnumKern16-3728073710/forBetterRBC--2,2,2-Iters70theK0TraderrTableRow.tex
+% \expandableinput ./resDir-host-node006cnumKern16-3728057516/forBetterRBC--2,2,2-Iters70theK50SerieserrTableRow.tex
+% \expandableinput ./resDir-host-node014cnumKern16-3728057626/forBetterRBC--2,2,2-Iters70theK50SerieserrTableRow.tex
+% \expandableinput ./resDir-host-node001dnumKern16-3728050749/forBetterRBC--2,2,2-Iters70theK50SerieserrTableRow.tex
+% \expandableinput ./resDir-host-node001dnumKern16-3728075486/forBetterRBC--3,3,3-Iters70theK0TraderrTableRow.tex
+% \expandableinput ./resDir-host-node006cnumKern16-3728082193/forBetterRBC--3,3,3-Iters70theK0TraderrTableRow.tex
+% \expandableinput ./resDir-host-node014cnumKern16-3728083327/forBetterRBC--3,3,3-Iters70theK0TraderrTableRow.tex
+% \expandableinput ./resDir-host-node014cnumKern16-3728063389/forBetterRBC--3,3,3-Iters70theK50SerieserrTableRow.tex
+% \expandableinput ./resDir-host-node006cnumKern16-3728063145/forBetterRBC--3,3,3-Iters70theK50SerieserrTableRow.tex
+% \expandableinput ./resDir-host-node001dnumKern16-3728056324/forBetterRBC--3,3,3-Iters70theK50SerieserrTableRow.tex
+% \expandableinput ./resDir-host-node001dnumKern16-3728069334/forBetterRBC--4,4,4-Iters70theK50SerieserrTableRow.tex
+% \expandableinput ./resDir-host-node006cnumKern16-3728076072/forBetterRBC--4,4,4-Iters70theK50SerieserrTableRow.tex
+% \expandableinput ./resDir-host-node014cnumKern16-3728076599/forBetterRBC--4,4,4-Iters70theK50SerieserrTableRow.tex
+% \end{tabular}
+% \caption{Error Bounds and Actual Errors}
+% \end{table}
+
+
+% \begin{table}
+%   \centering
+% \begin{tabular}{|r|r|r|r|}
+% \hline
+%   \multicolumn{1}{|c|}{Approximation}&
+%   \multicolumn{1}{|c|}{K}&
+%   \multicolumn{1}{|c|}{Bound}&
+%   \multicolumn{1}{|c|}{Actual}\\
+% \hline
+% \expandableinput ./resDir-host-node006cnumKern16-3728054360/forBetterRBC--1,1,1-Iters70theK40SerieserrTableRow.tex
+% \expandableinput ./resDir-host-node014cnumKern16-3728054395/forBetterRBC--1,1,1-Iters70theK40SerieserrTableRow.tex
+% \expandableinput ./resDir-host-node001dnumKern16-3728047610/forBetterRBC--1,1,1-Iters70theK40SerieserrTableRow.tex
+% \expandableinput ./resDir-host-node001dnumKern16-3728050023/forBetterRBC--2,2,2-Iters70theK40SerieserrTableRow.tex
+% \expandableinput ./resDir-host-node006cnumKern16-3728056785/forBetterRBC--2,2,2-Iters70theK40SerieserrTableRow.tex
+% \expandableinput ./resDir-host-node014cnumKern16-3728056860/forBetterRBC--2,2,2-Iters70theK40SerieserrTableRow.tex
+% \expandableinput ./resDir-host-node001dnumKern16-3728054855/forBetterRBC--3,3,3-Iters70theK40SerieserrTableRow.tex
+% \expandableinput ./resDir-host-node014cnumKern16-3728061857/forBetterRBC--3,3,3-Iters70theK40SerieserrTableRow.tex
+% \expandableinput ./resDir-host-node006cnumKern16-3728061663/forBetterRBC--3,3,3-Iters70theK40SerieserrTableRow.tex
+% \expandableinput ./resDir-host-node014cnumKern16-3728072788/forBetterRBC--4,4,4-Iters70theK40SerieserrTableRow.tex
+% \expandableinput ./resDir-host-node001dnumKern16-3728065567/forBetterRBC--4,4,4-Iters70theK40SerieserrTableRow.tex
+% \expandableinput ./resDir-host-node006cnumKern16-3728072340/forBetterRBC--4,4,4-Iters70theK40SerieserrTableRow.tex
+% \end{tabular}
+% \caption{Error Bounds and Actual Errors}
+% \end{table}
+
+
+
+
+% \begin{table}
+%   \centering
+% \begin{tabular}{|r|r|r|r|}
+% \hline
+%   \multicolumn{1}{|c|}{Approximation}&
+%   \multicolumn{1}{|c|}{K}&
+%   \multicolumn{1}{|c|}{Bound}&
+%   \multicolumn{1}{|c|}{Actual}\\
+% \hline
+% \expandableinput ./resDir-host-node014cnumKern16-3728054090/forBetterRBC--1,1,1-Iters70theK30SerieserrTableRow.tex
+% \expandableinput ./resDir-host-node006cnumKern16-3728054066/forBetterRBC--1,1,1-Iters70theK30SerieserrTableRow.tex
+% \expandableinput ./resDir-host-node001dnumKern16-3728047318/forBetterRBC--1,1,1-Iters70theK30SerieserrTableRow.tex
+% \expandableinput ./resDir-host-node001dnumKern16-3728049385/forBetterRBC--2,2,2-Iters70theK30SerieserrTableRow.tex
+% \expandableinput ./resDir-host-node014cnumKern16-3728056210/forBetterRBC--2,2,2-Iters70theK30SerieserrTableRow.tex
+% \expandableinput ./resDir-host-node006cnumKern16-3728056144/forBetterRBC--2,2,2-Iters70theK30SerieserrTableRow.tex
+% \expandableinput ./resDir-host-node006cnumKern16-3728060383/forBetterRBC--3,3,3-Iters70theK30SerieserrTableRow.tex
+% \expandableinput ./resDir-host-node001dnumKern16-3728053585/forBetterRBC--3,3,3-Iters70theK30SerieserrTableRow.tex
+% \expandableinput ./resDir-host-node014cnumKern16-3728060543/forBetterRBC--3,3,3-Iters70theK30SerieserrTableRow.tex
+% \expandableinput ./resDir-host-node001dnumKern16-3728062370/forBetterRBC--4,4,4-Iters70theK30SerieserrTableRow.tex\expandableinput ./resDir-host-node014cnumKern16-3728069554/forBetterRBC--4,4,4-Iters70theK30SerieserrTableRow.tex
+% \expandableinput ./resDir-host-node006cnumKern16-3728069181/forBetterRBC--4,4,4-Iters70theK30SerieserrTableRow.tex
+
+% \end{tabular}
+% \caption{Error Bounds and Actual Errors}
+% \end{table}
+
+
+% \begin{table}
+%   \centering
+% \begin{tabular}{|r|r|r|r|}
+% \hline
+%   \multicolumn{1}{|c|}{Approximation}&
+%   \multicolumn{1}{|c|}{K}&
+%   \multicolumn{1}{|c|}{Bound}&
+%   \multicolumn{1}{|c|}{Actual}\\
+% \hline
+% \expandableinput ./resDir-host-node014cnumKern16-3728053837/forBetterRBC--1,1,1-Iters70theK20SerieserrTableRow.tex
+% \expandableinput ./resDir-host-node006cnumKern16-3728053822/forBetterRBC--1,1,1-Iters70theK20SerieserrTableRow.tex
+% \expandableinput ./resDir-host-node001dnumKern16-3728047076/forBetterRBC--1,1,1-Iters70theK20SerieserrTableRow.tex
+% \expandableinput ./resDir-host-node006cnumKern16-3728055587/forBetterRBC--2,2,2-Iters70theK20SerieserrTableRow.tex
+% \expandableinput ./resDir-host-node014cnumKern16-3728055643/forBetterRBC--2,2,2-Iters70theK20SerieserrTableRow.tex
+% \expandableinput ./resDir-host-node001dnumKern16-3728048831/forBetterRBC--2,2,2-Iters70theK20SerieserrTableRow.tex
+% \expandableinput ./resDir-host-node006cnumKern16-3728059273/forBetterRBC--3,3,3-Iters70theK20SerieserrTableRow.tex
+% \expandableinput ./resDir-host-node001dnumKern16-3728052490/forBetterRBC--3,3,3-Iters70theK20SerieserrTableRow.tex
+% \expandableinput ./resDir-host-node014cnumKern16-3728059404/forBetterRBC--3,3,3-Iters70theK20SerieserrTableRow.tex
+% \expandableinput ./resDir-host-node006cnumKern16-3728066693/forBetterRBC--4,4,4-Iters70theK20SerieserrTableRow.tex
+% \expandableinput ./resDir-host-node001dnumKern16-3728059860/forBetterRBC--4,4,4-Iters70theK20SerieserrTableRow.tex
+% \expandableinput ./resDir-host-node014cnumKern16-3728067015/forBetterRBC--4,4,4-Iters70theK20SerieserrTableRow.tex
+% \end{tabular}
+% \caption{Error Bounds and Actual Errors}
+% \end{table}
+
+
+% \begin{table}
+%   \centering
+% \begin{tabular}{|r|r|r|r|}
+% \hline
+%   \multicolumn{1}{|c|}{Approximation}&
+%   \multicolumn{1}{|c|}{K}&
+%   \multicolumn{1}{|c|}{Bound}&
+%   \multicolumn{1}{|c|}{Actual}\\
+% \hline
+% \expandableinput ./resDir-host-node001dnumKern16-3728046878/forBetterRBC--1,1,1-Iters70theK10SerieserrTableRow.tex
+% \expandableinput ./resDir-host-node014cnumKern16-3728053631/forBetterRBC--1,1,1-Iters70theK10SerieserrTableRow.tex
+% \expandableinput ./resDir-host-node006cnumKern16-3728053623/forBetterRBC--1,1,1-Iters70theK10SerieserrTableRow.tex
+% \expandableinput ./resDir-host-node001dnumKern16-3728048360/forBetterRBC--2,2,2-Iters70theK10SerieserrTableRow.tex
+% \expandableinput ./resDir-host-node006cnumKern16-3728055113/forBetterRBC--2,2,2-Iters70theK10SerieserrTableRow.tex
+% \expandableinput ./resDir-host-node014cnumKern16-3728055167/forBetterRBC--2,2,2-Iters70theK10SerieserrTableRow.tex
+% \expandableinput ./resDir-host-node006cnumKern16-3728058341/forBetterRBC--3,3,3-Iters70theK10SerieserrTableRow.tex
+% \expandableinput ./resDir-host-node001dnumKern16-3728051569/forBetterRBC--3,3,3-Iters70theK10SerieserrTableRow.tex
+% \expandableinput ./resDir-host-node014cnumKern16-3728058462/forBetterRBC--3,3,3-Iters70theK10SerieserrTableRow.tex
+% \expandableinput ./resDir-host-node001dnumKern16-3728057969/forBetterRBC--4,4,4-Iters70theK10SerieserrTableRow.tex
+% \expandableinput ./resDir-host-node014cnumKern16-3728065084/forBetterRBC--4,4,4-Iters70theK10SerieserrTableRow.tex
+% \expandableinput ./resDir-host-node006cnumKern16-3728064807/forBetterRBC--4,4,4-Iters70theK10SerieserrTableRow.tex
+% \end{tabular}
+% \caption{Error Bounds and Actual Errors}
+% \end{table}
+
+
+% The panels in Figure \ref{fig:cntpltB} shows the results when $K=1,2,3,4,5$
+% while 
+% Figure \ref{fig:cntpltC} shows the results when $K=10$, with degree of approximation $(1,1,1)$
+% for computing the decision rule.  The top panel provides a contour plot of the
+% norm of the equation errors. The bottom plot shows the error in the decision rule for different values of $k_{t-1}, \theta_{t-1}$ with $\epsilon_t=0$.  The plots for different values of $\epsilon_t$ are not different.  The error bound, 
+% \ifmacosx
+% \input{resDir/forBetterRBC--1,1,1-Iters20theK30host-MacBook-Pro-2numKern2errBnd.tex} 
+% \fi
+% is 25\% larger than the actual error 
+% \iflinux
+% \input{resDir-host-node006dnumKern16-3727705617/forBetterRBC--2,2,2-Iters70theK10SerieserrBnd.tex}
+% \fi
+%  Notice that even though equation errors are comparable in magnitude, the error in the decision rule is significantly smaller for the series representation solution.  The additional constraints on the equation system provided by computing conditional expectations paths and incorporating them into the solution at time $t$ leads to better solutions.
+
+
+
+% In what follows I show the impact of increasing the number of terms 
+% employed in the series representation.  
+
+
+
+% Figure \ref{fig:cntpltA} shows the results when $K=0$, with degree of approximation $(1,1,1)$.  The top panel provides a contour plot of the
+% norm of the equation errors. The bottom plot shows the error in the decision rule for different values of $k_{t-1}, \theta_{t-1}$ with $\epsilon_t=0$.  The plots for different values of $\epsilon_t$ are not appreciably different. The error bound, 
+% % \ifmacosx
+% \input{resDir/forBetterRBC--1,1,1-Iters30theK0host-MacBook-Pro-2numKern2errBnd.tex} 
+% \fi
+% \iflinux
+% \input{resDir-host-node006dnumKern16-3727705061/forBetterRBC--1,1,1-Iters70theK0SerieserrBnd.tex}
+% \fi
+% is 25\% larger than the actual error 
+% \ifmacosx
+% \input{resDir/forBetterRBC--1,1,1-Iters70theK0host-MacBook-Pro-2numKern2acterr.tex}
+% \fi
+% \iflinux
+% \input{resDir-host-node006dnumKern16-3727705061/forBetterRBC--1,1,1-Iters70theK0Seriesacterr.tex}
+% \fi
+
+
+
+% \begin{figure}
+%   \centering
+% \ifmacosx
+%   \includegraphics[width=3.0in]{resDir/forBetterRBC--1,1,1-Iters30theK0host-MacBook-Pro-2numKern2.pdf}
+%   \includegraphics[width=3.0in]{resDir/forBetterRBC--1,1,1-Iters30theK0host-MacBook-Pro-2numKern2Approx.pdf}
+% \fi
+% \iflinux
+%   \includegraphics[width=3.0in]{resDir/forBetterRBC--1,1,1-Iters70theK50host-node014bnumKern16Series.pdf}
+%   \includegraphics[width=3.0in]{resDir/forBetterRBC--1,1,1-Iters70theK50host-node014bnumKern16SeriesApprox.pdf}
+% \fi
+%   \caption{Contour Plot for approx=(1,1,1) K =50 }
+%   \label{fig:cntpltA}
+% \end{figure}
+
+
+% \begin{figure}
+%   \centering
+% \iflinux  
+%   \includegraphics[width=3.0in]{./resDir-host-node006dnumKern16-3727725359/forBetterRBC--2,2,2-Iters70theK0Trad.pdf}
+%   \includegraphics[width=3.0in]{./resDir-host-node006dnumKern16-3727725359/forBetterRBC--2,2,2-Iters70theK0TradApprox.pdf}
+% \fi
+% \ifmacosx  
+% \includegraphics{resDir/forBetterRBC--2,2,2-Iters70theK0numKern2.pdf}
+% \fi
+%   \caption{Contour Plot for approx=(2,2,2) 70 iterations Standard Approach}
+%   \label{fig:cntpltD}
+% \end{figure}
+
+
+% \begin{figure}
+%   \centering
+% \iflinux
+%   \includegraphics[width=3.0in]{./resDir-host-node006dnumKern16-3727706925/forBetterRBC--2,2,2-Iters70theK50Series.pdf}
+%   \includegraphics[width=3.0in]{./resDir-host-node006dnumKern16-3727706925/forBetterRBC--2,2,2-Iters70theK50SeriesApprox.pdf}
+% \fi
+% \ifmacosx  
+% \includegraphics{resDir/forBetterRBC--2,2,2-Iters70theK5numKern2.pdf}
+% \fi
+%   \caption{Contour Plot for approx=(2,2,2) 70 iterations and K =50}
+%   \label{fig:cntpltE}
+% \end{figure}
+
+
+% \begin{figure}
+%   \centering
+% \ifmacosx
+%   \includegraphics{resDir/forBetterRBC--3,3,3-Iters70theK20numKern2.pdf}
+%   \fi
+% \iflinux
+% \includegraphics{./resDir-host-node006dnumKern16-3727726597/forBetterRBC--3,3,3-Iters70theK0Trad.pdf}
+% \includegraphics{./resDir-host-node006dnumKern16-3727726597/forBetterRBC--3,3,3-Iters70theK0TradApprox.pdf}
+  
+% \fi
+%   \caption{Contour Plot for approx=(3,3,3) 30 iterations  Standard Approach}
+%   \label{fig:cntpltI}
+% \end{figure}
+
+% \begin{figure}
+%   \centering
+% \ifmacosx
+%   \includegraphics{resDir/forBetterRBC--3,3,3-Iters70theK20numKern2.pdf}
+%   \fi
+% \iflinux
+% \includegraphics{resDir-host-node006dnumKern16-3727708776/forBetterRBC--3,3,3-Iters70theK30Series.pdf}
+%   \includegraphics{resDir-host-node006dnumKern16-3727708776/forBetterRBC--3,3,3-Iters70theK30SeriesApprox.pdf}
+% \fi
+%   \caption{Contour Plot for approx=(3,3,3) 20 iterations and K =30 }
+%   \label{fig:cntpltI}
+% \end{figure}
+
+
+
+% \begin{figure}
+%   \centering
+% \ifmacosx
+%   \includegraphics{resDir/forBetterRBC--3,3,3-Iters70theK20numKern2.pdf}
+%   \fi
+% \iflinux
+% \includegraphics{./resDir-host-node006dnumKern16-3727710766/forBetterRBC--3,3,3-Iters70theK50Series.pdf}
+%   \includegraphics{./resDir-host-node006dnumKern16-3727710766/forBetterRBC--3,3,3-Iters70theK50SeriesApprox.pdf}
+% \fi
+%   \caption{Contour Plot for approx=(3,3,3) 20 iterations and K =50 }
+%   \label{fig:cntpltI}
+% \end{figure}
+
+
+% \begin{figure}
+%   \centering
+% \ifmacosx
+%   \includegraphics{resDir/forBetterRBC--3,3,3-Iters70theK20numKern2.pdf}
+%   \fi
+% \iflinux
+% \includegraphics{./resDir-host-node006dnumKern16-3727726597/forBetterRBC--3,3,3-Iters70theK0Trad.pdf}
+% \includegraphics{./resDir-host-node006dnumKern16-3727726597/forBetterRBC--3,3,3-Iters70theK0TradApprox.pdf}
+  
+% \fi
+%   \caption{Contour Plot for approx=(4,4,4) 30 iterations Standard Approach}
+%   \label{fig:cntpltI}
+% \end{figure}
+
+% \begin{figure}
+%   \centering
+% \ifmacosx
+%   \includegraphics{resDir/forBetterRBC--3,3,3-Iters70theK20numKern2.pdf}
+%   \fi
+% \iflinux
+% \includegraphics{./resDir-host-node006dnumKern16-3727715561/forBetterRBC--4,4,4-Iters70theK30Series.pdf}
+%   \includegraphics{./resDir-host-node006dnumKern16-3727715561/forBetterRBC--4,4,4-Iters70theK30SeriesApprox.pdf}
+% \fi
+%   \caption{Contour Plot for approx=(4,4,4) 20 iterations and K =30 }
+%   \label{fig:cntpltI}
+% \end{figure}
+
+
+
+% \begin{figure}
+%   \centering
+% \ifmacosx
+%   \includegraphics{resDir/forBetterRBC--3,3,3-Iters70theK20numKern2.pdf}
+%   \fi
+% \iflinux
+% \includegraphics{./resDir-host-node006dnumKern16-3727721518/forBetterRBC--4,4,4-Iters70theK50Series.pdf}
+%   \includegraphics{./resDir-host-node006dnumKern16-3727721518/forBetterRBC--4,4,4-Iters70theK50SeriesApprox.pdf}
+% \fi
+%   \caption{Contour Plot for approx=(4,4,4) 20 iterations and K =50 }
+%   \label{fig:cntpltI}
+% \end{figure}
+
 

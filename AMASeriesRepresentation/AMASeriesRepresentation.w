@@ -1722,7 +1722,7 @@ resids=Through[lms["FitResiduals"]];
 {bfs,pvs,evs,rsqs,diffs,resids}]
 
 
-
+Print["varyParamsForSlSq does not do approx"]
 Options[varyParamsForSlSq]={"epsCalc"->"zero","useTail"->False}
 varyParamsForSlSq[paramRanges_?MatrixQ,
 modGenerator:(_Function|_InterpolatingFunction|_CompiledFunction|_Symbol),
@@ -1735,18 +1735,18 @@ With[{theMods=Map[genBothX0Z0Funcs,Map[First,theModsFull]]},
 doRefModel[approx];
 numEps=Length[theModsFull[[1,-2]]];
 toIg=theModsFull[[1,-1]];
-someRes=ParallelTable[
+(*someRes=ParallelTable[
 parallelNestGenericIterREInterp[genFRExtFunc,linModNow,
 {bFuncs,theK},rbcEqnsFirstRBCTrips,sgSpecErg,smolyakInterpolation,{},
-theFullXs],{bFuncs,theMods},{linModNow,Map[First,theModsFull]}];
+theFullXs],{bFuncs,theMods},{linModNow,Map[First,theModsFull]}];*)
 With[{thePreds=ParallelTable[getSlopesRSqs[bFuncs,linModNow,numEps,toIg,approx,
 theK,opts],
-{bFuncs,theMods},{linModNow,Map[First,theModsFull]}],
+{bFuncs,theMods},{linModNow,Map[First,theModsFull]}](*,
 morePreds=ParallelTable[getSlopesRSqs[bFuncs,linModNow,numEps,toIg,approx,
 theK,opts],
-{bFuncs,Flatten[Flatten[someRes,1][[All,4]],1]},{linModNow,Map[First,theModsFull]}]
+{bFuncs,Flatten[Flatten[someRes,1][[All,4]],1]},{linModNow,Map[First,theModsFull]}]*)
 },
-{someRes,morePreds,thePreds}]]]]
+thePreds]]]]
 
 
 varyParamsGenMods[paramRanges_?MatrixQ,

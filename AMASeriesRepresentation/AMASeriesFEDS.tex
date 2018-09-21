@@ -38,10 +38,10 @@ An Algorithm with Error Formulas } %(Better?, Coherent? Comprehensive? General? 
 This paper provides a technique for representing  discrete time  nonlinear dynamic stochastic time invariant maps.
 \marginpar{Address Bullets in Other Computing? Section}
 Using this new series representation, the paper 
-augments a traditional solution strategy with an additional set of
+augments the traditional solution strategy with an additional set of
 constraints thereby enhancing algorithm robustness and improving accuracy.
 In addition, it provides general
-formulae for evaluating the accuracy of proposed solutions.
+formulas for evaluating the accuracy of proposed solutions.
 The technique can readily accommodate models with occasionally binding constraints and regime switching. 
 The  algorithm  uses
 Smolyak polynomial function approximation  in a way which makes it possible to exploit a high degree of parallelism.
@@ -60,7 +60,7 @@ Smolyak polynomial function approximation  in a way which makes it possible to e
 
 \section{Introduction}
 
-This paper investigates the solution of discrete time  dynamic stochastic
+This paper addresses the solution of discrete time  dynamic stochastic
 infinite-horizon economies with bounded-time-invariant solutions.
 It describes how to obtain decision rules satisfying a system of 
 first-order conditions, ``Euler Equations'',  and how to assess their accuracy.\footnote{This series 
@@ -86,8 +86,7 @@ one bounded infinite dimensional series into another.
     It turns out that this representation provides a way to use
     Euler equation errors to
     approximate the magnitude of the    approximation error in components of 
-    decision rules.
-\footnote{    Others have also studied approximation error for dynamic stochastic models\cite{judd2017lower,santos2005accuracy,Santos2000accuracy}.} This paper provides  approximation
+    decision rules.\footnote{    Others have also studied approximation error for dynamic stochastic models\cite{judd2017lower,santos2005accuracy,Santos2000accuracy}.} This paper provides  approximation
     explicitly relating the magnitude of components of the
     Euler equation errors to the magnitude of components of
     errors in the decision rule 
@@ -108,7 +107,7 @@ builds upon the work of
 In particular it uses
 the an-isotropic Smolyak Method, the adaptive
 parallelotope method\citep{Judd2014}
-and precomputes all integrals required for the conditional expectations.
+and precomputes all integrals required by the calculations.
 The algorithm should scale well to large models as many 
 of the algorithm's components can be computed in parallel with limited amounts of information flowing between compute nodes.
 
@@ -125,14 +124,14 @@ of the algorithm's components can be computed in parallel with limited amounts o
 The paper is organized as follows.
 Section \ref{sec:newseries} presents a useful new series representation for any bounded time series.
 Section \ref{sec:extToMaps} shows how to apply this series representation to time invariant maps.
-Section \ref{sec:solnerrorbounds} provides formulae for approximating dynamic stochastic model error in proposed  solutions.
+Section \ref{sec:solnerrorbounds} provides formulas for approximating dynamic stochastic model errors in proposed  solutions.
 Section \ref{sec:algoforsoln} presents a new solution algorithm for improving proposed solutions.
 %Section \ref{sec:future} discusses directions for future work.
 Section \ref{sec:conc} concludes.
 
 \section{A New Series Representation For  Bounded Time Series}
 \label{sec:newseries}
-Since \cite{blanchard80} numerous authors have developed solution algorithms and formulae for solving linear rational expectations models.  It turns out that
+Since \cite{blanchard80} numerous authors have developed solution algorithms and formulas for solving linear rational expectations models.  It turns out that
 the solutions associated with these linear 
 saddle point models, by quantifying the potential 
 impact of anticipated future shocks,
@@ -140,7 +139,7 @@ impact of anticipated future shocks,
 in characterizing the 
 solutions for highly nonlinear models. 
 This section describes the relationship 
-between {\em linear reference models} and general bounded time series in route to
+between {\em linear reference models} and bounded time series in preparation for
 discussing how these calculations can be useful for representing time invariant maps.
 \subsection{Linear Reference Models and a Formula for  ``Anticipated Shocks''}
 \label{sec:linref}
@@ -161,8 +160,8 @@ x_t=B x_{t-1} + \phi \psi_\epsilon \epsilon + (I - F)^{-1} \phi \psi_c\label{hSy
 \intertext{where}
 \phi= (H_0 +H_1 B)^{-1}  \text{ and } \,\,F=-\phi H_1.\citep{anderson10}
 \end{gather}
-It will be useful to collect the components of this solution for use later in the paper. In Section \ref{sec:almostarbitrary}, I will use these matrices  to construct a series representation for any bounded path.
-Define $\linMod \equiv \linModMats$.
+It will be useful to collect the components of this solution,$\linMod \equiv \linModMats$, for use later in the paper.\footnote{In Section \ref{sec:almostarbitrary}, I will use these matrices  to construct a series representation for any bounded path.}
+
 
 
 
@@ -212,7 +211,7 @@ one can easily compute a corresponding series representation like
 Interestingly, the linear model, $H$, the  constant term $\psi_c$ and the
 impact of the stochastic shocks $\psi_\epsilon $ can  be 
 chosen rather arbitrarily -- the only constraints being the existence of a saddle-point solution for the linear system and that all z-values fall in the row space of $H_1$.  
-Further, note that since the eigenvalues of $F$ are all less than one in magnitude, the formula supports the intuition that far distant shocks
+Note that since the eigenvalues of $F$ are all less than one in magnitude, the formula supports the intuition that far distant shocks
  influence current conditions less than  imminent shocks.
 
 %The formula will provide a series  for any $L$ dimensional $\linMod$.
@@ -228,13 +227,13 @@ fully account for any stochastic aspects encountered in the models I  analyze.
 
 A key feature to note is that the series representation can accommodate arbitrarily complex time series trajectories, so long as these trajectories are bounded.
 Later, this observation will give us some confidence in the 
-robustness of the algorithms 
+robustness of the algorithm for 
 %described in section \ref{sec:unknown-solutions} for 
 constructing series 
 representations for unknown families of functions 
 satisfying complicated systems of dynamic non-linear equations.
 
-\subsection{Arbitrary  Bounded Time Series and an ``Almost'' Arbitrary Linear Model }
+\subsection{The Linear Reference Model in Action: Arbitrary  Bounded Time Series }
 \label{sec:almostarbitrary}
 
 
@@ -243,15 +242,18 @@ Consider the following matrix constructed from ``almost'' arbitrary coefficients
   \begin{bmatrix}
 H_{-1}&H_{0}&H_{1} \label{linRef}
   \end{bmatrix}=
-\vcenter{\hbox{\includegraphics{refHmat.pdf}}}\intertext{with $\psi_c=\psi_\epsilon=0, \,\,  \psi_z=I$.
+\vcenter{\hbox{\includegraphics{refHmat.pdf}}}
+\end{gather}
+with $\psi_c=\psi_\epsilon=0, \,\,  \psi_z=I$.
 I have chosen these coefficients so that 
 the linear model has a unique stable solution and, since $H_1$ is full rank,
-its column space will span the column space for all non zero values for $z_t$. 
-The flexibility in choosing $\linMod$ will 
+its column space will span the column space for all non zero values for $z_t \in \mathcal{R}^3$.  The flexibility in choosing $\linMod$ will 
 become more important in the context below where we must 
 choose a  linear reference model in a context where we may have 
-little guidance about what might make a good choice.  It turns out that the algorithm is very forgiving about the choice of $\linMod$.  The solution for this system is
-}
+little guidance about what might make a good choice.  It turns out that the algorithm is very forgiving about the choice of $\linMod$.  
+The solution for this system is
+
+\begin{gather}
   B=
 \vcenter{\hbox{\includegraphics{refBmat.pdf}}}\\
 \phi=
@@ -269,7 +271,7 @@ bounded families of time series paths
 x_{2,t}=\frac{\someNorm{x_{t-1}}}{({1+\someNorm{\epsilon_{t}}})^2} (-1)^t\\
 ax_{3,t}=\epsilon_t \intertext{and the $\epsilon_t$ are a sequence of pseudo random draws from the uniform distributions $\mathcal{U}(-4,4)$ produced subsequent to the selection of a random seed.} randomseed(\someNorm{x_{t-1}}+\someNorm{\epsilon_t})
 \end{gather} 
-The upper three panels in Figure \ref{arbpaths} display these three time series
+The three panels in Figure \ref{arbpaths} display these three time series
 generated  for a particular initial state vector and shock value.
  The first set of trajectories characterizes 
 a function of the digits in the decimal representation of $\pi$ and was chosen
@@ -301,13 +303,15 @@ unbounded, but slowly diverging  trajectories.}
 
 
 
-The values for the z's are not at all important 
-and their relationship to the x trajectories are rather unintuitive. What is important is that these values exist and are easy to compute.
+Though unintuitive and perhaps lacking a compelling 
+interpretation, the values for
+$z_t$ exist,  provide  a series for the $x_t$  and are easy to compute.
 One can repeat the calculations for any given initial condition to produce
-a z series exactly replicating the new set of trajectories.  Thus, the family
-of z functions along with equation \ref{theSeries} provide a series 
-representation for the entire family of trajectories. Numerical linear algebra calculations can easily transform a $z_t$ series into an $x_t$ series and vice versa.  This can be done for any path starting from particular initial conditions. 
- Thus,  any discrete time invariant map that generates families of bounded paths has a series representation like Equation \ref{theSeries}.
+a z series exactly replicating any set of trajectories.  Thus, the family
+of z functions along with equation \ref{theSeries} can provide a series 
+representation for the entire family of trajectories. Consequently, 
+numerical linear algebra calculations can easily transform a $z_t$ series into an $x_t$ series and vice versa.  This can be done for any path starting from any particular initial conditions. 
+ Thus,  for example, any discrete time invariant map that generates families of bounded paths has a series representation.
 
 
 
@@ -315,8 +319,8 @@ representation for the entire family of trajectories. Numerical linear algebra c
 
 \subsection{Assessing $x_t$ Errors}
 \label{sec:truncationerr}
-The formula \ref{theSeries} was derived in \citep{anderson10}
-to compute the impact on the current state of fully anticipated future shocks.  The formula characterizes the impact exactly.  However one can contemplate the impact of at least two deviations from the exact calculation:
+The formula \ref{theSeries} 
+computes the impact on the current state of fully anticipated future shocks.  The formula characterizes the impact exactly.  However one can contemplate the impact of at least two deviations from the exact calculation:
 \begin{itemize}
 \item One could truncate a series of correct values of $z_t$.  
 \item One might have imprecise values of $z_t$ along the path.
@@ -522,13 +526,14 @@ With
 \begin{figure}
   \centering
 \includegraphics[width=3.0in]{simprbcvals.pdf}  %\hspace{.75in}
-\includegraphics[width=3.0in]{simprbczvals.pdf}  
-  \caption{model variable values and z values}
+%\includegraphics[width=3.0in]{simprbczvals.pdf}  
+  \caption{model variable values}
   \label{rbcpaths}
 \end{figure}
 
-The left panel of Figure \refeq{rbcpaths} shows, from top to bottom, the paths of $\theta_t, c_t, \text{ and } k_t$ from the initial values given in Equation \refeq{theInits}.  The right panel shows the paths for the $z_t$ variables associated with the linear reference model. The orange line corresponds to $z_{1t}\tArg$,
-the blue line corresponds to $z_{2t}\tArg$ and the green line corresponds to $z_{3t}\tArg$.%\footnote{For now we focus on the times series paths, $z_t(x_{t-1},\epsilon_t)$ for given $(x_{t-1},\epsilon_t)$.  Later we will exploit the information available from explicit investigation of the variation in  $z_t(x_{t-1},\epsilon_t)$ with $(x_{t-1},\epsilon_t)$ to improve solution accuracy and robustness.}
+Figure \refeq{rbcpaths} shows, from top to bottom, the paths of $\theta_t, c_t, \text{ and } k_t$ from the initial values given in Equation \refeq{theInits}.  The right panel shows the paths for the $z_t$ variables associated with the linear reference model. 
+
+%The orange line corresponds to $z_{1t}\tArg$,the blue line corresponds to $z_{2t}\tArg$ and the green line corresponds to $z_{3t}\tArg$.%\footnote{For now we focus on the times series paths, $z_t(x_{t-1},\epsilon_t)$ for given $(x_{t-1},\epsilon_t)$.  Later we will exploit the information available from explicit investigation of the variation in  $z_t(x_{t-1},\epsilon_t)$ with $(x_{t-1},\epsilon_t)$ to improve solution accuracy and robustness.}
 
 By including enough terms we can compute the solution for $x_t$ 
 exactly.
@@ -573,7 +578,6 @@ This is a very broad class of models including most widely used
 macroeconomics models.  This constraint will make it easier to write
 down and manipulate the conditional expectations expressions in the
 description of the algorithms in subsequent sections.
-
 For example, the Euler equations for the  neoclassical growth  model 
 \label{sec:simple-rbc-model-ext} can be written as
 \begin{gather}
@@ -636,12 +640,10 @@ Recomputing the truncation errors with the expanded model produces nearly identi
 
 This section shows how to write a series representation for any proposed
 model solution and to characterize the series representation for a typically
-unknown solution in such a way that one can use the model equation errors  to construct an approximate error for the norm of the distance between the proposed and the exact solution.
-
-This work contrasts with the analysis provided in
+unknown solution in such a way that one can use the model equation errors  to construct an approximate error for the norm of the distance between the proposed and the exact solution.\footnote{This work contrasts with the analysis provided in
 \cite{judd2017lower,peralta-alva14,santos2005accuracy,Santos2000accuracy}. 
 Their approaches identify Euler Equation Errors, but use statistical techniques to estimate the impact of these errors on solution accuracy.  Here I provide
-a formula for the approximate error that does not require statistical inference.
+a formula for the approximate error that does not require statistical inference.}
 
 
 
@@ -721,13 +723,13 @@ For proof see Appendix \ref{sec:error-bound-formula}.
 
 
 To fix notation,  assume that our model is characterized by
- a countable number of equations systems.
+ a finite number of equations systems.
 I will require that, for any 
  given $(x_{t-1},\epsilon_t)$,  this collection of 
 systems of equations produces a unique solution for $x_t$.  
 Using the convention described in section \ref{sec:convenient},
- we will include 
-enough auxiliary variables so that we can correctly compute expected values
+ I will include 
+enough auxiliary variables so that I can correctly compute expected values
 for model variables by applying the law of iterated 
 expectations.
 
@@ -747,7 +749,7 @@ candidate $x_t\tArg$ values.
 Thus, we will have an equation system and  corresponding gatekeeper 
 logical expressions 
 indicating which equation system is in force for producing the unique
-solution for a give $x_{t-1}, \epsilon_t$.
+solution for a given $\tArg$.
 I will only consider time invariant model solutions $x_t=\xWarg$.  Given a decision rule $\xWarg$, denote its conditional expectation $\XWOarg(x_{t-1})\equiv \expct{\xWarg}$. 
 
 
@@ -891,7 +893,7 @@ x_{t-1}\\ \xpWarg\\ \XpWOarg(\xWarg)
 
 An outline of the current Mathematica implementation of the algorithm follows.
 Table \ref{algnotation} provides notation.
-\begin{table}[b]
+\begin{table}[h]
   \centering
 \begin{description}
 \item[$\linMod\equiv \linModMats$] The linear reference model
@@ -926,13 +928,22 @@ Below, I note where these features play a role.
   
 %\begin{tikzpicture}
 %\tikzset{every tree node/.style={align=center}}  
+% {\small
+% \Tree [.nestInterp\ref{nestInterp}  !\qsetw{4cm}
+% [.doInterp\ref{doInterp}
+% [.genFindRootFuncs\ref{genFindRootFuncs} !\qsetw{2cm}
+% [.genFindRootWorker\ref{genFindRootWorker} genZsForFindRoot\ref{genZsForFindRoot}
+% [.genLilXkZkFunc\ref{genLilXkZkFunc} fSumC\ref{fSumC} genXtOfXtm1\ref{genXtOfXtm1} [.genXtp1OfXt\ref{genXtp1OfXt} ] ] ] ] 
+% [.makeInterpFuncs\ref{makeInterpFuncs} !\qsetw{2cm} [.genInterpData\ref{genInterpData} evaluateTriple\ref{evaluateTriple} ] ] [.interpDataToFunc\ref{interpDataToFunc} 
+%  ] ] ] 
+% }
 {\small
-\Tree [.nestInterp\ref{nestInterp}  !\qsetw{4cm}
-[.doInterp  \ref{doInterp}
-[.genFindRootFuncs \ref{genFindRootFuncs}!\qsetw{2cm}
-[.genFindRootWorker\ref{genFindRootWorker} genZsForFindRoot\ref{genZsForFindRoot}
-[.genLilXkZkFunc\ref{genLilXkZkFunc} fSumC\ref{fSumC} genXtOfXtm1\ref{genXtOfXtm1} [.genXtp1OfXt\ref{genXtp1OfXt} ] ] ] ] 
-[.makeInterpFuncs\ref{makeInterpFuncs} !\qsetw{2cm} [.genInterpData\ref{genInterpData} evaluateTriple\ref{evaluateTriple} ] ] [.interpDataToFunc\ref{interpDataToFunc} 
+\Tree [.nestInterp  !\qsetw{4cm}
+[.doInterp
+[.genFindRootFuncs !\qsetw{2cm}
+[.genFindRootWorker genZsForFindRoot
+[.genLilXkZkFunc fSumC genXtOfXtm1 [.genXtp1OfXt ] ] ] ] 
+[.makeInterpFuncs !\qsetw{2cm} [.genInterpData evaluateTriple ] ] [.interpDataToFunc 
  ] ] ] 
 }
 %\end{tikzpicture}
@@ -976,7 +987,7 @@ producing interpolation data and subsequently returns the
 \end{description}
 
 
-% \subsection{{Some Algorithmic Details}}
+% \subsection{Some Algorithmic Details}
 
 
   
@@ -1717,7 +1728,7 @@ H_0\left ( \pdrv{\eqnFunc(x_{t-1},x_{t},x_{t+1},\epsilon_t)}{x_t}\right )^{-1}
 
 
 
-\section{ Examples}
+\section{Examples}
 \label{sec:extension}
 
 
@@ -2586,6 +2597,25 @@ and subsequently returns the
 \caption{$interpDataToFunc$\label{interpDataToFunc}} 
 \end{algorithm}
 
+\begin{algorithm}
+ \SetKwInOut{Input}{input}
+ \SetKwInOut{Output}{output}
+\Input{$(approxLevels,means,stdDev,minZs,maxZs,vvMat,distributions)$}
+\tcc{Given approximation levels,  PCA information, and probability distributions for errors compute the collocation points, the Psi Matrix, the polynomials and the integrals olf the polynomials}
+\Output{$\{xPts,PsiMat,polys, intPolys\}$}
+\caption{$smolyakInterpolationPrep$\label{smolyakInterpolationPrep}} 
+\end{algorithm}
+
+
+\begin{algorithm}
+ \SetKwInOut{Input}{input}
+ \SetKwInOut{Output}{output}
+\Input{$(approxLevels,varRanges,distributions)$}
+\tcc{Given approximation levels, variable ranges and probability distributions for errors compute the collocation points, the Psi Matrix, the polynomials and the integrals olf the polynomials}
+\Output{$\{xPts,PsiMat,polys, intPolys\}$}
+\caption{$smolyakInterpolationPrep$\label{smolyakInterpolationPrep}} 
+\end{algorithm}
+
 
 
 
@@ -2593,28 +2623,54 @@ and subsequently returns the
 \label{sec:other-computing}
 
 \begin{itemize}
-\item Table 1 out of place
+
+\item known errors
+  \begin{itemize}
+\item doPrepPoly
+\item eliminate colors in graphs throughout
 \item {fix genInterpData checks all signatures}
-\item {Call tree, hyperlink?}
-\item function names bold greek and function name reconcile.
-\item More information about other error formulae.
-\item multiple formulae?
+\item {correct caption for ergodic values transformed}
 \item legend for figs throughout
 \item axes labels throughout
-\item eliminate colors in graphs throughout
-\item {correct caption for ergodic values transformed}
+  \end{itemize}
+
+\item aesthetic
+\begin{itemize}
+\item {Call tree, hyperlink?}
+\item function names bold greek and function name reconcile.
+\item use different time series.  random and pi same?
+\item no colors
+\item greek for function names
+ \end{itemize}
+
+\item other mention
+  \begin{itemize}
 \item {mention genboth}
-\item {show solution accuracy for unknown solution}
-\item {show solution accuracy simple and OBC}
-\item {revise assess error calc or eliminate}
-\item {revise assess robust or eliminate}
-\item {just the first term.}
-\item Proof for robustness and accuracy and parallelism gains.
-\item doPrepPoly
+\item a good path corresponds to a good error if enough terms
+\item refer to far distant relation to truncating k vals
+\item and parallelism gains.
 \item calculate using their error?
 \item {parallelism measure}
 \item {Large model multiple errors}
 \item units for z
+  \end{itemize}
+
+\item error formula
+  \begin{itemize}
+\item {show solution accuracy for unknown solution}
+\item {show solution accuracy simple and OBC}
+\item More information about other error formulas.
+\item multiple formulas?
+\item {revise assess error calc or eliminate}
+\item {just the first term.}
+  \end{itemize}
+
+\item robust
+  \begin{itemize}
+\item Chris model example for robust
+\item {revise assess robust or eliminate}
+\item Proof for robustness and accuracy 
+  \end{itemize}
 \end{itemize}
 
 

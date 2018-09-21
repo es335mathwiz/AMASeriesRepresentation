@@ -2674,10 +2674,9 @@ ssEqnSubs=
 
 rbcEqnsNotBindingSubbed=((rbcEqnsNotBinding/.paramSubs)/.eps[theta][t]->0);
 theVars=Cases[Variables[forFR=(rbcEqnsNotBindingSubbed/.ssEqnSubs)],_Symbol];
-frArg=MapThread[Prepend[#1,#2]&,{{{.3604,.1,2},{.187,-0.35,.35},{.187,0.1,3.9},
+frArg=MapThread[Prepend[#1,#2]&,{{{.3604,.1,2},{.187,-1.35,5.35},{.187,0.01,25.9},
  {0,-9.,9.},{1,-10.03,10.},{2.7741,0.001,9.},{1.0001,.8,1.2}},theVars}];
 ssFRSolnSubs=Prepend[Chop[FindRoot[forFR,frArg(*,MaxIterations->1000*)]],IIss->0];
-
 
 
 
@@ -2802,7 +2801,7 @@ rbcEqnsFirstRBCCSTrips::usage="model equations";
 
 theProduct=upsilon*II//.ssFRSolnSubs/.paramSubs;
 
-
+Print["II>=",theProduct];
 
 argsSubs={
 cc[t-1]->cctm1,

@@ -684,6 +684,109 @@ E_tx_{t+1}=G^p(g^p(x_{t-1},\epsilon_t))\\
 
 For proof see Appendix \ref{sec:error-bound-formula}.  
 
+\subsection{Assessing the Error Approximation}
+\label{sec:assess-error-appr}
+
+
+This section reports an experiment evaluating how well several different
+formulations of the error approximation perform.  
+I compute the known decision rule for the RBC model with parameters
+$\{\alpha=0.36,\delta=0.95,\eta=1,\rho=0.95,\sigma=0.01\}$.  
+I generate a 10 other settings for the model parameters by choosing
+parameters from the following ranges.
+\begin{gather*}
+ 0.20 <\alpha<0.40,\,\,0.85<\delta<0.99,\,\,0.85<\rho<0.99,\,\,0.005<\sigma<0.015
+\end{gather*}
+producing the following 10 model specifications:
+
+   \begin{tabular}{|c|c|c|c|c|}
+\hline
+\multicolumn{1}{|c|}{$\alpha$}&
+\multicolumn{1}{|c|}{$\delta$}&
+\multicolumn{1}{|c|}{$\eta$}&
+\multicolumn{1}{|c|}{$\rho$}&
+\multicolumn{1}{|c|}{$\sigma$}\\
+\hline
+                   0.35 & 0.92875 & 1. & 0.957188 & 0.00875 \\
+\hline
+                   0.275 & 0.9725 & 1. & 0.906875 & 0.01375 \\
+\hline
+                   0.375 & 0.8675 & 1. & 0.924375 & 0.01125 \\
+\hline
+                   0.225 & 0.94625 & 1. & 0.891563 & 0.00625 \\
+\hline
+                   0.325 & 0.91125 & 1. & 0.944063 & 0.006875 \\
+\hline
+                   0.2625 & 0.922187 & 1. & 0.98125 & 0.011875 \\
+\hline
+                   0.3625 & 0.887187 & 1. & 0.85875 & 0.014375 \\
+\hline
+                   0.2125 & 0.965938 & 1. & 0.965938 & 0.009375 \\
+\hline
+                   0.3125 & 0.860938 & 1. & 0.878438 & 0.008125 \\
+\hline
+                   0.2375 & 0.904688 & 1. & 0.933125 & 0.013125 \\
+\hline
+                  \end{tabular}
+
+
+I generate 30 representative points, $(k_{i,t-1},\theta_{i,t-1},\epsilon_{i,t})$, from the ergodic set for the reference model
+using the Niederreiter quasi-random algorithm.
+To approximate the error I use the proposed decision rule and decision rule conditional expectation to generate a path forward $k$ steps beyond time $t$ 
+for each representative point.  I then evaluate the
+model equations at each point along that path.  This produces a sequence of 
+errors that approximate how much the values of z's would need to change 
+and consequently, appropriately weighted, the quantity $\hat{\mathbf{e_i}}$,
+approximately how much the value of
+$x_t$ needs to change.  I regress the actual error on the predicted error 
+computed at the 30 representative points. 
+
+
+\begin{gather*}
+  \mathbf{e_i}=\alpha + \beta   \hat{\mathbf{e_t}} +u_i
+\end{gather*}
+
+ 
+I do this for each of the 100 possible 
+combinations of the, by inaccurate by construction, 
+ 10 linearizations and the 10 linear reference models.
+The reference model for the true solution stays fixed while the proposed
+decision rules and the linear reference model  both change.
+Still the formula does a good job of predicting the error in the 
+proposed decision rule function.\footnote{The formula predicts the changes 
+in $\theta_t$ perfectly since it is determined by a backward looking equation.}
+Even with $k=0$, using only one term in the error formula still provides 
+useful information about the magnitude of the discrepancy between the 
+true proposed and true values.
+
+
+
+\begin{figure}
+  \centering
+  \includegraphics[width=3.0in]{cRegRSQ10x0.pdf}
+  \includegraphics[width=3.0in]{cRegRSQ10x1.pdf}
+  \includegraphics[width=3.0in]{cRegRSQ10x10.pdf}
+  \includegraphics[width=3.0in]{cRegRSQ10x30.pdf}
+%  \caption{ }
+  \label{fig:erg}
+\end{figure}
+
+
+\begin{figure}
+  \centering
+  \includegraphics[width=3.0in]{kRegRSQ10x0.pdf}
+  \includegraphics[width=3.0in]{kRegRSQ10x1.pdf}
+  \includegraphics[width=3.0in]{kRegRSQ10x10.pdf}
+  \includegraphics[width=3.0in]{kRegRSQ10x30.pdf}
+%  \caption{ }
+  \label{fig:erg}
+\end{figure}
+
+
+
+
+
+
 \section{Improving Proposed  Solutions}
 \label{sec:algoforsoln}
 
@@ -1545,6 +1648,7 @@ exploit the high degree of parallelism available in the algorithm.
 \bibliography{anderson,files}
 \newpage
 
+\clearpage
 \appendix
 
 
@@ -2614,6 +2718,37 @@ and subsequently returns the
 \tcc{Given approximation levels, variable ranges and probability distributions for errors compute the collocation points, the Psi Matrix, the polynomials and the integrals olf the polynomials}
 \Output{$\{xPts,PsiMat,polys, intPolys\}$}
 \caption{$smolyakInterpolationPrep$\label{smolyakInterpolationPrep}} 
+\end{algorithm}
+\clearpage
+
+\begin{algorithm}
+ \SetKwInOut{Input}{input}
+ \SetKwInOut{Output}{output}
+\Input{$(approxLevels,varRanges,distributions)$}
+\tcc{Given approximation levels, variable ranges and probability distributions for errors compute the collocation points, the Psi Matrix, the polynomials and the integrals olf the polynomials}
+\Output{$\{xPts,PsiMat,polys, intPolys\}$}
+\caption{$\label{genSolutionErrXtEps}$\label{genSolutionErrXtEps}} 
+\end{algorithm}
+
+
+\begin{algorithm}
+ \SetKwInOut{Input}{input}
+ \SetKwInOut{Output}{output}
+\Input{$(approxLevels,varRanges,distributions)$}
+\tcc{Given approximation levels, variable ranges and probability distributions for errors compute the collocation points, the Psi Matrix, the polynomials and the integrals olf the polynomials}
+\Output{$\{xPts,PsiMat,polys, intPolys\}$}
+\caption{$\label{genSolutionErrXtEpsZero}$\label{genSolutionErrXtEpsZero}} 
+\end{algorithm}
+
+
+
+\begin{algorithm}
+ \SetKwInOut{Input}{input}
+ \SetKwInOut{Output}{output}
+\Input{$(approxLevels,varRanges,distributions)$}
+\tcc{Given approximation levels, variable ranges and probability distributions for errors compute the collocation points, the Psi Matrix, the polynomials and the integrals olf the polynomials}
+\Output{$\{xPts,PsiMat,polys, intPolys\}$}
+\caption{$\label{genSolutionPath}$\label{genSolutionPath}} 
 \end{algorithm}
 
 

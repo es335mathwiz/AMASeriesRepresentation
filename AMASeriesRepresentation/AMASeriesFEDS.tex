@@ -973,29 +973,37 @@ thus improving algorithm reliability.
 % \label{sec:unknown-solutions}
 
 I closely follow the techniques outlined in \citep{Judd2013,Judd2014}. 
+As a result, much of what must be done to use this proposed algorithm is 
+the same as for the usual approach.
+One must specify an initial guess for decision rule $\xWargK$ obtain conditional expectations function
+
 I use their an-isotropic Smolyak Lagrange interpolation with adaptive domain.
 I also precompute all of the conditional expectations for the integrals as outlined in \citep{JuddIntegrals} so that the time t computations are all 
 deterministic.
 
-The algorithm uses a proposed decision rule characterized by a linearly weighted sum of Chebyshev polynomials with precomputed integrals.  Since the
+The algorithm uses a proposed decision rule characterized by a linearly weighted sum of Chebyshev polynomials with precomputed integrals.  
+Since the
 orthogonal polynomials have been integrated, the linearly weighted sum provides
 the conditional expectations function needed for computing conditional expectations paths from each collocation point forward.  This provides the 
 expected future values for the $z_t$ needed for the series representation.
+decide upon the ranges for variables and the degrees of approximation for the an-isotropic Smolyak polynomial representation.
 The algorithm then solves
 a deterministic problem at time t to improve the proposed solution.
 
-\marginpar{incorporate bullets into text}
-\begin{enumerate}
-\item Specify a (collection of) model equations systems(s) 
-as in \refeq{eqnGates}.
-For all relevant values of $\tArg$ there is one and only one solution $x_t\tArg$
-\item specify a linear reference model
-\item specify an initial guess for decision rule $\xWargK$ obtain conditional expectations function
-\item decide upon the ranges for variables and the degrees of approximation for the an-isotropic Smolyak polynomial representation
-\item decide upon $K$, the number of conditional expectations function recursive iterations.  Fewer means more truncation error. In effect, 
+I suggest organizing equations using pre and post conditions.
+This can help with parallelizing a solution regardless of whether or not
+one uses the series representation
+decide upon $K$, the number of conditional expectations function recursive iterations.  Fewer means more truncation error. In effect, 
 the algorithm imposes nonlinear constraints the for number of period specified 
 and uses the linear reference model thereafter(ie $z_{t+N}=0, \forall N>K$
-\end{enumerate}
+
+However, there are number of new steps. 
+One must  specify a linear reference model
+
+\marginpar{incorporate bullets into text}
+
+
+
 
 
 \subsubsection{Single Equation System Case}

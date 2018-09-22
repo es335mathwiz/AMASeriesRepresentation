@@ -950,7 +950,7 @@ parallelNestGenericIterREInterp::usage=
 @{
 
 Options[parallelNestGenericIterREInterp]={"xVarRanges"->{},"Traditional"->False,"addTailContribution"->False,"maxForCEIters"->Infinity,
-"normConvTol"->10^(-10),"maxNormsToKeep"->50}
+"normConvTol"->10.^(-10),"maxNormsToKeep"->50}
 
 
 parallelNestGenericIterREInterp[genFRExtFunc,@<linMod@>,

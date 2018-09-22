@@ -906,7 +906,7 @@ write the model in the form
 In the algorithm's implementation, the ${\mathbf b_i}$ will be a 
 boolean function precondition and 
 the ${\mathbf c_i}$ will be a 
-boolean function postcondition for a given equation system.  The
+boolean function postcondition for a given equation system. If some $b_i$ is false, then there is no need to solve model $i$. If $c_i$ is false, the system has produced an unacceptable solution.  The function $d$ uses the truth values from the $(b_.,c_.)$ and the possible values of the state variables to select one and only one $x_t$.  The
 ${\mathbf d_i}$ will be a function for choosing among the 
 candidate $x_t\tArg$ values.
 Thus, we will have an equation system and  corresponding gatekeeper 
@@ -930,23 +930,23 @@ and for regime switching)(\ref{sec:ressw}).
 
 
 
-\subsection{An Informal Characterization  of the Algorithm}
+\subsection{How this Approach Differs From the Usual Approach}
 \label{sec:walkthrough}
 
 
 It may be worthwhile at this point
-to characterize  how the approach I propose here differs from 
+to compare and contrast the approach I propose here with from 
 what is typically done for solving dynamic stochastic models.
 As with the standard approach I characterize the solutions using a linearly
 weighted sums of orthogonal polynomials and solve the model equations
 at predetermined collocation points. However, in this new algorithm, I 
 augment the model Euler equations with equations based on \refeq{theSeries}
- that link the conditional expectations for future values in
+  linking the conditional expectations for future values in
 the proposed solution with the
 time t value of the model variables.  As a result, the algorithm determines
 linearly weighted polynomials characterizing the 
 trajectories for the usual
-variables $x_t(x_{t-1},\epsilon_t)$ as well as new  $z_t(x_{t-1},\epsilon_t)$ variables.  These new constraints 
+variables $x_t(x_{t-1},\epsilon_t)$ as well as new variables $z_t(x_{t-1},\epsilon_t)$ variables.  These new constraints 
 help keep proposed solutions bounded during the algorithmic iterations 
 thus improving algorithm reliability.
 
@@ -983,8 +983,6 @@ the conditional expectations function needed for computing conditional expectati
 expected future values for the $z_t$ needed for the series representation.
 The algorithm then solves
 a deterministic problem at time t to improve the proposed solution.
-The algorithm can easily accommodate inequality
-constraints or regime switching.\footnote{See sections \ref{sec:occbind} and \ref{sec:regime-switch-model} characterizing  models with regime switching.}
 
 \marginpar{incorporate bullets into text}
 \begin{enumerate}

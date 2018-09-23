@@ -1,0 +1,61 @@
+Get["tests/pathSetup.mth"]
+Get["AMASeriesRepresentation`"]
+Get["firstRBCTrips.m"]
+Get["firstRBCCSTrips.m"]
+
+
+Print["about to do approx"]
+
+approxCS=2*{1,1,1};
+itersCS=8;
+theKCS=5;
+
+Print["approx,iters,k",{approxCS,itersCS,theKCS}];
+gipper=Table[
+Module[{},
+{linModFirstRBCCSTrips,rbcEqnsFirstRBCCSTrips,forErgodicInfoCS,theDistFirstRBCCSTrips,toIgCS}=
+(*alphaVal,ddVal,deltaVal,etaVal,rhoVal,sigmaVal,upsilonVal*)
+firstRBCCSGenModel[0.36,.1,disc,1,0.95,0.01,ups];(*constraint shouldntbind*)
+{tryEpsCS,numKernCS,theNameCS,mthNameCS,bothX0Z0CS,sgSpecErgCS,zPtsCS,theFullXsCS}=
+doSmolPrep[approxCS,itersCS,theKCS,forErgodicInfoCS,toIgCS,linModFirstRBCCSTrips,theDistFirstRBCCSTrips];
+{tmCS,igCS}=Timing[
+theResCS=parallelNestGenericIterREInterp[genFRExtFunc,linModFirstRBCCSTrips,
+{bothX0Z0CS,theKCS},rbcEqnsFirstRBCCSTrips,sgSpecErgCS,smolyakInterpolation,
+{},theFullXsCS,"Traditional"->tVal,"maxForCEIters"->250]];
+Print["tval,ups,disc".{tVal,ups,disc}];
+{{tVal,ups,disc},theResCS,tmCS}],{ups,.96,1.9,.01},{disc,.97,.99,.01},{tVal,{True,False}}];
+Save["gipperout.mth",gipper]
+
+(*
+{linModFirstRBCCSTrips,rbcEqnsFirstRBCCSTrips,forErgodicInfoCS,theDistFirstRBCCSTrips,toIgCS}=
+(*alphaVal,ddVal,deltaVal,etaVal,rhoVal,sigmaVal,upsilonVal*)
+firstRBCCSGenModel @@ (theVals={0.36,.1,0.99,1,0.99,0.01,.99});(*constraint shouldntbind*)
+Print["thevals,approx,theKCS,itersCS",{theVals,approxCS,theKs}];
+{tryEpsCS,numKernCS,theNameCS,mthNameCS,bothX0Z0CS,sgSpecErgCS,zPtsCS,theFullXsCS}=
+doSmolPrep[approxCS,itersCS,theKCS,forErgodicInfoCS,toIgCS,linModFirstRBCCSTrips,theDistFirstRBCCSTrips];
+{tmCS,igCS}=Timing[
+theResCS=parallelNestGenericIterREInterp[genFRExtFunc,linModFirstRBCCSTrips,
+{bothX0Z0CS,theKCS},rbcEqnsFirstRBCCSTrips,sgSpecErgCS,smolyakInterpolation,{},theFullXsCS,"Traditional"->False]];
+
+*)
+
+(*firstRBCCSTrips`Private`upsilon*firstRBCCSTrips`Private`II//.firstRBCCSTrips`Private`ssFRSolnSubs/.firstRBCCSTrips`Private`paramSubs   0.182356*)
+
+
+huh=theResCS[[-1,-1,1]] @@ Flatten[#] & /@theFullXsCS;
+huh[[All,{1,3}]]
+(* 
+checking trad
+.975 fine upsilon
+.95 disc rate and 1.975 okay for trad
+
+examples where traditional diverges but mine doesn't
+firstRBCCSGenModel[0.444219,.106641,0.9933984,.95,0.955,0.02125,1.977656];
+[0.36,.1,0.99,1,0.95,0.01,1.975]
+
+may need high discount rate
+(*constraint shouldntbind*)
+
+*)
+
+Quit

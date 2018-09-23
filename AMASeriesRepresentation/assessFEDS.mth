@@ -1,0 +1,106 @@
+Get["tests/pathSetup.mth"]
+Get["AMASeriesRepresentation`"]
+Get["firstRBCTrips.m"]
+Get["firstRBCCSTrips.m"]
+
+
+approx=1*{1,1,1};
+iters=8;
+theK=5;
+refModel={linModFirstRBCTrips,rbcEqnsFirstRBCTrips,firstRBCTripsExactDR,firstRBCTripsExactDRCE,forErgodicInfo,theDistFirstRBCTrips,toIg}=
+(*alphaVal,deltaVal,etaVal,rhoVal.sigmaVal*)
+firstRBCGenModel[0.36,0.95,1,0.95,0.01];
+{tryEps,numKern,theName,mthName,bothX0Z0,sgSpecErg,zPts,theFullXs}=
+doSmolPrep[approx,iters,theK,forErgodicInfo,toIg,linModFirstRBCTrips,theDistFirstRBCTrips];
+{tm,ig}=Timing[
+theRes=parallelNestGenericIterREInterp[genFRExtFunc,linModFirstRBCTrips,
+{bothX0Z0,theK},rbcEqnsFirstRBCTrips,sgSpecErg,smolyakInterpolation,{},theFullXs]];
+bothX0Z0Ref=bothX0Z0;
+
+
+paramTrials=genTestPts[
+pRanges={{0.20,0.85,1,0.85,0.005},{0.40,0.99,1,0.99,0.015}},10,Nied];
+
+{rbcEqnsFirstRBCTrips,theFullXs,firstRBCTripsExactDR,sgSpecErg}=doRefModel[1*{1,1,1}];
+
+(* 
+{tm,ig}=Timing[ship10x1=varyParamsForSlSq[pRanges,firstRBCGenModel,10,1*{1,1,1},1];]
+(*tm-> 436.96*)
+
+Export["cReg10x1.pdf",ListPlot[Flatten[ship10x1[[All,All,1,1]],1],
+PlotLabel->"c error regression, K=1",AxesLabel->{"\[Alpha]","\[Beta]"}]]
+Export["cRegRSQ10x1.pdf",ListPlot[Flatten[ship10x1[[All,All,{3,4},1]],1],
+PlotLabel->"c error regression, K=1",AxesLabel->{Superscript[\[Sigma],2],Superscript["R",2]}]]
+
+
+Export["kReg10x1.pdf",ListPlot[Flatten[ship10x1[[All,All,1,2]],1],
+PlotLabel->"k error regression, K=1",AxesLabel->{"\[Alpha]","\[Beta]"}]]
+Export["kRegRSQ10x1.pdf",ListPlot[Flatten[ship10x1[[All,All,{3,4},2]],1],
+PlotLabel->"k error regression, K=1",AxesLabel->{Superscript[\[Sigma],2],Superscript["R",2]}]]
+
+{tm,ig}=Timing[ship10x10=varyParamsForSlSq[pRanges,firstRBCGenModel,10,1*{1,1,1},10]];
+(*tm->505.436*)
+
+Export["cReg10x10.pdf",ListPlot[Flatten[ship10x10[[All,All,1,1]],1],
+PlotLabel->"c error regression, K=10",AxesLabel->{"\[Alpha]","\[Beta]"}]]
+Export["cRegRSQ10x10.pdf",ListPlot[Flatten[ship10x10[[All,All,{3,4},1]],1],
+PlotLabel->"c error regression, K=10",AxesLabel->{Superscript[\[Sigma],2],Superscript["R",2]}]]
+
+
+Export["kReg10x10.pdf",ListPlot[Flatten[ship10x10[[All,All,1,1]],1],
+PlotLabel->"k error regression, K=10",AxesLabel->{"\[Alpha]","\[Beta]"}]]
+Export["kRegRSQ10x10.pdf",ListPlot[Flatten[ship10x10[[All,All,{3,4},1]],1],
+PlotLabel->"k error regression, K=10",AxesLabel->{Superscript[\[Sigma],2],Superscript["R",2]}]]
+
+
+
+{tm,ig}=Timing[ship10x0=varyParamsForSlSq[pRanges,firstRBCGenModel,10,1*{1,1,1},0]];
+(*tm-> 407*)
+Export["cReg10x0.pdf",ListPlot[Flatten[ship10x0[[All,All,1,1]],1],
+PlotLabel->"c error regression, K=0",AxesLabel->{"\[Alpha]","\[Beta]"}]]
+Export["cRegRSQ10x0.pdf",ListPlot[Flatten[ship10x0[[All,All,{3,4},1]],1],
+PlotLabel->"c error regression, K=0",AxesLabel->{Superscript[\[Sigma],2],Superscript["R",2]}]]
+
+
+
+Export["kReg10x0.pdf",ListPlot[Flatten[ship10x0[[All,All,1,1]],1],
+PlotLabel->"k error regression, K=0",AxesLabel->{"\[Alpha]","\[Beta]"}]]
+Export["kRegRSQ10x0.pdf",ListPlot[Flatten[ship10x0[[All,All,{3,4},1]],1],
+PlotLabel->"k error regression, K=0",AxesLabel->{Superscript[\[Sigma],2],Superscript["R",2]}]]
+
+
+
+
+
+{tm,ig}=Timing[ship10x30=varyParamsForSlSq[pRanges,firstRBCGenModel,10,1*{1,1,1},30]];
+(*tm-> 407*)
+Export["cReg10x30.pdf",ListPlot[Flatten[ship10x30[[All,All,1,1]],1],
+PlotLabel->"c error regression, K=30",AxesLabel->{"\[Alpha]","\[Beta]"}]]
+Export["cRegRSQ10x30.pdf",ListPlot[Flatten[ship10x30[[All,All,{3,4},1]],1],
+PlotLabel->"c error regression, K=30",AxesLabel->{Superscript[\[Sigma],2],Superscript["R",2]}]]
+
+Export["kReg10x30.pdf",ListPlot[Flatten[ship10x30[[All,All,1,1]],1],
+PlotLabel->"k error regression, K=30",AxesLabel->{"\[Alpha]","\[Beta]"}]]
+Export["kRegRSQ10x30.pdf",ListPlot[Flatten[ship10x30[[All,All,{3,4},1]],1],
+PlotLabel->"k error regression, K=30",AxesLabel->{Superscript[\[Sigma],2],Superscript["R",2]}]]
+
+
+
+
+
+tm-> too long
+{tm,ig}=Timing[ship=varyParamsForSlSq[pRanges,firstRBCGenModel,25,1*{1,1,1},1]];
+
+
+
+
+
+
+*)
+
+(*
+assessSimplestErrPrediction[{rbcEqnsFirstRBCTrips,theFullXs,1,linModFirstRBCTrips,firstRBCTripsExactDR},theRes[[4,-1]],"useTail"->False]
+
+
+assessNextSimplestErrPrediction[{rbcEqnsFirstRBCTrips,theFullXs,1,linModFirstRBCTrips,firstRBCTripsExactDR},theRes[[4,1]],4,"useTail"->False]
+*)

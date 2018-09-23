@@ -689,7 +689,7 @@ E_tx_{t+1}=G^p(g^p(x_{t-1},\epsilon_t))\\
 
 For proof see Appendix \ref{sec:error-bound-formula}.  
 
-\subsection{Decision Rule Components Error Approximation}
+\subsection{Decision Rule Components Local Error Approximation}
 \label{sec:decis-rule-comp}
 
 We seek
@@ -782,7 +782,7 @@ For each of the 100 pairings of decision rule and linear reference model,
 I compute the error approximation at each representative point 
 and regress the actual error on the predicted error.
 \begin{gather*}
-  \mathbf{e_i}=\alpha + \beta   \hat{\mathbf{e_t}} +u_i
+  \mathbf{e_i}=\alpha + \beta   \hat{\mathbf{e_i}} +u_i
 \end{gather*}
 Thus, the  true model for the true solution stays 
 fixed while the proposed
@@ -906,7 +906,7 @@ write the model in the form
 In the algorithm's implementation, the ${\mathbf b_i}$ will be a 
 boolean function precondition and 
 the ${\mathbf c_i}$ will be a 
-boolean function postcondition for a given equation system. If some $b_i$ is false, then there is no need to solve model $i$. If $c_i$ is false, the system has produced an unacceptable solution.  The function $d$ uses the truth values from the $(b_.,c_.)$ and the possible values of the state variables to select one and only one $x_t$.  The
+boolean function postcondition for a given equation system. If some $b_i$ is false, then there is no need to solve model $i$. If $c_i$ is false, the system has produced an unacceptable solution which should be ignored.  Each of these individual models could be solved in parallel. The function $d$ uses the truth values from the $(b_.,c_.)$ and the possible values of the state variables to select one and only one $x_t$.  The
 ${\mathbf d_i}$ will be a function for choosing among the 
 candidate $x_t\tArg$ values.
 Thus, we will have an equation system and  corresponding gatekeeper 
@@ -935,7 +935,7 @@ and for regime switching)(\ref{sec:ressw}).
 
 
 It may be worthwhile at this point
-to compare and contrast the approach I propose here with from 
+to compare and contrast the approach I propose here with 
 what is typically done for solving dynamic stochastic models.
 As with the standard approach I characterize the solutions using a linearly
 weighted sums of orthogonal polynomials and solve the model equations
@@ -1000,7 +1000,7 @@ and uses the linear reference model thereafter(ie $z_{t+N}=0, \forall N>K$
 However, there are number of new steps. 
 One must  specify a linear reference model
 
-\marginpar{incorporate bullets into text}
+
 
 
 
@@ -1673,6 +1673,107 @@ V= \vcenter{\hbox{\includegraphics{ergodicV.pdf}}}
 % sending the coefficient matrices for Smolyak calculation.  These nodes
 % should use efficient polynomial composition to compute conditional expectations
 % paths .
+
+\section{A Model with Occasionally Binding Constraints}
+\label{sec:occbind}
+
+
+
+\label{sec:obc-solut}
+
+Stochastic dynamic non linear economic
+models often embody  occasionally binding constraints (OBC).
+Since \citep{Christiano2000} a host of
+authors have described a variety of approaches.\footnote{The algorithms described \citep{holden15:_exist_dsge} and \citep{guerrieri15:_occbin} also exploit the use of ``anticipated shocks'', but do not use the comprehensive formula employed here. }
+\citep{holden15:_exist_dsge,guerrieri15:_occbin,benigno09,hintermaier10,brumm10,nakov08,haefke98,nakata12,gordon11,billi11,Hintermaier2010,Guerrieri2015}
+
+
+%\subsection{First Order Conditions Lagrangian Derivations}
+\label{sec:folag}
+
+Consider adding  a  constraint to the simple RBC model:
+
+\begin{gather*}
+  I_t \ge \upsilon I_{ss}
+\end{gather*}
+
+
+ \begin{gather*}
+   \max\left \{  u(c_t) + E_t \sum_{t=0}^\infty  \delta^{t+1}u(c_{t+1})\right \}\\
+   c_t + k_t=(1-d)k_{t-1} + \theta_t f(k_{t-1})\\
+    \theta_t =\theta_{t-1}^\rho e^{\epsilon_t}\\
+f(k_t)= k_t^\alpha\\
+u(c)=\frac{c^{1-\eta}-1}{1-\eta}\\
+ \mathbb{L}= \left \{ 
+ u(c_t)+E_t\sum_{t=0}^\infty \delta^{t}u(c_{t+1}) 
+ \right \}+ \\
+\sum_{t=0}^\infty 
+\left \{ \delta^t \lambda_t  (c_t + k_t-((1-d)k_{t-1} + \theta_t f(k_{t-1}))) + \right . \\ 
+\left . \delta^t \mu_t( (k_t - (1-d)k_{t-1} ) - \upsilon I_{ss})  \right \} \intertext{ so that we can impose}
+ I_t =(k_t - (1-d)k_{t-1} ) \ge  \upsilon I_{ss}\intertext{ The first order conditions become}
+\frac{1}{c_t^\eta} + \lambda_t\\
+\lambda_t - \delta \lambda_{t+1}\theta_{t+1} \alpha k_t^{(\alpha-1)}- \delta(1-d) \lambda_{t+1} + \mu_t - \delta (1-d)\mu_{t+1}
+% \intertext{To computed the bordered Hessian we need}
+% \nabla G_1=\nabla
+% \begin{bmatrix}
+% (c_t + k_t-((1-d)k_{t-1} + \theta_t f(k_{t-1})))\\
+% -(c_t + k_t-((1-d)k_{t-1} + \theta_t f(k_{t-1})))\\
+% (c_{t+1} + k_{t+1}-((1-d)k_{t} + \theta_{t+1} f(k_{t})))\\
+% -(c_{t+1} + k_{t+1}-((1-d)k_{t} + \theta_{t+1} f(k_{t})))
+% \end{bmatrix}=\\
+% \begin{bmatrix}
+%   1&1\\
+%   -1&-1\\
+% 0&(1-d)+\theta_{t+1}\alpha k_t^{(\alpha-1)}\\
+% 0&-((1-d)+\theta_{t+1}\alpha k_t^{(\alpha-1)})
+% \end{bmatrix}\\
+% \nabla G_2=\nabla
+% \begin{bmatrix}
+% (c_t + k_t-((1-d)k_{t-1} + \theta_t f(k_{t-1})))\\
+% -(c_t + k_t-((1-d)k_{t-1} + \theta_t f(k_{t-1})))\\
+% (c_{t+1} + k_{t+1}-((1-d)k_{t} + \theta_{t+1} f(k_{t})))\\
+% -(c_{t+1} + k_{t+1}-((1-d)k_{t} + \theta_{t+1} f(k_{t})))\\
+% ( (k_t - (1-d)k_{t-1} ) - \upsilon I_{ss})\\
+% ( (k_{t+1} - (1-d)k_{t} ) - \upsilon I_{ss})
+% \end{bmatrix}
+% \intertext{The second order conditions are}
+% \begin{bmatrix}
+% -\eta c^{-(\eta+1)}&0\\
+% 0& \alpha(\alpha-1) k_t^{(\alpha-2)}
+% \end{bmatrix}
+\end{gather*}
+
+
+For example, the Euler equations for the  neoclassical growth  model 
+%\label{sec:simple-rbc-model-ext}
+can be written as
+ 
+
+
+\begin{tcolorbox}[ams gather]
+if(\mu>0 \land (k_t - (1-d)k_{t-1}-\upsilon I_{ss})=0)\\
+  \lambda_t -\frac{1}{c_t}\\
+c_t+I_t-\theta_tk_{t-1}^\alpha\\
+N_t-\lambda_t \theta_t\\
+\theta_t-e^{(\rho\ln(\theta_{t-1})+\epsilon)}\\
+\lambda_t + \mu_t - (\alpha k_t^{(\alpha-1)}\delta N_{t+1}+\lambda_{t+1} \delta (1-d)+\mu_{t+1}+\delta (1-d)\mu_{t+1}\\
+I_t-(K_t-(1-d)k_{t-1})\\
+\mu_t(k_t - (1-d) k_{t-1}-\upsilon I_{ss})\\
+\end{tcolorbox}
+\begin{tcolorbox}[ams gather]
+if(\mu=0 \land (k_t - (1-d)k_{t-1}-\upsilon I_{ss})\ge 0)\\
+  \lambda_t -\frac{1}{c_t}\\
+c_t+I_t-\theta_tk_{t-1}^\alpha\\
+N_t-\lambda_t \theta_t\\
+\theta_t-e^{(\rho\ln(\theta_{t-1})+\epsilon)}\\
+\lambda_t + {\mu_t} - (\alpha k_t^{(\alpha-1)}\delta N_{t+1}+\lambda_{t+1} \delta (1-d)+{\mu_{t+1}}+\delta (1-d)\mu_{t+1}\\
+I_t-(K_t-(1-d)k_{t-1})\\
+\mu_t(k_t - (1-d) k_{t-1}-\upsilon I_{ss})
+\end{tcolorbox}
+
+
+
+
 \section{Conclusions}
 This paper introduces a new series representation for bounded time series and
 shows how to apply the series for representing bounded time invariant maps.
@@ -1900,104 +2001,6 @@ H_0\left ( \pdrv{\eqnFunc(x_{t-1},x_{t},x_{t+1},\epsilon_t)}{x_t}\right )^{-1}
 \section{Examples}
 \label{sec:extension}
 
-
-
-\subsection{Occasionally Binding Constraints}
-\label{sec:occbind}
-
-
-
-\label{sec:obc-solut}
-
-Stochastic dynamic non linear economic
-models increasingly embody  occasionally binding constraints (OBC).
-Since \citep{Christiano2000} a host of
-authors have described a variety of approaches.\footnote{The algorithms described \citep{holden15:_exist_dsge} and \citep{guerrieri15:_occbin} also exploit the use of ``anticipated shocks'', but do not use the comprehensive formula employed here. }
-\citep{holden15:_exist_dsge,guerrieri15:_occbin,benigno09,hintermaier10,brumm10,nakov08,haefke98,nakata12,gordon11,billi11,Hintermaier2010,Guerrieri2015}
-
-
-%\subsection{First Order Conditions Lagrangian Derivations}
-\label{sec:folag}
-
-Consider adding constraints the constraints:
-
-\begin{gather*}
-  I_t \ge \upsilon I_{ss}
-\end{gather*}
-
-  We consider a model described in \citep{Maliar2005}\footnote{Here, we set their $\beta=1$ and do not discuss quasi-geometric discounting or time-inconsistency.}
- \begin{gather*}
-   \max\left \{  u(c_t) + E_t \sum_{t=0}^\infty  \delta^{t+1}u(c_{t+1})\right \}\\
-   c_t + k_t=(1-d)k_{t-1} + \theta_t f(k_{t-1})\\
-    \theta_t =\theta_{t-1}^\rho e^{\epsilon_t}\\
-f(k_t)= k_t^\alpha\\
-u(c)=\frac{c^{1-\eta}-1}{1-\eta}\\
- \mathbb{L}= \left \{ 
- u(c_t)+E_t\sum_{t=0}^\infty \delta^{t}u(c_{t+1}) 
- \right \}+ \\
-\sum_{t=0}^\infty 
-\left \{ \delta^t \lambda_t  (c_t + k_t-((1-d)k_{t-1} + \theta_t f(k_{t-1}))) + \right . \\ 
-\left . \delta^t \mu_t( (k_t - (1-d)k_{t-1} ) - \upsilon I_{ss})  \right \} \intertext{ so that we can impose}
- I_t =(k_t - (1-d)k_{t-1} ) \ge  \upsilon I_{ss}\intertext{ The first order conditions become}
-\frac{1}{c_t^\eta} + \lambda_t\\
-\lambda_t - \delta \lambda_{t+1}\theta_{t+1} \alpha k_t^{(\alpha-1)}- \delta(1-d) \lambda_{t+1} + \mu_t - \delta (1-d)\mu_{t+1}
-% \intertext{To computed the bordered Hessian we need}
-% \nabla G_1=\nabla
-% \begin{bmatrix}
-% (c_t + k_t-((1-d)k_{t-1} + \theta_t f(k_{t-1})))\\
-% -(c_t + k_t-((1-d)k_{t-1} + \theta_t f(k_{t-1})))\\
-% (c_{t+1} + k_{t+1}-((1-d)k_{t} + \theta_{t+1} f(k_{t})))\\
-% -(c_{t+1} + k_{t+1}-((1-d)k_{t} + \theta_{t+1} f(k_{t})))
-% \end{bmatrix}=\\
-% \begin{bmatrix}
-%   1&1\\
-%   -1&-1\\
-% 0&(1-d)+\theta_{t+1}\alpha k_t^{(\alpha-1)}\\
-% 0&-((1-d)+\theta_{t+1}\alpha k_t^{(\alpha-1)})
-% \end{bmatrix}\\
-% \nabla G_2=\nabla
-% \begin{bmatrix}
-% (c_t + k_t-((1-d)k_{t-1} + \theta_t f(k_{t-1})))\\
-% -(c_t + k_t-((1-d)k_{t-1} + \theta_t f(k_{t-1})))\\
-% (c_{t+1} + k_{t+1}-((1-d)k_{t} + \theta_{t+1} f(k_{t})))\\
-% -(c_{t+1} + k_{t+1}-((1-d)k_{t} + \theta_{t+1} f(k_{t})))\\
-% ( (k_t - (1-d)k_{t-1} ) - \upsilon I_{ss})\\
-% ( (k_{t+1} - (1-d)k_{t} ) - \upsilon I_{ss})
-% \end{bmatrix}
-% \intertext{The second order conditions are}
-% \begin{bmatrix}
-% -\eta c^{-(\eta+1)}&0\\
-% 0& \alpha(\alpha-1) k_t^{(\alpha-2)}
-% \end{bmatrix}
-\end{gather*}
-
-
-For example, the Euler equations for the  neoclassical growth  model 
-%\label{sec:simple-rbc-model-ext}
-can be written as
- 
-
-
-\begin{tcolorbox}[ams gather]
-if(\mu>0 \land (k_t - (1-d)k_{t-1}-\upsilon I_{ss})=0)\\
-  \lambda_t -\frac{1}{c_t}\\
-c_t+I_t-\theta_tk_{t-1}^\alpha\\
-N_t-\lambda_t \theta_t\\
-\theta_t-e^{(\rho\ln(\theta_{t-1})+\epsilon)}\\
-\lambda_t + \mu_t - (\alpha k_t^{(\alpha-1)}\delta N_{t+1}+\lambda_{t+1} \delta (1-d)+\mu_{t+1}+\delta (1-d)\mu_{t+1}\\
-I_t-(K_t-(1-d)k_{t-1})\\
-\mu_t(k_t - (1-d) k_{t-1}-\upsilon I_{ss})\\
-\end{tcolorbox}
-\begin{tcolorbox}[ams gather]
-if(\mu=0 \land (k_t - (1-d)k_{t-1}-\upsilon I_{ss})\ge 0)\\
-  \lambda_t -\frac{1}{c_t}\\
-c_t+I_t-\theta_tk_{t-1}^\alpha\\
-N_t-\lambda_t \theta_t\\
-\theta_t-e^{(\rho\ln(\theta_{t-1})+\epsilon)}\\
-\lambda_t + {\mu_t} - (\alpha k_t^{(\alpha-1)}\delta N_{t+1}+\lambda_{t+1} \delta (1-d)+{\mu_{t+1}}+\delta (1-d)\mu_{t+1}\\
-I_t-(K_t-(1-d)k_{t-1})\\
-\mu_t(k_t - (1-d) k_{t-1}-\upsilon I_{ss})
-\end{tcolorbox}
 
 
 

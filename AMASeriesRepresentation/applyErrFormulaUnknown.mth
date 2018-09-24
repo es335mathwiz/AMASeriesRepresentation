@@ -1,0 +1,22 @@
+Get["tests/pathSetup.mth"]
+Get["AMASeriesRepresentation`"]
+Get["firstRBCTrips.m"]
+
+
+
+iters=8;
+theK=30;
+refModel={linModFirstRBCTrips,rbcEqnsFirstRBCTrips,firstRBCTripsExactDR,firstRBCTripsExactDRCE,forErgodicInfo,theDistFirstRBCTrips,toIg}=
+(*alphaVal,deltaVal,etaVal,rhoVal.sigmaVal*)
+firstRBCGenModel[0.36,0.95,1.5,0.98,0.01];
+
+
+approxUnk1x1x1=3*{1,1,1};
+sPrepUnk1x1x1x5={tryEps,numKern,theName,mthName,bothX0Z0,sgSpecErg,zPts,theFullXsUnk1x1x1x5}=
+doSmolPrep[approxUnk1x1x1,iters,theK,forErgodicInfo,toIg,linModFirstRBCTrips,theDistFirstRBCTrips];
+{tm,ig}=Timing[
+theResUnk1x1x1x5=parallelNestGenericIterREInterp[genFRExtFunc,linModFirstRBCTrips,
+{bothX0Z0,theK},rbcEqnsFirstRBCTrips,sgSpecErg,smolyakInterpolation,{},theFullXsUnk1x1x1x5]];
+errsUnk1x1x1x5=nextSimplestErrXtm1Eps[rbcEqnsFirstRBCTrips,theResUnk1x1x1x5[[4,-1,1]],
+theResUnk1x1x1x5[[4,-1,2]],Transpose[{#}],1,linModFirstRBCTrips,5]&/@theFullXsUnk1x1x1x5;
+actErrsUnk1x1x1x5=Flatten[(((theResUnk1x1x1x5[[4,-1,1]] @@ #)[[Range[4]]]) - (firstRBCTripsExactDR @@ #))]& /@ theFullXsUnk1x1x1x5

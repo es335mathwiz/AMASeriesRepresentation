@@ -39,8 +39,8 @@ This paper provides a new technique for representing  discrete time  nonlinear d
 \marginpar{Address Bullets in Other Computing? Section}
 Using this new series representation, the paper 
 augments the usual solution strategy with an additional set of
-constraints thereby enhancing algorithm robustness.
-In addition, it provides general
+constraints thereby enhancing algorithm reliability
+The paper also provides general
 formulas for evaluating the accuracy of proposed solutions.
 The technique can readily accommodate models with occasionally binding constraints and regime switching. 
 The  algorithm  uses
@@ -86,12 +86,11 @@ one bounded infinite dimensional series into another.
 
     It turns out that this representation provides a way to use
     Euler equation errors to
-    approximate the magnitude of the    approximation error in components of 
-    decision rules.\footnote{    Others have also studied approximation error for dynamic stochastic models\citep{judd2017lower,santos2005accuracy,Santos2000accuracy}.} This paper provides  approximation
-    explicitly relating the magnitude of components of the
-    Euler equation errors to the magnitude of components of
-    errors in the decision rule 
-without resort to statistical inference or ancillary simulations.
+    approximate the error in components of 
+    decision rules.\footnote{    Others have also studied approximation error for dynamic stochastic models\citep{judd2017lower,santos2005accuracy,Santos2000accuracy}.} This paper provides  approximation formulas
+    explicitly relating the
+    Euler equation errors to the components of
+    errors in the decision rule.
 
     In addition, the series representation provides exploitable
     constraints on model solutions that enhance  
@@ -127,6 +126,8 @@ Section \ref{sec:newseries} presents a useful new series representation for any 
 Section \ref{sec:extToMaps} shows how to use this series representation to represent characterize time invariant maps.
 Section \ref{sec:solnerrorbounds} provides formulas for approximating dynamic stochastic model errors in proposed  solutions.
 Section \ref{sec:algoforsoln} presents a new solution algorithm for improving proposed solutions.
+Section \ref{sec:occbind} applies the technique to a model with 
+occasionally binding constraints.
 %Section \ref{sec:future} discusses directions for future work.
 Section \ref{sec:conc} concludes.
 
@@ -162,7 +163,7 @@ x_t=B x_{t-1} + \phi \psi_\epsilon \epsilon + (I - F)^{-1} \phi \psi_c\label{hSy
 \intertext{where}
 \phi= (H_0 +H_1 B)^{-1}  \text{ and } \,\,F=-\phi H_1.\citep{anderson10}
 \end{gather}
-It will be useful to collect the components of this solution,$\linMod \equiv \linModMats$, for  later use.\footnote{In Section \ref{sec:almostarbitrary}, I will use these matrices  to construct a series representation for any bounded path
+It will be useful to collect the components of this linear reference model solution,$\linMod \equiv \linModMats$, for  later use.\footnote{In Section \ref{sec:almostarbitrary}, I will use these matrices  to construct a series representation for any bounded path
 and in \ref{sec:algoforsoln} compute improvements in proposed model solutions.}
 
 
@@ -214,7 +215,7 @@ one can easily compute a corresponding series representation like
 Interestingly, the linear model, $H$, the  constant term $\psi_c$ and the
 impact of the stochastic shocks $\psi_\epsilon $ can  be 
 chosen rather arbitrarily -- the only constraints being the existence of a saddle-point solution for the linear system and that all z-values fall in the row space of $H_1$.  
-Note that since the eigenvalues of $F$ are all less than one in magnitude, the formula supports the intuition that far distant shocks
+Note that since the eigenvalues of $F$ are all less than one in magnitude, the formula supports the intuition that  distant future shocks
  influence current conditions less than  imminent shocks.
 
 %The formula will provide a series  for any $L$ dimensional $\linMod$.
@@ -250,10 +251,11 @@ H_{-1}&H_{0}&H_{1} \label{linRef}
 with $\psi_c=\psi_\epsilon=0, \,\,  \psi_z=I$.
 I have chosen these coefficients so that 
 the linear model has a unique stable solution and, since $H_1$ is full rank,
-its column space will span the column space for all non zero values for $z_t \in \mathcal{R}^3$.  The flexibility in choosing $\linMod$ will 
-become more important in the context below where we must 
-choose a  linear reference model in a context where we may have 
-little guidance about what might make a good choice.  It turns out that the algorithm is very forgiving about the choice of $\linMod$.  
+its column space will span the column space for all non zero values for $z_t \in \mathcal{R}^3$.\footnote{The flexibility in choosing $\linMod$ will 
+become more important in later in the paper  where we must 
+choose a  linear reference model in a context where we will have 
+little guidance about what might make a good choice.}  It turns out that the algorithm is very forgiving about the choice of $\linMod$.  
+
 The solution for this system is
 
 \begin{gather}
@@ -309,10 +311,9 @@ unbounded, but slowly diverging  trajectories.}
 Though unintuitive and perhaps lacking a compelling 
 interpretation, the values for
 $z_t$ exist,  provide  a series for the $x_t$  and are easy to compute.
-One can repeat the calculations for any given initial condition to produce
-a z series exactly replicating any bounded set of trajectories.  Thus, the family
-of z functions along with equation \ref{theSeries} can provide a series 
-representation for the entire family of trajectories. Consequently, these
+One can apply the calculations for any given initial condition to produce
+a z series exactly replicating any bounded set of trajectories.  
+Consequently, these
 numerical linear algebra calculations can easily transform a $z_t$ series into an $x_t$ series and vice versa.  Since this can be done for any path starting from any particular initial conditions, 
 any discrete time invariant map that generates families of bounded paths has a series representation.
 
@@ -323,7 +324,7 @@ any discrete time invariant map that generates families of bounded paths has a s
 \subsection{Assessing $x_t$ Errors}
 \label{sec:truncationerr}
 The formula \ref{theSeries} 
-computes the impact on the current state of fully anticipated future shocks.  The formula characterizes the impact exactly.  However one can contemplate the impact of at least two deviations from the exact calculation:
+computes the impact on the current state of fully anticipated future shocks.  It characterizes the impact exactly.  However one can contemplate the impact of at least two deviations from the exact calculation:
 one could truncate a series of correct values of $z_t$ or
 one might have imprecise values of $z_t$ along the path.
 
@@ -368,12 +369,12 @@ the initial value of the state vector to high precision.
 
 
 We can assess the impact of perturbed values for $z_t$ by computing the maximum discrepancy,$\Delta z_t$, impacting the $z_t$ and applying the 
-partial sum formula
-Thus, one can  approximate $\mathcal{X}_t$ using
+partial sum formula.
+One can  approximate $\mathcal{X}_t$ using
  	 \begin{gather}
  	 \xWOargK_t \equiv B x_{t-1}+ \phi \psi_\epsilon\epsilon  + (I - F)^{-1} \phi \psi_c + \sum_{s=0}^\infty F^s \phi (z_{t}+\Delta z_{t})\label{theDeltaSeries}
  \end{gather}
-Note yet again that for approximating $\xWarg$ the impact of  a given realization along the path declines for those realizations which are  more temporally distant.
+Note, yet again, that for approximating $\xWarg$, the impact of  a given realization along the path declines for those realizations which are  more temporally distant.
 However, we can conservatively bound the  series approximation  errors by using the largest possible $\Delta z_t$ in the formula:
     \begin{gather}
 \infNorm{\xWarg-\xWargK} \le \infNorm{(I -F)^{-1} \phi \psi_z}  \infNorm{\Delta z_t } \label{pathErr}
@@ -420,7 +421,7 @@ series formulation and to approximate the  errors for these models as well.}
 
 \subsection{An RBC Example}
 \label{sec:rbcaux}
-  I consider a model described in \citep{Maliar2005}\footnote{Here, I set their $\beta=1$ and 
+  Consider the model described in \citep{Maliar2005}\footnote{Here, I set their $\beta=1$ and 
 do not discuss quasi-geometric discounting or time-inconsistency.}
  \begin{gather*}
    \max\left \{  u(c_t) + E_t \sum_{t=1}^\infty  \delta^{t}u(c_{t+1})\right \}\\
@@ -572,7 +573,7 @@ Again, the first few terms make most of the difference in approximating the valu
 
 
 For convenience of notation in what follows, 
-we will focus on models built up from components of the form
+I will focus on models built up from components of the form
 \begin{gather}
   h_i(x_{t-1},x_{t},x_{t+1},\epsilon_t)=h^{det}_{io}(x_{t-1},x_{t},\epsilon_t)+\sum_{j=1}^{p_i} [h^{det}_{ij}(x_{t-1},x_{t},\epsilon_t)h^{nondet}_{ij}(x_{t+1})]=0
 \end{gather}
@@ -658,7 +659,7 @@ a formula for the approximate error that does not require statistical inference.
 \label{sec:errorformula}
 
 Consider a bounded region, $\bndRgn$, that contains all iterated conditional expectations paths.
-  By bounding the largest deviation in the paths for the $\Delta z_t^p$ we can bound the largest deviation in a proposed solution from the exact solution. 
+  By bounding the largest deviation in the paths for the $\Delta z_t^p$, we can bound the largest deviation in a proposed solution from the exact solution. 
 
 
 
@@ -692,11 +693,11 @@ For proof see Appendix \ref{sec:error-bound-formula}.
 \subsection{Decision Rule Components Local Error Approximation}
 \label{sec:decis-rule-comp}
 
-We seek
+Given a proposed model solution define 
+the error in $x_t$ at $\tArg$
+
 \begin{gather*}
-\eqnFunc(x_{t-1},\xWOarg^\star\tArg,\XWOarg^\star(\xWOarg^\star\tArg),\epsilon_t)=0\,\,\forall \tArg.  \intertext{Given a proposed model solution define 
-the error in $x_t$ at $\tArg$}
-\mathbf{e}\tArg\equiv \xWOarg^\star\tArg-\xWOarg^p\tArg\intertext{compute the conditional expectations for the decision rule and use them to generate a path to use with a linear reference model $\linMod  \equiv \linModMats$  in \ref{theSeries} to appoximate  $\mathbf{e}$.} 
+\mathbf{e}\tArg\equiv \xWOarg^\star\tArg-\xWOarg^p\tArg\intertext{compute the conditional expectations functions for the decision rule and use them to generate a path to use with a linear reference model $\linMod  \equiv \linModMats$  in \ref{theSeries} to appoximate  $\mathbf{e}$.} 
 \XWOarg^p(x)\equiv \expct{\xWOarg^p(x,\epsilon)}.
 \end{gather*}
 \begin{gather*}
@@ -773,10 +774,10 @@ I linearized each of the ten models at their respective stochastic steady
 states producing 10 linear reference models $\linMod_i$ and 10 decision rules
 based on the linearization. 
 As a result I have $100=10 \times 10$ combinations of decision rules and
-linear reference models to use in the error formula.
+linear reference models to use in the error formula experiments.
 
 
-I generate 30 representative points, $(k_{i,t-1},\theta_{i,t-1},\epsilon_{i,t})$, from the ergodic set for the fixed reference model
+I generate 30 representative points, $(k_{i,t-1},\theta_{i,t-1},\epsilon_{i,t})$, from the ergodic set for the fixed true reference model
 using the Niederreiter quasi-random algorithm.
 For each of the 100 pairings of decision rule and linear reference model,
 I compute the error approximation at each representative point 
@@ -785,12 +786,12 @@ and regress the actual error on the predicted error.
   \mathbf{e_i}=\alpha + \beta   \hat{\mathbf{e_i}} +u_i
 \end{gather*}
 Thus, the  true model for the true solution stays 
-fixed while the proposed
+fixed while the, by construction inaccurate  proposed
 decision rules and the linear reference model  both change.
 
-Figures \ref{fig:forc} and \ref{fig:fork}  present the $R^2$ and estimated variance and Figures \ref{fig:forcn} and \ref{fig:forkn} the regression coefficients\footnote{The formula predicts the changes 
+Figures \ref{fig:forc} and \ref{fig:fork}  present the $R^2$ and estimated variance and Figures \ref{fig:forcn} and \ref{fig:forkn} the regression coefficients for $k=0, 1, 10, 30$\footnote{The formula predicts the changes 
 in $\theta_t$ perfectly since it is determined by a backward looking equation.}
-Still the formula does a good job of predicting the error in the 
+The formula does a good job of predicting the error in the 
 proposed decision rule function.
 Even with $k=0$, using only one term in the error formula still provides 
 useful information about the magnitude of the discrepancy between the 
@@ -890,6 +891,8 @@ To fix notation,  assume that our model is characterized by
 I will require that, for any 
  given $(x_{t-1},\epsilon_t)$,  this collection of 
 systems of equations produces a unique solution for $x_t$.  
+This formulation will allow us to apply the technique to models with
+ooccasionally binding  constraints and models with regime switching.
 Using the convention described in section \ref{sec:convenient},
  I will include 
 enough auxiliary variables so that I can correctly compute expected values
@@ -903,24 +906,25 @@ write the model in the form
 \eqnFuncSysI{i}\equiv \eqnFuncSysIExpl{i} \label{eqnGates}
 \end{gather}
  represents a set of model equations, $\eqnFunc_i$,  with Boolean valued gate, $\preGate_i, \postGate_i$. 
-In the algorithm's implementation, the ${\mathbf b_i}$ will be a 
+In the algorithm's implementation, the $\preGate_i$ will be a 
 boolean function precondition and 
-the ${\mathbf c_i}$ will be a 
-boolean function postcondition for a given equation system. If some $b_i$ is false, then there is no need to solve model $i$. If $c_i$ is false, the system has produced an unacceptable solution which should be ignored.  Each of these individual models could be solved in parallel. The function $d$ uses the truth values from the $(b_.,c_.)$ and the possible values of the state variables to select one and only one $x_t$.  The
-${\mathbf d_i}$ will be a function for choosing among the 
+the $\postGate_i$ will be a 
+boolean function postcondition for a given equation system. If some $\preGate_i$ is false, then there is no need to try to solve model $i$. If $\postGate_i$ is false, the system has produced an unacceptable solution which should be ignored.  Each of these individual models could be solved in parallel.   The
+$\lastGate$ will be a function for choosing among the 
 candidate $x_t\tArg$ values.
-Thus, we will have an equation system and  corresponding gatekeeper 
+The function $\lastGate$ uses the truth values from the $(\preGate_.,\postGate_.)$ and the possible values of the state variables to select one and only one $x_t$.  Thus, we will have an equation system and  corresponding gatekeeper 
 logical expressions 
 indicating which equation system is in force for producing the unique
 solution for a given $\tArg$.
+
 I will only consider time invariant model solutions $x_t=\xWarg$.  Given a decision rule $\xWarg$, denote its conditional expectation $\XWOarg(x_{t-1})\equiv \expct{\xWarg}$. 
 
 
  Examples of such systems include the simple RBC model from Section
 \ref{simpRBCExample}.
 Other examples include  models with 
-occasionally binding constraints with solutions 
-exhibiting complementary slackness, or models with 
+occasionally binding constraints where solutions 
+exhibit complementary slackness conditions, or models with 
 regime switching.  See the appendix for an example 
 of a specification for occasionally binding constraints(\ref{sec:occbind}) 
 and for regime switching)(\ref{sec:ressw}).
@@ -930,14 +934,14 @@ and for regime switching)(\ref{sec:ressw}).
 
 
 
-\subsection{How this Approach Differs From the Usual Approach}
+\subsection{How My Approach Differs From the Usual Approach}
 \label{sec:walkthrough}
 
 
 It may be worthwhile at this point
 to compare and contrast the approach I propose here with 
 what is typically done for solving dynamic stochastic models.
-As with the standard approach I characterize the solutions using a linearly
+As with the standard approach, I characterize the solutions using a linearly
 weighted sums of orthogonal polynomials and solve the model equations
 at predetermined collocation points. However, in this new algorithm, I 
 augment the model Euler equations with equations based on \refeq{theSeries}
@@ -946,8 +950,8 @@ the proposed solution with the
 time t value of the model variables.  As a result, the algorithm determines
 linearly weighted polynomials characterizing the 
 trajectories for the usual
-variables $x_t(x_{t-1},\epsilon_t)$ as well as new variables $z_t(x_{t-1},\epsilon_t)$ variables.  These new constraints 
-help keep proposed solutions bounded during the algorithmic iterations 
+variables $x_t(x_{t-1},\epsilon_t)$ as well as new  $z_t(x_{t-1},\epsilon_t)$ variables.  These new constraints 
+help keep proposed solutions bounded during the solution iterations 
 thus improving algorithm reliability.
 
 
@@ -976,16 +980,14 @@ I closely follow the techniques outlined in \citep{Judd2013,Judd2014}.
 As a result, much of what must be done to use this proposed algorithm is 
 the same as for the usual approach.
 One must specify an initial guess for decision rule $\xWargK$ obtain conditional expectations function
-
-I use their an-isotropic Smolyak Lagrange interpolation with adaptive domain.
+I use the an-isotropic Smolyak Lagrange interpolation with adaptive domain.
 I also precompute all of the conditional expectations for the integrals as outlined in \citep{JuddIntegrals} so that the time t computations are all 
 deterministic.
 
 The algorithm uses a proposed decision rule characterized by a linearly weighted sum of Chebyshev polynomials with precomputed integrals.  
 Since the
 orthogonal polynomials have been integrated, the linearly weighted sum provides
-the conditional expectations function needed for computing conditional expectations paths from each collocation point forward.  This provides the 
-expected future values for the $z_t$ needed for the series representation.
+the conditional expectations function needed for computing conditional expectations paths from each collocation point forward.  
 decide upon the ranges for variables and the degrees of approximation for the an-isotropic Smolyak polynomial representation.
 The algorithm then solves
 a deterministic problem at time t to improve the proposed solution.
@@ -998,7 +1000,15 @@ the algorithm imposes nonlinear constraints the for number of period specified
 and uses the linear reference model thereafter(ie $z_{t+N}=0, \forall N>K$
 
 However, there are number of new steps. 
-One must  specify a linear reference model
+One must  specify a linear reference model.  One must choose a value for
+$K$ the number of terms in the series representation.  There are tradeoffs.
+More terms corresponds to more accuracy when the decision rule is accurate but
+More terms is computationally more expensive. The initial guess is 
+typically some distance away from the solution.   Consequently the
+terms in the series will be incorrect.  The smolyak grid adds more error to
+the calculation.  If there are many grid points it is more likely that 
+increasing the K can improve the quality of the solution.  If the grid is
+too sparse, increasing K will have less of an impact. 
 
 
 
@@ -1239,7 +1249,7 @@ Table \ref{evalp} shows the evaluation point when the degree of approximation
 was (1,1,1).  Table \ref{acterr} shows the actual error in the decision rule
 at each evaluation point.  Table \ref{esterr} shows the 
 estimated error in the decision rule
-at each evaluation point.  Note that the formula provides accurate estimates
+at each evaluation points.  Note that the formula provides accurate estimates
 of the error component by component.
 
 
@@ -1777,7 +1787,7 @@ of the error component by component.
 Stochastic dynamic non linear economic
 models often embody  occasionally binding constraints (OBC).
 Since \citep{Christiano2000} a host of
-authors have described a variety of approaches.\footnote{The algorithms described \citep{holden15:_exist_dsge} and \citep{guerrieri15:_occbin} also exploit the use of ``anticipated shocks'', but do not use the comprehensive formula employed here. }
+authors have described a variety of approaches.\footnote{The algorithms described in \citep{holden15:_exist_dsge} and \citep{guerrieri15:_occbin} also exploit the use of ``anticipated shocks'', but do not use the comprehensive formula employed here. }
 \citep{holden15:_exist_dsge,guerrieri15:_occbin,benigno09,hintermaier10,brumm10,nakov08,haefke98,nakata12,gordon11,billi11,Hintermaier2010,Guerrieri2015}
 
 
@@ -1869,26 +1879,28 @@ I_t-(K_t-(1-d)k_{t-1})\\
 
 \section{Conclusions}
 This paper introduces a new series representation for bounded time series and
-shows how to apply the series for representing bounded time invariant maps.
-This representation proves useful because the solutions for many
-dynamic stochastic economic models fall in this class.
-The series representation plays a strategic role in developing a formula for approximating the errors in dynamic model solution decision rules.  The paper
+shows how to develop  series for representing bounded time invariant maps.
+The series representation plays a strategic role in developing a formula 
+for approximating the errors in dynamic model solution decision rules. 
+ The paper
 also shows how to  augment the usual ``Euler Equation'' model solution
 methods with constraints reflecting how the updated
-conditional expectation paths impact the time t solution values.
-The current prototype was written in Mathematica and is available on gitHub
+conditional expectation paths relate to the time t solution values.
+The prototype was written in Mathematica and is available on gitHub
+at 
 
 
-There are many directions to pursue in future work.
-I have begun work  developing a Julia version.
-In writing  Mathematica code I applied a functional programming style
-while blending numerica and symbolic calculations. Along with
-Mathematica, Julia is also a homoiconic language where functions are first order objects. But, I suspect that the 
-symbolic numeric balance may be different as I implement the code in Julia.
-Indeed, perhaps the Julia code will be completely numeric.
-In that implementation, I 
-will investigate computational efficiency issues and further
-exploit the high degree of parallelism available in the algorithm.
+% There are many directions to pursue in future work.
+% The technique should be useful for value function iteration.
+% I have begun work  developing a Julia version.
+% In writing  Mathematica code I applied a functional programming style
+% while blending numerica and symbolic calculations. Along with
+% Mathematica, Julia is also a homoiconic language where functions are first order objects. But, I suspect that the 
+% symbolic numeric balance may be different as I implement the code in Julia.
+% Indeed, perhaps the Julia code will be completely numeric.
+% In that implementation, I 
+% will investigate computational efficiency issues and further
+% exploit the high degree of parallelism available in the algorithm.
 
 %Using tail contribution can reduce magnitude of $z_0$
 
@@ -2093,12 +2105,12 @@ H_0\left ( \pdrv{\eqnFunc(x_{t-1},x_{t},x_{t+1},\epsilon_t)}{x_t}\right )^{-1}
 
 \section{Examples}
 \label{sec:extension}
-
-
-
-
-\subsection{Regime Switching}
 \label{sec:ressw}
+
+
+
+%\subsection{Regime Switching}
+
 
 
 

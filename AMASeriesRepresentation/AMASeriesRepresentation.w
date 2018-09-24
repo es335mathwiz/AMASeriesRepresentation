@@ -271,8 +271,7 @@ Apply[preFunc,thePt],
 With[{theRes=
 Apply[theFunc,thePt]},
 With[{forTest=Transpose[{Drop[thePt,Length[theRes]]}]},
-Print["forTest:",forTest];
-If[Apply[postFunc,{thePt,forTest}],Flatten[theRes],$Failed]]],
+If[Apply[postFunc,{thePt,forTest}],theRes,$Failed]]],
 $Failed],_,Function[{val,tag},
 Print["catchinevaluateTriple:",{xArgs,val,tag}//InputForm];$Failed]]
 
@@ -431,7 +430,7 @@ Module[{},
 With[{numX=Length[initVec],
  	thePath=
 Check[iterateDRCE[theCondExp,initVec,iters+1],
-Print["problems with current DRCE,using at",initVec,"linMod!!!!!"];
+Print["problems with current DRCE, at",initVec,"linMod!!!!!"];
 iterateDRCE[genX0Z0Funcs[linMod],initVec,iters+1]]},
 With[{restVals=
   Map[(theHMat .thePath[[Range[3*numX]+numX*(#-1)]] -psiC)&,

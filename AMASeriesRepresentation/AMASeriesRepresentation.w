@@ -246,6 +246,36 @@ If[Apply[postFunc,{thePt,theRes}],theRes,$Failed]],
 $Failed],_,Function[{val,tag},
 Print["catchinevaluateTriple:",{xArgs,val,tag}//InputForm];$Failed]]
 
+
+evaluateTriple[
+@<aProcessedTriple@>,
+thePt:{_?NumberQ..}]:=
+Catch[
+If[
+Apply[preFunc,thePt],
+With[{theRes=
+Apply[theFunc,thePt]},
+If[Apply[postFunc,{thePt,theRes}],theRes,$Failed]],
+$Failed],_,Function[{val,tag},
+Print["catchinevaluateTriple:",{xArgs,val,tag}//InputForm];$Failed]]
+
+
+
+evaluateTripleEqnSys[
+triple:{preFunc_Function,theFunc:(_Function|_CompiledFunction|_Symbol),
+postFunc_Function},
+thePt:{_?NumberQ..}]:=
+Catch[
+If[
+Apply[preFunc,thePt],
+With[{theRes=
+Apply[theFunc,thePt]},
+With[{forTest=Transpose[{Drop[thePt,Length[theRes]]}]},
+Print["forTest:",forTest];
+If[Apply[postFunc,{thePt,forTest}],Flatten[theRes],$Failed]]],
+$Failed],_,Function[{val,tag},
+Print["catchinevaluateTriple:",{xArgs,val,tag}//InputForm];$Failed]]
+
 @}
 
 
@@ -1834,7 +1864,7 @@ With[{numX=Length[initVec]-numEps},
 With[{theArg=Join[
 Take[thePath,{1,3*numX}],initVec[[-Reverse[Range[numEps]]]]]},
 With[{theVal=
-ParallelTable[evaluateTriple[aTriple,Flatten[theArg]],
+ParallelTable[evaluateTripleEqnSys[aTriple,Flatten[theArg]],
 {aTriple,triples[[1]]}]},
 triples[[2]][theArg,theVal]]]]]
 

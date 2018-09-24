@@ -1235,7 +1235,100 @@ V= \vcenter{\hbox{\includegraphics{ergodicV.pdf}}}
 \end{gather}
 
 
+Table \ref{evalp} shows the evaluation point when the degree of approximation
+was (1,1,1).  Table \ref{acterr} shows the actual error in the decision rule
+at each evaluation point.  Table \ref{esterr} shows the 
+estimated error in the decision rule
+at each evaluation point.  Note that the formula provides accurate estimates
+of the error component by component.
 
+
+\begin{table}
+  \centering
+  
+\begin{gather*}
+  \begin{bmatrix}
+    k_1&\theta_1&\epsilon_1\\
+&\vdots\\
+    k_{30}&\theta_{30}&\epsilon_{30}\\
+  \end{bmatrix}=
+  \input{xs1x1x1x5}
+\end{gather*}
+
+  \caption{Model Evaluation Points \label{evalp}}
+\end{table}
+
+
+ \begin{table}
+    \centering
+   \begin{gather*}
+ \begin{bmatrix}
+     \eulerE_{c,1}&\eulerE_{k,1}&\eulerE_{\theta,1}\\
+ &\vdots\\
+     \eulerE_{c,30}&\eulerE_{k,30}&\eulerE_{\theta,30}\\
+   \end{bmatrix}=
+  \input{actErrs1x1x1x5}
+   \end{gather*}
+   \caption{Actual Errors\label{acterr}}
+ \end{table}
+
+ \begin{figure}
+   \centering
+  
+   \begin{gather*}
+ \begin{bmatrix}
+     \hat{\eulerE}_{c,1}&\hat{\eulerE}_{k,1}&\hat{\eulerE}_{\theta,1}\\
+ &\vdots\\
+     \hat{\eulerE}_{c,30}&\hat{\eulerE}_{k,30}&\hat{\eulerE}_{\theta,30}\\
+   \end{bmatrix}=
+   \input{errs1x1x1x5}
+   \end{gather*}
+   \caption{Error Approximations\label{esterr}}
+ \end{figure}
+
+
+\begin{table}
+  \centering
+  
+\begin{gather*}
+  \begin{bmatrix}
+    k_1&\theta_1&\epsilon_1\\
+&\vdots\\
+    k_{30}&\theta_{30}&\epsilon_{30}\\
+  \end{bmatrix}=
+  \input{xs2x2x2x5}
+\end{gather*}
+
+  \caption{Model Evaluation Points \label{evalp}}
+\end{table}
+
+
+ \begin{table}
+    \centering
+   \begin{gather*}
+ \begin{bmatrix}
+     \eulerE_{c,1}&\eulerE_{k,1}&\eulerE_{\theta,1}\\
+ &\vdots\\
+     \eulerE_{c,30}&\eulerE_{k,30}&\eulerE_{\theta,30}\\
+   \end{bmatrix}=
+  \input{actErrs2x2x2x5}
+   \end{gather*}
+   \caption{Actual Errors\label{acterr}}
+ \end{table}
+
+ \begin{figure}
+   \centering
+  
+   \begin{gather*}
+ \begin{bmatrix}
+     \hat{\eulerE}_{c,1}&\hat{\eulerE}_{k,1}&\hat{\eulerE}_{\theta,1}\\
+ &\vdots\\
+     \hat{\eulerE}_{c,30}&\hat{\eulerE}_{k,30}&\hat{\eulerE}_{\theta,30}\\
+   \end{bmatrix}=
+   \input{errs2x2x2x5}
+   \end{gather*}
+   \caption{Error Approximations\label{esterr}}
+ \end{figure}
 
 
 % The following graphs present some characteristics of a proposed solution

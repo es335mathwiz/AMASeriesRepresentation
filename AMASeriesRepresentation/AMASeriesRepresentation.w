@@ -1648,9 +1648,10 @@ genTestPts[theZBounds:{minZs_?VectorQ,maxZs_?VectorQ},numPts_Integer,
 numGen:(Nied|Sobol),theMeans_?VectorQ,theSDs_?VectorQ,thessv_?MatrixQ,
 ignored_?VectorQ]:=
 With[{zRanges=Transpose[theZBounds]},
-With[{someZs=numGen[numPts,Length[zRanges]]},
+With[{someUnis=numGen[numPts,Length[zRanges]]},
+With[{someZs=backUnisToVars[someUnis,zRanges]},
 With[{theXs=backZtoX[someZs,theMeans,theSDs,thessv]},
-Map[fillIn[{{},ignored,#}]&,theXs]]]]
+Map[fillIn[{{},ignored,#}]&,theXs]]]]]
 @}
 
 @d assessErrPredictionUsage

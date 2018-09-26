@@ -131,6 +131,7 @@ occasionally binding constraints.
 %Section \ref{sec:future} discusses directions for future work.
 Section \ref{sec:conc} concludes.
 
+\clearpage
 \section{A New Series Representation For  Bounded Time Series}
 \label{sec:newseries}
 Since \citep{blanchard80} numerous authors have developed solution algorithms and formulas for solving linear rational expectations models.  It turns out that
@@ -383,6 +384,7 @@ However, we can conservatively bound the  series approximation  errors by using 
 
 \label{sec:pathnorm}
 
+\clearpage
 \section{Dynamic Stochastic Time Invariant Maps}
 \label{sec:extToMaps}
 
@@ -637,20 +639,21 @@ F=
 Recomputing the truncation errors with the expanded model produces nearly identicle results for  variable approximation errors.
 
 
+\clearpage
 \section{Approximating Model Solution Errors}
 \label{sec:solnerrorbounds}
 
 
-This section shows how to write a series representation for any proposed
-model solution and to characterize the series representation for a typically
-unknown solution in such a way that one can use the model equation errors  to construct an approximate error for the norm of the distance between the proposed and the exact solution.\footnote{This work contrasts with the analysis provided in
+This section shows how to use the model equation errors  to construct an 
+approximate error for the components of any proposed
+model solution.\footnote{This work contrasts with the analysis provided in
 \citep{judd2017lower,peralta-alva14,santos2005accuracy,Santos2000accuracy}. 
 Their approaches identify Euler Equation Errors, but use statistical techniques to estimate the impact of these errors on solution accuracy.  Here I provide
 a formula for the approximate error that does not require statistical inference.}
 
 
 
-\subsection{An Error Bound}
+\subsection{Approximating a Global Decision Rule Error Bound}
 \label{sec:an-error-bound}
 
 
@@ -690,7 +693,7 @@ E_tx_{t+1}=G^p(g^p(x_{t-1},\epsilon_t))\\
 
 For proof see Appendix \ref{sec:error-bound-formula}.  
 
-\subsection{Decision Rule Components Local Error Approximation}
+\subsection{Approximating Local Decision Rule Errors}
 \label{sec:decis-rule-comp}
 
 Given a proposed model solution define 
@@ -717,7 +720,7 @@ the error in $x_t$ at $\tArg$
 \label{sec:assess-error-appr}
 
 
-This section reports an experiment evaluating how well the 
+This section reports on the results of an experiment evaluating how well the 
 formula performs.  
 I compute the known decision rule for the RBC model with parameters
 $\{\alpha=0.36,\delta=0.95,\eta=1,\rho=0.95,\sigma=0.01\}$.  I consider this
@@ -773,29 +776,35 @@ producing the following 10 model specifications:
 I linearized each of the ten models at their respective stochastic steady
 states producing 10 linear reference models $\linMod_i$ and 10 decision rules
 based on the linearization. 
-As a result I have $100=10 \times 10$ combinations of decision rules and
+As a result I have $100=10 \times 10$ combinations of (inaccurate by design ) decision rule functions
+ and
 linear reference models to use in the error formula experiments.
 
 
 I generate 30 representative points, $(k_{i,t-1},\theta_{i,t-1},\epsilon_{i,t})$, from the ergodic set for the fixed true reference model
 using the Niederreiter quasi-random algorithm.
 For each of the 100 pairings of decision rule and linear reference model,
-I compute the error approximation at each representative point 
-and regress the actual error on the predicted error.
+I compute the error approximation at each of the 30 representative points
+and regress the actual error, computed using the known analytic solution, and the predicted error from the error formula.
 \begin{gather*}
   \mathbf{e_i}=\alpha + \beta   \hat{\mathbf{e_i}} +u_i
 \end{gather*}
-Thus, the  true model for the true solution stays 
-fixed while the, by construction inaccurate  proposed
-decision rules and the linear reference model  both change.
+Although the true model and the true decision rule stays 
+fixed in the experiment, the
+  proposed decision rules and the linear reference model both change.
 
-Figures \ref{fig:forc} and \ref{fig:fork}  present the $R^2$ and estimated variance and Figures \ref{fig:forcn} and \ref{fig:forkn} the regression coefficients for $k=0, 1, 10, 30$\footnote{The formula predicts the changes 
+Figures \ref{fig:forc} and \ref{fig:fork}  present the 100 $R^2$ and estimated variance and Figures \ref{fig:forcn} and \ref{fig:forkn} presents the 100 resulting regression coefficients for a variety of values for $K$, of number of terms in the 
+error formula, ( $K=0, 1, 10, 30$)\footnote{I don't display results for $\theta_t$ because the formula predicts the error 
 in $\theta_t$ perfectly since it is determined by a backward looking equation.}
-The formula does a good job of predicting the error in the 
-proposed decision rule function.
-Even with $k=0$, using only one term in the error formula still provides 
+The regressions with $K=0$ correspond to the maximand of the
+global error formula. The figures show that
+the formula does a good job of predicting the error produced by the 
+inaccurate decision rule functions.
+Even with $K=0$, using only one term in the error formula,
+ still provides 
 useful information about the magnitude of the discrepancy between the 
-true proposed and true values.
+proposed decision rules values and true values.  The $R^2$ values are all above 60 percent and are often near one.  The $\beta$ coefficients are generally  close to one and the 
+constant tends to be close to zero.
 
 
 
@@ -848,11 +857,12 @@ true proposed and true values.
 
 
 
+\clearpage
 \section{Improving Proposed  Solutions}
 \label{sec:algoforsoln}
 
 
-\subsection{Generalization and Practical Considerations for Applying the Series Formula}
+\subsection{Some Practical Considerations for Applying the Series Formula}
 \label{sec:practicalformula}
 
 % The framework provides a new way to bound the error one can expect from
@@ -886,30 +896,34 @@ true proposed and true values.
 
 
 
-To fix notation,  assume that our model is characterized by
+I assume that all models of interest can be characterized by
  a finite number of equations systems.
 I will require that, for any 
  given $(x_{t-1},\epsilon_t)$,  this collection of 
-systems of equations produces a unique solution for $x_t$.  
+equation systems  produces a unique solution for $x_t$.  
 This formulation will allow us to apply the technique to models with
 ooccasionally binding  constraints and models with regime switching.
-Using the convention described in section \ref{sec:convenient},
+I will only consider time invariant model solutions $x_t=\xWarg$.  Given a decision rule $\xWarg$, denote its conditional expectation $\XWOarg(x_{t-1})\equiv \expct{\xWarg}$.
+Using the convention described in section \ref{sec:convenient}, 
  I will include 
 enough auxiliary variables so that I can correctly compute expected values
 for model variables by applying the law of iterated 
 expectations.
 
 It will be convenient for describing the algorithms to
-write the model in the form
+write the models in the form
 \begin{gather}
 \eqnFuncSys \intertext{ where, each }
 \eqnFuncSysI{i}\equiv \eqnFuncSysIExpl{i} \label{eqnGates}
 \end{gather}
- represents a set of model equations, $\eqnFunc_i$,  with Boolean valued gate, $\preGate_i, \postGate_i$. 
+ represents a set of model equations, $\eqnFunc_i$,  with Boolean valued gate functions, $\preGate_i, \postGate_i$. 
 In the algorithm's implementation, the $\preGate_i$ will be a 
 boolean function precondition and 
 the $\postGate_i$ will be a 
-boolean function postcondition for a given equation system. If some $\preGate_i$ is false, then there is no need to try to solve model $i$. If $\postGate_i$ is false, the system has produced an unacceptable solution which should be ignored.  Each of these individual models could be solved in parallel.   The
+boolean function postcondition for a given equation system. If some $\preGate_i$ is false, then there is no need to try to solve model $i$. If $\postGate_i$ is false, the system has produced an unacceptable solution which should be ignored.
+I suggest organizing equations using pre and post conditions as
+this can help with parallelizing a solution regardless of whether or not
+one uses my series representation. The
 $\lastGate$ will be a function for choosing among the 
 candidate $x_t\tArg$ values.
 The function $\lastGate$ uses the truth values from the $(\preGate_.,\postGate_.)$ and the possible values of the state variables to select one and only one $x_t$.  Thus, we will have an equation system and  corresponding gatekeeper 
@@ -917,7 +931,6 @@ logical expressions
 indicating which equation system is in force for producing the unique
 solution for a given $\tArg$.
 
-I will only consider time invariant model solutions $x_t=\xWarg$.  Given a decision rule $\xWarg$, denote its conditional expectation $\XWOarg(x_{t-1})\equiv \expct{\xWarg}$. 
 
 
  Examples of such systems include the simple RBC model from Section
@@ -925,9 +938,10 @@ I will only consider time invariant model solutions $x_t=\xWarg$.  Given a decis
 Other examples include  models with 
 occasionally binding constraints where solutions 
 exhibit complementary slackness conditions, or models with 
-regime switching.  See the appendix for an example 
-of a specification for occasionally binding constraints(\ref{sec:occbind}) 
-and for regime switching)(\ref{sec:ressw}).
+regime switching.   See Section \ref{sec:occbind} for a model with
+occasionally binding constraints and
+Section \ref{sec:ressw} for an example 
+of a specification for regime switching.
 
 
 
@@ -939,7 +953,7 @@ and for regime switching)(\ref{sec:ressw}).
 
 
 It may be worthwhile at this point
-to compare and contrast the approach I propose here with 
+to briefly compare and contrast the approach I propose here with 
 what is typically done for solving dynamic stochastic models.
 As with the standard approach, I characterize the solutions using a linearly
 weighted sums of orthogonal polynomials and solve the model equations
@@ -952,7 +966,7 @@ linearly weighted polynomials characterizing the
 trajectories for the usual
 variables $x_t(x_{t-1},\epsilon_t)$ as well as new  $z_t(x_{t-1},\epsilon_t)$ variables.  These new constraints 
 help keep proposed solutions bounded during the solution iterations 
-thus improving algorithm reliability.
+thus improving algorithm reliability and accuracy.
 
 
 
@@ -977,38 +991,28 @@ thus improving algorithm reliability.
 % \label{sec:unknown-solutions}
 
 I closely follow the techniques outlined in \citep{Judd2013,Judd2014}. 
-As a result, much of what must be done to use this proposed algorithm is 
+As a result, much of what must be done to use this  algorithm is 
 the same as for the usual approach.
-One must specify an initial guess for decision rule $\xWargK$ obtain conditional expectations function
+One must specify an initial guess for decision rule $\xWargK$ and obtain conditional expectations functions.
 I use the an-isotropic Smolyak Lagrange interpolation with adaptive domain.
-I also precompute all of the conditional expectations for the integrals as outlined in \citep{JuddIntegrals} so that the time t computations are all 
+I precompute all of the conditional expectations for the integrals as outlined in \citep{JuddIntegrals} so that the time t computations \ref{eqnGates} are all 
 deterministic.
 
-The algorithm uses a proposed decision rule characterized by a linearly weighted sum of Chebyshev polynomials with precomputed integrals.  
-Since the
-orthogonal polynomials have been integrated, the linearly weighted sum provides
-the conditional expectations function needed for computing conditional expectations paths from each collocation point forward.  
-decide upon the ranges for variables and the degrees of approximation for the an-isotropic Smolyak polynomial representation.
-The algorithm then solves
-a deterministic problem at time t to improve the proposed solution.
 
-I suggest organizing equations using pre and post conditions.
-This can help with parallelizing a solution regardless of whether or not
-one uses the series representation
-decide upon $K$, the number of conditional expectations function recursive iterations.  Fewer means more truncation error. In effect, 
-the algorithm imposes nonlinear constraints the for number of period specified 
-and uses the linear reference model thereafter(ie $z_{t+N}=0, \forall N>K$
 
-However, there are number of new steps. 
-One must  specify a linear reference model.  One must choose a value for
+
+There are number of new steps. 
+One must  specify a linear reference model.
+  One must choose a value for
 $K$ the number of terms in the series representation.  There are tradeoffs.
+Fewer means more truncation error. 
 More terms corresponds to more accuracy when the decision rule is accurate but
 More terms is computationally more expensive. The initial guess is 
 typically some distance away from the solution.   Consequently the
 terms in the series will be incorrect.  The smolyak grid adds more error to
 the calculation.  If there are many grid points it is more likely that 
 increasing the K can improve the quality of the solution.  If the grid is
-too sparse, increasing K will have less of an impact. 
+too sparse, increasing K will likely be less useful. 
 
 
 
@@ -1018,7 +1022,7 @@ too sparse, increasing K will have less of an impact.
 
 \subsubsection{Single Equation System Case}
 
-For now, consider the single model equation system case. A description 
+For now, consider a single model equation system case with no Boolean gates. A description 
 of the actual, multi-system implementation follows.   We seek 
 \begin{gather*}
 \eqnFunc(x_{t-1},\xWOarg^\star\tArg,\XWOarg^\star(\xWOarg^\star\tArg),\epsilon_t)=0\,\,\forall \tArg.  \intertext{Given a proposed model solution}
@@ -1096,8 +1100,8 @@ The current implementation  has a couple of atypical features.
 Many of the calculations exploit Mathematica's capability to blend
 numerical and symbolic computation and to easily use functions as arguments for
 other functions.  In addition, the implementation exploits parallelism at
-several points.   The parallel features apply whether or not one employs the
-the  usual technique or the approach suggested here.
+several points.   The parallel features also apply when employing
+the  usual technique for solving theset types of models.
 Below, I note where these features play a role.
 
 
@@ -1205,7 +1209,7 @@ producing interpolation data and subsequently returns the
 
 
 
-\subsection{Approximating the Known Solution: $U(c) = Log(c)$ }
+\subsection{Approximating a Known Solution: $\eta=1, U(c) = Log(c)$ }
 \label{sec:recov-known-solut}
 
 This subsection uses the series representation to
@@ -1216,7 +1220,8 @@ Smolyak polynomial function approximation with precomputed expectations.
 Figure \ref{fig:erg}  characterizes the use of the parallelotope
 transformation described in \citep{Judd2013}. The left panel shows the 200 values of $k_t$ and $\theta_t$ resulting from a stochastic simulation of the the known decision rule. The right panel shows the transformed variables that constitute
 an improved set of variables for constructing function approximation values.
-\begin{figure}
+
+\begin{figure}[h]
   \centering
   \includegraphics[width=2.3in]{ergodicKTheta.pdf}
   \includegraphics[width=2.3in]{ergodicZs.pdf}
@@ -1245,56 +1250,61 @@ V= \vcenter{\hbox{\includegraphics{ergodicV.pdf}}}
 \end{gather}
 
 
-Table \ref{evalp} shows the evaluation point when the degree of approximation
-was (1,1,1).  Table \ref{acterr} shows the actual error in the decision rule
-at each evaluation point.  Table \ref{esterr} shows the 
+Table \ref{evalpA} shows the evaluation points when the degree of approximation
+was (1,1,1).  Table \ref{valatA} shows the decesion rule prescription for $(c_t,k_t,\theta_t)$ at each evaluation point. Table \ref{acterrA} shows the actual error in the decision rule
+at each evaluation point.  Table \ref{esterrA} shows the 
 estimated error in the decision rule
 at each evaluation points.  Note that the formula provides accurate estimates
 of the error component by component.
 
 
-\begin{table}
-  \centering
+ \begin{table}
+   \centering
   
-\begin{gather*}
-  \begin{bmatrix}
-    k_1&\theta_1&\epsilon_1\\
-&\vdots\\
-    k_{30}&\theta_{30}&\epsilon_{30}\\
-  \end{bmatrix}=
+ \begin{gather*}
+   \begin{bmatrix}
+     k_1&\theta_1&\epsilon_1\\
+ &\vdots\\
+     k_{30}&\theta_{30}&\epsilon_{30}\\
+   \end{bmatrix}\\
   \input{xs1x1x1x5}
-\end{gather*}
+ \end{gather*}\\
+   \caption{RBC Known Solution: Model Evaluation Points \label{evalpA} d=(1,1,1)}
+ \end{table}
 
-  \caption{Model Evaluation Points \label{evalp}}
+
+\begin{table}
+  \centering
+  
+\begin{gather*}
+  \begin{bmatrix}
+    c_1&k_1&\theta_1\\
+&\vdots\\
+    c_{30}&k_{30}&\theta_{30}\\
+  \end{bmatrix}\\
+  \input{theApps1x1x1x5}
+\end{gather*}\\
+  \caption{RBC Known Solution: Values at Evaluation Points \label{valatA} d=(1,1,1)}
 \end{table}
-
 
  \begin{table}
     \centering
    \begin{gather*}
- \begin{bmatrix}
-     \eulerE_{c,1}&\eulerE_{k,1}&\eulerE_{\theta,1}\\
- &\vdots\\
-     \eulerE_{c,30}&\eulerE_{k,30}&\eulerE_{\theta,30}\\
-   \end{bmatrix}=
+\forActErr\\
   \input{actErrs1x1x1x5}
-   \end{gather*}
-   \caption{Actual Errors\label{acterr}}
+   \end{gather*}\\
+   \caption{RBC Known Solution: Actual Errors\label{acterrA} d=(1,1,1)}
  \end{table}
 
- \begin{figure}
+ \begin{table}
    \centering
   
    \begin{gather*}
- \begin{bmatrix}
-     \hat{\eulerE}_{c,1}&\hat{\eulerE}_{k,1}&\hat{\eulerE}_{\theta,1}\\
- &\vdots\\
-     \hat{\eulerE}_{c,30}&\hat{\eulerE}_{k,30}&\hat{\eulerE}_{\theta,30}\\
-   \end{bmatrix}=
+\forEstErr\\
    \input{errs1x1x1x5}
-   \end{gather*}
-   \caption{Error Approximations\label{esterr}}
- \end{figure}
+   \end{gather*}\\
+   \caption{RBC Known Solution: Error Approximations\label{esterrA} d=(1,1,1)}
+ \end{table}
 
 
 \begin{table}
@@ -1305,478 +1315,148 @@ of the error component by component.
     k_1&\theta_1&\epsilon_1\\
 &\vdots\\
     k_{30}&\theta_{30}&\epsilon_{30}\\
-  \end{bmatrix}=
+  \end{bmatrix}\\
   \input{xs2x2x2x5}
-\end{gather*}
+\end{gather*}\\
+  \caption{RBC Known Solution: Model Evaluation Points \label{evalpB} d=(2,2,2)}
+\end{table}
 
-  \caption{Model Evaluation Points \label{evalp}}
+\begin{table}
+  \centering
+  
+\begin{gather*}
+  \begin{bmatrix}
+    k_1&\theta_1&\epsilon_1\\
+&\vdots\\
+    k_{30}&\theta_{30}&\epsilon_{30}\\
+  \end{bmatrix}\\
+  \input{xs2x2x2x5}
+\end{gather*}\\
+  \caption{RBC Known Solution: Values at Evaluation Points \label{valatB}d=(2,2,2)}
 \end{table}
 
 
  \begin{table}
     \centering
    \begin{gather*}
- \begin{bmatrix}
-     \eulerE_{c,1}&\eulerE_{k,1}&\eulerE_{\theta,1}\\
- &\vdots\\
-     \eulerE_{c,30}&\eulerE_{k,30}&\eulerE_{\theta,30}\\
-   \end{bmatrix}=
+\forActErr\\
   \input{actErrs2x2x2x5}
-   \end{gather*}
-   \caption{Actual Errors\label{acterr}}
+   \end{gather*}\\
+   \caption{RBC Known Solution: Actual Errors\label{acterrB}d=(2,2,2)}
  \end{table}
 
- \begin{figure}
+ \begin{table}
    \centering
   
    \begin{gather*}
- \begin{bmatrix}
-     \hat{\eulerE}_{c,1}&\hat{\eulerE}_{k,1}&\hat{\eulerE}_{\theta,1}\\
- &\vdots\\
-     \hat{\eulerE}_{c,30}&\hat{\eulerE}_{k,30}&\hat{\eulerE}_{\theta,30}\\
-   \end{bmatrix}=
+\forEstErr\\
    \input{errs2x2x2x5}
+   \end{gather*}\\
+   \caption{RBC Known Solution: Error Approximations\label{esterrB}d=(2,2,2)}
+ \end{table}
+
+ \begin{table}
+   \centering
+   \begin{gather*}
+          \begin{bmatrix}
+       K&d=(1,1,1)&d=(2,2,2)&d=(3,3,3)
+     \end{bmatrix}\\
    \end{gather*}
-   \caption{Error Approximations\label{esterr}}
- \end{figure}
-
-
-% The following graphs present some characteristics of a proposed solution
-% on a Smolyak grid with degree of approximation vector (1,1,1).  
-% The panels labeled approximation error show contour plots of the norm of
-% the difference between the approximate solution and the known exact solution
-% at various points in the ergodic set.
-% $\mathbb{E}()$:
-% \begin{gather*}
-% \mathbb{E}()\equiv \sqrt{(c_t()-c_t^\star())^2 +(k_t()-k_t^\star())^2 +(\theta_t()-\theta_t^\star())^2 +(N_t()-N_t^\star())^2 }  
-% \end{gather*}
-% The panels labeled equation error show  contour plots for
-% \begin{gather*}
-%   \mathbb{D}()\equiv \eqnFunc(x_{-},g^p(x_{-},\epsilon),G^p(g^p(x_{-},\epsilon)),\epsilon). 
-% \end{gather*}
-% These are the model equation ``Euler'' errors at various locations in the ergodic set.
-
-
-% The bottom panel of
-% Figure \ref{fig:tradOne} shows the approximation error obtained by the standard
-% practice of selecting a number of approximation points and solving the collocation problem for the model equations at these points to
-%  approximate the  decision rule. The black dots show the interpolation points. The label of the figure provides the predicted error bound along with the largest error.
-% The green dot shows the location associated with the largest actual error.  The orange dot shows the location associated with  the largest equation system discrepancy 
-% and was used in computing the error bound. 
-
-% The top panel provides a contour plot of the
-% norm of the equation errors. The bottom plot shows the error in the decision rule for different values of $k_{t-1}, \theta_{t-1}$ with $\epsilon_t=0$.
-% Notice that  setting $K=0$ is not equivalent to the standard approach as
-% the series formula has a correction term for $z_t(x_{t-1},\epsilon_t)$
-
-
-
-
-% \begin{figure}
-%   \centering
-% \ifmacosx
-
-
-
-%   \includegraphics[width=3.0in]{resDir/forBetterRBC--1,1,1-Iters70theK0host-MacBook-Pro-2numKern2Trad.pdf}
-% \includegraphics[width=3.0in]{resDir/forBetterRBC--1,1,1-Iters70theK0host-MacBook-Pro-2numKern2ApproxTrad.pdf}
-
-
-% \fi
-% %\iflinux
-% \includegraphics[width=3.0in]{keepQ/resDir-host-node006dnumKern16-3727705036/forBetterRBC--1,1,1-Iters70theK0Trad.pdf}
-% \includegraphics[width=3.0in]{keepQ/resDir-host-node006dnumKern16-3727705036/forBetterRBC--1,1,1-Iters70theK0TradApprox.pdf}
-% %\fi
-%   \caption{Contour Plot for Standard Approach approx=(1,1,1) }
-%   \label{fig:tradOne}
-% \end{figure}
-
-
-% \begin{figure}
-%   \centering
-% \ifmacosx
-%   \includegraphics[width=3.0in]{resDir/forBetterRBC--1,1,1-Iters30theK0host-MacBook-Pro-2numKern2.pdf}
-%   \includegraphics[width=3.0in]{resDir/forBetterRBC--1,1,1-Iters30theK0host-MacBook-Pro-2numKern2Approx.pdf}
-% \fi
-% %\iflinux
-% \includegraphics[width=3.0in]{keepQ/resDir-host-node006dnumKern16-3727705061/forBetterRBC--1,1,1-Iters70theK0Series.pdf}
-% \includegraphics[width=3.0in]{keepQ/resDir-host-node006dnumKern16-3727705061/forBetterRBC--1,1,1-Iters70theK0SeriesApprox.pdf}
-% %\fi
-%   \caption{Contour Plot for approx=(1,1,1) K =0 }
-%   \label{fig:cntpltA}
-% \end{figure}
-
-
-
-% In order to evaluate how well the error approximation works, compute and
-% fix a particular decision rule as a proposed solution and I 
-% experiment with various parameterization of the 
-% RBC with known analytic solutions.
-% Consequently, I hold $\eta=d=1$ but approximate the model solution error 
-% for 50 various  parameter settings
-% \begin{gather*}
-%  0.20 <\alpha<0.40,\,\,0.85<\delta<0.99,\,\,0.85<\rho<0.99,\,\,0.005<\sigma<0.015
-% \end{gather*}
-% I do this approximation for 50 various values of 
-% $(k_{t-1},\theta_{t-1},\epsilon_t)$ generated using the Niederreiter algorithm
-%  covering the ergodic set.  I do this for values of k from 0 to 20.  The static proposed solution comes from linearizing
-% the RBC model around the deterministic steady state for
-%  the parameter settings in \ref{rbcparams}.  
-% solution path.  I use the statically selected decision rule and its conditional
-% expectation to construct the paths required in the error formula. 
-
-% Figure   \ref{fig:cdiffsk0}
-% \begin{figure}
-%   \centering
-%   \label{fig:cdiffsk0}
-%   \caption{$c_{err}-c_{predicted}$ Mean Versus StandardDeviation, k=0} 
-% \begin{gather}
-% \vcenter{\hbox{\includegraphics[width=5.5in]{cDiffk0.pdf}}}
-% \end{gather}
-% \end{figure}
-
-% Figure   \ref{fig:ccoefsk0}
-% \begin{figure}
-%   \centering
-%   \label{fig:ccoefsk0}
-%   \caption{$c_{err}= c_0+ \beta c_{predicted}$, k=0}
-% \begin{gather}
-% \vcenter{\hbox{\includegraphics[width=5.5in]{cCoeffsk0.pdf}}}
-% \end{gather}
-% \end{figure}
-
-
-
-% Figure   \ref{fig:diffskT0}
-% \begin{figure}
-%   \centering
-%   \label{fig:cdiffskT0}
-%   \caption{$c_{err}-c_{predicted}$ Mean Versus StandardDeviation, k=0  with added tail} 
-% \begin{gather}
-% \vcenter{\hbox{\includegraphics[width=5.5in]{cDiffkT0.pdf}}}
-% \end{gather}
-% \end{figure}
-
-% Figure   \ref{fig:ccoefskT0}
-% \begin{figure}
-%   \centering
-%   \label{fig:ccoefskT0}
-%   \caption{$c_{err}= c_0+ \beta c_{predicted}$, k=0 with added tail}
-% \begin{gather}
-% \vcenter{\hbox{\includegraphics[width=5.5in]{cCoeffskT0.pdf}}}
-% \end{gather}
-% \end{figure}
-
-% Figure   \ref{fig:cdiffsk1}
-% \begin{figure}
-%   \centering
-%   \label{fig:cdiffsk1}
-%   \caption{$c_{err}-c_{predicted}$ Mean Versus StandardDeviation, k=1} 
-% \begin{gather}
-% \vcenter{\hbox{\includegraphics[width=5.5in]{cDiffk1.pdf}}}
-% \end{gather}
-% \end{figure}
-
-% Figure   \ref{fig:ccoefsk1}
-% \begin{figure}
-%   \centering
-%   \label{fig:ccoefsk1}
-%   \caption{$c_{err}= c_0+ \beta c_{predicted}$, k=1}
-% \begin{gather}
-% \vcenter{\hbox{\includegraphics[width=5.5in]{cCoeffsk1.pdf}}}
-% \end{gather}
-% \end{figure}
-
-% Figure   \ref{fig:cdiffsk1}
-% \begin{figure}
-%   \centering
-%   \label{fig:cdiffsk1}
-%   \caption{$c_{err}-c_{predicted}$ Mean Versus StandardDeviation, k=1 added tail} 
-% \begin{gather}
-% \vcenter{\hbox{\includegraphics[width=5.5in]{cDiffkT1.pdf}}}
-% \end{gather}
-% \end{figure}
-
-% Figure   \ref{fig:ccoefsk1}
-% \begin{figure}
-%   \centering
-%   \label{fig:ccoefsk1}
-%   \caption{$c_{err}= c_0+ \beta c_{predicted}$, k=1, added tail}
-% \begin{gather}
-% \vcenter{\hbox{\includegraphics[width=5.5in]{cCoeffskT1.pdf}}}
-% \end{gather}
-% \end{figure}
-
-
-% Figure   \ref{fig:cdiffsk5}
-% \begin{figure}
-%   \centering
-%   \label{fig:cdiffsk5}
-%   \caption{$c_{err}-c_{predicted}$ Mean Versus StandardDeviation, k=5} 
-% \begin{gather}
-% \vcenter{\hbox{\includegraphics[width=5.5in]{cDiffk5.pdf}}}
-% \end{gather}
-% \end{figure}
-
-% Figure   \ref{fig:ccoefsk5}
-% \begin{figure}
-%   \centering
-%   \label{fig:ccoefsk5}
-%   \caption{$c_{err}= c_0+ \beta c_{predicted}$, k=5}
-% \begin{gather}
-% \vcenter{\hbox{\includegraphics[width=5.5in]{cCoeffsk5.pdf}}}
-% \end{gather}
-% \end{figure}
-
-
-% Figure   \ref{fig:cdiffsk5}
-% \begin{figure}
-%   \centering
-%   \label{fig:cdiffsk5}
-%   \caption{$c_{err}-c_{predicted}$ Mean Versus StandardDeviation, k=5 added tail} 
-% \begin{gather}
-% \vcenter{\hbox{\includegraphics[width=5.5in]{cDiffkT5.pdf}}}
-% \end{gather}
-% \end{figure}
-
-% Figure   \ref{fig:ccoefsk5}
-% \begin{figure}
-%   \centering
-%   \label{fig:ccoefsk5}
-%   \caption{$c_{err}= c_0+ \beta c_{predicted}$, k=5, added tail}
-% \begin{gather}
-% \vcenter{\hbox{\includegraphics[width=5.5in]{cCoeffskT5.pdf}}}
-% \end{gather}
-% \end{figure}
-
-
-
-% Figure   \ref{fig:cdiffsk10}
-% \begin{figure}
-%   \centering
-%   \label{fig:cdiffsk10}
-%   \caption{$c_{err}-c_{predicted}$ Mean Versus StandardDeviation, k=10} 
-% \begin{gather}
-% \vcenter{\hbox{\includegraphics[width=5.5in]{cDiffk10.pdf}}}
-% \end{gather}
-% \end{figure}
-
-% Figure   \ref{fig:ccoefsk10}
-% \begin{figure}
-%   \centering
-%   \label{fig:ccoefsk10}
-%   \caption{$c_{err}= c_0+ \beta c_{predicted}$, k=10}
-% \begin{gather}
-% \vcenter{\hbox{\includegraphics[width=5.5in]{cCoeffsk10.pdf}}}
-% \end{gather}
-% \end{figure}
-
-
-
-% Figure   \ref{fig:cdiffsk10}
-% \begin{figure}
-%   \centering
-%   \label{fig:cdiffsk10}
-%   \caption{$c_{err}-c_{predicted}$ Mean Versus StandardDeviation, k=10 added tail} 
-% \begin{gather}
-% \vcenter{\hbox{\includegraphics[width=5.5in]{cDiffkT10.pdf}}}
-% \end{gather}
-% \end{figure}
-
-% Figure   \ref{fig:ccoefsk10}
-% \begin{figure}
-%   \centering
-%   \label{fig:ccoefsk10}
-%   \caption{$c_{err}= c_0+ \beta c_{predicted}$, k=10, added tail}
-% \begin{gather}
-% \vcenter{\hbox{\includegraphics[width=5.5in]{cCoeffskT10.pdf}}}
-% \end{gather}
-% \end{figure}
-
-
-
-
-% Figure   \ref{fig:cdiffsk10}
-% \begin{figure}
-%   \centering
-%   \label{fig:cdiffsk10}
-%   \caption{$c_{err}-c_{predicted}$ Mean Versus StandardDeviation, k=10 added tail} 
-% \begin{gather}
-% \vcenter{\hbox{\includegraphics[width=5.5in]{cDiffkT10.pdf}}}
-% \end{gather}
-% \end{figure}
-
-% Figure   \ref{fig:ccoefsk10}
-% \begin{figure}
-%   \centering
-%   \label{fig:ccoefsk10}
-%   \caption{$c_{err}= c_0+ \beta c_{predicted}$, k=10, added tail}
-% \begin{gather}
-% \vcenter{\hbox{\includegraphics[width=5.5in]{cCoeffskT10.pdf}}}
-% \end{gather}
-% \end{figure}
-
-
-
-
-% Figure   \ref{fig:cdiffsk20}
-% \begin{figure}
-%   \centering
-%   \label{fig:cdiffsk20}
-%   \caption{$c_{err}-c_{predicted}$ Mean Versus StandardDeviation, k=20} 
-% \begin{gather}
-% \vcenter{\hbox{\includegraphics[width=5.5in]{cDiffk20.pdf}}}
-% \end{gather}
-% \end{figure}
-
-% Figure   \ref{fig:ccoefsk20}
-% \begin{figure}
-%   \centering
-%   \label{fig:ccoefsk20}
-%   \caption{$c_{err}= c_0+ \beta c_{predicted}$, k=20}
-% \begin{gather}
-% \vcenter{\hbox{\includegraphics[width=5.5in]{cCoeffsk20.pdf}}}
-% \end{gather}
-% \end{figure}
-
-
-% Figure   \ref{fig:cdiffsk50}
-% \begin{figure}
-%   \centering
-%   \label{fig:cdiffsk50}
-%   \caption{$c_{err}-c_{predicted}$ Mean Versus StandardDeviation, k=50} 
-% \begin{gather}
-% %\vcenter{\hbox{\includegraphics[width=5.5in]{cDiffk50.pdf}}}
-% \end{gather}
-% \end{figure}
-
-% Figure   \ref{fig:ccoefsk50}
-% \begin{figure}
-%   \centering
-%   \label{fig:ccoefsk50}
-%   \caption{$c_{err}= c_0+ \beta c_{predicted}$, k=50}
-% \begin{gather}
-% %\vcenter{\hbox{\includegraphics[width=5.5in]{cCoeffsk50.pdf}}}
-% \end{gather}
-% \end{figure}
-
-
-% Figure   \ref{fig:cdiffsk50}
-% \begin{figure}
-%   \centering
-%   \label{fig:cdiffsk50}
-%   \caption{$c_{err}-c_{predicted}$ Mean Versus StandardDeviation, k=50} 
-% \begin{gather}
-% \vcenter{\hbox{\includegraphics[width=5.5in]{cDiffkT50.pdf}}}
-% \end{gather}
-% \end{figure}
-
-% Figure   \ref{fig:ccoefsk50}
-% \begin{figure}
-%   \centering
-%   \label{fig:ccoefsk50}
-%   \caption{$c_{err}= c_0+ \beta c_{predicted}$, k=50}
-% \begin{gather}
-% \vcenter{\hbox{\includegraphics[width=5.5in]{cCoeffskT50.pdf}}}
-% \end{gather}
-% \end{figure}
-
-
-% I used the Niedererreiter number theoretic algorithm to generated highly 
-% dispersed test points throughout the ergodic region.\citep{niederreiter88,Xu2005}
-% For the given set of parameters, I computed the exact solution.
-% I chose a wide array of different degrees of  approximation for the
-% Smolyak polynomials and for each given degree of approximation I applied
-% the error formula to approximate the error at each of
-% the test points.  I ran a regression using the formula approximation as a right
-% hand side variable along with a constant to predict the true error.
-% Varying k from 0 to 20 consistently  produces $R^2$ near one, tiny standard errors and a coefficient on the estimated error very near one.
-
-
-
-
-
-
-
-% \vspace{.25in}
-
-% \begin{tabular}{|r|r|r|r|r|}
-% \hline
-% \multicolumn{5}{|c|}{$c \,\,\text{with}\,\, \mathbb{V}=\{1,1,1\},k_p=2$}\\
-% \hline
-%   MAE &$R^2$&$(\alpha,\beta)$&$\hat{\sigma}$&$k_e$\\
-% \hline
-% \end{tabular}
-% Speedup
-
-% \begin{figure}
-%   \centering
+%\vspace{.2in}
+   \begin{gather*}
+   \input{errByKTab}     
+   \end{gather*}
+   \caption{RBC Known Solution: Impact of Series Length on Approximation Error}
+ \end{table}
+
+\clearpage
+\subsection{Approximating an Unknown Solution: $\eta=3$ }
+\label{sec:recov-unknown-solut}
+
+
+ \begin{table}
+   \centering
   
-%   \caption{$c_t,k_t \,\,\text{with}\,\, \mathbb{V}=\{2,2,2\},k_p=10$}
-% \begin{gather}
-% \vcenter{\hbox{\includegraphics{curio01.pdf}}}
-% \end{gather}
-% \end{figure}
+ \begin{gather*}
+   \begin{bmatrix}
+     k_1&\theta_1&\epsilon_1\\
+ &\vdots\\
+     k_{30}&\theta_{30}&\epsilon_{30}\\
+   \end{bmatrix}\\
+  \input{xs1x1x1x5Unk}
+ \end{gather*}\\
+   \caption{RBC Approximated Solution: Model Evaluation Points \label{evalpunkA} d=(1,1,1)}
+ \end{table}
 
 
-% \begin{figure}
-%   \centering
+\begin{table}
+  \centering
   
-%   \caption{$c_t,k_t \,\,\text{with}\,\, \mathbb{V}=\{2,2,2\}, Traditional$}
-% \begin{gather}
-% \vcenter{\hbox{\includegraphics{curio02.pdf}}}
-% \end{gather}
-% \end{figure}
+\begin{gather*}
+  \begin{bmatrix}
+    c_1&k_1&\theta_1\\
+&\vdots\\
+    c_{30}&k_{30}&\theta_{30}\\
+  \end{bmatrix}\\
+  \input{theApps1x1x1x5Unk}
+\end{gather*}\\
+  \caption{RBC Approximated Solution: Values at Evaluation Points \label{valatunkA} d=(1,1,1)}
+\end{table}
 
-
-% \section{Robust Calculations}
-
- 
-
-% Many global methods propose a solution and update the solution by solving
-% the original system of equations with the previous iterations guess.
-% These iterations are notorious for going off track.
-% The series representation provides a useful additional constraint on the 
-% evolution of proposed solution in the algorithm.
-% To demonstrate this phenomenon, 
-% I experimented with an RBC model with occasionally binding constraints.
-
-% For a given set of parameters, I computed a deterministic 
-% steady state for the non binding solution.  I discarded
-% those parameter values that produced a negative steady state for capital or 
-% consumption.  For each set of parameters,
-% I linearized the model at the steady state and computed
-% the linear perfect foresight solution to use as the linear reference model and
-% as an initial guess for the equation system.
-
-% In order to test the effectiveness of the 
-% algorithm for model convergence I use Nied to generate model parameters.
-% I discarded those parameters which failed to produce 
-% I computed
-
-
-
-
-
-% \begin{figure}
-%   \centering
+ \begin{table}
+   \centering
   
-%   \caption{Values for $(c_{ss}>0\wedge k_{ss}>0)\,\,\{\alpha,d,\delta,\eta,\rho,\sigma,\Upsilon\}\,\, Converged?$}
-% \begin{gather}
-% \vcenter{\hbox{\includegraphics[width=5.5in]{paramsForTest.pdf}}}
-% \end{gather}
-% \end{figure}
+   \begin{gather*}
+\forEstErr
+\\
+   \input{errs1x1x1x5Unk}
+   \end{gather*}\\
+   \caption{RBC Approximated Solution: Error Approximations\label{esterrunkA} d=(1,1,1)}
+ \end{table}
 
 
-% It will be useful to explore the computational aspects of choosing the right value for k.  Zero seems to improve reliability.
-% It will be important to work on exploiting the high degree of parallelism 
-% available.
+\begin{table}
+  \centering
+  
+\begin{gather*}
+  \begin{bmatrix}
+    k_1&\theta_1&\epsilon_1\\
+&\vdots\\
+    k_{30}&\theta_{30}&\epsilon_{30}\\
+  \end{bmatrix}\\
+  \input{xs2x2x2x5Unk}
+\end{gather*}\\
+  \caption{RBC Approximated Solution: Model Evaluation Points \label{evalpunkB} d=(2,2,2)}
+\end{table}
 
-% It should be possible to maintain a small footprint communication would involve
-% sending the coefficient matrices for Smolyak calculation.  These nodes
-% should use efficient polynomial composition to compute conditional expectations
-% paths .
+\begin{table}
+  \centering
+  
+\begin{gather*}
+  \begin{bmatrix}
+    k_1&\theta_1&\epsilon_1\\
+&\vdots\\
+    k_{30}&\theta_{30}&\epsilon_{30}\\
+  \end{bmatrix}\\
+  \input{theApps2x2x2x5Unk}
+\end{gather*}\\
+  \caption{RBC Approximated Solution: Values at Evaluation Points \label{valatunkB}d=(2,2,2)}
+\end{table}
 
+
+
+ \begin{table}
+   \centering
+  
+   \begin{gather*}
+\forEstErr\\
+   \input{errs2x2x2x5Unk}
+   \end{gather*}\\
+   \caption{RBC Approximated Solution: Error Approximations\label{esterrunkB}d=(2,2,2)}
+ \end{table}
+
+
+\clearpage
 \section{A Model with Occasionally Binding Constraints}
 \label{sec:occbind}
 
@@ -1876,7 +1556,98 @@ I_t-(K_t-(1-d)k_{t-1})\\
 
 
 
+ \begin{table}
+   \centering
+  
+ \begin{gather*}
+   \begin{bmatrix}
+     k_1&\theta_1&\epsilon_1\\
+ &\vdots\\
+     k_{30}&\theta_{30}&\epsilon_{30}\\
+   \end{bmatrix}\\
+  \input{xs1x1x1x5CS}
+ \end{gather*}
 
+   \caption{Occasionally Binding Constraints Model Evaluation Points \label{evalpobcA} d=(1,1,1)}
+ \end{table}
+
+
+\begin{table}
+  \centering
+  
+\begin{gather*}
+  \begin{bmatrix}
+    c_1&I_1&k_1\\
+&\vdots\\
+    c_{30}&I_{30}&k_{30}\\
+  \end{bmatrix}\\
+ \input{theApps1x1x1x5CS}
+\end{gather*}
+
+  \caption{Occasionally Binding Constraints Values at Evaluation Points for Occasionally Binding Constraints \label{valatobcA}  d=(1,1,1)}
+\end{table}
+
+ \begin{table}
+   \centering
+  
+   \begin{gather*}
+\forEstErr\\
+   \input{errs1x1x1x5CS}
+   \end{gather*}
+   \caption{Occasionally Binding Constraints Error Approximations\label{esterrobcA}  d=(1,1,1)}
+ \end{table}
+
+
+
+
+
+ \begin{table}
+   \centering
+  
+ \begin{gather*}
+   \begin{bmatrix}
+     k_1&\theta_1&\epsilon_1\\
+ &\vdots\\
+     k_{30}&\theta_{30}&\epsilon_{30}\\
+   \end{bmatrix}\\
+  \input{xs2x2x2x5CS}
+ \end{gather*}
+
+   \caption{Occasionally Binding Constraints Model Evaluation Points \label{evalpobcB} d=(2,2,2)}
+ \end{table}
+
+
+\begin{table}
+  \centering
+  
+\begin{gather*}
+  \begin{bmatrix}
+    k_1&\theta_1&\epsilon_1\\
+&\vdots\\
+    k_{30}&\theta_{30}&\epsilon_{30}\\
+  \end{bmatrix}\\
+ \input{theApps2x2x2x5CS}
+\end{gather*}
+
+  \caption{Occasionally Binding Constraints Values at Evaluation Points for Occasionally Binding Constraints \label{valatobcB}  d=(2,2,2)}
+\end{table}
+
+
+ \begin{table}
+   \centering
+
+   \begin{gather*}
+\forEstErr\\
+   \input{errs2x2x2x5CS}
+   \end{gather*}
+   \caption{Occasionally Binding Constraints Error Approximations\label{esterrobcB}  d=(2,2,2)}
+ \end{table}
+
+Why not here?
+
+
+
+\clearpage
 \section{Conclusions}
 This paper introduces a new series representation for bounded time series and
 shows how to develop  series for representing bounded time invariant maps.
@@ -1889,6 +1660,7 @@ conditional expectation paths relate to the time t solution values.
 The prototype was written in Mathematica and is available on gitHub
 at 
 
+\newpage
 
 % There are many directions to pursue in future work.
 % The technique should be useful for value function iteration.
@@ -2685,7 +2457,6 @@ $theFindRootFuncs=genFindRootFuncs(\linMod,\bothFuncs,\kappa,\eqnFuncSys)$\\
 $\bothFuncs^{i+1}=makeInterpFuncs(theFindRootFuncs,\smolSpec)$\\
 \Output{$\bothFuncs^{i+1}$}
 \caption{$doInterp$\label{doInterp}} 
-\label{doInterp}
 \end{algorithm}
 
 
@@ -2711,7 +2482,6 @@ $theFuncOptionsTriples=\map(\func(v,\{v[1],genFindRootWorker(\linMod,\bothFuncs,
 \eqnFuncSysNoD)$\\
 \Output{$\{theFuncOptionsTriples,\theD\}$}
 \caption{$genFindRootFuncs$\label{genFindRootFuncs}} 
-\label{genFindRootFuncs}
 \end{algorithm}
 
 
@@ -2729,7 +2499,6 @@ $funcOfXtZt=FindRoot((x_t^p,z_t),\{\eqnFunc(\modEqnArgsNow),x_t-x_t^p\})$\\
 $funcOfXtm1Eps=Function((x_{t-1},\epsilon_t),funcOfXtZt)$\\
 \Output{$funcOfXtm1Eps$}
 \caption{$genFindRootWorker$\label{genFindRootWorker}} 
-\label{genFindRootWorker}
 \end{algorithm}
 
 
@@ -2745,7 +2514,6 @@ $}
 $=\{(X_{t+i},Z_{t+1}),\ldots,(X_{t+\kappa-1}Z_{t+\kappa-1})\}=genZsForFindRoot(\linMod,x_t^p,\XZFunc)$\\
 \Output{$\{Z_{t+1},\ldots,Z_{t+k-1}\}$}
 \caption{$genZsForFindRoot$\label{genZsForFindRoot}}
-\label{genZsForFindRoot}
 \end{algorithm}
 
 
@@ -2796,7 +2564,6 @@ $x_t=B x_{t-1}+ (I-F)^{-1} \phi \psi_c + \phi . \psi_\epsilon . \epsilon_t+
 \phi \psi_z  z_t + F  fCon$\\
 \Output{$x_t$}
 \caption{$genXtOfXtm1$\label{genXtOfXtm1}} 
-\label{genXtOfXtm1}
 \end{algorithm}
 
 
@@ -2810,7 +2577,6 @@ $x_t=B x_{t-1}+ (I-F)^{-1} \phi \psi_c + \phi . \psi_\epsilon . \epsilon_t+
 \phi \psi_z  z_t +fCon$\\
 \Output{$x_t$}
 \caption{$genXtp1OfXt$\label{genXtp1OfXt}} 
-\label{genXtp1OfXt}
 \end{algorithm}
 
 
@@ -2880,7 +2646,7 @@ and subsequently returns the
 \Input{$(approxLevels,means,stdDev,minZs,maxZs,vvMat,distributions)$}
 \tcc{Given approximation levels,  PCA information, and probability distributions for errors compute the collocation points, the Psi Matrix, the polynomials and the integrals olf the polynomials}
 \Output{$\{xPts,PsiMat,polys, intPolys\}$}
-\caption{$smolyakInterpolationPrep$\label{smolyakInterpolationPrep}} 
+\caption{$smolyakInterpolationPrep$\label{smolyakInterpolationPrepA}} 
 \end{algorithm}
 
 
@@ -2890,7 +2656,7 @@ and subsequently returns the
 \Input{$(approxLevels,varRanges,distributions)$}
 \tcc{Given approximation levels, variable ranges and probability distributions for errors compute the collocation points, the Psi Matrix, the polynomials and the integrals olf the polynomials}
 \Output{$\{xPts,PsiMat,polys, intPolys\}$}
-\caption{$smolyakInterpolationPrep$\label{smolyakInterpolationPrep}} 
+\caption{$smolyakInterpolationPrep$\label{smolyakInterpolationPrepB}} 
 \end{algorithm}
 \clearpage
 
@@ -2900,7 +2666,7 @@ and subsequently returns the
 \Input{$(approxLevels,varRanges,distributions)$}
 \tcc{Given approximation levels, variable ranges and probability distributions for errors compute the collocation points, the Psi Matrix, the polynomials and the integrals olf the polynomials}
 \Output{$\{xPts,PsiMat,polys, intPolys\}$}
-\caption{$\label{genSolutionErrXtEps}$\label{genSolutionErrXtEps}} 
+\caption{$genSolutionErrXtEps$\label{genSolutionErrXtEps}} 
 \end{algorithm}
 
 
@@ -2910,7 +2676,7 @@ and subsequently returns the
 \Input{$(approxLevels,varRanges,distributions)$}
 \tcc{Given approximation levels, variable ranges and probability distributions for errors compute the collocation points, the Psi Matrix, the polynomials and the integrals olf the polynomials}
 \Output{$\{xPts,PsiMat,polys, intPolys\}$}
-\caption{$\label{genSolutionErrXtEpsZero}$\label{genSolutionErrXtEpsZero}} 
+\caption{$genSolutionErrXtEpsZero$\label{genSolutionErrXtEpsZero}} 
 \end{algorithm}
 
 
@@ -2921,12 +2687,13 @@ and subsequently returns the
 \Input{$(approxLevels,varRanges,distributions)$}
 \tcc{Given approximation levels, variable ranges and probability distributions for errors compute the collocation points, the Psi Matrix, the polynomials and the integrals olf the polynomials}
 \Output{$\{xPts,PsiMat,polys, intPolys\}$}
-\caption{$\label{genSolutionPath}$\label{genSolutionPath}} 
+\caption{$genSolutionPath$\label{genSolutionPath}} 
 \end{algorithm}
 
 
 
 
+\newpage
 \section{Other Computing?}
 \label{sec:other-computing}
 
@@ -2937,18 +2704,15 @@ and subsequently returns the
 \item doPrepPoly
 \item eliminate colors in graphs throughout
 \item {fix genInterpData checks all signatures}
-\item {correct caption for ergodic values transformed}
+\item {correct caption for ergodic values transformed} (look at oldBetterRBC.m)
 \item legend for figs throughout
 \item axes labels throughout
   \end{itemize}
 
 \item aesthetic
 \begin{itemize}
-\item {Call tree, hyperlink?}
 \item function names bold greek and function name reconcile.
-\item use different time series.  random and pi same?
 \item no colors
-\item greek for function names
  \end{itemize}
 
 \item other mention
@@ -2957,10 +2721,7 @@ and subsequently returns the
 \item a good path corresponds to a good error if enough terms
 \item refer to far distant relation to truncating k vals
 \item and parallelism gains.
-\item calculate using their error?
 \item {parallelism measure}
-\item {Large model multiple errors}
-\item units for z
   \end{itemize}
 
 \item error formula
@@ -2968,14 +2729,12 @@ and subsequently returns the
 \item {show solution accuracy for unknown solution}
 \item {show solution accuracy simple and OBC}
 \item More information about other error formulas.
-\item multiple formulas?
 \item {revise assess error calc or eliminate}
 \item {just the first term.}
   \end{itemize}
 
 \item robust
   \begin{itemize}
-\item Chris model example for robust
 \item {revise assess robust or eliminate}
 \item Proof for robustness and accuracy 
   \end{itemize}
@@ -2988,3 +2747,439 @@ and subsequently returns the
 
 
 
+
+% The following graphs present some characteristics of a proposed solution
+% on a Smolyak grid with degree of approximation vector (1,1,1).  
+% The panels labeled approximation error show contour plots of the norm of
+% the difference between the approximate solution and the known exact solution
+% at various points in the ergodic set.
+% $\mathbb{E}()$:
+% \begin{gather*}
+% \mathbb{E}()\equiv \sqrt{(c_t()-c_t^\star())^2 +(k_t()-k_t^\star())^2 +(\theta_t()-\theta_t^\star())^2 +(N_t()-N_t^\star())^2 }  
+% \end{gather*}
+% The panels labeled equation error show  contour plots for
+% \begin{gather*}
+%   \mathbb{D}()\equiv \eqnFunc(x_{-},g^p(x_{-},\epsilon),G^p(g^p(x_{-},\epsilon)),\epsilon). 
+% \end{gather*}
+% These are the model equation ``Euler'' errors at various locations in the ergodic set.
+
+
+% The bottom panel of
+% Figure \ref{fig:tradOne} shows the approximation error obtained by the standard
+% practice of selecting a number of approximation points and solving the collocation problem for the model equations at these points to
+%  approximate the  decision rule. The black dots show the interpolation points. The label of the figure provides the predicted error bound along with the largest error.
+% The green dot shows the location associated with the largest actual error.  The orange dot shows the location associated with  the largest equation system discrepancy 
+% and was used in computing the error bound. 
+
+% The top panel provides a contour plot of the
+% norm of the equation errors. The bottom plot shows the error in the decision rule for different values of $k_{t-1}, \theta_{t-1}$ with $\epsilon_t=0$.
+% Notice that  setting $K=0$ is not equivalent to the standard approach as
+% the series formula has a correction term for $z_t(x_{t-1},\epsilon_t)$
+
+
+
+
+% \begin{figure}
+%   \centering
+% \ifmacosx
+
+
+
+%   \includegraphics[width=3.0in]{resDir/forBetterRBC--1,1,1-Iters70theK0host-MacBook-Pro-2numKern2Trad.pdf}
+% \includegraphics[width=3.0in]{resDir/forBetterRBC--1,1,1-Iters70theK0host-MacBook-Pro-2numKern2ApproxTrad.pdf}
+
+
+% \fi
+% %\iflinux
+% \includegraphics[width=3.0in]{keepQ/resDir-host-node006dnumKern16-3727705036/forBetterRBC--1,1,1-Iters70theK0Trad.pdf}
+% \includegraphics[width=3.0in]{keepQ/resDir-host-node006dnumKern16-3727705036/forBetterRBC--1,1,1-Iters70theK0TradApprox.pdf}
+% %\fi
+%   \caption{Contour Plot for Standard Approach approx=(1,1,1) }
+%   \label{fig:tradOne}
+% \end{figure}
+
+
+% \begin{figure}
+%   \centering
+% \ifmacosx
+%   \includegraphics[width=3.0in]{resDir/forBetterRBC--1,1,1-Iters30theK0host-MacBook-Pro-2numKern2.pdf}
+%   \includegraphics[width=3.0in]{resDir/forBetterRBC--1,1,1-Iters30theK0host-MacBook-Pro-2numKern2Approx.pdf}
+% \fi
+% %\iflinux
+% \includegraphics[width=3.0in]{keepQ/resDir-host-node006dnumKern16-3727705061/forBetterRBC--1,1,1-Iters70theK0Series.pdf}
+% \includegraphics[width=3.0in]{keepQ/resDir-host-node006dnumKern16-3727705061/forBetterRBC--1,1,1-Iters70theK0SeriesApprox.pdf}
+% %\fi
+%   \caption{Contour Plot for approx=(1,1,1) K =0 }
+%   \label{fig:cntpltA}
+% \end{figure}
+
+
+
+% In order to evaluate how well the error approximation works, compute and
+% fix a particular decision rule as a proposed solution and I 
+% experiment with various parameterization of the 
+% RBC with known analytic solutions.
+% Consequently, I hold $\eta=d=1$ but approximate the model solution error 
+% for 50 various  parameter settings
+% \begin{gather*}
+%  0.20 <\alpha<0.40,\,\,0.85<\delta<0.99,\,\,0.85<\rho<0.99,\,\,0.005<\sigma<0.015
+% \end{gather*}
+% I do this approximation for 50 various values of 
+% $(k_{t-1},\theta_{t-1},\epsilon_t)$ generated using the Niederreiter algorithm
+%  covering the ergodic set.  I do this for values of k from 0 to 20.  The static proposed solution comes from linearizing
+% the RBC model around the deterministic steady state for
+%  the parameter settings in \ref{rbcparams}.  
+% solution path.  I use the statically selected decision rule and its conditional
+% expectation to construct the paths required in the error formula. 
+
+% Figure   \ref{fig:cdiffsk0}
+% \begin{figure}
+%   \centering
+%   \label{fig:cdiffsk0}
+%   \caption{$c_{err}-c_{predicted}$ Mean Versus StandardDeviation, k=0} 
+% \begin{gather}
+% \vcenter{\hbox{\includegraphics[width=5.5in]{cDiffk0.pdf}}}
+% \end{gather}
+% \end{figure}
+
+% Figure   \ref{fig:ccoefsk0}
+% \begin{figure}
+%   \centering
+%   \label{fig:ccoefsk0}
+%   \caption{$c_{err}= c_0+ \beta c_{predicted}$, k=0}
+% \begin{gather}
+% \vcenter{\hbox{\includegraphics[width=5.5in]{cCoeffsk0.pdf}}}
+% \end{gather}
+% \end{figure}
+
+
+
+% Figure   \ref{fig:diffskT0}
+% \begin{figure}
+%   \centering
+%   \label{fig:cdiffskT0}
+%   \caption{$c_{err}-c_{predicted}$ Mean Versus StandardDeviation, k=0  with added tail} 
+% \begin{gather}
+% \vcenter{\hbox{\includegraphics[width=5.5in]{cDiffkT0.pdf}}}
+% \end{gather}
+% \end{figure}
+
+% Figure   \ref{fig:ccoefskT0}
+% \begin{figure}
+%   \centering
+%   \label{fig:ccoefskT0}
+%   \caption{$c_{err}= c_0+ \beta c_{predicted}$, k=0 with added tail}
+% \begin{gather}
+% \vcenter{\hbox{\includegraphics[width=5.5in]{cCoeffskT0.pdf}}}
+% \end{gather}
+% \end{figure}
+
+% Figure   \ref{fig:cdiffsk1}
+% \begin{figure}
+%   \centering
+%   \label{fig:cdiffsk1}
+%   \caption{$c_{err}-c_{predicted}$ Mean Versus StandardDeviation, k=1} 
+% \begin{gather}
+% \vcenter{\hbox{\includegraphics[width=5.5in]{cDiffk1.pdf}}}
+% \end{gather}
+% \end{figure}
+
+% Figure   \ref{fig:ccoefsk1}
+% \begin{figure}
+%   \centering
+%   \label{fig:ccoefsk1}
+%   \caption{$c_{err}= c_0+ \beta c_{predicted}$, k=1}
+% \begin{gather}
+% \vcenter{\hbox{\includegraphics[width=5.5in]{cCoeffsk1.pdf}}}
+% \end{gather}
+% \end{figure}
+
+% Figure   \ref{fig:cdiffsk1}
+% \begin{figure}
+%   \centering
+%   \label{fig:cdiffsk1}
+%   \caption{$c_{err}-c_{predicted}$ Mean Versus StandardDeviation, k=1 added tail} 
+% \begin{gather}
+% \vcenter{\hbox{\includegraphics[width=5.5in]{cDiffkT1.pdf}}}
+% \end{gather}
+% \end{figure}
+
+% Figure   \ref{fig:ccoefsk1}
+% \begin{figure}
+%   \centering
+%   \label{fig:ccoefsk1}
+%   \caption{$c_{err}= c_0+ \beta c_{predicted}$, k=1, added tail}
+% \begin{gather}
+% \vcenter{\hbox{\includegraphics[width=5.5in]{cCoeffskT1.pdf}}}
+% \end{gather}
+% \end{figure}
+
+
+% Figure   \ref{fig:cdiffsk5}
+% \begin{figure}
+%   \centering
+%   \label{fig:cdiffsk5}
+%   \caption{$c_{err}-c_{predicted}$ Mean Versus StandardDeviation, k=5} 
+% \begin{gather}
+% \vcenter{\hbox{\includegraphics[width=5.5in]{cDiffk5.pdf}}}
+% \end{gather}
+% \end{figure}
+
+% Figure   \ref{fig:ccoefsk5}
+% \begin{figure}
+%   \centering
+%   \label{fig:ccoefsk5}
+%   \caption{$c_{err}= c_0+ \beta c_{predicted}$, k=5}
+% \begin{gather}
+% \vcenter{\hbox{\includegraphics[width=5.5in]{cCoeffsk5.pdf}}}
+% \end{gather}
+% \end{figure}
+
+
+% Figure   \ref{fig:cdiffsk5}
+% \begin{figure}
+%   \centering
+%   \label{fig:cdiffsk5}
+%   \caption{$c_{err}-c_{predicted}$ Mean Versus StandardDeviation, k=5 added tail} 
+% \begin{gather}
+% \vcenter{\hbox{\includegraphics[width=5.5in]{cDiffkT5.pdf}}}
+% \end{gather}
+% \end{figure}
+
+% Figure   \ref{fig:ccoefsk5}
+% \begin{figure}
+%   \centering
+%   \label{fig:ccoefsk5}
+%   \caption{$c_{err}= c_0+ \beta c_{predicted}$, k=5, added tail}
+% \begin{gather}
+% \vcenter{\hbox{\includegraphics[width=5.5in]{cCoeffskT5.pdf}}}
+% \end{gather}
+% \end{figure}
+
+
+
+% Figure   \ref{fig:cdiffsk10}
+% \begin{figure}
+%   \centering
+%   \label{fig:cdiffsk10}
+%   \caption{$c_{err}-c_{predicted}$ Mean Versus StandardDeviation, k=10} 
+% \begin{gather}
+% \vcenter{\hbox{\includegraphics[width=5.5in]{cDiffk10.pdf}}}
+% \end{gather}
+% \end{figure}
+
+% Figure   \ref{fig:ccoefsk10}
+% \begin{figure}
+%   \centering
+%   \label{fig:ccoefsk10}
+%   \caption{$c_{err}= c_0+ \beta c_{predicted}$, k=10}
+% \begin{gather}
+% \vcenter{\hbox{\includegraphics[width=5.5in]{cCoeffsk10.pdf}}}
+% \end{gather}
+% \end{figure}
+
+
+
+% Figure   \ref{fig:cdiffsk10}
+% \begin{figure}
+%   \centering
+%   \label{fig:cdiffsk10}
+%   \caption{$c_{err}-c_{predicted}$ Mean Versus StandardDeviation, k=10 added tail} 
+% \begin{gather}
+% \vcenter{\hbox{\includegraphics[width=5.5in]{cDiffkT10.pdf}}}
+% \end{gather}
+% \end{figure}
+
+% Figure   \ref{fig:ccoefsk10}
+% \begin{figure}
+%   \centering
+%   \label{fig:ccoefsk10}
+%   \caption{$c_{err}= c_0+ \beta c_{predicted}$, k=10, added tail}
+% \begin{gather}
+% \vcenter{\hbox{\includegraphics[width=5.5in]{cCoeffskT10.pdf}}}
+% \end{gather}
+% \end{figure}
+
+
+
+
+% Figure   \ref{fig:cdiffsk10}
+% \begin{figure}
+%   \centering
+%   \label{fig:cdiffsk10}
+%   \caption{$c_{err}-c_{predicted}$ Mean Versus StandardDeviation, k=10 added tail} 
+% \begin{gather}
+% \vcenter{\hbox{\includegraphics[width=5.5in]{cDiffkT10.pdf}}}
+% \end{gather}
+% \end{figure}
+
+% Figure   \ref{fig:ccoefsk10}
+% \begin{figure}
+%   \centering
+%   \label{fig:ccoefsk10}
+%   \caption{$c_{err}= c_0+ \beta c_{predicted}$, k=10, added tail}
+% \begin{gather}
+% \vcenter{\hbox{\includegraphics[width=5.5in]{cCoeffskT10.pdf}}}
+% \end{gather}
+% \end{figure}
+
+
+
+
+% Figure   \ref{fig:cdiffsk20}
+% \begin{figure}
+%   \centering
+%   \label{fig:cdiffsk20}
+%   \caption{$c_{err}-c_{predicted}$ Mean Versus StandardDeviation, k=20} 
+% \begin{gather}
+% \vcenter{\hbox{\includegraphics[width=5.5in]{cDiffk20.pdf}}}
+% \end{gather}
+% \end{figure}
+
+% Figure   \ref{fig:ccoefsk20}
+% \begin{figure}
+%   \centering
+%   \label{fig:ccoefsk20}
+%   \caption{$c_{err}= c_0+ \beta c_{predicted}$, k=20}
+% \begin{gather}
+% \vcenter{\hbox{\includegraphics[width=5.5in]{cCoeffsk20.pdf}}}
+% \end{gather}
+% \end{figure}
+
+
+% Figure   \ref{fig:cdiffsk50}
+% \begin{figure}
+%   \centering
+%   \label{fig:cdiffsk50}
+%   \caption{$c_{err}-c_{predicted}$ Mean Versus StandardDeviation, k=50} 
+% \begin{gather}
+% %\vcenter{\hbox{\includegraphics[width=5.5in]{cDiffk50.pdf}}}
+% \end{gather}
+% \end{figure}
+
+% Figure   \ref{fig:ccoefsk50}
+% \begin{figure}
+%   \centering
+%   \label{fig:ccoefsk50}
+%   \caption{$c_{err}= c_0+ \beta c_{predicted}$, k=50}
+% \begin{gather}
+% %\vcenter{\hbox{\includegraphics[width=5.5in]{cCoeffsk50.pdf}}}
+% \end{gather}
+% \end{figure}
+
+
+% Figure   \ref{fig:cdiffsk50}
+% \begin{figure}
+%   \centering
+%   \label{fig:cdiffsk50}
+%   \caption{$c_{err}-c_{predicted}$ Mean Versus StandardDeviation, k=50} 
+% \begin{gather}
+% \vcenter{\hbox{\includegraphics[width=5.5in]{cDiffkT50.pdf}}}
+% \end{gather}
+% \end{figure}
+
+% Figure   \ref{fig:ccoefsk50}
+% \begin{figure}
+%   \centering
+%   \label{fig:ccoefsk50}
+%   \caption{$c_{err}= c_0+ \beta c_{predicted}$, k=50}
+% \begin{gather}
+% \vcenter{\hbox{\includegraphics[width=5.5in]{cCoeffskT50.pdf}}}
+% \end{gather}
+% \end{figure}
+
+
+% I used the Niedererreiter number theoretic algorithm to generated highly 
+% dispersed test points throughout the ergodic region.\citep{niederreiter88,Xu2005}
+% For the given set of parameters, I computed the exact solution.
+% I chose a wide array of different degrees of  approximation for the
+% Smolyak polynomials and for each given degree of approximation I applied
+% the error formula to approximate the error at each of
+% the test points.  I ran a regression using the formula approximation as a right
+% hand side variable along with a constant to predict the true error.
+% Varying k from 0 to 20 consistently  produces $R^2$ near one, tiny standard errors and a coefficient on the estimated error very near one.
+
+
+
+
+
+
+
+% \vspace{.25in}
+
+% \begin{tabular}{|r|r|r|r|r|}
+% \hline
+% \multicolumn{5}{|c|}{$c \,\,\text{with}\,\, \mathbb{V}=\{1,1,1\},k_p=2$}\\
+% \hline
+%   MAE &$R^2$&$(\alpha,\beta)$&$\hat{\sigma}$&$k_e$\\
+% \hline
+% \end{tabular}
+% Speedup
+
+% \begin{figure}
+%   \centering
+  
+%   \caption{$c_t,k_t \,\,\text{with}\,\, \mathbb{V}=\{2,2,2\},k_p=10$}
+% \begin{gather}
+% \vcenter{\hbox{\includegraphics{curio01.pdf}}}
+% \end{gather}
+% \end{figure}
+
+
+% \begin{figure}
+%   \centering
+  
+%   \caption{$c_t,k_t \,\,\text{with}\,\, \mathbb{V}=\{2,2,2\}, Traditional$}
+% \begin{gather}
+% \vcenter{\hbox{\includegraphics{curio02.pdf}}}
+% \end{gather}
+% \end{figure}
+
+
+% \section{Robust Calculations}
+
+ 
+
+% Many global methods propose a solution and update the solution by solving
+% the original system of equations with the previous iterations guess.
+% These iterations are notorious for going off track.
+% The series representation provides a useful additional constraint on the 
+% evolution of proposed solution in the algorithm.
+% To demonstrate this phenomenon, 
+% I experimented with an RBC model with occasionally binding constraints.
+
+% For a given set of parameters, I computed a deterministic 
+% steady state for the non binding solution.  I discarded
+% those parameter values that produced a negative steady state for capital or 
+% consumption.  For each set of parameters,
+% I linearized the model at the steady state and computed
+% the linear perfect foresight solution to use as the linear reference model and
+% as an initial guess for the equation system.
+
+% In order to test the effectiveness of the 
+% algorithm for model convergence I use Nied to generate model parameters.
+% I discarded those parameters which failed to produce 
+% I computed
+
+
+
+
+
+% \begin{figure}
+%   \centering
+  
+%   \caption{Values for $(c_{ss}>0\wedge k_{ss}>0)\,\,\{\alpha,d,\delta,\eta,\rho,\sigma,\Upsilon\}\,\, Converged?$}
+% \begin{gather}
+% \vcenter{\hbox{\includegraphics[width=5.5in]{paramsForTest.pdf}}}
+% \end{gather}
+% \end{figure}
+
+
+% It will be useful to explore the computational aspects of choosing the right value for k.  Zero seems to improve reliability.
+% It will be important to work on exploiting the high degree of parallelism 
+% available.
+
+% It should be possible to maintain a small footprint communication would involve
+% sending the coefficient matrices for Smolyak calculation.  These nodes
+% should use efficient polynomial composition to compute conditional expectations
+% paths .

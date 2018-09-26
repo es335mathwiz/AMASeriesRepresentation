@@ -28,6 +28,24 @@ actErrs1x1x1x5=Flatten[(((theRes1x1x1x5[[4,-1,1]] @@ #)[[Range[4]]]) - (firstRBC
 
 (*
 wholeLot=Table[tryK[bump*{1,1,1},theK],{bump,1,3},{theK,0,10}];
+moreWholeLot=Table[tryK[bump*{1,1,1},theK],{bump,1,3},{theK,10,40,5}];
 
 tradLot=Table[tryK[bump*{1,1,1},0,"Traditional"->True],{bump,1,3}];
+
+errVals=Map[Log,wholeLot[[All,All,-1]],{2}]
+moreErrVals=Map[Log,moreWholeLot[[All,All,-1]],{2}]
+
+
+iterswhole=wholeLot[[All,All,1,1]]
+
+
+errtrad=Log /@(Last /@ tradLot)
+
+iterstrad=tradLot[[All,1,1]]
+
+tradline={Join[{999},errtrad]}
+nontradlines=Transpose[ArrayFlatten[{{{Range[0,10]}},{errVals}}]]
+moreNonTradlines=Transpose[ArrayFlatten[{{{Range[10,40,5]}},{moreErrVals}}]]
+errTab=Join[tradline,nontradlines,moreNonTradlines]
+Export["errByKTab.tex",TableForm[errTab],"TeXFragment"]
 *)

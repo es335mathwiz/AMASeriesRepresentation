@@ -164,7 +164,7 @@ B x_{t-1}+ \phi \psi_\epsilon\epsilon + (I - F)^{-1} \phi \psi_c
 \newcommand{\lastGate}{\mathbf{d}}
 \newcommand{\eqnFuncSysIExpl}[1]{\{(\mathbf{b}_{#1}\tArg,\eqnFunc_{#1}\allArgs=0,\mathbf{c}_{#1}\allArgs )\}}
 \newcommand{\eqnFuncSysI}[1]{\mathbb{C}_{#1}}
-\newcommand{\eqnFuncSys}{\{\{\eqnFuncSysI{1},\ldots,\eqnFuncSysI{M}\},\mathbf{d}\allArgs|(b_.,c_.)\}}
+\newcommand{\eqnFuncSys}{\{\{\eqnFuncSysI{1},\ldots,\eqnFuncSysI{M}\},\mathbf{d}\allArgs|(\preGate_.,\postGate_.)\}}
 \newcommand{\theD}{\mathbf{d}}
 \newcommand{\eqnFuncSysNoD}{\{\eqnFuncSysI{1},\ldots,\eqnFuncSysI{M}\}}
 \newcommand{\eqnErrs}{{{m}_e}}
@@ -338,5 +338,20 @@ M_\varpi^{det}(#1,#2,\epsilon_#4)E_#4(#3)
 
 %
 \newcommand{\eulerE}{\mathbf{e}}
+\newcommand{\lgabs}[1]{{\ln(|\eulerE_{#1}|)}}
+\newcommand{\lgabshat}[1]{{\ln(|\hat{\eulerE_{#1}}|)}}
+
+\newcommand{\forEstErr}{{\begin{bmatrix}
+     \lgabshat{c,1}&\lgabshat{k,1}&\lgabshat{\theta,1}\\
+ &\vdots\\
+     \lgabshat{c,30}&\lgabshat{k,30}&\lgabshat{\theta,30}\\
+   \end{bmatrix} }}
+
+
+\newcommand{\forActErr}{{\begin{bmatrix}
+     \lgabs{c,1}&\lgabs{k,1}&\lgabs{\theta,1}\\
+ &\vdots\\
+     \lgabs{c,30}&\lgabs{k,30}&\lgabs{\theta,30}\\
+   \end{bmatrix} }}
 
 

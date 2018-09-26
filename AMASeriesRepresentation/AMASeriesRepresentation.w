@@ -2179,6 +2179,7 @@ BeginPackage["AMASeriesRepresentation`",
  {"JLink`","ProtectedSymbols`","mathSmolyak`","MSNTO`"}]
 @<usage definitions@>
 Begin["`Private`"]
+Print["code should restrict findroot guesses to ergodic set"];
 @<package code@>
 End[]
 EndPackage[]

@@ -8,7 +8,7 @@ iters=8;
 theK=5;
 refModel={linModFirstRBCTrips,rbcEqnsFirstRBCTrips,firstRBCTripsExactDR,firstRBCTripsExactDRCE,forErgodicInfo,theDistFirstRBCTrips,toIg}=
 (*alphaVal,deltaVal,etaVal,rhoVal.sigmaVal*)
-firstRBCGenModel[0.36,0.95,3.0,0.95,0.02];
+firstRBCGenModel[0.36,0.95,5.3,0.99,0.02];
 
 
 approxUnk1x1x1=1*{1,1,1};
@@ -73,12 +73,12 @@ theResUnk2x2x2x5[[4,-1,2]],Transpose[{#}],1,linModFirstRBCTrips,5]&/@theFullXsUn
 (*
 
 Export["xs1x1x1x5Unk.tex",TableForm[theFullXsUnk1x1x1x5[[All,{2,4,5}]]],"TeXFragment"]
-Export["errs1x1x1x5Unk.tex",TableForm[Flatten /@Map[Log[Abs[#]]&,errsUnk1x1x1x5[[All,{1,2,4}]]],"TeXFragment"]
+Export["errs1x1x1x5Unk.tex",TableForm[Flatten /@Map[Log[Abs[#]]&,errsUnk1x1x1x5[[All,{1,2,4}]]]],"TeXFragment"]
 Export["theApps1x1x1x5Unk.tex",TableForm[Flatten/@theAppsUnk1x1x1x5[[All,{1,2,4}]]],"TeXFragment"]
 
 
 Export["xs2x2x2x5Unk.tex",TableForm[theFullXsUnk2x2x2x5[[All,{2,4,5}]]],"TeXFragment"]
-Export["errs2x2x2x5Unk.tex",TableForm[Flatten /@Map[Log[Abs[#]]&,errsUnk2x2x2x5[[All,{1,2,4}]]],"TeXFragment"]
+Export["errs2x2x2x5Unk.tex",TableForm[Flatten /@Map[Log[Abs[#]]&,errsUnk2x2x2x5[[All,{1,2,4}]]]],"TeXFragment"]
 Export["theApps2x2x2x5Unk.tex",TableForm[Flatten/@theAppsUnk2x2x2x5[[All,{1,2,4}]]],"TeXFragment"]
 
 *)

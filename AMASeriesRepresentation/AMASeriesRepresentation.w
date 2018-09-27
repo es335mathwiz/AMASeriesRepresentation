@@ -129,6 +129,38 @@ funcOfXtm1Eps
 @{
 
 
+
+Options[toRange]={"rangeWeight"->0.1}
+toRange[theValue_?NumberQ,theRange:{lowerVal_?NumberQ,upperVal_?NumberQ},
+opts:OptionsPattern[]]:=If[
+lowerVal<=theValue<=upperVal,theValue,
+If[theValue<lowerVal,
+lowerVal+OptionValue[rangeWeight]*(upperVal-lowerVal),
+If[theValue>upperVal,
+upperVal-OptionValue[rangeWeight]*(upperVal-lowerVal)]]]
+
+toRange[theValues_?VectorQ,
+theRanges:{{_?NumberQ,_?NumberQ}..}]:=
+MapThread[toRange,{theValues,theRanges}]/;(Length[theRanges]==Length[theValues])
+
+toRange[theValues_?MatrixQ,
+theRanges:{{_?NumberQ,_?NumberQ}..}]:=
+With[{asVec=
+      MapThread[toRange,{Flatten[theValues],theRanges}]},
+     Transpose[{asVec}]]/;(Length[theRanges]==Length[theValues])
+
+
+toRangeXtm1XtXtp1Eps[theVals_?MatrixQ,numEps_Integer,
+theRanges:{{_?NumberQ,_?NumberQ}..}]:=
+With[{numX=(Length[theVals]-numEps)/3},
+With[{
+xtm1=toRange[theVals[[Range[numX]]],theRanges],
+xt=toRange[theVals[[numX+Range[numX]]],theRanges],
+xtp1=toRange[theVals[[2*numX+Range[numX]]],theRanges],
+theEps=theVals[[3*numX+Range[numEps]]]},
+Join[xtm1,xt,xtp1,theEps]]]/;((Length[theVals]-numEps)  == 3*Length[theRanges])
+
+
 makePatternArgs[theNames_List]:=
 Map[PatternTest[Pattern[#, Blank[]], NumberQ]&,theNames]
 
@@ -205,7 +237,7 @@ Flatten[Join[xDisc,eqnAppl]]]]]]]@}
 funcOfXtm1Eps
 [Apply[Sequence,xtm1epsArgPatterns]],
 (**)
-With[{frRes=FindRoot[
+With[{frRes=FindRoot[(**)
 funcOfXtZt[Apply[Sequence,Join[xLagArgs,eArgs,xArgs]]],
 Join[xArgsInit]]},If[Not[FreeQ[frRes,FindRoot]],
 Throw[$Failed,"genFRExtFunc:FindRoot"]];
@@ -217,7 +249,7 @@ Transpose[{Flatten[Join[xArgs,zArgs*0]]/.frRes}]]]@}
 funcOfXtm1Eps
 [Apply[Sequence,xtm1epsArgPatterns]],
 (**)
-With[{frRes=FindRoot[
+With[{frRes=FindRoot[(**)
 funcOfXtZt[Apply[Sequence,Join[xLagArgs,eArgs,xArgs,zArgs]]],
 Join[xArgsInit,zArgsInit]]},If[Not[FreeQ[frRes,FindRoot]],
 Throw[$Failed,"genFRExtFunc:FindRoot"]];
@@ -2707,7 +2739,7 @@ rbcEqnsNotBindingSubbed=((rbcEqnsNotBinding/.paramSubs)/.eps[theta][t]->0);
 theVars=Cases[Variables[forFR=(rbcEqnsNotBindingSubbed/.ssEqnSubs)],_Symbol];
 frArg=MapThread[Prepend[#1,#2]&,{{{.3604,.1,2},{.187,-1.35,5.35},{.187,0.01,25.9},
  {0,-9.,9.},{1,-10.03,10.},{2.7741,0.001,9.},{1.0001,.8,1.2}},theVars}];
-ssFRSolnSubs=Prepend[Chop[FindRoot[forFR,frArg(*,MaxIterations->1000*)]],IIss->0];
+ssFRSolnSubs=Prepend[Chop[FindRoot[(**)forFR,frArg(*,MaxIterations->1000*)]],IIss->0];
 
 
 

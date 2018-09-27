@@ -636,7 +636,7 @@ F=
 \vcenter{\hbox{\includegraphics{RBCFmatSymb.pdf}}}\\
 \psi_c=\vcenter{\hbox{\includegraphics{RBCPsissSymb.pdf}}}
 \end{gather}
-Recomputing the truncation errors with the expanded model produces nearly identicle results for  variable approximation errors.
+Recomputing the truncation errors with the expanded model produces nearly identical results for  variable approximation errors.
 
 
 \clearpage
@@ -700,7 +700,7 @@ Given a proposed model solution define
 the error in $x_t$ at $\tArg$
 
 \begin{gather*}
-\mathbf{e}\tArg\equiv \xWOarg^\star\tArg-\xWOarg^p\tArg\intertext{compute the conditional expectations functions for the decision rule and use them to generate a path to use with a linear reference model $\linMod  \equiv \linModMats$  in \ref{theSeries} to appoximate  $\mathbf{e}$.} 
+\mathbf{e}\tArg\equiv \xWOarg^\star\tArg-\xWOarg^p\tArg\intertext{compute the conditional expectations functions for the decision rule and use them to generate a path to use with a linear reference model $\linMod  \equiv \linModMats$  in \ref{theSeries} to approximate  $\mathbf{e}$.} 
 \XWOarg^p(x)\equiv \expct{\xWOarg^p(x,\epsilon)}.
 \end{gather*}
 \begin{gather*}
@@ -902,7 +902,7 @@ I will require that, for any
  given $(x_{t-1},\epsilon_t)$,  this collection of 
 equation systems  produces a unique solution for $x_t$.  
 This formulation will allow us to apply the technique to models with
-ooccasionally binding  constraints and models with regime switching.
+occasionally binding  constraints and models with regime switching.
 I will only consider time invariant model solutions $x_t=\xWarg$.  Given a decision rule $\xWarg$, denote its conditional expectation $\XWOarg(x_{t-1})\equiv \expct{\xWarg}$.
 Using the convention described in section \ref{sec:convenient}, 
  I will include 
@@ -918,9 +918,9 @@ write the models in the form
 \end{gather}
  represents a set of model equations, $\eqnFunc_i$,  with Boolean valued gate functions, $\preGate_i, \postGate_i$. 
 In the algorithm's implementation, the $\preGate_i$ will be a 
-boolean function precondition and 
+Boolean function precondition and 
 the $\postGate_i$ will be a 
-boolean function postcondition for a given equation system. If some $\preGate_i$ is false, then there is no need to try to solve model $i$. If $\postGate_i$ is false, the system has produced an unacceptable solution which should be ignored.
+Boolean function post-condition for a given equation system. If some $\preGate_i$ is false, then there is no need to try to solve model $i$. If $\postGate_i$ is false, the system has produced an unacceptable solution which should be ignored.
 I suggest organizing equations using pre and post conditions as
 this can help with parallelizing a solution regardless of whether or not
 one uses my series representation. The
@@ -1004,12 +1004,12 @@ deterministic.
 There are number of new steps. 
 One must  specify a linear reference model.
   One must choose a value for
-$K$ the number of terms in the series representation.  There are tradeoffs.
+$K$ the number of terms in the series representation.  There are trade-offs.
 Fewer means more truncation error. 
 More terms corresponds to more accuracy when the decision rule is accurate but
 More terms is computationally more expensive. The initial guess is 
 typically some distance away from the solution.   Consequently the
-terms in the series will be incorrect.  The smolyak grid adds more error to
+terms in the series will be incorrect.  The Smolyak grid adds more error to
 the calculation.  If there are many grid points it is more likely that 
 increasing the K can improve the quality of the solution.  If the grid is
 too sparse, increasing K will likely be less useful. 
@@ -1101,7 +1101,7 @@ Many of the calculations exploit Mathematica's capability to blend
 numerical and symbolic computation and to easily use functions as arguments for
 other functions.  In addition, the implementation exploits parallelism at
 several points.   The parallel features also apply when employing
-the  usual technique for solving theset types of models.
+the  usual technique for solving the set types of models.
 Below, I note where these features play a role.
 
 
@@ -1147,12 +1147,12 @@ and an outer
 model solution selection function. 
 Each of the function constructions can be done in {\bf parallel}.
 Each of the triples
- returns the boolean gate values and a unique value for 
+ returns the Boolean gate values and a unique value for 
 $x_t$ for any given value of $\tArg$ the selection function chooses 
 one solution from the set of  model equations. The routine
  subsequently uses these 
 functions to construct interpolating functions approximating the 
-decision rules. Subcomponents of this step exploit parallelism.
+decision rules. Sub-components of this step exploit parallelism.
 
 
 \item[genLilXkZkFunc] --- {\bf Symbolically} creates a function that uses an initial $Z_t$ path to generate a function of $(x_{t-1},\epsilon_t,z_t)$ providing (potentially symbolic ) inputs 
@@ -1250,10 +1250,21 @@ V= \vcenter{\hbox{\includegraphics{ergodicV.pdf}}}
 \end{gather}
 
 
-Table \ref{evalpA} shows the evaluation points when the degree of approximation
-was (1,1,1).  Table \ref{valatA} shows the decesion rule prescription for $(c_t,k_t,\theta_t)$ at each evaluation point. Table \ref{acterrA} shows the actual error in the decision rule
+Table \ref{evalpA} shows the evaluation points when the Smolyak polynomial 
+degrees of approximation
+were (1,1,1).  Table \ref{valatA} shows the decision rule prescription for $(c_t,k_t,\theta_t)$ at each evaluation point. Table \ref{acterrA} shows the log of the absolute value of the actual error in the decision rule
 at each evaluation point.  Table \ref{esterrA} shows the 
-estimated error in the decision rule
+log of the absolute value of the estimated error in the decision rule
+at each evaluation points.  Note that the formula provides accurate estimates
+of the error component by component.
+
+
+
+Table \ref{evalpB} shows the evaluation points when the Smolyak polynomial 
+degrees of approximation
+were (2,2,2).  Table \ref{valatB} shows the decision rule prescription for $(c_t,k_t,\theta_t)$ at each evaluation point. Table \ref{acterrB} shows the log of the absolute value of the actual error in the decision rule
+at each evaluation point.  Table \ref{esterrB} shows the 
+log of the absolute value of the estimated error in the decision rule
 at each evaluation points.  Note that the formula provides accurate estimates
 of the error component by component.
 
@@ -1355,6 +1366,14 @@ of the error component by component.
    \caption{RBC Known Solution: Error Approximations\label{esterrB}d=(2,2,2)}
  \end{table}
 
+Each of the estimated errors were computed with $K=5$.
+Table \ref{impactK} shows the effect of increasing value of K.  Generally
+increasing K increases the accuracy of the solution.  The value of K has
+more effect when the Smolyak grid is more densely populated with collocation
+points.
+
+
+
  \begin{table}
    \centering
    \begin{gather*}
@@ -1366,13 +1385,31 @@ of the error component by component.
    \begin{gather*}
    \input{errByKTab}     
    \end{gather*}
-   \caption{RBC Known Solution: Impact of Series Length on Approximation Error}
+   \caption{RBC Known Solution: Impact of Series Length on Approximation Error \label{impactK}}
  \end{table}
+
+
 
 \clearpage
 \subsection{Approximating an Unknown Solution: $\eta=3$ }
 \label{sec:recov-unknown-solut}
 
+
+Table \ref{evalpunkA} shows the evaluation points when the Smolyak polynomial 
+degrees of approximation
+were (1,1,1).  Table \ref{valatunkA} shows the decision rule prescription for $(c_t,k_t,\theta_t)$ at each evaluation point.   Table \ref{esterrunkA} shows the 
+log of the absolute value of the estimated error in the decision rule
+at each evaluation points.  Note that the formula provides accurate estimates
+of the error component by component.
+
+
+
+Table \ref{evalpunkB} shows the evaluation points when the Smolyak polynomial 
+degrees of approximation
+were (2,2,2).  Table \ref{valatunkB} shows the decision rule prescription for $(c_t,k_t,\theta_t)$ at each evaluation point.   Table \ref{esterrB} shows the 
+log of the absolute value of the estimated error in the decision rule
+at each evaluation points.  Note that the formula provides accurate estimates
+of the error component by component.
 
  \begin{table}
    \centering
@@ -1556,6 +1593,25 @@ I_t-(K_t-(1-d)k_{t-1})\\
 
 
 
+Table \ref{evalpobcA} shows the evaluation points when the Smolyak polynomial 
+degrees of approximation
+were (1,1,1).  Table \ref{valatobcA} shows the decision rule prescription for $(c_t,k_t,\theta_t)$ at each evaluation point.   Table \ref{esterrobcA} shows the 
+log of the absolute value of the estimated error in the decision rule
+at each evaluation points.  Note that the formula provides accurate estimates
+of the error component by component.
+
+
+
+Table \ref{evalpobcB} shows the evaluation points when the Smolyak polynomial 
+degrees of approximation
+were (2,2,2).  Table \ref{valatobcB} shows the decision rule prescription for $(c_t,k_t,\theta_t)$ at each evaluation point.   Table \ref{esterrobcB} shows the 
+log of the absolute value of the estimated error in the decision rule
+at each evaluation points.  Note that the formula provides accurate estimates
+of the error component by component.
+
+
+
+
  \begin{table}
    \centering
   
@@ -1656,9 +1712,10 @@ for approximating the errors in dynamic model solution decision rules.
  The paper
 also shows how to  augment the usual ``Euler Equation'' model solution
 methods with constraints reflecting how the updated
-conditional expectation paths relate to the time t solution values.
+conditional expectation paths relate to the time t solution values thereby
+enhancing solution algorithm reliability and accuracy.
 The prototype was written in Mathematica and is available on gitHub
-at 
+at \href{https://github.com/es335mathwiz/AMASeriesRepresentation}{https://github.com/es335mathwiz/AMASeriesRepresentation}.
 
 \newpage
 
@@ -1875,7 +1932,7 @@ H_0\left ( \pdrv{\eqnFunc(x_{t-1},x_{t},x_{t+1},\epsilon_t)}{x_t}\right )^{-1}
 
 
 
-\section{Examples}
+\section{A Regime Switching Example}
 \label{sec:extension}
 \label{sec:ressw}
 
@@ -2470,7 +2527,7 @@ $\bothFuncs^{i+1}=makeInterpFuncs(theFindRootFuncs,\smolSpec)$\\
 Symbolically generates a collection of function triples
 and an outer 
 model solution selection function. Each of the triples
- returns the boolean gate values and a unique value for 
+ returns the Boolean gate values and a unique value for 
 $x_t$ for any given value of $(x_{t-1},\epsilon_t)$ 
 for one from the set of  model equations. It
  subsequently uses these 
@@ -2644,7 +2701,7 @@ and subsequently returns the
  \SetKwInOut{Input}{input}
  \SetKwInOut{Output}{output}
 \Input{$(approxLevels,means,stdDev,minZs,maxZs,vvMat,distributions)$}
-\tcc{Given approximation levels,  PCA information, and probability distributions for errors compute the collocation points, the Psi Matrix, the polynomials and the integrals olf the polynomials}
+\tcc{Given approximation levels,  PCA information, and probability distributions for errors compute the collocation points, the Psi Matrix, the polynomials and the integrals of the polynomials}
 \Output{$\{xPts,PsiMat,polys, intPolys\}$}
 \caption{$smolyakInterpolationPrep$\label{smolyakInterpolationPrepA}} 
 \end{algorithm}
@@ -2654,7 +2711,7 @@ and subsequently returns the
  \SetKwInOut{Input}{input}
  \SetKwInOut{Output}{output}
 \Input{$(approxLevels,varRanges,distributions)$}
-\tcc{Given approximation levels, variable ranges and probability distributions for errors compute the collocation points, the Psi Matrix, the polynomials and the integrals olf the polynomials}
+\tcc{Given approximation levels, variable ranges and probability distributions for errors compute the collocation points, the Psi Matrix, the polynomials and the integrals of the polynomials}
 \Output{$\{xPts,PsiMat,polys, intPolys\}$}
 \caption{$smolyakInterpolationPrep$\label{smolyakInterpolationPrepB}} 
 \end{algorithm}
@@ -2664,7 +2721,7 @@ and subsequently returns the
  \SetKwInOut{Input}{input}
  \SetKwInOut{Output}{output}
 \Input{$(approxLevels,varRanges,distributions)$}
-\tcc{Given approximation levels, variable ranges and probability distributions for errors compute the collocation points, the Psi Matrix, the polynomials and the integrals olf the polynomials}
+\tcc{Given approximation levels, variable ranges and probability distributions for errors compute the collocation points, the Psi Matrix, the polynomials and the integrals of the polynomials}
 \Output{$\{xPts,PsiMat,polys, intPolys\}$}
 \caption{$genSolutionErrXtEps$\label{genSolutionErrXtEps}} 
 \end{algorithm}
@@ -2674,7 +2731,7 @@ and subsequently returns the
  \SetKwInOut{Input}{input}
  \SetKwInOut{Output}{output}
 \Input{$(approxLevels,varRanges,distributions)$}
-\tcc{Given approximation levels, variable ranges and probability distributions for errors compute the collocation points, the Psi Matrix, the polynomials and the integrals olf the polynomials}
+\tcc{Given approximation levels, variable ranges and probability distributions for errors compute the collocation points, the Psi Matrix, the polynomials and the integrals of the polynomials}
 \Output{$\{xPts,PsiMat,polys, intPolys\}$}
 \caption{$genSolutionErrXtEpsZero$\label{genSolutionErrXtEpsZero}} 
 \end{algorithm}
@@ -2685,60 +2742,13 @@ and subsequently returns the
  \SetKwInOut{Input}{input}
  \SetKwInOut{Output}{output}
 \Input{$(approxLevels,varRanges,distributions)$}
-\tcc{Given approximation levels, variable ranges and probability distributions for errors compute the collocation points, the Psi Matrix, the polynomials and the integrals olf the polynomials}
+\tcc{Given approximation levels, variable ranges and probability distributions for errors compute the collocation points, the Psi Matrix, the polynomials and the integrals of the polynomials}
 \Output{$\{xPts,PsiMat,polys, intPolys\}$}
 \caption{$genSolutionPath$\label{genSolutionPath}} 
 \end{algorithm}
 
 
 
-
-\newpage
-\section{Other Computing?}
-\label{sec:other-computing}
-
-\begin{itemize}
-
-\item known errors
-  \begin{itemize}
-\item doPrepPoly
-\item eliminate colors in graphs throughout
-\item {fix genInterpData checks all signatures}
-\item {correct caption for ergodic values transformed} (look at oldBetterRBC.m)
-\item legend for figs throughout
-\item axes labels throughout
-  \end{itemize}
-
-\item aesthetic
-\begin{itemize}
-\item function names bold greek and function name reconcile.
-\item no colors
- \end{itemize}
-
-\item other mention
-  \begin{itemize}
-\item {mention genboth}
-\item a good path corresponds to a good error if enough terms
-\item refer to far distant relation to truncating k vals
-\item and parallelism gains.
-\item {parallelism measure}
-  \end{itemize}
-
-\item error formula
-  \begin{itemize}
-\item {show solution accuracy for unknown solution}
-\item {show solution accuracy simple and OBC}
-\item More information about other error formulas.
-\item {revise assess error calc or eliminate}
-\item {just the first term.}
-  \end{itemize}
-
-\item robust
-  \begin{itemize}
-\item {revise assess robust or eliminate}
-\item Proof for robustness and accuracy 
-  \end{itemize}
-\end{itemize}
 
 
 

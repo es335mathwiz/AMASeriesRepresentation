@@ -161,6 +161,13 @@ theEps=theVals[[3*numX+Range[numEps]]]},
 Join[xtm1,xt,xtp1,theEps]]]/;((Length[theVals]-numEps)  == 3*Length[theRanges])
 
 
+toRangeXtm1XtXtp1Eps[theVals_?VectorQ,numEps_Integer,
+theRanges:{{_?NumberQ,_?NumberQ}..}]:=
+With[{aMat=toRangeXtm1XtXtp1Eps[Transpose[{theVals}],numEps,theRanges]},
+Flatten[aMat]]
+
+
+
 makePatternArgs[theNames_List]:=
 Map[PatternTest[Pattern[#, Blank[]], NumberQ]&,theNames]
 
@@ -209,8 +216,11 @@ With[{
 xkAppl=Flatten[
 Join[xLagArgs,xArgs,
 (Apply[bothXZFuncs[[1,2]],xArgs][[Range[numX]]]),eArgs]]},
-With[{eqnAppl=Apply[eqnsFunc,Flatten[xkAppl]]},
-Flatten[Join[eqnAppl]]]]]]@}
+With[{fixXkAppl=If[OptionValue["xVarRanges"]==={},xkAppl,
+toRangeXtm1XtXtp1Eps[xkAppl,numEps,OptionValue["xVarRanges"]]]},
+Print[{"fix",xkAppl,fixXkAppl}];
+With[{eqnAppl=Apply[eqnsFunc,Flatten[fixXkAppl]]},
+Flatten[Join[eqnAppl]]]]]]]@}
 
 @d setDelayedSeriesFXtZtBoth
 @{SetDelayed[
@@ -228,9 +238,12 @@ Print["trying higher throw"];Throw[$Failed,"higher"]]),_,
 Function[{val,tag},Print["catchfxtzt:",{xArgs,val,tag}//InputForm];
 Throw[$Failed,"fromGenLil"]]]},
 With[{xkAppl=Apply[xkFunc,Join[xLagArgs,eArgs,zArgs]]},
-With[{eqnAppl=Apply[eqnsFunc,Flatten[xkAppl]],
-xDisc=xArgs-xkAppl[[numX+Range[numX]]]},
-Flatten[Join[xDisc,eqnAppl]]]]]]]@}
+With[{fixXkAppl=If[OptionValue["xVarRanges"]==={},xkAppl,
+toRangeXtm1XtXtp1Eps[xkAppl,numEps,OptionValue["xVarRanges"]]]},
+Print[{"fix",xkAppl,fixXkAppl}];
+With[{eqnAppl=Apply[eqnsFunc,Flatten[fixXkAppl]],
+xDisc=xArgs-fixXkAppl[[numX+Range[numX]]]},
+Flatten[Join[xDisc,eqnAppl]]]]]]]]@}
 
 @d setDelayedTradFXtm1Eps
 @{SetDelayed[
@@ -1346,8 +1359,11 @@ With[{
 xkAppl=Flatten[
 Join[xLagArgs,xArgs,
 Map[(Apply[#[[1,2]],xArgs][[Range[numX]]])&,regimesBothXZFuncs],eArgs]]},
-With[{eqnAppl=Apply[eqnsFunc,Flatten[xkAppl]]},
-Flatten[Join[eqnAppl]]]]]]@}
+With[{fixXkAppl=If[OptionValue["xVarRanges"]==={},xkAppl,
+toRangeXtm1XtXtp1Eps[xkAppl,numEps,OptionValue["xVarRanges"]]]},
+Print[{"fix",xkAppl,fixXkAppl}];
+With[{eqnAppl=Apply[eqnsFunc,Flatten[fixXkAppl]]},
+Flatten[Join[eqnAppl]]]]]]]@}
 
 @d setDelayedSeriesFXtZtRegimesBoth
 @{SetDelayed[
@@ -1367,9 +1383,12 @@ Print["trying higher throw"];Throw[$Failed,"higher"]]),_,
 Function[{val,tag},Print["catchfxtzt:",{xArgs,val,tag}//InputForm];
 Throw[$Failed,"fromGenLil"]]]},
 With[{xkAppl=Apply[xkFunc,Join[xLagArgs,eArgs,zArgs]]},
-With[{eqnAppl=Apply[eqnsFunc,Flatten[xkAppl]],
-xDisc=xArgs-xkAppl[[numX+Range[numX]]]},
-Flatten[Join[xDisc,eqnAppl]]]]]]]@}
+With[{fixXkAppl=If[OptionValue["xVarRanges"]==={},xkAppl,
+toRangeXtm1XtXtp1Eps[xkAppl,numEps,OptionValue["xVarRanges"]]]},
+Print[{"fix",xkAppl,fixXkAppl}];
+With[{eqnAppl=Apply[eqnsFunc,Flatten[fixXkAppl]],
+xDisc=xArgs-fixXkAppl[[numX+Range[numX]]]},
+Flatten[Join[xDisc,eqnAppl]]]]]]]]@}
 
 
 @d regimesBothXZFuncs

@@ -36,10 +36,9 @@ An Algorithm with Error Formulas } %(Better?, Coherent? Comprehensive? General? 
 
 \begin{abstract}
 This paper provides a new technique for representing  discrete time  nonlinear dynamic stochastic time invariant maps.
-\marginpar{Address Bullets in Other Computing? Section}
 Using this new series representation, the paper 
 augments the usual solution strategy with an additional set of
-constraints thereby enhancing algorithm reliability
+constraints thereby enhancing algorithm reliability.
 The paper also provides general
 formulas for evaluating the accuracy of proposed solutions.
 The technique can readily accommodate models with occasionally binding constraints and regime switching. 
@@ -302,7 +301,7 @@ unbounded, but slowly diverging  trajectories.}
 \includegraphics[width=2in]{oscillPath.pdf}
 \includegraphics[width=2in]{pseudoPath.pdf}
   
-  \caption{Arbitrary Bounded Time Series Paths and Corresponding $z_{i,t}$ values}\label{arbpaths}
+  \caption{Arbitrary Bounded Time Series Paths}\label{arbpaths}
 \end{figure}
 
 
@@ -1119,6 +1118,7 @@ Below, I note where these features play a role.
 % [.makeInterpFuncs\ref{makeInterpFuncs} !\qsetw{2cm} [.genInterpData\ref{genInterpData} evaluateTriple\ref{evaluateTriple} ] ] [.interpDataToFunc\ref{interpDataToFunc} 
 %  ] ] ] 
 % }
+\framebox{
 {\small
 \Tree [.nestInterp  !\qsetw{4cm}
 [.doInterp
@@ -1127,7 +1127,7 @@ Below, I note where these features play a role.
 [.genLilXkZkFunc fSumC genXtOfXtm1 [.genXtp1OfXt ] ] ] ] 
 [.makeInterpFuncs !\qsetw{2cm} [.genInterpData evaluateTriple ] ] [.interpDataToFunc 
  ] ] ] 
-}
+}}
 %\end{tikzpicture}
   \caption{Function Call Tree}\label{calltree}
 \end{figure}

@@ -134,9 +134,9 @@ Options[toRange]={"rangeWeight"->0.1}
 toRange[theValue_?NumberQ,theRange:{lowerVal_?NumberQ,upperVal_?NumberQ},
 opts:OptionsPattern[]]:=If[
 lowerVal<=theValue<=upperVal,theValue,
-If[theValue<lowerVal,
+If[theValue<lowerVal,Print["toRange adjusting:",{theValue,{lowerVal,upperVal}}];
 lowerVal+OptionValue[rangeWeight]*(upperVal-lowerVal),
-If[theValue>upperVal,
+If[theValue>upperVal,Print["toRange adjusting:",{theValue,{lowerVal,upperVal}}];
 upperVal-OptionValue[rangeWeight]*(upperVal-lowerVal)]]]
 
 toRange[theValues_?VectorQ,
@@ -167,6 +167,36 @@ With[{aMat=toRangeXtm1XtXtp1Eps[Transpose[{theVals}],numEps,theRanges]},
 Flatten[aMat]]
 
 
+toRangeXInit[theVals_?MatrixQ,
+theRanges:{{_?NumberQ,_?NumberQ}..}]:=
+With[{numX=Length[theVals]/2},
+With[{
+xt=toRange[theVals[[Range[numX]]],theRanges],
+zt=theVals[[numX+Range[numX]]]},
+Join[xt,zt]]]/;Length[theVals]/2==Length[theRanges]
+
+
+toRangeXInit[theVals_?VectorQ,
+theRanges:{{_?NumberQ,_?NumberQ}..}]:=
+With[{aMat=toRangeXInit[Transpose[{theVals}],theRanges]},
+Flatten[aMat]]
+
+
+ 
+toErgodic[theValues_?VectorQ,
+theMeans_?VectorQ,theSDs_?VectorQ,theV_?MatrixQ,
+zRanges:{{_?NumberQ,_?NumberQ}..}]:=
+Flatten[toErgodic[Transpose[{theValues}],theMeans,theSDs,theV,zRanges]]
+
+toErgodic[theValues_?MatrixQ,
+theMeans_?VectorQ,theSDs_?VectorQ,theV_?MatrixQ,
+zRanges:{{_?NumberQ,_?NumberQ}..}]:=
+With[{zsIn=    Transpose[backXtoZ[Transpose[theValues],theMeans,theSDs,theV]]},
+With[{goodZs=Transpose[toRange[zsIn,zRanges]]},
+    backZtoX[goodZs,theMeans,theSDs,theV]]]
+
+
+
 
 makePatternArgs[theNames_List]:=
 Map[PatternTest[Pattern[#, Blank[]], NumberQ]&,theNames]
@@ -184,7 +214,10 @@ xLagArgs=Table[Unique["theFRXLagArgs"],{numX}],
 eArgs=Table[Unique["theFREArgs"],{numEps}]@}
 
 @d prepFindRootXInitBoth
-@{theXInit=Flatten[Apply[bothXZFuncs[[1,1]],Join[xLagArgs,eArgs]]],
+@{theXInit=
+With[{rawVal=Flatten[Apply[bothXZFuncs[[1,1]],Join[xLagArgs,eArgs]]]},
+If[OptionValue["xVarRanges"]==={},rawVal,
+toRangeXInit[rawVal,OptionValue["xVarRanges"]]]],
 funcOfXtm1Eps=Unique["fNameXtm1Eps"],
 funcOfXtZt=Unique["fNameXtZt"]
 @}
@@ -218,7 +251,6 @@ Join[xLagArgs,xArgs,
 (Apply[bothXZFuncs[[1,2]],xArgs][[Range[numX]]]),eArgs]]},
 With[{fixXkAppl=If[OptionValue["xVarRanges"]==={},xkAppl,
 toRangeXtm1XtXtp1Eps[xkAppl,numEps,OptionValue["xVarRanges"]]]},
-Print[{"fix",xkAppl,fixXkAppl}];
 With[{eqnAppl=Apply[eqnsFunc,Flatten[fixXkAppl]]},
 Flatten[Join[eqnAppl]]]]]]]@}
 
@@ -240,7 +272,6 @@ Throw[$Failed,"fromGenLil"]]]},
 With[{xkAppl=Apply[xkFunc,Join[xLagArgs,eArgs,zArgs]]},
 With[{fixXkAppl=If[OptionValue["xVarRanges"]==={},xkAppl,
 toRangeXtm1XtXtp1Eps[xkAppl,numEps,OptionValue["xVarRanges"]]]},
-Print[{"fix",xkAppl,fixXkAppl}];
 With[{eqnAppl=Apply[eqnsFunc,Flatten[fixXkAppl]],
 xDisc=xArgs-fixXkAppl[[numX+Range[numX]]]},
 Flatten[Join[xDisc,eqnAppl]]]]]]]]@}
@@ -1341,8 +1372,11 @@ funcOfXtm1Eps
 @}
 
 @d prepFindRootXInitRegimesBoth
-@{theXInit=Flatten[Apply[regimesBothXZFuncs[[regimeIndx,1,1]],
-Join[xLagArgs,eArgs]]],
+@{theXInit=
+With[{rawVal=Flatten[Apply[regimesBothXZFuncs[[regimeIndx,1,1]],
+Join[xLagArgs,eArgs]]]},
+If[OptionValue["xVarRanges"]==={},rawVal,
+toRangeXInit[rawVal,OptionValue["xVarRanges"]]]],
 funcOfXtm1Eps=Unique["fNameXtm1Eps"],
 funcOfXtZt=Unique["fNameXtZt"]
 @}
@@ -1361,7 +1395,6 @@ Join[xLagArgs,xArgs,
 Map[(Apply[#[[1,2]],xArgs][[Range[numX]]])&,regimesBothXZFuncs],eArgs]]},
 With[{fixXkAppl=If[OptionValue["xVarRanges"]==={},xkAppl,
 toRangeXtm1XtXtp1Eps[xkAppl,numEps,OptionValue["xVarRanges"]]]},
-Print[{"fix",xkAppl,fixXkAppl}];
 With[{eqnAppl=Apply[eqnsFunc,Flatten[fixXkAppl]]},
 Flatten[Join[eqnAppl]]]]]]]@}
 
@@ -1385,7 +1418,6 @@ Throw[$Failed,"fromGenLil"]]]},
 With[{xkAppl=Apply[xkFunc,Join[xLagArgs,eArgs,zArgs]]},
 With[{fixXkAppl=If[OptionValue["xVarRanges"]==={},xkAppl,
 toRangeXtm1XtXtp1Eps[xkAppl,numEps,OptionValue["xVarRanges"]]]},
-Print[{"fix",xkAppl,fixXkAppl}];
 With[{eqnAppl=Apply[eqnsFunc,Flatten[fixXkAppl]],
 xDisc=xArgs-fixXkAppl[[numX+Range[numX]]]},
 Flatten[Join[xDisc,eqnAppl]]]]]]]]@}
@@ -2377,8 +2409,8 @@ forErgodicInfo:(_Symbol|_Function|_CompiledFunction),toIg_?VectorQ,
 Module[{zPts,ptErg,tfErg,plyErg,iplyErg,dplyErg,bothX0Z0,smolStuff,smolRngErg,sgSpecErg},
 (**)tryEps=0;
 LaunchKernels[];numKern=Length[Kernels[]];
-theName=fNameString[approx,iters,theK,numKern];
-mthName=theName<>".mth";
+(*theName=fNameString[approx,iters,theK,numKern];*)
+(*mthName=theName<>".mth";*)
 bothX0Z0=genBothX0Z0Funcs[linMod];
 {mn,sd,minz,maxz,svd}=ergodicInfo[forErgodicInfo,toIg,1];
 smolStuff=

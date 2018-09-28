@@ -5,17 +5,17 @@ Get["firstRBCTrips.m"]
 
 
 iters=8;
-theK=30;
+theK=5;
 refModel={linModFirstRBCTrips,rbcEqnsFirstRBCTrips,firstRBCTripsExactDR,firstRBCTripsExactDRCE,forErgodicInfo,theDistFirstRBCTrips,toIg}=
 (*alphaVal,deltaVal,etaVal,rhoVal.sigmaVal*)
-firstRBCGenModel[0.36,0.95,5.3,0.99,0.02];
+firstRBCGenModel[0.36,0.95,3.3,0.95,0.02];
 
 
 approxUnk1x1x1=1*{1,1,1};
 sPrepUnk1x1x1x5={tryEps,numKern,theName,mthName,bothX0Z0,sgSpecErg,zPts,theFullXsUnk1x1x1x5}=
 doSmolPrep[approxUnk1x1x1,iters,theK,forErgodicInfo,toIg,linModFirstRBCTrips,theDistFirstRBCTrips];
 
-xVR={{0.001,3},{0.001,4},{0.001,20},{0.8,2}};
+xVR={{0.08,10},{0.001,6},{0.9,50},{0.7,2}};
 
 theResUnk1x1x1x5Trad=.
 {tm,ig}=Timing[

@@ -36,9 +36,10 @@ An Algorithm with Error Formulas } %(Better?, Coherent? Comprehensive? General? 
 
 \begin{abstract}
 This paper provides a new technique for representing  discrete time  nonlinear dynamic stochastic time invariant maps.
-Using this new series representation, the paper 
-augments the usual solution strategy with an additional set of
-constraints thereby enhancing algorithm reliability.
+Using this new series representation, the paper shows how to
+augment a solution strategy based on projection methods
+  with an additional set of
+constraints thereby enhancing its reliability.
 The paper also provides general
 formulas for evaluating the accuracy of proposed solutions.
 The technique can readily accommodate models with occasionally binding constraints and regime switching. 
@@ -86,17 +87,27 @@ one bounded infinite dimensional series into another.
     It turns out that this representation provides a way to use
     Euler equation errors to
     approximate the error in components of 
-    decision rules.\footnote{    Others have also studied approximation error for dynamic stochastic models\citep{judd2017lower,santos2005accuracy,Santos2000accuracy}.} This paper provides  approximation formulas
+    decision rules.\footnote{    Others have also studied approximation error for dynamic stochastic models \citep{judd2017lower,santos2005accuracy,Santos2000accuracy}.} This paper provides  approximation formulas
     explicitly relating the
     Euler equation errors to the components of
     errors in the decision rule.
 
-    In addition, the series representation provides exploitable
-    constraints on model solutions that enhance  
-    algorithm reliability.
-    The series representation can readily accommodate models even with
-    disjoint ergodic sets
-    thereby providing a robust solution method for a wide class of models including models with occasionally binding constraints and/or regime switching.
+In addition, the series representation provides exploitable constraints on model solutions that enhance an algorithm's reliability.
+Practitioners using projection methods and other techniques
+have often found models difficult to solve.
+They find that
+it can be difficult to find an initial guess for a solution so that 
+the calculations converge and that sometimes the convergent decision rules
+lack appropriate long run properties like stability.
+Furthermore, economists have an increasing interest in crafting models with
+occasionally binding constraints and regime switching where, unfortunately, these problems seem to arise more often.
+The series representation overcomes these problems by making it easier to choose an initial guess
+that converges and by ensuring that the solutions have appropriate long run 
+properties.
+
+    % The series representation can readily accommodate models even with
+    % disjoint ergodic sets
+    % thereby providing a robust solution method for a wide class of models including models with occasionally binding constraints and/or regime switching.
 
 %    $\ZWOarg_{t+\nu}$ that satisfy the model equations thereby
 
@@ -105,8 +116,8 @@ builds upon the work of
 \citep{juddGSSA2011,JuddIntegrals}.
 In particular it uses
 the an-isotropic Smolyak Method, the adaptive
-parallelotope method\citep{Judd2014}
-and precomputes all integrals required by the calculations\citep{JuddIntegrals}.
+parallelotope method \citep{Judd2014}
+and precomputes all integrals required by the calculations  \citep{JuddIntegrals}.
 The algorithm should scale well to large models as many 
 of the algorithm's components can be computed in parallel with limited amounts of information flowing between compute nodes.
 
@@ -133,7 +144,7 @@ Section \ref{sec:conc} concludes.
 \clearpage
 \section{A New Series Representation For  Bounded Time Series}
 \label{sec:newseries}
-Since \citep{blanchard80} numerous authors have developed solution algorithms and formulas for solving linear rational expectations models.  It turns out that
+Since  \citep{blanchard80} numerous authors have developed solution algorithms and formulas for solving linear rational expectations models.  It turns out that
 the solutions associated with these linear 
 saddle point models, by quantifying the potential 
 impact of anticipated future shocks,
@@ -161,7 +172,7 @@ inhomogeneous solutions
 \intertext{ can be computed as}
 x_t=B x_{t-1} + \phi \psi_\epsilon \epsilon + (I - F)^{-1} \phi \psi_c\label{hSystem}
 \intertext{where}
-\phi= (H_0 +H_1 B)^{-1}  \text{ and } \,\,F=-\phi H_1.\citep{anderson10}
+\phi= (H_0 +H_1 B)^{-1}  \text{ and } \,\,F=-\phi H_1.\intertext{ \citep{anderson10}}
 \end{gather}
 It will be useful to collect the components of this linear reference model solution,$\linMod \equiv \linModMats$, for  later use.\footnote{In Section \ref{sec:almostarbitrary}, I will use these matrices  to construct a series representation for any bounded path
 and in \ref{sec:algoforsoln} compute improvements in proposed model solutions.}
@@ -205,7 +216,7 @@ z_t
 
 
 \begin{myProof}
-See \citep{anderson10},
+See  \citep{anderson10},
 \end{myProof}
 
 	 Consequently, given a bounded time series \refeq{aBPath},
@@ -394,7 +405,7 @@ to compute conditional expected solution paths
 forward from any initial value and realization of $\tArg$.\footnote{Economists have long used similar manipulation of
 time series paths for dynamic models. 
 Indeed, Potter constructs his generalized impulse response functions using
-differences in conditional expectations paths\citep{Potter2000,Koop1996a}.
+differences in conditional expectations paths \citep{Potter2000,Koop1996a}.
 }
 As a result, we can use the family of conditional expectations paths 
 along with a contrived linear reference model to generate
@@ -422,7 +433,7 @@ series formulation and to approximate the  errors for these models as well.}
 
 \subsection{An RBC Example}
 \label{sec:rbcaux}
-  Consider the model described in \citep{Maliar2005}\footnote{Here, I set their $\beta=1$ and 
+  Consider the model described in  \citep{Maliar2005}\footnote{Here, I set their $\beta=1$ and 
 do not discuss quasi-geometric discounting or time-inconsistency.}
  \begin{gather*}
    \max\left \{  u(c_t) + E_t \sum_{t=1}^\infty  \delta^{t}u(c_{t+1})\right \}\\
@@ -439,7 +450,7 @@ c_t + k_t=\theta_{t-1}k_{t-1}^\alpha \\
  \end{tcolorbox}
 \label{sec:rbcexample}
 
-It is well known that when $\eta=d=1$, we have a closed form solution\citep{lettau03}:
+It is well known that when $\eta=d=1$, we have a closed form solution \citep{lettau03}:
 \begin{gather}
 x_t(\xtmEpsArg)\equiv    \DR(\xtmEpsArg)\equiv
    \begin{bmatrix}
@@ -646,7 +657,7 @@ Recomputing the truncation errors with the expanded model produces nearly identi
 This section shows how to use the model equation errors  to construct an 
 approximate error for the components of any proposed
 model solution.\footnote{This work contrasts with the analysis provided in
-\citep{judd2017lower,peralta-alva14,santos2005accuracy,Santos2000accuracy}. 
+ \citep{judd2017lower,peralta-alva14,santos2005accuracy,Santos2000accuracy}. 
 Their approaches identify Euler Equation Errors, but use statistical techniques to estimate the impact of these errors on solution accuracy.  Here I provide
 a formula for the approximate error that does not require statistical inference.}
 
@@ -975,7 +986,7 @@ thus improving algorithm reliability and accuracy.
 % \item start linear.  check error bounds, if adequate done
 % \item traditional iteration ignores the path constraints on initial solution leading to larger errors on $\bndRgn^p$
 % \item It's a good idea to compute easy approximation using just the linear model one ieration to get an approximation for the ergodic set
-% \item PEA moving bounds \citep{maliarmovingbounds}
+% \item PEA moving bounds  \citep{maliarmovingbounds}
 % \item them simulate and make the Maliar SVD transformation
 % \item then iterate on the ergodic set till it settles down
 % \item in this way can avoid solutions which are explosive when iterated 
@@ -989,12 +1000,12 @@ thus improving algorithm reliability and accuracy.
 % \subsubsection{Approximating an Unknown Solution: $U(c) \ne Log(c)$ }
 % \label{sec:unknown-solutions}
 
-I closely follow the techniques outlined in \citep{Judd2013,Judd2014}. 
+I closely follow the techniques outlined in  \citep{Judd2013,Judd2014}. 
 As a result, much of what must be done to use this  algorithm is 
 the same as for the usual approach.
 One must specify an initial guess for decision rule $\xWargK$ and obtain conditional expectations functions.
 I use the an-isotropic Smolyak Lagrange interpolation with adaptive domain.
-I precompute all of the conditional expectations for the integrals as outlined in \citep{JuddIntegrals} so that the time t computations \ref{eqnGates} are all 
+I precompute all of the conditional expectations for the integrals as outlined in  \citep{JuddIntegrals} so that the time t computations \ref{eqnGates} are all 
 deterministic.
 
 
@@ -1177,7 +1188,7 @@ producing interpolation data and subsequently returns the
 
 % \begin{enumerate}
 % \item Not required, but one can use a linearized version of some $\eqnFunc_i$  as the  linear reference model, $\linMod$.
-% \item Current implementation builds on the approach described in \citep{Judd2014}
+% \item Current implementation builds on the approach described in  \citep{Judd2014}
 %   \begin{itemize}
 %   \item Approximate the ``boundaries'' for the ergodic set
 %   \item Decide upon the  degrees of approximation for the an-isotropic Smolyak polynomial representation
@@ -1218,7 +1229,7 @@ to compare the various approximations to the known actual solution.
 In what follows, both the traditional and the new  approach use an-isotropic
 Smolyak polynomial function approximation with precomputed expectations.
 Figure \ref{fig:erg}  characterizes the use of the parallelotope
-transformation described in \citep{Judd2013}. The left panel shows the 200 values of $k_t$ and $\theta_t$ resulting from a stochastic simulation of the the known decision rule. The right panel shows the transformed variables that constitute
+transformation described in  \citep{Judd2013}. The left panel shows the 200 values of $k_t$ and $\theta_t$ resulting from a stochastic simulation of the the known decision rule. The right panel shows the transformed variables that constitute
 an improved set of variables for constructing function approximation values.
 
 \begin{figure}[h]
@@ -1503,9 +1514,9 @@ of the error component by component.
 
 Stochastic dynamic non linear economic
 models often embody  occasionally binding constraints (OBC).
-Since \citep{Christiano2000} a host of
-authors have described a variety of approaches.\footnote{The algorithms described in \citep{holden15:_exist_dsge} and \citep{guerrieri15:_occbin} also exploit the use of ``anticipated shocks'', but do not use the comprehensive formula employed here. }
-\citep{holden15:_exist_dsge,guerrieri15:_occbin,benigno09,hintermaier10,brumm10,nakov08,haefke98,nakata12,gordon11,billi11,Hintermaier2010,Guerrieri2015}
+Since  \citep{Christiano2000} a host of
+authors have described a variety of approaches.\footnote{The algorithms described in  \citep{holden15:_exist_dsge} and  \citep{guerrieri15:_occbin} also exploit the use of ``anticipated shocks'', but do not use the comprehensive formula employed here. }
+ \citep{holden15:_exist_dsge,guerrieri15:_occbin,benigno09,hintermaier10,brumm10,nakov08,haefke98,nakata12,gordon11,billi11,Hintermaier2010,Guerrieri2015}
 
 
 %\subsection{First Order Conditions Lagrangian Derivations}
@@ -2050,14 +2061,14 @@ I_t-(K_t-(1-d_1)k_{t-1})\\
 
 % This section describes a method for finding maxima in a closed bounded domain.
 % Let $D=[a,b]$ in $R^s$ where $a_i \le x_i \le b_i$. We want to find  $M=f(x^\ast)= \max_{x \in D}f(x)$.
-% Th number theoretic (Quasi-Monte Carlo) approached is designed for finding optima with many local optima.  It is based on the used of space filling points.\citep{Xu2005}
+% Th number theoretic (Quasi-Monte Carlo) approached is designed for finding optima with many local optima.  It is based on the used of space filling points. \citep{Xu2005}
 % The number theoretic method of optimization includes two basic steps.
 % \begin{enumerate}
 % \item Choose a set $p=x_i, i=1,\dots,n$ of potential optima that are uniformly scattered.
 % \item Find $M_n\text{ and } x^\ast \in p =\max_{1\le i \le n}f(x_i)$
 % \end{enumerate}
 
-% Even when choosing $p$ wisely convergence slow until \citep{Niederreiter1983}.  They speed up the convergence by contracting the domain.
+% Even when choosing $p$ wisely convergence slow until  \citep{Niederreiter1983}.  They speed up the convergence by contracting the domain.
 % Their algorithm discards all but the best in the domain. Must have very many points to guarantee choosing a point close to the optimum.
 
 
@@ -2396,7 +2407,7 @@ I_t-(K_t-(1-d_1)k_{t-1})\\
 % \subsection{Ergodic Partition of Invariant Sets}
 % \label{sec:ergod-part-invar}
 
-% Following \citep{ergodicvisual}, consider a map $T$ on a compact metric space $\mathcal{A}$ endowed with a measure $\mu$ preserved under $T$. We wish to 
+% Following  \citep{ergodicvisual}, consider a map $T$ on a compact metric space $\mathcal{A}$ endowed with a measure $\mu$ preserved under $T$. We wish to 
 % visualize invariant sets $\mathcal{B} \subseteq \mathcal{A}$.
 
 % \begin{gather*}
@@ -3100,7 +3111,7 @@ and subsequently returns the
 
 
 % I used the Niedererreiter number theoretic algorithm to generated highly 
-% dispersed test points throughout the ergodic region.\citep{niederreiter88,Xu2005}
+% dispersed test points throughout the ergodic region. \citep{niederreiter88,Xu2005}
 % For the given set of parameters, I computed the exact solution.
 % I chose a wide array of different degrees of  approximation for the
 % Smolyak polynomials and for each given degree of approximation I applied

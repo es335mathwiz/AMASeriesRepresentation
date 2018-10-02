@@ -8,19 +8,19 @@ iters=8;
 theK=5;
 refModel={linModFirstRBCTrips,rbcEqnsFirstRBCTrips,firstRBCTripsExactDR,firstRBCTripsExactDRCE,forErgodicInfo,theDistFirstRBCTrips,toIg}=
 (*alphaVal,deltaVal,etaVal,rhoVal.sigmaVal*)
-firstRBCGenModel[0.36,0.95,3.3,0.95,0.02];
-
+firstRBCGenModel[0.36,0.95,1,0,0.95,0.02];
+xVR={{0.1,1},{0.1,.5},{1,10},{0.7,1.5}};
 
 approxUnk1x1x1=1*{1,1,1};
 sPrepUnk1x1x1x5={tryEps,numKern,theName,mthName,bothX0Z0,sgSpecErg,zPts,theFullXsUnk1x1x1x5}=
 doSmolPrep[approxUnk1x1x1,iters,theK,forErgodicInfo,toIg,linModFirstRBCTrips,theDistFirstRBCTrips];
 
-xVR={{0.08,10},{0.001,6},{0.9,50},{0.7,2}};
+forStay={sgSpecErg[[-1]],Join[toIg,Range[5,8]],1}
 
 theResUnk1x1x1x5Trad=.
 {tm,ig}=Timing[
 theResUnk1x1x1x5Trad=parallelNestGenericIterREInterp[genFRExtFunc,linModFirstRBCTrips,
-{bothX0Z0,theK},rbcEqnsFirstRBCTrips,sgSpecErg,smolyakInterpolation,{},theFullXsUnk1x1x1x5,"Traditional"->True,"xVarRanges"->xVR]];
+{bothX0Z0,theK},rbcEqnsFirstRBCTrips,sgSpecErg,smolyakInterpolation,{},theFullXsUnk1x1x1x5,"Traditional"->True,"xVarRanges"->xVR,"stayErgodic"->forStay]];
 theResUnk1x1x1x5Trad[[4,-1,1]]@@#&/@theFullXsUnk1x1x1x5
 (*
 tragic=iterateDRCE[theResUnk1x1x1x5Trad[[4,-1,2]],Transpose[{Drop[#,-1]}],1000] & /@
@@ -49,11 +49,11 @@ sPrepUnk2x2x2x5={tryEps,numKern,theName,mthName,bothX0Z0,sgSpecErg,zPts,theFullX
 doSmolPrep[approxUnk2x2x2,iters,theK,forErgodicInfo,toIg,linModFirstRBCTrips,theDistFirstRBCTrips];
 
 
-
+forStay={sgSpecErg[[-1]],Join[toIg,Range[5,8]],1}
 theResUnk2x2x2x5Trad=.
 {tm,ig}=Timing[
 theResUnk2x2x2x5Trad=parallelNestGenericIterREInterp[genFRExtFunc,linModFirstRBCTrips,
-{bothX0Z0,theK},rbcEqnsFirstRBCTrips,sgSpecErg,smolyakInterpolation,{},theFullXsUnk2x2x2x5,"Traditional"->True,"xVarRanges"->xVR]];
+{bothX0Z0,theK},rbcEqnsFirstRBCTrips,sgSpecErg,smolyakInterpolation,{},theFullXsUnk2x2x2x5,"Traditional"->True,"xVarRanges"->xVR,"xVarRanges"->xVR,"stayErgodic"->forStay]];
 theResUnk2x2x2x5Trad[[4,-1,1]]@@#&/@theFullXsUnk2x2x2x5
 (*
 tragic=iterateDRCE[theResUnk2x2x2x5Trad[[4,-1,2]],Transpose[{Drop[#,-1]}],1000] & /@
@@ -63,7 +63,7 @@ theFullXsUnk2x2x2x5;
 theResUnk2x2x2x5=.
 {tm,ig}=Timing[
 theResUnk2x2x2x5=parallelNestGenericIterREInterp[genFRExtFunc,linModFirstRBCTrips,
-{theResUnk2x2x2x5Trad[[4,-1]](*bothX0Z0*),theK},rbcEqnsFirstRBCTrips,sgSpecErg,smolyakInterpolation,{},theFullXsUnk2x2x2x5,"Traditional"->False,"xVarRanges"->xVR]];
+{(*theResUnk2x2x2x5Trad[[4,-1]]*)bothX0Z0,theK},rbcEqnsFirstRBCTrips,sgSpecErg,smolyakInterpolation,{},theFullXsUnk2x2x2x5,"Traditional"->False,"xVarRanges"->xVR]];
 theAppsUnk2x2x2x5=theResUnk2x2x2x5[[4,-1,1]]@@#&/@theFullXsUnk2x2x2x5
 
 
@@ -91,20 +91,20 @@ Export["theApps2x2x2x5Unk.tex",TableForm[Flatten/@theAppsUnk2x2x2x5[[All,{1,2,4}
 approxUnk3x3x3=3*{1,1,1};
 sPrepUnk3x3x3x5={tryEps,numKern,theName,mthName,bothX0Z0,sgSpecErg,zPts,theFullXsUnk3x3x3x5}=
 doSmolPrep[approxUnk3x3x3,iters,theK,forErgodicInfo,toIg,linModFirstRBCTrips,theDistFirstRBCTrips];
-
+forStay={sgSpecErg[[-1]],Join[toIg,Range[5,8]],1}
 
 
 theResUnk3x3x3x5Trad=.
 {tm,ig}=Timing[
 theResUnk3x3x3x5Trad=parallelNestGenericIterREInterp[genFRExtFunc,linModFirstRBCTrips,
-{bothX0Z0,theK},rbcEqnsFirstRBCTrips,sgSpecErg,smolyakInterpolation,{},theFullXsUnk3x3x3x5,"Traditional"->True,"xVarRanges"->xVR]];
+{bothX0Z0,theK},rbcEqnsFirstRBCTrips,sgSpecErg,smolyakInterpolation,{},theFullXsUnk3x3x3x5,"Traditional"->True,"xVarRanges"->xVR,"stayErgodic"->forStay]];
 theResUnk3x3x3x5Trad[[4,-1,1]]@@#&/@theFullXsUnk3x3x3x5
 
 
 theResUnk3x3x3x5=.
 {tm,ig}=Timing[
 theResUnk3x3x3x5=parallelNestGenericIterREInterp[genFRExtFunc,linModFirstRBCTrips,
-{theResUnk3x3x3x5Trad[[4,-1]](*bothX0Z0*),theK},rbcEqnsFirstRBCTrips,sgSpecErg,smolyakInterpolation,{},theFullXsUnk3x3x3x5,"Traditional"->False,"xVarRanges"->xVR]];
+{(*theResUnk3x3x3x5Trad[[4,-1]]*)bothX0Z0,theK},rbcEqnsFirstRBCTrips,sgSpecErg,smolyakInterpolation,{},theFullXsUnk3x3x3x5,"Traditional"->False,"xVarRanges"->xVR,"stayErgodic"->forStay]];
 theResUnk3x3x3x5[[4,-1,1]]@@#&/@theFullXsUnk3x3x3x5
 
 

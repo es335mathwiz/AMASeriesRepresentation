@@ -66,7 +66,7 @@ infinite-horizon economies with bounded-time-invariant solutions.
 It describes how to obtain decision rules satisfying a system of 
 first-order conditions, ``Euler Equations'',  and how to assess their accuracy.\footnote{The series 
 representation presented here should also prove useful for applications based on
-value function iteration but I  defer treating this topic for
+value function iteration, but, I  defer treating this topic for
  future work.
 }
  For an overview of techniques for solving nonlinear models,
@@ -133,8 +133,8 @@ of the algorithm's components can be computed in parallel with limited amounts o
 
 The paper is organized as follows.
 Section \ref{sec:newseries} presents a useful new series representation for any bounded time series.
-Section \ref{sec:extToMaps} shows how to use this series representation to represent characterize time invariant maps.
-Section \ref{sec:solnerrorbounds} provides formulas for approximating dynamic stochastic model errors in proposed  solutions.
+Section \ref{sec:extToMaps} shows how to use this series representation to characterize time invariant maps.
+Section \ref{sec:solnerrorbounds} provides formulas for approximating dynamic stochastic model decision rule errors in proposed  solutions.
 Section \ref{sec:algoforsoln} presents a new solution algorithm for improving proposed solutions.
 Section \ref{sec:occbind} applies the technique to a model with 
 occasionally binding constraints.
@@ -175,7 +175,7 @@ x_t=B x_{t-1} + \phi \psi_\epsilon \epsilon + (I - F)^{-1} \phi \psi_c\label{hSy
 \phi= (H_0 +H_1 B)^{-1}  \text{ and } \,\,F=-\phi H_1.\intertext{ \citep{anderson10}}
 \end{gather}
 It will be useful to collect the components of this linear reference model solution,$\linMod \equiv \linModMats$, for  later use.\footnote{In Section \ref{sec:almostarbitrary}, I will use these matrices  to construct a series representation for any bounded path
-and in \ref{sec:algoforsoln} compute improvements in proposed model solutions.}
+and in \ref{sec:algoforsoln} to compute improvements in proposed model solutions.}
 
 
 
@@ -262,10 +262,10 @@ H_{-1}&H_{0}&H_{1} \label{linRef}
 with $\psi_c=\psi_\epsilon=0, \,\,  \psi_z=I$.
 I have chosen these coefficients so that 
 the linear model has a unique stable solution and, since $H_1$ is full rank,
-its column space will span the column space for all non zero values for $z_t \in \mathcal{R}^3$.\footnote{The flexibility in choosing $\linMod$ will 
-become more important in later in the paper  where we must 
+its row space will span the column space for all non zero values for $z_t \in \mathcal{R}^3$.\footnote{The flexibility in choosing $\linMod$ will 
+become more important  later in the paper  where we must 
 choose a  linear reference model in a context where we will have 
-little guidance about what might make a good choice.}  It turns out that the algorithm is very forgiving about the choice of $\linMod$.  
+little guidance about what might make a good choice.}  
 
 The solution for this system is
 

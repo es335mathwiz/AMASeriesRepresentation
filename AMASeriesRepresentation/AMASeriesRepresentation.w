@@ -79,7 +79,8 @@ replaceMySlotStandIn[xx_]:=xx/.mySlotStandIn->Slot
 @{
 
 (*begin code for genFRExtFunc*)
-Options[genFRExtFunc]={"xVarRanges"->{},"Traditional"->False,"addTailContribution"->False} 
+Options[genFRExtFunc]={"xVarRanges"->{},"Traditional"->False,"addTailContribution"->False,"stayErgodic"->{},
+"normConvTol"->10.^(-9)} 
 
 @}
 
@@ -89,7 +90,7 @@ genFRExtFunc[{numX_Integer,numEps_Integer,numZ_Integer},@<linMod@>,
 @<bothXZFuncs@>,
 @<rawTriples@>,
 opts:OptionsPattern[]]:=
-Module[{varRanges=OptionValue["xVarRanges"]},
+Module[{varRanges=OptionValue["xVarRanges"],stayErg=OptionValue["stayErgodic"]},
 With[{funcTrips=
 Map[{#[[1]],genFRExtFunc[{numX,numEps,numZ},linMod,bothXZFuncs,#[[2]],
 Apply[Sequence,
@@ -106,7 +107,7 @@ selectorFunc[@<rawTriples@>]:=triples[[-1]]
 genFRExtFunc[{numX_Integer,numEps_Integer,numZ_Integer},
 @<linMod@>,@<bothXZFuncs@>,
 @<eqnsFunc@>,opts:OptionsPattern[]]:=
-Module[{varRanges=OptionValue["xVarRanges"]},
+Module[{varRanges=OptionValue["xVarRanges"],stayErg=OptionValue["stayErgodic"]},
 With[{@<findRootArgNames@>},
 With[{@<prepFindRootXInitBoth@>},
 With[{zArgsInit=Transpose[{zArgs,Drop[theXInit,numX]}]},
@@ -182,7 +183,7 @@ With[{aMat=toRangeXInit[Transpose[{theVals}],theRanges]},
 Flatten[aMat]]
 
 
- 
+ (*these calls compute as though epsilons included*)
 toErgodic[theValues_?VectorQ,
 theMeans_?VectorQ,theSDs_?VectorQ,theV_?MatrixQ,
 zRanges:{{_?NumberQ,_?NumberQ}..}]:=
@@ -196,7 +197,44 @@ With[{goodZs=Transpose[toRange[zsIn,zRanges]]},
     backZtoX[goodZs,theMeans,theSDs,theV]]]
 
 
+ (*these calls compute as though epsilons excluded*)
+toErgodic[theValues_?MatrixQ,
+theMeans_?VectorQ,theSDs_?VectorQ,theV_?MatrixQ,
+zRanges:{{_?NumberQ,_?NumberQ}..},toIgnore:{_Integer..},numEps_Integer]:=
+With[{toMod=Complement[Range[Length[theValues]],toIgnore]},
+With[{theMods=toErgodic[Join[theValues[[toMod]],ConstantArray[{0},{numEps}]],theMeans,theSDs,theV,zRanges]},(*Print[{"toerg",toMod,theMods,"toerg"}];*)
+ReplacePart[theValues,
+MapThread[#1->#2&,{toMod,Drop[Transpose[theMods],-numEps]}]]]]
 
+
+toErgodic[theValues_?VectorQ,
+theMeans_?VectorQ,theSDs_?VectorQ,theV_?MatrixQ,
+zRanges:{{_?NumberQ,_?NumberQ}..},toIgnore:{_Integer..},numEps_Integer]:=
+Flatten[toErgodic[Transpose[{theValues}],theMeans,theSDs,theV,zRanges,toIgnore,numEps]]
+
+
+toErgodic[theValues_?MatrixQ,
+{{theMeans_?VectorQ,theSDs_?VectorQ,
+theMinZ_?VectorQ,theMaxZ_?VectorQ,theV_?MatrixQ},
+toIgnore:{_Integer..},numEps_Integer}]:=
+With[{zRanges=Transpose[{theMinZ,theMaxZ}]},
+toErgodic[theValues,theMeans,theSDs,theV,zRanges,toIgnore,numEps]]
+
+
+
+
+toErgodic[theValues_?VectorQ,
+{{theMeans_?VectorQ,theSDs_?VectorQ,
+theMinZ_?VectorQ,theMaxZ_?VectorQ,theV_?MatrixQ},
+toIgnore:{_Integer..},numEps_Integer}]:=
+Flatten[toErgodic[Transpose[{theValues}],
+{{theMeans,theSDs,theMinZ,theMaxZ,theV},
+toIgnore,numEps}]]
+
+
+toErgodic[theValues:(_?MatrixQ|_?VectorQ),{}]:=theValues
+
+Print["need to reconcile toErgodic defs (ignore shocks)"]
 
 makePatternArgs[theNames_List]:=
 Map[PatternTest[Pattern[#, Blank[]], NumberQ]&,theNames]
@@ -216,8 +254,12 @@ eArgs=Table[Unique["theFREArgs"],{numEps}]@}
 @d prepFindRootXInitBoth
 @{theXInit=
 With[{rawVal=Flatten[Apply[bothXZFuncs[[1,1]],Join[xLagArgs,eArgs]]]},
-If[OptionValue["xVarRanges"]==={},rawVal,
-toRangeXInit[rawVal,OptionValue["xVarRanges"]]]],
+With[{midVal=
+If[varRanges==={},rawVal,
+toRangeXInit[rawVal,varRanges]]},(*Print[{"possible:",stayErg,midVal,rawVal,toErgodic[midVal,stayErg],"possible"}];*)
+If[stayErg==={},midVal,
+toErgodic[midVal,stayErg]]
+]],
 funcOfXtm1Eps=Unique["fNameXtm1Eps"],
 funcOfXtZt=Unique["fNameXtZt"]
 @}
@@ -249,8 +291,8 @@ With[{
 xkAppl=Flatten[
 Join[xLagArgs,xArgs,
 (Apply[bothXZFuncs[[1,2]],xArgs][[Range[numX]]]),eArgs]]},
-With[{fixXkAppl=If[OptionValue["xVarRanges"]==={},xkAppl,
-toRangeXtm1XtXtp1Eps[xkAppl,numEps,OptionValue["xVarRanges"]]]},
+With[{fixXkAppl=If[varRanges==={},xkAppl,
+toRangeXtm1XtXtp1Eps[xkAppl,numEps,varRanges]]},
 With[{eqnAppl=Apply[eqnsFunc,Flatten[fixXkAppl]]},
 Flatten[Join[eqnAppl]]]]]]]@}
 
@@ -260,7 +302,9 @@ funcOfXtZt[
 (**)
 Apply[Sequence,xtztArgPatterns]],
 Module[{theZsNow=genZsForFindRoot[linMod,
-Transpose[{xArgs}],bothXZFuncs[[1,2]],bothXZFuncs[[2]]]},
+Transpose[{xArgs}],bothXZFuncs[[1,2]],bothXZFuncs[[2]],
+Apply[Sequence,FilterRules[{opts},
+Options[genZsForFindRoot]]]]},
 With[{xkFunc=Catch[
 (Check[genLilXkZkFunc[linMod,theZsNow,
 Apply[Sequence,FilterRules[{opts},
@@ -270,8 +314,8 @@ Print["trying higher throw"];Throw[$Failed,"higher"]]),_,
 Function[{val,tag},Print["catchfxtzt:",{xArgs,val,tag}//InputForm];
 Throw[$Failed,"fromGenLil"]]]},
 With[{xkAppl=Apply[xkFunc,Join[xLagArgs,eArgs,zArgs]]},
-With[{fixXkAppl=If[OptionValue["xVarRanges"]==={},xkAppl,
-toRangeXtm1XtXtp1Eps[xkAppl,numEps,OptionValue["xVarRanges"]]]},
+With[{fixXkAppl=If[varRanges==={},xkAppl,
+toRangeXtm1XtXtp1Eps[xkAppl,numEps,varRanges]]},
 With[{eqnAppl=Apply[eqnsFunc,Flatten[fixXkAppl]],
 xDisc=xArgs-fixXkAppl[[numX+Range[numX]]]},
 Flatten[Join[xDisc,eqnAppl]]]]]]]]@}
@@ -295,7 +339,8 @@ funcOfXtm1Eps
 (**)
 With[{frRes=FindRoot[(**)
 funcOfXtZt[Apply[Sequence,Join[xLagArgs,eArgs,xArgs,zArgs]]],
-Join[xArgsInit,zArgsInit]]},If[Not[FreeQ[frRes,FindRoot]],
+Join[xArgsInit,zArgsInit](*,
+EvaluationMonitor:>Print[{"inFR:",xLagArgs,eArgs,xArgs,zArgs}//InputForm]*)]},If[Not[FreeQ[frRes,FindRoot]],
 Throw[$Failed,"genFRExtFunc:FindRoot"]];
 Transpose[{Flatten[Join[xArgs,zArgs]]/.frRes}]]]@}
 
@@ -482,7 +527,7 @@ Module[{},Inverse[IdentityMatrix[Length[FF]]-FF] . phi . theTailZ]
 @}
 
 @d Z Matrices Given
-@{With[{fCon=Check[fSumC[phi,FF,psiZ,theZs],Print["trying to throw low"];
+@{With[{fCon=Check[fSumC[phi,FF,psiZ,theZs],Print[{"trying to throw low",theZs}//InputForm];
 Throw[$Failed,"low"]]},
 With[{(*theRes=genLilXkZkFunc[linMod,fCon,
 Apply[Sequence,FilterRules[{opts},
@@ -498,22 +543,28 @@ genLilXkZkFunc[linMod,fCon]]]
 @d genZsForFindRoot
 @{
 Print["should update genZsForFindRoot to use conditional expectation instead of using hmat********************************"];
+Options[genZsForFindRoot]={"stayErgodic"->{}}
 genZsForFindRoot[linMod:{theHMat_?MatrixQ,BB_?MatrixQ,
 phi_?MatrixQ,FF_?MatrixQ,psiEps_?MatrixQ,psiC_?MatrixQ,psiZ_?MatrixQ,
 backLookingInfo:{{_Integer,backLooking_,backLookingExp_}...}},
-	initVec_?MatrixQ,theCondExp:(_Function|_CompiledFunction),iters_Integer]:=
+	initVec_?MatrixQ,theCondExp:(_Function|_CompiledFunction),
+iters_Integer,opts:OptionsPattern[]]:=
 Module[{},
 With[{numX=Length[initVec],
  	thePath=
-Check[iterateDRCE[theCondExp,initVec,iters+1],
+Check[iterateDRCE[theCondExp,initVec,iters+1,
+Apply[Sequence,FilterRules[{opts},
+Options[iterateDRCE]]]],
 Print["problems with current DRCE, at",initVec,"linMod!!!!!"];
 iterateDRCE[genX0Z0Funcs[linMod],initVec,iters+1]]},
+(*Print[{"thePath:",thePath,OptionValue["stayErgodic"],"end"}//InputForm];*)
 With[{restVals=
   Map[(theHMat .thePath[[Range[3*numX]+numX*(#-1)]] -psiC)&,
 Range[(Length[thePath]/numX)-3]]},
       restVals
 ]]]
 
+Print["problem with variance in firstRBC  0.01 is hardwired somewhere"]
 
 
 
@@ -527,12 +578,14 @@ iterateDRCE::usage="iterateDRCE[drExpFunc:(_Function|_CompiledFunction|_Symbol),
 
 @d iterateDRCE
 @{
-
+Options[iterateDRCE]={"stayErgodic"->{}}
 iterateDRCE[drExpFunc:(_Function|_CompiledFunction|_Symbol),
-initVec_?MatrixQ,numPers_Integer]:=
-	With[{numX=Length[initVec]},
+initVec_?MatrixQ,numPers_Integer,opts:OptionsPattern[]]:=
+	With[{numX=Length[initVec],stayErg=OptionValue["stayErgodic"]},
 With[{iterated=
-NestList[Function[xx,((Transpose[{Flatten[Apply[drExpFunc,Flatten[xx]]]}]))],
+NestList[Function[xx,((Transpose[{Flatten[
+toErgodic[Apply[drExpFunc,Flatten[xx]],stayErg]
+]}]))],
 Identity[initVec],numPers]},
 Apply[Join,
 (Map[Function[xx,Identity[xx[[Range[numX]]]]],iterated])]]]/;
@@ -579,7 +632,8 @@ parallelDoGenericIterREInterp::usage=
 @{
 (*begin code for doSmolyakIterREInterp*)
 
-Options[parallelDoGenericIterREInterp]={"xVarRanges"->{},"Traditional"->False,"addTailContribution"->False}
+Options[parallelDoGenericIterREInterp]={"xVarRanges"->{},"Traditional"->False,"addTailContribution"->False,"stayErgodic"->{},
+"normConvTol"->10.^(-9)}
 
 @}
 
@@ -1055,7 +1109,7 @@ parallelNestGenericIterREInterp::usage=
 @{
 
 Options[parallelNestGenericIterREInterp]={"xVarRanges"->{},"Traditional"->False,"addTailContribution"->False,"maxForCEIters"->Infinity,
-"normConvTol"->10.^(-10),"maxNormsToKeep"->50}
+"normConvTol"->10.^(-9),"maxNormsToKeep"->50,"stayErgodic"->{}}
 
 
 parallelNestGenericIterREInterp[genFRExtFunc,@<linMod@>,
@@ -1070,7 +1124,6 @@ NestList[Function[xx,parallelDoGenericIterREInterp[genFRExtFunc,linMod,
 {xx,numSteps},triples,smolGSpec,genericInterp,svmArgs,
 Apply[Sequence,FilterRules[{opts},
 Options[parallelDoGenericIterREInterp]]]]],justBothXZFuncs,numIters]]
-
 
 parallelNestGenericIterREInterp[genFRExtFunc,@<linMod@>,
 @<bothXZFuncs@>,
@@ -1313,7 +1366,7 @@ genFRExtFunc[{numX_Integer,numEps_Integer,numZ_Integer},
 @<linMod@>,
 @<regimesBothXZFuncs@>,
 @<rawRegimesTriples@>,opts:OptionsPattern[]]:=
-Module[{varRanges=OptionValue["xVarRanges"]},
+Module[{varRanges=OptionValue["xVarRanges"],stayErg=OptionValue["stayErgodic"]},
 With[{regimeTrips=
 Table[genFRExtFunc[{numX,numEps,numZ},linMod,regimesBothXZFuncs,
 rawRegimesTriples[[-1]],rawRegimesTriples[[1,ii]],ii,Apply[Sequence,
@@ -1331,7 +1384,7 @@ genFRExtFunc[{numX_Integer,numEps_Integer,numZ_Integer},@<linMod@>,
 @<regimesBothXZFuncs@>,probFunc:(_Function|_CompiledFunction|_Symbol),
 @<rawTriples@>,regimeIndx_Integer,
 opts:OptionsPattern[]]:=
-Module[{varRanges=OptionValue["xVarRanges"]},
+Module[{varRanges=OptionValue["xVarRanges"],stayErg=OptionValue["stayErgodic"]},
 With[{funcTrips=
 Map[{#[[1]],genFRExtFunc[{numX,numEps,numZ},linMod,regimesBothXZFuncs,
 probFunc,#[[2]],regimeIndx,
@@ -1352,7 +1405,7 @@ genFRExtFunc[{numX_Integer,numEps_Integer,numZ_Integer},
 @<linMod@>,
 @<regimesBothXZFuncs@>,probFunc:(_Symbol|_Function|_CompiledFunction),
 @<eqnsFunc@>,regimeIndx_Integer,opts:OptionsPattern[]]:=
-Module[{varRanges=OptionValue["xVarRanges"]},
+Module[{varRanges=OptionValue["xVarRanges"],stayErg=OptionValue["stayErgodic"]},
 With[{@<findRootArgNames@>},
 With[{@<prepFindRootXInitRegimesBoth@>},
 With[{zArgsInit=Transpose[{zArgs,Drop[theXInit,numX]}]},
@@ -1375,8 +1428,12 @@ funcOfXtm1Eps
 @{theXInit=
 With[{rawVal=Flatten[Apply[regimesBothXZFuncs[[regimeIndx,1,1]],
 Join[xLagArgs,eArgs]]]},
-If[OptionValue["xVarRanges"]==={},rawVal,
-toRangeXInit[rawVal,OptionValue["xVarRanges"]]]],
+With[{midVal=
+If[varRanges==={},rawVal,
+toRangeXInit[rawVal,varRanges]]},
+If[stayErg==={},midVal,
+toErgodic[midVal,stayErg]]
+]],
 funcOfXtm1Eps=Unique["fNameXtm1Eps"],
 funcOfXtZt=Unique["fNameXtZt"]
 @}
@@ -1393,8 +1450,8 @@ With[{
 xkAppl=Flatten[
 Join[xLagArgs,xArgs,
 Map[(Apply[#[[1,2]],xArgs][[Range[numX]]])&,regimesBothXZFuncs],eArgs]]},
-With[{fixXkAppl=If[OptionValue["xVarRanges"]==={},xkAppl,
-toRangeXtm1XtXtp1Eps[xkAppl,numEps,OptionValue["xVarRanges"]]]},
+With[{fixXkAppl=If[varRanges==={},xkAppl,
+toRangeXtm1XtXtp1Eps[xkAppl,numEps,varRanges]]},
 With[{eqnAppl=Apply[eqnsFunc,Flatten[fixXkAppl]]},
 Flatten[Join[eqnAppl]]]]]]]@}
 
@@ -1416,8 +1473,8 @@ Print["trying higher throw"];Throw[$Failed,"higher"]]),_,
 Function[{val,tag},Print["catchfxtzt:",{xArgs,val,tag}//InputForm];
 Throw[$Failed,"fromGenLil"]]]},
 With[{xkAppl=Apply[xkFunc,Join[xLagArgs,eArgs,zArgs]]},
-With[{fixXkAppl=If[OptionValue["xVarRanges"]==={},xkAppl,
-toRangeXtm1XtXtp1Eps[xkAppl,numEps,OptionValue["xVarRanges"]]]},
+With[{fixXkAppl=If[varRanges==={},xkAppl,
+toRangeXtm1XtXtp1Eps[xkAppl,numEps,varRanges]]},
 With[{eqnAppl=Apply[eqnsFunc,Flatten[fixXkAppl]],
 xDisc=xArgs-fixXkAppl[[numX+Range[numX]]]},
 Flatten[Join[xDisc,eqnAppl]]]]]]]]@}
@@ -2484,6 +2541,7 @@ simpParamSubs::usage="placeholder"
 @d simpParamSubs
 @{
 (*parameters page 21 using state 1*)
+(*
 paramSubs={
 alpha->.36,
 beta->1,
@@ -2492,6 +2550,7 @@ delta->.95,
 rho->.95,
 sigma->.01
 } ;
+*)
 paramSubs={
 alpha->alphaVal,
 delta->deltaVal,

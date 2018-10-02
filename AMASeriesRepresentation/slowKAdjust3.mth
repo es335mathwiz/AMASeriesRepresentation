@@ -1,0 +1,408 @@
+Get["tests/pathSetup.mth"]
+Get["AMASeriesRepresentation`"]
+Get["firstRBCTrips.m"]
+
+
+refModel={linModFirstRBCInit,rbcEqnsFirstRBCTrips,firstRBCTripsExactDR,firstRBCTripsExactDRCE,forErgodicInfo,theDistFirstRBCTrips,toIg}=
+(*alphaVal,deltaVal,etaVal,rhoVal.sigmaVal*)
+firstRBCGenModel[0.36,0.95,1.3,0.95,0.02];
+bothNow=genBothX0Z0Funcs[linModFirstRBCTrips];
+xVR={{0.1,1},{0.1,.5},{1,10},{0.7,1.5}};
+
+(*
+theAppsUnk3x3x3xExact=firstRBCTripsExactDR@@#&/@theFullXsUnk3x3x3x5
+*)
+
+doKStepSE[kNow_Integer,approx:{_Integer..},
+forErgInfoNow:(_Function|_CompiledFunction|_Symbol),linModNow_List]:=
+Module[{tryEps,numKern,theName,mthName,sgSpecErg,zPts,theFullXs,
+sPrep,forStay,theRes,tm,ig,
+longPaths,fp,linModNext,bothX0Z0},
+sPrep={tryEps,numKern,theName,mthName,bothX0Z0,sgSpecErg,zPts,theFullXs}=
+doSmolPrep[approx,999,999,forErgInfoNow,toIg,linModNow,theDistFirstRBCTrips];
+forStay={sgSpecErg[[-1]],Join[toIg,Range[5,8]],1};
+theResSE=.;
+{tm,ig}=Timing[
+theResSE=parallelNestGenericIterREInterp[genFRExtFunc,linModNow,
+{bothX0Z0,kNow},rbcEqnsFirstRBCTrips,sgSpecErg,smolyakInterpolation,{},theFullXs,"Traditional"->False,"xVarRanges"->xVR,"stayErgodic"->forStay]];
+theAppsSE=theResSE[[4,-1,1]]@@#&/@theFullXs;
+longPaths=(iterateDRCE[theResSE[[4,-1,2]],
+Transpose[{#}],240][[Reverse[-Range[8]]]])& /@ theFullXs[[All,Range[4]]];
+fp=Flatten[longPaths[[1]][[Range[4]]]];
+linModNext=genLinModFirstRBCTrips[genSSSubsFirstRBCTrips[fp]];
+errsSE=nextSimplestErrXtm1Eps[rbcEqnsFirstRBCTrips,theResSE[[4,-1,1]],
+theResSE[[4,-1,2]],Transpose[{#}],1,linModNext,0]&/@theFullXs;
+forErgInfoNext=genForErgodicInfo[Function[{ig1,kk,ig2,tt,eps},Flatten[(theResSE[[4,-1,1]] @@ {ig1,kk,ig2,tt,eps})[[Range[4]]]]]];
+{theResSE,forErgInfoNext,theAppsSE,errsSE,sgSpecErg,theFullXs,
+longPaths,fp,linModNext}]
+
+doKStepNotSE[kNow_Integer,approx:{_Integer..},
+forErgInfoNow:(_Function|_CompiledFunction|_Symbol),linModNow_List]:=
+Module[{tryEps,numKern,theName,mthName,bothX0Z0,sgSpecErg,zPts,theFullXs,
+sPrep,forStay,theRes,tm,ig,
+longPaths,fp,linModNext},
+sPrep={tryEps,numKern,theName,mthName,bothX0Z0,sgSpecErg,zPts,theFullXs}=
+doSmolPrep[approx,999,999,forErgInfoNow,toIg,linModNow,theDistFirstRBCTrips];
+forStay={sgSpecErg[[-1]],Join[toIg,Range[5,8]],1};
+theResNotSE=.;
+{tm,ig}=Timing[
+theResNotSE=parallelNestGenericIterREInterp[genFRExtFunc,linModNow,
+{bothX0Z0,kNow},rbcEqnsFirstRBCTrips,sgSpecErg,smolyakInterpolation,{},theFullXs,"Traditional"->False,"xVarRanges"->xVR,"stayErgodic"{}]];
+theAppsNotSE=theResNotSE[[4,-1,1]]@@#&/@theFullXs;
+longPaths=(iterateDRCE[theResNotSE[[4,-1,2]],
+Transpose[{#}],240][[Reverse[-Range[8]]]])& /@ theFullXs[[All,Range[4]]];
+fp=Flatten[longPaths[[1]][[Range[4]]]];
+linModNext=genLinModFirstRBCTrips[genSSSubsFirstRBCTrips[fp]];
+errsNotSE=nextSimplestErrXtm1Eps[rbcEqnsFirstRBCTrips,theResNotSE[[4,-1,1]],
+theResNotSE[[4,-1,2]],Transpose[{#}],1,linModNext,0]&/@theFullXs;
+forErgInfoNext=genForErgodicInfo[Function[{ig1,kk,ig2,tt,eps},Flatten[(theResNotSE[[4,-1,1]] @@ {ig1,kk,ig2,tt,eps})[[Range[4]]]]]];
+{theResNotSE,forErgInfoNext,theAppsNotSE,errsNotSE,sgSpecErg,theFullXs,
+longPaths,fp,linModNext}]
+
+genForErgodicInfo[theFuncNow:(_Function|_CompiledFunction|_Symbol)]:=
+Function[{numPers},
+With[{draws=RandomVariate[theDistFirstRBCTrips[[1,1,2]],numPers],
+initVec={99,.238,99,.9614}},
+With[{vars=
+FoldList[Flatten[Apply[theFuncNow, Append[Flatten[#1],#2]]]&,initVec,draws]},
+ArrayFlatten[{{Drop[vars,1],Transpose[{draws}]}}]]]];
+
+
+
+
+
+threeStep[_,kk_,_,th_,eps_]:=
+Module[{chk=Infinity,stepOne},
+While[chk>5,
+With[{draws=RandomVariate[theDistFirstRBCTrips[[1,1,2]],2]},
+stepOne=funcNow2[ig,kk,ig,th,eps];
+With[{stepTwo=funcNow2[ig,stepOne[[2]],ig,stepOne[[4]],draws[[1]]]},
+With[{stepThree=funcNow2[ig,stepTwo[[2]],ig,stepTwo[[4]],draws[[2]]]},
+Print["stepThree:",{stepOne,stepTwo,stepThree}];
+chk=Norm[stepThree]]]]];stepOne]
+
+(*
+for
+firstRBCGenModel[0.36,0.95,1.3,0.95,0.02];
+{aa,bb,cc,dd,ee,ff,gg,hh,ii}=doKStepSE[1,1*{1,1,1},forErgodicInfo,linModFirstRBCInit];
+
+{aa,bb,cc,dd,ee,ff,gg,hh,ii}=doKStepSE[10,1*{1,1,1},forErgodicInfo,linModFirstRBCInit];
+In[41]:= Norm /@ dd//InputForm
+
+Out[41]//InputForm= 
+{0.013736959815430824, 0.014548487024177464, 0.004783507374822391, 
+ 0.0027639888910000426, 0.0002630033139377414, 0.009515277855367177, 
+ 0.0041097491005024946, 0.016550781063182727, 0.0016214986065114087, 
+ 0.003065688484649812, 0.0083642505410955, 0.010461551321446506, 
+ 0.008727784608882778, 0.0011067273935827346, 0.0062034371531479735, 
+ 0.015098754979603952, 0.0011844253580042356, 0.002139835935700216, 
+ 0.010352947623496032, 0.014772388443493382, 0.0028397468342679804, 
+ 0.0026647842911452155, 0.00290188036183547, 0.005895717777452266, 
+ 0.009297198412529961, 0.01730206430395776, 0.0003919620386855249, 
+ 0.011831115044773122, 0.005375411556356675, 0.018537899550646535}
+
+{aa,bb,cc,dd,ee,ff,gg,hh,ii}=doKStepSE[10,2*{1,1,1},forErgodicInfo,linModFirstRBCInit];
+
+In[43]:= In[43]:= Norm /@ dd//InputForm
+
+Out[43]//InputForm= 
+{0.0003671371735297924, 0.0001438400364240151, 0.00013232065102249346, 
+ 0.00015779357875852002, 0.00009357218675894355, 0.00005811925504643824, 
+ 0.00005795158287967139, 0.00018675427699940968, 8.861312598150807*^-6, 
+ 0.0000601890893992254, 0.0002993651645925214, 0.000038598746010903956, 
+ 0.00003938719937073279, 0.00008304256662029384, 0.00004577548437222318, 
+ 0.000021326398833788704, 0.0002585255660312182, 0.00007628311717742251, 
+ 0.00001697541709292882, 0.00034217526541844423, 0.0001867591245875031, 
+ 0.000010129669974127535, 0.00002338569183504121, 0.00021730808500899365, 
+ 0.00013774697237544812, 0.00009439564792078776, 0.00010910889382632006, 
+ 0.00020189981379430285, 0.00011430512942666021, 0.00006958273723095128}
+
+{aa,bb,cc,dd,ee,ff,gg,hh,ii}=doKStepNotSE[10,2*{1,1,1},bb,ii];
+
+In[45]:= Norm /@ dd//InputForm
+
+Out[45]//InputForm= 
+{0.00044933943010980144, 0.00001330306422023465, 0.00030594559268551396, 
+ 0.0000844219856116905, 0.000012254984870844246, 0.00020666858189838274, 
+ 0.000048045055955598063, 0.00010315197816107911, 0.0001479524658037047, 
+ 5.054787740940698*^-6, 0.00037536507734458967, 0.00010686094762292799, 
+ 0.00007355739726743226, 0.0000125329341242023, 0.000013350640528637182, 
+ 0.00006903270630356788, 0.00030709998041360823, 0.00005774081270902133, 
+ 0.0001342962491160149, 0.0002947151603905618, 0.00017070895975877776, 
+ 0.00014611631000143165, 0.00007588224606548537, 0.0001462855611352869, 
+ 0.0003175848966872789, 0.000015058966062234131, 0.000033089468695227155, 
+ 0.0003858055608779068, 0.000055379323861209876, 0.00012248747421683115}
+
+
+{aa,bb,cc,dd,ee,ff,gg,hh,ii}=doKStepSE[10,3*{1,1,1},bb,ii];
+
+
+In[47]:= Norm /@ dd//InputForm
+
+Out[47]//InputForm= 
+{0.00002732389402236204, 4.247545548387758*^-6, 0.000036340170924624905, 
+ 0.000010602068562023064, 2.0106463193986674*^-7, 0.000015839616303705093, 
+ 0.00003598234783156677, 4.051668211721201*^-6, 8.653527022034171*^-7, 
+ 0.000018726938398092728, 0.000037757200113052605, 0.00003944994033646082, 
+ 0.000019936306545767784, 0.00001289338782429081, 0.000024864530903493813, 
+ 0.000043820615874208556, 2.3449056044500377*^-6, 0.000011666228670328727, 
+ 0.00003150061332857739, 1.4139628837980192*^-6, 0.000027316700223768546, 
+ 0.000029469820178302436, 0.000013868657903816436, 5.533440052027949*^-6, 
+ 0.000019163907661744958, 0.00004880402416610238, 0.000010904063143052257, 
+ 0.000050825079340882756, 0.000029898671508193683, 0.000011737830993463223}
+
+{aa,bb,cc,dd,ee,ff,gg,hh,ii}=doKStepSE[10,4*{1,1,1},bb,ii];
+
+
+
+*)
+
+(*
+(*K=1 not ergodic*)
+theResUnk3x3xb3x1=.
+{tm,ig}=Timing[
+theResUnk3x3x3x1=parallelNestGenericIterREInterp[genFRExtFunc,linModFirstRBCTrips,
+{theResUnk3x3x3x0[[4,-1]],1},rbcEqnsFirstRBCTrips,sgSpecErg,smolyakInterpolation,{},theFullXs,"Traditional"->False,"xVarRanges"->xVR]];
+theAppsUnk3x3x3x1=theResUnk3x3x3x1[[4,-1,1]]@@#&/@theFullXs
+
+
+
+
+errsUnk3x3x3x1=nextSimplestErrXtm1Eps[rbcEqnsFirstRBCTrips,theResUnk3x3x3x1[[4,-1,1]],
+theResUnk3x3x3x1[[4,-1,2]],Transpose[{#}],1,linModFirstRBCTrips,1]&/@theFullXs;
+
+
+
+
+
+(*K=1 ergodic*)
+theResUnk3x3x3x1SE=.
+{tm,ig}=Timing[
+theResUnk3x3x3x1SE=parallelNestGenericIterREInterp[genFRExtFunc,linModFirstRBCTrips,
+{theResUnk3x3x3x0SE[[4,-1]],1},rbcEqnsFirstRBCTrips,sgSpecErg,smolyakInterpolation,{},theFullXsUnk3x3x3x5,"Traditional"->False,"xVarRanges"->xVR,"stayErgodic"->forStay]];
+theAppsUnk3x3x3x1SE=theResUnk3x3x3x1SE[[4,-1,1]]@@#&/@theFullXsUnk3x3x3x5
+
+
+
+
+errsUnk3x3x3x1=nextSimplestErrXtm1Eps[rbcEqnsFirstRBCTrips,theResUnk3x3x3x1[[4,-1,1]],
+theResUnk3x3x3x1[[4,-1,2]],Transpose[{#}],1,linModFirstRBCTrips,1]&/@theFullXsUnk3x3x3x5;
+
+
+
+
+(*K=2 not ergodic*)
+theResUnk3x3x3x2=.
+{tm,ig}=Timing[
+theResUnk3x3x3x2=parallelNestGenericIterREInterp[genFRExtFunc,linModFirstRBCTrips,
+{theResUnk3x3x3x1[[4,-1]],2},rbcEqnsFirstRBCTrips,sgSpecErg,smolyakInterpolation,{},theFullXsUnk3x3x3x5,"Traditional"->False,"xVarRanges"->xVR]];
+theAppsUnk3x3x3x2=theResUnk3x3x3x2[[4,-1,1]]@@#&/@theFullXsUnk3x3x3x5
+
+
+
+
+errsUnk3x3x3x2=nextSimplestErrXtm1Eps[rbcEqnsFirstRBCTrips,theResUnk3x3x3x2[[4,-1,1]],
+theResUnk3x3x3x2[[4,-1,2]],Transpose[{#}],1,linModFirstRBCTrips,2]&/@theFullXsUnk3x3x3x5;
+
+
+
+
+funcNow2=Function[{ig1,kk,ig2,tt,eps},Flatten[(theResUnk3x3x3x2[[4,-1,1]] @@ {ig1,kk,ig2,tt,eps})[[Range[4]]]]];
+forErgodicInfo2=genForErgodicInfo[funcNow2]
+
+
+
+
+approxUnk3x3x3=3*{1,1,1};
+sPrepUnk3x3x3x5x2={tryEps2,numKern2,theName2,mthName2,bothX0Z02,sgSpecErg2,zPts2,theFullXsUnk3x3x3x5x2}=
+doSmolPrep[approxUnk3x3x3,iters,theK,forErgodicInfo2,toIg,linModFirstRBCTrips,theDistFirstRBCTrips];
+forStay2={sgSpecErg2[[-1]],Join[toIg,Range[5,8]],1}
+
+
+
+(*K=2  ergodic*)
+theResUnk3x3x3x2SE=.
+{tm,ig}=Timing[
+theResUnk3x3x3x2SE=parallelNestGenericIterREInterp[genFRExtFunc,linModFirstRBCTrips,
+{theResUnk3x3x3x1SE[[4,-1]],2},rbcEqnsFirstRBCTrips,sgSpecErg2,smolyakInterpolation,{},theFullXsUnk3x3x3x5x2,"Traditional"->False,"xVarRanges"->xVR,"stayErgodic"->forStay2]];
+theAppsUnk3x3x3x2SE=theResUnk3x3x3x2SE[[4,-1,1]]@@#&/@theFullXsUnk3x3x3x5x2
+
+
+
+
+errsUnk3x3x3x2SE=nextSimplestErrXtm1Eps[rbcEqnsFirstRBCTrips,theResUnk3x3x3x2SE[[4,-1,1]],
+theResUnk3x3x3x2SE[[4,-1,2]],Transpose[{#}],1,linModFirstRBCTrips,2]&/@theFullXsUnk3x3x3x5x2;
+
+
+
+
+(*K=3 not ergodic*)
+theResUnk3x3x3x3=.
+{tm,ig}=Timing[
+theResUnk3x3x3x3=parallelNestGenericIterREInterp[genFRExtFunc,linModFirstRBCTrips,
+{theResUnk3x3x3x2[[4,-1]],3},rbcEqnsFirstRBCTrips,sgSpecErg,smolyakInterpolation,{},theFullXsUnk3x3x3x5,"Traditional"->False,"xVarRanges"->xVR]];
+theAppsUnk3x3x3x3=theResUnk3x3x3x3[[4,-1,1]]@@#&/@theFullXsUnk3x3x3x5
+
+
+
+
+errsUnk3x3x3x3=nextSimplestErrXtm1Eps[rbcEqnsFirstRBCTrips,theResUnk3x3x3x3[[4,-1,1]],
+theResUnk3x3x3x3[[4,-1,2]],Transpose[{#}],1,linModFirstRBCTrips,2]&/@theFullXsUnk3x3x3x5;
+
+
+
+funcNow3=Function[{ig1,kk,ig2,tt,eps},Flatten[(theResUnk3x3x3x3[[4,-1,1]] @@ {ig1,kk,ig2,tt,eps})[[Range[4]]]]];
+forErgodicInfo3=genForErgodicInfo[funcNow3]
+
+
+approxUnk3x3x3=3*{1,1,1};
+sPrepUnk3x3x3x5x2={tryEps2,numKern2,theName2,mthName2,bothX0Z02,sgSpecErg2,zPts2,theFullXsUnk3x3x3x5x2}=
+doSmolPrep[approxUnk3x3x3,iters,theK,forErgodicInfo2,toIg,linModFirstRBCTrips,theDistFirstRBCTrips];
+forStay2={sgSpecErg2[[-1]],Join[toIg,Range[5,8]],1}
+
+
+(*K=3  ergodic*)
+theResUnk3x3x3x3SE=.
+{tm,ig}=Timing[
+theResUnk3x3x3x3SE=parallelNestGenericIterREInterp[genFRExtFunc,linModFirstRBCTrips,
+{theResUnk3x3x3x2SE[[4,-1]],3},rbcEqnsFirstRBCTrips,sgSpecErg,smolyakInterpolation,{},theFullXsUnk3x3x3x5,"Traditional"->False,"xVarRanges"->xVR,"stayErgodic"->forStay]];
+theAppsUnk3x3x3x3SE=theResUnk3x3x3x3SE[[4,-1,1]]@@#&/@theFullXsUnk3x3x3x5
+
+
+(*
+
+errsUnk3x3x3x3SE=nextSimplestErrXtm1Eps[rbcEqnsFirstRBCTrips,theResUnk3x3x3x3SE[[4,-1,1]],
+theResUnk3x3x3x3SE[[4,-1,2]],Transpose[{#}],1,linModFirstRBCTrips,2]&/@theFullXsUnk3x3x3x5;
+
+
+(*K=4 not ergodic*)
+theResUnk3x3x3x4=.
+{tm,ig}=Timing[
+theResUnk3x3x3x4=parallelNestGenericIterREInterp[genFRExtFunc,linModFirstRBCTrips,
+{theResUnk3x3x3x3[[4,-1]],4},rbcEqnsFirstRBCTrips,sgSpecErg,smolyakInterpolation,{},theFullXsUnk3x3x3x5,"Traditional"->False,"xVarRanges"->xVR]];
+theAppsUnk3x3x3x4=theResUnk3x3x3x4[[4,-1,1]]@@#&/@theFullXsUnk3x3x3x5
+
+
+
+
+errsUnk3x3x3x4=nextSimplestErrXtm1Eps[rbcEqnsFirstRBCTrips,theResUnk3x3x3x4[[4,-1,1]],
+theResUnk3x3x3x4[[4,-1,2]],Transpose[{#}],1,linModFirstRBCTrips,2]&/@theFullXsUnk3x3x3x5;
+
+
+
+
+
+(*K=4  ergodic*)
+theResUnk3x3x3x4SE=.
+{tm,ig}=Timing[
+theResUnk3x3x3x4SE=parallelNestGenericIterREInterp[genFRExtFunc,linModFirstRBCTrips,
+{theResUnk3x3x3x3SE[[4,-1]],4},rbcEqnsFirstRBCTrips,sgSpecErg,smolyakInterpolation,{},theFullXsUnk3x3x3x5,"Traditional"->False,"xVarRanges"->xVR,"stayErgodic"->forStay]];
+theAppsUnk3x3x3x4SE=theResUnk3x3x3x4SE[[4,-1,1]]@@#&/@theFullXsUnk3x3x3x5
+
+
+
+
+errsUnk3x3x3x4SE=nextSimplestErrXtm1Eps[rbcEqnsFirstRBCTrips,theResUnk3x3x3x4SE[[4,-1,1]],
+theResUnk3x3x3x4SE[[4,-1,2]],Transpose[{#}],1,linModFirstRBCTrips,2]&/@theFullXsUnk3x3x3x5;
+
+
+(*K=5 not ergodic*)
+theResUnk3x3x3x5=.
+{tm,ig}=Timing[
+theResUnk3x3x3x5=parallelNestGenericIterREInterp[genFRExtFunc,linModFirstRBCTrips,
+{theResUnk3x3x3x4[[4,-1]],5},rbcEqnsFirstRBCTrips,sgSpecErg,smolyakInterpolation,{},theFullXsUnk3x3x3x5,"Traditional"->False,"xVarRanges"->xVR]];
+theAppsUnk3x3x3x5=theResUnk3x3x3x5[[4,-1,1]]@@#&/@theFullXsUnk3x3x3x5
+
+
+
+
+errsUnk3x3x3x5=nextSimplestErrXtm1Eps[rbcEqnsFirstRBCTrips,theResUnk3x3x3x5[[4,-1,1]],
+theResUnk3x3x3x5[[4,-1,2]],Transpose[{#}],1,linModFirstRBCTrips,2]&/@theFullXsUnk3x3x3x5;
+
+
+
+
+
+(*K=5  ergodic*)
+theResUnk3x3x3x5SE=.
+{tm,ig}=Timing[
+theResUnk3x3x3x5SE=parallelNestGenericIterREInterp[genFRExtFunc,linModFirstRBCTrips,
+{theResUnk3x3x3x4SE[[4,-1]],5},rbcEqnsFirstRBCTrips,sgSpecErg,smolyakInterpolation,{},theFullXsUnk3x3x3x5,"Traditional"->False,"xVarRanges"->xVR,"stayErgodic"->forStay]];
+theAppsUnk3x3x3x5SE=theResUnk3x3x3x5SE[[4,-1,1]]@@#&/@theFullXsUnk3x3x3x5
+
+
+
+
+errsUnk3x3x3x5SE=nextSimplestErrXtm1Eps[rbcEqnsFirstRBCTrips,theResUnk3x3x3x5SE[[4,-1,1]],
+theResUnk3x3x3x5SE[[4,-1,2]],Transpose[{#}],1,linModFirstRBCTrips,2]&/@theFullXsUnk3x3x3x5;
+
+
+
+
+(*K=10 not ergodic*)
+theResUnk3x3x3x10=.
+{tm,ig}=Timing[
+theResUnk3x3x3x10=parallelNestGenericIterREInterp[genFRExtFunc,linModFirstRBCTrips,
+{theResUnk3x3x3x5[[4,-1]],10},rbcEqnsFirstRBCTrips,sgSpecErg,smolyakInterpolation,{},theFullXsUnk3x3x3x5,"Traditional"->False,"xVarRanges"->xVR]];
+theAppsUnk3x3x3x10=theResUnk3x3x3x10[[4,-1,1]]@@#&/@theFullXsUnk3x3x3x5
+
+
+
+
+errsUnk3x3x3x10=nextSimplestErrXtm1Eps[rbcEqnsFirstRBCTrips,theResUnk3x3x3x10[[4,-1,1]],
+theResUnk3x3x3x10[[4,-1,2]],Transpose[{#}],1,linModFirstRBCTrips,2]&/@theFullXsUnk3x3x3x5;
+
+
+
+
+
+(*K=10  ergodic*)
+theResUnk3x3x3x10SE=.
+{tm,ig}=Timing[
+theResUnk3x3x3x10SE=parallelNestGenericIterREInterp[genFRExtFunc,linModFirstRBCTrips,
+{theResUnk3x3x3x5SE[[4,-1]],10},rbcEqnsFirstRBCTrips,sgSpecErg,smolyakInterpolation,{},theFullXsUnk3x3x3x5,"Traditional"->False,"xVarRanges"->xVR,"stayErgodic"->forStay]];
+theAppsUnk3x3x3x10SE=theResUnk3x3x3x10SE[[4,-1,1]]@@#&/@theFullXsUnk3x3x3x5
+
+
+
+
+errsUnk3x3x3x10SE=nextSimplestErrXtm1Eps[rbcEqnsFirstRBCTrips,theResUnk3x3x3x10SE[[4,-1,1]],
+theResUnk3x3x3x10SE[[4,-1,2]],Transpose[{#}],1,linModFirstRBCTrips,2]&/@theFullXsUnk3x3x3x5;
+
+
+
+
+(*K=20 not ergodic*)
+theResUnk3x3x3x20=.
+{tm,ig}=Timing[
+theResUnk3x3x3x20=parallelNestGenericIterREInterp[genFRExtFunc,linModFirstRBCTrips,
+{theResUnk3x3x3x10[[4,-1]],20},rbcEqnsFirstRBCTrips,sgSpecErg,smolyakInterpolation,{},theFullXsUnk3x3x3x5,"Traditional"->False,"xVarRanges"->xVR]];
+theAppsUnk3x3x3x20=theResUnk3x3x3x20[[4,-1,1]]@@#&/@theFullXsUnk3x3x3x5
+
+
+
+
+errsUnk3x3x3x20=nextSimplestErrXtm1Eps[rbcEqnsFirstRBCTrips,theResUnk3x3x3x20[[4,-1,1]],
+theResUnk3x3x3x20[[4,-1,2]],Transpose[{#}],1,linModFirstRBCTrips,2]&/@theFullXsUnk3x3x3x5;
+
+
+
+
+
+(*K=20  ergodic*)
+theResUnk3x3x3x20SE=.
+{tm,ig}=Timing[
+theResUnk3x3x3x20SE=parallelNestGenericIterREInterp[genFRExtFunc,linModFirstRBCTrips,
+{theResUnk3x3x3x10SE[[4,-1]],20},rbcEqnsFirstRBCTrips,sgSpecErg,smolyakInterpolation,{},theFullXsUnk3x3x3x5,"Traditional"->False,"xVarRanges"->xVR,"stayErgodic"->forStay]];
+theAppsUnk3x3x3x20SE=theResUnk3x3x3x20SE[[4,-1,1]]@@#&/@theFullXsUnk3x3x3x5
+
+
+
+
+errsUnk3x3x3x20SE=nextSimplestErrXtm1Eps[rbcEqnsFirstRBCTrips,theResUnk3x3x3x20SE[[4,-1,1]],
+theResUnk3x3x3x20SE[[4,-1,2]],Transpose[{#}],1,linModFirstRBCTrips,2]&/@theFullXsUnk3x3x3x5;
+
+
+
+*)
+*)

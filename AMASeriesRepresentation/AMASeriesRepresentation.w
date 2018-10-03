@@ -80,7 +80,7 @@ replaceMySlotStandIn[xx_]:=xx/.mySlotStandIn->Slot
 
 (*begin code for genFRExtFunc*)
 Options[genFRExtFunc]={"xVarRanges"->{},"Traditional"->False,"addTailContribution"->False,"stayErgodic"->{},
-"normConvTol"->10.^(-9)} 
+"normConvTol"->10.^(-10)} 
 
 @}
 
@@ -633,7 +633,7 @@ parallelDoGenericIterREInterp::usage=
 (*begin code for doSmolyakIterREInterp*)
 
 Options[parallelDoGenericIterREInterp]={"xVarRanges"->{},"Traditional"->False,"addTailContribution"->False,"stayErgodic"->{},
-"normConvTol"->10.^(-9)}
+"normConvTol"->10.^(-10)}
 
 @}
 
@@ -1108,8 +1108,8 @@ parallelNestGenericIterREInterp::usage=
 @d parallelNestGenericIterREInterp
 @{
 
-Options[parallelNestGenericIterREInterp]={"xVarRanges"->{},"Traditional"->False,"addTailContribution"->False,"maxForCEIters"->Infinity,
-"normConvTol"->10.^(-9),"maxNormsToKeep"->50,"stayErgodic"->{}}
+Options[parallelNestGenericIterREInterp]={"xVarRanges"->{},"Traditional"->False,"addTailContribution"->False,"maxForCEIters"->100,
+"normConvTol"->10.^(-10),"maxNormsToKeep"->50,"stayErgodic"->{}}
 
 
 parallelNestGenericIterREInterp[genFRExtFunc,@<linMod@>,
@@ -1124,6 +1124,9 @@ NestList[Function[xx,parallelDoGenericIterREInterp[genFRExtFunc,linMod,
 {xx,numSteps},triples,smolGSpec,genericInterp,svmArgs,
 Apply[Sequence,FilterRules[{opts},
 Options[parallelDoGenericIterREInterp]]]]],justBothXZFuncs,numIters]]
+
+
+
 
 parallelNestGenericIterREInterp[genFRExtFunc,@<linMod@>,
 @<bothXZFuncs@>,
@@ -1140,8 +1143,7 @@ Options[parallelDoGenericIterREInterp]]]]],justBothXZFuncs,
 With[{theNorms=
 Map[Function[notxx,
 (Norm[Apply[#1[[1]],notxx]-Apply[#2[[1]],notxx]])],
-evalPts]},Print[{"nestWhile:",itCount++,maxNorm=Max[theNorms],tol=Norm[theNorms]/Length[theNorms],OptionValue["normConvTol"]}];(Norm[theNorms]/Length[theNorms])>OptionValue["normConvTol"]]&,2,
-OptionValue["maxForCEIters"]]},
+evalPts]},Print[{"nestWhile:",itCount++,maxNorm=Max[theNorms],tol=Norm[theNorms]/Length[theNorms],OptionValue["normConvTol"]}];(Norm[theNorms]/Length[theNorms])>OptionValue["normConvTol"]]&,2,OptionValue["maxForCEIters"]]},
 {itCount,maxNorm,tol,nestResults}
 ]]
 
@@ -2742,6 +2744,43 @@ Apply[  Function , {{cct, kkt, nlt, tht}, Flatten[
 
 @}
 
+@d genLinModUsage
+@{
+
+genSSSubsFirstRBCTrips::usage="genSSSubsFirstRBCTrips[ssVals_List]"
+genLinModFirstRBCTrips::usage="genLinModFirstRBCTrips[ssSolnSubsRE_List]"
+@}
+@d genLinMod
+@{
+genSSSubsFirstRBCTrips[
+{ccVal_?NumberQ,kkVal_?NumberQ,nlVal_?NumberQ,thVal_?NumberQ}]:=
+{cc->ccVal,kk->kkVal,nlPart->nlVal,theta->thVal};
+Print["after"];
+
+genLinModFirstRBCTrips[ssSolnSubsRE_List]:=
+Module[{hmatSymbRE,hmatSymbRawRE,zfSymbRE,hfSymbRE,amatSymbRE,
+	evlsSymbRE,evcsSymbRE,qmatSymbRE,bmatSymbRE,phimatSymbRE,fmatSymbRE,
+hSumRE,ssSolnVecRE,psicSymbRE,psiz},
+hmatSymbRawRE=(((equationsToMatrix[
+rbcEqns/.simpParamSubs]//FullSimplify)/.{xxxx_[t+_.]->xxxx})//.ssSolnSubsRE)/.{eps[_]->0}//FullSimplify;
+psiepsSymbRE=-Transpose[{((Map[D[#,eps[theta][t]]&, rbcEqns])/.{eps[_][_]->0,xxxx_[t+_.]->xxxx})//.ssSolnSubsRE}/.simpParamSubs];
+hmatSymbRE=(hmatSymbRawRE//.simpSubs)//.simpParamSubs;
+{zfSymbRE,hfSymbRE}=symbolicAR[hmatSymbRE//.simpParamSubs];
+amatSymbRE=symbolicTransitionMatrix[hfSymbRE];
+{evlsSymbRE,evcsSymbRE}=Eigensystem[Transpose[amatSymbRE]];
+qmatSymbRE=Join[zfSymbRE,evcsSymbRE[[{1}]]];
+(*Print["computing and simplifying the symbolic b phi f etc"]*)
+{bmatSymbRE,phimatSymbRE,fmatSymbRE}=symbolicComputeBPhiF[hmatSymbRE,qmatSymbRE]//Simplify;
+hSumRE=hmatSymbRE[[All,Range[4]]]+hmatSymbRE[[All,4+Range[4]]]+hmatSymbRE[[All,8+Range[4]]];
+ssSolnVecRE=({{cc},{kk},{nlPart},{theta}}//.ssSolnSubsRE)//.simpParamSubs;
+psicSymbRE=hSumRE . ssSolnVecRE;
+psiz=IdentityMatrix[4];
+linModFirstRBCTrips={hmatSymbRE//N,bmatSymbRE // N, phimatSymbRE // N, 
+    fmatSymbRE // N, psiepsSymbRE // N, 
+    psicSymbRE // N, psiz // N,{}}
+];
+
+@}
 
 \subsection{assemble code}
 
@@ -2777,6 +2816,7 @@ firstRBCGenModel::usage="firstRBCGenModel"
 @<exampleInitsUsage@>
 @<rbcEqnsFirstRBCTripsUsage@>
 @<exact definitions usage@>
+@<genLinModUsage@> 
 @}
 
 
@@ -2787,6 +2827,7 @@ firstRBCGenModel::usage="firstRBCGenModel"
 @<rbcEqns@>
 @<ssSolnSubsRE@>
 @<linModFirstRBCTrips@>
+@<genLinMod@> 
 @<exact definitions code@>
 @<rbcEqnsFirstRBCTrips@>
 @}

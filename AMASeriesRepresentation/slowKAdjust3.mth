@@ -4,7 +4,7 @@ Get["AMASeriesRepresentation`"]
 Get["firstRBCTrips.m"]
 
 
-refModel={linModFirstRBCInit,rbcEqnsFirstRBCTrips,firstRBCTripsExactDR,firstRBCTripsExactDRCE,forErgodicInfo,theDistFirstRBCTrips,toIg}=
+refModel={linModFirstRBCInit,rbcEqnsFirstRBCTrips,firstRBCTripsExactDR,firstRBCTripsExactDRCE,forErgodicInfo,theDistFirstRBCTrips,toIg,paramSubs}=
 (*alphaVal,deltaVal,etaVal,rhoVal.sigmaVal*)
 firstRBCGenModel[0.36,1.0,0.95,1.0,0.95,0.01];
 bothNow=genBothX0Z0Funcs[linModFirstRBCTrips];

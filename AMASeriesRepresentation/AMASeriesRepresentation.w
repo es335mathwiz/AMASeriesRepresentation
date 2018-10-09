@@ -2466,6 +2466,7 @@ numSteps_Integer}@}
 
 @d doSmolPrepUsage
 @{
+fNameTail::usage="fname with data on computation"
 doSmolPrep::usage="doSmolPrep[approx_?VectorQ,iters_Integer,theK_Integer,forErgodicInfo:(_Symbol|_Function|_CompiledFunction),toIg_?VectorQ]"
 @}
 
@@ -2478,8 +2479,8 @@ forErgodicInfo:(_Symbol|_Function|_CompiledFunction),toIg_?VectorQ,
 Module[{zPts,ptErg,tfErg,plyErg,iplyErg,dplyErg,bothX0Z0,smolStuff,smolRngErg,sgSpecErg},
 (**)tryEps=0;
 LaunchKernels[];numKern=Length[Kernels[]];
-(*theName=fNameString[approx,iters,theK,numKern];*)
-(*mthName=theName<>".mth";*)
+theName=fNameString[approx,iters,theK,numKern];
+mthName=theName<>".mth";
 bothX0Z0=genBothX0Z0Funcs[linMod];
 {mn,sd,minz,maxz,svd}=ergodicInfo[forErgodicInfo,toIg,1];
 smolStuff=
@@ -2495,7 +2496,18 @@ theFullXs=genTestPts[{minz,maxz},30,Nied,mn,sd,svd,toIg];
 
 fNameString[approx_?VectorQ,iters_Integer,theK_Integer,numKern_Integer]:=
 Module[{},
-StringReplace[dirNameString[]<>"forBetterRBC-CS-"<>ToString[approx]<>"Iters"<>ToString[iters]<>"theK"<>ToString[theK],{" "->"","{"->"-","}"->"-"}]];
+dirNameString[]<>fNameTail[approx,iters,theK,numKern]]
+
+
+fNameTail[approx_?VectorQ,iters_Integer,theK_Integer,numKern_Integer]:=
+StringReplace["forBetterRBC-CS-"<>ToString[approx]<>"Iters"<>ToString[iters]<>"theK"<>ToString[theK],
+{" "->"","{"->"-","}"->"-"}]
+
+
+
+
+
+
 dirNameString[]:=
 Module[{},
 aDir="resDirGen"<>"-host-"<>$MachineName<>"numKern"<>ToString[numKern]<>"-"<>ToString[Round[AbsoluteTime[]]]<>"/";
@@ -2815,7 +2827,7 @@ rhoVal_?NumberQ,
 sigmaVal_?NumberQ]:=
 Module[{},
 @<firstRBCTripsPackage code@>
-{linModFirstRBCTrips,rbcEqnsFirstRBCTrips,firstRBCTripsExactDR,firstRBCTripsExactDRCE,forErgodicInfo,theDistFirstRBCTrips,{1,3,4}}
+{linModFirstRBCTrips,rbcEqnsFirstRBCTrips,firstRBCTripsExactDR,firstRBCTripsExactDRCE,forErgodicInfo,theDistFirstRBCTrips,{1,3,4},simpParamSubs}
 ]
 End[]
 EndPackage[]

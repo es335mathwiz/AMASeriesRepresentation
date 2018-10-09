@@ -39,9 +39,9 @@ This paper provides a new technique for representing  discrete time  nonlinear d
 Using this new series representation, the paper shows how to
 augment a solution strategy based on projection methods
   with an additional set of
-constraints thereby enhancing its reliability.
+constraints thereby enhancing its reliability and accuracy.
 The paper also provides general
-formulas for evaluating the accuracy of proposed solutions.
+formulas for evaluating the accuracy of proposed decision rule solutions.
 The technique can readily accommodate models with occasionally binding constraints and regime switching. 
 The  algorithm  uses
 Smolyak polynomial function approximation  in a way which makes it possible to exploit a high degree of parallelism.
@@ -134,7 +134,7 @@ of the algorithm's components can be computed in parallel with limited amounts o
 The paper is organized as follows.
 Section \ref{sec:newseries} presents a useful new series representation for any bounded time series.
 Section \ref{sec:extToMaps} shows how to use this series representation to characterize time invariant maps.
-Section \ref{sec:solnerrorbounds} provides formulas for approximating dynamic stochastic model decision rule errors in proposed  solutions.
+Section \ref{sec:solnerrorbounds} provides formulas for approximating dynamic stochastic model decision rule errors in proposed solutions.
 Section \ref{sec:algoforsoln} presents a new solution algorithm for improving proposed solutions.
 Section \ref{sec:occbind} applies the technique to a model with 
 occasionally binding constraints.
@@ -175,7 +175,7 @@ x_t=B x_{t-1} + \phi \psi_\epsilon \epsilon + (I - F)^{-1} \phi \psi_c\label{hSy
 \phi= (H_0 +H_1 B)^{-1}  \text{ and } \,\,F=-\phi H_1.\intertext{ \citep{anderson10}}
 \end{gather}
 It will be useful to collect the components of this linear reference model solution,$\linMod \equiv \linModMats$, for  later use.\footnote{In Section \ref{sec:almostarbitrary}, I will use these matrices  to construct a series representation for any bounded path
-and in \ref{sec:algoforsoln} to compute improvements in proposed model solutions.}
+and in \ref{sec:algoforsoln} to compute improvements in proposed model decision rule solutions.}
 
 
 
@@ -326,7 +326,7 @@ One can apply the calculations for any given initial condition to produce
 a z series exactly replicating any bounded set of trajectories.  
 Consequently, these
 numerical linear algebra calculations can easily transform a $z_t$ series into an $x_t$ series and vice versa.  Since this can be done for any path starting from any particular initial conditions, 
-any discrete time invariant map that generates families of bounded paths has a series representation.
+any discrete time invariant map that generates families of bounded paths has a series representation. Section \ref{sec:extToMaps} builds on this observation.
 
 
 
@@ -339,6 +339,16 @@ computes the impact on the current state of fully anticipated future shocks.  It
 one could truncate a series of correct values of $z_t$ or
 one might have imprecise values of $z_t$ along the path.
 
+{\color{blue}
+Should report units free Euler equation error for comparability to   Judd smolyak paper 2014.
+
+Should compare and contrast to decision rule error.
+
+Reproduce each of the combinations of param values as they did.
+
+More interested in error in the decision rule than in model equation error.
+}
+
 \subsubsection{Truncation Error}
 
 
@@ -346,7 +356,7 @@ The series representation can compute the entire series exactly
 if all the terms are included, but, it will at times be useful to exploit the fact that
 the terms for state vectors closer 
 to the initial time have the most important impact.
-One could consider approximating  $\mathcal{X}_t$ by 
+One could consider approximating  $\xWOarg_t$ by 
 truncating the series  at a finite number of terms.
  	 \begin{gather}
  	 \xWOargK_t \equiv B x_{t-1}+ \phi \psi_\epsilon\epsilon  + (I - F)^{-1} \phi \psi_c + \sum_{s=0}^k F^s \phi z_{t}\label{theTruncSeries}
@@ -363,7 +373,7 @@ We can bound the  series approximation truncation errors:
  Figure \ref{figArbTrunc} shows
 that this truncation error can be  a very conservative measure of the accuracy
 of the truncated series.  The orange line represents the computed approximation of
-the infinity norm of the difference between $x_t$ from the full series and a truncated series for different lengths of the truncation.  The blue line shows the infinity norm of the actual difference between the $x_t$ computed using the full series and the value obtained using a truncated series.  The series requires only the first 20 terms to compute
+the infinity norm of the difference between $x_t$ from the full series and a truncated series for different values of $k$, the length of the truncation.  The blue line shows the infinity norm of the actual difference between the $x_t$ computed using the full series and the value obtained using a truncated series.  The series requires only the first 20 terms to compute
 the initial value of the state vector to high precision. 
 
 
@@ -412,7 +422,7 @@ along with a contrived linear reference model to generate
 a series representation for the model solutions  and
 to approximate errors.
 
-So long as the trajectories are 
+So long as the iterated trajectories of the conditional expectations paths are 
  bounded, the time invariant maps can 
 be represented using the framework from section \ref{sec:newseries}.
 The series representation will provide a linearly weighted sum of $z_t\tArg$ functions that give us an approximation for the model solutions.
@@ -433,24 +443,31 @@ series formulation and to approximate the  errors for these models as well.}
 
 \subsection{An RBC Example}
 \label{sec:rbcaux}
-  Consider the model described in  \citep{Maliar2005}\footnote{Here, I set their $\beta=1$ and 
+  Consider the model described in  \citep{Maliar2005,Judd2014}\footnote{Here, I set their $\beta=1$ and 
 do not discuss quasi-geometric discounting or time-inconsistency.}
  \begin{gather*}
    \max\left \{  u(c_t) + E_t \sum_{t=1}^\infty  \delta^{t}u(c_{t+1})\right \}\\
-c_t + k_t=(1-d)k_{t-1} + \theta_t f(k_t)\\
+c_t + k_t= \theta_{t} f(k_{t-1})\\
 f(k_t)= k_t^\alpha\\
 u(c)=\frac{c^{1-\eta}-1}{1-\eta}
  \end{gather*}
 The first order conditions for the model are
 
 \begin{tcolorbox}[ams gather]
-\frac{1}{c_t^{\eta}}=\alpha \delta k_{t}^{\alpha-1} E_t \left (\frac{\theta_{t+1}}{c_{t+1}^\eta} \right ) \\
-c_t + k_t=\theta_{t-1}k_{t-1}^\alpha \\
+\frac{1}{c_t^{\eta}}=\delta \left ( \alpha k_{t}^{\alpha-1} E_t \left (\frac{\theta_{t+1}}{c_{t+1}^\eta} \right )+ (1-d)E_t\left (\frac{1}{c_{t+1}^\eta} \right ) \right )\\
+c_t + k_t=(1-d)k_{t-1}\theta_{t}k_{t-1}^\alpha \\
  \theta_t =\theta_{t-1}^\rho e^{\epsilon_t}\label{rbcSys}
  \end{tcolorbox}
 \label{sec:rbcexample}
 
-It is well known that when $\eta=d=1$, we have a closed form solution \citep{lettau03}:
+For comparison with results reported in \citep{Judd2014} it will be useful
+to recast the first equation in unit free form:
+
+\begin{gather*}
+\delta c_t^{\eta}\left ( \alpha k_{t}^{\alpha-1} E_t \left (\frac{\theta_{t+1}}{c_{t+1}^\eta} \right )+ (1-d)E_t\left (\frac{1}{c_{t+1}^\eta} \right ) \right ) -1\\
+\end{gather*}
+
+It is well known that when $\eta=1$, we have a closed form solution \citep{lettau03}:
 \begin{gather}
 x_t(\xtmEpsArg)\equiv    \DR(\xtmEpsArg)\equiv
    \begin{bmatrix}
@@ -518,7 +535,7 @@ k_{t-1}\\
 % required for a given level of approximation
 % accuracy.}
 
-For example, using $d=1$ and the following parameter values and using the arbitrary linear reference model \eqref{linRef} we can generate a series representation for the model solutions.
+For example, using $\eta=d=1$ and the following parameter values and using the arbitrary linear reference model \eqref{linRef} we can generate a series representation for the model solutions.
 
 \begin{gather}\label{rbcparams}
 \vcenter{\hbox{\includegraphics{RBCParamSubs.pdf}}} \,\, \text{ we have } \,\,
@@ -547,9 +564,7 @@ For example, using $d=1$ and the following parameter values and using the arbitr
 \end{figure}
 
 Figure \refeq{rbcpaths} shows, from top to bottom, the paths of $\theta_t, c_t, \text{ and } k_t$ from the initial values given in Equation \refeq{theInits}. 
-
 %The orange line corresponds to $z_{1t}\tArg$,the blue line corresponds to $z_{2t}\tArg$ and the green line corresponds to $z_{3t}\tArg$.%\footnote{For now we focus on the times series paths, $z_t(x_{t-1},\epsilon_t)$ for given $(x_{t-1},\epsilon_t)$.  Later we will exploit the information available from explicit investigation of the variation in  $z_t(x_{t-1},\epsilon_t)$ with $(x_{t-1},\epsilon_t)$ to improve solution accuracy and robustness.}
-
 By including enough terms we can compute the solution for $x_t$ 
 exactly.
 Figure \ref{rbcTrunc} shows the impact that truncating the series has 
@@ -575,7 +590,7 @@ With enough terms, even using an ``almost'' arbitrarily chosen linear model,  th
 Figure \ref{rbcTruncSimp} shows that using a 
 linearization that better tracks the 
 nonlinear model paths, improves the approximation $Z_n$, shown in blue  and the approximate error  $B_n$ shown in red.
-Using the linearization of the RBC model around the ergodic mean produces a tighter but still pessimistic bound on the errors for the initial state vector.
+Using the linearization of the RBC model around the ergodic mean produces a tighter but still  pessimistic bound on the errors for the initial state vector.
 Again, the first few terms make most of the difference in approximating the value of the state variables.
 
 
@@ -613,38 +628,35 @@ We will be working with models where expectations are computed at time t, with  
 We can construct a linear reference model for the modified RBC system
 by  augmenting the RBC model with the equation 
 \begin{tcolorbox}[ams gather]
-  \rcpC_t=\frac{\theta_t}{c_t},
+  \rcpC_{1,t}=\frac{\theta_t}{c_t},  \rcpC_{2,t}=\frac{1}{c_t},
 \end{tcolorbox}
 \noindent
-substituting $\rcpC_{t+1}$ for $\frac{\theta_{t+1}}{c_{t+1}}$
+substituting $\rcpC_{1,t+1}$ for $\frac{\theta_{t+1}}{c_{t+1}}$ and
+$\rcpC_{2,t+1}$ for $\frac{1}{c_{t+1}}$
 in the first equation and 
  linearizing the RBC model about the ergodic mean.
 
-This 
-leads to:
-{\small
-\begin{gather}
-  \begin{bmatrix}
-H_{-1}&H_{0}&H_{1} 
-  \end{bmatrix}=\\
-\vcenter{\hbox{\includegraphics{RBCHmatSymb.pdf}}} \label{rbcLinSys}
-\intertext{with}
-\psi_\epsilon=
-\begin{bmatrix}
-  0\\0\\1\\0
-\end{bmatrix}, \psi_z=I
-\end{gather}%(\footnote{generated by AMAPaperCalcs.mth {RBCHmatSymb.pdf}})
-}
-These coefficients  produce a unique stable linear solution.
+This leads to:
+
+   \begin{gather}
+ H_{-1}=\vcenter{\hbox{\includegraphics{rbcExampleOctoberHM.pdf}}} \\
+H_{0}=\vcenter{\hbox{\includegraphics{rbcExampleOctoberHZ.pdf}}} \label{rbcLinSys}\\  
+H_{1}=\vcenter{\hbox{\includegraphics{rbcExampleOctoberHP.pdf}}} \intertext{with}
+ \psi_\epsilon= \begin{bmatrix}
+   0\\0\\0\\0\\1
+ \end{bmatrix}, \psi_z=I_5
+ \end{gather}
+
+These coefficients  produce a unique stable linear solution.\footnote{$H_{1}$  has only one non-zero term here since $d=1$.}
 
 \begin{gather}
   B=
-\vcenter{\hbox{\includegraphics{RBCBmatSymb.pdf}}},
+\vcenter{\hbox{\includegraphics{rbcExampleOctoberB.pdf}}},
 \phi=
-\vcenter{\hbox{\includegraphics{RBCPhimatSymb.pdf}}}\\
+\vcenter{\hbox{\includegraphics{rbcExampleOctoberPhi.pdf}}}\\
 F=
-\vcenter{\hbox{\includegraphics{RBCFmatSymb.pdf}}}\\
-\psi_c=\vcenter{\hbox{\includegraphics{RBCPsissSymb.pdf}}}
+\vcenter{\hbox{\includegraphics{rbcExampleOctoberF.pdf}}}\\
+\psi_c=\vcenter{\hbox{\includegraphics{rbcExampleOctoberPsiC.pdf}}}
 \end{gather}
 Recomputing the truncation errors with the expanded model produces nearly identical results for  variable approximation errors.
 
@@ -656,7 +668,8 @@ Recomputing the truncation errors with the expanded model produces nearly identi
 
 This section shows how to use the model equation errors  to construct an 
 approximate error for the components of any proposed
-model solution.\footnote{This work contrasts with the analysis provided in
+model decision rule solution.   Here I provide
+a formula for the approximate error that does not require statistical inference.\footnote{This work contrasts with the analysis provided in
  \citep{judd2017lower,peralta-alva14,santos2005accuracy,Santos2000accuracy}. 
 Their approaches identify Euler Equation Errors, but use statistical techniques to estimate the impact of these errors on solution accuracy.  Here I provide
 a formula for the approximate error that does not require statistical inference.}
@@ -672,7 +685,7 @@ a formula for the approximate error that does not require statistical inference.
 \label{sec:errorformula}
 
 Consider a bounded region, $\bndRgn$, that contains all iterated conditional expectations paths.
-  By bounding the largest deviation in the paths for the $\Delta z_t^p$, we can bound the largest deviation in a proposed solution from the exact solution. 
+  By bounding the largest deviation in the paths for the $\Delta z_t^p$, we can bound the largest deviation in a proposed model decision rule solution from the exact solution. 
 
 
 
@@ -685,7 +698,7 @@ E_tx^\star_{t+1}=G^\star(g^\star(x_{t-1},\epsilon_t)) \intertext{we have}
    x^\star_t(x_{t-1},\epsilon_t) \in{R^L}\,\,\twoNorm{x^\star_t(x_{t-1},\epsilon_t)}  \le \overline{\mathcal{X}}\,\,\forall t\ > 0
   \end{gather}
 
-Now consider a proposed solution for the model,
+Now consider a proposed model decision rule solution for the model,
  $x^p_t=g^p(x_{t-1},\epsilon_t)$ define
 $G^p(x)\equiv\expct{g^p(x,\epsilon)}$  so that 
   \begin{gather*}
@@ -706,7 +719,7 @@ For proof see Appendix \ref{sec:error-bound-formula}.
 \subsection{Approximating Local Decision Rule Errors}
 \label{sec:decis-rule-comp}
 
-Given a proposed model solution define 
+Given a proposed decision rule  solution define 
 the error in $x_t$ at $\tArg$
 
 \begin{gather*}
@@ -737,7 +750,7 @@ $\{\alpha=0.36,\delta=0.95,\eta=1,\rho=0.95,\sigma=0.01\}$.  I consider this
 the fixed ``true'' model.
 
 I generate  10 other settings for the model parameters by choosing
-parameters from the following ranges.
+parameters from the ranges:
 \begin{gather*}
  0.20 <\alpha<0.40,\,\,0.85<\delta<0.99,\,\,0.85<\rho<0.99,\,\,0.005<\sigma<0.015
 \end{gather*}
@@ -795,26 +808,28 @@ I generate 30 representative points, $(k_{i,t-1},\theta_{i,t-1},\epsilon_{i,t})$
 using the Niederreiter quasi-random algorithm.
 For each of the 100 pairings of decision rule and linear reference model,
 I compute the error approximation at each of the 30 representative points
-and regress the actual error, computed using the known analytic solution, and the predicted error from the error formula.
+and regress the actual error, computed using the known analytic solution, and the predicted error from the error formula:
 \begin{gather*}
   \mathbf{e_i}=\alpha + \beta   \hat{\mathbf{e_i}} +u_i
 \end{gather*}
 Although the true model and the true decision rule stays 
 fixed in the experiment, the
-  proposed decision rules and the linear reference model both change.
+  proposed decision rules and the linear reference models both change.
 
-Figures \ref{fig:forc} and \ref{fig:fork}  present the 100 $R^2$ and estimated variance and Figures \ref{fig:forcn} and \ref{fig:forkn} presents the 100 resulting regression coefficients for a variety of values for $K$, of number of terms in the 
+Figures \ref{fig:forc} and \ref{fig:fork}  present the 100 $R^2$'s and estimated variance, $\hat{\sigma}^2$ and Figures \ref{fig:forcn} and \ref{fig:forkn} presents the 100 resulting regression coefficients, $ (\alpha,\beta)$ for a variety of values for $K$, of number of terms in the 
 error formula, ( $K=0, 1, 10, 30$)\footnote{I don't display results for $\theta_t$ because the formula predicts the error 
 in $\theta_t$ perfectly since it is determined by a backward looking equation.}
-The regressions with $K=0$ correspond to the maximand of the
-global error formula. The figures show that
+( The regressions with $K=0$ correspond to the maximand of the
+global error formula. ) The figures show that
 the formula does a good job of predicting the error produced by the 
 inaccurate decision rule functions.
 Even with $K=0$, using only one term in the error formula,
  still provides 
 useful information about the magnitude of the discrepancy between the 
 proposed decision rules values and true values.  The $R^2$ values are all above 60 percent and are often near one.  The $\beta$ coefficients are generally  close to one and the 
-constant tends to be close to zero.
+constant tends to be close to zero. {\color{blue} Increasing $k$ initially increases accuracy,
+but utimately the inaccuracy of the conditional expectation path reduces
+the accuracy of the estimates with many terms.}
 
 
 
@@ -903,7 +918,24 @@ constant tends to be close to zero.
 %\eqnFuncSysI{i}\equiv \eqnFuncSysIExpl{i} \label{eqnGates}
 %\end{gather}
 
+{\color{blue}
+For robustness, one needs to ``re-route'' trajectories that stray from the
+ergodic set during the search for a solution.  These proposed decision rule
+solutions 
+cab explode and become unbounded.  They pollute the calculations in the
+error formula and in the augmented system.
 
+Probably need homotopy to get larg $\eta$ in RBC, but the extra constraints
+facilitate this.
+
+Check that explosive conditional expectation can't simulate bounded.
+Related to pruning?
+
+Use  JEDC 2014 RBC 
+
+
+My method handles Multiple expectational equations  impact on decision rules.
+}
 
 
 I assume that all models of interest can be characterized by
@@ -928,9 +960,10 @@ write the models in the form
 \end{gather}
  represents a set of model equations, $\eqnFunc_i$,  with Boolean valued gate functions, $\preGate_i, \postGate_i$. 
 In the algorithm's implementation, the $\preGate_i$ will be a 
-Boolean function precondition and 
+Boolean pre-condition  function and 
 the $\postGate_i$ will be a 
-Boolean function post-condition for a given equation system. If some $\preGate_i$ is false, then there is no need to try to solve model $i$. If $\postGate_i$ is false, the system has produced an unacceptable solution which should be ignored.
+Boolean post-condition  functions for a given equation system. If some $\preGate_i$ is false, then there is no need to try to solve model $i$. 
+If $\postGate_i(x_t\tArg)$ is false, the system has produced an unacceptable solution which should be ignored.
 I suggest organizing equations using pre and post conditions as
 this can help with parallelizing a solution regardless of whether or not
 one uses my series representation. The
@@ -964,13 +997,14 @@ of a specification for regime switching.
 
 It may be worthwhile at this point
 to briefly compare and contrast the approach I propose here with 
-what is typically done for solving dynamic stochastic models.
+what is typically done when using projection methods 
+for solving dynamic stochastic models.
 As with the standard approach, I characterize the solutions using a linearly
 weighted sums of orthogonal polynomials and solve the model equations
 at predetermined collocation points. However, in this new algorithm, I 
 augment the model Euler equations with equations based on \refeq{theSeries}
   linking the conditional expectations for future values in
-the proposed solution with the
+the proposed decision rule solution with the
 time t value of the model variables.  As a result, the algorithm determines
 linearly weighted polynomials characterizing the 
 trajectories for the usual
@@ -1000,7 +1034,7 @@ thus improving algorithm reliability and accuracy.
 % \subsubsection{Approximating an Unknown Solution: $U(c) \ne Log(c)$ }
 % \label{sec:unknown-solutions}
 
-I closely follow the techniques outlined in  \citep{Judd2013,Judd2014}. 
+Since I closely follow the techniques outlined in  \citep{Judd2013,Judd2014}. 
 As a result, much of what must be done to use this  algorithm is 
 the same as for the usual approach.
 One must specify an initial guess for decision rule $\xWargK$ and obtain conditional expectations functions.
@@ -1011,20 +1045,25 @@ deterministic.
 
 
 
-There are number of new steps. 
+There are a number of new steps. 
 One must  specify a linear reference model.
   One must choose a value for
 $K$ the number of terms in the series representation.  There are trade-offs.
-Fewer means more truncation error. 
-More terms corresponds to more accuracy when the decision rule is accurate but
-More terms is computationally more expensive. The initial guess is 
+Small $k$  means more truncation error. 
+Large $k$ corresponds to more accuracy when the decision rule is accurate but
+is computationally more expensive. The initial guess is 
 typically some distance away from the solution.   Consequently the
 terms in the series will be incorrect.  The Smolyak grid adds more error to
 the calculation.  If there are many grid points it is more likely that 
 increasing the K can improve the quality of the solution.  If the grid is
 too sparse, increasing K will likely be less useful. 
 
+{\color{blue}
+More research needed on selecting $k$.
 
+Should always iterate forward from evaluation points to check stability.
+
+}
 
 
 
@@ -1035,7 +1074,7 @@ too sparse, increasing K will likely be less useful.
 For now, consider a single model equation system case with no Boolean gates. A description 
 of the actual, multi-system implementation follows.   We seek 
 \begin{gather*}
-\eqnFunc(x_{t-1},\xWOarg^\star\tArg,\XWOarg^\star(\xWOarg^\star\tArg),\epsilon_t)=0\,\,\forall \tArg.  \intertext{Given a proposed model solution}
+\eqnFunc(x_{t-1},\xWOarg^\star\tArg,\XWOarg^\star(\xWOarg^\star\tArg),\epsilon_t)=0\,\,\forall \tArg.  \intertext{Given a proposed decision rule model solution}
  x_t=\xWOarg^p\tArg\intertext{ compute}
 \XWOarg^p(x_{t-1})\equiv \expct{\xWOarg^p\tArg}.
 \end{gather*}
@@ -1277,7 +1316,7 @@ were (2,2,2).  Table \ref{valatB} shows the decision rule prescription for $(c_t
 at each evaluation point.  Table \ref{esterrB} shows the 
 log of the absolute value of the estimated error in the decision rule
 at each evaluation points.  Note that the formula provides accurate estimates
-of the error component by component.
+of the error component by component. Each of the estimated errors were computed with $K=5$.
 
 
  \begin{table}
@@ -1377,7 +1416,7 @@ of the error component by component.
    \caption{RBC Known Solution: Error Approximations\label{esterrB}d=(2,2,2)}
  \end{table}
 
-Each of the estimated errors were computed with $K=5$.
+
 Table \ref{impactK} shows the effect of increasing value of K.  Generally
 increasing K increases the accuracy of the solution.  The value of K has
 more effect when the Smolyak grid is more densely populated with collocation
@@ -1728,6 +1767,15 @@ enhancing solution algorithm reliability and accuracy.
 The prototype was written in Mathematica and is available on gitHub
 at \href{https://github.com/es335mathwiz/AMASeriesRepresentation}{https://github.com/es335mathwiz/AMASeriesRepresentation}.
 
+{\color{blue}
+It would be interesting to apply the techniques in a recent paper, \citep{DreossiDP16}, describing a method for characterizing the
+families of trajectories ``reachable'' for a given set of initial conditions.
+It would be useful to apply the error fomulas to decision rules generated
+using local perturbation techniques and to explore ways to use the series
+representation to improve upon the accuracy of these methods.
+
+Timing comparisons and impact of parallelism.
+}
 \newpage
 
 % There are many directions to pursue in future work.

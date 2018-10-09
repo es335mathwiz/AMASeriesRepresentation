@@ -1,3 +1,4 @@
+
 Get["tests/pathSetup.mth"]
 Get["AMASeriesRepresentation`"]
 Get["firstRBCTrips.m"]
@@ -5,26 +6,26 @@ Get["firstRBCTrips.m"]
 
 refModel={linModFirstRBCInit,rbcEqnsFirstRBCTrips,firstRBCTripsExactDR,firstRBCTripsExactDRCE,forErgodicInfo,theDistFirstRBCTrips,toIg}=
 (*alphaVal,deltaVal,etaVal,rhoVal.sigmaVal*)
-firstRBCGenModel[0.36,0.95,1.3,0.95,0.02];
+firstRBCGenModel[0.36,1.0,0.95,1.0,0.95,0.01];
 bothNow=genBothX0Z0Funcs[linModFirstRBCTrips];
-xVR={{0.1,1},{0.1,.5},{1,10},{0.7,1.5}};
+xVR={{0.1,1},{0.1,.5},{1,10},{1,10},{0.7,1.5}};
 
 (*
 theAppsUnk3x3x3xExact=firstRBCTripsExactDR@@#&/@theFullXsUnk3x3x3x5
 *)
-Options[doKStepSE]={"Traditional"->False,"xVarRanges"->xVR,
-normConvTol ->10.0^(-10),"goodStart"->{}}
-Options[doKStepNotSE]={"Traditional"->False,"xVarRanges"->xVR,
-normConvTol ->10.0^(-10),"goodStart"->{}}
+Options[tryEtaStepTradNotSE]=Options[doKStepSE]=Options[doKStepNotSE]=
+{"Traditional"->False,"xVarRanges"->{},
+normConvTol ->10.0^(-10),"goodStart"->{},"MPMult"->1,"maxForCEIters"->100,"FRMonitor"->False}
 doKStepSE[kNow_Integer,approx:{_Integer..},
 forErgInfoNow:(_Function|_CompiledFunction|_Symbol),linModNow_List,
 opts:OptionsPattern[]]:=
 Module[{tryEps,numKern,theName,mthName,sgSpecErg,zPts,theFullXs,
-sPrep,forStay,theRes,tm,ig,
-longPaths,fp,linModNext,bothX0Z0},
+sPrep,forStay,theResSE,tm,ig,
+longPaths,fp,linModNext,bothX0Z0,collPts,eqnErrs},
 sPrep={tryEps,numKern,theName,mthName,bothX0Z0,sgSpecErg,zPts,theFullXs}=
 doSmolPrep[approx,999,999,forErgInfoNow,toIg,linModNow,theDistFirstRBCTrips];
-forStay={sgSpecErg[[-1]],Join[toIg,Range[5,8]],1};
+forStay={sgSpecErg[[-1]],Join[toIg,Range[6,10]],1};
+Print["done smol prep",approx];
 theResSE=.;
 {tm,ig}=Timing[
 theResSE=parallelNestGenericIterREInterp[genFRExtFunc,linModNow,
@@ -34,26 +35,39 @@ kNow},rbcEqnsFirstRBCTrips,sgSpecErg,smolyakInterpolation,{},
 theFullXs,
 Apply[Sequence,
 FilterRules[Join[{"stayErgodic"->forStay},{opts}],Options[parallelNestGenericIterREInterp]]]]];
+Print["done parallelNest tm=",tm];
 theAppsSE=theResSE[[4,-1,1]]@@#&/@theFullXs;
-longPaths=(iterateDRCE[theResSE[[4,-1,2]],
-Transpose[{#}],240][[Reverse[-Range[8]]]])& /@ theFullXs[[All,Range[4]]];
-fp=Flatten[longPaths[[1]][[Range[4]]]];
-linModNext=genLinModFirstRBCTrips[genSSSubsFirstRBCTrips[fp]];
+Print["done app fullxs",theAppsSE[[1]]];
+longPaths=
+Function[xx,TimeConstrained[FixedPoint[Flatten[(theResSE[[4,-1,2]] @@ #)[[Range[5]]]]&,xx],1]]/@theFullXs;
+Print["done SS",longPaths[[1]]];
+fp=Union[DeleteCases[longPaths,$Aborted|{___,Overflow[],___}],SameTest->((Norm[#1-#2]<10^(-12))&)];
+Print["done fp",fp];
+forErgInfoNext=genForErgodicInfo[Function[{ig1,kk,ig2,ig3,tt,eps},Flatten[(theResSE[[4,-1,1]] @@ {ig1,kk,ig2,ig3,tt,eps})[[Range[5]]]]]];
+Print["done forergInfoNext"];
+collPts=Transpose[{fillIn[{{},toIg,#}]}]& /@ sgSpecErg[[3]];
+eqnErrs=genSolutionErrXtm1Eps[rbcEqnsFirstRBCTrips,
+theResSE[[4,-1,1]],theResSE[[4,-1,2]],#,1]& /@ collPts;
+Print["done eqn errs",eqnErrs[[1]]];
+If[fp==={},Print["fp empty, nothing left to do"],
+linModNext=genLinModFirstRBCTrips[genSSSubsFirstRBCTrips[fp[[1]]]];
+Print["done gen linmod",BB];
 errsSE=nextSimplestErrXtm1Eps[rbcEqnsFirstRBCTrips,theResSE[[4,-1,1]],
 theResSE[[4,-1,2]],Transpose[{#}],1,linModNext,0]&/@theFullXs;
-forErgInfoNext=genForErgodicInfo[Function[{ig1,kk,ig2,tt,eps},Flatten[(theResSE[[4,-1,1]] @@ {ig1,kk,ig2,tt,eps})[[Range[4]]]]]];
+Print["done errs",errsSE[[1]]]];
 {theResSE,forErgInfoNext,theAppsSE,errsSE,sgSpecErg,theFullXs,
-longPaths,fp,linModNext}]
+longPaths,fp,linModNext,eqnErrs}]
 
 doKStepNotSE[kNow_Integer,approx:{_Integer..},
 forErgInfoNow:(_Function|_CompiledFunction|_Symbol),linModNow_List,
 opts:OptionsPattern[]]:=
 Module[{tryEps,numKern,theName,mthName,bothX0Z0,sgSpecErg,zPts,theFullXs,
-sPrep,forStay,theRes,tm,ig,
-longPaths,fp,linModNext},
+sPrep,forStay,theResNotSE,tm,ig,
+longPaths,fp,linModNext,collPts,eqnErrs},
 sPrep={tryEps,numKern,theName,mthName,bothX0Z0,sgSpecErg,zPts,theFullXs}=
 doSmolPrep[approx,999,999,forErgInfoNow,toIg,linModNow,theDistFirstRBCTrips];
-forStay={sgSpecErg[[-1]],Join[toIg,Range[5,8]],1};
+forStay={sgSpecErg[[-1]],Join[toIg,Range[6,10]],1};
+Print["done smol prep",approx];
 theResNotSE=.;
 {tm,ig}=Timing[
 theResNotSE=parallelNestGenericIterREInterp[genFRExtFunc,linModNow,
@@ -61,21 +75,34 @@ theResNotSE=parallelNestGenericIterREInterp[genFRExtFunc,linModNow,
 theFullXs,
 Apply[Sequence,
 FilterRules[Join[{"stayErgodic"->{}},{opts}],Options[parallelNestGenericIterREInterp]]]]];
+Print["done parallelNest tm=",tm];
 theAppsNotSE=theResNotSE[[4,-1,1]]@@#&/@theFullXs;
-longPaths=(iterateDRCE[theResNotSE[[4,-1,2]],
-Transpose[{#}],240][[Reverse[-Range[8]]]])& /@ theFullXs[[All,Range[4]]];
-fp=Flatten[longPaths[[1]][[Range[4]]]];
-linModNext=genLinModFirstRBCTrips[genSSSubsFirstRBCTrips[fp]];
+Print["done app fullxs",theAppsNotSE[[1]]];
+forErgInfoNext=genForErgodicInfo[Function[{ig1,kk,ig2,ig3,tt,eps},Flatten[(theResNotSE[[4,-1,1]] @@ {ig1,kk,ig2,ig3,tt,eps})[[Range[5]]]]]];
+Print["done forergInfoNext"];
+longPaths=
+Function[xx,TimeConstrained[FixedPoint[Flatten[(theResNotSE[[4,-1,2]] @@ #)[[Range[5]]]]&,xx],1]]/@theFullXs;
+Print["done SS",longPaths[[1]]];
+fp=Union[DeleteCases[longPaths,$Aborted|{___,Overflow[],___}],SameTest->((Norm[#1-#2]<10^(-12))&)];
+Print["done fp",fp];
+collPts=Transpose[{fillIn[{{},toIg,#}]}]& /@ sgSpecErg[[3]];
+eqnErrs=genSolutionErrXtm1Eps[rbcEqnsFirstRBCTrips,
+theResNotSE[[4,-1,1]],theResNotSE[[4,-1,2]],#,1]& /@ collPts;
+Print["done eqn errs",eqnErrs[[1]]];
+If[fp==={},Print["fp empty, nothing left to do"],
+linModNext=genLinModFirstRBCTrips[genSSSubsFirstRBCTrips[fp[[1]]]];
+Print["done gen linmod",BB];
 errsNotSE=nextSimplestErrXtm1Eps[rbcEqnsFirstRBCTrips,theResNotSE[[4,-1,1]],
 theResNotSE[[4,-1,2]],Transpose[{#}],1,linModNext,0]&/@theFullXs;
-forErgInfoNext=genForErgodicInfo[Function[{ig1,kk,ig2,tt,eps},Flatten[(theResNotSE[[4,-1,1]] @@ {ig1,kk,ig2,tt,eps})[[Range[4]]]]]];
+Print["done errs",errsNotSE[[1]]]
+];
 {theResNotSE,forErgInfoNext,theAppsNotSE,errsNotSE,sgSpecErg,theFullXs,
-longPaths,fp,linModNext}]
+longPaths,fp,linModNext,eqnErrs}]
 
 genForErgodicInfo[theFuncNow:(_Function|_CompiledFunction|_Symbol)]:=
 Function[{numPers},
 With[{draws=RandomVariate[theDistFirstRBCTrips[[1,1,2]],numPers],
-initVec={99,.238,99,.9614}},
+initVec={99,.238,99,99,.9614}},
 With[{vars=
 FoldList[Flatten[Apply[theFuncNow, Append[Flatten[#1],#2]]]&,initVec,draws]},
 ArrayFlatten[{{Drop[vars,1],Transpose[{draws}]}}]]]];
@@ -217,6 +244,34 @@ Out[13]//InputForm=
 In[14]:= 
 
 
+
 *)
 
+(*
+Export["rbcExampleOctoberHM.pdf",MatrixForm[linModFirstRBCInit[[1,All,Range[5]]]]]
 
+Export["rbcExampleOctoberHZ.pdf",MatrixForm[linModFirstRBCInit[[1,All,5+Range[5]]]]]
+
+Export["rbcExampleOctoberHP.pdf",MatrixForm[linModFirstRBCInit[[1,All,2*5+Range[5]]]]]
+
+Export["rbcExampleOctoberB.pdf",MatrixForm[getB[Chop[linModFirstRBCInit]]]]
+
+Export["rbcExampleOctoberF.pdf",MatrixForm[getF[Chop[linModFirstRBCInit]]]]
+
+
+Export["rbcExampleOctoberPhi.pdf",MatrixForm[getPhi[Chop[linModFirstRBCInit]]]]
+
+
+Export["rbcExampleOctoberPsiC.pdf",MatrixForm[Chop[linModFirstRBCInit[[6]]]]]
+
+*)
+
+tryEtaStepTradNotSE[etaNow_?NumberQ,someRes_List,opts:OptionsPattern[]]:=
+Module[{refModel,etaRes},
+refModel={linModFirstRBCInit,rbcEqnsFirstRBCTrips,firstRBCTripsExactDR,firstRBCTripsExactDRCE,forErgodicInfo,theDistFirstRBCTrips,toIg}=
+(*alphaVal,deltaVal,etaVal,rhoVal.sigmaVal*)
+firstRBCGenModel[0.36,1.0,0.95,etaNow,0.95,0.01];
+etaRes=doKStepNotSE[0,1*{1,1,1},someRes[[2]],someRes[[9]],
+Apply[Sequence,FilterRules[{opts},Options[doKStepNotSE]]]];
+Print["eqn err norms", Norm/@ etaRes[[-1]]];
+etaRes]

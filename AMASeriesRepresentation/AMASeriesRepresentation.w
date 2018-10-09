@@ -80,7 +80,7 @@ replaceMySlotStandIn[xx_]:=xx/.mySlotStandIn->Slot
 
 (*begin code for genFRExtFunc*)
 Options[genFRExtFunc]={"xVarRanges"->{},"Traditional"->False,"addTailContribution"->False,"stayErgodic"->{},
-"normConvTol"->10.^(-10)} 
+"normConvTol"->10.^(-10),"MPMult"->1,"FRMonitor"->False} 
 
 @}
 
@@ -256,7 +256,7 @@ eArgs=Table[Unique["theFREArgs"],{numEps}]@}
 With[{rawVal=Flatten[Apply[bothXZFuncs[[1,1]],Join[xLagArgs,eArgs]]]},
 With[{midVal=
 If[varRanges==={},rawVal,
-toRangeXInit[rawVal,varRanges]]},(*Print[{"possible:",stayErg,midVal,rawVal,toErgodic[midVal,stayErg],"possible"}];*)
+toRangeXInit[rawVal,varRanges]]},(*Print[{"possible:",varRanges,stayErg,midVal,rawVal,toErgodic[midVal,stayErg],"possible"}];*)
 If[stayErg==={},midVal,
 toErgodic[midVal,stayErg]]
 ]],
@@ -325,11 +325,17 @@ Flatten[Join[xDisc,eqnAppl]]]]]]]]@}
 funcOfXtm1Eps
 [Apply[Sequence,xtm1epsArgPatterns]],
 (**)
+With[{MPMultVal=OptionValue["MPMult"],
+EMonVal=If[OptionValue["FRMonitor"],
+EvaluationMonitor:>Print[{"inFR:",funcOfXtZt,xLagArgs,eArgs,xArgs,zArgs}//InputForm],
+EvaluationMonitor->None]
+},
 With[{frRes=FindRoot[(**)
 funcOfXtZt[Apply[Sequence,Join[xLagArgs,eArgs,xArgs]]],
-Join[xArgsInit]]},If[Not[FreeQ[frRes,FindRoot]],
+Join[xArgsInit],EMonVal,WorkingPrecision->MPMultVal*$MachinePrecision]},
+If[Not[FreeQ[frRes,FindRoot]],
 Throw[$Failed,"genFRExtFunc:FindRoot"]];
-Transpose[{Flatten[Join[xArgs,zArgs*0]]/.frRes}]]]@}
+Transpose[{Flatten[Join[xArgs,zArgs*0]]/.frRes}]]]]@}
 
 
 @d setDelayedSeriesFXtm1Eps
@@ -337,12 +343,16 @@ Transpose[{Flatten[Join[xArgs,zArgs*0]]/.frRes}]]]@}
 funcOfXtm1Eps
 [Apply[Sequence,xtm1epsArgPatterns]],
 (**)
+With[{MPMultVal=OptionValue["MPMult"],
+EMonVal=If[OptionValue["FRMonitor"],
+EvaluationMonitor:>Print[{"inFR:",funcOfXtZt,xLagArgs,eArgs,xArgs,zArgs}//InputForm],
+EvaluationMonitor->None]
+},
 With[{frRes=FindRoot[(**)
 funcOfXtZt[Apply[Sequence,Join[xLagArgs,eArgs,xArgs,zArgs]]],
-Join[xArgsInit,zArgsInit](*,
-EvaluationMonitor:>Print[{"inFR:",xLagArgs,eArgs,xArgs,zArgs}//InputForm]*)]},If[Not[FreeQ[frRes,FindRoot]],
+Join[xArgsInit,zArgsInit],EMonVal,WorkingPrecision->MPMultVal*$MachinePrecision]},If[Not[FreeQ[frRes,FindRoot]],
 Throw[$Failed,"genFRExtFunc:FindRoot"]];
-Transpose[{Flatten[Join[xArgs,zArgs]]/.frRes}]]]@}
+Transpose[{Flatten[Join[xArgs,zArgs]]/.frRes}]]]]@}
 
 
 
@@ -633,7 +643,7 @@ parallelDoGenericIterREInterp::usage=
 (*begin code for doSmolyakIterREInterp*)
 
 Options[parallelDoGenericIterREInterp]={"xVarRanges"->{},"Traditional"->False,"addTailContribution"->False,"stayErgodic"->{},
-"normConvTol"->10.^(-10)}
+"normConvTol"->10.^(-10),"MPMult"->1,"FRMonitor"->False}
 
 @}
 
@@ -1109,7 +1119,7 @@ parallelNestGenericIterREInterp::usage=
 @{
 
 Options[parallelNestGenericIterREInterp]={"xVarRanges"->{},"Traditional"->False,"addTailContribution"->False,"maxForCEIters"->100,
-"normConvTol"->10.^(-10),"maxNormsToKeep"->50,"stayErgodic"->{}}
+"normConvTol"->10.^(-10),"maxNormsToKeep"->50,"stayErgodic"->{},"MPMult"->1,"FRMonitor"->False}
 
 
 parallelNestGenericIterREInterp[genFRExtFunc,@<linMod@>,
@@ -2504,10 +2514,11 @@ CRRAUDrv[cc_,eta_]:=If[eta===1,D[Log[cc],cc],D[(1/(1-eta))*(cc^(1-eta)-1),cc]];
 closed form solution version  beta=1 geometric discounting
 chkcobb douglas production*)
 rbcEqns={
-CRRAUDrv[cc[t],eta]-
-(delta*(nlPart[t+1]*((alpha *(kk[t]^(alpha-1)) )))),
+(delta*(nlPart1[t+1]*((alpha *(kk[t]^(alpha-1))+
+(1-dd)*nlPart2[t+1] )))/CRRAUDrv[cc[t],eta])-1,
 cc[t] + kk[t]-((theta[t])*(kk[t-1]^alpha)),
-nlPart[t] - (nlPartRHS=(1)* (theta[t]*CRRAUDrv[cc[t],eta])),
+nlPart1[t] - (nlPart1RHS= (theta[t]*CRRAUDrv[cc[t],eta])),
+nlPart2[t] - (nlPart2RHS= (CRRAUDrv[cc[t],eta])),
 theta[t]-E^(rho*Log[theta[t-1]] + eps[theta][t])
 };
 @}
@@ -2529,8 +2540,9 @@ thSubsRE=Flatten[Solve[theta==anExpRE*thNow[theta,0],theta][[2]]];
 kSSSubRE=Flatten[Solve[nxtK[kk,theta/.thSubsRE]==kk,kk][[-1]]];
 On[Solve::ifun];
 cSSSubRE=cc->(yNow[kk/.kSSSubRE,theta/.thSubsRE]-kk/.kSSSubRE);
-nlPartSSSubRE=(nlPart->(nlPartRHS/.xxxx_[t]->xxxx))//.Join[thSubsRE,Append[kSSSubRE,cSSSubRE]]/.simpParamSubs;
-ssSolnSubsRE=Flatten[{thSubsRE,kSSSubRE,cSSSubRE,nlPartSSSubRE}];
+nlPart1SSSubRE=(nlPart1->(nlPart1RHS/.xxxx_[t]->xxxx))//.Join[thSubsRE,Append[kSSSubRE,cSSSubRE]]/.simpParamSubs;
+nlPart2SSSubRE=(nlPart2->(nlPart2RHS/.xxxx_[t]->xxxx))//.Join[thSubsRE,Append[kSSSubRE,cSSSubRE]]/.simpParamSubs;
+ssSolnSubsRE=Flatten[{thSubsRE,kSSSubRE,cSSSubRE,nlPart1SSSubRE,nlPart2SSSubRE}];
 
 @}
 
@@ -2547,14 +2559,16 @@ simpParamSubs::usage="placeholder"
 paramSubs={
 alpha->.36,
 beta->1,
-eta->1,
+dd->1,
 delta->.95,
+eta->1,
 rho->.95,
 sigma->.01
 } ;
 *)
 paramSubs={
 alpha->alphaVal,
+dd->ddVal,
 delta->deltaVal,
 eta->etaVal,
 rho->rhoVal,
@@ -2586,8 +2600,13 @@ rbcEqns/.simpParamSubs]//FullSimplify)/.{xxxx_[t+_.]->xxxx})//.ssSolnSubsRE)/.{e
 psiepsSymbRE=-Transpose[{((Map[D[#,eps[theta][t]]&, rbcEqns])/.{eps[_][_]->0,xxxx_[t+_.]->xxxx})//.ssSolnSubsRE}/.simpParamSubs];
 
 
-hmatSymbRE=(hmatSymbRawRE//.simpSubs)//.simpParamSubs;
 
+
+
+preHmatSymbRE=(hmatSymbRawRE//.simpSubs)//.simpParamSubs;
+
+rescalermat=DiagonalMatrix[1/(Map[Norm,preHmatSymbRE])];
+hmatSymbRE=rescalermat . preHmatSymbRE;
 
 
 {zfSymbRE,hfSymbRE}=symbolicAR[hmatSymbRE//.simpParamSubs];
@@ -2598,10 +2617,10 @@ qmatSymbRE=Join[zfSymbRE,evcsSymbRE[[{1}]]];
 (*Print["computing and simplifying the symbolic b phi f etc"]*)
 {bmatSymbRE,phimatSymbRE,fmatSymbRE}=symbolicComputeBPhiF[hmatSymbRE,qmatSymbRE]//Simplify;
 
-hSumRE=hmatSymbRE[[All,Range[4]]]+hmatSymbRE[[All,4+Range[4]]]+hmatSymbRE[[All,8+Range[4]]];
-ssSolnVecRE=({{cc},{kk},{nlPart},{theta}}//.ssSolnSubsRE)//.simpParamSubs;
+hSumRE=hmatSymbRE[[All,Range[5]]]+hmatSymbRE[[All,5+Range[5]]]+hmatSymbRE[[All,8+Range[5]]];
+ssSolnVecRE=({{cc},{kk},{nlPart1},{nlPart2},{theta}}//.ssSolnSubsRE)//.simpParamSubs;
 psicSymbRE=hSumRE . ssSolnVecRE;
-psiz=IdentityMatrix[4];
+psiz=IdentityMatrix[5];
 
 
 linModFirstRBCTrips={hmatSymbRE//N,bmatSymbRE // N, phimatSymbRE // N, 
@@ -2619,7 +2638,7 @@ aGSpecFirstRBCTrips::usage="aGSpec={{1},1,{{4,kLow,kHigh},{3,thLow,thHigh},{3,si
 
 @d exampleInits
 @{
-anXFirstRBCTrips=Transpose[{{.2,.18,1.0,1.01}}];
+anXFirstRBCTrips=Transpose[{{.2,.18,1.0,1.0,1.01}}];
 anEpsFirstRBCTrips={{0.01}};
 anXEpsFirstRBCTrips=Join[anXFirstRBCTrips,anEpsFirstRBCTrips];
 aZFirstRBCTrips=Transpose[{{.1,.2,.3,.4}}];
@@ -2627,7 +2646,7 @@ anXEpsZsFirstRBCTrips=Join[anXEpsFirstRBCTrips,aZFirstRBCTrips];
 
 
 
-probDimsFirstRBCTrips={4,1,4};
+probDimsFirstRBCTrips={5,1,5};
 
 thNow[lastTh_,eps_]:=(E^eps)*lastTh^rho/.simpParamSubs;
 nxtK[lastK_,thNowVal_]:=((alpha*delta))*thNowVal*lastK^(alpha)/.simpParamSubs;
@@ -2638,15 +2657,17 @@ Off[Solve::ifun];
 thSubsRE=Flatten[Solve[theta==anExpRE*thNow[theta,0],theta][[2]]];
 kSSSubRE=Flatten[Solve[nxtK[kk,theta/.thSubsRE]==kk,kk][[-1]]];
 cSSSubRE=cc->(yNow[kk/.kSSSubRE,theta/.thSubsRE]-kk/.kSSSubRE);
-nlPartSSSubRE=(nlPart->(nlPartRHS/.xxxx_[t]->xxxx))//.Join[thSubsRE,Append[kSSSubRE,cSSSubRE]];
-ssSolnSubsRE=Flatten[{thSubsRE,kSSSubRE,cSSSubRE,nlPartSSSubRE}];
+nlPart1SSSubRE=(nlPart1->(nlPart1RHS/.xxxx_[t]->xxxx))//.Join[thSubsRE,Append[kSSSubRE,cSSSubRE]];
+nlPart2SSSubRE=(nlPart2->(nlPart2RHS/.xxxx_[t]->xxxx))//.Join[thSubsRE,Append[kSSSubRE,cSSSubRE]];
+ssSolnSubsRE=Flatten[{thSubsRE,kSSSubRE,cSSSubRE,nlPart1SSSubRE,nlPart2SSSubRE}];
 (*Print["RE done now PF"];*)
 thSubsPF=Flatten[Solve[theta==theta^rho,theta]][[1]];
 kSSSubPF=Flatten[Solve[nxtK[kk,theta/.thSubsPF]==kk,kk]][[-1]];
 On[Solve::ifun];
 cSSSubPF=cc->(yNow[kk/.kSSSubPF,theta/.thSubsPF]-kk/.kSSSubPF);
-nlPartSSSubPF=(nlPart->(nlPartRHS/.xxxx_[t]->xxxx))//.{kSSSubPF,cSSSubPF,thSubsPF};
-ssSolnSubsPF=Flatten[{thSubsPF,kSSSubPF,cSSSubPF,nlPartSSSubPF}];
+nlPart1SSSubPF=(nlPart1->(nlPart1RHS/.xxxx_[t]->xxxx))//.{kSSSubPF,cSSSubPF,thSubsPF};
+nlPart2SSSubPF=(nlPart2->(nlPart2RHS/.xxxx_[t]->xxxx))//.{kSSSubPF,cSSSubPF,thSubsPF};
+ssSolnSubsPF=Flatten[{thSubsPF,kSSSubPF,cSSSubPF,nlPart1SSSubPF,nlPart2SSSubPF}];
 
 
 thVal=(theta//.ssSolnSubsRE//.(simpParamSubs//N))//N;
@@ -2660,7 +2681,7 @@ sigHigh = 3*sigVal;
 thLow = 9/10;
 thHigh = 11/10;
 
-aGSpecFirstRBCTrips={{1,3},2,{{6,kLow,kHigh},{10,thLow,thHigh},{6,sigLow,3*sigHigh}}};
+aGSpecFirstRBCTrips={{1,3,4},2,{{6,kLow,kHigh},{10,thLow,thHigh},{6,sigLow,3*sigHigh}}};
       
 @}
 
@@ -2672,19 +2693,10 @@ rbcEqnsFirstRBCTrips::usage="model equations";
 
 @d rbcEqnsFirstRBCTrips
 @{
+tryComp=genCompiledEqns[rbcEqns,simpParamSubs];
   rbcEqnsFirstRBCTrips={
  { {True&,
-Apply[  Compile , {
-{
-{cctm1,_Real},{kktm1,_Real},{nltm1,_Real},{thetatm1,_Real},
-{cct,_Real},{kkt,_Real},{nlt,_Real},{thetat,_Real},
-{cctp1,_Real},{kktp1,_Real},{nltp1,_Real},{thetatp1,_Real},
-{epsVal,_Real}
-},
-({cct^(-1) - (alpha*delta*nltp1)/kkt^(1-alpha),
-cct + kkt - 1.*kktm1^(alpha)*thetat, 
-nlt - thetat/cct,
-  thetat - ((N[E]^epsVal)*(thetatm1^(rho)))}/.paramSubs),"RuntimeOptions"->{"RuntimeErrorHandler"->Function[$Failed],"CatchMachineOverflow"->True,"CatchMachineUnderflow"->True}}],
+tryComp,
    True&}
  },
 Function[{aPt,allRes},
@@ -2709,7 +2721,7 @@ sigVal = sigma //. (simpParamSubs//N);
 
 forErgodicInfo=Function[{numPers},
 With[{draws=RandomVariate[theDistFirstRBCTrips[[1,1,2]],numPers],
-initVec={99,kVal,99,thVal}},
+initVec={99,kVal,99,99,thVal}},
 With[{vars=
 FoldList[Flatten[Apply[firstRBCTripsExactDR, Append[Flatten[#1],#2]]]&,initVec,draws]},
 ArrayFlatten[{{Drop[vars,1],Transpose[{draws}]}}]]]];
@@ -2719,11 +2731,11 @@ theDistFirstRBCTrips={{{ee,NormalDistribution[0,sigma]}}}//.paramSubs;
 
 
 firstRBCTripsExactDR = 
- Function[{cc, kk, nl, th, eps}, 
+ Function[{cc, kk, nl1,nl2, th, eps}, 
 With[{tht=(th^rho)*E^eps//.simpParamSubs//N},
 With[{kkt=(tht*alpha*delta*kk^alpha)//.simpParamSubs//N},
 With[{cct=((tht*kk^alpha)*(1-alpha*delta))//.simpParamSubs//N},
-Transpose[{{cct,kkt,tht/cct,tht}}]]]]];
+Transpose[{{cct,kkt,tht/cct,1/cct,tht}}]]]]];
 
 
 
@@ -2734,11 +2746,13 @@ kkExp=Expectation[(((tht^rho)*E^eps)*alpha*delta*kkt^alpha),eps \[Distributed] N
 
 ccExp=Expectation[(((((tht^rho)*E^eps)*kkt^alpha)*(1-alpha*delta))),eps \[Distributed] NormalDistribution[0,sigma]];
 
-nnExp=Expectation[((tht^rho)*E^eps)/((((((tht^rho)*E^eps)*kkt^alpha)*(1-alpha*delta)))),eps \[Distributed] NormalDistribution[0,sigma]];
+nl1Exp=Expectation[((tht^rho)*E^eps)/((((((tht^rho)*E^eps)*kkt^alpha)*(1-alpha*delta)))),eps \[Distributed] NormalDistribution[0,sigma]];
+
+nl2Exp=Expectation[1/((((((tht^rho)*E^eps)*kkt^alpha)*(1-alpha*delta)))),eps \[Distributed] NormalDistribution[0,sigma]];
  
 firstRBCTripsExactDRCE=
-Apply[  Function , {{cct, kkt, nlt, tht}, Flatten[
-               {ccExp,kkExp,nnExp,thExp}//.paramSubs]}];
+Apply[  Function , {{cct, kkt, nl1t,nl2t, tht}, Flatten[
+               {ccExp,kkExp,nl1Exp,nl2Exp,thExp}//.paramSubs]}];
 
 
 
@@ -2753,10 +2767,8 @@ genLinModFirstRBCTrips::usage="genLinModFirstRBCTrips[ssSolnSubsRE_List]"
 @d genLinMod
 @{
 genSSSubsFirstRBCTrips[
-{ccVal_?NumberQ,kkVal_?NumberQ,nlVal_?NumberQ,thVal_?NumberQ}]:=
-{cc->ccVal,kk->kkVal,nlPart->nlVal,theta->thVal};
-Print["after"];
-
+{ccVal_?NumberQ,kkVal_?NumberQ,nl1Val_?NumberQ,nl2Val_?NumberQ,thVal_?NumberQ}]:=
+{cc->ccVal,kk->kkVal,nlPart1->nl1Val,nlPart2->nl2Val,theta->thVal};
 genLinModFirstRBCTrips[ssSolnSubsRE_List]:=
 Module[{hmatSymbRE,hmatSymbRawRE,zfSymbRE,hfSymbRE,amatSymbRE,
 	evlsSymbRE,evcsSymbRE,qmatSymbRE,bmatSymbRE,phimatSymbRE,fmatSymbRE,
@@ -2771,10 +2783,10 @@ amatSymbRE=symbolicTransitionMatrix[hfSymbRE];
 qmatSymbRE=Join[zfSymbRE,evcsSymbRE[[{1}]]];
 (*Print["computing and simplifying the symbolic b phi f etc"]*)
 {bmatSymbRE,phimatSymbRE,fmatSymbRE}=symbolicComputeBPhiF[hmatSymbRE,qmatSymbRE]//Simplify;
-hSumRE=hmatSymbRE[[All,Range[4]]]+hmatSymbRE[[All,4+Range[4]]]+hmatSymbRE[[All,8+Range[4]]];
-ssSolnVecRE=({{cc},{kk},{nlPart},{theta}}//.ssSolnSubsRE)//.simpParamSubs;
+hSumRE=hmatSymbRE[[All,Range[5]]]+hmatSymbRE[[All,5+Range[5]]]+hmatSymbRE[[All,8+Range[5]]];
+ssSolnVecRE=({{cc},{kk},{nlPart1},{nlPart2},{theta}}//.ssSolnSubsRE)//.simpParamSubs;
 psicSymbRE=hSumRE . ssSolnVecRE;
-psiz=IdentityMatrix[4];
+psiz=IdentityMatrix[5];
 linModFirstRBCTrips={hmatSymbRE//N,bmatSymbRE // N, phimatSymbRE // N, 
     fmatSymbRE // N, psiepsSymbRE // N, 
     psicSymbRE // N, psiz // N,{}}
@@ -2796,13 +2808,14 @@ BeginPackage["firstRBCTrips`", {
 Begin["`Private`"]
 firstRBCGenModel[
 alphaVal_?NumberQ,
+ddVal_?NumberQ,
 deltaVal_?NumberQ,
 etaVal_?NumberQ,
 rhoVal_?NumberQ,
 sigmaVal_?NumberQ]:=
 Module[{},
 @<firstRBCTripsPackage code@>
-{linModFirstRBCTrips,rbcEqnsFirstRBCTrips,firstRBCTripsExactDR,firstRBCTripsExactDRCE,forErgodicInfo,theDistFirstRBCTrips,{1,3}}
+{linModFirstRBCTrips,rbcEqnsFirstRBCTrips,firstRBCTripsExactDR,firstRBCTripsExactDRCE,forErgodicInfo,theDistFirstRBCTrips,{1,3,4}}
 ]
 End[]
 EndPackage[]
@@ -2845,8 +2858,8 @@ chkcobb douglas production*)
 rbcEqnsNotBinding={
 lam[t] -CRRAUDrv[cc[t],eta],
 cc[t] + II[t]-((theta[t])*(kk[t-1]^alpha)),
-nlPart[t] -((lam[t])*theta[t]),
-(lam[t]) -(alpha*delta*nlPart[t+1]/(kk[t]^(1-alpha))) -lam[t+1]*delta*(1-dd),
+nlPart1[t] -((lam[t])*theta[t]),
+(lam[t]) -(alpha*delta*nlPart1[t+1]/(kk[t]^(1-alpha))) -lam[t+1]*delta*(1-dd),
 II[t] -(kk[t]-(1-dd)*kk[t-1]),
 mu1[t],
 theta[t]-(N[E]^(eps[theta][t]))*(theta[t-1]^rho)
@@ -2913,11 +2926,15 @@ psiepsSymbRE=-Transpose[{((Map[D[#,eps[theta][t]]&, rbcEqnsNotBinding])/.{eps[_]
 
 
 
-hmatSymbRE=hmatSymbRawRE//.simpParamSubs;
+preHmatSymbRE=hmatSymbRawRE//.simpParamSubs;
 hSumRE=hmatSymbRE[[All,Range[7]]]+hmatSymbRE[[All,7+Range[7]]]+hmatSymbRE[[All,2*7+Range[7]]];
 
 
-ssSolnVecRE={{cc},{II},{kk},{lam},{mu1},{nlPart},{theta}}//.ssFRSolnSubs;
+rescalermat=DiagonalMatrix[1/(Map[Norm,preHmatSymbRE])];
+hmatSymbRE=rescalermat . preHmatSymbRE;
+
+
+ssSolnVecRE={{cc},{II},{kk},{lam},{mu1},{nlPart1},{theta}}//.ssFRSolnSubs;
 psicSymbRE=hSumRE . ssSolnVecRE;
 
 
@@ -2973,15 +2990,15 @@ Off[NSolve::ifun];
 thSubsRE=Flatten[NSolve[theta==anExpRE*thNow[theta,0],theta,Reals][[2]]];
 kSSSubRE=Flatten[NSolve[nxtK[kk,theta/.thSubsRE]==kk,kk,Reals][[-1]]];
 cSSSubRE=cc->(yNow[kk/.kSSSubRE,theta/.thSubsRE]-kk/.kSSSubRE);
-nlPartSSSubRE=(nlPart->(nlPartRHS/.xxxx_[t]->xxxx))//.Join[thSubsRE,Append[kSSSubRE,cSSSubRE]];
-ssSolnSubsRE=Flatten[{thSubsRE,kSSSubRE,cSSSubRE,nlPartSSSubRE}];
+nlPart1SSSubRE=(nlPart1->(nlPart1RHS/.xxxx_[t]->xxxx))//.Join[thSubsRE,Append[kSSSubRE,cSSSubRE]];
+ssSolnSubsRE=Flatten[{thSubsRE,kSSSubRE,cSSSubRE,nlPart1SSSubRE}];
 (*Print["RE done now PF"];*)
 thSubsPF=Flatten[NSolve[theta==theta^rho,theta,Reals]][[1]];
 kSSSubPF=Flatten[NSolve[nxtK[kk,theta/.thSubsPF]==kk,kk,Reals]][[-1]];
 On[NSolve::ifun];
 cSSSubPF=cc->(yNow[kk/.kSSSubPF,theta/.thSubsPF]-kk/.kSSSubPF);
-nlPartSSSubPF=(nlPart->(nlPartRHS/.xxxx_[t]->xxxx))//.{kSSSubPF,cSSSubPF,thSubsPF};
-ssSolnSubsPF=Flatten[{thSubsPF,kSSSubPF,cSSSubPF,nlPartSSSubPF}];
+nlPart1SSSubPF=(nlPart1->(nlPart1RHS/.xxxx_[t]->xxxx))//.{kSSSubPF,cSSSubPF,thSubsPF};
+ssSolnSubsPF=Flatten[{thSubsPF,kSSSubPF,cSSSubPF,nlPart1SSSubPF}];
 
 
 thVal=(theta//.ssSolnSubsRE//.(simpParamSubs//N))//N;
@@ -3023,21 +3040,21 @@ II[t-1]->iitm1,
 kk[t-1]->kktm1,
 lam[t-1]->lamtm1,
 mu1[t-1]->mu1tm1,
-nlPart[t-1]->nltm1,
+nlPart1[t-1]->nltm1,
 theta[t-1]->thetatm1,
 cc[t]->cct,
 II[t]->iit,
 kk[t]->kkt,
 lam[t]->lamt,
 mu1[t]->mu1t,
-nlPart[t]->nlt,
+nlPart1[t]->nlt,
 theta[t]->thetat,
 cc[t+1]->cctp1,
 II[t+1]->iitp1,
 kk[t+1]->kktp1,
 lam[t+1]->lamtp1,
 mu1[t+1]->mu1tp1,
-nlPart[t+1]->nltp1,
+nlPart1[t+1]->nltp1,
 theta[t+1]->thetatp1,
 eps[theta][t]->epsVal
 };
@@ -3061,8 +3078,8 @@ Apply[Function , ({Drop[theArgs,-1],rbcBackLookingExpEqns/.argsSubs}/.paramSubs)
 preRbcEqnsBinding={
 lam[t] -CRRAUDrv[cc[t],eta],
 cc[t] + II[t]-((theta[t])*(kk[t-1]^alpha)),
-nlPart[t] -((lam[t])*theta[t]),
-(lam[t]) -(alpha*delta*nlPart[t+1]/(kk[t]^(1-alpha)))-lam[t+1]*delta*(1-dd)+mu1[t]-mu1[t+1]*delta*(1-dd),
+nlPart1[t] -((lam[t])*theta[t]),
+(lam[t]) -(alpha*delta*nlPart1[t+1]/(kk[t]^(1-alpha)))-lam[t+1]*delta*(1-dd)+mu1[t]-mu1[t+1]*delta*(1-dd),
 II[t] -(kk[t]-(1-dd)*kk[t-1]),
 II[t] - theProduct,
 theta[t]-(N[E]^(eps[theta][t]))*(theta[t-1]^rho)

@@ -36,7 +36,7 @@ An Algorithm with Error Formulas } %(Better?, Coherent? Comprehensive? General? 
 
 \begin{abstract}
 This paper provides a technique for representing  discrete time  nonlinear dynamic stochastic time invariant maps.
-\marginpar{Address Bullets in Other Computing? Section}
+%\marginpar{Address Bullets in Other Computing? Section}
 Using this new series representation, the paper 
 augments a traditional solution strategy with an additional set of
 constraints thereby enhancing algorithm robustness and improving accuracy.
@@ -502,13 +502,13 @@ k_{t-1}\\
 
 For example, using $d=1$ and the following parameter values and using the arbitrary linear reference model \eqref{linRef} we can generate a series representation for the model solutions.
 
-\begin{gather}\label{rbcparams}
-\vcenter{\hbox{\includegraphics{RBCParamSubs.pdf}}} \,\, \text{ we have } \,\,
-  \begin{bmatrix}
-    c_{ss}\\k_{ss} \\ \theta_{ss} 
-  \end{bmatrix}=
-\left [ \vcenter{\hbox{\includegraphics{RBCSSVal.pdf}}}\right ]
-\end{gather}
+% \begin{gather}\label{rbcparams}
+% \vcenter{\hbox{\includegraphics{RBCParamSubs.pdf}}} \,\, \text{ we have } \,\,
+%   \begin{bmatrix}
+%     c_{ss}\\k_{ss} \\ \theta_{ss} 
+%   \end{bmatrix}=
+% \left [ \vcenter{\hbox{\includegraphics{RBCSSVal.pdf}}}\right ]
+% \end{gather}
 
 With 
 \begin{gather}\label{theInits}
@@ -821,7 +821,7 @@ a deterministic problem at time t to improve the proposed solution.
 The algorithm can easily accommodate inequality
 constraints or regime switching.\footnote{See sections \ref{sec:occbind} and \ref{sec:regime-switch-model} characterizing  models with regime switching.}
 
-\marginpar{incorporate bullets into text}
+%\marginpar{incorporate bullets into text}
 \begin{enumerate}
 \item Specify a (collection of) model equations systems(s) 
 as in \refeq{eqnGates}.

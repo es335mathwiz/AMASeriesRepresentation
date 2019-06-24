@@ -1,0 +1,98 @@
+Get["tests/pathSetup.mth"]
+Get["AMASeriesRepresentation`"]
+Get["firstRBCTrips.m"]
+
+Print["change5 to 10"]
+
+iters=8;
+theK=10;
+refModel={linModFirstRBCTrips,rbcEqnsFirstRBCTrips,firstRBCTripsExactDR,firstRBCTripsExactDRCE,forErgodicInfo,theDistFirstRBCTrips,toIg}=
+(*alphaVal,deltaVal,etaVal,rhoVal.sigmaVal*)
+firstRBCGenModel[0.36,0.95,1,0.95,0.01];
+
+
+approx1x1x1=1*{1,1,1};
+sPrep1x1x1x5={tryEps,numKern,theName,mthName,bothX0Z0,sgSpecErg,zPts,theFullXs1x1x1x5}=
+doSmolPrep[approx1x1x1,iters,theK,forErgodicInfo,toIg,linModFirstRBCTrips,theDistFirstRBCTrips];
+theResUnk1x1x1x5=.;
+{tm,ig}=Timing[
+theRes1x1x1x5=parallelNestGenericIterREInterp[genFRExtFunc,linModFirstRBCTrips,
+{bothX0Z0,theK},rbcEqnsFirstRBCTrips,sgSpecErg,smolyakInterpolation,{},theFullXs1x1x1x5]];
+errs1x1x1x5=nextSimplestErrXtm1Eps[rbcEqnsFirstRBCTrips,theRes1x1x1x5[[4,-1,1]],
+theRes1x1x1x5[[4,-1,2]],Transpose[{#}],1,linModFirstRBCTrips,5]&/@theFullXs1x1x1x5;
+theApps1x1x1x5=(theRes1x1x1x5[[4,-1,1]] @@ #)&/@theFullXs1x1x1x5
+
+actErrs1x1x1x5=Flatten[(((theRes1x1x1x5[[4,-1,1]] @@ #)[[Range[4]]]) - (firstRBCTripsExactDR @@ #))]& /@ theFullXs1x1x1x5
+(*
+theRes1x1x1x5[[4,-1,2]],Transpose[{#}],1,linModFirstRBCTrips,5]&/@theFullXs1x1x1x5;
+*)
+(*
+Export["xs1x1x1x5.tex",TableForm[theFullXs1x1x1x5[[All,{2,4,5}]]],"TeXFragment"]
+Export["actErrs1x1x1x5.tex",TableForm[Map[Log[Abs[#]]&,actErrs1x1x1x5[[All,{1,2,4}]],{1}]],"TeXFragment"]
+Export["errs1x1x1x5.tex",TableForm[Flatten /@Map[Log[Abs[#]]&,errs1x1x1x5[[All,{1,2,4}]],{1}]],"TeXFragment"]
+
+Export["theApps1x1x1x5.tex",TableForm[Flatten[theApps1x1x1x5[[All,{1,2,4}]],1]],"TeXFragment"]
+*)
+
+
+
+
+approx2x2x2=2*{1,1,1};
+sPrep2x2x2x5={tryEps,numKern,theName,mthName,bothX0Z0,sgSpecErg,zPts,theFullXs2x2x2x5}=
+doSmolPrep[approx2x2x2,iters,theK,forErgodicInfo,toIg,linModFirstRBCTrips,theDistFirstRBCTrips];
+{tm,ig}=Timing[
+theRes2x2x2x5=parallelNestGenericIterREInterp[genFRExtFunc,linModFirstRBCTrips,
+{bothX0Z0,theK},rbcEqnsFirstRBCTrips,sgSpecErg,smolyakInterpolation,{},theFullXs2x2x2x5]];
+errs2x2x2x5=nextSimplestErrXtm1Eps[rbcEqnsFirstRBCTrips,theRes2x2x2x5[[4,-1,1]],
+theRes2x2x2x5[[4,-1,2]],Transpose[{#}],1,linModFirstRBCTrips,5]&/@theFullXs2x2x2x5;
+actErrs2x2x2x5=Flatten[(((theRes2x2x2x5[[4,-1,1]] @@ #)[[Range[4]]]) - (firstRBCTripsExactDR @@ #))]& /@ theFullXs2x2x2x5
+
+theApps2x2x2x5=(theRes2x2x2x5[[4,-1,1]] @@ #)&/@theFullXs2x2x2x5
+
+(*
+Export["xs2x2x2x5.tex",TableForm[theFullXs2x2x2x5[[All,{2,4,5}]]],"TeXFragment"]
+Export["actErrs2x2x2x5.tex",TableForm[Map[Log[Abs[#]]&,actErrs2x2x2x5[[All,{1,2,4}]],{1}]],"TeXFragment"]
+Export["errs2x2x2x5.tex",TableForm[Flatten /@Map[Log[Abs[#]]&,errs2x2x2x5[[All,{1,2,4}]],{1}]],"TeXFragment"]
+Map[Log[Abs[#]]&,actErrs2x2x2x5[[All,{1,2,4}]],{1}]
+*)
+
+
+
+
+(*
+approx3x3x3=3*{1,1,1};
+sPrep3x3x3x5={tryEps,numKern,theName,mthName,bothX0Z0,sgSpecErg,zPts,theFullXs3x3x3x5}=
+doSmolPrep[approx3x3x3,iters,theK,forErgodicInfo,toIg,linModFirstRBCTrips,theDistFirstRBCTrips];
+{tm,ig}=Timing[
+theRes3x3x3x5=parallelNestGenericIterREInterp[genFRExtFunc,linModFirstRBCTrips,
+{bothX0Z0,theK},rbcEqnsFirstRBCTrips,sgSpecErg,smolyakInterpolation,{},theFullXs3x3x3x5]];
+errs3x3x3x5=nextSimplestErrXtm1Eps[rbcEqnsFirstRBCTrips,theRes3x3x3x5[[4,-1,1]],
+theRes3x3x3x5[[4,-1,2]],Transpose[{#}],1,linModFirstRBCTrips,5]&/@theFullXs3x3x3x5;
+actErrs3x3x3x5=Flatten[(((theRes3x3x3x5[[4,-1,1]] @@ #)[[Range[4]]]) - (firstRBCTripsExactDR @@ #))]& /@ theFullXs3x3x3x5;
+(*
+Export["xs3x3x3x5.tex",TableForm[theFullXs3x3x3x5[[All,{2,4,5}]]],"TeXFragment"]
+Export["actErrs3x3x3x5.tex",TableForm[actErrs3x3x3x5[[All,{1,2,4}]]],"TeXFragment"]
+Export["errs3x3x3x5.tex",TableForm[errs3x3x3x5[[All,{1,2,4}]]],"TeXFragment"]
+*)
+
+
+
+
+
+
+
+approx4x4x4=4*{1,1,1};
+sPrep4x4x4x5={tryEps,numKern,theName,mthName,bothX0Z0,sgSpecErg,zPts,theFullXs4x4x4x5}=
+doSmolPrep[approx4x4x4,iters,theK,forErgodicInfo,toIg,linModFirstRBCTrips,theDistFirstRBCTrips];
+{tm,ig}=Timing[
+theRes4x4x4x5=parallelNestGenericIterREInterp[genFRExtFunc,linModFirstRBCTrips,
+{bothX0Z0,theK},rbcEqnsFirstRBCTrips,sgSpecErg,smolyakInterpolation,{},theFullXs4x4x4x5]];
+errs4x4x4x5=nextSimplestErrXtm1Eps[rbcEqnsFirstRBCTrips,theRes4x4x4x5[[4,-1,1]],
+theRes4x4x4x5[[4,-1,2]],Transpose[{#}],1,linModFirstRBCTrips,5]&/@theFullXs4x4x4x5;
+actErrs4x4x4x5=Flatten[(((theRes4x4x4x5[[4,-1,1]] @@ #)[[Range[4]]]) - (firstRBCTripsExactDR @@ #))]& /@ theFullXs4x4x4x5;
+(*
+Export["xs4x4x4x5.tex",TableForm[theFullXs4x4x4x5[[All,{2,4,5}]]],"TeXFragment"]
+Export["actErrs4x4x4x5.tex",TableForm[actErrs4x4x4x5[[All,{1,2,4}]]],"TeXFragment"]
+Export["errs4x4x4x5.tex",TableForm[errs4x4x4x5[[All,{1,2,4}]]],"TeXFragment"]
+*)
+*)

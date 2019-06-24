@@ -1,0 +1,41 @@
+Get["slowKAdjust3.mth"]
+
+refModel={linModFirstRBCInit,rbcEqnsFirstRBCTrips,firstRBCTripsExactDR,firstRBCTripsExactDRCE,forErgodicInfo,theDistFirstRBCTrips,toIg}=
+(*alphaVal,deltaVal,etaVal,rhoVal.sigmaVal*)
+firstRBCGenModel[0.36,0.95,2.5,0.96,0.02];
+bothNow=genBothX0Z0Funcs[linModFirstRBCTrips];
+xVR={{0.01,1},{0.1,.5},{1,60},{1,60},{0.7,1.5}};
+
+
+
+(*>
+for
+firstRBCGenModel[0.36,0.95,3.0,0.95,0.02];
+
+{aa,bb,cc,dd,ee,ff,gg,hh,ii}=doKStepSE[10,1*{1,1,1},forErgodicInfo,linModFirstRBCInit];
+
+keep={aa,bb,cc,dd,ee,ff,gg,hh,ii};
+
+{aa,bb,cc,dd,ee,ff,gg,hh,ii}=doKStepSE[10,1*{1,1,1},bb,ii,"goodStart"->aa[[4,-1]]];
+
+{aa,bb,cc,dd,ee,ff,gg,hh,ii}=doKStepSE[10,1*{1,1,1},forErgodicInfo,linModFirstRBCInit];
+
+{aa,bb,cc,dd,ee,ff,gg,hh,ii}=doKStepSE[5,1*{1,1,1},forErgodicInfo,linModFirstRBCInit];
+Norm /@ dd//InputForm
+
+Out[13]//InputForm= 
+{6.518159490868416, 1.120045945788507, 2.163371696170853, 0.6118604486212577, 
+ 4.6297857306540156, 0.27197073242859593, 1.5129858981574635, 
+ 1.6136397025911329, 2.217697571194908, 0.2603200700991225, 
+ 5.862166189009362, 0.5612132584222138, 6.8782561444915125, 
+ 0.453606978945107, 1.3534863303639246, 0.14979008808940739, 
+ 1.677930409059932, 0.5832507081713921, 6.050544413151198, 
+ 1.0199127706787248, 2.661132310872604, 1.6615794626706424, 
+ 6.786390559598806, 0.8265407486161446, 2.6963835717243168, 
+ 0.04664727118796275, 0.7184913059467198, 0.3562874717902999, 
+ 4.420618941354059, 0.5007086280995914}
+
+{aa,bb,cc,dd,ee,ff,gg,hh,ii}=doKStepSE[10,3*{1,1,1},bb,ii];
+
+
+*)

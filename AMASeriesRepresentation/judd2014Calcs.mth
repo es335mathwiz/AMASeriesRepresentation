@@ -1,0 +1,48 @@
+
+Get["tests/pathSetup.mth"]
+Get["AMASeriesRepresentation`"]
+Get["firstRBCTrips.m"]
+
+
+
+refModel={linModFirstRBCInit,rbcEqnsFirstRBCTrips,firstRBCTripsExactDR,firstRBCTripsExactDRCE,forErgodicInfo,theDistFirstRBCTrips,toIg,paramSubs}=
+(*alphaVal,deltaVal,etaVal,rhoVal.sigmaVal*)
+firstRBCGenModel[0.36,1.0,0.95,1.0,0.95,0.01];
+bothNow=genBothX0Z0Funcs[linModFirstRBCTrips];
+xVR={{0.1,1},{0.1,.5},{1,10},{1,10},{0.7,1.5}};
+
+Options[saveKStepSE]=Options[saveKStepNotSE]=
+{"Traditional"->False,
+"xVarRanges"->{},
+normConvTol ->10.0^(-10),
+"goodStart"->{},
+"MPMult"->1,
+"maxForCEIters"->100,
+"FRMonitor"->False}
+saveKStepSE[
+kNow_Integer,
+approx:{_Integer..},
+forErgInfoNow:(_Function|_CompiledFunction|_Symbol),
+linModNow_List,
+opts:OptionsPattern[]]:=
+Module[{ig,bothX0Z0,sgSpecErg,theFullXs,theName,mthName},
+{ig,ig,ig,ig,bothX0Z0,sgSpecErg,ig,theFullXs}=
+doSmolPrep[approx,999,999,forErgInfoNow,toIg,linModNow,theDistFirstRBCTrips];
+forStay={sgSpecErg[[-1]],Join[toIg,Range[6,10]],1};
+Print["done smol prep",approx];
+theResSE=.;
+{tm,ig}=Timing[
+theResSE=parallelNestGenericIterREInterp[genFRExtFunc,linModNow,
+{
+If[OptionValue["goodStart"]=={},bothX0Z0,OptionValue["goodStart"]],
+kNow},rbcEqnsFirstRBCTrips,sgSpecErg,smolyakInterpolation,{},
+theFullXs,
+Apply[Sequence,
+FilterRules[Join[{"stayErgodic"->forStay},{opts}],Options[parallelNestGenericIterREInterp]]]]];
+Print["done parallelNest tm=",tm];
+collPts=Transpose[{fillIn[{{},toIg,#}]}]& /@ sgSpecErg[[3]];
+eqnErrs=genSolutionErrXtm1Eps[rbcEqnsFirstRBCTrips,
+theResSE[[4,-1,1]],theResSE[[4,-1,2]],#,1]& /@ collPts;
+Print["done eqn errs",Norm /@eqnErrs];
+fName=fNameTail[approx,99,kNow,99];
+{theResSE,sgSpecErg,theFullXs,eqnErrs,paramSubs,theName,fName}]

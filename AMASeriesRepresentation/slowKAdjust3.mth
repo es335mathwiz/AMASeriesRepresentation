@@ -1,0 +1,277 @@
+
+Get["tests/pathSetup.mth"]
+Get["AMASeriesRepresentation`"]
+Get["firstRBCTrips.m"]
+
+
+refModel={linModFirstRBCInit,rbcEqnsFirstRBCTrips,firstRBCTripsExactDR,firstRBCTripsExactDRCE,forErgodicInfo,theDistFirstRBCTrips,toIg,paramSubs}=
+(*alphaVal,deltaVal,etaVal,rhoVal.sigmaVal*)
+firstRBCGenModel[0.36,1.0,0.95,1.0,0.95,0.01];
+bothNow=genBothX0Z0Funcs[linModFirstRBCTrips];
+xVR={{0.1,1},{0.1,.5},{1,10},{1,10},{0.7,1.5}};
+
+(*
+theAppsUnk3x3x3xExact=firstRBCTripsExactDR@@#&/@theFullXsUnk3x3x3x5
+*)
+Options[tryEtaStepTradNotSE]=Options[doKStepSE]=Options[doKStepNotSE]=
+{"Traditional"->False,"xVarRanges"->{},
+normConvTol ->10.0^(-10),"goodStart"->{},"MPMult"->1,"maxForCEIters"->100,"FRMonitor"->False}
+doKStepSE[kNow_Integer,approx:{_Integer..},
+forErgInfoNow:(_Function|_CompiledFunction|_Symbol),linModNow_List,
+opts:OptionsPattern[]]:=
+Module[{tryEps,numKern,theName,mthName,sgSpecErg,zPts,theFullXs,
+sPrep,forStay,theResSE,tm,ig,
+longPaths,fp,linModNext,bothX0Z0,collPts,eqnErrs},
+sPrep={tryEps,numKern,theName,mthName,bothX0Z0,sgSpecErg,zPts,theFullXs}=
+doSmolPrep[approx,999,999,forErgInfoNow,toIg,linModNow,theDistFirstRBCTrips];
+forStay={sgSpecErg[[-1]],Join[toIg,Range[6,10]],1};
+Print["done smol prep",approx];
+theResSE=.;
+{tm,ig}=Timing[
+theResSE=parallelNestGenericIterREInterp[genFRExtFunc,linModNow,
+{
+If[OptionValue["goodStart"]=={},bothX0Z0,OptionValue["goodStart"]],
+kNow},rbcEqnsFirstRBCTrips,sgSpecErg,smolyakInterpolation,{},
+theFullXs,
+Apply[Sequence,
+FilterRules[Join[{"stayErgodic"->forStay},{opts}],Options[parallelNestGenericIterREInterp]]]]];
+Print["done parallelNest tm=",tm];
+theAppsSE=theResSE[[4,-1,1]]@@#&/@theFullXs;
+Print["done app fullxs",theAppsSE[[1]]];
+longPaths=
+Function[xx,TimeConstrained[FixedPoint[Flatten[(theResSE[[4,-1,2]] @@ #)[[Range[5]]]]&,xx],1]]/@theFullXs;
+Print["done SS",longPaths[[1]]];
+fp=Union[DeleteCases[longPaths,$Aborted|{___,Overflow[],___}],SameTest->((Norm[#1-#2]<10^(-12))&)];
+Print["done fp",fp];
+forErgInfoNext=genForErgodicInfo[Function[{ig1,kk,ig2,ig3,tt,eps},Flatten[(theResSE[[4,-1,1]] @@ {ig1,kk,ig2,ig3,tt,eps})[[Range[5]]]]]];
+Print["done forergInfoNext"];
+collPts=Transpose[{fillIn[{{},toIg,#}]}]& /@ sgSpecErg[[3]];
+eqnErrs=genSolutionErrXtm1Eps[rbcEqnsFirstRBCTrips,
+theResSE[[4,-1,1]],theResSE[[4,-1,2]],#,1]& /@ collPts;
+Print["done eqn errs",eqnErrs[[1]]];
+If[fp==={},Print["fp empty, nothing left to do"],
+linModNext=genLinModFirstRBCTrips[genSSSubsFirstRBCTrips[fp[[1]]]];
+Print["done gen linmod",BB];
+errsSE=nextSimplestErrXtm1Eps[rbcEqnsFirstRBCTrips,theResSE[[4,-1,1]],
+theResSE[[4,-1,2]],Transpose[{#}],1,linModNext,0]&/@theFullXs;
+Print["done errs",errsSE[[1]]]];
+{theResSE,forErgInfoNext,theAppsSE,errsSE,sgSpecErg,theFullXs,
+longPaths,fp,linModNext,eqnErrs}]
+
+doKStepNotSE[kNow_Integer,approx:{_Integer..},
+forErgInfoNow:(_Function|_CompiledFunction|_Symbol),linModNow_List,
+opts:OptionsPattern[]]:=
+Module[{tryEps,numKern,theName,mthName,bothX0Z0,sgSpecErg,zPts,theFullXs,
+sPrep,forStay,theResNotSE,tm,ig,
+longPaths,fp,linModNext,collPts,eqnErrs},
+sPrep={tryEps,numKern,theName,mthName,bothX0Z0,sgSpecErg,zPts,theFullXs}=
+doSmolPrep[approx,999,999,forErgInfoNow,toIg,linModNow,theDistFirstRBCTrips];
+forStay={sgSpecErg[[-1]],Join[toIg,Range[6,10]],1};
+Print["done smol prep",approx];
+theResNotSE=.;
+{tm,ig}=Timing[
+theResNotSE=parallelNestGenericIterREInterp[genFRExtFunc,linModNow,
+{If[OptionValue["goodStart"]=={},bothX0Z0,OptionValue["goodStart"]],kNow},rbcEqnsFirstRBCTrips,sgSpecErg,smolyakInterpolation,{},
+theFullXs,
+Apply[Sequence,
+FilterRules[Join[{"stayErgodic"->{}},{opts}],Options[parallelNestGenericIterREInterp]]]]];
+Print["done parallelNest tm=",tm];
+theAppsNotSE=theResNotSE[[4,-1,1]]@@#&/@theFullXs;
+Print["done app fullxs",theAppsNotSE[[1]]];
+forErgInfoNext=genForErgodicInfo[Function[{ig1,kk,ig2,ig3,tt,eps},Flatten[(theResNotSE[[4,-1,1]] @@ {ig1,kk,ig2,ig3,tt,eps})[[Range[5]]]]]];
+Print["done forergInfoNext"];
+longPaths=
+Function[xx,TimeConstrained[FixedPoint[Flatten[(theResNotSE[[4,-1,2]] @@ #)[[Range[5]]]]&,xx],1]]/@theFullXs;
+Print["done SS",longPaths[[1]]];
+fp=Union[DeleteCases[longPaths,$Aborted|{___,Overflow[],___}],SameTest->((Norm[#1-#2]<10^(-12))&)];
+Print["done fp",fp];
+collPts=Transpose[{fillIn[{{},toIg,#}]}]& /@ sgSpecErg[[3]];
+eqnErrs=genSolutionErrXtm1Eps[rbcEqnsFirstRBCTrips,
+theResNotSE[[4,-1,1]],theResNotSE[[4,-1,2]],#,1]& /@ collPts;
+Print["done eqn errs",eqnErrs[[1]]];
+If[fp==={},Print["fp empty, nothing left to do"],
+linModNext=genLinModFirstRBCTrips[genSSSubsFirstRBCTrips[fp[[1]]]];
+Print["done gen linmod",BB];
+errsNotSE=nextSimplestErrXtm1Eps[rbcEqnsFirstRBCTrips,theResNotSE[[4,-1,1]],
+theResNotSE[[4,-1,2]],Transpose[{#}],1,linModNext,0]&/@theFullXs;
+Print["done errs",errsNotSE[[1]]]
+];
+{theResNotSE,forErgInfoNext,theAppsNotSE,errsNotSE,sgSpecErg,theFullXs,
+longPaths,fp,linModNext,eqnErrs}]
+
+genForErgodicInfo[theFuncNow:(_Function|_CompiledFunction|_Symbol)]:=
+Function[{numPers},
+With[{draws=RandomVariate[theDistFirstRBCTrips[[1,1,2]],numPers],
+initVec={99,.238,99,99,.9614}},
+With[{vars=
+FoldList[Flatten[Apply[theFuncNow, Append[Flatten[#1],#2]]]&,initVec,draws]},
+ArrayFlatten[{{Drop[vars,1],Transpose[{draws}]}}]]]];
+
+
+
+
+
+threeStep[_,kk_,_,th_,eps_]:=
+Module[{chk=Infinity,stepOne},
+While[chk>5,
+With[{draws=RandomVariate[theDistFirstRBCTrips[[1,1,2]],2]},
+stepOne=funcNow2[ig,kk,ig,th,eps];
+With[{stepTwo=funcNow2[ig,stepOne[[2]],ig,stepOne[[4]],draws[[1]]]},
+With[{stepThree=funcNow2[ig,stepTwo[[2]],ig,stepTwo[[4]],draws[[2]]]},
+Print["stepThree:",{stepOne,stepTwo,stepThree}];
+chk=Norm[stepThree]]]]];stepOne]
+
+(*
+for
+firstRBCGenModel[0.36,0.95,1.3,0.95,0.02];
+{aa,bb,cc,dd,ee,ff,gg,hh,ii}=doKStepSE[1,1*{1,1,1},forErgodicInfo,linModFirstRBCInit];
+
+{aa,bb,cc,dd,ee,ff,gg,hh,ii}=doKStepSE[10,1*{1,1,1},forErgodicInfo,linModFirstRBCInit];
+In[41]:= Norm /@ dd//InputForm
+
+Out[41]//InputForm= 
+{0.013736959815430824, 0.014548487024177464, 0.004783507374822391, 
+ 0.0027639888910000426, 0.0002630033139377414, 0.009515277855367177, 
+ 0.0041097491005024946, 0.016550781063182727, 0.0016214986065114087, 
+ 0.003065688484649812, 0.0083642505410955, 0.010461551321446506, 
+ 0.008727784608882778, 0.0011067273935827346, 0.0062034371531479735, 
+ 0.015098754979603952, 0.0011844253580042356, 0.002139835935700216, 
+ 0.010352947623496032, 0.014772388443493382, 0.0028397468342679804, 
+ 0.0026647842911452155, 0.00290188036183547, 0.005895717777452266, 
+ 0.009297198412529961, 0.01730206430395776, 0.0003919620386855249, 
+ 0.011831115044773122, 0.005375411556356675, 0.018537899550646535}
+
+{aa,bb,cc,dd,ee,ff,gg,hh,ii}=doKStepSE[10,2*{1,1,1},forErgodicInfo,linModFirstRBCInit];
+
+In[43]:= In[43]:= Norm /@ dd//InputForm
+
+Out[43]//InputForm= 
+{0.0003671371735297924, 0.0001438400364240151, 0.00013232065102249346, 
+ 0.00015779357875852002, 0.00009357218675894355, 0.00005811925504643824, 
+ 0.00005795158287967139, 0.00018675427699940968, 8.861312598150807*^-6, 
+ 0.0000601890893992254, 0.0002993651645925214, 0.000038598746010903956, 
+ 0.00003938719937073279, 0.00008304256662029384, 0.00004577548437222318, 
+ 0.000021326398833788704, 0.0002585255660312182, 0.00007628311717742251, 
+ 0.00001697541709292882, 0.00034217526541844423, 0.0001867591245875031, 
+ 0.000010129669974127535, 0.00002338569183504121, 0.00021730808500899365, 
+ 0.00013774697237544812, 0.00009439564792078776, 0.00010910889382632006, 
+ 0.00020189981379430285, 0.00011430512942666021, 0.00006958273723095128}
+
+{aa,bb,cc,dd,ee,ff,gg,hh,ii}=doKStepNotSE[10,2*{1,1,1},bb,ii];
+
+In[45]:= Norm /@ dd//InputForm
+
+Out[45]//InputForm= 
+{0.00044933943010980144, 0.00001330306422023465, 0.00030594559268551396, 
+ 0.0000844219856116905, 0.000012254984870844246, 0.00020666858189838274, 
+ 0.000048045055955598063, 0.00010315197816107911, 0.0001479524658037047, 
+ 5.054787740940698*^-6, 0.00037536507734458967, 0.00010686094762292799, 
+ 0.00007355739726743226, 0.0000125329341242023, 0.000013350640528637182, 
+ 0.00006903270630356788, 0.00030709998041360823, 0.00005774081270902133, 
+ 0.0001342962491160149, 0.0002947151603905618, 0.00017070895975877776, 
+ 0.00014611631000143165, 0.00007588224606548537, 0.0001462855611352869, 
+ 0.0003175848966872789, 0.000015058966062234131, 0.000033089468695227155, 
+ 0.0003858055608779068, 0.000055379323861209876, 0.00012248747421683115}
+
+
+{aa,bb,cc,dd,ee,ff,gg,hh,ii}=doKStepSE[10,3*{1,1,1},bb,ii];
+
+
+In[47]:= Norm /@ dd//InputForm
+
+Out[47]//InputForm= 
+{0.00002732389402236204, 4.247545548387758*^-6, 0.000036340170924624905, 
+ 0.000010602068562023064, 2.0106463193986674*^-7, 0.000015839616303705093, 
+ 0.00003598234783156677, 4.051668211721201*^-6, 8.653527022034171*^-7, 
+ 0.000018726938398092728, 0.000037757200113052605, 0.00003944994033646082, 
+ 0.000019936306545767784, 0.00001289338782429081, 0.000024864530903493813, 
+ 0.000043820615874208556, 2.3449056044500377*^-6, 0.000011666228670328727, 
+ 0.00003150061332857739, 1.4139628837980192*^-6, 0.000027316700223768546, 
+ 0.000029469820178302436, 0.000013868657903816436, 5.533440052027949*^-6, 
+ 0.000019163907661744958, 0.00004880402416610238, 0.000010904063143052257, 
+ 0.000050825079340882756, 0.000029898671508193683, 0.000011737830993463223}
+
+{aa,bb,cc,dd,ee,ff,gg,hh,ii}=doKStepSE[10,4*{1,1,1},bb,ii];
+
+
+In[49]:= Norm /@ dd//InputForm
+
+Out[49]//InputForm= 
+{0.00001596198508171427, 0.000018795600557624717, 0.00001726030131958354, 
+ 4.496133889335064*^-6, 0.000011908247919374293, 0.000011140883043903675, 
+ 0.000026227681820231576, 0.000020152969264581228, 0.000017819303685418914, 
+ 0.000012719624777466866, 0.00003897609945072071, 0.00003624321602235166, 
+ 0.000035668277886632126, 7.719905189346847*^-6, 0.00003384747285162744, 
+ 0.00004178230123704893, 3.729291801684449*^-6, 5.4594389415910735*^-6, 
+ 0.000032200023869630905, 7.5704066243001375*^-6, 0.00001638183035847535, 
+ 0.000038259169584717594, 3.3359324225672073*^-6, 1.3179077002214785*^-6, 
+ 0.00003582290344538917, 0.00004111967341083903, 2.668191603335086*^-6, 
+ 0.000028139795818334415, 0.000016922499955564597, 0.000020575432449359175}
+
+{aa,bb,cc,dd,ee,ff,gg,hh,ii}=doKStepSE[10,3*{1,1,1},bb,ii,"normConvTol"->10.^(-12)];
+keep={aa,bb,cc,dd,ee,ff,gg,hh,ii};
+
+{aa,bb,cc,dd,ee,ff,gg,hh,ii}=doKStepSE[10,4*{1,1,1},bb,ii,"normConvTol"->10.^(-13),"goodStart"->aa[[4,-1]]];
+                           -12            -14       -13
+{nestWhile:, 28, 1.98132 10   , 7.15774 10   , 1. 10   }
+
+In[11]:= Norm /@ dd //InputForm
+
+Out[11]//InputForm= 
+{0.000040320131711375774, 0.00004435701136183733, 0.000022687183763923015, 
+ 0.00001204024260213307, 8.379630620881194*^-6, 0.000042909609019442006, 
+ 0.000032273171681628685, 0.000042878019997609924, 6.011071544713134*^-6, 
+ 9.075014459386568*^-6, 8.659010141013756*^-6, 0.00004433358636685344, 
+ 5.274100020703618*^-6, 0.00001125082890064586, 0.000024057991887181714, 
+ 0.0000194760093251051, 9.993291956097992*^-6, 0.00001876334675815242, 
+ 0.000045459373409815316, 0.000042849600587083906, 0.000026981381052495328, 
+ 0.00004286932869437686, 0.000022878315624423814, 0.000023323597572675598, 
+ 0.00002027724661195754, 0.00002307099639477104, 2.9665684678709648*^-6, 
+ 0.000018735653966890836, 0.00003382836290941522, 0.00003840264952062263}
+
+Out[13]//InputForm= 
+{0.000041578602654058365, 0.00004585861320528195, 0.000029517450945253875, 
+ 3.690855538328793*^-6, 0.000011629259150604837, 0.000043874214114376044, 
+ 0.000035008190539322656, 0.00004066321597161392, 5.600183220493999*^-6, 
+ 0.000011655562570828478, 1.4706727171412791*^-6, 0.000049636522737926727, 
+ 3.432156336341093*^-7, 0.000011633335088938063, 0.000019781871757450057, 
+ 0.000020421036379305252, 0.00001093684412215151, 0.000015775050551669114, 
+ 0.00005887556168639648, 0.000027118820409051048, 0.00003154807897917393, 
+ 0.00004553449551091992, 0.000027160470134974073, 0.000013084250724999068, 
+ 0.000018517145895435628, 0.000024882775102530587, 0.000010712758057790026, 
+ 0.000023525133750704626, 0.00003849103779691295, 0.00005789634943125135}
+
+In[14]:= 
+
+
+
+*)
+
+(*
+Export["rbcExampleOctoberHM.pdf",MatrixForm[linModFirstRBCInit[[1,All,Range[5]]]]]
+
+Export["rbcExampleOctoberHZ.pdf",MatrixForm[linModFirstRBCInit[[1,All,5+Range[5]]]]]
+
+Export["rbcExampleOctoberHP.pdf",MatrixForm[linModFirstRBCInit[[1,All,2*5+Range[5]]]]]
+
+Export["rbcExampleOctoberB.pdf",MatrixForm[getB[Chop[linModFirstRBCInit]]]]
+
+Export["rbcExampleOctoberF.pdf",MatrixForm[getF[Chop[linModFirstRBCInit]]]]
+
+
+Export["rbcExampleOctoberPhi.pdf",MatrixForm[getPhi[Chop[linModFirstRBCInit]]]]
+
+
+Export["rbcExampleOctoberPsiC.pdf",MatrixForm[Chop[linModFirstRBCInit[[6]]]]]
+
+*)
+
+tryEtaStepTradNotSE[etaNow_?NumberQ,someRes_List,opts:OptionsPattern[]]:=
+Module[{refModel,etaRes},
+refModel={linModFirstRBCInit,rbcEqnsFirstRBCTrips,firstRBCTripsExactDR,firstRBCTripsExactDRCE,forErgodicInfo,theDistFirstRBCTrips,toIg}=
+(*alphaVal,deltaVal,etaVal,rhoVal.sigmaVal*)
+firstRBCGenModel[0.36,1.0,0.95,etaNow,0.95,0.01];
+etaRes=doKStepNotSE[0,1*{1,1,1},someRes[[2]],someRes[[9]],
+Apply[Sequence,FilterRules[{opts},Options[doKStepNotSE]]]];
+Print["eqn err norms", Norm/@ etaRes[[-1]]];
+etaRes]

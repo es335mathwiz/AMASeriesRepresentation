@@ -1,0 +1,126 @@
+Get["tests/pathSetup.mth"]
+Get["AMASeriesRepresentation`"]
+Get["firstRBCCSTrips.m"]
+
+
+iters=8;
+theK=10;
+refModelCS={linModFirstRBCCSTrips,rbcEqnsFirstRBCCSTrips,forErgodicInfoCS,theDistFirstRBCCSTrips,toIg}=
+firstRBCCSGenModel[
+0.36,.1,0.95,1,0.95,0.01,0.975];
+
+
+approx1x1x1=1*{1,1,1};
+sPrep1x1x1x5={tryEps,numKern,theName,mthName,bothX0Z0,sgSpecErg,zPts,theFullXs1x1x1x5}=
+doSmolPrep[approx1x1x1,iters,theK,forErgodicInfoCS,toIg,linModFirstRBCCSTrips,theDistFirstRBCCSTrips];
+theRes1x1x1x5=.
+{tm,ig}=Timing[
+theRes1x1x1x5=parallelNestGenericIterREInterp[genFRExtFunc,linModFirstRBCCSTrips,
+{bothX0Z0,theK},rbcEqnsFirstRBCCSTrips,sgSpecErg,smolyakInterpolation,{},theFullXs1x1x1x5]];
+errs1x1x1x5=nextSimplestErrXtm1Eps[rbcEqnsFirstRBCCSTrips,theRes1x1x1x5[[4,-1,1]],
+theRes1x1x1x5[[4,-1,2]],Transpose[{#}],1,linModFirstRBCCSTrips,5]&/@theFullXs1x1x1x5;
+theAppsCS1x1x1x5=theRes1x1x1x5[[4,-1,1]] @@ # &/@ theFullXs1x1x1x5;
+
+
+
+(*
+Export["theApps1x1x1x5CS.tex",TableForm[theApps1x1x1x5[[All,{1,2,3}]]],"TeXFragment"]
+Export["xs1x1x1x5CS.tex",TableForm[theFullXs1x1x1x5[[All,{3,7,8}]]],"TeXFragment"]
+Export["errs1x1x1x5CS.tex",TableForm[Flatten/@Map[Log[Abs[#]]&,errs1x1x1x5[[All,{1,2,3}]]]],"TeXFragment"]
+
+
+
+*)
+
+
+
+
+approx2x2x2=2*{1,1,1};
+sPrep2x2x2x5={tryEps,numKern,theName,mthName,bothX0Z0,sgSpecErg,zPts,theFullXs2x2x2x5}=
+doSmolPrep[approx2x2x2,iters,theK,forErgodicInfoCS,toIg,linModFirstRBCCSTrips,theDistFirstRBCCSTrips];
+theRes2x2x2x5=.
+{tm,ig}=Timing[
+theRes2x2x2x5=parallelNestGenericIterREInterp[genFRExtFunc,linModFirstRBCCSTrips,
+{theRes1x1x1x5[[4,-1]],theK},rbcEqnsFirstRBCCSTrips,sgSpecErg,smolyakInterpolation,{},theFullXs2x2x2x5]];
+
+theApps2x2x2x5CS=theRes2x2x2x5[[4,-1,1]] @@ # &/@ theFullXs2x2x2x5;
+
+errs2x2x2x5=nextSimplestErrXtm1Eps[rbcEqnsFirstRBCCSTrips,theRes2x2x2x5[[4,-1,1]],
+theRes2x2x2x5[[4,-1,2]],Transpose[{#}],1,linModFirstRBCCSTrips,5]&/@theFullXs2x2x2x5;
+
+
+(*
+
+
+Export["theApps2x2x2x5CS.tex",TableForm[Flatten/@theApps2x2x2x5CS[[All,{1,2,3}]]],"TeXFragment"]
+Export["xs2x2x2x5CS.tex",TableForm[theFullXs2x2x2x5[[All,{3,7,8}]]],"TeXFragment"]
+Export["errs2x2x2x5CS.tex",TableForm[Flatten/@Map[Log[Abs[#]]&,errs2x2x2x5[[All,{1,2,3}]]]],"TeXFragment"]
+
+
+
+(*
+Export["xs2x2x2x5CS.tex",TableForm[theFullXs2x2x2x5[[All,{2,4,5}]]],"TeXFragment"]
+*)
+(*
+*)
+Export["errs2x2x2x5CS.tex",TableForm[Flatten /@Map[Log[Abs[#]]&errs2x2x2x5[[All,{1,2,4}]]],"TeXFragment"]]
+
+
+
+
+*)
+
+
+
+
+
+
+
+approx3x3x3=3*{1,1,1};
+sPrep3x3x3x5={tryEps,numKern,theName,mthName,bothX0Z0,sgSpecErg,zPts,theFullXs3x3x3x5}=
+doSmolPrep[approx3x3x3,iters,theK,forErgodicInfoCS,toIg,linModFirstRBCCSTrips,theDistFirstRBCCSTrips];
+theRes3x3x3x5=.
+{tm,ig}=Timing[
+theRes3x3x3x5=parallelNestGenericIterREInterp[genFRExtFunc,linModFirstRBCCSTrips,
+{theRes2x2x2x5[[4,-1]],theK},rbcEqnsFirstRBCCSTrips,sgSpecErg,smolyakInterpolation,{},theFullXs3x3x3x5]];
+
+theApps3x3x3x5CS=theRes3x3x3x5[[4,-1,1]] @@ # &/@ theFullXs3x3x3x5;
+
+errs3x3x3x5=nextSimplestErrXtm1Eps[rbcEqnsFirstRBCCSTrips,theRes3x3x3x5[[4,-1,1]],
+theRes3x3x3x5[[4,-1,2]],Transpose[{#}],1,linModFirstRBCCSTrips,5]&/@theFullXs3x3x3x5;
+
+(*
+actErrs3x3x3x5=Flatten[(((theRes3x3x3x5[[4,-1,1]] @@ #)[[Range[4]]]) - (firstRBCCSTripsExactDR @@ #))]& /@ theFullXs3x3x3x5
+Export["actErrs3x3x3x5CS.tex",TableForm[actErrs3x3x3x5[[All,{1,2,4}]]],"TeXFragment"]
+(*
+Export["xs3x3x3x5CS.tex",TableForm[theFullXs3x3x3x5[[All,{2,4,5}]]],"TeXFragment"]
+*)
+(*
+{{1.162156227029333, 0.37263436423374563, 3.8879775459235053, 
+ >     0.8604695106751419, -0.05785186570264057, 0.8086554829796732, 
+ >     0.9397840050662409}, $Failed, "low"}
+
+*)
+Export["errs3x3x3x5CS.tex",TableForm[Flatten /@Map[Log[Abs[#]]&errs3x3x3x5[[All,{1,2,4}]]],"TeXFragment"]]
+*)
+
+
+(*
+
+
+Get["theRes3x3x3x5m3.m"];
+approx was actually 3*{1,1,1} but name was wrong
+theFullXs1x1x1x5
+
+
+
+theAppm3=theRes3x3x3x5m3[[4,-1,1]]@@ # & /@ theFullXs1x1x1x5;
+Export["xs3x3x3x5CS.tex",TableForm[theFullXs1x1x1x5[[{1,2,3}]]],"TeXFragment"]
+theAppm3=theRes3x3x3x5m3[[4,-1,1]]@@ # & /@ 
+Export["theApps3x3x3x5CS.tex",TableForm[theAppm3[[All,{1,2,3}]]],"TeXFragment"]
+errs3x3x3x5=nextSimplestErrXtm1Eps[rbcEqnsFirstRBCCSTrips,theRes3x3x3x5m3[[4,-1,1]],
+theRes3x3x3x5m3[[4,-1,2]],Transpose[{#}],1,linModFirstRBCCSTrips,3]&/@theFullXs1x1x1x5;
+<
+
+
+*)

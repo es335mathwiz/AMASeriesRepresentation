@@ -1,0 +1,16 @@
+Get["slowKAdjust3.mth"]
+
+refModel={linModFirstRBCInit,rbcEqnsFirstRBCTrips,firstRBCTripsExactDR,firstRBCTripsExactDRCE,forErgodicInfo,theDistFirstRBCTrips,toIg}=
+(*alphaVal,deltaVal,etaVal,rhoVal.sigmaVal*)
+firstRBCGenModel[0.36,0.95,1.0,0.95,0.000001];
+bothNow=genBothX0Z0Funcs[linModFirstRBCTrips];
+xVR={{0.01,1},{0.1,.5},{1,60},{0.7,1.5}};
+
+
+
+(*
+{aa,bb,cc,dd,ee,ff,gg,hh,ii}=doKStepSE[10,1*{1,1,1},forErgodicInfo,linModFirstRBCInit];
+
+
+{aa,bb,cc,dd,ee,ff,gg,hh,ii}=doKStepSE[10,1*{1,1,1},bb,ii,"normConvTol"->10.^(-13),"goodStart"->aa[[4,-1]]];
+*)

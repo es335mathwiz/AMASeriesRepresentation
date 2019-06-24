@@ -1,0 +1,119 @@
+Get["slowKAdjust3.mth"]
+
+xVR={{0.01,1},{0.1,.5},{1,60},{1,60},{0.7,1.5}};
+
+(*first traditional*)
+
+(*eta 1*)
+eta1={aa,bb,cc,dd,ee,ff,gg,hh,ii,jj}=doKStepNotSE[0,1*{1,1,1},forErgodicInfo,linModFirstRBCInit,"Traditional"->True,"xVarRanges"->xVR,"FRMonitor"->False,"MPMult"->1
+(*,"goodStart"->aa[[4,-1]]*)];
+
+(*eta 2*)
+refModel={linModFirstRBCInit,rbcEqnsFirstRBCTrips,firstRBCTripsExactDR,firstRBCTripsExactDRCE,forErgodicInfo,theDistFirstRBCTrips,toIg}=
+(*alphaVal,ddVal,deltaVal,etaVal,rhoVal.sigmaVal*)
+firstRBCGenModel[0.36,1.0,0.95,2.0,0.95,0.01];
+
+eta2={aa,bb,cc,dd,ee,ff,gg,hh,ii,jj}=doKStepNotSE[0,1*{1,1,1},bb,ii,"Traditional"->True,"xVarRanges"->xVR,"FRMonitor"->False,"MPMult"->1
+,"goodStart"->aa[[4,-1]]];
+
+
+(*trying 2.0 to 3.0 large equation errors*)
+
+(*trying 2.0 to 2.5 *)
+refModel={linModFirstRBCInit,rbcEqnsFirstRBCTrips,firstRBCTripsExactDR,firstRBCTripsExactDRCE,forErgodicInfo,theDistFirstRBCTrips,toIg}=
+(*alphaVal,deltaVal,etaVal,rhoVal.sigmaVal*)
+firstRBCGenModel[0.36,1.0,0.95,2.5,0.95,0.01];
+
+eta2p5={aa,bb,cc,dd,ee,ff,gg,hh,ii,jj}=doKStepNotSE[0,1*{1,1,1},bb,ii,"Traditional"->True,"xVarRanges"->xVR,"FRMonitor"->False,"MPMult"->1
+,"goodStart"->aa[[4,-1]]];
+
+(*trying 2.5 to 3.5  var range needs adjusting*)
+refModel={linModFirstRBCInit,rbcEqnsFirstRBCTrips,firstRBCTripsExactDR,firstRBCTripsExactDRCE,forErgodicInfo,theDistFirstRBCTrips,toIg}=
+(*alphaVal,deltaVal,etaVal,rhoVal.sigmaVal*)
+firstRBCGenModel[0.36,1.0,0.95,3.5,0.95,0.01];
+xVR={{0.001,1},{0.1,.5},{1,1000},{1,1000},{0.7,1.5}};
+
+eta3p5={aa,bb,cc,dd,ee,ff,gg,hh,ii,jj}=doKStepNotSE[0,1*{1,1,1},bb,ii,"Traditional"->True,"xVarRanges"->xVR,"FRMonitor"->False,"MPMult"->1
+,"goodStart"->aa[[4,-1]]];
+
+
+(*trying 3.5 to 4.5 *)
+
+curious=tryEtaStepTradNotSE[4.5,eta3p5];
+(*32 iterations*)
+(*trying 4.5 to 5.5*)
+eta4p5=curious;
+
+
+
+
+
+curious=tryEtaStepTradNotSE[5.5,eta4p5];(*48 iterations*)
+
+eta5p5=curious;
+curious=tryEtaStepTradNotSE[6.5,eta5p5];(*large errors changing lims*)
+xVR={{0.0001,1},{0.01,.5},{.01,6000},{.01,6000},{0.7,1.5}};
+curious=tryEtaStepTradNotSE[6.0,eta5p5];(*46 iters*)
+
+
+eta6p0=curious;
+curious=tryEtaStepTradNotSE[6.5,eta6p0];(*two fp overflows *)
+
+
+
+eta6p5=curious;
+xVR={{0.0001,1},{0.01,.5},{.01,6000},{.01,6000},{0.7,1.5}};
+curious=tryEtaStepTradNotSE[7.0,eta6p0];(*two fp overflows can't simulate for ergodic region*)
+
+
+eta7p0=curious;
+xVR={{0.0001,1},{0.01,.5},{.01,6000},{.01,6000},{0.7,1.5}};
+
+
+xVR={{0.0001,1},{0.01,.5},{.01,160000},{.01,160000},{0.7,1.5}};
+curious=tryEtaStepTradNotSE[8.0,eta6p0,
+"Traditional"->True,"xVarRanges"->xVR,"FRMonitor"->False,"MPMult"->1,"goodStart"->eta7p0[[1,4,-1]],"maxForCEIters" -> 300];(*two fp overflows slow convergence*)
+
+(*44 iters  small equation errors  moving rage for nlparts helped*)
+eta8p0=curious;
+
+curious=tryEtaStepTradNotSE[9.0,eta6p0,
+"Traditional"->True,"xVarRanges"->xVR,"FRMonitor"->False,"MPMult"->1,"goodStart"->eta8p0[[1,4,-1]],"maxForCEIters" -> 300];(*eight overflows for app 91iters convergence*)
+
+
+
+
+
+
+
+eta9p0=curious;
+
+curious=tryEtaStepTradNotSE[10.0,eta6p0,
+"Traditional"->True,"xVarRanges"->xVR,"FRMonitor"->False,"MPMult"->1,"goodStart"->eta9p0[[1,4,-1]],"maxForCEIters" -> 300];(*eight overflows for app 91iters convergence*)
+
+
+eta10p0=curious;(*108 iters some fixed points found*)
+
+
+xVR={{0.0001,1},{0.01,.5},{.01,10.^20},{.01,10.^20},{0.7,1.5}};
+
+curious=tryEtaStepTradNotSE[12.0,eta6p0,
+"Traditional"->True,"xVarRanges"->xVR,"FRMonitor"->False,"MPMult"->1,"goodStart"->eta10p0[[1,4,-1]],"maxForCEIters" -> 300];(*eight overflows for app 91iters convergence*)
+
+eta10p5=curious;Save["eta10p5",eta10p5];
+curious=tryEtaStepTradNotSE[11.0,eta6p0,
+"Traditional"->True,"xVarRanges"->xVR,"FRMonitor"->False,"MPMult"->1,"goodStart"->eta10p5[[1,4,-1]],"maxForCEIters" -> 300];(*large errors*)
+
+
+curious=tryEtaStepTradNotSE[10.505,eta6p0,
+"Traditional"->True,"xVarRanges"->xVR,"FRMonitor"->False,"MPMult"->1,"goodStart"->eta10p505[[1,4,-1]],"maxForCEIters" -> 300];(*eight overflows for app 91iters convergence*)
+
+Get["slowKAdjust3.mth"]
+Get["eta6p0.mth"];
+Get["eta10p5"];
+xVR={{0.0001,1},{0.01,.5},{.01,10.^20},{.01,10.^20},{0.7,1.5}};
+nestFunc[{prev_List,prevEta_?NumberQ}]:=
+{tryEtaStepTradNotSE[prevEta+.01,eta6p0,
+"Traditional"->True,"xVarRanges"->xVR,"FRMonitor"->False,"MPMult"->1,"goodStart"->prev[[1,4,-1]],"maxForCEIters" -> 300],prevEta+.01};
+
+vals=NestList[nestFunc,{eta10p5,10.505},1];

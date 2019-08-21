@@ -3,7 +3,7 @@ $HistoryLength=1;
 Get["tests/pathSetup.mth"]
 Get["AMASeriesRepresentation`"]
 Print["preemscstomma"]
-Get["emscsToMma`"]
+(*Get["emscsToMma`"]*)
 Get["betterRBCTrips`"]
 
 LaunchKernels[]
@@ -12,7 +12,7 @@ ParallelEvaluate[$HistoryLength=1];
 ParallelEvaluate[Get["tests/pathSetup.mth"]]
 ParallelNeeds["AMASeriesRepresentation`"]
 Print["preemscstomma"]
-ParallelNeeds["emscsToMma`"]
+(*ParallelNeeds["emscsToMma`"]*)
 ParallelNeeds["betterRBCTrips`"]
 
 

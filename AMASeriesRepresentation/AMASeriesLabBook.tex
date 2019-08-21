@@ -1,9 +1,25 @@
-\UseRawInputEncoding
+\newcommand{\NWtarget}[2]{#2}
+\newcommand{\NWlink}[2]{#2}
+\newcommand{\NWtxtMacroDefBy}{Fragment defined by}
+\newcommand{\NWtxtMacroRefIn}{Fragment referenced in}
+\newcommand{\NWtxtMacroNoRef}{Fragment never referenced}
+\newcommand{\NWtxtDefBy}{Defined by}
+\newcommand{\NWtxtRefIn}{Referenced in}
+\newcommand{\NWtxtNoRef}{Not referenced}
+\newcommand{\NWtxtFileDefBy}{File defined by}
+\newcommand{\NWtxtIdentsUsed}{Uses:}
+\newcommand{\NWtxtIdentsNotUsed}{Never used}
+\newcommand{\NWtxtIdentsDefed}{Defines:}
+\newcommand{\NWsep}{${\diamond}$}
+\newcommand{\NWnotglobal}{(not defined globally)}
+\newcommand{\NWuseHyperlinks}{}
+ \UseRawInputEncoding
 \documentclass[hyperref]{labbook}
 \usepackage{moreverb}
 \usepackage{natbib}
 \usepackage{hyperref}
 \usepackage{graphicx}
+\usepackage{enumitem}
 
 \begin{document}
 
@@ -12,395 +28,519 @@
 \author{Gary Anderson }
 \maketitle
 
-\printindex
-\tableofcontents
 
+\tableofcontents
+\newexperiment{refactor}{Refactor Existing Code}
+
+\newexperiment{parallelize}{Paralellize Existing Code}
+\newexperiment{components}{Improve other component packages}
+\newexperiment{publication}{Work on  Journal Articles}
+\newexperiment{SeriesPaper}{AMASeries Representation Paper}
+\newsubexperiment{SeriesGlossary}{AMASeries Representation Paper Glossary}
+\newsubexperiment{restoreFunctionality}{Restore AMASeriesRepresentation Functionality}
+\newexperiment{HPC}{High Performance Computing}
+\newsubexperiment{GPU}{Graphics Processing Unit}
+\newsubexperiment{FPGA}{Field Programmable Graphic Arrays}
+\newsubexperiment{Glascow}{December 5, Glascow Presentation}
+\newsubexperiment{toJulia}{Convert AMASeries Code to Julia}
+\newsubexperiment{MmaGPU}{Mathematica and GPU}
 
 
 
 \mainmatter
 
-\labday{Tuesday October 2, 2018}
+\labday{Tuesday August 2O, 2019}
+
+\experiment{refactor}
 
 \begin{itemize}
-\item \href{https://people.eecs.berkeley.edu/~tommasodreossi/papers/phd_thesis.pdf}{reachability}
-\end{itemize}
-
-
-\labday{Friday September 28, 2018}
-
-\begin{itemize}
-\item tar -cvf allfiles.tar \$(cat mylist.txt)
-\end{itemize}
-
-\labday{Thursday September 27, 2018}
-
-\section{Other Computing?}
-\label{sec:other-computing}
-
-\begin{itemize}
-
-\item known errors
-  \begin{itemize}
-\item doPrepPoly
-\item eliminate colors in graphs throughout
-\item {fix genInterpData checks all signatures}
-\item {correct caption for ergodic values transformed} (look at oldBetterRBC.m)
-\item legend for figs throughout
-\item axes labels throughout
-  \end{itemize}
-
-\item aesthetic
-\begin{itemize}
-\item function names bold greek and function name reconcile.
-\item no colors
- \end{itemize}
-
-\item other mention
-  \begin{itemize}
-\item {mention genboth}
-\item a good path corresponds to a good error if enough terms
-\item refer to far distant relation to truncating k vals
-\item and parallelism gains.
-\item {parallelism measure}
-  \end{itemize}
-
-\item error formula
-  \begin{itemize}
-\item {show solution accuracy for unknown solution}
-\item {show solution accuracy simple and OBC}
-\item More information about other error formulas.
-\item {revise assess error calc or eliminate}
-\item {just the first term.}
-  \end{itemize}
-
-\item robust
-  \begin{itemize}
-\item {revise assess robust or eliminate}
-\item Proof for robustness and accuracy 
-  \end{itemize}
+\item redo labbook
 \end{itemize}
 
 
 
-\labday{Wednesday September 26, 2018}
+\begin{flushleft} \small
+\begin{minipage}{\linewidth}\label{scrap1}\raggedright\small
+\NWtarget{nuweb1}{} \verb@"genLabbookPDF.sh"@\nobreak\ {\footnotesize {1}}$\equiv$
+\vspace{-1ex}
+\begin{list}{}{} \item
+\mbox{}\verb@@\\
+\mbox{}\verb@#!/bin/bash@\\
+\mbox{}\verb@nuweb  AMASeriesLabBook@\\
+\mbox{}\verb@pdflatex  AMASeriesLabBook@\\
+\mbox{}\verb@makeindex  AMASeriesLabBook@\\
+\mbox{}\verb@bibtex  AMASeriesLabBook@\\
+\mbox{}\verb@nuweb  AMASeriesLabBook@\\
+\mbox{}\verb@pdflatex  AMASeriesLabBook@\\
+\mbox{}\verb@pdflatex  AMASeriesLabBook@\\
+\mbox{}\verb@@{\NWsep}
+\end{list}
+\vspace{-1.5ex}
+\footnotesize
+\begin{list}{}{\setlength{\itemsep}{-\parsep}\setlength{\itemindent}{-\leftmargin}}
 
-\begin{itemize}
-\item about to submit to FEDS notes about next steps
-\item rule out explosive solutions
-\item use explosive to rule out findroot guesses
-\end{itemize}
-
-\labday{Tuesday June 26, 2018}
-
-\begin{itemize}
-\item interval arithemetic
-\end{itemize}
-
-
-\begin{itemize}
-\item \href{https://www.siam.org/Publications/Journals}{SIAM journals}
-\item \href{https://github.com/EconForge/Smolyak}{python and julia smolyak by coleman and lyon}
-\end{itemize}
-
-
-
-
-
-\labday{Saturday June 2, 2018}
-
-
-\begin{itemize}
-\item mathematica-test-runner tests/someMacTests.wlt
-\item \href{https://mathematica.stackexchange.com/questions/164468/wolframscript-how-to-print-in-color/164487#164487}{colors used in testrunner}  just type reset to reset terminal colors   
-\end{itemize}
-
-
-\begin{itemize}
-\item \href{https://orgmode.org/manual/Structure-editing.html}{org editing}
-\item \href{http://ergoemacs.org/emacs/emacs_package_system.html}{emacs package system}
-\item org-meta-return doesn't seem to be defined
-\end{itemize}
-
-
-
-\labday{Wednesday May 30, 2018}
-
-\begin{itemize}
-\item convergence problems when using delta in collocation solutions occurs at specific collocation points
-\item probably conditional expectation at those points goes out of the grid
-%\includegraphics{duh.pdf}
-\item need to distinguish between divergent and non convergent solutions
-\item should monitor evolution of the solution for the worst few.  if just bouncing around marginally time to stop.  if consistently moving away should stop
-\item probably just do time series regression and test for null of zero coefficients
-\end{itemize}
-
-
-\labday{Monday May 28, 2018}
-
-\begin{itemize}
-\item \href{ssh ublm1 /var/appl/matlmd/scripts/mathlm status}{math icence status}
-\end{itemize}
-
-\labday{Monday May 21, 2018}
-
-\begin{itemize}
-\item \href{https://www.blazemeter.com/blog/how-start-working-github-plugin-jenkins}{jenkins on mac setup}
-\item \href{https://dev.to/iriskatastic/start-continuous-integration-with-jenkins-pipeline-4edb}{jenkins and CI}
-\end{itemize}
-\labday{Sunday May 20, 2018}
-
-\begin{itemize}
-\item \href{https://mathematica.stackexchange.com/questions/163912/automating-testing-of-mathematica-code}{setting up continuous integration testing with mathematica}
-\item \href{https://medium.com/@briananderson2209/best-automation-testing-tools-for-2018-top-10-reviews-8a4a19f664d2}{best test automation, most not useful except for web apps}
-\item \href{https://testanything.org/producers.html}{test-anything-protocol producers}
-\item \href{https://testanything.org/consumers.html}{tap consumers}
-\end{itemize}
-
-
-\labday{Friday May 18, 2018}
-\begin{itemize}
-\item simplify model spec to just ergodic parallel regime format
-\end{itemize}
-
-
-\begin{itemize}
-\item \href{https://emacs.stackexchange.com/questions/3992/how-to-extend-the-esc-m-translation-to-non-character-keys}{how to extend esc}
-\item \href{https://emacs.stackexchange.com/questions/3971/how-to-type-org-modes-m-bindings-in-emacs-for-mac}{for meta characters on mac}
+\item{}
+\end{list}
+\end{minipage}\vspace{4ex}
+\end{flushleft}
+\subexperiment{restoreFunctionality}
 \begin{verbatim}
-C-x @ m
+garyyrag@garyyrag:~/git/AMASeriesRepresentation/AMASeriesRepresentation$ ls -ltr *.m* *.wl
+ls: cannot access '*.wl': No such file or directory
+-rw-r--r-- 1 garyyrag garyyrag 24560 Jun 22 00:34  AMAFedsBetterRBC.mth
+-rw-r--r-- 1 garyyrag garyyrag  1717 Jun 22 00:34  csCompare.mth
+-rw-r--r-- 1 garyyrag garyyrag  2749 Jun 22 00:34  createNewFuncs.mth
+-rw-r--r-- 1 garyyrag garyyrag   551 Jun 22 00:34  chkConv.mth
+-rw-r--r-- 1 garyyrag garyyrag  3700 Jun 22 00:34  canonicalNK.mth
+-rw-r--r-- 1 garyyrag garyyrag  7303 Jun 22 00:34  buildUp.mth
+-rw-r--r-- 1 garyyrag garyyrag 11176 Jun 22 00:34  betterRBCTrips.m
+-rw-r--r-- 1 garyyrag garyyrag  4226 Jun 22 00:34  assessFEDS.mth
+-rw-r--r-- 1 garyyrag garyyrag  4800 Jun 22 00:34  applyErrFormulaUnknown.mth
+-rw-r--r-- 1 garyyrag garyyrag  4597 Jun 22 00:34  applyErrFormula.mth
+-rw-r--r-- 1 garyyrag garyyrag  4217 Jun 22 00:34  applyErrFormulaCS.mth
+-rw-r--r-- 1 garyyrag garyyrag  1747 Jun 22 00:34  anotherTryScript.mth
+-rw-r--r-- 1 garyyrag garyyrag   457 Jun 22 00:34  doRegime.mth
+-rw-r--r-- 1 garyyrag garyyrag 15965 Jun 22 00:34  doQL.mth
+-rw-r--r-- 1 garyyrag garyyrag  4451 Jun 22 00:34  doHeatMap.mth
+-rw-r--r-- 1 garyyrag garyyrag  4365 Jun 22 00:34  solveLargeEta.mth
+-rw-r--r-- 1 garyyrag garyyrag  9552 Jun 22 00:34  slowKAdjust.mth
+-rw-r--r-- 1 garyyrag garyyrag  9619 Jun 22 00:34  slowKAdjust4.mth
+-rw-r--r-- 1 garyyrag garyyrag 13029 Jun 22 00:34  slowKAdjust3.mth
+-rw-r--r-- 1 garyyrag garyyrag  2323 Jun 22 00:34  robust.mth
+-rw-r--r-- 1 garyyrag garyyrag 10625 Jun 22 00:34  quickRegimes.mth
+-rw-r--r-- 1 garyyrag garyyrag  9492 Jun 22 00:34  quasiLinear.m
+-rw-r--r-- 1 garyyrag garyyrag  2391 Jun 22 00:34  notRobust.mth
+-rw-r--r-- 1 garyyrag garyyrag 11913 Jun 22 00:34  nkZLB.m
+-rw-r--r-- 1 garyyrag garyyrag  1706 Jun 22 00:34  judd2014Calcs.mth
+-rw-r--r-- 1 garyyrag garyyrag  1508 Jun 22 00:34  harderRBC.mth
+-rw-r--r-- 1 garyyrag garyyrag  1477 Jun 22 00:34  getResultsScaffold.mth
+-rw-r--r-- 1 garyyrag garyyrag  3071 Jun 22 00:34  getResults.mth
+-rw-r--r-- 1 garyyrag garyyrag  7496 Jun 22 00:34  getResultsCS.mth
+-rw-r--r-- 1 garyyrag garyyrag  1489 Jun 22 00:34  getResultsApproxScaffold.mth
+-rw-r--r-- 1 garyyrag garyyrag  1827 Jun 22 00:34  getResultsApprox.mth
+-rw-r--r-- 1 garyyrag garyyrag  1537 Jun 22 00:34  forFinish.mth
+-rw-r--r-- 1 garyyrag garyyrag  5832 Jun 22 00:34  fixCompSlackNow.mth
+-rw-r--r-- 1 garyyrag garyyrag  6015 Jun 22 00:34  finishPaper.mth
+-rw-r--r-- 1 garyyrag garyyrag  5355 Jun 22 00:34  verifyConv.mth
+-rw-r--r-- 1 garyyrag garyyrag  1392 Jun 22 00:34  tryScript.mth
+-rw-rw-r-- 1 garyyrag garyyrag  9381 Jun 24 02:37  firstRBCTrips.m
+-rw-rw-r-- 1 garyyrag garyyrag  8696 Jun 24 02:37  firstRBCCSTrips.m
+-rw-rw-r-- 1 garyyrag garyyrag 78774 Jun 24 02:37  AMASeriesRepresentation.m
+-rw-r--r-- 1 garyyrag garyyrag  1898 Jun 24 02:56  varyTheK.mth
+-rw-r--r-- 1 garyyrag garyyrag 22561 Aug 20 09:01  whittle.mth
+garyyrag@garyyrag:~/git/AMASeriesRepresentation/AMASeriesRepresentation$ 
 \end{verbatim}
 
-\item
+\begin{description}[style=nextline]
+\item[AMAFedsBetterRBC.mth]
+
+This loads without error
 \begin{verbatim}
-  { docker run   -u root   --rm   -d   -p 8080:8080  -p 50000:50000  -v jenkins-data:/var/jenkins_home   -v /var/run/docker.sock:/var/run/docker.sock   jenkinsci/blueocean }{jenkins installation}
+Get["AMAFedsBetterRBC.mth"]
+
+In[4]:= $ContextPath
+
+Out[4]= {firstRBCTrips`, AMAModel`, NumericAMA`, SymbolicAMA`, 
+ 
+>    AMASeriesRepresentation`, MSNTO`, mathSmolyak`, ProtectedSymbols`, 
+ 
+>    JLink`, URLUtilities`, PacletManager`, System`, Global`}
 
 \end{verbatim}
-\end{itemize}
 
-\labday{Thursday April 21, 2018}
+
+The following also produce no errors.
+
+\begin{verbatim}
+  Print["msnto?"]
+Needs["MSNTO`"]
+Print["reading first"]
+Get["firstRBCTrips`"]
+Print["done reading first"]
+\end{verbatim}
+\end{description}
+
+
+\begin{verbatim}
+
+In[10]:= $ContextPath
+
+Out[10]= {firstRBCTrips`, AMAModel`, NumericAMA`, SymbolicAMA`, 
+ 
+>    AMASeriesRepresentation`, MSNTO`, mathSmolyak`, ProtectedSymbols`, 
+ 
+>    JLink`, URLUtilities`, PacletManager`, System`, Global`}
+
+
+\end{verbatim}
+
+firstRBCTrips` loads, but this fails:
+\begin{verbatim}
+firstRBCGenModel[0.36,0.95,1,0,0.95,0.02];
+\end{verbatim}
+
+first error
+\begin{verbatim}
+
+Thread::tdlen: Objects of unequal length in {} + {0., 0., -0.948593, 0., 0.}
+     cannot be combined.
+
+\end{verbatim}
+
+Third component of linModFirstRBCTrips corrupted
+\begin{verbatim}
+Inverse[{{} + {0., 0., -0.948593, 0., 0.}, 
+ 
+>      {} + {0., 0.548964, 0.548964, 0., 0.}, 
+ 
+>      {} + {0., 0., 0., 0.707107, 0.}, {} + {0., 0., 0., 0., 1.}, 
+ 
+>      {} + {-0.688677, 0., 0., 0., 0.}}], 
+ 
+>    {{0., 0., 0., 0., 0., 1.}, 
+\end{verbatim}
+Function should setup an AMASeriesRepresentation trips model.
+
+symbolicComputeBPhiF called with matrices but fails
+
+B doesn't seem right -- 
+
+Turns out  h is 5 x 15, but b is 6 x 10,  to few large roots
+
+
+\begin{verbatim}
+
+
+In[39]:= firstRBCTrips`Private`evlsSymbRE
+
+Out[39]= {0.94981, 0., 0., 0., 0., 0., 0., 0., 0., 0.}
+
+In[43]:= Dimensions[firstRBCTrips`Private`zfSymbRE]
+
+Out[43]= {5, 10}
+
+\end{verbatim}
+
+
+These seem to work to: no complaints, linMod seems fine
+\begin{verbatim}
+judd2014Calcs.mth:firstRBCGenModel[0.36,1.0,0.95,1.0,0.95,0.01]
+\end{verbatim}
+Following is the same in different file
+\begin{verbatim}
+slowKAdjust3.mth:firstRBCGenModel[0.36,1.0,0.95,1.0,0.95,0.01];
+\end{verbatim}
+Also works
+\begin{verbatim}
+solveLargeEta.mth:firstRBCGenModel[0.36,1.0,0.95,2.0,0.95,0.01];
+\end{verbatim}
+also seems fine
+\begin{verbatim}
+varyTheK.mth:firstRBCGenModel[0.36,1,0.95,1,0.95,0.01]
+\end{verbatim}
+also works
+\begin{verbatim}
+applyErrFormulaUnknown.mth:firstRBCGenModel[0.36,0.95,1,0,0.95,0.02];
+\end{verbatim}
+
+
+
+\experiment{SeriesPaper}
+
+\subexperiment{SeriesGlossary}
+
+
+
+Started glossary on AMASeriesFEDS using all \TeX\ strategy 
+
+\subexperiment{GPU}
+
+\href{https://nextjournal.com/sdanisch/julia-gpu-programming}{Graphics Processing Unit in julia}
+
+Doesn't find a nvidia capable device
+
+\href{https://www.cyberciti.biz/faq/linux-tell-which-graphics-vga-card-installed/}{how to determin gpu info}
 
 \begin{itemize}
-\item \href{https://atom.io/packages/linter-mathematica}{Atom linter for mathematica}
+\item     lspci command
+\item     lshw command
+\item     grep command
+\item     update-pciids command
+\item     GUI tools such as hardinfo and gnome-system-information command.
 \end{itemize}
-
-\labday{Thursday March 26, 2018}
-\begin{itemize}
-\item approx 6,6 singular matrix  trying 6,3
-\end{itemize}
-\labday{Monday March 26, 2018}
-
-\begin{itemize}
-\item List,of xvars for initializing different triples
-\item pre and post perhaps better way to do bang bang control
-\item perhaps series can handle models that don't explode too fast
-\item should use pre post final to fail unconstrained non optimality
-\end{itemize}
-\labday{Sunday March 25, 2018}
-
-\begin{itemize}
-\item \href{http://people.clarkson.edu/~mbudisic/software.html}{mesochronic code}
-\end{itemize}
-\labday{Wednesday March 21, 2018}
-
-  \begin{itemize}
-  \item \href{https://www.wolfram.com/company/careers/opportunities/#op-94325-software-developer-in-test}{CI Test job at Wolfram}
-  \item \href{https://github.com/lynchs61/Mathematica-Test-Runner}{math test runner}
-  \item \href{https://testanything.org/consumers.html}{test anything protocol: tap consumers}
-  \item \href{http://reference.wolfram.com/language/tutorial/UsingTheTestingFramework.html}{mathematica testing getting started}
-  \item \href{https://wiki.jenkins.io/display/JENKINS/TAP+Plugin}{jenkins tap consumer }
-  \item \href{https://www.atlassian.com/software/jira}{project tracking}
-  \end{itemize}
+\begin{verbatim}
+ lspci| grep -i --color 'vga\|3d|\|2d'
+c1:00.0 VGA compatible controller: NVIDIA Corporation TU102 [GeForce RTX 2080 Ti Rev. A] (rev a1)
+\end{verbatim}
 
 
-\labday{Sunday February 23, 2018}
-\experiment{Check performance of Complementary Slackness version}
+\begin{verbatim}
+garyyrag@garyyrag:~/git/AMASeriesRepresentation/AMASeriesRepresentation$ sudo lspci -v -s c1:00.0
+[sudo] password for garyyrag: 
+c1:00.0 VGA compatible controller: NVIDIA Corporation TU102 [GeForce RTX 2080 Ti Rev. A] (rev a1) (prog-if 00 [VGA controller])
+	Subsystem: ASUSTeK Computer Inc. Device 866a
+	Flags: bus master, fast devsel, latency 0, IRQ 11, NUMA node 0
+	Memory at d7000000 (32-bit, non-prefetchable) [size=16M]
+	Memory at c0000000 (64-bit, prefetchable) [size=256M]
+	Memory at d0000000 (64-bit, prefetchable) [size=32M]
+	I/O ports at b000 [size=128]
+	Expansion ROM at 000c0000 [disabled] [size=128K]
+	Capabilities: [60] Power Management version 3
+	Capabilities: [68] MSI: Enable- Count=1/1 Maskable- 64bit+
+	Capabilities: [78] Express Legacy Endpoint, MSI 00
+	Capabilities: [100] Virtual Channel
+	Capabilities: [250] Latency Tolerance Reporting
+	Capabilities: [258] L1 PM Substates
+	Capabilities: [128] Power Budgeting <?>
+	Capabilities: [420] Advanced Error Reporting
+	Capabilities: [600] Vendor Specific Information: ID=0001 Rev=1 Len=024 <?>
+	Capabilities: [900] #19
+	Capabilities: [bb0] #15
+	Kernel modules: nvidiafb, nouveau
+
+\end{verbatim}
+
+\begin{verbatim}
+/1                         power          To Be Filled By O.E.M.
+garyyrag@garyyrag:~/git/AMASeriesRepresentation/AMASeriesRepresentation$ sudo lshw -short | grep -i --color display
+/0/101/0                   display        TU102 [GeForce RTX 2080 Ti Rev. A]
+garyyrag@garyyrag:~/git/AMASeriesRepresentation/AMASeriesRepresentation$ 
+\end{verbatim}
+
+
+\begin{verbatim}
+garyyrag@garyyrag:~/git/AMASeriesRepresentation/AMASeriesRepresentation$ sudo lshw -class display
+  *-display UNCLAIMED
+       description: VGA compatible controller
+       product: TU102 [GeForce RTX 2080 Ti Rev. A]
+       vendor: NVIDIA Corporation
+       physical id: 0
+       bus info: pci@0000:c1:00.0
+       version: a1
+       width: 64 bits
+       clock: 33MHz
+       capabilities: pm msi pciexpress vga_controller bus_master cap_list
+       configuration: latency=0
+       resources: memory:d7000000-d7ffffff memory:c0000000-cfffffff memory:d0000000-d1ffffff ioport:b000(size=128) memory:c0000-dffff
+garyyrag@garyyrag:~/git/AMASeriesRepresentation/AMASeriesRepresentation$ 
+\end{verbatim}
+
+\begin{verbatim}
+ 
+garyyrag@garyyrag:~/git/AMASeriesRepresentation/AMASeriesRepresentation$ nvcc -V check
+nvcc: NVIDIA (R) Cuda compiler driver
+Copyright (c) 2005-2017 NVIDIA Corporation
+Built on Fri_Nov__3_21:07:56_CDT_2017
+Cuda compilation tools, release 9.1, V9.1.85
+\end{verbatim}
+
+Problems with nvidia driver
+\begin{verbatim}
+
+garyyrag@garyyrag:~/git/AMASeriesRepresentation/AMASeriesRepresentation$ nvidia-smi
+NVIDIA-SMI has failed because it couldn't communicate with the NVIDIA driver. Make sure that the latest NVIDIA driver is installed and running.
+
+\end{verbatim}
+
+nvidia driver  not loaded
+
+\begin{verbatim}
+lsmod |grep nvidia
+\end{verbatim}
+
+\href{https://askubuntu.com/questions/1048274/ubuntu-18-04-stopped-working-with-nvidia-drivers}{perhaps this will solve problem}
+
+
+\href{https://devtalk.nvidia.com/default/topic/1047416/linux/nvidia-driver-is-not-loaded-ubuntu-18-10-/}{I also took these steps}
+
+will try this
+\href{https://askubuntu.com/questions/61396/how-do-i-install-the-nvidia-drivers}{how to install on ubuntu 18.04}
+
+\begin{verbatim}
+ glxinfo -B
+name of display: :1
+display: :1  screen: 0
+direct rendering: Yes
+Extended renderer info (GLX_MESA_query_renderer):
+    Vendor: VMware, Inc. (0xffffffff)
+    Device: llvmpipe (LLVM 8.0, 256 bits) (0xffffffff)
+    Version: 19.0.8
+    Accelerated: no
+    Video memory: 128609MB
+    Unified memory: no
+    Preferred profile: core (0x1)
+    Max core profile version: 3.3
+    Max compat profile version: 3.1
+    Max GLES1 profile version: 1.1
+    Max GLES[23] profile version: 3.0
+OpenGL vendor string: VMware, Inc.
+OpenGL renderer string: llvmpipe (LLVM 8.0, 256 bits)
+OpenGL core profile version string: 3.3 (Core Profile) Mesa 19.0.8
+OpenGL core profile shading language version string: 3.30
+OpenGL core profile context flags: (none)
+OpenGL core profile profile mask: core profile
+
+OpenGL version string: 3.1 Mesa 19.0.8
+OpenGL shading language version string: 1.40
+OpenGL context flags: (none)
+
+OpenGL ES profile version string: OpenGL ES 3.0 Mesa 19.0.8
+OpenGL ES profile shading language version string: OpenGL ES GLSL ES 3.00
+
+\end{verbatim}
+
+\labday{Wednesday August 21, 2019}
+
+\experiment{HPC}
+\subexperiment{GPU}
 
 \begin{itemize}
 \item 
+\href{https://ubuntu-mate.community/t/grub-terminal-console-mode-error/7356/8}{Solved initial gpu problems.}  But still at startup still see message
+
+"error: no  video mode activated"
+\item will be important to compare julia/mathematica gpu ease of use and speed along with just parallized cpus
+\item it appears very important for mathematica to send data  before operating see their CUDADot example
 \end{itemize}
-\labday{Friday February 23, 2018}
+
+\experiment{toJulia}
+Working through
+\href{https://nextjournal.com/sdanisch/julia-gpu-programming}{Graphics Processing Unit in julia}
 
 \begin{itemize}
-\item use classifier to characterize ergodic set  MSNTO pick points SVM characterize region
+\item  \href{https://github.com/JuliaAttic/CUDNN.jl}{warning about cudnn availability when building CuArrays but this package is being phased out}
+\item working through Pkg.adds and using of packages
 \end{itemize}
 
-\labday{Tuesday February 13, 2018}
+
+\subexperiment{MmaGPU}
 
 \begin{itemize}
-\item \href{http://www.runmycode.org/faq.html}{runmycode}
-\item \href{http://juliacon.org/2018/cfp}{julia con}
+\item \href{https://reference.wolfram.com/language/CUDALink/guide/CUDALink.html}{CUDALink`}
+\item using CUDALink`, currently CUDAQ[] returns false
+\item SystemInformation has ViceoCardPCIInformation Device NVIDIA TU102 GeForce RTX 2080 Ti Rev A(a1)
+\item \href{https://mathematica.stackexchange.com/questions/195348/mathematica-12-supported-gpus}{appears to require a paclet update}
+\item \href{http://support.wolfram.com/kb/12498}{should be able to do it from with Mma }  The download triggered by CUDAResourceInstall[Update->True]  is going pretty slowly
+\item following \href{https://reference.wolfram.com/language/CUDALink/tutorial/Setup.html}{Wolfram CUDALink Setup}
+\begin{verbatim}
+export NVIDIADriverLibraryPath=/usr/lib/x86_64-linux-gnu/libnvidia-tls.so.430.40
+export CUDA_LIBRARY_PATH=/usr/lib/x86_64-linux-gnu/libcuda.so.430.40
+\end{verbatim}
+\item \href{https://reference.wolfram.com/language/CUDALink/tutorial/Overview.html}{CUDALink Overview}
 \end{itemize}
 
-\labday{Friday February 9, 2018}
 
-\begin{description}
-\item[doItSeries] \ 
+\subexperiment{restoreFunctionality}
+\begin{itemize}
+\item find tests and build on them for firstRBCTrips  gen mod has 6 arguments state space  before errors dim 5
   \begin{itemize}
-  \item (1,1,1),1,1
-%  \includegraphics{resDir/forBetterRBC--1,1,1-Iters30theK0host-MacBook-Pro-2numKern2ApproxTrad.pdf}
+  \item whittle.mth dr function has 9=4+4+1 args  I think should be 11 =5+5+1
+  \item verifyConv seems to have right dimensionality 
+  \item varyTheK.mth 6 args to gen mod
+  \item tryScript.mth not model specific. for cluster computing.
+  \item slowKAdjust.mth,slowKAdjust4.mth gen has 5 arg 
+  \item slowKAdjust4.mth gen has 6 xdim 5
+  \item robust.mth  6 gen args 
+  \item quickRegimes.mth working with regime switch
+  \item quasiLinear not trips
+  \item notrobust.mth  6 gen args 
+  \item nkZLB.m no triples
+  \item judd2014Calcs.mth  gen has 6 args
+  \item getResultsScaffold.mth not model specific, cluster code
+  \item getResults.mth AMAFedsBetter connection
+  \item getResultsCS.mth  trips but complementary slackness application  7 args for gen
+  \item getResultsApproxScaffold.mth cluster code
+  \item getResultsApprox.mth AMAFedsBetter code
+  \item forFinish.mth  cluster code
+  \item fixCompSlackNow.mth  compslack code
+  \item finishPaper.mth uses betterRBCTrips
+  \end{itemize}
+Last modified dates.  Recently modified mostg likely to work.
+
+\begin{verbatim}
+-rw-r--r-- 1 garyanderson staff  4597 Jun 24 00:59  applyErrFormula.mth
+-rw-r--r-- 1 garyanderson staff  4217 Jun 24 00:59  applyErrFormulaCS.mth
+-rw-r--r-- 1 garyanderson staff  4800 Jun 24 00:59  applyErrFormulaUnknown.mth
+-rw-r--r-- 1 garyanderson staff  4226 Jun 24 00:59  assessFEDS.mth
+-rw-r--r-- 1 garyanderson staff   551 Jun 24 00:59  chkConv.mth
+-rw-r--r-- 1 garyanderson staff  1508 Jun 24 00:59  harderRBC.mth
+-rw-r--r-- 1 garyanderson staff  1706 Jun 24 00:59  judd2014Calcs.mth
+-rw-r--r-- 1 garyanderson staff  2391 Jun 24 00:59  notRobust.mth
+-rw-r--r-- 1 garyanderson staff  2323 Jun 24 00:59  robust.mth
+-rw-r--r-- 1 garyanderson staff  9552 Jun 24 00:59  slowKAdjust.mth
+-rw-r--r-- 1 garyanderson staff 13029 Jun 24 00:59  slowKAdjust3.mth
+-rw-r--r-- 1 garyanderson staff  9619 Jun 24 00:59  slowKAdjust4.mth
+-rw-r--r-- 1 garyanderson staff  4365 Jun 24 00:59  solveLargeEta.mth
+-rw-r--r-- 1 garyanderson staff  1392 Jun 24 00:59  tryScript.mth
+-rw-r--r-- 1 garyanderson staff  1886 Jun 24 00:59  varyTheK.mth
+-rw-r--r-- 1 garyanderson staff  5355 Jun 24 00:59  verifyConv.mth
+-rw-r--r-- 1 garyanderson staff  6027 Jun 27 19:05  finishPaper.mth
+-rw-r--r-- 1 garyanderson staff 15945 Jun 27 19:20  doQL.mth
+\end{verbatim}
+\end{itemize}
+
+\begin{description}[style=nextline] 
+\item[finishPaper.mth] \ 
+  \begin{itemize}
+  \item prepSmol works
+  \item errBoundInfo[1*{1,1,1},2,10]  has problems
+\begin{verbatim}
+
+In[5]:= errBoundInfo[1*{1,1,1},2,10]
+
+LaunchKernels::nodef: 
+   Some subkernels are already running. Not launching default kernels again.
+done approxAndBound{1, 1, 1}0.0000694
+
+Part::partw: Part 1 of {} does not exist.
+
+Part::partd: Part specification 
+    parallelNestGenericIterREInterp[genFRExtFunc, 
+\end{verbatim}
+  \item bigger number of pts works better but has problems with msnto choice
+\begin{verbatim}
+errBoundInfo[1*{1,1,1},2,100]
+\end{verbatim}
+    \begin{itemize}
+    \item
+\begin{verbatim}
+ MSNTO`Private`chooseLower[#1, #2, #3, 0.5] & , 
+ 
+>                {{}, {0.0139635, 0.0159097, 0.0185343}, 
+ 
+>                 {0.171802, 0.93915, -0.0110343}}]
+\end{verbatim}
+\begin{verbatim}
+, 
+ 
+>               MapThread[MSNTO`Private`chooseUpper[#1, #2, #3, 0.5] & , 
+ 
+>                {{}, {0.0139635, 0.0159097, 0.0185343}, 
+ 
+>                 {0.199729, 0.970969, 0.0260343}}]
+\end{verbatim}
+      chooseLower choose upper fail
+    \end{itemize}
   \end{itemize}
 \end{description}
 
-\labday{Friday January 28, 2018}
-
+\subexperiment{FPGA}
 \begin{itemize}
-\item \href{https://docs.julialang.org/en/stable/manual/performance-tips/}{julia performance tips}
-\item \href{https://github.com/JuliaParallel/ClusterManagers.jl}{clustermanagers}
-\item \href{https://groups.google.com/forum/?fromgroups=#!topic/julia-dev/21AGMrqbuM0}{julia functional programming}
-\end{itemize}
-
-\labday{Tuesday Januaryt 23, 2018}
-
-
-\begin{itemize}
-\item {http://reference.wolfram.com/language/tutorial/ConstrainedOptimizationLocalNumerical.html}{math numerical optimization constraints}
-\item \href{http://reference.wolfram.com/language/tutorial/ConstrainedOptimizationLocalNumerical.html}{math numerical optimization constraints} from google ``mathematica nonlinearinteriorpoint''
-\item \href{http://www.johnboccio.com/MathematicaTutorials/08_ConstrainedOptimization.pdf}{Wolfram tuitorial constrained optimization}
-\item \href{https://lectures.quantecon.org/jl/}{QuantEcon lecures julia}
-\end{itemize}
-
-
-
-\labday{Monday Januaryt 22, 2018}
-
-
-\begin{itemize}
-\item \href{https://github.com/JuliaInterop/Mathematica.jl}{Julia call Mathematica}
-\item \href{https://github.com/JuliaParallel/ClusterManagers.jl}{julia slurm}
-\item \href{http://ucidatascienceinitiative.github.io/IntroToJulia/Html/HPCJulia}{HPC Julia}
-\item \href{http://ucidatascienceinitiative.github.io/IntroToJulia/Html/HPCJulia}{Julia downloads}
-\item \href{http://reference.wolfram.com/language/tutorial/ConstrainedOptimizationGlobalNumerical.html}{Mathematica optimization documentation}
-\item \href{https://lectures.quantecon.org/jl/getting_started.html}{Julia Quantitative Economics}
-\item \href{https://docs.julialang.org/en/stable/manual/embedding/}{calling julia from c fortran}
-\end{itemize}
-
-\labday{Sunday December 10, 2017}
-
-\begin{itemize}
-\item 01 no errors
-\item Xlib:  extension "MIT-SHM" missing on display "localhost:10.0" repeatedly
-Think related to quitting with control backslash  I tried  control C then exit to linkread didn't work, but backout of linkread worked  ps -aef had many fewer mathematica related process after backout than exit
+\item investigate buying a julia/Mathematica oriented FPGA
   \begin{itemize}
-  \item using kkSSNow to sett initial guess for 01 no errors 01 and mean 3.78,.99
-  \item seems to work for notbinding alone up to 4*{1,1,1}
-  \item not distributing work broadly all on kernel 15 or 10 
-  \end{itemize}
-
-\end{itemize}
-
-
-\labday{Saturday December 9, 2017}
-
-\begin{itemize}
-\item code seems to switch back and forth between using multiple kernels and a single kernel 15
-\end{itemize}
-
-
-\labday{Thursday December 8, 2017}
-
-\begin{itemize}
-\item betterRBCCompSlack
-  \begin{itemize}
-  \item try notbinding always true
-  \item then try binding always true
-  \item compare with occ bind online solutions
+  \item \href{https://community.wolfram.com/groups/-/m/t/563691}{ Using Redpitaya board with Mathematica ? } 4 yhears old  and signal processing not many examples or code
+  \item
+   \href{https://www.freelancer.com/projects/matlab-mathematica/fpga-implementation-using-xilinx-system/}{
+FPGA implementation using xilinx system generator}  someone looking to hire programming expertise  (freelancer site)
+\item \href{http://simonlab.uchicago.edu/FPGA.html}{U of Chicago development team}  pdf papers describing their work on various projects
   \end{itemize}
 \end{itemize}
-
-\labday{Thursday December 7, 2017}
-
-\begin{itemize}
-\item betterRBCCompSlack
-  \begin{itemize}
-  \item try notbinding always true
-  \end{itemize}
-\end{itemize}
-
-\labday{Saturday November 21, 2017}
-\begin{itemize}
-\item problems with MSNTO  functions differ accross kernels when evaluating
-\end{itemize}
-
-
-
-\labday{Saturday November 4, 2017}
-
-\begin{itemize}
-\item VAR expectations in FRBUS
-\item feedback from Chris after Tuesday November 7
-\item paper notes post seminar
-  \begin{itemize}
-  \item event monitors 
-``probability of hitting lower bound staying two periods''
-  \item Smets model
-  \item FRBUS
-  \item measure parallel speedup
-  \item fix broken code solve RBC examples and provide error boounds
-  \item verify using ergodic works
-  \item polynomial composition Fa Di Bruno
-  \item example random series with inequality constraint
-  \end{itemize}
-
-\end{itemize}
-
-
-
-\begin{itemize}
-\item do linearsolve in parallel
-\item xkzk func chose negative capital compiled function failed perhaps just need to make sure number of series terms adequate. happened with only two terms but high accuracy for anisotropic
-\item still need progress monitor
-\item does ergodic work?
-\item should compute error bounds actual error versus series length and number of recursions (new conditional expectations) exploit an-isotropic
-\item increase Mma precisoion to try higher degree approximation 
-\item some files
-\begin{verbatim}
--rw-r--r-- 1 m1gsa00 msu   1180 Oct 30 16:51 someParallel.mth
-for sbatch
-
--rw-r--r-- 1 m1gsa00 msu   1926 Oct 30 17:03 AMAFedsBetterRBC.mth
-defines doIt
-
--rw-r--r-- 1 m1gsa00 msu    827 Oct 31 11:11 basicRBC.mth
-for debugging code with betterRBC.m
-
--rw-r--r-- 1 m1gsa00 msu    343 Oct 31 13:52 interParallel.mth
-interactive parallel slow initialization runs [{4,4,2},6,3]
-fails with huge numbers 
-
--rw-r--r-- 1 m1gsa00 msu  10261 Oct 31 13:52 cleanTrans.mth
-fails cmpXValsfails to evaluate
-
--rw-r--r-- 1 m1gsa00 msu    687 Nov  4 14:05 arbGenPath.mth
--rw-r--r-- 1 m1gsa00 msu   4723 Nov  4 14:07 genArbLin.mth 
-generate graphs for paper
-\end{verbatim}
-  \item Chris suggests focus on describing context in literature
-\item VAR expectations in FRBUS
-\item feedback from Chris after Tuesday November 7
-\item paper notes post seminar
-  \begin{itemize}
-  \item event monitors 
-``probability of hitting lower bound staying two periods''
-  \item Smets model
-  \item FRBUS
-  \item measure parallel speedup
-  \item fix broken code solve RBC examples and provide error boounds
-  \item verify using ergodic works
-  \item polynomial composition Fa Di Bruno
-  \item example random series with inequality constraint
-  \item presentation notes
-    \begin{itemize}
-    \item my models with boolean gates somewhat confusing unintuitive.
-neokeynesian NK model no lagrangian
-\item what happens for models with no solution or multiple solutions
-\item perhaps better not to emphasize new solution but that useful in any soluton algorithm  just better parameterized expectations
-\item Ben would like to recode and solve NK model with finite elements interested in E-Stability 
-    \end{itemize}
-  \end{itemize}
-
-\end{itemize}
-
 \bibliographystyle{plainnat}
 \bibliography{emds.bib}
+
+
+\printindex
 \end{document}
+
+
+

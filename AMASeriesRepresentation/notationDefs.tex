@@ -1,0 +1,30 @@
+
+
+\glsnoexpandfields
+
+
+\newcommand{\showLaTeX}[1]{
+\texttt{\detokenize{#1}}
+}
+
+\newcommand{\chkShow}[1]{ -- \showLaTeX{#1}}
+%\newcommand{\chkShow}[1]{}
+
+
+
+\newglossaryentry{sVar}{name=\ensuremath{{x}},sort={ax},
+  description={ use \chkShow{\sVar}   The state variable.}}
+  \newcommand{\sVar}{{\gls{sVar}}}
+
+
+
+\newacronym{msnto}{MSNTO}{multi-sequential number-theoretic optimization}
+  \newcommand{\MSNTO}{\gls{msnto}}
+
+
+
+
+
+\glsaddall{}
+
+

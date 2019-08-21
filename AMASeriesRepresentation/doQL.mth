@@ -15,7 +15,7 @@ LaunchKernels[]
 ParallelEvaluate[$MachineName]
 Print["post eval"]
 (*Get["JavaGraphics`"]*)
-ParallelEvaluate[SetDirectory["/msu/scratch2/m1gsa00/git/AMASeriesRepresentation/AMASeriesRepresentation"]]
+ParallelEvaluate[SetDirectory["~/git/AMASeriesRepresentation/AMASeriesRepresentation"]]
 Get["tests/pathSetup.mth"]
 ParallelEvaluate[Get["tests/pathSetup.mth"]]
 ParallelEvaluate[Get["AMASeriesRepresentation`"]];

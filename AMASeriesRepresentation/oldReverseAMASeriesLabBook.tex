@@ -1,0 +1,406 @@
+\UseRawInputEncoding
+\documentclass[hyperref]{labbook}
+\usepackage{moreverb}
+\usepackage{natbib}
+\usepackage{hyperref}
+\usepackage{graphicx}
+
+\begin{document}
+
+\frontmatter
+\title{AMA Series}
+\author{Gary Anderson }
+\maketitle
+
+\printindex
+\tableofcontents
+
+
+
+
+\mainmatter
+
+\labday{Tuesday October 2, 2018}
+
+\begin{itemize}
+\item \href{https://people.eecs.berkeley.edu/~tommasodreossi/papers/phd_thesis.pdf}{reachability}
+\end{itemize}
+
+
+\labday{Friday September 28, 2018}
+
+\begin{itemize}
+\item tar -cvf allfiles.tar \$(cat mylist.txt)
+\end{itemize}
+
+\labday{Thursday September 27, 2018}
+
+\section{Other Computing?}
+\label{sec:other-computing}
+
+\begin{itemize}
+
+\item known errors
+  \begin{itemize}
+\item doPrepPoly
+\item eliminate colors in graphs throughout
+\item {fix genInterpData checks all signatures}
+\item {correct caption for ergodic values transformed} (look at oldBetterRBC.m)
+\item legend for figs throughout
+\item axes labels throughout
+  \end{itemize}
+
+\item aesthetic
+\begin{itemize}
+\item function names bold greek and function name reconcile.
+\item no colors
+ \end{itemize}
+
+\item other mention
+  \begin{itemize}
+\item {mention genboth}
+\item a good path corresponds to a good error if enough terms
+\item refer to far distant relation to truncating k vals
+\item and parallelism gains.
+\item {parallelism measure}
+  \end{itemize}
+
+\item error formula
+  \begin{itemize}
+\item {show solution accuracy for unknown solution}
+\item {show solution accuracy simple and OBC}
+\item More information about other error formulas.
+\item {revise assess error calc or eliminate}
+\item {just the first term.}
+  \end{itemize}
+
+\item robust
+  \begin{itemize}
+\item {revise assess robust or eliminate}
+\item Proof for robustness and accuracy 
+  \end{itemize}
+\end{itemize}
+
+
+
+\labday{Wednesday September 26, 2018}
+
+\begin{itemize}
+\item about to submit to FEDS notes about next steps
+\item rule out explosive solutions
+\item use explosive to rule out findroot guesses
+\end{itemize}
+
+\labday{Tuesday June 26, 2018}
+
+\begin{itemize}
+\item interval arithemetic
+\end{itemize}
+
+
+\begin{itemize}
+\item \href{https://www.siam.org/Publications/Journals}{SIAM journals}
+\item \href{https://github.com/EconForge/Smolyak}{python and julia smolyak by coleman and lyon}
+\end{itemize}
+
+
+
+
+
+\labday{Saturday June 2, 2018}
+
+
+\begin{itemize}
+\item mathematica-test-runner tests/someMacTests.wlt
+\item \href{https://mathematica.stackexchange.com/questions/164468/wolframscript-how-to-print-in-color/164487#164487}{colors used in testrunner}  just type reset to reset terminal colors   
+\end{itemize}
+
+
+\begin{itemize}
+\item \href{https://orgmode.org/manual/Structure-editing.html}{org editing}
+\item \href{http://ergoemacs.org/emacs/emacs_package_system.html}{emacs package system}
+\item org-meta-return doesn't seem to be defined
+\end{itemize}
+
+
+
+\labday{Wednesday May 30, 2018}
+
+\begin{itemize}
+\item convergence problems when using delta in collocation solutions occurs at specific collocation points
+\item probably conditional expectation at those points goes out of the grid
+%\includegraphics{duh.pdf}
+\item need to distinguish between divergent and non convergent solutions
+\item should monitor evolution of the solution for the worst few.  if just bouncing around marginally time to stop.  if consistently moving away should stop
+\item probably just do time series regression and test for null of zero coefficients
+\end{itemize}
+
+
+\labday{Monday May 28, 2018}
+
+\begin{itemize}
+\item \href{ssh ublm1 /var/appl/matlmd/scripts/mathlm status}{math icence status}
+\end{itemize}
+
+\labday{Monday May 21, 2018}
+
+\begin{itemize}
+\item \href{https://www.blazemeter.com/blog/how-start-working-github-plugin-jenkins}{jenkins on mac setup}
+\item \href{https://dev.to/iriskatastic/start-continuous-integration-with-jenkins-pipeline-4edb}{jenkins and CI}
+\end{itemize}
+\labday{Sunday May 20, 2018}
+
+\begin{itemize}
+\item \href{https://mathematica.stackexchange.com/questions/163912/automating-testing-of-mathematica-code}{setting up continuous integration testing with mathematica}
+\item \href{https://medium.com/@briananderson2209/best-automation-testing-tools-for-2018-top-10-reviews-8a4a19f664d2}{best test automation, most not useful except for web apps}
+\item \href{https://testanything.org/producers.html}{test-anything-protocol producers}
+\item \href{https://testanything.org/consumers.html}{tap consumers}
+\end{itemize}
+
+
+\labday{Friday May 18, 2018}
+\begin{itemize}
+\item simplify model spec to just ergodic parallel regime format
+\end{itemize}
+
+
+\begin{itemize}
+\item \href{https://emacs.stackexchange.com/questions/3992/how-to-extend-the-esc-m-translation-to-non-character-keys}{how to extend esc}
+\item \href{https://emacs.stackexchange.com/questions/3971/how-to-type-org-modes-m-bindings-in-emacs-for-mac}{for meta characters on mac}
+\begin{verbatim}
+C-x @ m
+\end{verbatim}
+
+\item
+\begin{verbatim}
+  { docker run   -u root   --rm   -d   -p 8080:8080  -p 50000:50000  -v jenkins-data:/var/jenkins_home   -v /var/run/docker.sock:/var/run/docker.sock   jenkinsci/blueocean }{jenkins installation}
+
+\end{verbatim}
+\end{itemize}
+
+\labday{Thursday April 21, 2018}
+
+\begin{itemize}
+\item \href{https://atom.io/packages/linter-mathematica}{Atom linter for mathematica}
+\end{itemize}
+
+\labday{Thursday March 26, 2018}
+\begin{itemize}
+\item approx 6,6 singular matrix  trying 6,3
+\end{itemize}
+\labday{Monday March 26, 2018}
+
+\begin{itemize}
+\item List,of xvars for initializing different triples
+\item pre and post perhaps better way to do bang bang control
+\item perhaps series can handle models that don't explode too fast
+\item should use pre post final to fail unconstrained non optimality
+\end{itemize}
+\labday{Sunday March 25, 2018}
+
+\begin{itemize}
+\item \href{http://people.clarkson.edu/~mbudisic/software.html}{mesochronic code}
+\end{itemize}
+\labday{Wednesday March 21, 2018}
+
+  \begin{itemize}
+  \item \href{https://www.wolfram.com/company/careers/opportunities/#op-94325-software-developer-in-test}{CI Test job at Wolfram}
+  \item \href{https://github.com/lynchs61/Mathematica-Test-Runner}{math test runner}
+  \item \href{https://testanything.org/consumers.html}{test anything protocol: tap consumers}
+  \item \href{http://reference.wolfram.com/language/tutorial/UsingTheTestingFramework.html}{mathematica testing getting started}
+  \item \href{https://wiki.jenkins.io/display/JENKINS/TAP+Plugin}{jenkins tap consumer }
+  \item \href{https://www.atlassian.com/software/jira}{project tracking}
+  \end{itemize}
+
+
+\labday{Sunday February 23, 2018}
+\experiment{Check performance of Complementary Slackness version}
+
+\begin{itemize}
+\item 
+\end{itemize}
+\labday{Friday February 23, 2018}
+
+\begin{itemize}
+\item use classifier to characterize ergodic set  MSNTO pick points SVM characterize region
+\end{itemize}
+
+\labday{Tuesday February 13, 2018}
+
+\begin{itemize}
+\item \href{http://www.runmycode.org/faq.html}{runmycode}
+\item \href{http://juliacon.org/2018/cfp}{julia con}
+\end{itemize}
+
+\labday{Friday February 9, 2018}
+
+\begin{description}
+\item[doItSeries] \ 
+  \begin{itemize}
+  \item (1,1,1),1,1
+%  \includegraphics{resDir/forBetterRBC--1,1,1-Iters30theK0host-MacBook-Pro-2numKern2ApproxTrad.pdf}
+  \end{itemize}
+\end{description}
+
+\labday{Friday January 28, 2018}
+
+\begin{itemize}
+\item \href{https://docs.julialang.org/en/stable/manual/performance-tips/}{julia performance tips}
+\item \href{https://github.com/JuliaParallel/ClusterManagers.jl}{clustermanagers}
+\item \href{https://groups.google.com/forum/?fromgroups=#!topic/julia-dev/21AGMrqbuM0}{julia functional programming}
+\end{itemize}
+
+\labday{Tuesday Januaryt 23, 2018}
+
+
+\begin{itemize}
+\item {http://reference.wolfram.com/language/tutorial/ConstrainedOptimizationLocalNumerical.html}{math numerical optimization constraints}
+\item \href{http://reference.wolfram.com/language/tutorial/ConstrainedOptimizationLocalNumerical.html}{math numerical optimization constraints} from google ``mathematica nonlinearinteriorpoint''
+\item \href{http://www.johnboccio.com/MathematicaTutorials/08_ConstrainedOptimization.pdf}{Wolfram tuitorial constrained optimization}
+\item \href{https://lectures.quantecon.org/jl/}{QuantEcon lecures julia}
+\end{itemize}
+
+
+
+\labday{Monday Januaryt 22, 2018}
+
+
+\begin{itemize}
+\item \href{https://github.com/JuliaInterop/Mathematica.jl}{Julia call Mathematica}
+\item \href{https://github.com/JuliaParallel/ClusterManagers.jl}{julia slurm}
+\item \href{http://ucidatascienceinitiative.github.io/IntroToJulia/Html/HPCJulia}{HPC Julia}
+\item \href{http://ucidatascienceinitiative.github.io/IntroToJulia/Html/HPCJulia}{Julia downloads}
+\item \href{http://reference.wolfram.com/language/tutorial/ConstrainedOptimizationGlobalNumerical.html}{Mathematica optimization documentation}
+\item \href{https://lectures.quantecon.org/jl/getting_started.html}{Julia Quantitative Economics}
+\item \href{https://docs.julialang.org/en/stable/manual/embedding/}{calling julia from c fortran}
+\end{itemize}
+
+\labday{Sunday December 10, 2017}
+
+\begin{itemize}
+\item 01 no errors
+\item Xlib:  extension "MIT-SHM" missing on display "localhost:10.0" repeatedly
+Think related to quitting with control backslash  I tried  control C then exit to linkread didn't work, but backout of linkread worked  ps -aef had many fewer mathematica related process after backout than exit
+  \begin{itemize}
+  \item using kkSSNow to sett initial guess for 01 no errors 01 and mean 3.78,.99
+  \item seems to work for notbinding alone up to 4*{1,1,1}
+  \item not distributing work broadly all on kernel 15 or 10 
+  \end{itemize}
+
+\end{itemize}
+
+
+\labday{Saturday December 9, 2017}
+
+\begin{itemize}
+\item code seems to switch back and forth between using multiple kernels and a single kernel 15
+\end{itemize}
+
+
+\labday{Thursday December 8, 2017}
+
+\begin{itemize}
+\item betterRBCCompSlack
+  \begin{itemize}
+  \item try notbinding always true
+  \item then try binding always true
+  \item compare with occ bind online solutions
+  \end{itemize}
+\end{itemize}
+
+\labday{Thursday December 7, 2017}
+
+\begin{itemize}
+\item betterRBCCompSlack
+  \begin{itemize}
+  \item try notbinding always true
+  \end{itemize}
+\end{itemize}
+
+\labday{Saturday November 21, 2017}
+\begin{itemize}
+\item problems with MSNTO  functions differ accross kernels when evaluating
+\end{itemize}
+
+
+
+\labday{Saturday November 4, 2017}
+
+\begin{itemize}
+\item VAR expectations in FRBUS
+\item feedback from Chris after Tuesday November 7
+\item paper notes post seminar
+  \begin{itemize}
+  \item event monitors 
+``probability of hitting lower bound staying two periods''
+  \item Smets model
+  \item FRBUS
+  \item measure parallel speedup
+  \item fix broken code solve RBC examples and provide error boounds
+  \item verify using ergodic works
+  \item polynomial composition Fa Di Bruno
+  \item example random series with inequality constraint
+  \end{itemize}
+
+\end{itemize}
+
+
+
+\begin{itemize}
+\item do linearsolve in parallel
+\item xkzk func chose negative capital compiled function failed perhaps just need to make sure number of series terms adequate. happened with only two terms but high accuracy for anisotropic
+\item still need progress monitor
+\item does ergodic work?
+\item should compute error bounds actual error versus series length and number of recursions (new conditional expectations) exploit an-isotropic
+\item increase Mma precisoion to try higher degree approximation 
+\item some files
+\begin{verbatim}
+-rw-r--r-- 1 m1gsa00 msu   1180 Oct 30 16:51 someParallel.mth
+for sbatch
+
+-rw-r--r-- 1 m1gsa00 msu   1926 Oct 30 17:03 AMAFedsBetterRBC.mth
+defines doIt
+
+-rw-r--r-- 1 m1gsa00 msu    827 Oct 31 11:11 basicRBC.mth
+for debugging code with betterRBC.m
+
+-rw-r--r-- 1 m1gsa00 msu    343 Oct 31 13:52 interParallel.mth
+interactive parallel slow initialization runs [{4,4,2},6,3]
+fails with huge numbers 
+
+-rw-r--r-- 1 m1gsa00 msu  10261 Oct 31 13:52 cleanTrans.mth
+fails cmpXValsfails to evaluate
+
+-rw-r--r-- 1 m1gsa00 msu    687 Nov  4 14:05 arbGenPath.mth
+-rw-r--r-- 1 m1gsa00 msu   4723 Nov  4 14:07 genArbLin.mth 
+generate graphs for paper
+\end{verbatim}
+  \item Chris suggests focus on describing context in literature
+\item VAR expectations in FRBUS
+\item feedback from Chris after Tuesday November 7
+\item paper notes post seminar
+  \begin{itemize}
+  \item event monitors 
+``probability of hitting lower bound staying two periods''
+  \item Smets model
+  \item FRBUS
+  \item measure parallel speedup
+  \item fix broken code solve RBC examples and provide error boounds
+  \item verify using ergodic works
+  \item polynomial composition Fa Di Bruno
+  \item example random series with inequality constraint
+  \item presentation notes
+    \begin{itemize}
+    \item my models with boolean gates somewhat confusing unintuitive.
+neokeynesian NK model no lagrangian
+\item what happens for models with no solution or multiple solutions
+\item perhaps better not to emphasize new solution but that useful in any soluton algorithm  just better parameterized expectations
+\item Ben would like to recode and solve NK model with finite elements interested in E-Stability 
+    \end{itemize}
+  \end{itemize}
+
+\end{itemize}
+
+\bibliographystyle{plainnat}
+\bibliography{emds.bib}
+\end{document}

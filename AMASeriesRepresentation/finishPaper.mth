@@ -4,8 +4,12 @@ Get["tests/pathSetup.mth"]
 Get["AMASeriesRepresentation`"]
 (*
 Print["preemscstomma"]
+<<<<<<< HEAD
 Get["emscsToMma`"]
 *)
+=======
+(*Get["emscsToMma`"]*)
+>>>>>>> 18e731a37c37b3e4fce47093d82d87863072e1ef
 Get["betterRBCTrips`"]
 
 LaunchKernels[]
@@ -15,8 +19,12 @@ ParallelEvaluate[Get["tests/pathSetup.mth"]]
 ParallelNeeds["AMASeriesRepresentation`"]
 (*
 Print["preemscstomma"]
+<<<<<<< HEAD
 ParallelNeeds["emscsToMma`"]
 *)
+=======
+(*ParallelNeeds["emscsToMma`"]*)
+>>>>>>> 18e731a37c37b3e4fce47093d82d87863072e1ef
 ParallelNeeds["betterRBCTrips`"]
 
 

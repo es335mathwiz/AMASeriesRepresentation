@@ -538,7 +538,7 @@ xzt2=AMASeriesRepresentation`evaluateTriple[frFunc[[1, 2]],xtm1eps];
 
 
 
-
+Print["good to here"]
 
 
 
@@ -597,4 +597,4 @@ difficult={4,22,26}
 
 
 
-*)
+

@@ -6,9 +6,9 @@ Get["firstRBCTrips.m"]
 
 iters=8;
 
-refModel={linModFirstRBCTrips,rbcEqnsFirstRBCTrips,firstRBCTripsExactDR,firstRBCTripsExactDRCE,forErgodicInfo,theDistFirstRBCTrips,toIg}=
-(*alphaVal,deltaVal,etaVal,rhoVal.sigmaVal*)
-firstRBCGenModel[0.36,0.95,1,0.95,0.01];
+refModel={linModFirstRBCTrips,rbcEqnsFirstRBCTrips,firstRBCTripsExactDR,firstRBCTripsExactDRCE,forErgodicInfo,theDistFirstRBCTrips,toIg,sPSubs}=
+(*alphaVal,deltaVal,dd,etaVal,rhoVal.sigmaVal*)
+firstRBCGenModel[0.36,1,0.95,1,0.95,0.01];
 
 
 tryK[approx1x1x1:{_Integer..},theK_Integer,opts:OptionsPattern[]]:=

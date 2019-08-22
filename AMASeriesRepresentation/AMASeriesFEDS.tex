@@ -13,9 +13,20 @@
 % \usepackage{graphicx}
 % \usepackage{amsfonts}
 
+
+
+
+
+
 \input{AMASeriesFEDSNewCmds}
 
 
+
+
+\input{notationDefs}
+
+%\makeglossaries
+\makenoidxglossaries
 
 \author{Gary S. Anderson\thanks{The analysis and conclusions set forth are those of the author and do not indicate concurrence by other members of the research staff or the Board of Governors. I would like to thank Luca Guerrieri, Christopher Gust, Hess Chung, Benjamin Johannsen, Robert Tetlow and Etienne Gagnon for their comments and suggestions.  I would also like to thank Stephanie Harrington for her help with document preparation.
 %And special thanks to Luca Guerrieri for first noticing that the series representation formulation could lead to an error bound for model solutions. Any remaining errors are mine alone.}
@@ -70,13 +81,13 @@ value function iteration, but, I  defer treating this topic for
  future work.
 }
  For an overview of techniques for solving nonlinear models,
-see \citep{judd92,Christiano2000,doraszelskiy04,gaspar97,Judd2014,marcet.lorenzoni99,juddGSSA2011,maliarmovingbounds,RePEc:bny:wpaper:0058,JuddIntegrals}.
+see \citep{judd92,Christiano2000,doraszelskiy04,gaspar97,Judd2014,marcet.lorenzoni99,juddGSSA2011,maliarmovingbounds,RePEc:bny:wpaper:0058,NBERw17418}.
 
 
 This new series representation for bounded time series, adapted from \citep{anderson10},
 \begin{gather*}
-      	 x\tArg =B x_{t-1}+ \phi \psi_\epsilon\epsilon + (I - F)^{-1} \phi \psi_c + \sum_{\sForSum=0}^\infty F^\sForSum \phi \ZWOarg_{t+\nu}\tArg%\\ \intertext{ so that}
-%\expct{ x_{t+1}\tArg} =B x\tArg  + (I - F)^{-1} \phi \psi_c+ \sum_{\sForSum =1}^\infty F^{\sForSum-1} \phi \ZWOarg_{t+\nu}\tArg.
+      	 \sVar\tArg =B \sVar_{t-1}+ \phi \psi_\epsilon\epsilon + (I - F)^{-1} \phi \psi_c + \sum_{\sForSum=0}^\infty F^\sForSum \phi \ZWOarg_{t+\nu}\tArg%\\ \intertext{ so that}
+%\expct{ \sVar_{t+1}\tArg} =B \sVar\tArg  + (I - F)^{-1} \phi \psi_c+ \sum_{\sForSum =1}^\infty F^{\sForSum-1} \phi \ZWOarg_{t+\nu}\tArg.
     \end{gather*}
  makes it possible to  construct a series
     representation for any bounded time invariant discrete time map. As yet, the author has found no comparable use of a
@@ -113,11 +124,11 @@ properties.
 
 The numerical implementation of the algorithm 
 builds upon the work of
-\citep{juddGSSA2011,JuddIntegrals}.
+\citep{juddGSSA2011,NBERw17418}.
 In particular it uses
 the an-isotropic Smolyak Method, the adaptive
 parallelotope method \citep{Judd2014}
-and precomputes all integrals required by the calculations  \citep{JuddIntegrals}.
+and precomputes all integrals required by the calculations  \citep{NBERw17418}.
 The algorithm should scale well to large models as many 
 of the algorithm's components can be computed in parallel with limited amounts of information flowing between compute nodes.
 
@@ -141,7 +152,9 @@ occasionally binding constraints.
 %Section \ref{sec:future} discusses directions for future work.
 Section \ref{sec:conc} concludes.
 
-\clearpage
+
+
+
 \section{A New Series Representation For  Bounded Time Series}
 \label{sec:newseries}
 Since  \citep{blanchard80} numerous authors have developed solution algorithms and formulas for solving linear rational expectations models.  It turns out that
@@ -1039,7 +1052,7 @@ As a result, much of what must be done to use this  algorithm is
 the same as for the usual approach.
 One must specify an initial guess for decision rule $\xWargK$ and obtain conditional expectations functions.
 I use the an-isotropic Smolyak Lagrange interpolation with adaptive domain.
-I precompute all of the conditional expectations for the integrals as outlined in  \citep{JuddIntegrals} so that the time t computations \ref{eqnGates} are all 
+I precompute all of the conditional expectations for the integrals as outlined in  \citep{NBERw17418} so that the time t computations \ref{eqnGates} are all 
 deterministic.
 
 
@@ -1769,8 +1782,7 @@ The prototype was written in Mathematica and is available on gitHub
 at \href{https://github.com/es335mathwiz/AMASeriesRepresentation}{https://github.com/es335mathwiz/AMASeriesRepresentation}.
 
 {\color{blue}
-It would be interesting to apply the techniques in a recent paper, \citep{DreossiDP16}, describing a method for characterizing the
-families of trajectories ``reachable'' for a given set of initial conditions.
+It would be interesting to apply the techniques in a recent paper, \href{https://github.com/dreossi/sapo}{DreossiDP16, describing a method for characterizing thefamilies of trajectories ``reachable'' for a given set of initial conditions}.
 It would be useful to apply the error fomulas to decision rules generated
 using local perturbation techniques and to explore ways to use the series
 representation to improve upon the accuracy of these methods.
@@ -1805,8 +1817,8 @@ Timing comparisons and impact of parallelism.
 
 
 \bibliographystyle{plainnat}
-%\bibliography{anderson,files}
-\bibliography{files}
+\bibliography{anderson,files}
+%\bibliography{files}
 \newpage
 
 \clearpage
@@ -2810,6 +2822,8 @@ and subsequently returns the
 
 
 
+%\printglossaries
+\printnoidxglossary[sort=standard]
 
 
 

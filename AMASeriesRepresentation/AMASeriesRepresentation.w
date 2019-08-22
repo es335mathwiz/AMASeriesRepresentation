@@ -3217,6 +3217,18 @@ firstRBCCSGenModel::usage="firstRBCCSGenModel"
 @}
 
 
+@o genAMASeriesPDF.sh
+@{
+#!/bin/bash
+nuweb  AMASeriesRepresentation
+pdflatex  AMASeriesRepresentation
+makeindex  AMASeriesRepresentation
+bibtex  AMASeriesRepresentation
+nuweb  AMASeriesRepresentation
+pdflatex  AMASeriesRepresentation
+pdflatex  AMASeriesRepresentation
+@}
+
 \subsection{Identifiers}
 \label{sec:identifiers}
 

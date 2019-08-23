@@ -88,8 +88,8 @@ see \citep{judd92,Christiano2000,doraszelskiy04,gaspar97,Judd2014,marcet.lorenzo
 
 This new series representation for bounded time series, adapted from \citep{anderson10},
  \begin{gather*}
-       	 \drFunc\tArg =\BMat \sVar_{t-1}+ \phiMat \psiEpsMat\epsilon + (I - F)^{-1} \phiMat \psiCMat + \sum_{\sForSum=0}^\infty F^\sForSum \phiMat \ZWOarg_{t+\nu}\tArg%\\ \intertext{ so that}
-\expct{ \sVar_{t+1}\tArg} =B \sVar\tArg  + (I - F)^{-1} \phiMat \psiCMat+ \sum_{\sForSum =1}^\infty F^{\sForSum-1} \phiMat \ZWOarg_{t+\nu}\tArg.
+       	 \drFunc\tArg =\BMat \sVar_{t-1}+ \phiMat \psiEpsMat\theShock + (\IMat - \FMat)^{-1} \phiMat \psiCMat + \sum_{\sForSum=0}^\infty \FMat^\sForSum \phiMat \ZWOarg_{t+\nu}\tArg%\\ \intertext{ so that}
+\expct{ \sVar_{t+1}\tArg} =\BMat \sVar\tArg  + (\IMat - \FMat)^{-1} \phiMat \psiCMat+ \sum_{\sForSum =1}^\infty \FMat^{\sForSum-1} \phiMat \ZWOarg_{t+\nu}\tArg.
      \end{gather*}
  makes it possible to  construct a series
     representation for any bounded time invariant discrete time map. As yet, the author has found no comparable use of a
@@ -183,9 +183,9 @@ $L$ dimensional deterministic system that produces  a unique stable solution,
 \end{gather*}
 inhomogeneous solutions 
 \begin{gather}
-	 H_{-1} x_{t-1} + H_0 x_t + H_1 x_{t+1}=\psiEpsMat \epsilon +\psi_{c}
+	 H_{-1} x_{t-1} + H_0 x_t + H_1 x_{t+1}=\psiEpsMat \theShock +\psi_{c}
 \intertext{ can be computed as}
-x_t=B x_{t-1} + \phiMat \psiEpsMat \epsilon + (I - F)^{-1} \phiMat \psiCMat\label{hSystem}
+x_t=B x_{t-1} + \phiMat \psiEpsMat \theShock + (I - F)^{-1} \phiMat \psiCMat\label{hSystem}
 \intertext{where}
 \phiMat= (H_0 +H_1 B)^{-1}  \text{ and } \,\,F=-\phiMat H_1.\intertext{ \citep{anderson10}}
 \end{gather}
@@ -214,14 +214,14 @@ Consider any bounded discrete time path
 Now, given the trajectories \refeq{aBPath}, define 
 $  \zWOarg_{t}$ as  
 \begin{gather}
-  \zWOarg_{t} \equiv H_{-1} \xWOarg_{t-1} +  H_0 \xWOarg_{t} +  H_1 \xWOarg_{t+1} -\psiCMat - \psiEpsMat \epsilon_t \label{defZ} 
+  \zWOarg_{t} \equiv H_{-1} \xWOarg_{t-1} +  H_0 \xWOarg_{t} +  H_1 \xWOarg_{t+1} -\psiCMat - \psiEpsMat \theShock_t \label{defZ} 
 \end{gather}
 One can then express the $\xWOarg_t$ solving 
 \begin{gather}
-	 H_{-1} x_{t-1} + H_0 x_t + H_1 x_{t+1}=\psiEpsMat \epsilon +\psi_{c}+
+	 H_{-1} x_{t-1} + H_0 x_t + H_1 x_{t+1}=\psiEpsMat \theShock +\psi_{c}+
 z_t
 \intertext{ using}
-	 \xWOarg_{t} =B x_{t-1}+ \phiMat \psiEpsMat\epsilon + (I - F)^{-1} \phiMat \psiCMat + \sum_{\sForSum=0}^\infty F^s \phiMat \zWOarg_{t+\sForSum} \label{theSeries}
+	 \xWOarg_{t} =B x_{t-1}+ \phiMat \psiEpsMat\theShock + (I - F)^{-1} \phiMat \psiCMat + \sum_{\sForSum=0}^\infty F^s \phiMat \zWOarg_{t+\sForSum} \label{theSeries}
 \intertext{and}
 	 \xWOarg_{t+k+1} =B \xWOarg_{t+k}  + (I - F)^{-1} \phiMat \psiCMat+ \sum_{\sForSum =0}^\infty F^\sForSum \phiMat \zWOarg_{t+k+\sForSum+1} \,\,\,\,\,\forall t,k \ge  0.
 	 \end{gather}
@@ -250,7 +250,7 @@ Note that since the eigenvalues of $F$ are all less than one in magnitude, the f
 
 % \footnote{$\psiCMat$ full rank provides a sufficient condition, but not necessary condition.}
 The
-transformation $ {\{ x_{t}, x_{t}, x_{t+1},x_{t+2}\ldots\}} \rightarrow \linMod(x_{t-1},\epsilon_t) \rightarrow{\{ z_{t}, z_{t+1}, z_{t+2},\ldots\}} $ is invertible. $ {\{ z_{t}, z_{t+1}, z_{t+2},\ldots\}} \rightarrow \linMod(x_{t-1},\epsilon_t)^{-1} \rightarrow{\{ x_{t}, x_{t}, x_{t+1},x_{t+2}\ldots\}} $ and the inverse can be interpreted as giving the impact of ``fully anticipated future shocks'' on the path of $x_t$  in a linear perfect foresight model.  
+transformation $ {\{ x_{t}, x_{t}, x_{t+1},x_{t+2}\ldots\}} \rightarrow \linMod(x_{t-1},\theShock_t) \rightarrow{\{ z_{t}, z_{t+1}, z_{t+2},\ldots\}} $ is invertible. $ {\{ z_{t}, z_{t+1}, z_{t+2},\ldots\}} \rightarrow \linMod(x_{t-1},\theShock_t)^{-1} \rightarrow{\{ x_{t}, x_{t}, x_{t+1},x_{t+2}\ldots\}} $ and the inverse can be interpreted as giving the impact of ``fully anticipated future shocks'' on the path of $x_t$  in a linear perfect foresight model.  
 Note that the reference model is deterministic, so that 
  the $z_t\tArg$ functions will 
 fully account for any stochastic aspects encountered in the models I  analyze.
@@ -298,9 +298,9 @@ F=
 It is straightforward to apply \ref{theSeries} to  the following three
 bounded families of time series paths 
 \begin{gather}
-  x_{1,t}=\frac{\someNorm{x_{t-1}}}{{1+\someNorm{\epsilon_{t}}}} D_\pi(t) \intertext{where $D_\pi(t)$ gives the t-th digit of $\pi$}
-x_{2,t}=\frac{\someNorm{x_{t-1}}}{({1+\someNorm{\epsilon_{t}}})^2} (-1)^t\\
-ax_{3,t}=\epsilon_t \intertext{and the $\epsilon_t$ are a sequence of pseudo random draws from the uniform distributions $\mathcal{U}(-4,4)$ produced subsequent to the selection of a random seed.} randomseed(\someNorm{x_{t-1}}+\someNorm{\epsilon_t})
+  x_{1,t}=\frac{\someNorm{x_{t-1}}}{{1+\someNorm{\theShock_{t}}}} D_\pi(t) \intertext{where $D_\pi(t)$ gives the t-th digit of $\pi$}
+x_{2,t}=\frac{\someNorm{x_{t-1}}}{({1+\someNorm{\theShock_{t}}})^2} (-1)^t\\
+ax_{3,t}=\theShock_t \intertext{and the $\theShock_t$ are a sequence of pseudo random draws from the uniform distributions $\mathcal{U}(-4,4)$ produced subsequent to the selection of a random seed.} randomseed(\someNorm{x_{t-1}}+\someNorm{\theShock_t})
 \end{gather} 
 The three panels in Figure \ref{arbpaths} display these three time series
 generated  for a particular initial state vector and shock value.
@@ -374,7 +374,7 @@ to the initial time have the most important impact.
 One could consider approximating  $\xWOarg_t$ by 
 truncating the series  at a finite number of terms.
  	 \begin{gather}
- 	 \xWOargK_t \equiv B x_{t-1}+ \phiMat \psiEpsMat\epsilon  + (I - F)^{-1} \phiMat \psiCMat + \sum_{s=0}^k F^s \phiMat z_{t}\label{theTruncSeries}
+ 	 \xWOargK_t \equiv B x_{t-1}+ \phiMat \psiEpsMat\theShock  + (I - F)^{-1} \phiMat \psiCMat + \sum_{s=0}^k F^s \phiMat z_{t}\label{theTruncSeries}
  \end{gather}
 We can bound the  series approximation truncation errors:
 
@@ -408,7 +408,7 @@ We can assess the impact of perturbed values for $z_t$ by computing the maximum 
 partial sum formula.
 One can  approximate $\mathcal{X}_t$ using
  	 \begin{gather}
- 	 \xWOargK_t \equiv B x_{t-1}+ \phiMat \psiEpsMat\epsilon  + (I - F)^{-1} \phiMat \psiCMat + \sum_{s=0}^\infty F^s \phiMat (z_{t}+\Delta z_{t})\label{theDeltaSeries}
+ 	 \xWOargK_t \equiv B x_{t-1}+ \phiMat \psiEpsMat\theShock  + (I - F)^{-1} \phiMat \psiCMat + \sum_{s=0}^\infty F^s \phiMat (z_{t}+\Delta z_{t})\label{theDeltaSeries}
  \end{gather}
 Note, yet again, that for approximating $\xWarg$, the impact of  a given realization along the path declines for those realizations which are  more temporally distant.
 However, we can conservatively bound the  series approximation  errors by using the largest possible $\Delta z_t$ in the formula:
@@ -471,7 +471,7 @@ The first order conditions for the model are
 \begin{tcolorbox}[ams gather]
 \frac{1}{c_t^{\eta}}=\delta \left ( \alpha k_{t}^{\alpha-1} E_t \left (\frac{\theta_{t+1}}{c_{t+1}^\eta} \right )+ (1-d)E_t\left (\frac{1}{c_{t+1}^\eta} \right ) \right )\\
 c_t + k_t=(1-d)k_{t-1}\theta_{t}k_{t-1}^\alpha \\
- \theta_t =\theta_{t-1}^\rho e^{\epsilon_t}\label{rbcSys}
+ \theta_t =\theta_{t-1}^\rho e^{\theShock_t}\label{rbcSys}
  \end{tcolorbox}
 \label{sec:rbcexample}
 
@@ -491,10 +491,10 @@ x_t(\xtmEpsArg)\equiv    \DR(\xtmEpsArg)\equiv
    \begin{bmatrix}
 (1-\alpha \delta) \theta_{t} k_{t-1}^\alpha\\
   \alpha \delta \theta_{t} k_{t-1}^\alpha.\label{soln}\\
-\theta_{t-1}^\rho e^{\epsilon_t}.
+\theta_{t-1}^\rho e^{\theShock_t}.
    \end{bmatrix}
 \end{gather}
-For mean zero iid $\epsilon_t$ we can easily 
+For mean zero iid $\theShock_t$ we can easily 
 compute the conditional expectation of the model variables for any given $\theta_{t+k},k_{t+k}$
 \begin{gather*}
   \DRCE(x_{t+k+1})\equiv
@@ -511,7 +511,7 @@ e^{\frac{\sigma^2}{2}}\theta_{t+k}^\rho
 \end{gather*}
 
 
-For any given values of $k_{t-1},\theta_{t-1}, \epsilon_t$, the model decision rule, ($\DR$), and decision rule conditional expectation, ($\DRCE$), can generate a conditional expectations path forward from  any given initial $\tArg$:
+For any given values of $k_{t-1},\theta_{t-1}, \theShock_t$, the model decision rule, ($\DR$), and decision rule conditional expectation, ($\DRCE$), can generate a conditional expectations path forward from  any given initial $\tArg$:
 \begin{gather*}
   \xWOarg_t(\xtmEpsArg)=\DR(\xtmEpsArg)\\
   \xWOarg_{t+k+1}(\xtmEpsArg)=\DRCE(\xWOarg_{t+k}(\xtmEpsArg))
@@ -523,26 +523,26 @@ and corresponding paths for $\{(z_{1t}\tArg, z_{2t}\tArg, z_{3t}\tArg),\ldots\}$
 Formula \refeq{theSeries} requires that
 \begin{gather*}
 %   \begin{bmatrix}
-% c_t(k_{t-1},\theta_{t-1}, \epsilon_t)\\
-% k_t(k_{t-1},\theta_{t-1}, \epsilon_t)\\
-% \theta_t(k_{t-1},\theta_{t-1}, \epsilon_t)
+% c_t(k_{t-1},\theta_{t-1}, \theShock_t)\\
+% k_t(k_{t-1},\theta_{t-1}, \theShock_t)\\
+% \theta_t(k_{t-1},\theta_{t-1}, \theShock_t)
 %   \end{bmatrix} \rightarrow
 %   \begin{bmatrix}
-%   z_{1t}(k_{t-1},\theta_{t-1}, \epsilon_t)\\
-%   z_{2t}(k_{t-1},\theta_{t-1}, \epsilon_t)\\
-%   z_{3t}(k_{t-1},\theta_{t-1}, \epsilon_t) 
-%   \end{bmatrix}\equiv z(k_{t-1},\theta_{t-1}, \epsilon_t)\intertext{where}
+%   z_{1t}(k_{t-1},\theta_{t-1}, \theShock_t)\\
+%   z_{2t}(k_{t-1},\theta_{t-1}, \theShock_t)\\
+%   z_{3t}(k_{t-1},\theta_{t-1}, \theShock_t) 
+%   \end{bmatrix}\equiv z(k_{t-1},\theta_{t-1}, \theShock_t)\intertext{where}
 %   \begin{bmatrix}
-% c_t(k_{t-1},\theta_{t-1}, \epsilon_t)\\
-% k_t(k_{t-1},\theta_{t-1}, \epsilon_t)\\
-% \theta_t(k_{t-1},\theta_{t-1}, \epsilon_t)
+% c_t(k_{t-1},\theta_{t-1}, \theShock_t)\\
+% k_t(k_{t-1},\theta_{t-1}, \theShock_t)\\
+% \theta_t(k_{t-1},\theta_{t-1}, \theShock_t)
 %   \end{bmatrix}  =
 \xWOarg(\xtmEpsArg)=
 B   \begin{bmatrix}
 c_{t-1}\\
 k_{t-1}\\
 \theta_{t-1}
-  \end{bmatrix}  + \phiMat \psiEpsMat\epsilon_t + (I - F)^{-1} \phiMat \psiCMat + \sum_{\sForSum=0}^\infty F^s \phiMat z_{t+\sForSum}(k_{t-1},\theta_{t-1}, \epsilon_t) 
+  \end{bmatrix}  + \phiMat \psiEpsMat\theShock_t + (I - F)^{-1} \phiMat \psiCMat + \sum_{\sForSum=0}^\infty F^s \phiMat z_{t+\sForSum}(k_{t-1},\theta_{t-1}, \theShock_t) 
 \end{gather*}
 % \footnote{
 % We need not  make these adjustments for the steady state,
@@ -564,7 +564,7 @@ For example, using $\eta=d=1$ and the following parameter values and using the a
 
 \begin{gather}\label{theInits}
   \begin{bmatrix}
- k_{t-1}\\\theta_{t-1}\\\epsilon_t 
+ k_{t-1}\\\theta_{t-1}\\\theShock_t 
   \end{bmatrix}=
 \left [ \vcenter{\hbox{\includegraphics{anXEps.pdf}}}\right ]
 \end{gather}
@@ -579,7 +579,7 @@ For example, using $\eta=d=1$ and the following parameter values and using the a
 \end{figure}
 
 Figure \refeq{rbcpaths} shows, from top to bottom, the paths of $\theta_t, c_t, \text{ and } k_t$ from the initial values given in Equation \refeq{theInits}. 
-%The orange line corresponds to $z_{1t}\tArg$,the blue line corresponds to $z_{2t}\tArg$ and the green line corresponds to $z_{3t}\tArg$.%\footnote{For now we focus on the times series paths, $z_t(x_{t-1},\epsilon_t)$ for given $(x_{t-1},\epsilon_t)$.  Later we will exploit the information available from explicit investigation of the variation in  $z_t(x_{t-1},\epsilon_t)$ with $(x_{t-1},\epsilon_t)$ to improve solution accuracy and robustness.}
+%The orange line corresponds to $z_{1t}\tArg$,the blue line corresponds to $z_{2t}\tArg$ and the green line corresponds to $z_{3t}\tArg$.%\footnote{For now we focus on the times series paths, $z_t(x_{t-1},\theShock_t)$ for given $(x_{t-1},\theShock_t)$.  Later we will exploit the information available from explicit investigation of the variation in  $z_t(x_{t-1},\theShock_t)$ with $(x_{t-1},\theShock_t)$ to improve solution accuracy and robustness.}
 By including enough terms we can compute the solution for $x_t$ 
 exactly.
 Figure \ref{rbcTrunc} shows the impact that truncating the series has 
@@ -617,7 +617,7 @@ Again, the first few terms make most of the difference in approximating the valu
 For convenience of notation in what follows, 
 I will focus on models built up from components of the form
 \begin{gather}
-  h_i(x_{t-1},x_{t},x_{t+1},\epsilon_t)=h^{det}_{io}(x_{t-1},x_{t},\epsilon_t)+\sum_{j=1}^{p_i} [h^{det}_{ij}(x_{t-1},x_{t},\epsilon_t)h^{nondet}_{ij}(x_{t+1})]=0
+  h_i(x_{t-1},x_{t},x_{t+1},\theShock_t)=h^{det}_{io}(x_{t-1},x_{t},\theShock_t)+\sum_{j=1}^{p_i} [h^{det}_{ij}(x_{t-1},x_{t},\theShock_t)h^{nondet}_{ij}(x_{t+1})]=0
 \end{gather}
 This is a very broad class of models including most widely used
 macroeconomics models.  This constraint will make it easier to write
@@ -631,7 +631,7 @@ h_{11}^{det}()=\alpha \delta k_{t}^{\alpha-1} ,\,\,
 h_{11}^{nondet}(\cdot)=E_t \left (\frac{\theta_{t+1}}{c_{t+1}^\eta} \right )\\
 h_{20}^{det}(\cdot)=c_t + k_t-\theta_tk_{t-1}^\alpha,\,\,
 h_{21}^{det}(\cdot)=0\\
-h_{30}^{det}(\cdot)=\ln \theta_t -(\rho \ln \theta_{t-1} + \epsilon_t),\,\,
+h_{30}^{det}(\cdot)=\ln \theta_t -(\rho \ln \theta_{t-1} + \theShock_t),\,\,
 h_{31}^{det}(\cdot)=0
 \end{gather}
 Since we   need to compute 
@@ -639,7 +639,7 @@ the conditional expectation of nonlinear expressions,
 this setup will make it possible for us to use auxiliary
 variables to correctly compute the required expected values.
 \label{simpRBCExample}
-We will be working with models where expectations are computed at time t, with  $\epsilon_t$  known. 
+We will be working with models where expectations are computed at time t, with  $\theShock_t$  known. 
 We can construct a linear reference model for the modified RBC system
 by  augmenting the RBC model with the equation 
 \begin{tcolorbox}[ams gather]
@@ -704,29 +704,29 @@ Consider a bounded region, $\bndRgn$, that contains all iterated conditional exp
 
 
 
-Given an exact solution $x^\star_t=g^\star(x_{t-1},\epsilon_t)$ define the conditional expectations function,
+Given an exact solution $x^\star_t=g^\star(x_{t-1},\theShock_t)$ define the conditional expectations function,
   \begin{gather}
-G^\star(x)\equiv\expct{g^\star(x,\epsilon)} \intertext{then with}
-E_tx^\star_{t+1}=G^\star(g^\star(x_{t-1},\epsilon_t)) \intertext{we have}
+G^\star(x)\equiv\expct{g^\star(x,\theShock)} \intertext{then with}
+E_tx^\star_{t+1}=G^\star(g^\star(x_{t-1},\theShock_t)) \intertext{we have}
     \label{eq:2}
-\eqnFunc(x^\star_{t-1},x^\star_t,E_tx^\star_{t+1},\epsilon_t)=0  \,\, \forall  (x_{t-1},\epsilon_t)\\ 
-   x^\star_t(x_{t-1},\epsilon_t) \in{R^L}\,\,\twoNorm{x^\star_t(x_{t-1},\epsilon_t)}  \le \overline{\mathcal{X}}\,\,\forall t\ > 0
+\eqnFunc(x^\star_{t-1},x^\star_t,E_tx^\star_{t+1},\theShock_t)=0  \,\, \forall  (x_{t-1},\theShock_t)\\ 
+   x^\star_t(x_{t-1},\theShock_t) \in{R^L}\,\,\twoNorm{x^\star_t(x_{t-1},\theShock_t)}  \le \overline{\mathcal{X}}\,\,\forall t\ > 0
   \end{gather}
 
 Now consider a proposed model decision rule solution for the model,
- $x^p_t=g^p(x_{t-1},\epsilon_t)$ define
-$G^p(x)\equiv\expct{g^p(x,\epsilon)}$  so that 
+ $x^p_t=g^p(x_{t-1},\theShock_t)$ define
+$G^p(x)\equiv\expct{g^p(x,\theShock)}$  so that 
   \begin{gather*}
-E_tx_{t+1}=G^p(g^p(x_{t-1},\epsilon_t))\\
-\mathbf{e}_t^p(x_{t-1},\epsilon)\equiv
-\eqnFunc(x_{t-1},x^p_t,E_tx^p_{t+1},\epsilon_t)
+E_tx_{t+1}=G^p(g^p(x_{t-1},\theShock_t))\\
+\mathbf{e}_t^p(x_{t-1},\theShock)\equiv
+\eqnFunc(x_{t-1},x^p_t,E_tx^p_{t+1},\theShock_t)
 \end{gather*}
 
 
     \begin{gather*}
-	\infNorm{ x^\star_{t}(x_{t-1},\epsilon) -	 x^p_{t}(x_{t-1},\epsilon)} \le
-\max_{\{x_{-},\epsilon\}} \twoNorm{(I-F)^{-1} \phiMat \eqnFunc(x_{-},g^p(x_{-},\epsilon),G^p(g^p(x_{-},\epsilon)),\epsilon) }\intertext{which can be approximated by}
-    \max_{x_{t-1},\epsilon_t} (\phiMat \mathbf{e}_t^p(x_{t-1},\epsilon))^2
+	\infNorm{ x^\star_{t}(x_{t-1},\theShock) -	 x^p_{t}(x_{t-1},\theShock)} \le
+\max_{\{x_{-},\theShock\}} \twoNorm{(I-F)^{-1} \phiMat \eqnFunc(x_{-},g^p(x_{-},\theShock),G^p(g^p(x_{-},\theShock)),\theShock) }\intertext{which can be approximated by}
+    \max_{x_{t-1},\theShock_t} (\phiMat \mathbf{e}_t^p(x_{t-1},\theShock))^2
   \end{gather*}
 
 For proof see Appendix \ref{sec:error-bound-formula}.  
@@ -739,7 +739,7 @@ the error in $x_t$ at $\tArg$
 
 \begin{gather*}
 \mathbf{e}\tArg\equiv \xWOarg^\star\tArg-\xWOarg^p\tArg\intertext{compute the conditional expectations functions for the decision rule and use them to generate a path to use with a linear reference model $\linMod  \equiv \linModMats$  in \ref{theSeries} to approximate  $\mathbf{e}$.} 
-\XWOarg^p(x)\equiv \expct{\xWOarg^p(x,\epsilon)}.
+\XWOarg^p(x)\equiv \expct{\xWOarg^p(x,\theShock)}.
 \end{gather*}
 \begin{gather*}
  x_{t+k+1}=\XWOarg^p(x_{t+k})\,\,k=1,\ldots,K
@@ -748,7 +748,7 @@ the error in $x_t$ at $\tArg$
 \begin{gather*}
  \intertext{We can define functions $\zpWOarg_t$ by}
 \zpWOarg_t\equiv
-\eqnFunc(x_{t-1},x_t,x_{t+1},\epsilon_t)\\
+\eqnFunc(x_{t-1},x_t,x_{t+1},\theShock_t)\\
 \zpWOarg_{t+k}\equiv
 \eqnFunc(x_{t+k-1},x_{t+k},x_{t+k+1},0)\\
 \hat{\mathbf{e}}\tArg\equiv \sum_{\sForSum=0}^K F^s \phiMat \zpWOarg_{t+\nu}\\
@@ -819,7 +819,7 @@ As a result I have $100=10 \times 10$ combinations of (inaccurate by design ) de
 linear reference models to use in the error formula experiments.
 
 
-I generate 30 representative points, $(k_{i,t-1},\theta_{i,t-1},\epsilon_{i,t})$, from the ergodic set for the fixed true reference model
+I generate 30 representative points, $(k_{i,t-1},\theta_{i,t-1},\theShock_{i,t})$, from the ergodic set for the fixed true reference model
 using the Niederreiter quasi-random algorithm.
 For each of the 100 pairings of decision rule and linear reference model,
 I compute the error approximation at each of the 30 representative points
@@ -956,7 +956,7 @@ My method handles Multiple expectational equations  impact on decision rules.
 I assume that all models of interest can be characterized by
  a finite number of equations systems.
 I will require that, for any 
- given $(x_{t-1},\epsilon_t)$,  this collection of 
+ given $(x_{t-1},\theShock_t)$,  this collection of 
 equation systems  produces a unique solution for $x_t$.  
 This formulation will allow us to apply the technique to models with
 occasionally binding  constraints and models with regime switching.
@@ -1023,7 +1023,7 @@ the proposed decision rule solution with the
 time t value of the model variables.  As a result, the algorithm determines
 linearly weighted polynomials characterizing the 
 trajectories for the usual
-variables $x_t(x_{t-1},\epsilon_t)$ as well as new  $z_t(x_{t-1},\epsilon_t)$ variables.  These new constraints 
+variables $x_t(x_{t-1},\theShock_t)$ as well as new  $z_t(x_{t-1},\theShock_t)$ variables.  These new constraints 
 help keep proposed solutions bounded during the solution iterations 
 thus improving algorithm reliability and accuracy.
 
@@ -1031,7 +1031,7 @@ thus improving algorithm reliability and accuracy.
 
 
 % \begin{itemize}
-% \item show describe $z_t(x_{t-1},\epsilon_t)$ for RBC
+% \item show describe $z_t(x_{t-1},\theShock_t)$ for RBC
 % \item start linear.  check error bounds, if adequate done
 % \item traditional iteration ignores the path constraints on initial solution leading to larger errors on $\bndRgn^p$
 % \item It's a good idea to compute easy approximation using just the linear model one ieration to get an approximation for the ergodic set
@@ -1090,7 +1090,7 @@ Should always iterate forward from evaluation points to check stability.
 For now, consider a single model equation system case with no Boolean gates. A description 
 of the actual, multi-system implementation follows.   We seek 
 \begin{gather*}
-\eqnFunc(x_{t-1},\xWOarg^\star\tArg,\XWOarg^\star(\xWOarg^\star\tArg),\epsilon_t)=0\,\,\forall \tArg.  \intertext{Given a proposed decision rule model solution}
+\eqnFunc(x_{t-1},\xWOarg^\star\tArg,\XWOarg^\star(\xWOarg^\star\tArg),\theShock_t)=0\,\,\forall \tArg.  \intertext{Given a proposed decision rule model solution}
  x_t=\xWOarg^p\tArg\intertext{ compute}
 \XWOarg^p(x_{t-1})\equiv \expct{\xWOarg^p\tArg}.
 \end{gather*}
@@ -1107,7 +1107,7 @@ improve the accuracy of the proposed solution.
 \zpWarg\equiv H
 \begin{bmatrix}
 x_{t-1}\\ \xpWarg\\ \XpWOarg(\xWarg)
-\end{bmatrix}+\phiMat_\epsilon \epsilon_t+\phiMat_c\\
+\end{bmatrix}+\phiMat_\theShock \theShock_t+\phiMat_c\\
 \ZpWOarg(x_{t-1})\equiv \expct{\zpWarg}
 \end{gather*}
  \begin{itemize}
@@ -1127,10 +1127,10 @@ x_{t-1}\\ \xpWarg\\ \XpWOarg(\xWarg)
   \begin{itemize}
   \item We get expressions for $x_t,\,\, \expct x_{t+1}$ consistent with $\linMod$ and the conditional expectations path
    \begin{gather*}
-     \mathcal{X}_{t} =B x_{t-1}+ \phiMat \psiEpsMat\epsilon + (I - F)^{-1} \phiMat \psiCMat + \sum_{\sForSum=0}^\infty F^s \phiMat \ZWOarg(x_{t+\nu})\\
+     \mathcal{X}_{t} =B x_{t-1}+ \phiMat \psiEpsMat\theShock + (I - F)^{-1} \phiMat \psiCMat + \sum_{\sForSum=0}^\infty F^s \phiMat \ZWOarg(x_{t+\nu})\\
 	\expct{ \mathcal{X}_{t+1}} =B \mathcal{X}_{t}  + (I - F)^{-1} \phiMat \psiCMat+ \sum_{\sForSum =0}^\infty F^{\sForSum-1} \phiMat \ZWOarg(x_{t+\nu}) \,\,\,\,\,\forall t,k \ge  0
 \end{gather*}
-\item Use the model equations, $\eqnFunc(x_{t-1},x_t,\expct{x_{t+1}},\epsilon)=0$ and $x_t\tArg=\mathcal{X}_t\tArg$\\ to determine $\xppWarg, \zppWarg$
+\item Use the model equations, $\eqnFunc(x_{t-1},x_t,\expct{x_{t+1}},\theShock)=0$ and $x_t\tArg=\mathcal{X}_t\tArg$\\ to determine $\xppWarg, \zppWarg$
 \item $\xpWarg=\xppWarg, \zpWarg=\zppWarg$ -- {\color{blue}Repeat loop.}
   \end{itemize}
 }
@@ -1221,10 +1221,10 @@ functions to construct interpolating functions approximating the
 decision rules. Sub-components of this step exploit parallelism.
 
 
-\item[genLilXkZkFunc] --- {\bf Symbolically} creates a function that uses an initial $Z_t$ path to generate a function of $(x_{t-1},\epsilon_t,z_t)$ providing (potentially symbolic ) inputs 
+\item[genLilXkZkFunc] --- {\bf Symbolically} creates a function that uses an initial $Z_t$ path to generate a function of $(x_{t-1},\theShock_t,z_t)$ providing (potentially symbolic ) inputs 
   \begin{gather*}
     \begin{bmatrix}
-x_{t-1}\\x_t\\E_t(x_{t+1}),\epsilon_t)    
+x_{t-1}\\x_t\\E_t(x_{t+1}),\theShock_t)    
     \end{bmatrix}
   \end{gather*}
  for model system equations $\eqnFunc$.  This  routine  provides the 
@@ -1340,9 +1340,9 @@ of the error component by component. Each of the estimated errors were computed 
   
  \begin{gather*}
    \begin{bmatrix}
-     k_1&\theta_1&\epsilon_1\\
+     k_1&\theta_1&\theShock_1\\
  &\vdots\\
-     k_{30}&\theta_{30}&\epsilon_{30}\\
+     k_{30}&\theta_{30}&\theShock_{30}\\
    \end{bmatrix}\\
 %  \input{xs1x1x1x5}
  \end{gather*}\\
@@ -1389,9 +1389,9 @@ of the error component by component. Each of the estimated errors were computed 
   
 \begin{gather*}
   \begin{bmatrix}
-    k_1&\theta_1&\epsilon_1\\
+    k_1&\theta_1&\theShock_1\\
 &\vdots\\
-    k_{30}&\theta_{30}&\epsilon_{30}\\
+    k_{30}&\theta_{30}&\theShock_{30}\\
   \end{bmatrix}\\
 %  \input{xs2x2x2x5}
 \end{gather*}\\
@@ -1403,9 +1403,9 @@ of the error component by component. Each of the estimated errors were computed 
   
 \begin{gather*}
   \begin{bmatrix}
-    k_1&\theta_1&\epsilon_1\\
+    k_1&\theta_1&\theShock_1\\
 &\vdots\\
-    k_{30}&\theta_{30}&\epsilon_{30}\\
+    k_{30}&\theta_{30}&\theShock_{30}\\
   \end{bmatrix}\\
 %  \input{xs2x2x2x5}
 \end{gather*}\\
@@ -1482,9 +1482,9 @@ of the error component by component.
   
  \begin{gather*}
    \begin{bmatrix}
-     k_1&\theta_1&\epsilon_1\\
+     k_1&\theta_1&\theShock_1\\
  &\vdots\\
-     k_{30}&\theta_{30}&\epsilon_{30}\\
+     k_{30}&\theta_{30}&\theShock_{30}\\
    \end{bmatrix}\\
 %  \input{xs1x1x1x5Unk}
  \end{gather*}\\
@@ -1523,9 +1523,9 @@ of the error component by component.
   
 \begin{gather*}
   \begin{bmatrix}
-    k_1&\theta_1&\epsilon_1\\
+    k_1&\theta_1&\theShock_1\\
 &\vdots\\
-    k_{30}&\theta_{30}&\epsilon_{30}\\
+    k_{30}&\theta_{30}&\theShock_{30}\\
   \end{bmatrix}\\
 %  \input{xs2x2x2x5Unk}
 \end{gather*}\\
@@ -1537,9 +1537,9 @@ of the error component by component.
   
 \begin{gather*}
   \begin{bmatrix}
-    k_1&\theta_1&\epsilon_1\\
+    k_1&\theta_1&\theShock_1\\
 &\vdots\\
-    k_{30}&\theta_{30}&\epsilon_{30}\\
+    k_{30}&\theta_{30}&\theShock_{30}\\
   \end{bmatrix}\\
 %  \input{theApps2x2x2x5Unk}
 \end{gather*}\\
@@ -1587,7 +1587,7 @@ Consider adding  a  constraint to the simple RBC model:
  \begin{gather*}
    \max\left \{  u(c_t) + E_t \sum_{t=0}^\infty  \delta^{t+1}u(c_{t+1})\right \}\\
    c_t + k_t=(1-d)k_{t-1} + \theta_t f(k_{t-1})\\
-    \theta_t =\theta_{t-1}^\rho e^{\epsilon_t}\\
+    \theta_t =\theta_{t-1}^\rho e^{\theShock_t}\\
 f(k_t)= k_t^\alpha\\
 u(c)=\frac{c^{1-\eta}-1}{1-\eta}\\
  \mathbb{L}= \left \{ 
@@ -1641,7 +1641,7 @@ if(\mu>0 \land (k_t - (1-d)k_{t-1}-\upsilon I_{ss})=0)\\
   \lambda_t -\frac{1}{c_t}\\
 c_t+I_t-\theta_tk_{t-1}^\alpha\\
 N_t-\lambda_t \theta_t\\
-\theta_t-e^{(\rho\ln(\theta_{t-1})+\epsilon)}\\
+\theta_t-e^{(\rho\ln(\theta_{t-1})+\theShock)}\\
 \lambda_t + \mu_t - (\alpha k_t^{(\alpha-1)}\delta N_{t+1}+\lambda_{t+1} \delta (1-d)+\mu_{t+1}+\delta (1-d)\mu_{t+1}\\
 I_t-(K_t-(1-d)k_{t-1})\\
 \mu_t(k_t - (1-d) k_{t-1}-\upsilon I_{ss})\\
@@ -1651,7 +1651,7 @@ if(\mu=0 \land (k_t - (1-d)k_{t-1}-\upsilon I_{ss})\ge 0)\\
   \lambda_t -\frac{1}{c_t}\\
 c_t+I_t-\theta_tk_{t-1}^\alpha\\
 N_t-\lambda_t \theta_t\\
-\theta_t-e^{(\rho\ln(\theta_{t-1})+\epsilon)}\\
+\theta_t-e^{(\rho\ln(\theta_{t-1})+\theShock)}\\
 \lambda_t + {\mu_t} - (\alpha k_t^{(\alpha-1)}\delta N_{t+1}+\lambda_{t+1} \delta (1-d)+{\mu_{t+1}}+\delta (1-d)\mu_{t+1}\\
 I_t-(K_t-(1-d)k_{t-1})\\
 \mu_t(k_t - (1-d) k_{t-1}-\upsilon I_{ss})
@@ -1683,9 +1683,9 @@ of the error component by component.
   
  \begin{gather*}
    \begin{bmatrix}
-     k_1&\theta_1&\epsilon_1\\
+     k_1&\theta_1&\theShock_1\\
  &\vdots\\
-     k_{30}&\theta_{30}&\epsilon_{30}\\
+     k_{30}&\theta_{30}&\theShock_{30}\\
    \end{bmatrix}\\
 %  \input{xs1x1x1x5CS}
  \end{gather*}
@@ -1728,9 +1728,9 @@ of the error component by component.
   
  \begin{gather*}
    \begin{bmatrix}
-     k_1&\theta_1&\epsilon_1\\
+     k_1&\theta_1&\theShock_1\\
  &\vdots\\
-     k_{30}&\theta_{30}&\epsilon_{30}\\
+     k_{30}&\theta_{30}&\theShock_{30}\\
    \end{bmatrix}\\
 %  \input{xs2x2x2x5CS}
  \end{gather*}
@@ -1744,9 +1744,9 @@ of the error component by component.
   
 \begin{gather*}
   \begin{bmatrix}
-    k_1&\theta_1&\epsilon_1\\
+    k_1&\theta_1&\theShock_1\\
 &\vdots\\
-    k_{30}&\theta_{30}&\epsilon_{30}\\
+    k_{30}&\theta_{30}&\theShock_{30}\\
   \end{bmatrix}\\
 % \input{theApps2x2x2x5CS}
 \end{gather*}
@@ -1835,17 +1835,17 @@ We consider time invariant maps such as often arise from solving an
  optimization problem codified in a systems of equations.  
 In what follows, we construct an error approximation for proposed model solutions.
 Consider a bounded region, $\bndRgn$, where all iterated conditional expectations paths remain bounded.
- Given an exact solution $x^\star_t=g^\star(x_{t-1},\epsilon_t)$ define the conditional expectations function,
+ Given an exact solution $x^\star_t=g^\star(x_{t-1},\theShock_t)$ define the conditional expectations function,
   \begin{gather}
-G^\star(x)\equiv\expct{g^\star(x,\epsilon)} \intertext{then with}
-E_tx^\star_{t+1}=G^\star(g^\star(x_{t-1},\epsilon_t)) \intertext{we have}
-    \eqnFunc(x^\star_{t-1},x^\star_t,E_tx^\star_{t+1},\epsilon_t)=0  \,\, \forall  (x_{t-1},\epsilon_t)\\ \intertext{In words, the exact solution  exactly satisfies the model equations.  Using $G^\star$ and $\linMod$, construct the family of trajectories and corresponding $z^\star_t(x_{t-1},\epsilon)$ }
-   x^\star_t(x_{t-1},\epsilon_t) \in{R^L}\,\,\twoNorm{x^\star_t(x_{t-1},\epsilon_t)}  \le \bar{\mathcal{X}}\,\,\forall t\ > 0
+G^\star(x)\equiv\expct{g^\star(x,\theShock)} \intertext{then with}
+E_tx^\star_{t+1}=G^\star(g^\star(x_{t-1},\theShock_t)) \intertext{we have}
+    \eqnFunc(x^\star_{t-1},x^\star_t,E_tx^\star_{t+1},\theShock_t)=0  \,\, \forall  (x_{t-1},\theShock_t)\\ \intertext{In words, the exact solution  exactly satisfies the model equations.  Using $G^\star$ and $\linMod$, construct the family of trajectories and corresponding $z^\star_t(x_{t-1},\theShock)$ }
+   x^\star_t(x_{t-1},\theShock_t) \in{R^L}\,\,\twoNorm{x^\star_t(x_{t-1},\theShock_t)}  \le \bar{\mathcal{X}}\,\,\forall t\ > 0
   \end{gather}
    \begin{align}
-   z^\star_{t}(x_{t-1},\epsilon_t) \equiv& H_{-1}  x^\star_{t-1}(x_{t-1},\epsilon_t) + \nonumber\\
- & H_0  x^\star_{t}(x_{t-1},\epsilon_t) +   \\
- & H_1  x^\star_{t+1}(x_{t-1},\epsilon_t). \nonumber
+   z^\star_{t}(x_{t-1},\theShock_t) \equiv& H_{-1}  x^\star_{t-1}(x_{t-1},\theShock_t) + \nonumber\\
+ & H_0  x^\star_{t}(x_{t-1},\theShock_t) +   \\
+ & H_1  x^\star_{t+1}(x_{t-1},\theShock_t). \nonumber
    \end{align}
 
 
@@ -1853,29 +1853,29 @@ E_tx^\star_{t+1}=G^\star(g^\star(x_{t-1},\epsilon_t)) \intertext{we have}
 
    Consequently, the exact solution has a representation given by
 	 \begin{gather}
-	 x^\star_{t}(x_{t-1},\epsilon) =B x_{t-1}+ \phiMat \psiEpsMat\epsilon + (I - F)^{-1} \phiMat \psiCMat +\\ \sum_{\sForSum=0}^\infty F^s \phiMat z^\star_{t+\sForSum}(x_{t-1},\epsilon) \intertext{and}
-	 \expct{x^\star_{t+1}(x_{t-1},\epsilon)} =B x^\star_{t+k} + \sum_{\sForSum =0}^\infty F^\sForSum \phiMat \expct{z^\star_{t+1+\sForSum}(x_{t-1},\epsilon)} + (I - F)^{-1} \phiMat \psiCMat 
+	 x^\star_{t}(x_{t-1},\theShock) =B x_{t-1}+ \phiMat \psiEpsMat\theShock + (I - F)^{-1} \phiMat \psiCMat +\\ \sum_{\sForSum=0}^\infty F^s \phiMat z^\star_{t+\sForSum}(x_{t-1},\theShock) \intertext{and}
+	 \expct{x^\star_{t+1}(x_{t-1},\theShock)} =B x^\star_{t+k} + \sum_{\sForSum =0}^\infty F^\sForSum \phiMat \expct{z^\star_{t+1+\sForSum}(x_{t-1},\theShock)} + (I - F)^{-1} \phiMat \psiCMat 
  \intertext{with}
- \eqnFunc(x_{t-1},x^\star_t,E_tx^\star_{t+1},\epsilon_t)=0  \,\, \forall  (x_{t-1},\epsilon_t)\\ 
+ \eqnFunc(x_{t-1},x^\star_t,E_tx^\star_{t+1},\theShock_t)=0  \,\, \forall  (x_{t-1},\theShock_t)\\ 
 	 \end{gather}
 
 Now consider a proposed solution for the model,
- $x^p_t=g^p(x_{t-1},\epsilon_t)$ define
-$G^p(x)\equiv\expct{g^p(x,\epsilon)}$  so that 
+ $x^p_t=g^p(x_{t-1},\theShock_t)$ define
+$G^p(x)\equiv\expct{g^p(x,\theShock)}$  so that 
   \begin{gather*}
-E_tx_{t+1}=G^p(g^p(x_{t-1},\epsilon_t))\\
-\mathbf{e}_t^p(x_{t-1},\epsilon)\equiv
-\eqnFunc(x_{t-1},x^p_t,E_tx^p_{t+1},\epsilon_t)
+E_tx_{t+1}=G^p(g^p(x_{t-1},\theShock_t))\\
+\mathbf{e}_t^p(x_{t-1},\theShock)\equiv
+\eqnFunc(x_{t-1},x^p_t,E_tx^p_{t+1},\theShock_t)
 \end{gather*}
 By construction,  the conditional expectations paths will all be bounded
-in the region $\bndRgn^p$. Using $G^p$ and $\linMod$ construct the family of trajectories and corresponding $z^p_t(x_{t-1},\epsilon)$\footnote{The algorithm presented below for finding solutions provides a mechanism for generating such proposed solutions.} 
+in the region $\bndRgn^p$. Using $G^p$ and $\linMod$ construct the family of trajectories and corresponding $z^p_t(x_{t-1},\theShock)$\footnote{The algorithm presented below for finding solutions provides a mechanism for generating such proposed solutions.} 
 \begin{gather*}
-   x^p_t(x_{t-1},\epsilon_t) \in{R^L}\,\,\twoNorm{x^p_t(x_{t-1},\epsilon_t)}  \le \bar{\mathcal{X}}\,\,\forall t\ > 0
+   x^p_t(x_{t-1},\theShock_t) \in{R^L}\,\,\twoNorm{x^p_t(x_{t-1},\theShock_t)}  \le \bar{\mathcal{X}}\,\,\forall t\ > 0
   \end{gather*}
    \begin{align}
-   z^p_{t}(x_{t-1},\epsilon_t) \equiv& H_{-1}  x^p_{t-1}(x_{t-1},\epsilon_t) + \nonumber\\
- & H_0  x^p_{t}(x_{t-1},\epsilon_t) +   \\
- & H_1  x^p_{t+1}(x_{t-1},\epsilon_t). \nonumber
+   z^p_{t}(x_{t-1},\theShock_t) \equiv& H_{-1}  x^p_{t-1}(x_{t-1},\theShock_t) + \nonumber\\
+ & H_0  x^p_{t}(x_{t-1},\theShock_t) +   \\
+ & H_1  x^p_{t+1}(x_{t-1},\theShock_t). \nonumber
    \end{align}
 
 
@@ -1888,11 +1888,11 @@ in the region $\bndRgn^p$. Using $G^p$ and $\linMod$ construct the family of tra
  The proposed solution has a representation given by 
   \begin{gather}
     \label{eq:4}
-	 x^p_{t}(x_{t-1},\epsilon) =B x_{t-1}+ \phiMat \psiEpsMat\epsilon + (I - F)^{-1} \phiMat \psiCMat +\\ \sum_{\sForSum=0}^\infty F^s \phiMat z^p_{t+\sForSum}(x_{t-1},\epsilon) 
+	 x^p_{t}(x_{t-1},\theShock) =B x_{t-1}+ \phiMat \psiEpsMat\theShock + (I - F)^{-1} \phiMat \psiCMat +\\ \sum_{\sForSum=0}^\infty F^s \phiMat z^p_{t+\sForSum}(x_{t-1},\theShock) 
  \intertext{and}
- 	 \expct{x^p_{t+1}(x_{t-1},\epsilon)} =B x^p_{t+k} + \sum_{\sForSum =0}^\infty F^\sForSum \phiMat z^p_{t+1+\sForSum}(x_{t-1},\epsilon) + (I - F)^{-1} \phiMat \psiCMat \intertext{with}
-\mathbf{e}_t^p(x_{t-1},\epsilon)\equiv
-\eqnFunc(x_{t-1},x^p_t,E_tx^p_{t+1},\epsilon_t)
+ 	 \expct{x^p_{t+1}(x_{t-1},\theShock)} =B x^p_{t+k} + \sum_{\sForSum =0}^\infty F^\sForSum \phiMat z^p_{t+1+\sForSum}(x_{t-1},\theShock) + (I - F)^{-1} \phiMat \psiCMat \intertext{with}
+\mathbf{e}_t^p(x_{t-1},\theShock)\equiv
+\eqnFunc(x_{t-1},x^p_t,E_tx^p_{t+1},\theShock_t)
   \end{gather}
 
 
@@ -1900,13 +1900,13 @@ in the region $\bndRgn^p$. Using $G^p$ and $\linMod$ construct the family of tra
 
   \begin{gather}
     \label{eq:3}
-	 x^\star_{t}(x_{t-1},\epsilon) -	 x^p_{t}(x_{t-1},\epsilon) =
-         \sum_{\sForSum=0}^\infty F^s \phiMat (z^\star_{t+\sForSum}(x_{t-1},\epsilon)-z^p_{t+\sForSum}(x_{t-1},\epsilon))     \\
-\Delta z_{t+\sForSum}^p(x_{t-1},\epsilon_t)         \equiv (z^\star_{t+\sForSum}(x_{t-1},\epsilon)-z^p_{t+\sForSum}(x_{t-1},\epsilon))\\
-	 x^\star_{t}(x_{t-1},\epsilon) -	 x^p_{t}(x_{t-1},\epsilon) =
-\sum_{\sForSum=0}^\infty F^s \phiMat \Delta z_{t+\sForSum}^p(x_{t-1},\epsilon_t)   \\ 
-	\infNorm{ x^\star_{t}(x_{t-1},\epsilon) -	 x^p_{t}(x_{t-1},\epsilon)} \le
-\sum_{\sForSum=0}^\infty F^s \phiMat \infNorm{\Delta z_{t+\sForSum}^p(x_{t-1},\epsilon_t)}    
+	 x^\star_{t}(x_{t-1},\theShock) -	 x^p_{t}(x_{t-1},\theShock) =
+         \sum_{\sForSum=0}^\infty F^s \phiMat (z^\star_{t+\sForSum}(x_{t-1},\theShock)-z^p_{t+\sForSum}(x_{t-1},\theShock))     \\
+\Delta z_{t+\sForSum}^p(x_{t-1},\theShock_t)         \equiv (z^\star_{t+\sForSum}(x_{t-1},\theShock)-z^p_{t+\sForSum}(x_{t-1},\theShock))\\
+	 x^\star_{t}(x_{t-1},\theShock) -	 x^p_{t}(x_{t-1},\theShock) =
+\sum_{\sForSum=0}^\infty F^s \phiMat \Delta z_{t+\sForSum}^p(x_{t-1},\theShock_t)   \\ 
+	\infNorm{ x^\star_{t}(x_{t-1},\theShock) -	 x^p_{t}(x_{t-1},\theShock)} \le
+\sum_{\sForSum=0}^\infty F^s \phiMat \infNorm{\Delta z_{t+\sForSum}^p(x_{t-1},\theShock_t)}    
   \end{gather}
 
   By bounding the largest deviation in the paths for the $\Delta z_t^p$ we can bound the largest difference in $x_t$.\footnote{Since the future values are probability weighted averages of the $\Delta z_t^p$ values for the given initial conditions and the condition expectations paths remain in the region $\bndRgn^p$,
@@ -1916,9 +1916,9 @@ the largest error for $\Delta z_{t+k}^p$   are pessimistic bounds for the errors
 {\small
   \begin{tcolorbox}[ams gather]
   \Delta z_t \le  
-\max_{\{x_{-},\epsilon\}} \twoNorm{ \phiMat \eqnFunc(x_{-},g^p(x_{-},\epsilon),G^p(g^p(x_{-},\epsilon)),\epsilon) }\\
-	\infNorm{ x^\star_{t}(x_{t-1},\epsilon) -	 x^p_{t}(x_{t-1},\epsilon)} \le
-\max_{\{x_{-},\epsilon\}} \twoNorm{(I-F)^{-1} \phiMat \eqnFunc(x_{-},g^p(x_{-},\epsilon),G^p(g^p(x_{-},\epsilon)),\epsilon) }
+\max_{\{x_{-},\theShock\}} \twoNorm{ \phiMat \eqnFunc(x_{-},g^p(x_{-},\theShock),G^p(g^p(x_{-},\theShock)),\theShock) }\\
+	\infNorm{ x^\star_{t}(x_{t-1},\theShock) -	 x^p_{t}(x_{t-1},\theShock)} \le
+\max_{\{x_{-},\theShock\}} \twoNorm{(I-F)^{-1} \phiMat \eqnFunc(x_{-},g^p(x_{-},\theShock),G^p(g^p(x_{-},\theShock)),\theShock) }
   \end{tcolorbox}
 }
 
@@ -1927,40 +1927,40 @@ the largest error for $\Delta z_{t+k}^p$   are pessimistic bounds for the errors
  \begin{gather*}
 z^\star_t=\hApp{x^\star}\\
 z^p_t=\hApp{x^p}\\
-0=\eqnFunc(x^\star_{t-1},x^\star_{t},x^\star_{t+1},\epsilon_t)\\
-\mathbf{e}_t^p(x_{t-1},\epsilon)=\eqnFunc(x^p_{t-1},x^p_{t},x^p_{t+1},\epsilon_t)\\
-\max_{x_{t-1},\epsilon_t} (\twoNorm{\phiMat \Delta z_t})^2 =\max_{x_{t-1},\epsilon_t} (\phiMat(H_0(x^p_t-x^\star_t)+H_+(x^p_{t+1}-x^\star_{t+1})))^2
+0=\eqnFunc(x^\star_{t-1},x^\star_{t},x^\star_{t+1},\theShock_t)\\
+\mathbf{e}_t^p(x_{t-1},\theShock)=\eqnFunc(x^p_{t-1},x^p_{t},x^p_{t+1},\theShock_t)\\
+\max_{x_{t-1},\theShock_t} (\twoNorm{\phiMat \Delta z_t})^2 =\max_{x_{t-1},\theShock_t} (\phiMat(H_0(x^p_t-x^\star_t)+H_+(x^p_{t+1}-x^\star_{t+1})))^2
 \intertext{with}
-\eqnFunc(x^\star_{t-1},x^\star_{t},x^\star_{t+1},\epsilon_t) =0\\
-%\le \mathbf{e}_t^p(x_{t-1},\epsilon)\\
-\Delta \mathbf{e}_t^p(x_{t-1},\epsilon)\approx \pdrv{\eqnFunc(x_{t-1},x_{t},x_{t+1},\epsilon_t)}{x_t} (x^\star_t-x^p_t) +\pdrv{\eqnFunc(x_{t-1},x_{t},x_{t+1},\epsilon_t)}{x_{t+1}} (x^\star_{t+1}-x^p_{t+1}) \intertext{ when $\pdrv{\eqnFunc(x_{t-1},x_{t},x_{t+1},\epsilon_t)}{x_t}$ is non-singular, we can write}
- (x^\star_t-x^p_t) \approx \left ( \pdrv{\eqnFunc(x_{t-1},x_{t},x_{t+1},\epsilon_t)}{x_t}\right )^{-1} \left ( \Delta \mathbf{e}_t^p(x_{t-1},\epsilon) -\pdrv{\eqnFunc(x_{t-1},x_{t},x_{t+1},\epsilon_t)}{x_{t+1}} (x^\star_{t+1}-x^p_{t+1}) \right )
+\eqnFunc(x^\star_{t-1},x^\star_{t},x^\star_{t+1},\theShock_t) =0\\
+%\le \mathbf{e}_t^p(x_{t-1},\theShock)\\
+\Delta \mathbf{e}_t^p(x_{t-1},\theShock)\approx \pdrv{\eqnFunc(x_{t-1},x_{t},x_{t+1},\theShock_t)}{x_t} (x^\star_t-x^p_t) +\pdrv{\eqnFunc(x_{t-1},x_{t},x_{t+1},\theShock_t)}{x_{t+1}} (x^\star_{t+1}-x^p_{t+1}) \intertext{ when $\pdrv{\eqnFunc(x_{t-1},x_{t},x_{t+1},\theShock_t)}{x_t}$ is non-singular, we can write}
+ (x^\star_t-x^p_t) \approx \left ( \pdrv{\eqnFunc(x_{t-1},x_{t},x_{t+1},\theShock_t)}{x_t}\right )^{-1} \left ( \Delta \mathbf{e}_t^p(x_{t-1},\theShock) -\pdrv{\eqnFunc(x_{t-1},x_{t},x_{t+1},\theShock_t)}{x_{t+1}} (x^\star_{t+1}-x^p_{t+1}) \right )
 \intertext{ collecting results}
  (\twoNorm{\phiMat \Delta z_t})^2 =\\ 
  (\phiMat(
-H_0\left ( \pdrv{\eqnFunc(x_{t-1},x_{t},x_{t+1},\epsilon_t)}{x_t}\right )^{-1} \\
-\left ( \Delta \mathbf{e}_t^p(x_{t-1},\epsilon) -
-\pdrv{\eqnFunc(x_{t-1},x_{t},x_{t+1},\epsilon_t)}{x_{t+1}} (x^\star_{t+1}-x^p_{t+1}) \right )+
+H_0\left ( \pdrv{\eqnFunc(x_{t-1},x_{t},x_{t+1},\theShock_t)}{x_t}\right )^{-1} \\
+\left ( \Delta \mathbf{e}_t^p(x_{t-1},\theShock) -
+\pdrv{\eqnFunc(x_{t-1},x_{t},x_{t+1},\theShock_t)}{x_{t+1}} (x^\star_{t+1}-x^p_{t+1}) \right )+
 H_+(x^p_{t+1}-x^\star_{t+1})))^2=
 \\
  (\phiMat(
-H_0\left ( \pdrv{\eqnFunc(x_{t-1},x_{t},x_{t+1},\epsilon_t)}{x_t}\right )^{-1} 
-( \Delta \mathbf{e}_t^p(x_{t-1},\epsilon) )
+H_0\left ( \pdrv{\eqnFunc(x_{t-1},x_{t},x_{t+1},\theShock_t)}{x_t}\right )^{-1} 
+( \Delta \mathbf{e}_t^p(x_{t-1},\theShock) )
 -\\
-\left ( H_0\left ( \pdrv{\eqnFunc(x_{t-1},x_{t},x_{t+1},\epsilon_t)}{x_t}\right )^{-1} 
-\pdrv{\eqnFunc(x_{t-1},x_{t},x_{t+1},\epsilon_t)}{x_{t+1}} (x^\star_{t+1}-x^p_{t+1}) \right )+
+\left ( H_0\left ( \pdrv{\eqnFunc(x_{t-1},x_{t},x_{t+1},\theShock_t)}{x_t}\right )^{-1} 
+\pdrv{\eqnFunc(x_{t-1},x_{t},x_{t+1},\theShock_t)}{x_{t+1}} (x^\star_{t+1}-x^p_{t+1}) \right )+
 H_+(x^p_{t+1}-x^\star_{t+1})))^2=\\
  (\phiMat(
-H_0\left ( \pdrv{\eqnFunc(x_{t-1},x_{t},x_{t+1},\epsilon_t)}{x_t}\right )^{-1} 
-( \Delta \mathbf{e}_t^p(x_{t-1},\epsilon) )
+H_0\left ( \pdrv{\eqnFunc(x_{t-1},x_{t},x_{t+1},\theShock_t)}{x_t}\right )^{-1} 
+( \Delta \mathbf{e}_t^p(x_{t-1},\theShock) )
 -\\
-\left ( H_0\left ( \pdrv{\eqnFunc(x_{t-1},x_{t},x_{t+1},\epsilon_t)}{x_t}\right )^{-1} 
-\pdrv{\eqnFunc(x_{t-1},x_{t},x_{t+1},\epsilon_t)}{x_{t+1}}  -H_+\right ) (x^\star_{t+1}-x^p_{t+1})
+\left ( H_0\left ( \pdrv{\eqnFunc(x_{t-1},x_{t},x_{t+1},\theShock_t)}{x_t}\right )^{-1} 
+\pdrv{\eqnFunc(x_{t-1},x_{t},x_{t+1},\theShock_t)}{x_{t+1}}  -H_+\right ) (x^\star_{t+1}-x^p_{t+1})
 ))^2=\intertext{approximating the derivatives using the $H$ matrices}
-\pdrv{\eqnFunc(x_{t-1},x_{t},x_{t+1},\epsilon_t)}{x_{t}} \approx H_0\\
-\pdrv{\eqnFunc(x_{t-1},x_{t},x_{t+1},\epsilon_t)}{x_{t+1}} \approx H_+\\
+\pdrv{\eqnFunc(x_{t-1},x_{t},x_{t+1},\theShock_t)}{x_{t}} \approx H_0\\
+\pdrv{\eqnFunc(x_{t-1},x_{t},x_{t+1},\theShock_t)}{x_{t+1}} \approx H_+\\
 \intertext{produces}
-\max_{x_{t-1},\epsilon_t} (\phiMat \Delta \mathbf{e}_t^p(x_{t-1},\epsilon))^2
+\max_{x_{t-1},\theShock_t} (\phiMat \Delta \mathbf{e}_t^p(x_{t-1},\theShock))^2
   \end{gather*}
 
 
@@ -2021,9 +2021,9 @@ H_0\left ( \pdrv{\eqnFunc(x_{t-1},x_{t},x_{t+1},\epsilon_t)}{x_t}\right )^{-1}
 
 \label{sec:regime-switch-model}
 
-To apply the series formula, one must construct conditional expectations paths from each initial $x(x_{t-1},\epsilon_t)$.  Consider the case when the transition 
+To apply the series formula, one must construct conditional expectations paths from each initial $x(x_{t-1},\theShock_t)$.  Consider the case when the transition 
 probabilities $p_{ij}$ are constant and do not depend on 
-$x_{t-1},\epsilon_t,x_t$.
+$x_{t-1},\theShock_t,x_t$.
 
 \begin{gather*}
 E_t[x_{t+1}]=  \sum_{j=1}^{N} p_{ij} E_t(x_{t+1}(x_t)|s_{t+1}=j)  \\
@@ -2063,7 +2063,7 @@ if(s_t=0\land \mu>0 \land (k_t - (1-d_0)k_{t-1}-\upsilon I_{ss})=0)\\
   \lambda_t -\frac{1}{c_t}\\
 c_t+k_t-\theta_tk_{t-1}^\alpha\\
 N_t-\lambda_t \theta_t\\
-\theta_t-e^{(\rho\ln(\theta_{t-1})+\epsilon)}\\
+\theta_t-e^{(\rho\ln(\theta_{t-1})+\theShock)}\\
 \lambda_t + {\mu_t} - (\alpha k_t^{(\alpha-1)}\delta N_{t+1}+\lambda_{t+1} \delta (1-d_0)+{\mu_{t+1}}+\delta (1-d_0)\\
 I_t-(K_t-(1-d_0)k_{t-1})\\
 \mu_t(k_t - (1-d_0) k_{t-1}-\upsilon I_{ss})\\
@@ -2073,7 +2073,7 @@ if(s_t=0\land\mu=0 \land (k_t - (1-d_0)k_{t-1}-\upsilon I_{ss})\ge 0)\\
   \lambda_t -\frac{1}{c_t}\\
 c_t+k_t-\theta_tk_{t-1}^\alpha\\
 N_t-\lambda_t \theta_t\\
-\theta_t-e^{(\rho\ln(\theta_{t-1})+\epsilon)}\\
+\theta_t-e^{(\rho\ln(\theta_{t-1})+\theShock)}\\
 \lambda_t + {\mu_t} - (\alpha k_t^{(\alpha-1)}\delta N_{t+1}+\lambda_{t+1} \delta (1-d_0)+{\mu_{t+1}}+\delta (1-d_0)\\
 I_t-(K_t-(1-d_0)k_{t-1})\\
 \mu_t(k_t - (1-d_0) k_{t-1}-\upsilon I_{ss})
@@ -2083,7 +2083,7 @@ if(s_t=1\land \mu>0 \land (k_t - (1-d_1)k_{t-1}-\upsilon I_{ss})=0)\\
   \lambda_t -\frac{1}{c_t}\\
 c_t+k_t-\theta_tk_{t-1}^\alpha\\
 N_t-\lambda_t \theta_t\\
-\theta_t-e^{(\rho\ln(\theta_{t-1})+\epsilon)}\\
+\theta_t-e^{(\rho\ln(\theta_{t-1})+\theShock)}\\
 \lambda_t + {\mu_t} - (\alpha k_t^{(\alpha-1)}\delta N_{t+1}+\lambda_{t+1} \delta (1-d_1)+{\mu_{t+1}}+\delta (1-d_1)\\
 I_t-(K_t-(1-d_1)k_{t-1})\\
 \mu_t(k_t - (1-d_1) k_{t-1}-\upsilon I_{ss})\\
@@ -2093,7 +2093,7 @@ if(s_t=1\land\mu=0 \land (k_t - (1-d_1)k_{t-1}-\upsilon I_{ss})\ge 0)\\
   \lambda_t -\frac{1}{c_t}\\
 c_t+k_t-\theta_tk_{t-1}^\alpha\\
 N_t-\lambda_t \theta_t\\
-\theta_t-e^{(\rho\ln(\theta_{t-1})+\epsilon)}\\
+\theta_t-e^{(\rho\ln(\theta_{t-1})+\theShock)}\\
 \lambda_t + {\mu_t} - (\alpha k_t^{(\alpha-1)}\delta N_{t+1}+\lambda_{t+1} \delta (1-d_1)+{\mu_{t+1}}+\delta (1-d_1)\\
 I_t-(K_t-(1-d_1)k_{t-1})\\
 \mu_t(k_t - (1-d_1) k_{t-1}-\upsilon I_{ss})
@@ -2111,7 +2111,7 @@ I_t-(K_t-(1-d_1)k_{t-1})\\
 %   \SetKwInOut{Input}{input}
 %  \SetKwInOut{Output}{output}
 % \Input{$\aSmolPoly$, $\smolRngs$, $\distribSpec$} 
-% \Output{$\int \aSmolPoly \Pi (f_i(\epsilon_i)) d\epsilon_1 \ldots d\epsilon_k$}
+% \Output{$\int \aSmolPoly \Pi (f_i(\theShock_i)) d\theShock_1 \ldots d\theShock_k$}
 % \end{algorithm}
 
 
@@ -2580,7 +2580,7 @@ I_t-(K_t-(1-d_1)k_{t-1})\\
 and an outer 
 model solution selection function. Each of triples
  returns the boolean gate values and a unique value for 
-$x_t$ for any given value of $(x_{t-1},\epsilon_t)$ 
+$x_t$ for any given value of $(x_{t-1},\theShock_t)$ 
 one of the  model equations  
 and subsequently uses these 
 functions to construct interpolating functions approximating the 
@@ -2603,7 +2603,7 @@ Symbolically generates a collection of function triples
 and an outer 
 model solution selection function. Each of the triples
  returns the Boolean gate values and a unique value for 
-$x_t$ for any given value of $(x_{t-1},\epsilon_t)$ 
+$x_t$ for any given value of $(x_{t-1},\theShock_t)$ 
 for one from the set of  model equations. It
  subsequently uses these 
 functions to construct interpolating functions approximating the 
@@ -2626,9 +2626,9 @@ $theFuncOptionsTriples=\map(\func(v,\{v[1],genFindRootWorker(\linMod,\bothFuncs,
 $\tArg$}
 $\theZsNow=\{Z_{t+1},\ldots,Z_{t+k-1}\}=genZsForFindRoot(\linMod,x_t^p,\XZFunc)$\\
 $modEqnArgsFunc=genLilXkZkFunc(\linMod,\theZsNow)$\\
-$\modEqnArgsNow=\{x_{t-1},x_{t},E_t(x_{t+1}),\epsilon_t\}=modEqnArgsFunc(x_{t-1},\epsilon_t,z_t)$\\
+$\modEqnArgsNow=\{x_{t-1},x_{t},E_t(x_{t+1}),\theShock_t\}=modEqnArgsFunc(x_{t-1},\theShock_t,z_t)$\\
 $funcOfXtZt=FindRoot((x_t^p,z_t),\{\eqnFunc(\modEqnArgsNow),x_t-x_t^p\})$\\
-$funcOfXtm1Eps=Function((x_{t-1},\epsilon_t),funcOfXtZt)$\\
+$funcOfXtm1Eps=Function((x_{t-1},\theShock_t),funcOfXtZt)$\\
 \Output{$funcOfXtm1Eps$}
 \caption{$genFindRootWorker$\label{genFindRootWorker}} 
 \end{algorithm}
@@ -2657,11 +2657,11 @@ $=\{(X_{t+i},Z_{t+1}),\ldots,(X_{t+\kappa-1}Z_{t+\kappa-1})\}=genZsForFindRoot(\
 \tcc{Create functions that use the solution from the linear 
 reference model for an initial proposed decision rule function and 
 decision rule conditional expectation function.}
-$\xzFunc(x,\epsilon)=
+$\xzFunc(x,\theShock)=
 \begin{bmatrix}
-B x+(I-F)^{-1} \phiMat \psiCMat+ \psiEpsMat \epsilon_t\\0_{\numZ}  
+B x+(I-F)^{-1} \phiMat \psiCMat+ \psiEpsMat \theShock_t\\0_{\numZ}  
 \end{bmatrix}$\\
-$\XZFunc(x,\epsilon)=
+$\XZFunc(x,\theShock)=
 \begin{bmatrix}
 B x+(I-F)^{-1} \phiMat \psiCMat+ \psiEpsMat \\0_{\numZ}  
 \end{bmatrix}$\\
@@ -2675,9 +2675,9 @@ $\bothFuncs=\{\xzFunc,\XZFunc\}$\\
  \SetKwInOut{Input}{input}
  \SetKwInOut{Output}{output}
 \Input{$(\linMod,\{Z_{t+1},\ldots,Z_{t+k-1}\})$}
-\tcc{Symbolically creates a function that uses an initial $Z_t$ path to generate a function of $(x_{t-1},\epsilon_t,z_t)$ providing (potentially symbolic ) inputs $(x_{t-1},x_t,E_t(x_{t+1}),\epsilon_t)$,for model system equations $\eqnFunc$} 
+\tcc{Symbolically creates a function that uses an initial $Z_t$ path to generate a function of $(x_{t-1},\theShock_t,z_t)$ providing (potentially symbolic ) inputs $(x_{t-1},x_t,E_t(x_{t+1}),\theShock_t)$,for model system equations $\eqnFunc$} 
 $fCon=fSumC(\phiMat,F,\psi_z,\{Z_{t+1},\ldots,Z_{t+k-1}\})$
-$xtVals=genXtOfXtm1(\linMod,x_{t-1},\epsilon_t,z_t,fCon)$
+$xtVals=genXtOfXtm1(\linMod,x_{t-1},\theShock_t,z_t,fCon)$
 $xtp1Vals=genXtp1OfXt(\linMod,xtVals,fCon)$
 $fullVec=\{xtm1Vars,xtVals,xtp1Vals,epsVars\}$\\
 \Output{$fullVec$}
@@ -2689,10 +2689,10 @@ $fullVec=\{xtm1Vars,xtVals,xtp1Vals,epsVars\}$\\
 \begin{algorithm}
  \SetKwInOut{Input}{input}
  \SetKwInOut{Output}{output}
-\Input{$(\linMod,x_{t-1},\epsilon_t,z_t,fCon)$}
-\tcc{Symbolically creates a function that uses an initial $Z_t$ path to generate a function of $(x_{t-1},\epsilon_t,z_t)$ providing (potentially symbolically ) 
-the $x_t$ component of inputs  $(x_{t-1},x_t,E_t(x_{t+1}),\epsilon_t)$,for model system equations $\eqnFunc$}
-$x_t=B x_{t-1}+ (I-F)^{-1} \phiMat \psiCMat + \phiMat . \psiEpsMat . \epsilon_t+
+\Input{$(\linMod,x_{t-1},\theShock_t,z_t,fCon)$}
+\tcc{Symbolically creates a function that uses an initial $Z_t$ path to generate a function of $(x_{t-1},\theShock_t,z_t)$ providing (potentially symbolically ) 
+the $x_t$ component of inputs  $(x_{t-1},x_t,E_t(x_{t+1}),\theShock_t)$,for model system equations $\eqnFunc$}
+$x_t=B x_{t-1}+ (I-F)^{-1} \phiMat \psiCMat + \phiMat . \psiEpsMat . \theShock_t+
 \phiMat \psi_z  z_t + F  fCon$\\
 \Output{$x_t$}
 \caption{$genXtOfXtm1$\label{genXtOfXtm1}} 
@@ -2704,8 +2704,8 @@ $x_t=B x_{t-1}+ (I-F)^{-1} \phiMat \psiCMat + \phiMat . \psiEpsMat . \epsilon_t+
  \SetKwInOut{Input}{input}
  \SetKwInOut{Output}{output}
 \Input{$(\linMod,x_{t-1},fCon)$}
-\tcc{Symbolically creates a function that uses an initial $Z_t$ path to generate a function of $(x_{t-1},\epsilon_t,z_t)$ providing (potentially symbolically  )the $x_{t+1}$ component of inputs $(x_{t-1},x_t,E_t(x_{t+1}),\epsilon_t)$,for model system equations $\eqnFunc$}
-$x_t=B x_{t-1}+ (I-F)^{-1} \phiMat \psiCMat + \phiMat . \psiEpsMat . \epsilon_t+
+\tcc{Symbolically creates a function that uses an initial $Z_t$ path to generate a function of $(x_{t-1},\theShock_t,z_t)$ providing (potentially symbolically  )the $x_{t+1}$ component of inputs $(x_{t-1},x_t,E_t(x_{t+1}),\theShock_t)$,for model system equations $\eqnFunc$}
+$x_t=B x_{t-1}+ (I-F)^{-1} \phiMat \psiCMat + \phiMat . \psiEpsMat . \theShock_t+
 \phiMat \psi_z  z_t +fCon$\\
 \Output{$x_t$}
 \caption{$genXtp1OfXt$\label{genXtp1OfXt}} 
@@ -2846,7 +2846,7 @@ and subsequently returns the
 % \end{gather*}
 % The panels labeled equation error show  contour plots for
 % \begin{gather*}
-%   \mathbb{D}()\equiv \eqnFunc(x_{-},g^p(x_{-},\epsilon),G^p(g^p(x_{-},\epsilon)),\epsilon). 
+%   \mathbb{D}()\equiv \eqnFunc(x_{-},g^p(x_{-},\theShock),G^p(g^p(x_{-},\theShock)),\theShock). 
 % \end{gather*}
 % These are the model equation ``Euler'' errors at various locations in the ergodic set.
 
@@ -2859,9 +2859,9 @@ and subsequently returns the
 % and was used in computing the error bound. 
 
 % The top panel provides a contour plot of the
-% norm of the equation errors. The bottom plot shows the error in the decision rule for different values of $k_{t-1}, \theta_{t-1}$ with $\epsilon_t=0$.
+% norm of the equation errors. The bottom plot shows the error in the decision rule for different values of $k_{t-1}, \theta_{t-1}$ with $\theShock_t=0$.
 % Notice that  setting $K=0$ is not equivalent to the standard approach as
-% the series formula has a correction term for $z_t(x_{t-1},\epsilon_t)$
+% the series formula has a correction term for $z_t(x_{t-1},\theShock_t)$
 
 
 
@@ -2912,7 +2912,7 @@ and subsequently returns the
 %  0.20 <\alpha<0.40,\,\,0.85<\delta<0.99,\,\,0.85<\rho<0.99,\,\,0.005<\sigma<0.015
 % \end{gather*}
 % I do this approximation for 50 various values of 
-% $(k_{t-1},\theta_{t-1},\epsilon_t)$ generated using the Niederreiter algorithm
+% $(k_{t-1},\theta_{t-1},\theShock_t)$ generated using the Niederreiter algorithm
 %  covering the ergodic set.  I do this for values of k from 0 to 20.  The static proposed solution comes from linearizing
 % the RBC model around the deterministic steady state for
 %  the parameter settings in \ref{rbcparams}.  

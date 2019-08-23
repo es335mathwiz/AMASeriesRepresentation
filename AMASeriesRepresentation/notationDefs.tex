@@ -18,16 +18,25 @@
 
 
 \newglossaryentry{theShock}{name=\ensuremath{{\epsilon}},sort={gepsilon},
-  description={ use \chkShow{\theShock}   The state variable.}}
+  description={ use \chkShow{\theShock}   The shock variable.}}
   \newcommand{\theShock}{{\gls{theShock}}}
 
 \newglossaryentry{drFunc}{name=\ensuremath{{\mathcal{X}}},sort={aMX},
-  description={ use \chkShow{\drFunc}   The state variable.}}
+  description={ use \chkShow{\drFunc}   The ``decision rule'' function.}}
   \newcommand{\drFunc}{{\gls{drFunc}}}
 
 \newglossaryentry{BMat}{name=\ensuremath{{B}},sort={aB},
-  description={ use \chkShow{\BMat}   The state variable.}}
+  description={ use \chkShow{\BMat}   Linear impact of lagged  state variable.}}
   \newcommand{\BMat}{{\gls{BMat}}}
+
+
+\newglossaryentry{FMat}{name=\ensuremath{{F}},sort={aF},
+  description={ use \chkShow{\FMat}   Linear impact of future  state variables.}}
+  \newcommand{\FMat}{{\gls{FMat}}}
+
+\newglossaryentry{IMat}{name=\ensuremath{{I}},sort={aI},
+  description={ use \chkShow{\IMat}   Linear impact of future  state variables.}}
+  \newcommand{\IMat}{{\gls{IMat}}}
 
 
 \newglossaryentry{phiMat}{name=\ensuremath{{\phi}},sort={gphi},
@@ -44,12 +53,145 @@
   description={ use \chkShow{\psiCMat}   Constant impact matrix.}}
   \newcommand{\psiCMat}{{\gls{psiCMat}}}
 
-%\newcommand{\tArg}{(\sVar_{t-1},\theShock_t)}
-%\newcommand{\eqnFuncSysIExpl}[1]{\{(\mathbf{b}_{#1}\tArg,\eqnFunc_{#1}\allArgs=0,\mathbf{c}_{#1}\allArgs )\}}
 
 
 \newacronym{msnto}{MSNTO}{multi-sequential number-theoretic optimization}
   \newcommand{\MSNTO}{\gls{msnto}}
+
+
+
+
+
+
+\newcommand{\tArg}{(\sVar_{t-1},\theShock_t)}
+\newcommand{\eqnFuncSysIExpl}[1]{\{(\mathbf{b}_{#1}\tArg,\eqnFunc_{#1}\allArgs=0,\mathbf{c}_{#1}\allArgs )\}}
+
+\newcommand{\expct}[1]{{\mathcal{E}\left [ #1 \right ]}}
+
+\newcommand{\sForSum}{{\nu}}
+
+\newcommand{\ZWOarg}{   \mathbf{Z}}
+
+\newcommand{\linMod}{{\mathcal{L}}}
+\newcommand{\linModMats}{{\{H,\psi_\epsilon,\psi_c;B,\phi,F\}}}
+
+\newcommand{\xWOarg}{   \mathbf{x}}
+
+
+\newcommand{\zWOarg}{   \mathbf{z}}
+
+%\newcommand{\XWOargK}{   \hat{\mathbf{X}}}
+
+\newcommand{\xWOargK}{   \hat{\mathbf{x}}}
+
+
+\newcommand{\xWarg}{   \mathbf{x}(x_{t-1},\epsilon)}
+                       
+\newcommand{\xWargK}{   \hat{\mathbf{x}}(x_{t-1},\epsilon,k)}
+\newcommand{\xtmEpsArg}{{x_{t-1},\epsilon_t}}
+
+\newcommand{\DR}{\mathcal{D}}
+
+\newcommand{\DRCE}{\mathbb{D}}
+
+\newcommand{\rcpC}{{\mathbf{N}}}
+
+
+
+\newcommand{\bndRgn}{\mathcal{A}}
+\newcommand{\eqnFunc}{\mathbb{M}}
+
+\newcommand{\XWOarg}{   \mathbf{X}}
+
+\newcommand{\zpWOarg}{   \mathbf{z}^p}
+
+
+\newcommand{\eqnFuncSys}{\{\{\eqnFuncSysI{1},\ldots,\eqnFuncSysI{M}\},\mathbf{d}\allArgs|(\preGate_.,\postGate_.)\}}
+
+\newcommand{\eqnFuncSysI}[1]{\mathbb{C}_{#1}}
+
+
+\newcommand{\allArgs}{(x_{t-1},\epsilon,x_t,\expct{x_{t+1}})}
+
+
+\newcommand{\preGate}{\mathbf{b}}
+
+\newcommand{\postGate}{\mathbf{c}}
+
+\newcommand{\lastGate}{\mathbf{d}}
+\newcommand{\ZpWOarg}{   \mathbf{Z}^p}
+
+\newcommand{\zpWarg}{   \mathbf{z}^p(x_{t-1},\epsilon)}
+
+\newcommand{\xpWarg}{   \mathbf{x}^p(x_{t-1},\epsilon)}
+
+\newcommand{\xpWOarg}{   \mathbf{x}^p}
+
+\newcommand{\XpWOarg}{   \mathbf{X}^p}
+
+
+\newcommand{\xppWarg}{   \mathbf{x}^{p'}(x_{t-1},\epsilon)}
+
+\newcommand{\zppWarg}{   \mathbf{z}^{p'}(x_{t-1},\epsilon)}
+
+
+
+\newcommand{\tNo}{(x_{t-1})}
+
+
+\newcommand{\smolSpec}{\mathbb{S}}
+\newcommand{\aSmolPoly}[1]{p_{#1}(x,\epsilon)}
+\newcommand{\aSmolPolyCE}[1]{P_{#1}(x)}
+
+\newcommand{\xzFunc}{{{\gamma}}}
+
+
+\newcommand{\XZFunc}{{\mathbb{G}}}
+
+\newcommand{\bothFuncs}{\mathbb{H}}
+
+\newcommand{\eqnFuncSig}{{\Rn{3\numX+\numEps+\numZ}\rightarrow\Rn{\numX}}}
+\newcommand{\Rn}[1]{{\mathcal{R}^{#1}}}
+\newcommand{\numX}{{N_x}}
+\newcommand{\numZ}{{N_x}}
+\newcommand{\numEps}{{N_\epsilon}}
+
+\newcommand{\forActErr}{{\begin{bmatrix}
+     \lgabs{c,1}&\lgabs{k,1}&\lgabs{\theta,1}\\
+ &\vdots\\
+     \lgabs{c,30}&\lgabs{k,30}&\lgabs{\theta,30}\\
+   \end{bmatrix} }}
+
+\newcommand{\lgabs}[1]{{\ln(|\eulerE_{#1}|)}}
+\newcommand{\eulerE}{\mathbf{e}}
+
+
+
+\newcommand{\forEstErr}{{\begin{bmatrix}
+     \lgabshat{c,1}&\lgabshat{k,1}&\lgabshat{\theta,1}\\
+ &\vdots\\
+     \lgabshat{c,30}&\lgabshat{k,30}&\lgabshat{\theta,30}\\
+   \end{bmatrix} }}
+
+\newcommand{\lgabshat}[1]{{\ln(|\hat{\eulerE_{#1}}|)}}
+
+
+\newcommand{\eqnFuncSysNoD}{\{\eqnFuncSysI{1},\ldots,\eqnFuncSysI{M}\}}
+
+\newcommand{\theD}{\mathbf{d}}
+
+\newcommand{\theZsNow}{\mathcal{Z}}
+
+
+\newcommand{\modEqnArgsNow}{\mathcal{X}}
+
+
+
+
+
+
+
+
 
 
 

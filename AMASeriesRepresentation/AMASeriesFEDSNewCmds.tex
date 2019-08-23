@@ -33,12 +33,13 @@
 %\usepackage[margin=1.0in]{geometry}
 \usepackage{graphicx}
 \usepackage{moreverb}
-%\usepackage{hyperref}
+\usepackage{mathtools}
+
 \newcommand\infNorm[1]{\left\lVert#1\right\rVert_\infty}
 \newcommand\twoNorm[1]{\left\lVert#1\right\rVert_2}
 \newcommand\someNorm[1]{\left\lVert#1\right\rVert}
+\newcommand{\pdrv}[2]{\frac{\partial #1}{\partial #2}}
 
-\usepackage{mathtools}
 \mathtoolsset{showonlyrefs}
 
 \usepackage[english]{babel}
@@ -49,239 +50,235 @@
 
 
 
-\newcommand{\pdrv}[2]{\frac{\partial #1}{\partial #2}}
 
-\newcommand{\xgusst}[1]{x^{guess}_{#1}}
-\newcommand{\xnxt}[1]{x^{next}_{#1}}
-\newcommand{\znxt}[1]{z^{next}_{#1}}
-\newcommand{\xlst}[1]{x^{last}_{#1}}
-\newcommand{\zlst}[1]{z^{last}_{#1}}
-\newcommand{\zgusst}[1]{z^{guess}_{#1}}
-\newcommand{\xguss}{\xgusst{}}
-\newcommand{\xtpguss}{x^{tp1guess}}
-
-
-\newcommand{\iSet}{{\mathcal{I}_t}}
-
-\newcommand{\posInt}{{\mathcal{N}^+}}
-\newcommand{\Rn}[1]{{\mathcal{R}^{#1}}}
-\newcommand{\numX}{{N_x}}
-\newcommand{\numZ}{{N_x}}
-\newcommand{\numEps}{{N_\epsilon}}
-\newcommand{\numR}{{N_r}}
-\newcommand{\numIters}{{K}}
-\newcommand{\numTerms}{{N_{terms}}}
-\newcommand{\numPts}{{N_{points}}}
-\newcommand{\thePoints}{{\{(x_{t-1},\epsilon_t)^{1} \ldots (x_{t-1},\epsilon_t)^{\numPts}\}}}
-\newcommand{\thePts}{{\mathcal{P}}}
-%\newcommand{\ADRCE}{{\bf ADRCE}}
-%\newcommand{\ADR}{{\bf ADR}}
-\newcommand{\ADRCE}{\XZFunc}
-\newcommand{\ADR}{\xzFunc}
-\newcommand{\DRCE}{\mathbb{D}}
-\newcommand{\DR}{\mathcal{D}}
+% \newcommand{\xgusst}[1]{x^{guess}_{#1}}
+% \newcommand{\xnxt}[1]{x^{next}_{#1}}
+% \newcommand{\znxt}[1]{z^{next}_{#1}}
+% \newcommand{\xlst}[1]{x^{last}_{#1}}
+% \newcommand{\zlst}[1]{z^{last}_{#1}}
+% \newcommand{\zgusst}[1]{z^{guess}_{#1}}
+% \newcommand{\xguss}{\xgusst{}}
+% \newcommand{\xtpguss}{x^{tp1guess}}
 
 
-\newcommand{\bndRgn}{\mathcal{A}}
+% \newcommand{\iSet}{{\mathcal{I}_t}}
 
-\newcommand{\xtmEpsArg}{{x_{t-1},\epsilon_t}} 
-\newcommand{\xtArg}{{x_{t} }}
-
-
-\newcommand{\sumLinPart}{{
-B x_{t-1}+ \phi \psi_\epsilon\epsilon + (I - F)^{-1} \phi \psi_c 
-}}
-\newcommand{\sumZPart}{{
- \sum_{\sForSum=0}^\infty F^s \phi z_{t+\sForSum}(x_{t-1},\epsilon) 
-}}
-\newcommand{\sumZPartZero}{{
- \phi z_{t}(x_{t-1},\epsilon) 
-}}
-\newcommand{\sumZPartPos}{{
- \sum_{\sForSum=1}^\infty F^s \phi Z_{t+\sForSum}(x_{t-1},\epsilon) 
-}}
-
-\newcommand{\EsumLinPart}{{
-	 B x_{t-1}+ (I - F)^{-1} \phi \psi_c 
-}}
-\newcommand{\EsumZPartZero}{{
-	  \sum_{\sForSum=0}^\infty F^s \phi Z^{PF}_{t+\sForSum}(x_{t-1},0) 
-}}
-\newcommand{\EsumZPartEpsilon}{{
-	  \sum_{\sForSum=0}^\infty F^s \phi \expct{z_{t+\sForSum}(x_{t-1},\epsilon)}
-}}
-\newcommand{\EsumCapZPart}[1]{{
-	  \sum_{\sForSum=0}^\infty F^s \phi {Z^{#1}_{t+\sForSum}(x_{t-1})}
-}}
-\newcommand{\uncnxpt}[2]{{\mathcal{E}\left [ \left . #1 \right | #2  \right ]}}
-\newcommand{\expct}[1]{{\mathcal{E}\left [ #1 \right ]}}
-
-\newcommand{\xzFuncGuess}{{\mathbb{g}}}
-\newcommand{\xzFuncGuessIn}{{\mathbf{\mathbb{g}_{in}}}}
-\newcommand{\genxzFuncGuessIn}{{\mathbf{gen\mathbb{g}_{in}}}}
-\newcommand{\xzFuncGuessSig}{{(\Rn{\numX})\rightarrow
-(\Rn{({\numX+\numZ})})}}
+% \newcommand{\posInt}{{\mathcal{N}^+}}
+% \newcommand{\Rn}[1]{{\mathcal{R}^{#1}}}
+% \newcommand{\numX}{{N_x}}
+% \newcommand{\numZ}{{N_x}}
+% \newcommand{\numEps}{{N_\epsilon}}
+% \newcommand{\numR}{{N_r}}
+% \newcommand{\numIters}{{K}}
+% \newcommand{\numTerms}{{N_{terms}}}
+% \newcommand{\numPts}{{N_{points}}}
+% \newcommand{\thePoints}{{\{(x_{t-1},\epsilon_t)^{1} \ldots (x_{t-1},\epsilon_t)^{\numPts}\}}}
+% \newcommand{\thePts}{{\mathcal{P}}}
+% %\newcommand{\ADRCE}{{\bf ADRCE}}
+% %\newcommand{\ADR}{{\bf ADR}}
+% \newcommand{\ADRCE}{\XZFunc}
+% \newcommand{\ADR}{\xzFunc}
+% \newcommand{\DRCE}{\mathbb{D}}
+% \newcommand{\DR}{\mathcal{D}}
 
 
-\newcommand{\bothFuncs}{\mathbb{H}}
-\newcommand{\xzFunc}{{{\gamma}}}
-\newcommand{\xzFuncSig}{{(\Rn{\numX+\numEps})\rightarrow
-(\Rn{({\numX+\numZ})})}}
+% \newcommand{\bndRgn}{\mathcal{A}}
 
-\newcommand{\XZFunc}{{\mathbb{G}}}
-\newcommand{\genXZFunc}{{\mathbf{gen\mathbb{G}}}}
-\newcommand{\bigXFuncSig}{{(\Rn{\numX})\rightarrow
-(\Rn{({\numX+\numZ})})}}
+% \newcommand{\xtmEpsArg}{{x_{t-1},\epsilon_t}} 
+% \newcommand{\xtArg}{{x_{t} }}
 
 
-\newcommand{\genXGFP}{{\mathcal{U}}}
-\newcommand{\xgFP}{{\mathcal{V}}}
+% \newcommand{\sumLinPart}{{
+% B x_{t-1}+ \phi \psi_\epsilon\epsilon + (I - F)^{-1} \phi \psi_c 
+% }}
+% \newcommand{\sumZPart}{{
+%  \sum_{\sForSum=0}^\infty F^s \phi z_{t+\sForSum}(x_{t-1},\epsilon) 
+% }}
+% \newcommand{\sumZPartZero}{{
+%  \phi z_{t}(x_{t-1},\epsilon) 
+% }}
+% \newcommand{\sumZPartPos}{{
+%  \sum_{\sForSum=1}^\infty F^s \phi Z_{t+\sForSum}(x_{t-1},\epsilon) 
+% }}
 
-\newcommand{\genFpf}{{\mathbf{gen}_\fpf}}
-\newcommand{\fpf}{{\mathcal{T}}}
-\newcommand{\fpfIn}{{\mathbf{t}_{in}}}
-\newcommand{\fpfOut}{{\mathbf{t}_{out}}}
-\newcommand{\genFpfIn}{{\mathbf{gen\fpf}_{in}}}
-\newcommand{\genFpfOut}{{\mathbf{gen\fpf}_{out}}}
+% \newcommand{\EsumLinPart}{{
+% 	 B x_{t-1}+ (I - F)^{-1} \phi \psi_c 
+% }}
+% \newcommand{\EsumZPartZero}{{
+% 	  \sum_{\sForSum=0}^\infty F^s \phi Z^{PF}_{t+\sForSum}(x_{t-1},0) 
+% }}
+% \newcommand{\EsumZPartEpsilon}{{
+% 	  \sum_{\sForSum=0}^\infty F^s \phi \expct{z_{t+\sForSum}(x_{t-1},\epsilon)}
+% }}
+% \newcommand{\EsumCapZPart}[1]{{
+% 	  \sum_{\sForSum=0}^\infty F^s \phi {Z^{#1}_{t+\sForSum}(x_{t-1})}
+% }}
+% \newcommand{\uncnxpt}[2]{{\mathcal{E}\left [ \left . #1 \right | #2  \right ]}}
+% \newcommand{\expct}[1]{{\mathcal{E}\left [ #1 \right ]}}
 
-\newcommand{\genSlvr}{{\mathbf{gen}_{\slvr}}}
-\newcommand{\slvr}{{\mathcal{S}}}
-\newcommand{\slvrIn}{{\mathbf{s}_{in}}}
-\newcommand{\slvrOut}{{\mathbf{s}_{out}}}
-\newcommand{\genSlvrIn}{{\mathbf{gen\slvr}_{in}}}
-\newcommand{\genSlvrOut}{{\mathbf{gen\slvr}_{out}}}
-\newcommand{\solverSig}{{
-\frfpnsRegimeFuncHelp
-}}
-\newcommand{\allArgs}{(x_{t-1},\epsilon,x_t,\expct{x_{t+1}})}
-\newcommand{\proj}[1]{{\pi_{#1}}}
-\newcommand{\eqnArg}{\mathbf{m}_{in}}
-\newcommand{\eqnOut}{\mathbf{m}_{err}}
-\newcommand{\eqnFunc}{\mathbb{M}}
-\newcommand{\preGate}{\mathbf{b}}
-\newcommand{\postGate}{\mathbf{c}}
-\newcommand{\lastGate}{\mathbf{d}}
-\newcommand{\tArg}{(x_{t-1},\epsilon_t)}
+% \newcommand{\xzFuncGuess}{{\mathbb{g}}}
+% \newcommand{\xzFuncGuessIn}{{\mathbf{\mathbb{g}_{in}}}}
+% \newcommand{\genxzFuncGuessIn}{{\mathbf{gen\mathbb{g}_{in}}}}
+% \newcommand{\xzFuncGuessSig}{{(\Rn{\numX})\rightarrow
+% (\Rn{({\numX+\numZ})})}}
 
-\newcommand{\eqnFuncSysIExpl}[1]{\{(\mathbf{b}_{#1}\tArg,\eqnFunc_{#1}\allArgs=0,\mathbf{c}_{#1}\allArgs )\}}
-\newcommand{\eqnFuncSysI}[1]{\mathbb{C}_{#1}}
-\newcommand{\eqnFuncSys}{\{\{\eqnFuncSysI{1},\ldots,\eqnFuncSysI{M}\},\mathbf{d}\allArgs|(\preGate_.,\postGate_.)\}}
-\newcommand{\theD}{\mathbf{d}}
-\newcommand{\eqnFuncSysNoD}{\{\eqnFuncSysI{1},\ldots,\eqnFuncSysI{M}\}}
-\newcommand{\eqnErrs}{{{m}_e}}
-\newcommand{\eqnFuncSig}{{\Rn{3\numX+\numEps+\numZ}\rightarrow\Rn{\numX}}}
-\newcommand{\theZsNow}{\mathcal{Z}}
 
-\newcommand{\modEqnArgsNow}{\mathcal{X}}
+% \newcommand{\bothFuncs}{\mathbb{H}}
+% \newcommand{\xzFunc}{{{\gamma}}}
+% \newcommand{\xzFuncSig}{{(\Rn{\numX+\numEps})\rightarrow
+% (\Rn{({\numX+\numZ})})}}
+
+% \newcommand{\XZFunc}{{\mathbb{G}}}
+% \newcommand{\genXZFunc}{{\mathbf{gen\mathbb{G}}}}
+% \newcommand{\bigXFuncSig}{{(\Rn{\numX})\rightarrow
+% (\Rn{({\numX+\numZ})})}}
+
+
+% \newcommand{\genXGFP}{{\mathcal{U}}}
+% \newcommand{\xgFP}{{\mathcal{V}}}
+
+% \newcommand{\genFpf}{{\mathbf{gen}_\fpf}}
+% \newcommand{\fpf}{{\mathcal{T}}}
+% \newcommand{\fpfIn}{{\mathbf{t}_{in}}}
+% \newcommand{\fpfOut}{{\mathbf{t}_{out}}}
+% \newcommand{\genFpfIn}{{\mathbf{gen\fpf}_{in}}}
+% \newcommand{\genFpfOut}{{\mathbf{gen\fpf}_{out}}}
+
+% \newcommand{\genSlvr}{{\mathbf{gen}_{\slvr}}}
+% \newcommand{\slvr}{{\mathcal{S}}}
+% \newcommand{\slvrIn}{{\mathbf{s}_{in}}}
+% \newcommand{\slvrOut}{{\mathbf{s}_{out}}}
+% \newcommand{\genSlvrIn}{{\mathbf{gen\slvr}_{in}}}
+% \newcommand{\genSlvrOut}{{\mathbf{gen\slvr}_{out}}}
+% \newcommand{\solverSig}{{
+% \frfpnsRegimeFuncHelp
+% }}
+% \newcommand{\allArgs}{(x_{t-1},\epsilon,x_t,\expct{x_{t+1}})}
+% \newcommand{\proj}[1]{{\pi_{#1}}}
+% \newcommand{\eqnArg}{\mathbf{m}_{in}}
+% \newcommand{\eqnOut}{\mathbf{m}_{err}}
+% \newcommand{\eqnFunc}{\mathbb{M}}
+% \newcommand{\preGate}{\mathbf{b}}
+% \newcommand{\postGate}{\mathbf{c}}
+% \newcommand{\lastGate}{\mathbf{d}}
+% \newcommand{\eqnFuncSysI}[1]{\mathbb{C}_{#1}}
+% \newcommand{\eqnFuncSys}{\{\{\eqnFuncSysI{1},\ldots,\eqnFuncSysI{M}\},\mathbf{d}\allArgs|(\preGate_.,\postGate_.)\}}
+% \newcommand{\theD}{\mathbf{d}}
+% \newcommand{\eqnFuncSysNoD}{\{\eqnFuncSysI{1},\ldots,\eqnFuncSysI{M}\}}
+% \newcommand{\eqnErrs}{{{m}_e}}
+% \newcommand{\eqnFuncSig}{{\Rn{3\numX+\numEps+\numZ}\rightarrow\Rn{\numX}}}
+% \newcommand{\theZsNow}{\mathcal{Z}}
+
+% \newcommand{\modEqnArgsNow}{\mathcal{X}}
 
 
 
-\newcommand{\lilXFuncSig}{{fix lilXFuncSig}}
+% \newcommand{\lilXFuncSig}{{fix lilXFuncSig}}
 
 
 
-\newcommand{\frfpnsFuncSig}{{\Rn{\numX+\numEps}\rightarrow\Rn{\numX+\numZ}}}
+% \newcommand{\frfpnsFuncSig}{{\Rn{\numX+\numEps}\rightarrow\Rn{\numX+\numZ}}}
 
-\newcommand{\bigXRegimeFuncSig}{{(\Rn{\numX+1})\rightarrow
-(\Rn{({\numX+\numZ})})}}
-\newcommand{\lilXRegimeFuncSig}{{(\Rn{\numX+1+\numEps+\numZ})\rightarrow
-(\Rn{({3(\numX+1)+\numEps+\numZ})})}}
-\newcommand{\eqnRegimeFuncSig}{{
-\{\Rn{3(\numX+1)+\numEps+\numZ}\rightarrow\Rn{\numX},
-\ldots,
-\Rn{3(\numX+1)+\numEps+\numZ}\rightarrow\Rn{\numX}\}
-}}
-\newcommand{\frfpnsRegimeFuncHelp}{{\Rn{\numX+\numEps}\rightarrow\Rn{\numX+\numZ}}}
+% \newcommand{\bigXRegimeFuncSig}{{(\Rn{\numX+1})\rightarrow
+% (\Rn{({\numX+\numZ})})}}
+% \newcommand{\lilXRegimeFuncSig}{{(\Rn{\numX+1+\numEps+\numZ})\rightarrow
+% (\Rn{({3(\numX+1)+\numEps+\numZ})})}}
+% \newcommand{\eqnRegimeFuncSig}{{
+% \{\Rn{3(\numX+1)+\numEps+\numZ}\rightarrow\Rn{\numX},
+% \ldots,
+% \Rn{3(\numX+1)+\numEps+\numZ}\rightarrow\Rn{\numX}\}
+% }}
+% \newcommand{\frfpnsRegimeFuncHelp}{{\Rn{\numX+\numEps}\rightarrow\Rn{\numX+\numZ}}}
 
-\newcommand{\frfpnsRegimeFuncSig}{{
-\{ (\frfpnsRegimeFuncHelp{1}), \ldots ,  (\frfpnsRegimeFuncHelp{\numR})\}
-}}
+% \newcommand{\frfpnsRegimeFuncSig}{{
+% \{ (\frfpnsRegimeFuncHelp{1}), \ldots ,  (\frfpnsRegimeFuncHelp{\numR})\}
+% }}
 
-\newcommand{\dstSpec}{{\mathbf{distSpec}}}
-\newcommand{\expctSpec}{{\mathbf{expctSpec}}}
-\newcommand{\grdSpec}{{\mathbf{grdSpec}}}
-
-
-\newcommand{\linMod}{{\mathcal{L}}}
-\newcommand{\linModMats}{{\{H,\psi_\epsilon,\psi_c;B,\phi,F\}}}
-\newcommand{\sForSum}{{\nu}}
-
-\newcommand{\xWOarg}{   \mathbf{x}}
-\newcommand{\xWarg}{   \mathbf{x}(x_{t-1},\epsilon)}
-\newcommand{\xWargK}{   \hat{\mathbf{x}}(x_{t-1},\epsilon,k)}
-\newcommand{\xWOargK}{   \hat{\mathbf{x}}}
-
-\newcommand{\xpWOarg}{   \mathbf{x}^p}
-\newcommand{\xpWarg}{   \mathbf{x}^p(x_{t-1},\epsilon)}
-\newcommand{\xpWargK}{   \hat{\mathbf{x}}^p(x_{t-1},\epsilon,k)}
-\newcommand{\xpWOargK}{   \hat{\mathbf{x}^p}}
+% \newcommand{\dstSpec}{{\mathbf{distSpec}}}
+% \newcommand{\expctSpec}{{\mathbf{expctSpec}}}
+% \newcommand{\grdSpec}{{\mathbf{grdSpec}}}
 
 
-\newcommand{\xppWOarg}{   \mathbf{x}^{p'}}
-\newcommand{\xppWarg}{   \mathbf{x}^{p'}(x_{t-1},\epsilon)}
-\newcommand{\xppWargK}{   \hat{\mathbf{x}}^{p'}(x_{t-1},\epsilon,k)}
-\newcommand{\xppWOargK}{   \hat{\mathbf{x}^{p'}}}
+% \newcommand{\linMod}{{\mathcal{L}}}
+% \newcommand{\linModMats}{{\{H,\psi_\epsilon,\psi_c;B,\phi,F\}}}
+% \newcommand{\sForSum}{{\nu}}
+
+% \newcommand{\xWOarg}{   \mathbf{x}}
+% \newcommand{\xWarg}{   \mathbf{x}(x_{t-1},\epsilon)}
+% \newcommand{\xWargK}{   \hat{\mathbf{x}}(x_{t-1},\epsilon,k)}
+% \newcommand{\xWOargK}{   \hat{\mathbf{x}}}
+
+% \newcommand{\xpWOarg}{   \mathbf{x}^p}
+% \newcommand{\xpWarg}{   \mathbf{x}^p(x_{t-1},\epsilon)}
+% \newcommand{\xpWargK}{   \hat{\mathbf{x}}^p(x_{t-1},\epsilon,k)}
+% \newcommand{\xpWOargK}{   \hat{\mathbf{x}^p}}
 
 
-
-\newcommand{\XWOarg}{   \mathbf{X}}
-\newcommand{\XWarg}{   \mathbf{X}(x_{t-1},\epsilon)}
-\newcommand{\XWargK}{   \hat{\mathbf{X}}(x_{t-1},\epsilon,k)}
-\newcommand{\XWOargK}{   \hat{\mathbf{X}}}
-
-
-\newcommand{\XpWOarg}{   \mathbf{X}^p}
-\newcommand{\XpWarg}{   \mathbf{X}^p(x_{t-1},\epsilon)}
-\newcommand{\XpWargK}{   \hat{\mathbf{X}^p}(x_{t-1},\epsilon,k)}
-\newcommand{\XpWOargK}{   \hat{\mathbf{X}^p}}
-
-\newcommand{\zWOarg}{   \mathbf{z}}
-\newcommand{\zWarg}{   \mathbf{z}(x_{t-1},\epsilon)}
-\newcommand{\zWargK}{   \hat{\mathbf{z}}(x_{t-1},\epsilon,k)}
-\newcommand{\zWOargK}{   \hat{\mathbf{z}}}
-
-
-\newcommand{\ZWOarg}{   \mathbf{Z}}
-\newcommand{\ZWarg}{   \mathbf{Z}(x_{-1},\epsilon)}
-\newcommand{\ZWargK}{   \hat{\mathbf{Z}}(x_{-1},\epsilon,k)}
-\newcommand{\ZWOargK}{   \hat{\mathbf{Z}}}
-
-
-\newcommand{\zpWOarg}{   \mathbf{z}^p}
-\newcommand{\zpWarg}{   \mathbf{z}^p(x_{t-1},\epsilon)}
-\newcommand{\zpWargK}{   \hat{\mathbf{z}^p}(x_{t-1},\epsilon,k)}
-\newcommand{\zpWOargK}{   \hat{\mathbf{z}^p}}
+% \newcommand{\xppWOarg}{   \mathbf{x}^{p'}}
+% \newcommand{\xppWarg}{   \mathbf{x}^{p'}(x_{t-1},\epsilon)}
+% \newcommand{\xppWargK}{   \hat{\mathbf{x}}^{p'}(x_{t-1},\epsilon,k)}
+% \newcommand{\xppWOargK}{   \hat{\mathbf{x}^{p'}}}
 
 
 
-\newcommand{\zppWOarg}{   \mathbf{z}^{p'}}
-\newcommand{\zppWarg}{   \mathbf{z}^{p'}(x_{t-1},\epsilon)}
-\newcommand{\zppWargK}{   \hat{\mathbf{z}^{p'}}(x_{t-1},\epsilon,k)}
-\newcommand{\zppWOargK}{   \hat{\mathbf{z}^{p'}}}
+% \newcommand{\XWOarg}{   \mathbf{X}}
+% \newcommand{\XWarg}{   \mathbf{X}(x_{t-1},\epsilon)}
+% \newcommand{\XWargK}{   \hat{\mathbf{X}}(x_{t-1},\epsilon,k)}
+% \newcommand{\XWOargK}{   \hat{\mathbf{X}}}
 
 
-\newcommand{\ZpWOarg}{   \mathbf{Z}^p}
-\newcommand{\ZpWarg}{   \mathbf{Z}^p(x_{-1},\epsilon)}
-\newcommand{\ZpWargK}{   \hat{\mathbf{Z}^p}(x_{-1},\epsilon,k)}
-\newcommand{\ZpWOargK}{   \hat{\mathbf{Z}^p}}
+% \newcommand{\XpWOarg}{   \mathbf{X}^p}
+% \newcommand{\XpWarg}{   \mathbf{X}^p(x_{t-1},\epsilon)}
+% \newcommand{\XpWargK}{   \hat{\mathbf{X}^p}(x_{t-1},\epsilon,k)}
+% \newcommand{\XpWOargK}{   \hat{\mathbf{X}^p}}
+
+% \newcommand{\zWOarg}{   \mathbf{z}}
+% \newcommand{\zWarg}{   \mathbf{z}(x_{t-1},\epsilon)}
+% \newcommand{\zWargK}{   \hat{\mathbf{z}}(x_{t-1},\epsilon,k)}
+% \newcommand{\zWOargK}{   \hat{\mathbf{z}}}
 
 
-\newcommand{\xIter}[2]{\mathcal{X}^{#1}(#2)}
-\newcommand{\xNow}[1]{x^{#1}_t(x_{t-1},\epsilon_t)}
-\newcommand{\zNow}[1]{z^{#1}(x_{t-1},\epsilon_t)}
-\newcommand{\xNowtp}[1]{x^{#1}_{t+1}(x_{t-1},\epsilon_t)}
-\newcommand{\XNow}[3]{\mathcal{X}^{#1}_{#2}(x_{#3})}
-\newcommand{\ZNow}[3]{\mathcal{Z}^{#1}(x_{#3})}
+% \newcommand{\ZWOarg}{   \mathbf{Z}}
+% \newcommand{\ZWarg}{   \mathbf{Z}(x_{-1},\epsilon)}
+% \newcommand{\ZWargK}{   \hat{\mathbf{Z}}(x_{-1},\epsilon,k)}
+% \newcommand{\ZWOargK}{   \hat{\mathbf{Z}}}
 
 
-\newcommand{\rcpC}{{\mathbf{N}}}
+% \newcommand{\zpWOarg}{   \mathbf{z}^p}
+% \newcommand{\zpWarg}{   \mathbf{z}^p(x_{t-1},\epsilon)}
+% \newcommand{\zpWargK}{   \hat{\mathbf{z}^p}(x_{t-1},\epsilon,k)}
+% \newcommand{\zpWOargK}{   \hat{\mathbf{z}^p}}
 
 
 
-\newcommand{\gssaKtp}{{\left \{  
-\beta \frac{u^\prime(c_{\tau+1})}{u^\prime(c_{\tau})} 
-[1- \delta + a_{t+1}f^\prime(k_{\tau+1})]
-\right \} -1}}
+% \newcommand{\zppWOarg}{   \mathbf{z}^{p'}}
+% \newcommand{\zppWarg}{   \mathbf{z}^{p'}(x_{t-1},\epsilon)}
+% \newcommand{\zppWargK}{   \hat{\mathbf{z}^{p'}}(x_{t-1},\epsilon,k)}
+% \newcommand{\zppWOargK}{   \hat{\mathbf{z}^{p'}}}
+
+
+% \newcommand{\ZpWOarg}{   \mathbf{Z}^p}
+% \newcommand{\ZpWarg}{   \mathbf{Z}^p(x_{-1},\epsilon)}
+% \newcommand{\ZpWargK}{   \hat{\mathbf{Z}^p}(x_{-1},\epsilon,k)}
+% \newcommand{\ZpWOargK}{   \hat{\mathbf{Z}^p}}
+
+
+% \newcommand{\xIter}[2]{\mathcal{X}^{#1}(#2)}
+% \newcommand{\xNow}[1]{x^{#1}_t(x_{t-1},\epsilon_t)}
+% \newcommand{\zNow}[1]{z^{#1}(x_{t-1},\epsilon_t)}
+% \newcommand{\xNowtp}[1]{x^{#1}_{t+1}(x_{t-1},\epsilon_t)}
+% \newcommand{\XNow}[3]{\mathcal{X}^{#1}_{#2}(x_{#3})}
+% \newcommand{\ZNow}[3]{\mathcal{Z}^{#1}(x_{#3})}
+
+
+% \newcommand{\rcpC}{{\mathbf{N}}}
+
+
+
+% \newcommand{\gssaKtp}{{\left \{  
+% \beta \frac{u^\prime(c_{\tau+1})}{u^\prime(c_{\tau})} 
+% [1- \delta + a_{t+1}f^\prime(k_{\tau+1})]
+% \right \} -1}}
 
 
 \newenvironment{myProof}[1][Proof]{\begin{trivlist}
@@ -298,62 +295,62 @@ B x_{t-1}+ \phi \psi_\epsilon\epsilon + (I - F)^{-1} \phi \psi_c
       \hskip1.5em plus0em minus0.5em \fi \nobreak
       \vrule height0.75em width0.5em depth0.25em\fi}
 
-\newcommand{\xtFuncTI}{\mathcal{X}(x,\epsilon)}
-\newcommand{\XtFuncTI}{\mathbf{X}(x)}
-\newcommand{\expctEps}[1]{\mathcal{E}_{\epsilon} \left [#1 \right ]}
-\newcommand{\xsubtFunc}[2]{\mathcal{X}_{#1}{#2}}
-\newcommand{\xtFunc}[1]{\mathcal{X}{#1}}
-\newcommand{\XtFunc}[1]{\mathbf{X}{#1}}
-\newcommand{\stochF}[1]{\mathcal{S}^{\{#1\}}}
-\newcommand{\detF}[1]{\mathcal{D}^{\{#1\}}}
-\newcommand{\initXE}{(x_{-1},\epsilon_0)}
-\newcommand{\nlEqnLHS}[4]{
-  h_\varpi(#1,#2,E_t(#3),\epsilon_#4)}
+% \newcommand{\xtFuncTI}{\mathcal{X}(x,\epsilon)}
+% \newcommand{\XtFuncTI}{\mathbf{X}(x)}
+% \newcommand{\expctEps}[1]{\mathcal{E}_{\epsilon} \left [#1 \right ]}
+% \newcommand{\xsubtFunc}[2]{\mathcal{X}_{#1}{#2}}
+% \newcommand{\xtFunc}[1]{\mathcal{X}{#1}}
+% \newcommand{\XtFunc}[1]{\mathbf{X}{#1}}
+% \newcommand{\stochF}[1]{\mathcal{S}^{\{#1\}}}
+% \newcommand{\detF}[1]{\mathcal{D}^{\{#1\}}}
+% \newcommand{\initXE}{(x_{-1},\epsilon_0)}
+% \newcommand{\nlEqnLHS}[4]{
+%   h_\varpi(#1,#2,E_t(#3),\epsilon_#4)}
 
-\newcommand{\nlEqn}[4]{
-h_\varpi^{det}(#1,#2,\epsilon_#4)+
-H_\varpi^{det}(#1,#2,\epsilon_#4)E_#4(#3)
-}
-\newcommand{\nlEqnSel}[4]{
-\varpi=m_\varpi^{det}(#1,#2,\epsilon_#4)+
-M_\varpi^{det}(#1,#2,\epsilon_#4)E_#4(#3)
-}
-\newcommand{\itSup}[1]{{\{#1\}}}
-\newcommand{\initX}{(x)}
-\newcommand{\initXEN}{(x_,\epsilon_t)}
-\newcommand{\detComp}[1]{{\detF{K-\nu}( \cdots \detF{K-1}(\detF{K}(#1))))}}
+% \newcommand{\nlEqn}[4]{
+% h_\varpi^{det}(#1,#2,\epsilon_#4)+
+% H_\varpi^{det}(#1,#2,\epsilon_#4)E_#4(#3)
+% }
+% \newcommand{\nlEqnSel}[4]{
+% \varpi=m_\varpi^{det}(#1,#2,\epsilon_#4)+
+% M_\varpi^{det}(#1,#2,\epsilon_#4)E_#4(#3)
+% }
+% \newcommand{\itSup}[1]{{\{#1\}}}
+% \newcommand{\initX}{(x)}
+% \newcommand{\initXEN}{(x_,\epsilon_t)}
+% \newcommand{\detComp}[1]{{\detF{K-\nu}( \cdots \detF{K-1}(\detF{K}(#1))))}}
 
-\newcommand{\tNo}{(x_{t-1})}
+% \newcommand{\tNo}{(x_{t-1})}
 
 
 \newtheorem{theorem}{Theorem}[section]
 
 
-\newcommand{\fSum}{\mathcal{F}}
-\newcommand{\modArgs}{\mathbb{X}}
-\newcommand{\smolSpec}{\mathbb{S}}
-\newcommand{\aSmolPoly}[1]{p_{#1}(x,\epsilon)}
-\newcommand{\aSmolPolyCE}[1]{P_{#1}(x)}
-\newcommand{\smolRngs}{\{(\underbar{x}_1,\bar{x}_1),\ldots,(\underbar{x}_L,\bar{x}_L),(\underbar{$\epsilon$}_1,\bar{\epsilon}_1),\ldots,(\underbar{$\epsilon$}_L,\bar{\epsilon}_K)\}}
-\newcommand{\distribSpec}{\{f_1,\ldots,f_K\}}
+% \newcommand{\fSum}{\mathcal{F}}
+% \newcommand{\modArgs}{\mathbb{X}}
+% \newcommand{\smolSpec}{\mathbb{S}}
+% \newcommand{\aSmolPoly}[1]{p_{#1}(x,\epsilon)}
+% \newcommand{\aSmolPolyCE}[1]{P_{#1}(x)}
+% \newcommand{\smolRngs}{\{(\underbar{x}_1,\bar{x}_1),\ldots,(\underbar{x}_L,\bar{x}_L),(\underbar{$\epsilon$}_1,\bar{\epsilon}_1),\ldots,(\underbar{$\epsilon$}_L,\bar{\epsilon}_K)\}}
+% \newcommand{\distribSpec}{\{f_1,\ldots,f_K\}}
 
 
-%
-\newcommand{\eulerE}{\mathbf{e}}
-\newcommand{\lgabs}[1]{{\ln(|\eulerE_{#1}|)}}
-\newcommand{\lgabshat}[1]{{\ln(|\hat{\eulerE_{#1}}|)}}
+% %
+% \newcommand{\eulerE}{\mathbf{e}}
+% \newcommand{\lgabs}[1]{{\ln(|\eulerE_{#1}|)}}
+% \newcommand{\lgabshat}[1]{{\ln(|\hat{\eulerE_{#1}}|)}}
 
-\newcommand{\forEstErr}{{\begin{bmatrix}
-     \lgabshat{c,1}&\lgabshat{k,1}&\lgabshat{\theta,1}\\
- &\vdots\\
-     \lgabshat{c,30}&\lgabshat{k,30}&\lgabshat{\theta,30}\\
-   \end{bmatrix} }}
+% \newcommand{\forEstErr}{{\begin{bmatrix}
+%      \lgabshat{c,1}&\lgabshat{k,1}&\lgabshat{\theta,1}\\
+%  &\vdots\\
+%      \lgabshat{c,30}&\lgabshat{k,30}&\lgabshat{\theta,30}\\
+%    \end{bmatrix} }}
 
 
-\newcommand{\forActErr}{{\begin{bmatrix}
-     \lgabs{c,1}&\lgabs{k,1}&\lgabs{\theta,1}\\
- &\vdots\\
-     \lgabs{c,30}&\lgabs{k,30}&\lgabs{\theta,30}\\
-   \end{bmatrix} }}
+% \newcommand{\forActErr}{{\begin{bmatrix}
+%      \lgabs{c,1}&\lgabs{k,1}&\lgabs{\theta,1}\\
+%  &\vdots\\
+%      \lgabs{c,30}&\lgabs{k,30}&\lgabs{\theta,30}\\
+%    \end{bmatrix} }}
 
 

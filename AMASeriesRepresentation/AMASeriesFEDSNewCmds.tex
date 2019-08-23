@@ -5,9 +5,7 @@
 
 % \usepackage{soul}
 % \usepackage{ulem}
-\usepackage{lmodern}% http://ctan.org/pkg/lm
-\usepackage{pdftexcmds}
-\usepackage{catchfile}
+\usepackage{qtree}
 \usepackage{ifluatex}
 \usepackage{ifplatform}
 
@@ -35,7 +33,7 @@
 %\usepackage[margin=1.0in]{geometry}
 \usepackage{graphicx}
 \usepackage{moreverb}
-\usepackage{hyperref}
+%\usepackage{hyperref}
 \newcommand\infNorm[1]{\left\lVert#1\right\rVert_\infty}
 \newcommand\twoNorm[1]{\left\lVert#1\right\rVert_2}
 \newcommand\someNorm[1]{\left\lVert#1\right\rVert}
@@ -47,7 +45,7 @@
 \usepackage[12hr,level]{datetime}
 %\usepackage{datetime}
 \usepackage{amsfonts}
-\usepackage[toc]{glossaries}
+
 
 
 
@@ -163,6 +161,8 @@ B x_{t-1}+ \phi \psi_\epsilon\epsilon + (I - F)^{-1} \phi \psi_c
 \newcommand{\preGate}{\mathbf{b}}
 \newcommand{\postGate}{\mathbf{c}}
 \newcommand{\lastGate}{\mathbf{d}}
+\newcommand{\tArg}{(x_{t-1},\epsilon_t)}
+
 \newcommand{\eqnFuncSysIExpl}[1]{\{(\mathbf{b}_{#1}\tArg,\eqnFunc_{#1}\allArgs=0,\mathbf{c}_{#1}\allArgs )\}}
 \newcommand{\eqnFuncSysI}[1]{\mathbb{C}_{#1}}
 \newcommand{\eqnFuncSys}{\{\{\eqnFuncSysI{1},\ldots,\eqnFuncSysI{M}\},\mathbf{d}\allArgs|(\preGate_.,\postGate_.)\}}
@@ -322,7 +322,7 @@ M_\varpi^{det}(#1,#2,\epsilon_#4)E_#4(#3)
 \newcommand{\initX}{(x)}
 \newcommand{\initXEN}{(x_,\epsilon_t)}
 \newcommand{\detComp}[1]{{\detF{K-\nu}( \cdots \detF{K-1}(\detF{K}(#1))))}}
-\newcommand{\tArg}{(x_{t-1},\epsilon_t)}
+
 \newcommand{\tNo}{(x_{t-1})}
 
 

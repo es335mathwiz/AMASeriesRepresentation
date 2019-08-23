@@ -1,6 +1,5 @@
 \documentclass[12pt]{article}
 \listfiles
-\usepackage{qtree}
 %C60 , C62, C63, C65
 %pdflatex --shell-escape AMASeriesFEDS.tex 
 
@@ -18,12 +17,15 @@
 
 
 
+
+
+
+\usepackage{hyperref}
+\usepackage[toc]{glossaries}
+\input{notationDefs}
+
 \input{AMASeriesFEDSNewCmds}
 
-
-
-
-\input{notationDefs}
 
 %\makeglossaries
 \makenoidxglossaries
@@ -85,10 +87,10 @@ see \citep{judd92,Christiano2000,doraszelskiy04,gaspar97,Judd2014,marcet.lorenzo
 
 
 This new series representation for bounded time series, adapted from \citep{anderson10},
-\begin{gather*}
-      	 \sVar\tArg =B \sVar_{t-1}+ \phi \psi_\epsilon\epsilon + (I - F)^{-1} \phi \psi_c + \sum_{\sForSum=0}^\infty F^\sForSum \phi \ZWOarg_{t+\nu}\tArg%\\ \intertext{ so that}
-%\expct{ \sVar_{t+1}\tArg} =B \sVar\tArg  + (I - F)^{-1} \phi \psi_c+ \sum_{\sForSum =1}^\infty F^{\sForSum-1} \phi \ZWOarg_{t+\nu}\tArg.
-    \end{gather*}
+ \begin{gather*}
+       	 \drFunc\tArg =\BMat \sVar_{t-1}+ \phiMat \psiEpsMat\epsilon + (I - F)^{-1} \phiMat \psiCMat + \sum_{\sForSum=0}^\infty F^\sForSum \phiMat \ZWOarg_{t+\nu}\tArg%\\ \intertext{ so that}
+\expct{ \sVar_{t+1}\tArg} =B \sVar\tArg  + (I - F)^{-1} \phiMat \psiCMat+ \sum_{\sForSum =1}^\infty F^{\sForSum-1} \phiMat \ZWOarg_{t+\nu}\tArg.
+     \end{gather*}
  makes it possible to  construct a series
     representation for any bounded time invariant discrete time map. As yet, the author has found no comparable use of a
 linear reference dynamical system for  conveniently transforming
@@ -181,11 +183,11 @@ $L$ dimensional deterministic system that produces  a unique stable solution,
 \end{gather*}
 inhomogeneous solutions 
 \begin{gather}
-	 H_{-1} x_{t-1} + H_0 x_t + H_1 x_{t+1}=\psi_\epsilon \epsilon +\psi_{c}
+	 H_{-1} x_{t-1} + H_0 x_t + H_1 x_{t+1}=\psiEpsMat \epsilon +\psi_{c}
 \intertext{ can be computed as}
-x_t=B x_{t-1} + \phi \psi_\epsilon \epsilon + (I - F)^{-1} \phi \psi_c\label{hSystem}
+x_t=B x_{t-1} + \phiMat \psiEpsMat \epsilon + (I - F)^{-1} \phiMat \psiCMat\label{hSystem}
 \intertext{where}
-\phi= (H_0 +H_1 B)^{-1}  \text{ and } \,\,F=-\phi H_1.\intertext{ \citep{anderson10}}
+\phiMat= (H_0 +H_1 B)^{-1}  \text{ and } \,\,F=-\phiMat H_1.\intertext{ \citep{anderson10}}
 \end{gather}
 It will be useful to collect the components of this linear reference model solution,$\linMod \equiv \linModMats$, for  later use.\footnote{In Section \ref{sec:almostarbitrary}, I will use these matrices  to construct a series representation for any bounded path
 and in \ref{sec:algoforsoln} to compute improvements in proposed model decision rule solutions.}
@@ -212,16 +214,16 @@ Consider any bounded discrete time path
 Now, given the trajectories \refeq{aBPath}, define 
 $  \zWOarg_{t}$ as  
 \begin{gather}
-  \zWOarg_{t} \equiv H_{-1} \xWOarg_{t-1} +  H_0 \xWOarg_{t} +  H_1 \xWOarg_{t+1} -\psi_c - \psi_\epsilon \epsilon_t \label{defZ} 
+  \zWOarg_{t} \equiv H_{-1} \xWOarg_{t-1} +  H_0 \xWOarg_{t} +  H_1 \xWOarg_{t+1} -\psiCMat - \psiEpsMat \epsilon_t \label{defZ} 
 \end{gather}
 One can then express the $\xWOarg_t$ solving 
 \begin{gather}
-	 H_{-1} x_{t-1} + H_0 x_t + H_1 x_{t+1}=\psi_\epsilon \epsilon +\psi_{c}+
+	 H_{-1} x_{t-1} + H_0 x_t + H_1 x_{t+1}=\psiEpsMat \epsilon +\psi_{c}+
 z_t
 \intertext{ using}
-	 \xWOarg_{t} =B x_{t-1}+ \phi \psi_\epsilon\epsilon + (I - F)^{-1} \phi \psi_c + \sum_{\sForSum=0}^\infty F^s \phi \zWOarg_{t+\sForSum} \label{theSeries}
+	 \xWOarg_{t} =B x_{t-1}+ \phiMat \psiEpsMat\epsilon + (I - F)^{-1} \phiMat \psiCMat + \sum_{\sForSum=0}^\infty F^s \phiMat \zWOarg_{t+\sForSum} \label{theSeries}
 \intertext{and}
-	 \xWOarg_{t+k+1} =B \xWOarg_{t+k}  + (I - F)^{-1} \phi \psi_c+ \sum_{\sForSum =0}^\infty F^\sForSum \phi \zWOarg_{t+k+\sForSum+1} \,\,\,\,\,\forall t,k \ge  0.
+	 \xWOarg_{t+k+1} =B \xWOarg_{t+k}  + (I - F)^{-1} \phiMat \psiCMat+ \sum_{\sForSum =0}^\infty F^\sForSum \phiMat \zWOarg_{t+k+\sForSum+1} \,\,\,\,\,\forall t,k \ge  0.
 	 \end{gather}
 \end{theorem}
 %\end{tcolorbox}
@@ -236,8 +238,8 @@ See  \citep{anderson10},
 and a stable linear homogeneous system, $\linMod$,
 one can easily compute a corresponding series representation like
 \refeq{theSeries} for $x_t$.
-Interestingly, the linear model, $H$, the  constant term $\psi_c$ and the
-impact of the stochastic shocks $\psi_\epsilon $ can  be 
+Interestingly, the linear model, $H$, the  constant term $\psiCMat$ and the
+impact of the stochastic shocks $\psiEpsMat $ can  be 
 chosen rather arbitrarily -- the only constraints being the existence of a saddle-point solution for the linear system and that all z-values fall in the row space of $H_1$.  
 Note that since the eigenvalues of $F$ are all less than one in magnitude, the formula supports the intuition that  distant future shocks
  influence current conditions less than  imminent shocks.
@@ -246,7 +248,7 @@ Note that since the eigenvalues of $F$ are all less than one in magnitude, the f
 
 
 
-% \footnote{$\psi_c$ full rank provides a sufficient condition, but not necessary condition.}
+% \footnote{$\psiCMat$ full rank provides a sufficient condition, but not necessary condition.}
 The
 transformation $ {\{ x_{t}, x_{t}, x_{t+1},x_{t+2}\ldots\}} \rightarrow \linMod(x_{t-1},\epsilon_t) \rightarrow{\{ z_{t}, z_{t+1}, z_{t+2},\ldots\}} $ is invertible. $ {\{ z_{t}, z_{t+1}, z_{t+2},\ldots\}} \rightarrow \linMod(x_{t-1},\epsilon_t)^{-1} \rightarrow{\{ x_{t}, x_{t}, x_{t+1},x_{t+2}\ldots\}} $ and the inverse can be interpreted as giving the impact of ``fully anticipated future shocks'' on the path of $x_t$  in a linear perfect foresight model.  
 Note that the reference model is deterministic, so that 
@@ -272,7 +274,7 @@ H_{-1}&H_{0}&H_{1} \label{linRef}
   \end{bmatrix}=
 \vcenter{\hbox{\includegraphics{refHmat.pdf}}}
 \end{gather}
-with $\psi_c=\psi_\epsilon=0, \,\,  \psi_z=I$.
+with $\psiCMat=\psiEpsMat=0, \,\,  \psi_z=I$.
 I have chosen these coefficients so that 
 the linear model has a unique stable solution and, since $H_1$ is full rank,
 its row space will span the column space for all non zero values for $z_t \in \mathcal{R}^3$.\footnote{The flexibility in choosing $\linMod$ will 
@@ -285,7 +287,7 @@ The solution for this system is
 \begin{gather}
   B=
 \vcenter{\hbox{\includegraphics{refBmat.pdf}}}\\
-\phi=
+\phiMat=
 \vcenter{\hbox{\includegraphics{refPhimat.pdf}}}\\
 F=
 \vcenter{\hbox{\includegraphics{refFmat.pdf}}}
@@ -372,14 +374,14 @@ to the initial time have the most important impact.
 One could consider approximating  $\xWOarg_t$ by 
 truncating the series  at a finite number of terms.
  	 \begin{gather}
- 	 \xWOargK_t \equiv B x_{t-1}+ \phi \psi_\epsilon\epsilon  + (I - F)^{-1} \phi \psi_c + \sum_{s=0}^k F^s \phi z_{t}\label{theTruncSeries}
+ 	 \xWOargK_t \equiv B x_{t-1}+ \phiMat \psiEpsMat\epsilon  + (I - F)^{-1} \phiMat \psiCMat + \sum_{s=0}^k F^s \phiMat z_{t}\label{theTruncSeries}
  \end{gather}
 We can bound the  series approximation truncation errors:
 
     \begin{gather}
       \label{eq:1}
-\sum_{s=k+1}^{\infty} F^s \phi \psi_z = (I -F)^{-1} F^{k+1}\phi \psi_z       \\
-\infNorm{\xWarg-\xWargK} \le \infNorm{(I -F)^{-1} F^{k+1}\phi \psi_z} \left ( \infNorm{H_{-1} }+ \infNorm{H_{0} }+ \infNorm{H_{1} } \right )\infNorm{\overline{\mathcal{X}}}
+\sum_{s=k+1}^{\infty} F^s \phiMat \psi_z = (I -F)^{-1} F^{k+1}\phiMat \psi_z       \\
+\infNorm{\xWarg-\xWargK} \le \infNorm{(I -F)^{-1} F^{k+1}\phiMat \psi_z} \left ( \infNorm{H_{-1} }+ \infNorm{H_{0} }+ \infNorm{H_{1} } \right )\infNorm{\overline{\mathcal{X}}}
     \end{gather}
 
 
@@ -406,12 +408,12 @@ We can assess the impact of perturbed values for $z_t$ by computing the maximum 
 partial sum formula.
 One can  approximate $\mathcal{X}_t$ using
  	 \begin{gather}
- 	 \xWOargK_t \equiv B x_{t-1}+ \phi \psi_\epsilon\epsilon  + (I - F)^{-1} \phi \psi_c + \sum_{s=0}^\infty F^s \phi (z_{t}+\Delta z_{t})\label{theDeltaSeries}
+ 	 \xWOargK_t \equiv B x_{t-1}+ \phiMat \psiEpsMat\epsilon  + (I - F)^{-1} \phiMat \psiCMat + \sum_{s=0}^\infty F^s \phiMat (z_{t}+\Delta z_{t})\label{theDeltaSeries}
  \end{gather}
 Note, yet again, that for approximating $\xWarg$, the impact of  a given realization along the path declines for those realizations which are  more temporally distant.
 However, we can conservatively bound the  series approximation  errors by using the largest possible $\Delta z_t$ in the formula:
     \begin{gather}
-\infNorm{\xWarg-\xWargK} \le \infNorm{(I -F)^{-1} \phi \psi_z}  \infNorm{\Delta z_t } \label{pathErr}
+\infNorm{\xWarg-\xWargK} \le \infNorm{(I -F)^{-1} \phiMat \psi_z}  \infNorm{\Delta z_t } \label{pathErr}
     \end{gather}
 
 
@@ -540,7 +542,7 @@ B   \begin{bmatrix}
 c_{t-1}\\
 k_{t-1}\\
 \theta_{t-1}
-  \end{bmatrix}  + \phi \psi_\epsilon\epsilon_t + (I - F)^{-1} \phi \psi_c + \sum_{\sForSum=0}^\infty F^s \phi z_{t+\sForSum}(k_{t-1},\theta_{t-1}, \epsilon_t) 
+  \end{bmatrix}  + \phiMat \psiEpsMat\epsilon_t + (I - F)^{-1} \phiMat \psiCMat + \sum_{\sForSum=0}^\infty F^s \phiMat z_{t+\sForSum}(k_{t-1},\theta_{t-1}, \epsilon_t) 
 \end{gather*}
 % \footnote{
 % We need not  make these adjustments for the steady state,
@@ -655,7 +657,7 @@ This leads to:
 %  H_{-1}=\vcenter{\hbox{\includegraphics{rbcExampleOctoberHM.pdf}}} \\
 % H_{0}=\vcenter{\hbox{\includegraphics{rbcExampleOctoberHZ.pdf}}} \label{rbcLinSys}\\  
 % H_{1}=\vcenter{\hbox{\includegraphics{rbcExampleOctoberHP.pdf}}} \intertext{with}
-%  \psi_\epsilon= \begin{bmatrix}
+%  \psiEpsMat= \begin{bmatrix}
 %    0\\0\\0\\0\\1
 %  \end{bmatrix}, \psi_z=I_5
 %  \end{gather}
@@ -665,11 +667,11 @@ These coefficients  produce a unique stable linear solution.\footnote{$H_{1}$  h
 % \begin{gather}
 %   B=
 % \vcenter{\hbox{\includegraphics{rbcExampleOctoberB.pdf}}},
-% \phi=
+% \phiMat=
 % \vcenter{\hbox{\includegraphics{rbcExampleOctoberPhi.pdf}}}\\
 % F=
 % \vcenter{\hbox{\includegraphics{rbcExampleOctoberF.pdf}}}\\
-% \psi_c=\vcenter{\hbox{\includegraphics{rbcExampleOctoberPsiC.pdf}}}
+% \psiCMat=\vcenter{\hbox{\includegraphics{rbcExampleOctoberPsiC.pdf}}}
 % \end{gather}
 Recomputing the truncation errors with the expanded model produces nearly identical results for  variable approximation errors.
 
@@ -723,8 +725,8 @@ E_tx_{t+1}=G^p(g^p(x_{t-1},\epsilon_t))\\
 
     \begin{gather*}
 	\infNorm{ x^\star_{t}(x_{t-1},\epsilon) -	 x^p_{t}(x_{t-1},\epsilon)} \le
-\max_{\{x_{-},\epsilon\}} \twoNorm{(I-F)^{-1} \phi \eqnFunc(x_{-},g^p(x_{-},\epsilon),G^p(g^p(x_{-},\epsilon)),\epsilon) }\intertext{which can be approximated by}
-    \max_{x_{t-1},\epsilon_t} (\phi \mathbf{e}_t^p(x_{t-1},\epsilon))^2
+\max_{\{x_{-},\epsilon\}} \twoNorm{(I-F)^{-1} \phiMat \eqnFunc(x_{-},g^p(x_{-},\epsilon),G^p(g^p(x_{-},\epsilon)),\epsilon) }\intertext{which can be approximated by}
+    \max_{x_{t-1},\epsilon_t} (\phiMat \mathbf{e}_t^p(x_{t-1},\epsilon))^2
   \end{gather*}
 
 For proof see Appendix \ref{sec:error-bound-formula}.  
@@ -749,7 +751,7 @@ the error in $x_t$ at $\tArg$
 \eqnFunc(x_{t-1},x_t,x_{t+1},\epsilon_t)\\
 \zpWOarg_{t+k}\equiv
 \eqnFunc(x_{t+k-1},x_{t+k},x_{t+k+1},0)\\
-\hat{\mathbf{e}}\tArg\equiv \sum_{\sForSum=0}^K F^s \phi \zpWOarg_{t+\nu}\\
+\hat{\mathbf{e}}\tArg\equiv \sum_{\sForSum=0}^K F^s \phiMat \zpWOarg_{t+\nu}\\
 \end{gather*}
 
 \subsection{Assessing the Error Approximation}
@@ -1105,7 +1107,7 @@ improve the accuracy of the proposed solution.
 \zpWarg\equiv H
 \begin{bmatrix}
 x_{t-1}\\ \xpWarg\\ \XpWOarg(\xWarg)
-\end{bmatrix}+\phi_\epsilon \epsilon_t+\phi_c\\
+\end{bmatrix}+\phiMat_\epsilon \epsilon_t+\phiMat_c\\
 \ZpWOarg(x_{t-1})\equiv \expct{\zpWarg}
 \end{gather*}
  \begin{itemize}
@@ -1125,8 +1127,8 @@ x_{t-1}\\ \xpWarg\\ \XpWOarg(\xWarg)
   \begin{itemize}
   \item We get expressions for $x_t,\,\, \expct x_{t+1}$ consistent with $\linMod$ and the conditional expectations path
    \begin{gather*}
-     \mathcal{X}_{t} =B x_{t-1}+ \phi \psi_\epsilon\epsilon + (I - F)^{-1} \phi \psi_c + \sum_{\sForSum=0}^\infty F^s \phi \ZWOarg(x_{t+\nu})\\
-	\expct{ \mathcal{X}_{t+1}} =B \mathcal{X}_{t}  + (I - F)^{-1} \phi \psi_c+ \sum_{\sForSum =0}^\infty F^{\sForSum-1} \phi \ZWOarg(x_{t+\nu}) \,\,\,\,\,\forall t,k \ge  0
+     \mathcal{X}_{t} =B x_{t-1}+ \phiMat \psiEpsMat\epsilon + (I - F)^{-1} \phiMat \psiCMat + \sum_{\sForSum=0}^\infty F^s \phiMat \ZWOarg(x_{t+\nu})\\
+	\expct{ \mathcal{X}_{t+1}} =B \mathcal{X}_{t}  + (I - F)^{-1} \phiMat \psiCMat+ \sum_{\sForSum =0}^\infty F^{\sForSum-1} \phiMat \ZWOarg(x_{t+\nu}) \,\,\,\,\,\forall t,k \ge  0
 \end{gather*}
 \item Use the model equations, $\eqnFunc(x_{t-1},x_t,\expct{x_{t+1}},\epsilon)=0$ and $x_t\tArg=\mathcal{X}_t\tArg$\\ to determine $\xppWarg, \zppWarg$
 \item $\xpWarg=\xppWarg, \zpWarg=\zppWarg$ -- {\color{blue}Repeat loop.}
@@ -1851,8 +1853,8 @@ E_tx^\star_{t+1}=G^\star(g^\star(x_{t-1},\epsilon_t)) \intertext{we have}
 
    Consequently, the exact solution has a representation given by
 	 \begin{gather}
-	 x^\star_{t}(x_{t-1},\epsilon) =B x_{t-1}+ \phi \psi_\epsilon\epsilon + (I - F)^{-1} \phi \psi_c +\\ \sum_{\sForSum=0}^\infty F^s \phi z^\star_{t+\sForSum}(x_{t-1},\epsilon) \intertext{and}
-	 \expct{x^\star_{t+1}(x_{t-1},\epsilon)} =B x^\star_{t+k} + \sum_{\sForSum =0}^\infty F^\sForSum \phi \expct{z^\star_{t+1+\sForSum}(x_{t-1},\epsilon)} + (I - F)^{-1} \phi \psi_c 
+	 x^\star_{t}(x_{t-1},\epsilon) =B x_{t-1}+ \phiMat \psiEpsMat\epsilon + (I - F)^{-1} \phiMat \psiCMat +\\ \sum_{\sForSum=0}^\infty F^s \phiMat z^\star_{t+\sForSum}(x_{t-1},\epsilon) \intertext{and}
+	 \expct{x^\star_{t+1}(x_{t-1},\epsilon)} =B x^\star_{t+k} + \sum_{\sForSum =0}^\infty F^\sForSum \phiMat \expct{z^\star_{t+1+\sForSum}(x_{t-1},\epsilon)} + (I - F)^{-1} \phiMat \psiCMat 
  \intertext{with}
  \eqnFunc(x_{t-1},x^\star_t,E_tx^\star_{t+1},\epsilon_t)=0  \,\, \forall  (x_{t-1},\epsilon_t)\\ 
 	 \end{gather}
@@ -1886,9 +1888,9 @@ in the region $\bndRgn^p$. Using $G^p$ and $\linMod$ construct the family of tra
  The proposed solution has a representation given by 
   \begin{gather}
     \label{eq:4}
-	 x^p_{t}(x_{t-1},\epsilon) =B x_{t-1}+ \phi \psi_\epsilon\epsilon + (I - F)^{-1} \phi \psi_c +\\ \sum_{\sForSum=0}^\infty F^s \phi z^p_{t+\sForSum}(x_{t-1},\epsilon) 
+	 x^p_{t}(x_{t-1},\epsilon) =B x_{t-1}+ \phiMat \psiEpsMat\epsilon + (I - F)^{-1} \phiMat \psiCMat +\\ \sum_{\sForSum=0}^\infty F^s \phiMat z^p_{t+\sForSum}(x_{t-1},\epsilon) 
  \intertext{and}
- 	 \expct{x^p_{t+1}(x_{t-1},\epsilon)} =B x^p_{t+k} + \sum_{\sForSum =0}^\infty F^\sForSum \phi z^p_{t+1+\sForSum}(x_{t-1},\epsilon) + (I - F)^{-1} \phi \psi_c \intertext{with}
+ 	 \expct{x^p_{t+1}(x_{t-1},\epsilon)} =B x^p_{t+k} + \sum_{\sForSum =0}^\infty F^\sForSum \phiMat z^p_{t+1+\sForSum}(x_{t-1},\epsilon) + (I - F)^{-1} \phiMat \psiCMat \intertext{with}
 \mathbf{e}_t^p(x_{t-1},\epsilon)\equiv
 \eqnFunc(x_{t-1},x^p_t,E_tx^p_{t+1},\epsilon_t)
   \end{gather}
@@ -1899,12 +1901,12 @@ in the region $\bndRgn^p$. Using $G^p$ and $\linMod$ construct the family of tra
   \begin{gather}
     \label{eq:3}
 	 x^\star_{t}(x_{t-1},\epsilon) -	 x^p_{t}(x_{t-1},\epsilon) =
-         \sum_{\sForSum=0}^\infty F^s \phi (z^\star_{t+\sForSum}(x_{t-1},\epsilon)-z^p_{t+\sForSum}(x_{t-1},\epsilon))     \\
+         \sum_{\sForSum=0}^\infty F^s \phiMat (z^\star_{t+\sForSum}(x_{t-1},\epsilon)-z^p_{t+\sForSum}(x_{t-1},\epsilon))     \\
 \Delta z_{t+\sForSum}^p(x_{t-1},\epsilon_t)         \equiv (z^\star_{t+\sForSum}(x_{t-1},\epsilon)-z^p_{t+\sForSum}(x_{t-1},\epsilon))\\
 	 x^\star_{t}(x_{t-1},\epsilon) -	 x^p_{t}(x_{t-1},\epsilon) =
-\sum_{\sForSum=0}^\infty F^s \phi \Delta z_{t+\sForSum}^p(x_{t-1},\epsilon_t)   \\ 
+\sum_{\sForSum=0}^\infty F^s \phiMat \Delta z_{t+\sForSum}^p(x_{t-1},\epsilon_t)   \\ 
 	\infNorm{ x^\star_{t}(x_{t-1},\epsilon) -	 x^p_{t}(x_{t-1},\epsilon)} \le
-\sum_{\sForSum=0}^\infty F^s \phi \infNorm{\Delta z_{t+\sForSum}^p(x_{t-1},\epsilon_t)}    
+\sum_{\sForSum=0}^\infty F^s \phiMat \infNorm{\Delta z_{t+\sForSum}^p(x_{t-1},\epsilon_t)}    
   \end{gather}
 
   By bounding the largest deviation in the paths for the $\Delta z_t^p$ we can bound the largest difference in $x_t$.\footnote{Since the future values are probability weighted averages of the $\Delta z_t^p$ values for the given initial conditions and the condition expectations paths remain in the region $\bndRgn^p$,
@@ -1914,9 +1916,9 @@ the largest error for $\Delta z_{t+k}^p$   are pessimistic bounds for the errors
 {\small
   \begin{tcolorbox}[ams gather]
   \Delta z_t \le  
-\max_{\{x_{-},\epsilon\}} \twoNorm{ \phi \eqnFunc(x_{-},g^p(x_{-},\epsilon),G^p(g^p(x_{-},\epsilon)),\epsilon) }\\
+\max_{\{x_{-},\epsilon\}} \twoNorm{ \phiMat \eqnFunc(x_{-},g^p(x_{-},\epsilon),G^p(g^p(x_{-},\epsilon)),\epsilon) }\\
 	\infNorm{ x^\star_{t}(x_{t-1},\epsilon) -	 x^p_{t}(x_{t-1},\epsilon)} \le
-\max_{\{x_{-},\epsilon\}} \twoNorm{(I-F)^{-1} \phi \eqnFunc(x_{-},g^p(x_{-},\epsilon),G^p(g^p(x_{-},\epsilon)),\epsilon) }
+\max_{\{x_{-},\epsilon\}} \twoNorm{(I-F)^{-1} \phiMat \eqnFunc(x_{-},g^p(x_{-},\epsilon),G^p(g^p(x_{-},\epsilon)),\epsilon) }
   \end{tcolorbox}
 }
 
@@ -1927,28 +1929,28 @@ z^\star_t=\hApp{x^\star}\\
 z^p_t=\hApp{x^p}\\
 0=\eqnFunc(x^\star_{t-1},x^\star_{t},x^\star_{t+1},\epsilon_t)\\
 \mathbf{e}_t^p(x_{t-1},\epsilon)=\eqnFunc(x^p_{t-1},x^p_{t},x^p_{t+1},\epsilon_t)\\
-\max_{x_{t-1},\epsilon_t} (\twoNorm{\phi \Delta z_t})^2 =\max_{x_{t-1},\epsilon_t} (\phi(H_0(x^p_t-x^\star_t)+H_+(x^p_{t+1}-x^\star_{t+1})))^2
+\max_{x_{t-1},\epsilon_t} (\twoNorm{\phiMat \Delta z_t})^2 =\max_{x_{t-1},\epsilon_t} (\phiMat(H_0(x^p_t-x^\star_t)+H_+(x^p_{t+1}-x^\star_{t+1})))^2
 \intertext{with}
 \eqnFunc(x^\star_{t-1},x^\star_{t},x^\star_{t+1},\epsilon_t) =0\\
 %\le \mathbf{e}_t^p(x_{t-1},\epsilon)\\
 \Delta \mathbf{e}_t^p(x_{t-1},\epsilon)\approx \pdrv{\eqnFunc(x_{t-1},x_{t},x_{t+1},\epsilon_t)}{x_t} (x^\star_t-x^p_t) +\pdrv{\eqnFunc(x_{t-1},x_{t},x_{t+1},\epsilon_t)}{x_{t+1}} (x^\star_{t+1}-x^p_{t+1}) \intertext{ when $\pdrv{\eqnFunc(x_{t-1},x_{t},x_{t+1},\epsilon_t)}{x_t}$ is non-singular, we can write}
  (x^\star_t-x^p_t) \approx \left ( \pdrv{\eqnFunc(x_{t-1},x_{t},x_{t+1},\epsilon_t)}{x_t}\right )^{-1} \left ( \Delta \mathbf{e}_t^p(x_{t-1},\epsilon) -\pdrv{\eqnFunc(x_{t-1},x_{t},x_{t+1},\epsilon_t)}{x_{t+1}} (x^\star_{t+1}-x^p_{t+1}) \right )
 \intertext{ collecting results}
- (\twoNorm{\phi \Delta z_t})^2 =\\ 
- (\phi(
+ (\twoNorm{\phiMat \Delta z_t})^2 =\\ 
+ (\phiMat(
 H_0\left ( \pdrv{\eqnFunc(x_{t-1},x_{t},x_{t+1},\epsilon_t)}{x_t}\right )^{-1} \\
 \left ( \Delta \mathbf{e}_t^p(x_{t-1},\epsilon) -
 \pdrv{\eqnFunc(x_{t-1},x_{t},x_{t+1},\epsilon_t)}{x_{t+1}} (x^\star_{t+1}-x^p_{t+1}) \right )+
 H_+(x^p_{t+1}-x^\star_{t+1})))^2=
 \\
- (\phi(
+ (\phiMat(
 H_0\left ( \pdrv{\eqnFunc(x_{t-1},x_{t},x_{t+1},\epsilon_t)}{x_t}\right )^{-1} 
 ( \Delta \mathbf{e}_t^p(x_{t-1},\epsilon) )
 -\\
 \left ( H_0\left ( \pdrv{\eqnFunc(x_{t-1},x_{t},x_{t+1},\epsilon_t)}{x_t}\right )^{-1} 
 \pdrv{\eqnFunc(x_{t-1},x_{t},x_{t+1},\epsilon_t)}{x_{t+1}} (x^\star_{t+1}-x^p_{t+1}) \right )+
 H_+(x^p_{t+1}-x^\star_{t+1})))^2=\\
- (\phi(
+ (\phiMat(
 H_0\left ( \pdrv{\eqnFunc(x_{t-1},x_{t},x_{t+1},\epsilon_t)}{x_t}\right )^{-1} 
 ( \Delta \mathbf{e}_t^p(x_{t-1},\epsilon) )
 -\\
@@ -1958,7 +1960,7 @@ H_0\left ( \pdrv{\eqnFunc(x_{t-1},x_{t},x_{t+1},\epsilon_t)}{x_t}\right )^{-1}
 \pdrv{\eqnFunc(x_{t-1},x_{t},x_{t+1},\epsilon_t)}{x_{t}} \approx H_0\\
 \pdrv{\eqnFunc(x_{t-1},x_{t},x_{t+1},\epsilon_t)}{x_{t+1}} \approx H_+\\
 \intertext{produces}
-\max_{x_{t-1},\epsilon_t} (\phi \Delta \mathbf{e}_t^p(x_{t-1},\epsilon))^2
+\max_{x_{t-1},\epsilon_t} (\phiMat \Delta \mathbf{e}_t^p(x_{t-1},\epsilon))^2
   \end{gather*}
 
 
@@ -1991,7 +1993,7 @@ H_0\left ( \pdrv{\eqnFunc(x_{t-1},x_{t},x_{t+1},\epsilon_t)}{x_t}\right )^{-1}
 
 
 % \begin{itemize}
-% \item rank condition on $\psi_c$
+% \item rank condition on $\psiCMat$
 % \item appendix derivations with all lagrangians
 % \end{itemize}
 
@@ -2657,11 +2659,11 @@ reference model for an initial proposed decision rule function and
 decision rule conditional expectation function.}
 $\xzFunc(x,\epsilon)=
 \begin{bmatrix}
-B x+(I-F)^{-1} \phi \psi_c+ \psi_\epsilon \epsilon_t\\0_{\numZ}  
+B x+(I-F)^{-1} \phiMat \psiCMat+ \psiEpsMat \epsilon_t\\0_{\numZ}  
 \end{bmatrix}$\\
 $\XZFunc(x,\epsilon)=
 \begin{bmatrix}
-B x+(I-F)^{-1} \phi \psi_c+ \psi_\epsilon \\0_{\numZ}  
+B x+(I-F)^{-1} \phiMat \psiCMat+ \psiEpsMat \\0_{\numZ}  
 \end{bmatrix}$\\
 $\bothFuncs=\{\xzFunc,\XZFunc\}$\\
 \Output{$\{\bothFuncs\}$}
@@ -2674,7 +2676,7 @@ $\bothFuncs=\{\xzFunc,\XZFunc\}$\\
  \SetKwInOut{Output}{output}
 \Input{$(\linMod,\{Z_{t+1},\ldots,Z_{t+k-1}\})$}
 \tcc{Symbolically creates a function that uses an initial $Z_t$ path to generate a function of $(x_{t-1},\epsilon_t,z_t)$ providing (potentially symbolic ) inputs $(x_{t-1},x_t,E_t(x_{t+1}),\epsilon_t)$,for model system equations $\eqnFunc$} 
-$fCon=fSumC(\phi,F,\psi_z,\{Z_{t+1},\ldots,Z_{t+k-1}\})$
+$fCon=fSumC(\phiMat,F,\psi_z,\{Z_{t+1},\ldots,Z_{t+k-1}\})$
 $xtVals=genXtOfXtm1(\linMod,x_{t-1},\epsilon_t,z_t,fCon)$
 $xtp1Vals=genXtp1OfXt(\linMod,xtVals,fCon)$
 $fullVec=\{xtm1Vars,xtVals,xtp1Vals,epsVars\}$\\
@@ -2690,8 +2692,8 @@ $fullVec=\{xtm1Vars,xtVals,xtp1Vals,epsVars\}$\\
 \Input{$(\linMod,x_{t-1},\epsilon_t,z_t,fCon)$}
 \tcc{Symbolically creates a function that uses an initial $Z_t$ path to generate a function of $(x_{t-1},\epsilon_t,z_t)$ providing (potentially symbolically ) 
 the $x_t$ component of inputs  $(x_{t-1},x_t,E_t(x_{t+1}),\epsilon_t)$,for model system equations $\eqnFunc$}
-$x_t=B x_{t-1}+ (I-F)^{-1} \phi \psi_c + \phi . \psi_\epsilon . \epsilon_t+
-\phi \psi_z  z_t + F  fCon$\\
+$x_t=B x_{t-1}+ (I-F)^{-1} \phiMat \psiCMat + \phiMat . \psiEpsMat . \epsilon_t+
+\phiMat \psi_z  z_t + F  fCon$\\
 \Output{$x_t$}
 \caption{$genXtOfXtm1$\label{genXtOfXtm1}} 
 \end{algorithm}
@@ -2703,8 +2705,8 @@ $x_t=B x_{t-1}+ (I-F)^{-1} \phi \psi_c + \phi . \psi_\epsilon . \epsilon_t+
  \SetKwInOut{Output}{output}
 \Input{$(\linMod,x_{t-1},fCon)$}
 \tcc{Symbolically creates a function that uses an initial $Z_t$ path to generate a function of $(x_{t-1},\epsilon_t,z_t)$ providing (potentially symbolically  )the $x_{t+1}$ component of inputs $(x_{t-1},x_t,E_t(x_{t+1}),\epsilon_t)$,for model system equations $\eqnFunc$}
-$x_t=B x_{t-1}+ (I-F)^{-1} \phi \psi_c + \phi . \psi_\epsilon . \epsilon_t+
-\phi \psi_z  z_t +fCon$\\
+$x_t=B x_{t-1}+ (I-F)^{-1} \phiMat \psiCMat + \phiMat . \psiEpsMat . \epsilon_t+
+\phiMat \psi_z  z_t +fCon$\\
 \Output{$x_t$}
 \caption{$genXtp1OfXt$\label{genXtp1OfXt}} 
 \end{algorithm}
@@ -2717,7 +2719,7 @@ $x_t=B x_{t-1}+ (I-F)^{-1} \phi \psi_c + \phi . \psi_\epsilon . \epsilon_t+
  \SetKwInOut{Output}{output}
 \Input{$(\linMod,\{Z_{t+1},\ldots,Z_{t+k-1}\})$}
 \tcc{Numerically sums the F contribution for the series.}
-$S=\sum F^{\nu-1} \phi Z_{t+\nu}$\\
+$S=\sum F^{\nu-1} \phiMat Z_{t+\nu}$\\
 \Output{$S$}
 \caption{$fSumC$\label{fSumC}} 
 \end{algorithm}

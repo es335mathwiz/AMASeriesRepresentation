@@ -14,12 +14,13 @@
 \newcommand{\NWnotglobal}{(not defined globally)}
 \newcommand{\NWuseHyperlinks}{}
  \UseRawInputEncoding
-\documentclass[hyperref]{labbook}
+\documentclass[hyperref,idxtotoc]{labbook}
 \usepackage{moreverb}
 \usepackage{natbib}
 \usepackage{hyperref}
 \usepackage{graphicx}
 \usepackage{enumitem}
+\usepackage{color}
 
 \begin{document}
 
@@ -39,11 +40,13 @@
 \newsubexperiment{SeriesGlossary}{AMASeries Representation Paper Glossary}
 \newsubexperiment{restoreFunctionality}{Restore AMASeriesRepresentation Functionality}
 \newexperiment{HPC}{High Performance Computing}
-\newsubexperiment{GPU}{Graphics Processing Unit}
+\newsubexperiment{GPUs}{Graphics Processing Units}
 \newsubexperiment{FPGA}{Field Programmable Graphic Arrays}
 \newsubexperiment{Glascow}{December 5, Glascow Presentation}
 \newsubexperiment{toJulia}{Convert AMASeries Code to Julia}
-\newsubexperiment{MmaGPU}{Mathematica and GPU}
+\newsubexperiment{MmaGPUs}{Mathematica and GPUs}
+\newexperiment{organize}{Generally Better Organize Things}
+\newsubexperiment{orgLabBook}{Generally Better Organize Labbook}
 
 
 
@@ -253,7 +256,7 @@ applyErrFormulaUnknown.mth:firstRBCGenModel[0.36,0.95,1,0,0.95,0.02];
 
 Started glossary on AMASeriesFEDS using all \TeX\ strategy 
 
-\subexperiment{GPU}
+\subexperiment{GPUs}
 
 \href{https://nextjournal.com/sdanisch/julia-gpu-programming}{Graphics Processing Unit in julia}
 
@@ -392,7 +395,7 @@ OpenGL ES profile shading language version string: OpenGL ES GLSL ES 3.00
 \labday{Wednesday August 21, 2019}
 
 \experiment{HPC}
-\subexperiment{GPU}
+\subexperiment{GPUs}
 
 \begin{itemize}
 \item 
@@ -403,7 +406,7 @@ OpenGL ES profile shading language version string: OpenGL ES GLSL ES 3.00
 \item it appears very important for mathematica to send data  before operating see their CUDADot example
 \end{itemize}
 
-\experiment{toJulia}
+\subexperiment{toJulia}
 Working through
 \href{https://nextjournal.com/sdanisch/julia-gpu-programming}{Graphics Processing Unit in julia}
 
@@ -413,7 +416,7 @@ Working through
 \end{itemize}
 
 
-\subexperiment{MmaGPU}
+\subexperiment{MmaGPUs}
 
 \begin{itemize}
 \item \href{https://reference.wolfram.com/language/CUDALink/guide/CUDALink.html}{CUDALink`}
@@ -519,7 +522,7 @@ errBoundInfo[1*{1,1,1},2,100]
  
 >                 {0.199729, 0.970969, 0.0260343}}]
 \end{verbatim}
-      chooseLower choose upper fail
+      chooseLower choose upper fail due to empt
     \end{itemize}
   \end{itemize}
 \end{description}
@@ -534,6 +537,113 @@ errBoundInfo[1*{1,1,1},2,100]
 FPGA implementation using xilinx system generator}  someone looking to hire programming expertise  (freelancer site)
 \item \href{http://simonlab.uchicago.edu/FPGA.html}{U of Chicago development team}  pdf papers describing their work on various projects
   \end{itemize}
+\end{itemize}
+\labday{Thursday August 22, 2019}
+
+\experiment{organize}
+\subexperiment{orgLabBook}
+\begin{itemize}
+\item read labBook documentation -- available in in notability, 5 pages done
+\item get KOMA-script English documentation  -- available in notability
+\item emacs code to regenerate labbook in background
+\end{itemize}
+\experiment{refactor}
+\subexperiment{restoreFunctionality}
+\begin{itemize}
+\item get basic code working
+  \begin{itemize}
+  \item buildUp.mth works from beginning to end even including Regimes on mac and ubuntu
+  \item work on finishPaper.mth  AMAFedsBetterRBC.mth another another good candidate, but different definitions they seem to be ``standalone''
+   {\color{red}
+    May delete the following:
+  \item do approxAndBound step by step in fixMma.wl
+    \begin{itemize}
+    \item seems to be calling parallelNestGenericIterREInterp missing last arg before opts integer or eval points
+    \item calling with numIters=1 leads to calling compiled function with 3 args instead of 13 sounds like calling model equations
+    \item buildUp.mth evaluateTripls of frFunc[[1,2]] works
+    \item parallelMakeGenericInterpFuncs when using frFunc
+      
+\begin{verbatim}
+
+theK=2
+{dr,cedr}=
+   genFRExtFunc, 
+   linModBetterRBCTrips,{X0Z0, theK}, 
+   eqnsCompiledBetterRBCTrips, sgSpecErg, 
+   smolyakInterpolation, {},(*
+"xVarRanges"->theRanges,*)"Traditional"->False]
+
+
+
+\end{verbatim}
+\item following works
+\begin{verbatim}
+
+theRes=parallelNestGenericIterREInterp[
+   genFRExtFunc, 
+   linModBetterRBCTrips,{X0Z0, theK}, 
+   eqnsCompiledBetterRBCTrips, sgSpecErg, 
+   smolyakInterpolation, {},3,(*
+"xVarRanges"->theRanges,*)"Traditional"->False]
+\end{verbatim}
+
+    \end{itemize}
+}
+  \item functions in finishPaper.mth
+     \begin{description}
+ \item[dirNameString, fNameString]   Seem to work fine
+ \item[prepSmol] produced no error/warniing messages
+ \item[approxAndBound] parallelNestGenericIterREInterp does not evaluate  missing argument. number of iters or evalpts
+   \begin{itemize}
+   \item added numiters to definition and passed down now get ``noSolutionFound''  message
+   \end{itemize}
+ \item[errBoundInfo] 
+ \item[actualErrs] 
+ \item[convDiscrep] 
+ \item[actErrCP] 
+     \end{description}
+  \end{itemize}
+\item get some tests setup
+\item measure coverage
+\end{itemize}
+\experiment{HPC}
+\subexperiment{GPUs}
+\begin{itemize}
+\item setup comparisons of julia and mathematica
+  \begin{itemize}
+  \item \href{https://cuda-tutorial.readthedocs.io/en/latest/tutorials/tutorial01/}{Tutorial 01: Say Hello to CUDA}
+
+  \item will need timers for comparisons
+
+    
+\item    cudaDeviceSynchronize(); makes sure that main doesn't return before gpu completes
+
+
+    
+\begin{verbatim}
+#include "stdio.h"
+__global__ void cuda_hello(){
+# if __CUDA_ARCH__>=200
+    printf("Hello World from GPU!\n");
+#endif  
+}
+
+int main() {
+    cuda_hello<<<1,1>>>();
+    cudaDeviceSynchronize();
+    return 0;
+}
+
+\end{verbatim}
+  \end{itemize}
+
+\item identify GPUs components how to measure how julia and Mathematica compare, olthers?
+found \href{https://nextjournal.com/sdanisch/julia-gpu-programming#writing-gpu-kernels}{programming GPU}
+\item \href{https://juliagpu.github.io/CUDAnative.jl/stable/man/usage.html}{another programming alternative }
+  CuArray does not seem to be defined need to do ``using CuArrays''
+
+  Did not actually get CUDnative example to work
+\item \href{https://reference.wolfram.com/cloudplatform/CUDALink/tutorial/Overview.html}{CUDALink Mathematica}
 \end{itemize}
 \bibliographystyle{plainnat}
 \bibliography{emds.bib}

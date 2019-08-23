@@ -30,8 +30,13 @@ frFunc = genFRExtFunc[{4, 1, 4},
    linModBetterRBCTrips, {X0Z0, 2}, 
    eqnsCompiledBetterRBCTrips];
 
+evaluateTriple[frFunc[[1, 1]], 
+  anXEpsFlatBetterRBCTrips]
+
 evaluateTriple[frFunc[[1, 2]], 
   anXEpsFlatBetterRBCTrips]
+
+
 
 
 
@@ -54,6 +59,13 @@ sgSpecErg = {toIg, smolRngErg, ptErg, tfErg, plyErg, iplyErg,
     betterRBCTripsMaxZ, 
     betterRBCTripsvv}}
 
+
+
+theFuncs=parallelMakeGenericInterpFuncs[frFunc,{},
+sgSpecErg,   smolyakInterpolation, {}]
+
+
+
 theK=2
 {dr,cedr}=parallelDoGenericIterREInterp[
    genFRExtFunc, 
@@ -61,6 +73,9 @@ theK=2
    eqnsCompiledBetterRBCTrips, sgSpecErg, 
    smolyakInterpolation, {},(*
 "xVarRanges"->theRanges,*)"Traditional"->False]
+
+
+
 
 
 dr @@ anXEpsFlatBetterRBCTrips

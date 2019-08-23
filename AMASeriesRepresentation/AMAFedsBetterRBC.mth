@@ -5,9 +5,11 @@ Print["series?"]
 Get["AMASeriesRepresentation`"]
 (*
 Print["preemscstomma"]
-Get["emscsToMma`"]*)
+Needs["emscsToMma`"]*)
+
 Print["msnto?"]
 Needs["MSNTO`"]
+
 Print["reading first"]
 Get["firstRBCTrips`"]
 Print["done reading first"]

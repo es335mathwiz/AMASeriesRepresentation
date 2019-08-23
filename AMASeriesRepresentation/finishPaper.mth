@@ -2,14 +2,8 @@ Print["setting history length to 1"];
 $HistoryLength=1;
 Get["tests/pathSetup.mth"]
 Get["AMASeriesRepresentation`"]
-(*
 Print["preemscstomma"]
-<<<<<<< HEAD
-Get["emscsToMma`"]
-*)
-=======
 (*Get["emscsToMma`"]*)
->>>>>>> 18e731a37c37b3e4fce47093d82d87863072e1ef
 Get["betterRBCTrips`"]
 
 LaunchKernels[]
@@ -17,14 +11,7 @@ LaunchKernels[]
 ParallelEvaluate[$HistoryLength=1];
 ParallelEvaluate[Get["tests/pathSetup.mth"]]
 ParallelNeeds["AMASeriesRepresentation`"]
-(*
-Print["preemscstomma"]
-<<<<<<< HEAD
-ParallelNeeds["emscsToMma`"]
-*)
-=======
 (*ParallelNeeds["emscsToMma`"]*)
->>>>>>> 18e731a37c37b3e4fce47093d82d87863072e1ef
 ParallelNeeds["betterRBCTrips`"]
 
 
@@ -68,14 +55,15 @@ bestVals=bestDR @@ {ig,kk,ig,tt,ee}},
 
 Options[approxAndBound]={"Traditional"->False,"addTailContribution"->False,"maxForCEIters"->40,
 "normConvTol"->10^(-10),"maxNormsToKeep"->50};
-approxAndBound[approx_?VectorQ,theK_Integer,
+approxAndBound[approx_?VectorQ,theK_Integer,numIters_Integer,
 opts:OptionsPattern[]]:=
 Module[{},
 {tryEps,numKern,theName,mthName,bothX0Z0,sgSpecErg,zPts}=
 prepSmol[approx,theK];
 {tm,ig}=Timing[
 theRes=parallelNestGenericIterREInterp[genFRExtFunc,linModBetterRBCTrips,
-{bothX0Z0,theK},rbcEqnsBetterRBCTrips,sgSpecErg,smolyakInterpolation,{},Apply[Sequence,FilterRules[{opts},Options[parallelNestGenericIterREInterp]]]]];
+{bothX0Z0,theK},rbcEqnsBetterRBCTrips,sgSpecErg,smolyakInterpolation,{},
+numIters,Apply[Sequence,FilterRules[{opts},Options[parallelNestGenericIterREInterp]]]]];
 {sgSpecErg,theRes,tm,Length[Kernels[]]}]
 
 

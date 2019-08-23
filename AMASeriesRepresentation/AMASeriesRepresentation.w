@@ -7,10 +7,31 @@
 
 \begin{document}
 \maketitle
-\chapter{Huh}
 
 \section{Introduction and Summary}
 \label{sec:introduction-summary}
+
+
+@o genAMASeriesPDF.sh
+@{
+#!/bin/bash
+nuweb  AMASeriesRepresentation
+pdflatex  AMASeriesRepresentation
+makeindex  AMASeriesRepresentation
+bibtex  AMASeriesRepresentation
+nuweb  AMASeriesRepresentation
+pdflatex  AMASeriesRepresentation
+pdflatex  AMASeriesRepresentation
+@}
+@o genAMAFEDSPDF.sh
+@{
+#!/bin/bash
+pdflatex  AMASeriesFEDS
+bibtex  AMASeriesFEDS
+pdflatex  AMASeriesFEDS
+pdflatex  AMASeriesFEDS
+@}
+
 
 \section{Triples}
 \label{sec:triples}

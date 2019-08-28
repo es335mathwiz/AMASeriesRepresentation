@@ -775,6 +775,29 @@ found \href{https://nextjournal.com/sdanisch/julia-gpu-programming#writing-gpu-k
 \item \href{https://en.wikipedia.org/wiki/Deep_learning}{deep learning -- (deep/recurrent/convolution) neural net}
 \end{itemize}
 
+\labday{Wednesday August 28, 2019}
+\experiment{refactor}
+\subexperiment{SeriesPaper}
+\begin{itemize}
+\item problems  with LaunchKernels and paralell distribute of definitions
+\item code seems to work when these are disabled in finishPaper.mth
+\item need to add numIters to errBoundInfo to pass to approxAndBound
+\item no definition for genCheckPt or vals or phivals in errBoundInfo (vals not used)
+\item actualErrs[tr[[-1,1]],{.4,1.0,0.0}] appears to work where tr comes from second argumentg of approxandbound
+\begin{verbatim}
+
+In[13]:= actualErrs[tr[[-1,1]],{.4,1.0,0.0}]
+
+Out[13]= {-0.00858291, -0.00108232, -0.0629335, -0.00643092}
+
+In[14]:= actualErrs[tr2[[-1,1]],{.4,1.0,0.0}]
+
+Out[14]= {-0.00399545, -0.0058075, -0.0145583, -0.000610145}
+
+\end{verbatim}
+\item problems calculation solution to some equation for approx when get to {3,2,1} or {2,3,1}
+\end{itemize}
+
 \bibliographystyle{plainnat}
 \bibliography{emds.bib}
 

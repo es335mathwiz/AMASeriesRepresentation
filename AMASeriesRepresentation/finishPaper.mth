@@ -5,7 +5,7 @@ Get["AMASeriesRepresentation`"]
 Print["preemscstomma"]
 (*Get["emscsToMma`"]*)
 Get["betterRBCTrips`"]
-
+(*
 LaunchKernels[]
 
 ParallelEvaluate[$HistoryLength=1];
@@ -14,7 +14,7 @@ ParallelNeeds["AMASeriesRepresentation`"]
 (*ParallelNeeds["emscsToMma`"]*)
 ParallelNeeds["betterRBCTrips`"]
 
-
+*)
 dirNameString[]:=
 Module[{},
 aDir="resDir"<>"-host-"<>$MachineName<>"numKern"<>ToString[numKern]<>"-"<>ToString[Round[AbsoluteTime[]]]<>"/"(*;
@@ -70,7 +70,7 @@ numIters,Apply[Sequence,FilterRules[{opts},Options[parallelNestGenericIterREInte
 Options[errBoundInfo]={"Traditional"->False,"addTailContribution"->False,"maxForCEIters"->40,
 "normConvTol"->10^(-10),"maxNormsToKeep"->50};
 errBoundInfo[approx:{_Integer,_Integer,_Integer},
-theK_Integer,numPts_Integer,
+theK_Integer,numIters_Integer,numPts_Integer,
 opts:OptionsPattern[]]:=
 Module[{sgSpec,theRes,pts,vals,phivals,rngs,
 forC,forCActual,forK,forKActual,forT,forTActual,
@@ -80,7 +80,7 @@ theResT,worstT,tLoc,
 theResCActual,worstCActual,cActualLoc,
 theResKActual,worstkActual,kActualLoc,
 theResTActual,worstTActual,tActualLoc},
-{sgSpec,theRes,tm,kerns}=approxAndBound[approx,theK,Apply[Sequence,FilterRules[{opts},Options[approxAndBound]]]];
+{sgSpec,theRes,tm,kerns}=approxAndBound[approx,theK,numIters,Apply[Sequence,FilterRules[{opts},Options[approxAndBound]]]];
 Print["done approxAndBound",approx,tm,kerns];
 pts=sgSpec[[3]];
 {vals,phivals}=genCheckPt[linModBetterRBCTrips,

@@ -399,20 +399,6 @@ $Failed],_,Function[{val,tag},
 Print["catchinevaluateTriple:",{xArgs,val,tag}//InputForm];$Failed]]
 
 
-evaluateTriple[
-@<aProcessedTriple@>,
-thePt:{_?NumberQ..}]:=
-Catch[
-If[
-Apply[preFunc,thePt],
-With[{theRes=
-Apply[theFunc,thePt]},
-If[Apply[postFunc,{thePt,theRes}],theRes,$Failed]],
-$Failed],_,Function[{val,tag},
-Print["catchinevaluateTriple:",{xArgs,val,tag}//InputForm];$Failed]]
-
-
-
 evaluateTripleEqnSys[
 triple:{preFunc_Function,theFunc:(_Function|_CompiledFunction|_Symbol),
 postFunc_Function},
@@ -680,6 +666,7 @@ svmRegressionRBF|svmRegressionSigmoid),
 svmArgs:{_?NumberQ...},opts:OptionsPattern[]]:=
 With[{numX=Length[BB],numZ=Length[psiZ[[1]]]},
 tn=AbsoluteTime[];
+Print["parrallelDoGenericIterREInterp:",{numX,numEps,numZ}];
 If[Length[Kernels[]]===0,LaunchKernels[]];reapRes=Reap[
 genFRExtFunc[{numX,numEps,numZ},linMod,bothXZFuncs,
 triples,Apply[Sequence,FilterRules[{opts},

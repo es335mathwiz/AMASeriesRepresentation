@@ -13,7 +13,7 @@
 \newcommand{\NWsep}{${\diamond}$}
 \newcommand{\NWnotglobal}{(not defined globally)}
 \newcommand{\NWuseHyperlinks}{}
- \UseRawInputEncoding
+\UseRawInputEncoding
 \documentclass[hyperref,idxtotoc]{labbook}
 \usepackage{moreverb}
 \usepackage{natbib}
@@ -593,7 +593,7 @@ theRes=parallelNestGenericIterREInterp[
      \begin{description}
  \item[dirNameString, fNameString]   Seem to work fine
  \item[prepSmol] produced no error/warniing messages
- \item[approxAndBound] parallelNestGenericIterREInterp does not evaluate  missing argument. number of iters or evalpts
+ \item[approxAndBound] parallelNestGenericIterREInterp does not evaluate  missing argument. number of iters or evalpts \label{appthur}
    \begin{itemize}
    \item added numiters to definition and passed down now get ``noSolutionFound''  message
    \end{itemize}
@@ -645,6 +645,136 @@ found \href{https://nextjournal.com/sdanisch/julia-gpu-programming#writing-gpu-k
   Did not actually get CUDnative example to work
 \item \href{https://reference.wolfram.com/cloudplatform/CUDALink/tutorial/Overview.html}{CUDALink Mathematica}
 \end{itemize}
+
+\labday{Friday August 23, 2019}
+
+\experiment{SeriesPaper}
+\begin{itemize}
+\item work on glossary entries
+  
+\item moved all notation related newcommands to end of glossary commented out unused in newcommands.tex file
+\end{itemize}
+
+\experiment{refactor}
+\subexperiment{restoreFunctionality}
+\begin{itemize}
+\item continue with approxAndBound function in finishPaper.mth  (see \ref{appthur})  nothing accomplished today
+\end{itemize}
+
+   \experiment{HPC}
+   \subexperiment{GPUs}
+   \begin{itemize}
+   \item get computer science parameterization of GPU specs for determining performance  (\href{https://en.wikipedia.org/wiki/General-purpose_computing_on_graphics_processing_units}{wikipedia}
+     \begin{itemize}
+     \item vectorizing functions of 1,2,3,4 dimensional arguments  (SIMD)
+     \item can have multi-level caches 
+
+   \item find/develop some benchmarks for C/Julia/Mathematica for economists
+
+
+     \end{itemize}
+     \item  \href{https://www.nvidia.com/en-gb/geforce/graphics-cards/rtx-2080-ti/}{my GeForce RTX 2080 Ti:} 
+     \begin{itemize}
+     \item  \href{https://www.techpowerup.com/gpu-specs/geforce-rtx-2080-ti.c3305}{better spec writeup: mentions 544 tensor cores that improvd speed for machine learning}
+       
+     \item \href{https://www.nvidia.com/en-gb/data-center/tensorcore/}{tensor cores for linear algebra}
+     \item newer NVIDIA V100 GPU Powered by Volta Tensor Cores may be better
+     \item \href{https://devblogs.nvidia.com/gpu-computing-julia-programming-language/}{julia and tensor flow and gpu's}look into TensorFlow.jl
+       
+     \item example on site needed update on @cuda line  ``threads=''
+\item
+ mathematica systeminformation has 
+       \begin{itemize}
+       \item total memory 10.7581GB,
+       \item  clockrate 1650000, 
+       \item core count 2176,
+       \item supports compute capabilites 7.5
+       \item gpu overlap 1
+       \item max block dims (1024,1024,64)
+       \item max threads/block 1024
+       \item max shared mem per block 49152
+       \item total constant memory 65536
+
+       \item warp size 32
+         \item maximum pitch  2147483647
+\item Maximum Registers Per Block 65536
+\item Texture Alignment 512
+\item Multiprocessor Count 68
+\item Execution Timeout 1
+\item Integrated False
+\item Can Map Host Memory True
+\item Compute Mode "Default"
+\item Texture1D Width 131072
+\item Texture2D Width 131072
+\item Texture2D Height 65536
+\item Texture3D Width 16384
+\item Texture3D Height 16384
+\item Texture3D Depth 16384
+\item Texture2D Array Width 32768
+\item Texture2D Array Height 32768
+\item Texture2D Array Slices 2048
+\item Surface Alignment 512
+\item Concurrent Kernels True
+\item ECC Enabled False
+\item TCC Enabled False
+       \end{itemize}
+   \item 
+
+
+     \end{itemize}
+   \end{itemize}
+
+
+   \labday{Saturday August 24, 2019}
+
+\experiment{refactor}
+\subexperiment{restoreFunctionality}
+
+\experiment{SeriesPaper}
+
+   \experiment{HPC}
+   \subexperiment{GPUs}
+
+
+   \begin{flushleft} \small
+\begin{minipage}{\linewidth}\label{scrap2}\raggedright\small
+\NWtarget{nuweb19}{} \verb@"someJuliaGPUStuff/nvidiaExampleDotCuArray.jl"@\nobreak\ {\footnotesize {19}}$\equiv$
+\vspace{-1ex}
+\begin{list}{}{} \item
+\mbox{}\verb@using CuArrays@\\
+\mbox{}\verb@     len = 400000@\\
+\mbox{}\verb@     from=[1.2,4.5,3.3,6.6]@\\
+\mbox{}\verb@     preX=rand(from, len)@\\
+\mbox{}\verb@     X = CuArray(preX)@\\
+\mbox{}\verb@f(x) = 3x^2 + 5x + 2@\\
+\mbox{}\verb@@{\tt @}\verb@time X .= f.(2 .* X.^2 .+ 6 .* X.^3 .- sqrt.(X))@\\
+\mbox{}\verb@@{\NWsep}
+\end{list}
+\vspace{-1.5ex}
+\footnotesize
+\begin{list}{}{\setlength{\itemsep}{-\parsep}\setlength{\itemindent}{-\leftmargin}}
+
+\item{}
+\end{list}
+\end{minipage}\vspace{4ex}
+\end{flushleft}
+\begin{itemize}
+
+
+\item
+\href{https://devblogs.nvidia.com/tensor-core-ai-performance-milestones/}{Volta perfomance measures}
+\item 
+\href{https://www.researchgate.net/publication/323722776_NVIDIA_Tensor_Core_Programmability_Performance_Precision}{requested this Volta Tensor Core research paper today}
+\item \href{https://arxiv.org/pdf/1811.09736.pdf}{Accelerating Reduction and Scan Using Tensor Core Units}
+\item \href{https://devblogs.nvidia.com/programming-tensor-cores-cuda-9/}{Tensor Core How to}
+\item \href{https://developer.nvidia.com/automatic-mixed-precision}{nvidia
+    designed to allow mixed precision for speedup}
+  \href{https://docs.nvidia.com/deeplearning/sdk/mixed-precision-training/index.html}{an NVIDIA mixed precision training guide}  appears to be designed for 4x4x4 matrices  $D= A*B+C$  each  matrix 4x4  FP16  but C,D can be FP32
+\item designed for deep neural nets DNNS  (resolve definitions recurrent and deep)
+\item only GEMMs support Tensor Core
+\item \href{https://en.wikipedia.org/wiki/Deep_learning}{deep learning -- (deep/recurrent/convolution) neural net}
+\end{itemize}
+
 \bibliographystyle{plainnat}
 \bibliography{emds.bib}
 

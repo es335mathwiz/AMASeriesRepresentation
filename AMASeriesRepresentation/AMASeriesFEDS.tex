@@ -88,8 +88,8 @@ see \citep{judd92,Christiano2000,doraszelskiy04,gaspar97,Judd2014,marcet.lorenzo
 
 This new series representation for bounded time series, adapted from \citep{anderson10},
  \begin{gather*}
-       	 \drFunc\tArg =\BMat \sVar_{t-1}+ \phiMat \psiEpsMat\theShock + (\IMat - \FMat)^{-1} \phiMat \psiCMat + \sum_{\sForSum=0}^\infty \FMat^\sForSum \phiMat \ZWOarg_{t+\nu}\tArg%\\ \intertext{ so that}
-\expct{ \sVar_{t+1}\tArg} =\BMat \sVar\tArg  + (\IMat - \FMat)^{-1} \phiMat \psiCMat+ \sum_{\sForSum =1}^\infty \FMat^{\sForSum-1} \phiMat \ZWOarg_{t+\nu}\tArg.
+       	 \drFunc\tArg =\BMat \sVar_{t-1}+ \phiMat \psiEpsMat\theShock + (\IMat - \FMat)^{-1} \phiMat \psiCMat + \sum_{\sumIdx=0}^\infty \FMat^\sumIdx \phiMat \ZWOarg_{t+\nu}\tArg \intertext{ so that}
+\expct{ \sVar_{t+1}\tArg} =\BMat \sVar\tArg  + (\IMat - \FMat)^{-1} \phiMat \psiCMat+ \sum_{\sumIdx =1}^\infty \FMat^{\sumIdx-1} \phiMat \ZWOarg_{t+\nu}\tArg.
      \end{gather*}
  makes it possible to  construct a series
     representation for any bounded time invariant discrete time map. As yet, the author has found no comparable use of a
@@ -221,9 +221,9 @@ One can then express the $\xWOarg_t$ solving
 	 H_{-1} x_{t-1} + H_0 x_t + H_1 x_{t+1}=\psiEpsMat \theShock +\psi_{c}+
 z_t
 \intertext{ using}
-	 \xWOarg_{t} =B x_{t-1}+ \phiMat \psiEpsMat\theShock + (I - F)^{-1} \phiMat \psiCMat + \sum_{\sForSum=0}^\infty F^s \phiMat \zWOarg_{t+\sForSum} \label{theSeries}
+	 \xWOarg_{t} =B x_{t-1}+ \phiMat \psiEpsMat\theShock + (I - F)^{-1} \phiMat \psiCMat + \sum_{\sumIdx=0}^\infty F^s \phiMat \zWOarg_{t+\sumIdx} \label{theSeries}
 \intertext{and}
-	 \xWOarg_{t+k+1} =B \xWOarg_{t+k}  + (I - F)^{-1} \phiMat \psiCMat+ \sum_{\sForSum =0}^\infty F^\sForSum \phiMat \zWOarg_{t+k+\sForSum+1} \,\,\,\,\,\forall t,k \ge  0.
+	 \xWOarg_{t+k+1} =B \xWOarg_{t+k}  + (I - F)^{-1} \phiMat \psiCMat+ \sum_{\sumIdx =0}^\infty F^\sumIdx \phiMat \zWOarg_{t+k+\sumIdx+1} \,\,\,\,\,\forall t,k \ge  0.
 	 \end{gather}
 \end{theorem}
 %\end{tcolorbox}
@@ -542,7 +542,7 @@ B   \begin{bmatrix}
 c_{t-1}\\
 k_{t-1}\\
 \theta_{t-1}
-  \end{bmatrix}  + \phiMat \psiEpsMat\theShock_t + (I - F)^{-1} \phiMat \psiCMat + \sum_{\sForSum=0}^\infty F^s \phiMat z_{t+\sForSum}(k_{t-1},\theta_{t-1}, \theShock_t) 
+  \end{bmatrix}  + \phiMat \psiEpsMat\theShock_t + (I - F)^{-1} \phiMat \psiCMat + \sum_{\sumIdx=0}^\infty F^s \phiMat z_{t+\sumIdx}(k_{t-1},\theta_{t-1}, \theShock_t) 
 \end{gather*}
 % \footnote{
 % We need not  make these adjustments for the steady state,
@@ -751,7 +751,7 @@ the error in $x_t$ at $\tArg$
 \eqnFunc(x_{t-1},x_t,x_{t+1},\theShock_t)\\
 \zpWOarg_{t+k}\equiv
 \eqnFunc(x_{t+k-1},x_{t+k},x_{t+k+1},0)\\
-\hat{\mathbf{e}}\tArg\equiv \sum_{\sForSum=0}^K F^s \phiMat \zpWOarg_{t+\nu}\\
+\hat{\mathbf{e}}\tArg\equiv \sum_{\sumIdx=0}^K F^s \phiMat \zpWOarg_{t+\nu}\\
 \end{gather*}
 
 \subsection{Assessing the Error Approximation}
@@ -1127,8 +1127,8 @@ x_{t-1}\\ \xpWarg\\ \XpWOarg(\xWarg)
   \begin{itemize}
   \item We get expressions for $x_t,\,\, \expct x_{t+1}$ consistent with $\linMod$ and the conditional expectations path
    \begin{gather*}
-     \mathcal{X}_{t} =B x_{t-1}+ \phiMat \psiEpsMat\theShock + (I - F)^{-1} \phiMat \psiCMat + \sum_{\sForSum=0}^\infty F^s \phiMat \ZWOarg(x_{t+\nu})\\
-	\expct{ \mathcal{X}_{t+1}} =B \mathcal{X}_{t}  + (I - F)^{-1} \phiMat \psiCMat+ \sum_{\sForSum =0}^\infty F^{\sForSum-1} \phiMat \ZWOarg(x_{t+\nu}) \,\,\,\,\,\forall t,k \ge  0
+     \mathcal{X}_{t} =B x_{t-1}+ \phiMat \psiEpsMat\theShock + (I - F)^{-1} \phiMat \psiCMat + \sum_{\sumIdx=0}^\infty F^s \phiMat \ZWOarg(x_{t+\nu})\\
+	\expct{ \mathcal{X}_{t+1}} =B \mathcal{X}_{t}  + (I - F)^{-1} \phiMat \psiCMat+ \sum_{\sumIdx =0}^\infty F^{\sumIdx-1} \phiMat \ZWOarg(x_{t+\nu}) \,\,\,\,\,\forall t,k \ge  0
 \end{gather*}
 \item Use the model equations, $\eqnFunc(x_{t-1},x_t,\expct{x_{t+1}},\theShock)=0$ and $x_t\tArg=\mathcal{X}_t\tArg$\\ to determine $\xppWarg, \zppWarg$
 \item $\xpWarg=\xppWarg, \zpWarg=\zppWarg$ -- {\color{blue}Repeat loop.}
@@ -1853,8 +1853,8 @@ E_tx^\star_{t+1}=G^\star(g^\star(x_{t-1},\theShock_t)) \intertext{we have}
 
    Consequently, the exact solution has a representation given by
 	 \begin{gather}
-	 x^\star_{t}(x_{t-1},\theShock) =B x_{t-1}+ \phiMat \psiEpsMat\theShock + (I - F)^{-1} \phiMat \psiCMat +\\ \sum_{\sForSum=0}^\infty F^s \phiMat z^\star_{t+\sForSum}(x_{t-1},\theShock) \intertext{and}
-	 \expct{x^\star_{t+1}(x_{t-1},\theShock)} =B x^\star_{t+k} + \sum_{\sForSum =0}^\infty F^\sForSum \phiMat \expct{z^\star_{t+1+\sForSum}(x_{t-1},\theShock)} + (I - F)^{-1} \phiMat \psiCMat 
+	 x^\star_{t}(x_{t-1},\theShock) =B x_{t-1}+ \phiMat \psiEpsMat\theShock + (I - F)^{-1} \phiMat \psiCMat +\\ \sum_{\sumIdx=0}^\infty F^s \phiMat z^\star_{t+\sumIdx}(x_{t-1},\theShock) \intertext{and}
+	 \expct{x^\star_{t+1}(x_{t-1},\theShock)} =B x^\star_{t+k} + \sum_{\sumIdx =0}^\infty F^\sumIdx \phiMat \expct{z^\star_{t+1+\sumIdx}(x_{t-1},\theShock)} + (I - F)^{-1} \phiMat \psiCMat 
  \intertext{with}
  \eqnFunc(x_{t-1},x^\star_t,E_tx^\star_{t+1},\theShock_t)=0  \,\, \forall  (x_{t-1},\theShock_t)\\ 
 	 \end{gather}
@@ -1888,9 +1888,9 @@ in the region $\bndRgn^p$. Using $G^p$ and $\linMod$ construct the family of tra
  The proposed solution has a representation given by 
   \begin{gather}
     \label{eq:4}
-	 x^p_{t}(x_{t-1},\theShock) =B x_{t-1}+ \phiMat \psiEpsMat\theShock + (I - F)^{-1} \phiMat \psiCMat +\\ \sum_{\sForSum=0}^\infty F^s \phiMat z^p_{t+\sForSum}(x_{t-1},\theShock) 
+	 x^p_{t}(x_{t-1},\theShock) =B x_{t-1}+ \phiMat \psiEpsMat\theShock + (I - F)^{-1} \phiMat \psiCMat +\\ \sum_{\sumIdx=0}^\infty F^s \phiMat z^p_{t+\sumIdx}(x_{t-1},\theShock) 
  \intertext{and}
- 	 \expct{x^p_{t+1}(x_{t-1},\theShock)} =B x^p_{t+k} + \sum_{\sForSum =0}^\infty F^\sForSum \phiMat z^p_{t+1+\sForSum}(x_{t-1},\theShock) + (I - F)^{-1} \phiMat \psiCMat \intertext{with}
+ 	 \expct{x^p_{t+1}(x_{t-1},\theShock)} =B x^p_{t+k} + \sum_{\sumIdx =0}^\infty F^\sumIdx \phiMat z^p_{t+1+\sumIdx}(x_{t-1},\theShock) + (I - F)^{-1} \phiMat \psiCMat \intertext{with}
 \mathbf{e}_t^p(x_{t-1},\theShock)\equiv
 \eqnFunc(x_{t-1},x^p_t,E_tx^p_{t+1},\theShock_t)
   \end{gather}
@@ -1901,12 +1901,12 @@ in the region $\bndRgn^p$. Using $G^p$ and $\linMod$ construct the family of tra
   \begin{gather}
     \label{eq:3}
 	 x^\star_{t}(x_{t-1},\theShock) -	 x^p_{t}(x_{t-1},\theShock) =
-         \sum_{\sForSum=0}^\infty F^s \phiMat (z^\star_{t+\sForSum}(x_{t-1},\theShock)-z^p_{t+\sForSum}(x_{t-1},\theShock))     \\
-\Delta z_{t+\sForSum}^p(x_{t-1},\theShock_t)         \equiv (z^\star_{t+\sForSum}(x_{t-1},\theShock)-z^p_{t+\sForSum}(x_{t-1},\theShock))\\
+         \sum_{\sumIdx=0}^\infty F^s \phiMat (z^\star_{t+\sumIdx}(x_{t-1},\theShock)-z^p_{t+\sumIdx}(x_{t-1},\theShock))     \\
+\Delta z_{t+\sumIdx}^p(x_{t-1},\theShock_t)         \equiv (z^\star_{t+\sumIdx}(x_{t-1},\theShock)-z^p_{t+\sumIdx}(x_{t-1},\theShock))\\
 	 x^\star_{t}(x_{t-1},\theShock) -	 x^p_{t}(x_{t-1},\theShock) =
-\sum_{\sForSum=0}^\infty F^s \phiMat \Delta z_{t+\sForSum}^p(x_{t-1},\theShock_t)   \\ 
+\sum_{\sumIdx=0}^\infty F^s \phiMat \Delta z_{t+\sumIdx}^p(x_{t-1},\theShock_t)   \\ 
 	\infNorm{ x^\star_{t}(x_{t-1},\theShock) -	 x^p_{t}(x_{t-1},\theShock)} \le
-\sum_{\sForSum=0}^\infty F^s \phiMat \infNorm{\Delta z_{t+\sForSum}^p(x_{t-1},\theShock_t)}    
+\sum_{\sumIdx=0}^\infty F^s \phiMat \infNorm{\Delta z_{t+\sumIdx}^p(x_{t-1},\theShock_t)}    
   \end{gather}
 
   By bounding the largest deviation in the paths for the $\Delta z_t^p$ we can bound the largest difference in $x_t$.\footnote{Since the future values are probability weighted averages of the $\Delta z_t^p$ values for the given initial conditions and the condition expectations paths remain in the region $\bndRgn^p$,

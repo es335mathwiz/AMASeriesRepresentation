@@ -48,12 +48,19 @@
   description={ use \chkShow{\psiEpsMat}  Shock impact matrix. }}
   \newcommand{\psiEpsMat}{{\gls{psiEpsMat}}}
 
-
 \newglossaryentry{psiCMat}{name=\ensuremath{{\psi_c}},sort={gpsic},
   description={ use \chkShow{\psiCMat}   Constant impact matrix.}}
   \newcommand{\psiCMat}{{\gls{psiCMat}}}
 
+\newglossaryentry{sumIdx}{name=\ensuremath{{\nu}},sort={gnu},
+  description={ use \chkShow{\sumIdx}   Summation index.}}
+  \newcommand{\sumIdx}{{\gls{sumIdx}}}
+%\newcommand{\sForSum}{{\nu}}
 
+
+
+  %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+  %acronyms
 
 \newacronym{msnto}{MSNTO}{multi-sequential number-theoretic optimization}
   \newcommand{\MSNTO}{\gls{msnto}}
@@ -63,12 +70,23 @@
 
 
 
-\newcommand{\tArg}{(\sVar_{t-1},\theShock_t)}
-\newcommand{\eqnFuncSysIExpl}[1]{\{(\mathbf{b}_{#1}\tArg,\eqnFunc_{#1}\allArgs=0,\mathbf{c}_{#1}\allArgs )\}}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%newcommands that don't use glossary symbols
+
 
 \newcommand{\expct}[1]{{\mathcal{E}\left [ #1 \right ]}}
 
-\newcommand{\sForSum}{{\nu}}
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%newcommands with glossary symbols
+
+
+\newcommand{\tArg}{(\sVar_{t-1},\theShock_t)}
+
+\newcommand{\eqnFuncSysIExpl}[1]{\{(\mathbf{b}_{#1}\tArg,\eqnFunc_{#1}\allArgs=0,\mathbf{c}_{#1}\allArgs )\}}
+
+
 
 \newcommand{\ZWOarg}{   \mathbf{Z}}
 

@@ -5,12 +5,14 @@ Get["AMASeriesRepresentation`"]
 Print["preemscstomma"]
 (*Get["emscsToMma`"]*)
 Get["betterRBCTrips`"]
-(*
-LaunchKernels[]
 
+LaunchKernels[]
 ParallelEvaluate[$HistoryLength=1];
 ParallelEvaluate[Get["tests/pathSetup.mth"]]
+
+(*
 ParallelNeeds["AMASeriesRepresentation`"]
+
 (*ParallelNeeds["emscsToMma`"]*)
 ParallelNeeds["betterRBCTrips`"]
 
@@ -138,3 +140,28 @@ backZtoX[{{z1,z2,tryEps}},betterRBCTripsMean,betterRBCTripsSD,betterRBCTripsvv][
 {z1,betterRBCTripsMinZ[[1]],betterRBCTripsMaxZ[[1]]},{z2,betterRBCTripsMinZ[[2]],betterRBCTripsMaxZ[[2]]},PlotRange->All,PlotLegends->Automatic,PlotLabel->StringReplace[theName,"Iters"->"\nIters"
 ]<>bothErrStr,
 Epilog->{PointSize[0.05],Green,Point[acterrLoc[[{1,2}]]],PointSize[0.025],Orange,Point[errBndLoc[[{1,2}]]],PointSize[0.0125],Black,Point[#]&/@zPts[[All,{1,2}]]},PlotRangeClipping->False]]
+
+
+
+
+
+(*sort out working stuff *)
+
+(*
+
+ab1=approxAndBound[{1,1,1},4,2];
+
+
+ab2=approxAndBound[{2*1,1,1},4,2];
+
+
+abt1=approxAndBound[{1,1,1},4,2,"Traditional"->True];
+
+
+abt2=approxAndBound[{2*1,1,1},4,2,"Traditional"->True];
+
+
+
+
+
+*)

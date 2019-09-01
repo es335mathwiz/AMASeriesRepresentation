@@ -48,6 +48,7 @@
 \newexperiment{organize}{Generally Better Organize Things}
 \newsubexperiment{orgLabBook}{Generally Better Organize Labbook}
 
+\newsubexperiment{wstp}{Mathematica WSTP protocol for connecting to ``C''}
 
 
 \mainmatter
@@ -797,6 +798,92 @@ Out[14]= {-0.00399545, -0.0058075, -0.0145583, -0.000610145}
 \end{verbatim}
 \item problems calculation solution to some equation for approx when get to {3,2,1} or {2,3,1}
 \end{itemize}
+
+
+\labday{Wednesday August 28, 2019}
+\experiment{refactor}
+\subexperiment{SeriesPaper}
+
+\labday{Friday August 30, 2019}
+
+\experiment{refactor}
+\subexperiment{SeriesPaper}
+\begin{itemize}
+\item Work through call tree from bottom up
+\end{itemize}
+
+
+   \experiment{HPC}
+   \subexperiment{GPUs}
+   \begin{itemize}
+   \item work out problems with Mathematica GPU
+     \begin{itemize}
+     \item work through prerequisite packages verify functioning
+       \begin{itemize}
+       \item CCompilerDriver basic examples work
+       \item SymbolicC basic examples work
+       \item CUDALink`NVCCCompiler examples work \href{https://reference.wolfram.com/language/CUDALink/ref/NVCCCompiler.html}{but not many examples}
+       \item \href{https://reference.wolfram.com/language/CCompilerDriver/tutorial/CreatingExecutable.html#277035586}{CCompilerDriver has problems} but 
+         \href{https://mathematica.stackexchange.com/questions/67787/a-bug-fix-to-mathematica-10-0-1-0}{here is a possible fix}
+       \end{itemize}
+
+     \end{itemize}
+
+   \end{itemize}
+
+\labday{Saturday August 31, 2019}
+\experiment{refactor}
+\subexperiment{SeriesPaper}
+\begin{itemize}
+\item Work through call tree from bottom up
+\end{itemize}
+
+
+   \experiment{HPC}
+   \subexperiment{GPUs}
+\labday{Friday August 30, 2019}
+\experiment{refactor}
+\subexperiment{SeriesPaper}
+\begin{itemize}
+\item Work through call tree from bottom up
+\end{itemize}
+
+
+   \experiment{HPC}
+   \subexperiment{GPUs}
+
+\labday{Friday August 30, 2019}
+\experiment{refactor}
+\subexperiment{SeriesPaper}
+\begin{itemize}
+\item Work through call tree from bottom up
+\end{itemize}
+
+
+   \experiment{HPC}
+   \subexperiment{GPUs}
+   \begin{itemize}
+   \item problems getting nvcccompiler and cudaq
+   \item I think I need to resolve why CCompilerDriver isn't working
+   \end{itemize}
+
+\subexperiment{wstp}
+   \begin{itemize}
+  \item    \href{https://mathematica.stackexchange.com/questions/91558/what-is-the-difference-between-mathlink-and-wstp-which-one-should-i-use}{``no difference'' wstp math link}
+\item \href{https://reference.wolfram.com/language/tutorial/WSTPInterface4.html}{changes for mathlink to wstp}
+\item \href{https://community.wolfram.com/groups/-/m/t/295101}{useful dialog between Szabolcs and WRI Steve Wilson around Mma 10 release time}
+\item \href{http://library.wolfram.com/infocenter/Books/8516/MathLinkDevelopmentInC.pdf}{pdf instructions for mathlink}
+\item \href{https://mathematica.stackexchange.com/questions/154633/portable-makefile-for-wscc-builds}{prtable makefiles reference to wstp and CCompilerDriver}
+\item \href{https://mathematica.stackexchange.com/questions/154633/portable-makefile-for-wscc-builds/154651#154651}{another  how to for mathlink}
+\item got examples to compile and connect to mathematica
+  \begin{itemize}
+  \item copied the wstp examples to mathlinkExper dir
+  \item modified the makefile to myMake added libuuid dir and adjusted relative paths for build
+  \item added libuuid to LD\_LIBRARY\_PATH in .bashrc
+  \end{itemize}
+\end{itemize}
+
+
 
 \bibliographystyle{plainnat}
 \bibliography{emds.bib}

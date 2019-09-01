@@ -1,4 +1,4 @@
-\documentclass[12pt]{article}
+ \documentclass[12pt]{article}
 \usepackage[english]{babel}
 \usepackage{hyperref}
 \usepackage{datetime}
@@ -478,7 +478,26 @@ chk
 \subsection{genXtOfXtm1}
 \label{sec:genxtofxtm1}
 
+@o USEgenXtOfXtm1
+@{
+Get["tests/pathSetup.mth"]
+Needs["AMASeriesRepresentation`"];
+Needs["betterRBCTrips`"];
 
+thePhi=getPhi[linMod];
+theF=getF[linModBetterRBCTrips];
+thePsiZ=getPsiZ[linModBetterRBCTrips],
+theZsNow=
+AMASeriesRepresentation`Private`genZsForFindRoot[linMod,
+	initVec,cdrFunc,numIters];
+fCon=fSumC[thePhi,theF,thePsiZ,theZsNow];
+fSumC[thePhi,theF,thePsiZ,theZsNow]]
+theZsNow=
+AMASeriesRepresentation`Private`genZsForFindRoot[linMod,
+	initVec,cdrFunc,numIters];
+genXtOfXtm1[linModBetterTrips,anXBetterRBCTrips,anXEpsBetterRBCTrips[[{-1}]],
+aZBetterRBCTrips,fCon] 
+  @}
 
 @d genXtOfXtm1
 @{
@@ -634,6 +653,33 @@ MapThread[Function[{xx,yy},Dot[xx,phi.psiZ.yy]],{fPows , zPath}]]]]]
 
 @}
 
+@o USEfSumC.wl
+@{
+Get["tests/pathSetup.mth"]
+Needs["AMASeriesRepresentation`"];
+Needs["betterRBCTrips`"];
+EXPERfSumC[@<linMod@>,initVec_?MatrixQ,cdrFunc_Function,
+numIters_Integer]:=
+Module[{
+thePhi=getPhi[linMod],
+theF=getF[linModBetterRBCTrips],
+thePsiZ=getPsiZ[linModBetterRBCTrips],
+theZsNow},
+theZsNow=
+AMASeriesRepresentation`Private`genZsForFindRoot[linMod,
+	initVec,cdrFunc,numIters];
+fSumC[thePhi,theF,thePsiZ,theZsNow]]
+
+{drFunc,cdrFunc}=genBothX0Z0Funcs[linModBetterRBCTrips];
+
+
+badcdrFunc=Function[{x1,x2,x3,x4},cdrFunc[x1^2,1/x2,x1*x4,x4^3]]
+
+
+EXPERfSumC[linModBetterRBCTrips,anXBetterRBCTrips,cdrFunc,2]
+EXPERfSumC[linModBetterRBCTrips,anXBetterRBCTrips,badcdrFunc,2]
+
+@}
 
 
 \section{parallelDoGenericIterREInterp}

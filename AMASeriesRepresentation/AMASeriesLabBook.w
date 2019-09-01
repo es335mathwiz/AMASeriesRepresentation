@@ -6,6 +6,7 @@
 \usepackage{graphicx}
 \usepackage{enumitem}
 \usepackage{color}
+\usepackage{qtree}
 
 \begin{document}
 
@@ -773,6 +774,35 @@ Out[14]= {-0.00399545, -0.0058075, -0.0145583, -0.000610145}
 \end{itemize}
 
 
+\begin{figure}[h]
+  \centering
+  
+%\begin{tikzpicture}
+%\tikzset{every tree node/.style={align=center}}  
+% {\small
+% \Tree [.nestInterp\ref{nestInterp}  !\qsetw{4cm}
+% [.doInterp\ref{doInterp}
+% [.genFindRootFuncs\ref{genFindRootFuncs} !\qsetw{2cm}
+% [.genFindRootWorker\ref{genFindRootWorker} genZsForFindRoot\ref{genZsForFindRoot}
+% [.genLilXkZkFunc\ref{genLilXkZkFunc} fSumC\ref{fSumC} genXtOfXtm1\ref{genXtOfXtm1} [.genXtp1OfXt\ref{genXtp1OfXt} ] ] ] ] 
+% [.makeInterpFuncs\ref{makeInterpFuncs} !\qsetw{2cm} [.genInterpData\ref{genInterpData} evaluateTriple\ref{evaluateTriple} ] ] [.interpDataToFunc\ref{interpDataToFunc} 
+%  ] ] ] 
+% }
+\framebox{
+{\small
+\Tree [.nestInterp  !\qsetw{4cm}
+[.doInterp
+[.genFindRootFuncs !\qsetw{2cm}
+[.genFindRootWorker genZsForFindRoot
+[.genLilXkZkFunc fSumC genXtOfXtm1 [.genXtp1OfXt ] ] ] ] 
+[.makeInterpFuncs !\qsetw{2cm} [.genInterpData evaluateTriple ] ] [.interpDataToFunc 
+ ] ] ] 
+}}
+%\end{tikzpicture}
+  \caption{Function Call Tree}\label{calltree}
+\end{figure}
+
+
    \experiment{HPC}
    \subexperiment{GPUs}
    \begin{itemize}
@@ -812,7 +842,7 @@ Out[14]= {-0.00399545, -0.0058075, -0.0145583, -0.000610145}
    \experiment{HPC}
    \subexperiment{GPUs}
 
-\labday{Friday August 30, 2019}
+\labday{Saturday August 31, 2019}
 \experiment{refactor}
 \subexperiment{SeriesPaper}
 \begin{itemize}
@@ -843,6 +873,9 @@ Out[14]= {-0.00399545, -0.0058075, -0.0145583, -0.000610145}
   \end{itemize}
 \end{itemize}
 
+\labday{Sunday September 1, 2019}
+\experiment{refactor}
+\subexperiment{SeriesPaper}
 
 
 \bibliographystyle{plainnat}

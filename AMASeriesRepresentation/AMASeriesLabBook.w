@@ -1,8 +1,9 @@
-\UseRawInputEncoding
+ \UseRawInputEncoding
 \documentclass[hyperref,idxtotoc]{labbook}
 \usepackage{moreverb}
 \usepackage{natbib}
 \usepackage{hyperref}
+\usepackage[space]{grffile}
 \usepackage{graphicx}
 \usepackage{enumitem}
 \usepackage{color}
@@ -877,6 +878,101 @@ Out[14]= {-0.00399545, -0.0058075, -0.0145583, -0.000610145}
 \experiment{refactor}
 \subexperiment{SeriesPaper}
 
+\labday{Monday September 2, 2019}
+   \experiment{HPC}
+   \subexperiment{GPUs}
+   \begin{itemize}
+   \item \href{https://www.pugetsystems.com/labs/hpc/How-To-Install-CUDA-10-1-on-Ubuntu-19-04-1405/}{implementing 10.1 install}  seemed to compile file except for errors related to volta (to be expected since my geforce 2080 dopesn't have volta?)
+     \item mathematica still has problems showing CUDAQ true   now just keeps downloading from server 
+     \item \href{https://mathematica.stackexchange.com/questions/3472/why-does-cudaq-from-cudalink-download-data-from-wolfram-servers}{will try some ideas from here}
+     \item \href{https://www.tensorflow.org/install/gpu}{tensorflow and tensorco
+re not strictly related}
+\item \href{https://en.wikipedia.org/wiki/Tensor_processing_unit}{Google is promoting TPU's for ML applications }
+     \end{itemize}
+     \subexperiment{tf}
+     \begin{itemize}
+     \item \href{https://www.tensorflow.org/overview/}{TensorFlow overview}
+     \item \href{https://www.tensorflow.org/api_docs/python/tf/linalg/eigh}{tensor flow linear algebra: eigenvalues}
+     \item \href{https://github.com/pypa/pipenv/issues/2122}{fix path problems for using pip}
+     \end{itemize}
+     \labday{Tuesday September 4, 2019}
+     \experiment{HPC}
+     \begin{itemize}
+     \item docker seems to work now
+
+\begin{verbatim}
+sudo docker run hello-world
+Unable to find image 'hello-world:latest' locally
+latest: Pulling from library/hello-world
+1b930d010525: Pull complete 
+Digest: sha256:451ce787d12369c5df2a32c85e5a03d52cbcef6eb3586dd03075f3034f10adcd
+Status: Downloaded newer image for hello-world:latest
+
+Hello from Docker!
+This message shows that your installation appears to be working correctly.
+
+To generate this message, Docker took the following steps:
+ 1. The Docker client contacted the Docker daemon.
+ 2. The Docker daemon pulled the "hello-world" image from the Docker Hub.
+    (amd64)
+ 3. The Docker daemon created a new container from that image which runs the
+    executable that produces the output you are currently reading.
+ 4. The Docker daemon streamed that output to the Docker client, which sent it
+    to your terminal.
+
+To try something more ambitious, you can run an Ubuntu container with:
+ $ docker run -it ubuntu bash
+
+Share images, automate workflows, and more with a free Docker ID:
+ https://hub.docker.com/
+
+For more examples and ideas, visit:
+ https://docs.docker.com/get-started/
+
+\end{verbatim}
+     \item added docker group so can do
+
+       docker run hello-world
+
+       etc without sudo
+
+     \item \href{https://www.reddit.com/r/docker/comments/5fs3ko/using_docker_to_distribute_consumer_software/}{some reddit observations about docker}  positive vibe about distributing software and testing software
+     \item \href{https://www.pugetsystems.com/labs/hpc/How-To-Setup-NVIDIA-Docker-and-NGC-Registry-on-your-Workstation---Part-5-Docker-Performance-and-Resource-Tuning-1119/}{pointer to 5 really good ubuntu docker posts|}
+     \end{itemize}
+
+\experiment{GPUs}
+
+\begin{itemize}
+\item trying to get CUDA running in mathematica using the steps \href{https://reference.wolfram.com/language/CUDALink/tutorial/Setup.html}{outlined here}
+\item
+  \includegraphics[width=5.5in]{nvidia-setting.png}
+
+\item Tried to install
+\begin{verbatim}
+CUDAResourcesInstall["~/Downloads/CUDAResources-Lin64-12.0.303.\
+paclet"]
+\end{verbatim}
+  but gopt the message
+\begin{verbatim}
+PacletInstall::newervers: A paclet named CUDAResources with a newer 
+version number (12.0.346) is already installed. If you wish to 
+install an older version, use PacletUninstall to remove the 
+existing version first, or call PacletInstall with IgnoreVersion->True.
+\end{verbatim}
+\item will try newer version for now
+\item changing library paths to exclude : additions shifts cudaq to true
+{\small
+\begin{verbatim}
+export NVIDIA_DRIVER_LIBRARY_PATH=/usr/lib/x86_64-linux-gnu/libnvidia-tls.so.430.40
+export CUDA_LIBRARY_PATH=/usr/lib/x86_64-linux-gnu/libcuda.so.430.40
+
+
+\end{verbatim}
+}
+\item \href{https://www.microway.com/knowledge-center-articles/comparison-of-nvidia-geforce-gpus-and-nvidia-tesla-gpus/}{comparison of GPUs performance Double precision single precision tensor core}
+\item \href{https://medium.com/better-programming/install-tensorflow-1-13-on-ubuntu-18-04-with-gpu-support-239b36d29070}{install tensor flow 1.13 with gpu support}
+\item \href{https://docs.aws.amazon.com/AmazonECS/latest/developerguide/docker-basics.html}{docker for AWS
+\end{itemize}
 
 \bibliographystyle{plainnat}
 \bibliography{emds.bib}
@@ -887,3 +983,4 @@ Out[14]= {-0.00399545, -0.0058075, -0.0145583, -0.000610145}
 
 
 
+?

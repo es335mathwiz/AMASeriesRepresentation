@@ -1,4 +1,4 @@
-\documentclass[12pt]{article}
+a\documentclass[12pt]{article}
 \usepackage[english]{babel}
 \usepackage{hyperref}
 \usepackage{datetime}
@@ -424,6 +424,64 @@ postFunc_Function}@}
 \subsection{genLilXkZkFunc}
 \label{sec:genlilxkzkfunc}
 
+
+@o USEgenLilXkZkFunc.wl
+@{
+Get["tests/pathSetup.mth"]
+Needs["AMASeriesRepresentation`"];
+Needs["betterRBCTrips`"];
+
+EXPERgenLilXkZkFunc[@<linMod@>,initVec_?MatrixQ,cdrFunc_Function,
+numIters_Integer]:=
+Module[{thePhi=getPhi[linMod],
+  theF=getF[linMod],
+  thePsiZ=getPsiZ[linMod]},
+numX=numZ=Length[theF];
+numEps=Length[initVec]-numX-numZ;
+xtm1eps=initVec[[Range[numX+numEps]]];
+xtm1=initVec[[Range[numX]]];
+epsVal=initVec[[numX+Range[numEps]]];
+Print["need to fix xt change args for each function to\n execise prototypes for next language"];
+xt=initVec[[Range[numX]]];
+zt=initVec[[numX+numEps+Range[numZ]]];
+theZsNow=
+AMASeriesRepresentation`Private`genZsForFindRoot[linMod,
+xt,cdrFunc,numIters];
+fCon=fSumC[thePhi,theF,thePsiZ,theZsNow];
+{genLilXkZkFunc[linMod,{}],genLilXkZkFunc[linMod,fCon],
+  genLilXkZkFunc[linMod,theZsNow]
+}]
+
+{drFunc,cdrFunc}=genBothX0Z0Funcs[linModBetterRBCTrips];
+badcdrFunc=Function[{x1,x2,x3,x4},cdrFunc[x1^2,1/x2,x1*x4,x4^3]]
+
+
+{tryAOne,tryBOne,tryCOne}=EXPERgenLilXkZkFunc[linModBetterRBCTrips,anXEpsZsBetterRBCTrips,cdrFunc,2]
+{tryATwo,tryBTwo,tryCTwo}=EXPERgenLilXkZkFunc[linModBetterRBCTrips,anXEpsZsBetterRBCTrips,badcdrFunc,2]
+
+Print["three different argument lists for genLilXkZkFunc?"]
+
+Print["first"]
+Print[Apply[tryAOne , Flatten[anXEpsZsBetterRBCTrips]]]
+
+Print[Apply[tryATwo , Flatten[anXEpsZsBetterRBCTrips]]]
+
+Print["second"]
+
+Print[Apply[tryBOne , Flatten[anXEpsZsBetterRBCTrips]]]
+
+Print[Apply[tryBTwo , Flatten[anXEpsZsBetterRBCTrips]]]
+
+
+Print["third"]
+
+Print[Apply[tryCOne , Flatten[anXEpsZsBetterRBCTrips]]]
+
+Print[Apply[tryCTwo , Flatten[anXEpsZsBetterRBCTrips]]]
+@}
+
+
+
 @d genLilXkZkFuncUsage
 @{
 genLilXkZkFunc::usage=
@@ -478,25 +536,42 @@ chk
 \subsection{genXtOfXtm1}
 \label{sec:genxtofxtm1}
 
-@o USEgenXtOfXtm1
+@o USEgenXtOfXtm1.wl
 @{
 Get["tests/pathSetup.mth"]
 Needs["AMASeriesRepresentation`"];
 Needs["betterRBCTrips`"];
 
-thePhi=getPhi[linMod];
-theF=getF[linModBetterRBCTrips];
-thePsiZ=getPsiZ[linModBetterRBCTrips],
+EXPERgenXtOfXtm1[@<linMod@>,initVec_?MatrixQ,cdrFunc_Function,
+numIters_Integer]:=
+Module[{thePhi=getPhi[linMod],
+  theF=getF[linMod],
+  thePsiZ=getPsiZ[linMod]},
+numX=numZ=Length[theF];
+numEps=Length[initVec]-numX-numZ;
+xtm1eps=initVec[[Range[numX+numEps]]];
+xtm1=initVec[[Range[numX]]];
+epsVal=initVec[[numX+Range[numEps]]];
+Print["need to fix xt change args for each function to\n execise prototypes for next language"];
+xt=initVec[[Range[numX]]];
+zt=initVec[[numX+numEps+Range[numZ]]];
 theZsNow=
 AMASeriesRepresentation`Private`genZsForFindRoot[linMod,
-	initVec,cdrFunc,numIters];
+xt,cdrFunc,numIters];
 fCon=fSumC[thePhi,theF,thePsiZ,theZsNow];
-fSumC[thePhi,theF,thePsiZ,theZsNow]]
-theZsNow=
-AMASeriesRepresentation`Private`genZsForFindRoot[linMod,
-	initVec,cdrFunc,numIters];
-genXtOfXtm1[linModBetterTrips,anXBetterRBCTrips,anXEpsBetterRBCTrips[[{-1}]],
-aZBetterRBCTrips,fCon] 
+AMASeriesRepresentation`Private`genXtOfXtm1[linMod,
+        xtm1,epsVal,
+        zt,fCon]]
+
+{drFunc,cdrFunc}=genBothX0Z0Funcs[linModBetterRBCTrips];
+badcdrFunc=Function[{x1,x2,x3,x4},cdrFunc[x1^2,1/x2,x1*x4,x4^3]]
+
+
+EXPERgenXtOfXtm1[linModBetterRBCTrips,anXEpsZsBetterRBCTrips,cdrFunc,2]
+EXPERgenXtOfXtm1[linModBetterRBCTrips,anXEpsZsBetterRBCTrips,badcdrFunc,2]
+
+
+
   @}
 
 @d genXtOfXtm1
@@ -514,8 +589,42 @@ phi . psiZ . zVars +FF.fCon},xtVals]
 @}
 
 
+
 \subsection{genXtp1OfXt}
 \label{sec:genxtp1ofxt}
+
+
+@o USEgenXtp1OfXt.wl
+@{
+Get["tests/pathSetup.mth"]
+Needs["AMASeriesRepresentation`"];
+Needs["betterRBCTrips`"];
+
+EXPERgenXtp1OfXt[@<linMod@>,initVec_?MatrixQ,cdrFunc_Function,
+numIters_Integer]:=
+Module[{thePhi=getPhi[linMod],
+  theF=getF[linMod],
+  thePsiZ=getPsiZ[linMod]},
+numX=Length[theF];
+xt=initVec[[Range[numX]]];
+theZsNow=
+AMASeriesRepresentation`Private`genZsForFindRoot[linMod,
+xt,cdrFunc,numIters];
+fCon=fSumC[thePhi,theF,thePsiZ,theZsNow];
+AMASeriesRepresentation`Private`genXtp1OfXt[linMod,
+        xt,
+        fCon]]
+
+{drFunc,cdrFunc}=genBothX0Z0Funcs[linModBetterRBCTrips];
+badcdrFunc=Function[{x1,x2,x3,x4},cdrFunc[x1^2,1/x2,x1*x4,x4^3]]
+
+
+EXPERgenXtp1OfXt[linModBetterRBCTrips,anXEpsBetterRBCTrips,cdrFunc,2]
+EXPERgenXtp1OfXt[linModBetterRBCTrips,anXEpsBetterRBCTrips,badcdrFunc,2]
+
+
+
+  @}
 
 
 
@@ -580,6 +689,67 @@ genLilXkZkFunc[linMod,fCon]]]
 @{
 Print["should update genZsForFindRoot to use conditional expectation instead of using hmat********************************"];
 Options[genZsForFindRoot]={"stayErgodic"->{}}
+
+@o USEgenZsForFindRoot.wl
+@{
+Get["tests/pathSetup.mth"]
+Needs["AMASeriesRepresentation`"];
+Needs["betterRBCTrips`"];
+
+EXPERgenZsForFindRoot[@<linMod@>,initVec_?MatrixQ,cdrFunc_Function,
+numIters_Integer]:=
+Module[{thePhi=getPhi[linMod],
+  theF=getF[linMod],
+  thePsiZ=getPsiZ[linMod]},
+numX=numZ=Length[theF];
+numEps=Length[initVec]-numX-numZ;
+xtm1eps=initVec[[Range[numX+numEps]]];
+xtm1=initVec[[Range[numX]]];
+epsVal=initVec[[numX+Range[numEps]]];
+Print["need to fix xt change args for each function to\n execise prototypes for next language"];
+xt=initVec[[Range[numX]]];
+zt=initVec[[numX+numEps+Range[numZ]]];
+theZsNow=
+AMASeriesRepresentation`Private`genZsForFindRoot[linMod,
+xt,cdrFunc,numIters]]
+
+{drFunc,cdrFunc}=genBothX0Z0Funcs[linModBetterRBCTrips];
+badcdrFunc=Function[{x1,x2,x3,x4},cdrFunc[x1^2,1/x2,x1*x4,x4^3]]
+
+
+Print["four arg lists (initvec,condexp, iters"]
+Print["first non regime"]
+Print["non regimes not sure which used"]
+Print["regime one: steps list matrices probs matrix iters integer"]
+Print["regime two: steps list matrices probs matrix iters list integers"]
+Print["regime three: steps  matrix probs vector iters integer"]
+{tryAOne,tryBOne,tryCOne}=EXPERgenZsForFindRoot[linModBetterRBCTrips,anXEpsZsBetterRBCTrips,cdrFunc,2]
+{tryATwo,tryBTwo,tryCTwo}=EXPERgenZsForFindRoot[linModBetterRBCTrips,anXEpsZsBetterRBCTrips,badcdrFunc,2]
+
+Print["three different argument lists for genZsForFindRoot?"]
+
+Print["first"]
+Print[Apply[tryAOne , Flatten[anXEpsZsBetterRBCTrips]]]
+
+Print[Apply[tryATwo , Flatten[anXEpsZsBetterRBCTrips]]]
+
+Print["second"]
+
+Print[Apply[tryBOne , Flatten[anXEpsZsBetterRBCTrips]]]
+
+Print[Apply[tryBTwo , Flatten[anXEpsZsBetterRBCTrips]]]
+
+
+Print["third"]
+
+Print[Apply[tryCOne , Flatten[anXEpsZsBetterRBCTrips]]]
+
+Print[Apply[tryCTwo , Flatten[anXEpsZsBetterRBCTrips]]]
+@}
+
+
+
+
 genZsForFindRoot[linMod:{theHMat_?MatrixQ,BB_?MatrixQ,
 phi_?MatrixQ,FF_?MatrixQ,psiEps_?MatrixQ,psiC_?MatrixQ,psiZ_?MatrixQ,
 backLookingInfo:{{_Integer,backLooking_,backLookingExp_}...}},

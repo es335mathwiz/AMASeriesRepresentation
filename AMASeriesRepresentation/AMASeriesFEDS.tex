@@ -89,8 +89,8 @@ see \citep{judd92,Christiano2000,doraszelskiy04,gaspar97,Judd2014,marcet.lorenzo
 
 This new series representation for bounded time series, adapted from \citep{anderson10},
  \begin{gather*}
-       	 \drFunc\tArg =\BMat \sVar_{t-1}+ \phiMat \psiEpsMat\theShock + (\IMat - \FMat)^{-1} \phiMat \psiCMat + \sum_{\sumIdx=0}^\infty \FMat^\sumIdx \phiMat \ZWOarg_{t+\nu}\tArg \intertext{ so that}
-\expct{ \sVar_{t+1}\tArg} =\BMat \sVar\tArg  + (\IMat - \FMat)^{-1} \phiMat \psiCMat+ \sum_{\sumIdx =1}^\infty \FMat^{\sumIdx-1} \phiMat \ZWOarg_{t+\nu}\tArg.
+       	 \drFunc\tArg =\BMat \sVar_{t-1}+ \phiMat \psiEpsMat\theShock + (\IMat - \FMat)^{-1} \phiMat \psiCMat + \sum_{\sumIdx=0}^\infty \FMat^\sumIdx \phiMat \ZVar_{t+\nu}\tArg \intertext{ so that}
+\expct{ \sVar_{t+1}\tArg} =\BMat \sVar\tArg  + (\IMat - \FMat)^{-1} \phiMat \psiCMat+ \sum_{\sumIdx =1}^\infty \FMat^{\sumIdx-1} \phiMat \ZVar_{t+\nu}\tArg.
      \end{gather*}
  makes it possible to  construct a series
     representation for any bounded time invariant discrete time map. As yet, the author has found no comparable use of a
@@ -123,7 +123,7 @@ properties.
     % disjoint ergodic sets
     % thereby providing a robust solution method for a wide class of models including models with occasionally binding constraints and/or regime switching.
 
-%    $\ZWOarg_{t+\nu}$ that satisfy the model equations thereby
+%    $\ZVar_{t+\nu}$ that satisfy the model equations thereby
 
 The numerical implementation of the algorithm 
 builds upon the work of
@@ -210,21 +210,21 @@ and in \ref{sec:algoforsoln} to compute improvements in proposed model decision 
 \begin{theorem}
 Consider any bounded discrete time path
  \begin{gather}
-   \xWOarg_t \in{R^L}\,\text{ with }\,\infNorm{\xWOarg_t}  \le \overline{\mathcal{X}}\,\,\,\,\,\forall t> 0 \label{aBPath}.
+   \sVar_t \in{R^L}\,\text{ with }\,\infNorm{\sVar_t}  \le \overline{\mathcal{X}}\,\,\,\,\,\forall t> 0 \label{aBPath}.
  \end{gather}
 Now, given the trajectories \refeq{aBPath}, define 
-$  \zWOarg_{t}$ as  
+$  \zVar_{t}$ as  
 \begin{gather}
-  \zWOarg_{t} \equiv H_{-1} \xWOarg_{t-1} +  H_0 \xWOarg_{t} +  H_1 \xWOarg_{t+1} -\psiCMat - \psiEpsMat \theShock_t \label{defZ} 
+  \zVar_{t} \equiv H_{-1} \sVar_{t-1} +  H_0 \sVar_{t} +  H_1 \sVar_{t+1} -\psiCMat - \psiEpsMat \theShock_t \label{defZ} 
 \end{gather}
-One can then express the $\xWOarg_t$ solving 
+One can then express the $\sVar_t$ solving 
 \begin{gather}
 	 H_{-1} x_{t-1} + H_0 x_t + H_1 x_{t+1}=\psiEpsMat \theShock +\psi_{c}+
 z_t
 \intertext{ using}
-	 \xWOarg_{t} =B x_{t-1}+ \phiMat \psiEpsMat\theShock + (I - F)^{-1} \phiMat \psiCMat + \sum_{\sumIdx=0}^\infty F^s \phiMat \zWOarg_{t+\sumIdx} \label{theSeries}
+	 \sVar_{t} =B x_{t-1}+ \phiMat \psiEpsMat\theShock + (I - F)^{-1} \phiMat \psiCMat + \sum_{\sumIdx=0}^\infty F^s \phiMat \zVar_{t+\sumIdx} \label{theSeries}
 \intertext{and}
-	 \xWOarg_{t+k+1} =B \xWOarg_{t+k}  + (I - F)^{-1} \phiMat \psiCMat+ \sum_{\sumIdx =0}^\infty F^\sumIdx \phiMat \zWOarg_{t+k+\sumIdx+1} \,\,\,\,\,\forall t,k \ge  0.
+	 \sVar_{t+k+1} =B \sVar_{t+k}  + (I - F)^{-1} \phiMat \psiCMat+ \sum_{\sumIdx =0}^\infty F^\sumIdx \phiMat \zVar_{t+k+\sumIdx+1} \,\,\,\,\,\forall t,k \ge  0.
 	 \end{gather}
 \end{theorem}
 %\end{tcolorbox}
@@ -372,10 +372,10 @@ The series representation can compute the entire series exactly
 if all the terms are included, but, it will at times be useful to exploit the fact that
 the terms for state vectors closer 
 to the initial time have the most important impact.
-One could consider approximating  $\xWOarg_t$ by 
+One could consider approximating  $\sVar_t$ by 
 truncating the series  at a finite number of terms.
  	 \begin{gather}
- 	 \xWOargK_t \equiv B x_{t-1}+ \phiMat \psiEpsMat\theShock  + (I - F)^{-1} \phiMat \psiCMat + \sum_{s=0}^k F^s \phiMat z_{t}\label{theTruncSeries}
+ 	 \sVarK_t \equiv B x_{t-1}+ \phiMat \psiEpsMat\theShock  + (I - F)^{-1} \phiMat \psiCMat + \sum_{s=0}^k F^s \phiMat z_{t}\label{theTruncSeries}
  \end{gather}
 We can bound the  series approximation truncation errors:
 
@@ -409,7 +409,7 @@ We can assess the impact of perturbed values for $z_t$ by computing the maximum 
 partial sum formula.
 One can  approximate $\mathcal{X}_t$ using
  	 \begin{gather}
- 	 \xWOargK_t \equiv B x_{t-1}+ \phiMat \psiEpsMat\theShock  + (I - F)^{-1} \phiMat \psiCMat + \sum_{s=0}^\infty F^s \phiMat (z_{t}+\Delta z_{t})\label{theDeltaSeries}
+ 	 \sVarK_t \equiv B x_{t-1}+ \phiMat \psiEpsMat\theShock  + (I - F)^{-1} \phiMat \psiCMat + \sum_{s=0}^\infty F^s \phiMat (z_{t}+\Delta z_{t})\label{theDeltaSeries}
  \end{gather}
 Note, yet again, that for approximating $\xWarg$, the impact of  a given realization along the path declines for those realizations which are  more temporally distant.
 However, we can conservatively bound the  series approximation  errors by using the largest possible $\Delta z_t$ in the formula:
@@ -514,12 +514,12 @@ e^{\frac{\sigma^2}{2}}\theta_{t+k}^\rho
 
 For any given values of $k_{t-1},\theta_{t-1}, \theShock_t$, the model decision rule, ($\DR$), and decision rule conditional expectation, ($\DRCE$), can generate a conditional expectations path forward from  any given initial $\tArg$:
 \begin{gather*}
-  \xWOarg_t(\xtmEpsArg)=\DR(\xtmEpsArg)\\
-  \xWOarg_{t+k+1}(\xtmEpsArg)=\DRCE(\xWOarg_{t+k}(\xtmEpsArg))
+  \sVar_t(\xtmEpsArg)=\DR(\xtmEpsArg)\\
+  \sVar_{t+k+1}(\xtmEpsArg)=\DRCE(\sVar_{t+k}(\xtmEpsArg))
 \end{gather*}
 and corresponding paths for $\{(z_{1t}\tArg, z_{2t}\tArg, z_{3t}\tArg),\ldots\}$
 \begin{gather*}
-  z_{t+k} \equiv H_{-1} \xWOarg_{t+k-1} +  H_0 \xWOarg_{t+k} +  H_1 \xWOarg_{t+K+1} 
+  z_{t+k} \equiv H_{-1} \sVar_{t+k-1} +  H_0 \sVar_{t+k} +  H_1 \sVar_{t+K+1} 
 \end{gather*}
 Formula \refeq{theSeries} requires that
 \begin{gather*}
@@ -538,7 +538,7 @@ Formula \refeq{theSeries} requires that
 % k_t(k_{t-1},\theta_{t-1}, \theShock_t)\\
 % \theta_t(k_{t-1},\theta_{t-1}, \theShock_t)
 %   \end{bmatrix}  =
-\xWOarg(\xtmEpsArg)=
+\sVar(\xtmEpsArg)=
 B   \begin{bmatrix}
 c_{t-1}\\
 k_{t-1}\\
@@ -739,20 +739,20 @@ Given a proposed decision rule  solution define
 the error in $x_t$ at $\tArg$
 
 \begin{gather*}
-\mathbf{e}\tArg\equiv \xWOarg^\star\tArg-\xWOarg^p\tArg\intertext{compute the conditional expectations functions for the decision rule and use them to generate a path to use with a linear reference model $\linMod  \equiv \linModMats$  in \ref{theSeries} to approximate  $\mathbf{e}$.} 
-\XWOarg^p(x)\equiv \expct{\xWOarg^p(x,\theShock)}.
+\mathbf{e}\tArg\equiv \sVar^\star\tArg-\sVar^p\tArg\intertext{compute the conditional expectations functions for the decision rule and use them to generate a path to use with a linear reference model $\linMod  \equiv \linModMats$  in \ref{theSeries} to approximate  $\mathbf{e}$.} 
+\XVar^p(x)\equiv \expct{\sVar^p(x,\theShock)}.
 \end{gather*}
 \begin{gather*}
- x_{t+k+1}=\XWOarg^p(x_{t+k})\,\,k=1,\ldots,K
+ x_{t+k+1}=\XVar^p(x_{t+k})\,\,k=1,\ldots,K
 \end{gather*}
 
 \begin{gather*}
- \intertext{We can define functions $\zpWOarg_t$ by}
-\zpWOarg_t\equiv
+ \intertext{We can define functions $\zpVar_t$ by}
+\zpVar_t\equiv
 \eqnFunc(x_{t-1},x_t,x_{t+1},\theShock_t)\\
-\zpWOarg_{t+k}\equiv
+\zpVar_{t+k}\equiv
 \eqnFunc(x_{t+k-1},x_{t+k},x_{t+k+1},0)\\
-\hat{\mathbf{e}}\tArg\equiv \sum_{\sumIdx=0}^K F^s \phiMat \zpWOarg_{t+\nu}\\
+\hat{\mathbf{e}}\tArg\equiv \sum_{\sumIdx=0}^K F^s \phiMat \zpVar_{t+\nu}\\
 \end{gather*}
 
 \subsection{Assessing the Error Approximation}
@@ -961,7 +961,7 @@ I will require that, for any
 equation systems  produces a unique solution for $x_t$.  
 This formulation will allow us to apply the technique to models with
 occasionally binding  constraints and models with regime switching.
-I will only consider time invariant model solutions $x_t=\xWarg$.  Given a decision rule $\xWarg$, denote its conditional expectation $\XWOarg(x_{t-1})\equiv \expct{\xWarg}$.
+I will only consider time invariant model solutions $x_t=\xWarg$.  Given a decision rule $\xWarg$, denote its conditional expectation $\XVar(x_{t-1})\equiv \expct{\xWarg}$.
 Using the convention described in section \ref{sec:convenient}, 
  I will include 
 enough auxiliary variables so that I can correctly compute expected values
@@ -1091,12 +1091,12 @@ Should always iterate forward from evaluation points to check stability.
 For now, consider a single model equation system case with no Boolean gates. A description 
 of the actual, multi-system implementation follows.   We seek 
 \begin{gather*}
-\eqnFunc(x_{t-1},\xWOarg^\star\tArg,\XWOarg^\star(\xWOarg^\star\tArg),\theShock_t)=0\,\,\forall \tArg.  \intertext{Given a proposed decision rule model solution}
- x_t=\xWOarg^p\tArg\intertext{ compute}
-\XWOarg^p(x_{t-1})\equiv \expct{\xWOarg^p\tArg}.
+\eqnFunc(x_{t-1},\sVar^\star\tArg,\XVar^\star(\sVar^\star\tArg),\theShock_t)=0\,\,\forall \tArg.  \intertext{Given a proposed decision rule model solution}
+ x_t=\sVar^p\tArg\intertext{ compute}
+\XVar^p(x_{t-1})\equiv \expct{\sVar^p\tArg}.
 \end{gather*}
 We will use a linear reference model $\linMod  \equiv \linModMats$ 
-to construct a series of $\zpWOarg$ functions that help 
+to construct a series of $\zpVar$ functions that help 
 improve the accuracy of the proposed solution.
 
 
@@ -1104,17 +1104,17 @@ improve the accuracy of the proposed solution.
 
 
 \begin{gather*}
- \intertext{We can define functions $\zpWOarg,\ZpWOarg$ by}
+ \intertext{We can define functions $\zpVar,\ZpVar$ by}
 \zpWarg\equiv H
 \begin{bmatrix}
-x_{t-1}\\ \xpWarg\\ \XpWOarg(\xWarg)
+x_{t-1}\\ \xpWarg\\ \XpVar(\xWarg)
 \end{bmatrix}+\phiMat_\theShock \theShock_t+\phiMat_c\\
-\ZpWOarg(x_{t-1})\equiv \expct{\zpWarg}
+\ZpVar(x_{t-1})\equiv \expct{\zpWarg}
 \end{gather*}
  \begin{itemize}
 \item  {\color{blue}Algorithm loop begins here.} Define conditional expectations paths for $x_t, z_t$ 
  \begin{gather*}
- x_{t+k+1}=\XWOarg(x_{t+k}),\,\,\,z_{t+k+1}=\ZWOarg(x_{t+k})\,\,\,\,  \forall k\ge 0      \end{gather*}
+ x_{t+k+1}=\XVar(x_{t+k}),\,\,\,z_{t+k+1}=\ZVar(x_{t+k})\,\,\,\,  \forall k\ge 0      \end{gather*}
 % \item
 % it will be useful to construct an augmented decision rule,
 % $\ADR\tArg\equiv
@@ -1128,8 +1128,8 @@ x_{t-1}\\ \xpWarg\\ \XpWOarg(\xWarg)
   \begin{itemize}
   \item We get expressions for $x_t,\,\, \expct x_{t+1}$ consistent with $\linMod$ and the conditional expectations path
    \begin{gather*}
-     \mathcal{X}_{t} =B x_{t-1}+ \phiMat \psiEpsMat\theShock + (I - F)^{-1} \phiMat \psiCMat + \sum_{\sumIdx=0}^\infty F^s \phiMat \ZWOarg(x_{t+\nu})\\
-	\expct{ \mathcal{X}_{t+1}} =B \mathcal{X}_{t}  + (I - F)^{-1} \phiMat \psiCMat+ \sum_{\sumIdx =0}^\infty F^{\sumIdx-1} \phiMat \ZWOarg(x_{t+\nu}) \,\,\,\,\,\forall t,k \ge  0
+     \mathcal{X}_{t} =B x_{t-1}+ \phiMat \psiEpsMat\theShock + (I - F)^{-1} \phiMat \psiCMat + \sum_{\sumIdx=0}^\infty F^s \phiMat \ZVar(x_{t+\nu})\\
+	\expct{ \mathcal{X}_{t+1}} =B \mathcal{X}_{t}  + (I - F)^{-1} \phiMat \psiCMat+ \sum_{\sumIdx =0}^\infty F^{\sumIdx-1} \phiMat \ZVar(x_{t+\nu}) \,\,\,\,\,\forall t,k \ge  0
 \end{gather*}
 \item Use the model equations, $\eqnFunc(x_{t-1},x_t,\expct{x_{t+1}},\theShock)=0$ and $x_t\tArg=\mathcal{X}_t\tArg$\\ to determine $\xppWarg, \zppWarg$
 \item $\xpWarg=\xppWarg, \zpWarg=\zppWarg$ -- {\color{blue}Repeat loop.}
@@ -1145,15 +1145,15 @@ Table \ref{algnotation} provides notation.
   \centering
 \begin{description}
 \item[$\linMod\equiv \linModMats$] The linear reference model
-\item[$ \xWOarg^{p}\tArg$] The proposed decision rule  $x_t$ components
-\item[$ \zWOarg^{p}\tArg$]The proposed decision rule  $z_t$ components
-\item[$ \XWOarg^p\tNo$] The proposed decision rule conditional expectations  $x_t$ components
-\item[$ \ZWOarg^p\tNo$] The proposed decision rule their conditional expectations  $z_t$ components
+\item[$ \sVar^{p}\tArg$] The proposed decision rule  $x_t$ components
+\item[$ \zVar^{p}\tArg$]The proposed decision rule  $z_t$ components
+\item[$ \XVar^p\tNo$] The proposed decision rule conditional expectations  $x_t$ components
+\item[$ \ZVar^p\tNo$] The proposed decision rule their conditional expectations  $z_t$ components
 \item[$ \kappa$] One less than the number of terms in series representation$(\kappa>=0)$
 \item[$\smolSpec$] Smolyak an-isotropic grid polynomials $(\aSmolPoly{1},\ldots,\aSmolPoly{N})$ and their conditional expectations $(\aSmolPolyCE{1},\ldots,\aSmolPolyCE{N})$
 \item[$\mathbb{T}$] Model evaluation points Neidereiter sequence in the model variable ergodic region.
-\item[$ \xzFunc$]  $\{\xWOarg\tArg,\zWOarg\tArg\}$ collects the decision rule components
-\item[$ \XZFunc$]  $\{\xWOarg\tArg,\zWOarg\tArg\}$ collects the decision rule conditional expectations components
+\item[$ \xzFunc$]  $\{\sVar\tArg,\zVar\tArg\}$ collects the decision rule components
+\item[$ \XZFunc$]  $\{\sVar\tArg,\zVar\tArg\}$ collects the decision rule conditional expectations components
 \item[$\bothFuncs$] $\{\xzFunc,\XZFunc\}$ collects decision rule information
 \item[$\eqnFuncSys$] The equation system $\eqnFuncSig$
 \end{description}
@@ -2543,15 +2543,15 @@ I_t-(K_t-(1-d_1)k_{t-1})\\
 
 \begin{description}
 \item[$\linMod\equiv \linModMats$] The linear reference model
-\item[$ \xWOarg^{p}\tArg$] The proposed decision rule  $x_t$ components
-\item[$ \zWOarg^{p}\tArg$]The proposed decision rule  $z_t$ components
-\item[$ \XWOarg^p\tNo$] The proposed decision rule conditional expectations  $x_t$ components
-\item[$ \ZWOarg^p\tNo$] The proposed decision rule their conditional expectations  $z_t$ components
+\item[$ \sVar^{p}\tArg$] The proposed decision rule  $x_t$ components
+\item[$ \zVar^{p}\tArg$]The proposed decision rule  $z_t$ components
+\item[$ \XVar^p\tNo$] The proposed decision rule conditional expectations  $x_t$ components
+\item[$ \ZVar^p\tNo$] The proposed decision rule their conditional expectations  $z_t$ components
 \item[$ \kappa$] One less than the number of terms in series representation$(\kappa>=0)$
 \item[$\smolSpec$] Smolyak an-isotropic grid polynomials $(\aSmolPoly{1},\ldots,\aSmolPoly{N})$ and their conditional expectations $(\aSmolPolyCE{1},\ldots,\aSmolPolyCE{N})$
 \item[$\mathbb{T}$] Model evaluation points Neidereiter sequence in the model variable ergodic region.
-\item[$ \xzFunc$]  $\{\xWOarg\tArg,\zWOarg\tArg\}$ collects the decision rule components
-\item[$ \XZFunc$]  $\{\xWOarg\tArg,\zWOarg\tArg\}$ collects the decision rule conditional expectations components
+\item[$ \xzFunc$]  $\{\sVar\tArg,\zVar\tArg\}$ collects the decision rule components
+\item[$ \XZFunc$]  $\{\sVar\tArg,\zVar\tArg\}$ collects the decision rule conditional expectations components
 \item[$\bothFuncs$] $\{\xzFunc,\XZFunc\}$ collects decision rule information
 \item[$\eqnFuncSys$] The equation system $\eqnFuncSig$
 \end{description}
@@ -2570,7 +2570,7 @@ I_t-(K_t-(1-d_1)k_{t-1})\\
 \caption{$nestInterp$\label{nestInterp}} 
 \end{algorithm}
 
-%linMod \xWOarg^{p}, \zWOarg^{p}, \XWOarg^p, \ZWOarg^p, \kappa,
+%linMod \sVar^{p}, \zVar^{p}, \XVar^p, \ZVar^p, \kappa,
 
 
 \begin{algorithm}

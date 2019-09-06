@@ -8,7 +8,8 @@
 \usepackage{enumitem}
 \usepackage{color}
 \usepackage{qtree}
-
+\usepackage{tikz}
+\def\acm{\tikz\fill[scale=0.4](0,.35)-- (.25,0) -- (1,.7) -- (.25,.25) --  cycle;}
 \begin{document}
 
 \frontmatter
@@ -778,24 +779,13 @@ Out[14]= {-0.00399545, -0.0058075, -0.0145583, -0.000610145}
 \begin{figure}[h]
   \centering
   
-%\begin{tikzpicture}
-%\tikzset{every tree node/.style={align=center}}  
-% {\small
-% \Tree [.nestInterp\ref{nestInterp}  !\qsetw{4cm}
-% [.doInterp\ref{doInterp}
-% [.genFindRootFuncs\ref{genFindRootFuncs} !\qsetw{2cm}
-% [.genFindRootWorker\ref{genFindRootWorker} genZsForFindRoot\ref{genZsForFindRoot}
-% [.genLilXkZkFunc\ref{genLilXkZkFunc} fSumC\ref{fSumC} genXtOfXtm1\ref{genXtOfXtm1} [.genXtp1OfXt\ref{genXtp1OfXt} ] ] ] ] 
-% [.makeInterpFuncs\ref{makeInterpFuncs} !\qsetw{2cm} [.genInterpData\ref{genInterpData} evaluateTriple\ref{evaluateTriple} ] ] [.interpDataToFunc\ref{interpDataToFunc} 
-%  ] ] ] 
-% }
 \framebox{
 {\small
 \Tree [.nestInterp  !\qsetw{4cm}
 [.doInterp
 [.genFindRootFuncs !\qsetw{2cm}
 [.genFindRootWorker genZsForFindRoot
-[.genLilXkZkFunc fSumC genXtOfXtm1 [.genXtp1OfXt ] ] ] ] 
+[.genLilXkZkFunc {fSumC} {genXtOfXtm1} [.genXtp1OfXt ] ] ] ] 
 [.makeInterpFuncs !\qsetw{2cm} [.genInterpData evaluateTriple ] ] [.interpDataToFunc 
  ] ] ] 
 }}
@@ -971,8 +961,64 @@ export CUDA_LIBRARY_PATH=/usr/lib/x86_64-linux-gnu/libcuda.so.430.40
 }
 \item \href{https://www.microway.com/knowledge-center-articles/comparison-of-nvidia-geforce-gpus-and-nvidia-tesla-gpus/}{comparison of GPUs performance Double precision single precision tensor core}
 \item \href{https://medium.com/better-programming/install-tensorflow-1-13-on-ubuntu-18-04-with-gpu-support-239b36d29070}{install tensor flow 1.13 with gpu support}
-\item \href{https://docs.aws.amazon.com/AmazonECS/latest/developerguide/docker-basics.html}{docker for AWS
+\item \href{https://docs.aws.amazon.com/AmazonECS/latest/developerguide/docker-basics.html}{docker for AWS}
+\item Code says
+{\color{red}
+\begin{verbatim}
+Print["should update genZsForFindRoot to use 
+conditional expectation instead of using 
+hmat********************************"];
+
+
+Print["code should restrict findroot guesses to ergodic set"];
+
+\end{verbatim}
+}
 \end{itemize}
+     \labday{Thursay September 5, 2019}
+
+
+\begin{figure}[h]
+  \centering
+  
+\framebox{
+{\small
+\Tree [.nestInterp  !\qsetw{4cm}
+[.doInterp
+[.genFindRootFuncs !\qsetw{2cm}
+[.genFindRootWorker genZsForFindRoot
+[.{genLilXkZkFunc}
+{fSumC\acm} {genXtOfXtm1\acm} [.{genXtp1OfXt} ] ] ] ] 
+[.makeInterpFuncs !\qsetw{2cm} [.genInterpData evaluateTriple ] ] [.interpDataToFunc 
+ ] ] ] 
+}}
+%\end{tikzpicture}
+  \caption{Function Call Tree}\label{calltree}
+\end{figure}
+
+
+     \labday{Friay September 6, 2019}
+
+
+\begin{figure}[h]
+  \centering
+  
+\framebox{
+{\small
+\Tree [.nestInterp  !\qsetw{4cm}
+[.doInterp
+[.genFindRootFuncs !\qsetw{2cm}
+[.genFindRootWorker genZsForFindRoot
+[.{genLilXkZkFunc\acm}
+{fSumC\acm} {genXtOfXtm1\acm} [.{genXtp1OfXt\acm} ] ] ] ] 
+[.makeInterpFuncs !\qsetw{2cm} [.genInterpData evaluateTriple ] ] [.interpDataToFunc 
+ ] ] ] 
+}}
+%\end{tikzpicture}
+  \caption{Function Call Tree}\label{calltree}
+\end{figure}
+
+
 
 \bibliographystyle{plainnat}
 \bibliography{emds.bib}
@@ -983,4 +1029,3 @@ export CUDA_LIBRARY_PATH=/usr/lib/x86_64-linux-gnu/libcuda.so.430.40
 
 
 
-?

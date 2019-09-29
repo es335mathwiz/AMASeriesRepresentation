@@ -1,4 +1,4 @@
-a\documentclass[12pt]{article}
+\documentclass[12pt]{article}
 \usepackage[english]{babel}
 \usepackage{hyperref}
 \usepackage{datetime}
@@ -685,10 +685,11 @@ genLilXkZkFunc[linMod,fCon]]]
 ]
 @}
 
-@d genZsForFindRoot
-@{
-Print["should update genZsForFindRoot to use conditional expectation instead of using hmat********************************"];
-Options[genZsForFindRoot]={"stayErgodic"->{}}
+
+\subsection{genZsForFindRoot}
+\label{sec:genz}
+
+
 
 @o USEgenZsForFindRoot.wl
 @{
@@ -717,26 +718,24 @@ xt,cdrFunc,numIters]]
 badcdrFunc=Function[{x1,x2,x3,x4},cdrFunc[x1^2,1/x2,x1*x4,x4^3]]
 
 
-Print["four arg lists (initvec,condexp, iters"]
+Print["four arg lists (initvec,condexp, iters)"]
+Print["non regimes"]
+
+tryAOne=EXPERgenZsForFindRoot[linModBetterRBCTrips,anXEpsZsBetterRBCTrips,cdrFunc,6]
+
+Print["four different argument lists for genZsForFindRoot?"]
+
 Print["first non regime"]
-Print["non regimes not sure which used"]
-Print["regime one: steps list matrices probs matrix iters integer"]
-Print["regime two: steps list matrices probs matrix iters list integers"]
-Print["regime three: steps  matrix probs vector iters integer"]
-{tryAOne,tryBOne,tryCOne}=EXPERgenZsForFindRoot[linModBetterRBCTrips,anXEpsZsBetterRBCTrips,cdrFunc,2]
-{tryATwo,tryBTwo,tryCTwo}=EXPERgenZsForFindRoot[linModBetterRBCTrips,anXEpsZsBetterRBCTrips,badcdrFunc,2]
+Print[tryAOne]
 
-Print["three different argument lists for genZsForFindRoot?"]
-
-Print["first"]
-Print[Apply[tryAOne , Flatten[anXEpsZsBetterRBCTrips]]]
-
+Print["others eventually call the second"]
 Print[Apply[tryATwo , Flatten[anXEpsZsBetterRBCTrips]]]
 
 Print["second"]
 
 Print[Apply[tryBOne , Flatten[anXEpsZsBetterRBCTrips]]]
 
+(*
 Print[Apply[tryBTwo , Flatten[anXEpsZsBetterRBCTrips]]]
 
 
@@ -745,11 +744,20 @@ Print["third"]
 Print[Apply[tryCOne , Flatten[anXEpsZsBetterRBCTrips]]]
 
 Print[Apply[tryCTwo , Flatten[anXEpsZsBetterRBCTrips]]]
+*)
+
 @}
 
+@d genZsForFindRoot
+@{
+Print["should update genZsForFindRoot to use conditional expectation instead of using hmat********************************"];
+Options[genZsForFindRoot]={"stayErgodic"->{}}
 
 
 
+
+
+(*non regime*)
 genZsForFindRoot[linMod:{theHMat_?MatrixQ,BB_?MatrixQ,
 phi_?MatrixQ,FF_?MatrixQ,psiEps_?MatrixQ,psiC_?MatrixQ,psiZ_?MatrixQ,
 backLookingInfo:{{_Integer,backLooking_,backLookingExp_}...}},
@@ -1741,10 +1749,10 @@ genRegimesBothX0Z0Funcs[@<linMods@>]:=Map[genBothX0Z0Funcs,linMods]
 
 
 
-@d genZsForFindRoot
+@d genZsForFindRootRegimes
 @{
-
-genZsForFindRoot[linMod:{theHMat_?MatrixQ,BB_?MatrixQ,
+(*regimes*)
+genZsForFindRootRegimes[linMod:{theHMat_?MatrixQ,BB_?MatrixQ,
 phi_?MatrixQ,FF_?MatrixQ,psiEps_?MatrixQ,psiC_?MatrixQ,psiZ_?MatrixQ,
 backLookingInfo:{{_Integer,backLooking_,backLookingExp_}...}},
 firstSteps:{_?MatrixQ..},firstProbs_?MatrixQ,
@@ -1761,22 +1769,22 @@ Map[compZsOnPath[theHMat,psiC,numX,#]&,thePaths]},
 
 
 
-genZsForFindRoot[linMod:{theHMat_?MatrixQ,BB_?MatrixQ,
+genZsForFindRootRegimes[linMod:{theHMat_?MatrixQ,BB_?MatrixQ,
 phi_?MatrixQ,FF_?MatrixQ,psiEps_?MatrixQ,psiC_?MatrixQ,psiZ_?MatrixQ,
 backLookingInfo:{{_Integer,backLooking_,backLookingExp_}...}},
 firstSteps:{_?MatrixQ..},firstProbs_?MatrixQ,
 drExpFuncs:{(_Function|_CompiledFunction|_Symbol)..},probFunc:(_Symbol|_Function|_CompiledFunction),iters:{_Integer..}]:=
-MapThread[Flatten[genZsForFindRoot[linMod,{#1},{#2},drExpFuncs,probFunc,#3],1]&,
+MapThread[Flatten[genZsForFindRootRegimes[linMod,{#1},{#2},drExpFuncs,probFunc,#3],1]&,
 {firstSteps,firstProbs,iters+1}]
 
 
 
-genZsForFindRoot[linMod:{theHMat_?MatrixQ,BB_?MatrixQ,
+genZsForFindRootRegimes[linMod:{theHMat_?MatrixQ,BB_?MatrixQ,
 phi_?MatrixQ,FF_?MatrixQ,psiEps_?MatrixQ,psiC_?MatrixQ,psiZ_?MatrixQ,
 backLookingInfo:{{_Integer,backLooking_,backLookingExp_}...}},
 firstSteps_?MatrixQ,firstProbs_?VectorQ,
 drExpFuncs:{(_Function|_CompiledFunction|_Symbol)..},probFunc:(_Symbol|_Function|_CompiledFunction),iters_Integer]:=
-Flatten[genZsForFindRoot[linMod,{firstSteps},{firstProbs},
+Flatten[genZsForFindRootRegimes[linMod,{firstSteps},{firstProbs},
 drExpFuncs,probFunc,iters+1],1]
 
 
@@ -2654,6 +2662,7 @@ EndPackage[]
 @<fSumC@>
 @<iterateDRCE@>
 @<genZsForFindRoot@>
+@<genZsForFindRootRegimes@>
 @<genLilXkZkFunc@>
 @<evaluateTriple@>
 @<genFRExtFunc@>

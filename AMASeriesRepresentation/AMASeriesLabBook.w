@@ -997,7 +997,7 @@ Print["code should restrict findroot guesses to ergodic set"];
 \end{figure}
 
 
-     \labday{Friay September 6, 2019}
+     \labday{Friday September 6, 2019}
 
 
 \begin{figure}[h]
@@ -1008,8 +1008,8 @@ Print["code should restrict findroot guesses to ergodic set"];
 \Tree [.nestInterp  !\qsetw{4cm}
 [.doInterp
 [.genFindRootFuncs !\qsetw{2cm}
-[.genFindRootWorker genZsForFindRoot
-[.{genLilXkZkFunc\acm}
+[.genFindRootWorker {genZsForFindRoot\acm}
+{genLilXkZkFunc\acm}
 {fSumC\acm} {genXtOfXtm1\acm} [.{genXtp1OfXt\acm} ] ] ] ] 
 [.makeInterpFuncs !\qsetw{2cm} [.genInterpData evaluateTriple ] ] [.interpDataToFunc 
  ] ] ] 
@@ -1019,7 +1019,24 @@ Print["code should restrict findroot guesses to ergodic set"];
 \end{figure}
 
 
+     \labday{Friday September 27, 2019}
 
+\begin{verbatim}
+-rw-r--r-- 1 garyanderson staff 2289 Aug 28 04:44 fixMma.wl
+-rw-r--r-- 1 garyanderson staff   63 Sep  5 06:00 cudalinkProblem.wl
+-rw-r--r-- 1 garyanderson staff 3042 Sep  5 06:00 finishBuildUp.wl
+-rw-r--r-- 1 garyanderson staff  830 Sep  5 06:25 USEfSumC.wl
+-rw-r--r-- 1 garyanderson staff  951 Sep  6 07:36 USEgenXtp1OfXt.wl
+-rw-r--r-- 1 garyanderson staff 1248 Sep  6 07:54 USEgenXtOfXtm1.wl
+-rw-r--r-- 1 garyanderson staff 1764 Sep  6 08:15 USEgenLilXkZkFunc.wl
+-rw-r--r-- 1 garyanderson staff 1607 Sep  7 07:05 USEgenZsForFindRoot.wl
+
+\end{verbatim}
+
+     \begin{itemize}
+     \item many functions in function tree no longer in AMASeriesRepresentation.w
+     \item update the call tree
+     \end{itemize}
 \bibliographystyle{plainnat}
 \bibliography{emds.bib}
 

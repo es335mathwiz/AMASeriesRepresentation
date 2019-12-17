@@ -86,4 +86,4 @@ filledPts=Map[Function[xx,fillIn[{{},smolToIgnore,xx}]],N[smolPts]]
 triples=eqnsCompiledBetterRBCTrips;
 theVals=
 ParallelTable[evaluateTriple[aTriple,Flatten[aPt]],
-{aPt,filledPts},{aTriple,triples[[1]]}]
+{aPt,Join[#[[Range[4]]],#[[Range[4]]],#[[Range[4]]],{0}]&/@filledPts},{aTriple,triples[[1]]}]

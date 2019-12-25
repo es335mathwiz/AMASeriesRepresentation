@@ -1,12 +1,23 @@
 (*assumes running with pwd two dirs below git*)
+Print["in pathSetup.mth"]
 PrependTo[$Path,"../../mathSmolyak/mathSmolyak"];
+Print["one"]
 PrependTo[$Path,"../../ProtectedSymbols"];
+Print["two"]
 PrependTo[$Path,"../../CStochSims"];
+Print["three"]
 PrependTo[$Path,"../../MSNTO/src/mathematica"];
+Print["four"]
 PrependTo[$Path,"../../paperProduction/FormatOptimize"];
+Print["five"]
 PrependTo[$Path,"../../mathAMA/SymbolicAMA/SymbolicAMA"];
+Print["six"]
 PrependTo[$Path,"../../mathAMA/AMAModel"];
+Print["seven"]
 PrependTo[$Path,"../../mathAMA/NumericAMA/NumericAMA"];
+Print["eight"]
 PrependTo[$Path,"../../EMSovereignCreditSpreads/code/emscsPaper"];
+Print["nine"]
 PrependTo[$Path,"../../svmrstuff/SVMR"];
+Print["done"]
 

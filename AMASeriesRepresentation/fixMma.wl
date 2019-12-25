@@ -1,5 +1,5 @@
 Get["finishPaper.mth"]
-
+Print["starting fixMma.wl"]
 (*  fails 
 approxAndBound[*)
 approx=1*{1,1,1}(*,*)

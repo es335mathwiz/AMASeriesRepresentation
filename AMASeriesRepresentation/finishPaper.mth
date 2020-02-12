@@ -7,16 +7,21 @@ Print["preemscstomma"]
 Get["betterRBCTrips`"]
 
 LaunchKernels[]
+
 ParallelEvaluate[$HistoryLength=1];
 ParallelEvaluate[Get["tests/pathSetup.mth"]]
 
-(*
+Print["after parallel pathSetup.mth"]
+
 ParallelNeeds["AMASeriesRepresentation`"]
 
 (*ParallelNeeds["emscsToMma`"]*)
 ParallelNeeds["betterRBCTrips`"]
-
+Print["done parallel betterRBCTrips"]
+(*
 *)
+
+
 dirNameString[]:=
 Module[{},
 aDir="resDir"<>"-host-"<>$MachineName<>"numKern"<>ToString[numKern]<>"-"<>ToString[Round[AbsoluteTime[]]]<>"/"(*;
@@ -44,6 +49,8 @@ zPts=backXtoZ[ptErg,betterRBCTripsMean,betterRBCTripsSD,betterRBCTripsvv];
 {tryEps,numKern,theName,mthName,bothX0Z0,sgSpecErg,zPts}
 ]
 
+
+
 actualErrs[approxDR_Function,xeps:{kk_?NumberQ,tt_?NumberQ,ee_?NumberQ}]:=
 With[{approxVals=(approxDR @@ {ig,kk,ig,tt,ee})[[Range[4]]],
 actualVals=simpRBCExactDRBetterTrips@@ {ig,kk,ig,tt,ee}},
@@ -62,10 +69,12 @@ opts:OptionsPattern[]]:=
 Module[{},
 {tryEps,numKern,theName,mthName,bothX0Z0,sgSpecErg,zPts}=
 prepSmol[approx,theK];
+Print["pre parallelnestgeneric"];
 {tm,ig}=Timing[
 theRes=parallelNestGenericIterREInterp[genFRExtFunc,linModBetterRBCTrips,
 {bothX0Z0,theK},rbcEqnsBetterRBCTrips,sgSpecErg,smolyakInterpolation,{},
 numIters,Apply[Sequence,FilterRules[{opts},Options[parallelNestGenericIterREInterp]]]]];
+Print["post parallelnestgeneric"];
 {sgSpecErg,theRes,tm,Length[Kernels[]]}]
 
 
@@ -141,7 +150,7 @@ backZtoX[{{z1,z2,tryEps}},betterRBCTripsMean,betterRBCTripsSD,betterRBCTripsvv][
 ]<>bothErrStr,
 Epilog->{PointSize[0.05],Green,Point[acterrLoc[[{1,2}]]],PointSize[0.025],Orange,Point[errBndLoc[[{1,2}]]],PointSize[0.0125],Black,Point[#]&/@zPts[[All,{1,2}]]},PlotRangeClipping->False]]
 
-
+Print["got to sort out working stuff!"]
 
 
 
@@ -154,6 +163,7 @@ ab1=approxAndBound[{1,1,1},4,2];
 
 ab2=approxAndBound[{2*1,1,1},4,2];
 
+ab3=approxAndBound[{3*1,2*1,1},4,2];
 
 abt1=approxAndBound[{1,1,1},4,2,"Traditional"->True];
 
@@ -163,5 +173,10 @@ abt2=approxAndBound[{2*1,1,1},4,2,"Traditional"->True];
 
 
 
+aFunc1[kk_?NumberQ,tt_?NumberQ,ee_?NumberQ]:=
+Module[{},Print[{kk,tt,ee}];
+(ab3[[2,-1,1]][0,kk,0,tt,0][[1,1]])]
+
 
 *)
+

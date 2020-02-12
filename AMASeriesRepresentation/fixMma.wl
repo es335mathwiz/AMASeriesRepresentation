@@ -28,6 +28,30 @@ Apply[DistributeDefinitions,Flatten[reapRes[[2]]]];
 
 
 (*fails*)
+bothX0Z0 = genBothX0Z0Funcs[
+   linModBetterRBCTrips];
+
+approx=1*{1,1,1};
+smolStuff = {ptErg, tfErg, plyErg, iplyErg, dplyErg} = 
+   smolyakInterpolationPrep[approx, {betterRBCTripsMean, 
+     betterRBCTripsSD, 
+     betterRBCTripsMinZ, 
+     betterRBCTripsMaxZ, 
+     betterRBCTripsvv}, 
+    theDistBetterRBCTrips]
+smolRngErg = 
+  Transpose[{betterRBCTripsMinZ, 
+    betterRBCTripsMaxZ}];
+toIg = aGSpecBetterRBCTrips[[1]];
+sgSpecErg = {toIg, smolRngErg, ptErg, tfErg, plyErg, iplyErg, 
+   1, approx, {betterRBCTripsMean, 
+    betterRBCTripsSD, 
+    betterRBCTripsMinZ, 
+    betterRBCTripsMaxZ, 
+    betterRBCTripsvv}}
+
+theK=3
+
 {tm,ig}=Timing[
 theRes=parallelNestGenericIterREInterp[genFRExtFunc,linModBetterRBCTrips,
 {bothX0Z0,theK},eqnsCompiledBetterRBCTrips,sgSpecErg,smolyakInterpolation,{},2 ,Apply[Sequence,FilterRules[{},Options[parallelNestGenericIterREInterp]]]]];
